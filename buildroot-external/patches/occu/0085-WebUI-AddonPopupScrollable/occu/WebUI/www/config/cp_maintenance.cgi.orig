@@ -470,7 +470,7 @@ proc action_put_page {} {
           }
         }
         table_data {align="center"} {class="CLASS20921"} {
-          puts "<img src='/ise/img/rm-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
           puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }

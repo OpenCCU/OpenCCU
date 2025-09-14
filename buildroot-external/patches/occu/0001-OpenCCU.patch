@@ -107,7 +107,7 @@
 -          }
 +        }
 +        table_data {align="center"} {class="CLASS20921"} {
-+          puts "<img src='/ise/img/rm-logo_small_gray.png' alt='OpenCCU'><br/>"
++          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
 +          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
          }
        }
@@ -422,7 +422,7 @@
 -          puts "<li style='padding-top:25px;'><img src='/ise/img/homematic_logo_small.png'/></li>"
 -        puts "</ul>"
 -
-+        puts "<img src='/ise/img/rm-logo_small.png'/><br/>"
++        puts "<img src='/ise/img/occu-logo_small.png'/><br/>"
 +        puts "\${dialogHelpInfoLblVersion} $ver(VERSION) ($ver(PLATFORM))<br/>"
 +        puts "<br/>\${dialogHelpInfoLblCopyright} &copy; 2016 - $CUR_YEAR<br/>"
 +        puts "OpenCCU Contributors (<a target='_blank' href='https://github.com/openccu/openccu/graphs/contributors'>see here</a>)<br/>"
@@ -518,7 +518,7 @@
        </div>
        <div align="center" style="padding-top:250px;">
 -        <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
-+        <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
++        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
        </div>
      </div>
  
@@ -529,7 +529,7 @@
        </div>
        <div align="center" style="padding-top:250px;">
 -        <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
-+        <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
++        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
        </div>
      </div>
  
@@ -540,7 +540,7 @@
  <tr>
    <!-- Logo -->
 -          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/homematic_logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
-+          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/rm-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
++          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
    <!-- Username und Pfad-->
    <td class="CLASS11101">
      <table class="CLASS11102">
@@ -551,12 +551,12 @@
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {
 -          $("headerLogo").src = "/ise/img/homematic_logo_small.png";
-+          $("headerLogo").src = "/ise/img/rm-logo_small.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small.png";
          }
          else
          {
 -          $("headerLogo").src = "/ise/img/homematic_logo_small_red.png";
-+          $("headerLogo").src = "/ise/img/rm-logo_small_red.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
          }
        }
      },
@@ -565,13 +565,13 @@
  SwitchOnFlashLight = function()
  {
 -  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small_red.png"; }
-+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small_red.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
  };
  
  SwitchOffFlashLight = function()
  {
 -  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small.png"; }
-+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
  };
  
  ShowAjaxLoad = function()
@@ -582,7 +582,7 @@
          </tr>
          <tr>
 -          <td><img src="/ise/img/homematic_logo_small_gray.png" /></td>
-+          <td><img src="/ise/img/rm-logo_small_gray.png" /></td>
++          <td><img src="/ise/img/occu-logo_small_gray.png" /></td>
          </tr>
      </table>
      </td>
@@ -604,7 +604,7 @@
            <table cellpadding="0" cellspacing="0">
              <tr>
 -              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
-+              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/rm-logo_small.png" alt="OpenCCU Logo" /></div></td>
++              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
                <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
                <td style="width: 100%;"></td>
                <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
@@ -622,23 +622,12 @@
            <table cellpadding="0" cellspacing="0">
            <tr>
 -            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
-+            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/rm-logo_small.png" alt="OpenCCU Logo" /></div></td>
++            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
              <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
                <td style="width: 100%;"></td>
                <td style="padding-right:63px;"><div class="clickable" onclick="loadHelp();"><img id="idHelp" src="/ise/img/help.png" width="48px" height="48px" alt="Hilfe" title="Hilfe"/></div></td>
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
-@@ -10,8 +10,8 @@
-     <meta http-equiv="pragma"        content="no-cache">
-     <meta http-equiv="expires"       content="0">
- 
--    <link rel="shortcut icon" href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon"/>
--    <link rel="icon"          href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon" />
-+    <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-+    <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
- 
-     <link rel="stylesheet" type="text/css" href="/webui/css/extern/nfs_datepicker.css" />
-     <link rel="stylesheet" type="text/css" href="/webui/css/extern/jquery.powertip.css" />
 @@ -72,7 +72,8 @@
        /*########################################################################*/
  
@@ -654,7 +643,7 @@
        <div id="webuiloader_background">
          <div id="webuiloader">
 -          <div id="webuiloader_icon"><img src="/ise/img/homematic_logo_small_gray.png" alt="" /></div>
-+          <div id="webuiloader_icon"><img src="/ise/img/rm-logo_small_gray.png" /></div>
++          <div id="webuiloader_icon"><img src="/ise/img/occu-logo_small_gray.png" /></div>
            <!-- div id="webuiloader_caption">HomeMatic WebUI wird geladen...</div-->
            <div id="webuiloader_caption"></div>
            <script type="text/javascript">jQuery("#webuiloader_caption").html(translateKey("loadWebUI"));</script>
@@ -691,7 +680,7 @@
    </div>
    <div align="center" style="padding-top:250px;">
 -    <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
-+    <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
++    <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
    </div>
  </body>
  
@@ -864,12 +853,12 @@
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {
 -          $("headerLogo").src = "/ise/img/homematic_logo_small.png";
-+          $("headerLogo").src = "/ise/img/rm-logo_small.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small.png";
          }
          else
          {
 -          $("headerLogo").src = "/ise/img/homematic_logo_small_red.png";
-+          $("headerLogo").src = "/ise/img/rm-logo_small_red.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
          }
        }
      },
@@ -878,13 +867,13 @@
  SwitchOnFlashLight = function()
  {
 -  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small_red.png"; }
-+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small_red.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
  };
  
  SwitchOffFlashLight = function()
  {
 -  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small.png"; }
-+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
  };
  
  getAjaxLoadElem = function() {

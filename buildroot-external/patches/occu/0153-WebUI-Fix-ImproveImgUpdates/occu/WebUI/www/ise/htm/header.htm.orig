@@ -7,7 +7,7 @@
 </colgroup>
 <tr>
   <!-- Logo -->
-          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/rm-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
+          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
   <!-- Username und Pfad-->
   <td class="CLASS11101">
     <table class="CLASS11102">

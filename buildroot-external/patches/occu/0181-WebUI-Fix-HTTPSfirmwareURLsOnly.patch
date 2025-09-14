@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
-@@ -118,7 +118,6 @@
+@@ -116,7 +116,6 @@
        /*# Globale Variablen                                                    #*/
        /*########################################################################*/
  

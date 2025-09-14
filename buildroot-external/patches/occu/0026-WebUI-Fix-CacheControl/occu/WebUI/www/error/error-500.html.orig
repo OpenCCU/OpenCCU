@@ -95,7 +95,7 @@
         <p>${ccuNotReadyHint}</p>
       </div>
       <div align="center" style="padding-top:250px;">
-        <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
+        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
       </div>
     </div>
 

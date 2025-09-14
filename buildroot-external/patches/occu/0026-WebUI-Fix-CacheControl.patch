@@ -180,8 +180,8 @@
 -    <meta http-equiv="pragma"        content="no-cache">
 -    <meta http-equiv="expires"       content="0">
  
-     <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-     <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
+     <link rel="shortcut icon" href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon"/>
+     <link rel="icon"          href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon" />
 @@ -215,6 +212,6 @@
          </div>
        </div>

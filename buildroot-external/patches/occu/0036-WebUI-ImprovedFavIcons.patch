@@ -1,36 +1,34 @@
 --- occu/WebUI/www/rega/login.htm.orig
 +++ occu/WebUI/www/rega/login.htm
-@@ -4,6 +4,14 @@
+@@ -4,6 +4,13 @@
    <head>
      <title>HomeMatic WebUI</title>
  
-+    <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-+    <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
-+    <link rel="apple-touch-icon" href="/ise/img/rm-touch-icon-iphone.png" />
-+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/rm-touch-icon-iphone-retina.png" />
-+    <link rel="icon" type="image/png" sizes="32x32" href="/ise/img/rm-favicon-32x32.png">
-+    <link rel="icon" type="image/png" sizes="16x16" href="/ise/img/rm-favicon-16x16.png">
-+    <link rel="manifest" href="/webui/site.webmanifest">
++    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
++    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
++    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
++    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
++    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
++    <link rel="manifest" href="/webui/site.webmanifest" />
 +    
      <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
      <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
 --- occu/WebUI/www/rega/logout.htm.orig
 +++ occu/WebUI/www/rega/logout.htm
-@@ -2,12 +2,20 @@
+@@ -2,12 +2,19 @@
  <html lang="de">
    <head>
      <title>HomeMatic WebUI</title>
 -    <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
-+
-+    <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-+    <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
-+    <link rel="apple-touch-icon" href="/ise/img/rm-touch-icon-iphone.png" />
-+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/rm-touch-icon-iphone-retina.png" />
-+    <link rel="icon" type="image/png" sizes="32x32" href="/ise/img/rm-favicon-32x32.png">
-+    <link rel="icon" type="image/png" sizes="16x16" href="/ise/img/rm-favicon-16x16.png">
-+    <link rel="manifest" href="/webui/site.webmanifest">
  
++    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
++    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
++    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
++    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
++    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
++    <link rel="manifest" href="/webui/site.webmanifest" />
++ 
      <!-- Required meta tags for bootstrap -->
      <meta charset="utf-8">
      <meta name="viewport" content="width=1024">
@@ -41,20 +39,42 @@
      <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
-@@ -20,6 +20,12 @@
-     <link rel="stylesheet" type="text/css" href="/webui/css/extern/msdropdown/dd.css" />
-     <link rel="stylesheet" type="text/css" href="/webui/css/extern/spectrum.css" />
+@@ -11,8 +11,12 @@
+     <meta http-equiv="Content-Language" content="de">
+     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
  
-+    <link rel="apple-touch-icon" href="/ise/img/rm-touch-icon-iphone.png" />
-+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/rm-touch-icon-iphone-retina.png" />
-+    <link rel="icon" type="image/png" sizes="32x32" href="/ise/img/rm-favicon-32x32.png">
-+    <link rel="icon" type="image/png" sizes="16x16" href="/ise/img/rm-favicon-16x16.png">
-+    <link rel="manifest" href="/webui/site.webmanifest">
-+
-     <title>HomeMatic WebUI</title>
+-    <link rel="shortcut icon" href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon"/>
+-    <link rel="icon"          href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon" />
++    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
++    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
++    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
++    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
++    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
++    <link rel="manifest" href="/webui/site.webmanifest" />
  
- 
+     <link rel="stylesheet" type="text/css" href="/webui/css/extern/nfs_datepicker.css" />
+     <link rel="stylesheet" type="text/css" href="/webui/css/extern/jquery.powertip.css" />
 --- occu/WebUI/www/webui/site.webmanifest.orig
 +++ occu/WebUI/www/webui/site.webmanifest
-@@ -0,0 +1 @@
-+{"name":"","short_name":"","icons":[{"src":"/ise/img/rm-android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/ise/img/rm-android-chrome-512x512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#ffffff","background_color":"#ffffff","display":"standalone"}
+@@ -0,0 +1,21 @@
++{
++  "name": "OpenCCU",
++  "short_name": "OCCU",
++  "icons": [
++    {
++      "src": "/ise/img/web-app-manifest-192x192.png",
++      "sizes": "192x192",
++      "type": "image/png",
++      "purpose": "maskable"
++    },
++    {
++      "src": "/ise/img/web-app-manifest-512x512.png",
++      "sizes": "512x512",
++      "type": "image/png",
++      "purpose": "maskable"
++    }
++  ],
++  "theme_color": "#ffffff",
++  "background_color": "#ffffff",
++  "display": "standalone"
++}

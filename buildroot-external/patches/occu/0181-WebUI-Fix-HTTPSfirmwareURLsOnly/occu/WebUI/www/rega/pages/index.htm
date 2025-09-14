@@ -11,20 +11,18 @@
     <meta http-equiv="Content-Language" content="de">
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-    <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-    <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
+    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
+    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+    <link rel="manifest" href="/webui/site.webmanifest" />
 
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/nfs_datepicker.css" />
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/jquery.powertip.css" />
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/jquery.jqplot.css" />
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/msdropdown/dd.css" />
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/spectrum.css" />
-
-    <link rel="apple-touch-icon" href="/ise/img/rm-touch-icon-iphone.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/rm-touch-icon-iphone-retina.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/ise/img/rm-favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/ise/img/rm-favicon-16x16.png">
-    <link rel="manifest" href="/webui/site.webmanifest">
 
     <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
 
@@ -241,7 +239,7 @@
     <div id="webuiloader_wrapper">
       <div id="webuiloader_background">
         <div id="webuiloader">
-          <div id="webuiloader_icon"><img src="/ise/img/rm-logo_small_gray.png" /></div>
+          <div id="webuiloader_icon"><img src="/ise/img/occu-logo_small_gray.png" /></div>
           <!-- div id="webuiloader_caption">HomeMatic WebUI wird geladen...</div-->
           <div id="webuiloader_caption"></div>
           <script type="text/javascript">jQuery("#webuiloader_caption").html(translateKey("loadWebUI"));</script>

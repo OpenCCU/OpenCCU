@@ -34917,11 +34917,11 @@ StartFlashing = function()
       {
         if( $("headerLogo").src.indexOf("_red") >= 0 )
         {
-          $("headerLogo").src = "/ise/img/rm-logo_small.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small.png";
         }
         else
         {
-          $("headerLogo").src = "/ise/img/rm-logo_small_red.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
         }
       }
     },
@@ -34936,12 +34936,12 @@ StopFlashing = function()
 
 SwitchOnFlashLight = function()
 {
-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small_red.png"; }
+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
 };
 
 SwitchOffFlashLight = function()
 {
-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small.png"; }
+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
 };
 
 getAjaxLoadElem = function() {

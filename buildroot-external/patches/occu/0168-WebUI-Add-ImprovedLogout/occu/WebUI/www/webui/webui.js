@@ -34710,11 +34710,11 @@ StartFlashing = function()
       {
         if( $("headerLogo").src.indexOf("_red") >= 0 )
         {
-          $("headerLogo").src = "/ise/img/rm-logo_small.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small.png";
         }
         else
         {
-          $("headerLogo").src = "/ise/img/rm-logo_small_red.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
         }
       }
     },

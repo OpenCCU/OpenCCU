@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
-@@ -206,6 +206,31 @@
+@@ -204,6 +204,31 @@
        } catch (e) {}
      </script>
  

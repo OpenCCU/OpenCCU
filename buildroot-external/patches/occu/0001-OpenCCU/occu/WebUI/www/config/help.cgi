@@ -186,7 +186,7 @@ proc action_put_page {} {
     puts "<tr>"
 
       puts "<td id='tdInfo' class='CLASS21305a' >"
-        puts "<img src='/ise/img/rm-logo_small.png'/><br/>"
+        puts "<img src='/ise/img/occu-logo_small.png'/><br/>"
         puts "\${dialogHelpInfoLblVersion} $ver(VERSION) ($ver(PLATFORM))<br/>"
         puts "<br/>\${dialogHelpInfoLblCopyright} &copy; 2016 - $CUR_YEAR<br/>"
         puts "OpenCCU Contributors (<a target='_blank' href='https://github.com/openccu/openccu/graphs/contributors'>see here</a>)<br/>"
