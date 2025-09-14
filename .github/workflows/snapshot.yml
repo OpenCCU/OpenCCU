@@ -129,7 +129,7 @@ jobs:
       # cleanup
       - name: Cleanup
         run: |
-          make clean-all
+          sudo -H -E -u builder make clean-all
           rm -rf release/*.img* buildroot-????.*
 
       #######################
@@ -396,7 +396,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5.8.0
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ github.repository_owner }}/openccu
           labels: |
             maintainer=OpenCCU OpenSource Team
             org.opencontainers.image.title=OpenCCU
@@ -492,7 +492,7 @@ jobs:
           echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
 
       - name: Publish Helm chart
-        uses: stefanprodan/helm-gh-pages@master
+        uses: stefanprodan/helm-gh-pages@89c6698c192e70ed0e495bee7d3d1ca5b477fe82
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           charts_dir: helm
@@ -558,7 +558,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash
-          git commit -a -m "snapshot bump [${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}]"
+          git diff --quiet || git commit -a -m "snapshot bump [${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}]"
           git push
 
   cleanup:

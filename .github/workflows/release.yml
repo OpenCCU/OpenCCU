@@ -171,12 +171,13 @@ jobs:
         timeout-minutes: 300
         run: |
           rm -rf release/OpenCCU-* buildroot-????.*
+          sudo chown -R builder:builder "$GITHUB_WORKSPACE"
           sudo -H -E -u builder nice -n 19 make DATE=${{ needs.release_draft.outputs.date }} BR2_DL_DIR=/mnt/download BR2_CCACHE_DIR=/mnt/ccache/${{ matrix.platform }} BR2_JLEVEL=${{ env.JLEVEL }} PRODUCT=${{ matrix.platform }} clean-all release
 
       # cleanup
       - name: Cleanup
         run: |
-          make clean-all
+          sudo -H -E -u builder make clean-all
           rm -rf release/*.img* buildroot-????.*
 
       #######################
@@ -590,7 +591,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash
-          git commit -a -m "release bump [${{ needs.release_draft.outputs.version }}]"
+          git diff --quiet || git commit -a -m "release bump [${{ needs.release_draft.outputs.version }}]"
           git push
 
   helm:
@@ -608,7 +609,7 @@ jobs:
 
       - name: Publish Helm chart
         if: github.event.inputs.test_workflow != 'true'
-        uses: stefanprodan/helm-gh-pages@master
+        uses: stefanprodan/helm-gh-pages@89c6698c192e70ed0e495bee7d3d1ca5b477fe82
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           charts_dir: helm
