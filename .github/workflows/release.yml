@@ -383,6 +383,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v5
 
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends jq
+
       - name: Setup Environment
         run: |
           echo "GIT_REF=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match)" >> $GITHUB_ENV
