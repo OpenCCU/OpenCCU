@@ -2121,6 +2121,15 @@
  }
  
  /* Kopfzeile */
+@@ -305,7 +335,7 @@
+ {
+   /*position: absolute;*/
+   margin-left: 0px;
+-  margin-top: 6px;
++  margin-top: 0px;
+   padding-left: 10px;
+ }
+ 
 @@ -391,7 +421,9 @@
    text-align:center;
    border:solid 1px $_(black); /* black */
