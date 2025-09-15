@@ -64,7 +64,7 @@
  array set REGA_LOGLEVELS {
    0 "\${dialogSettingsCMLogLevel0}"
    1 "\${dialogSettingsCMLogLevel1}"
-@@ -333,7 +341,7 @@
+@@ -334,7 +342,7 @@
  }
  
  proc action_put_page {} {
@@ -73,7 +73,7 @@
    http_head
  
    division {class="popupTitle j_translate"} {
-@@ -559,6 +567,21 @@
+@@ -560,6 +568,21 @@
                  table {class="CLASS20909"} {
                    table_row {
                      table_data {align="left"} {
@@ -95,7 +95,7 @@
                        puts "\${dialogSettingsCMLblLogBidCosRF}"
                      }
                      table_data {align="right"} {
-@@ -681,6 +704,7 @@
+@@ -682,6 +705,7 @@
      puts {
        apply_logging = function() {
          var pb = "action=apply_logging";
@@ -103,7 +103,7 @@
          pb += "&level_rfd="+document.getElementById("select_log_rfd").value;
          pb += "&level_hs485d="+document.getElementById("select_log_hs485d").value;
          //pb += "&level_pfmd="+document.getElementById("select_log_pfmd").value;
-@@ -1287,14 +1311,21 @@
+@@ -1288,14 +1312,21 @@
  }
  
  proc get_logserver {} {
@@ -127,7 +127,7 @@
    set fd -1
    catch {set fd [open "/etc/config/syslog" w]}
    if { $fd <0 } { return 0 }
-@@ -1306,13 +1337,26 @@
+@@ -1307,13 +1338,26 @@
    puts $fd "LOGLEVEL_HS485D=$level_hs485d"
    # puts $fd "LOGLEVEL_PFMFD=$level_pfmd"
    puts $fd "LOGLEVEL_REGA=$level_rega"
@@ -159,7 +159,7 @@
    return 1
  }
  
-@@ -1322,11 +1366,12 @@
+@@ -1323,11 +1367,12 @@
    import level_hs485d
    # import level_pfmd
    import level_rega

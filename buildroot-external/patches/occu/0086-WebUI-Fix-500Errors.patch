@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -1259,6 +1259,7 @@
+@@ -1260,6 +1260,7 @@
  }
  
  proc action_update_start {} {
@@ -8,7 +8,7 @@
    catch { exec killall hss_lcd }
    catch { exec lcdtool {Saving   Data...  } }
    rega system.Save()
-@@ -1275,6 +1276,7 @@
+@@ -1276,6 +1277,7 @@
  }
  
  proc action_reboot {} {
@@ -16,7 +16,7 @@
    catch { exec killall hss_lcd }
    catch { exec lcdtool {Saving   Data...  } }
    rega system.Save()
-@@ -1283,6 +1285,7 @@
+@@ -1284,6 +1286,7 @@
    exec /sbin/reboot
  }
  proc action_shutdown {} {

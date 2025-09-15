@@ -21,7 +21,7 @@
          jQuery(".YesNoDialog_yesButton").hide().text(translateKey("dialogSettingsCMBtnPerformSoftwareUpdateUpload"));
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -405,19 +405,16 @@
+@@ -406,19 +406,16 @@
              }
              table_row {
                td {width="20"} {}
@@ -48,7 +48,7 @@
                  }
                }
              }
-@@ -429,28 +426,25 @@
+@@ -430,28 +427,25 @@
              }
              table_row {
                td {width="20"} {}

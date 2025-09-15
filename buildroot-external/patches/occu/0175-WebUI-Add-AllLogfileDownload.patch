@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -1428,15 +1428,16 @@
+@@ -1429,15 +1429,16 @@
    puts "Content-Type:application/x-download"
    puts "Content-Disposition:attachment;filename=[set HOSTNAME]-$year-$month-$day.log\n"
    
