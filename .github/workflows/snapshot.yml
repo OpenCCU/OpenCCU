@@ -65,7 +65,7 @@ jobs:
           fi
           if ! getent group | grep -q ^builder:; then groupadd -g 48 builder; fi
           if ! getent passwd | grep -q ^builder:; then useradd -m -u 1003 -g 48 -G sudo builder; fi
-          if ! grep -q ^builder; then echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" >>/etc/sudoers; fi
+          if ! grep -q ^builder /etc/sudoers; then echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" >>/etc/sudoers; fi
           chown -R builder:builder /home/builder
 
       - name: Setup Environment
