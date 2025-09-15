@@ -1,6 +1,16 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -234,16 +234,6 @@
+@@ -54,7 +54,8 @@
+ 
+     puts "var req = jQuery.ajax({"
+       puts " url : \"/EULA.\"+lang,"
+-      puts " dataType: \"html\""
++      puts " dataType: \"html\","
++      puts " cache: false"
+     puts "});"
+ 
+     puts "req.done(function(data) {"
+@@ -234,16 +235,6 @@
      <p class="CLASS20914">
      ${dialogSettingsCMDialogPerformSoftwareUpdateP1}
      </p>
