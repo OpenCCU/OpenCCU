@@ -1,9 +1,9 @@
 {
   "os_list": [
     {
-      "name": "RaspberryMatic /home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m (Pi 5)",
+      "name": "OpenCCU 3.83.6.20250917-30dd2b (Pi 5)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/jens-maus/RaspberryMatic/releases/download/snapshots/RaspberryMatic-/home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m-rpi5.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.83.6.20250917-30dd2b-rpi5.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
       "release_date": "2025-09-17",
       "extract_size": 1345249792,
@@ -16,9 +16,9 @@
       ]
     },
     {
-      "name": "RaspberryMatic /home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m (Pi 4, Pi 400)",
+      "name": "OpenCCU 3.83.6.20250917-30dd2b (Pi 4, Pi 400)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/jens-maus/RaspberryMatic/releases/download/snapshots/RaspberryMatic-/home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m-rpi4.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.83.6.20250917-30dd2b-rpi4.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
       "release_date": "2025-09-17",
       "extract_size": 1345249792,
@@ -31,9 +31,9 @@
       ]
     },
     {
-      "name": "RaspberryMatic /home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m (Pi 3, Pi Zero 2, ELV-Charly, CCU3)",
+      "name": "OpenCCU 3.83.6.20250917-30dd2b (Pi 3, Pi Zero 2, ELV-Charly, CCU3)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/jens-maus/RaspberryMatic/releases/download/snapshots/RaspberryMatic-/home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m-rpi3.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.83.6.20250917-30dd2b-rpi3.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
       "release_date": "2025-09-17",
       "extract_size": 1345249792,
@@ -46,9 +46,9 @@
       ]
     },
     {
-      "name": "RaspberryMatic /home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m (Pi 2)",
+      "name": "OpenCCU 3.83.6.20250917-30dd2b (Pi 2)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/jens-maus/RaspberryMatic/releases/download/snapshots/RaspberryMatic-/home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m-rpi2.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.83.6.20250917-30dd2b-rpi2.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
       "release_date": "2025-09-17",
       "extract_size": 1345249792,
@@ -61,9 +61,9 @@
       ]
     },
     {
-      "name": "RaspberryMatic /home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m (Pi Zero, Pi 1)",
+      "name": "OpenCCU 3.83.6.20250917-30dd2b (Pi Zero, Pi 1)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/jens-maus/RaspberryMatic/releases/download/snapshots/RaspberryMatic-/home/runner/work/OpenCCU/OpenCCU/OpenCCU-3.83.6.20250917-30dd2be-rpi0.m-rpi0.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.83.6.20250917-30dd2b-rpi0.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
       "release_date": "2025-09-17",
       "extract_size": 1345249792,
