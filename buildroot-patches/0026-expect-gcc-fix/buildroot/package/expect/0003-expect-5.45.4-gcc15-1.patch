@@ -1,0 +1,411 @@
+Submitted By:            Xi Ruoyao <xry111@xry111.site>
+Date:                    2025-04-21
+Initial Package Version: 5.45.4
+Upstream Status:         The C99-compatibility part has been submitted
+                         for a long time, but the upstream seems inactive.
+                         The C23-compatibility part is not submitted.
+Origin:                  Fedora & Self:
+                         - Fedora expect-5.45.4-covscan-fixes.patch
+                         - Fedora expect-c99.patch
+                         - Fedora expect-configure-c99.patch
+                           - We are directly patching configure instead of
+                             patching configure.in like Fedora.  It's
+                             generally not a good idea, but better than
+                             adding autoconf into chapter 7 or bloating this
+                             patch into 100+ KiB (with a full regeneration
+                             of the configure script).
+                         - Self-made C23-compatibility fixes
+                           - Add a parameter list for various function
+                             declerations.
+Description:             Fix some build failure caused by the pre-C23 syntax
+                         no longer allowed by GCC 15 in the default C23
+                         mode.
+
+diff --color -Naur expect5.45.4.orig/configure expect5.45.4/configure
+--- expect5.45.4.orig/configure	2018-02-04 18:43:58.000000000 +0800
++++ expect5.45.4/configure	2025-04-22 11:16:42.221990368 +0800
+@@ -7994,7 +7994,6 @@
+ {
+ extern long timezone;
+ 	    timezone += 1;
+-	    exit (0);
+   ;
+   return 0;
+ }
+@@ -8030,7 +8029,6 @@
+ {
+ extern time_t timezone;
+ 		timezone += 1;
+-		exit (0);
+   ;
+   return 0;
+ }
+@@ -8791,7 +8789,7 @@
+ $as_echo_n "checking for memcpy... " >&6; }
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+-
++#include <string.h>
+ int
+ main ()
+ {
+@@ -8831,7 +8829,7 @@
+ /* end confdefs.h.  */
+ 
+ #include <sys/wait.h>
+-main() {
++int main() {
+ #ifndef WNOHANG
+ 	return 0;
+ #else
+@@ -8867,7 +8865,7 @@
+ 
+ #include <stdio.h>
+ #include <sys/wait.h>
+-main() {
++int main() {
+ #ifdef WNOHANG
+ 	FILE *fp = fopen("wnohang","w");
+ 	fprintf(fp,"%d",WNOHANG);
+@@ -8935,7 +8933,9 @@
+ /* end confdefs.h.  */
+ 
+ #include <signal.h>
+-#define RETSIGTYPE $retsigtype
++#include <stdlib.h>
++#include <unistd.h>
++#include <sys/wait.h>
+ 
+ int signal_rearms = 0;
+ 
+@@ -8952,7 +8952,7 @@
+ signal_rearms++;
+ }
+ 
+-main()
++int main()
+ {
+ 	signal(SIGINT,parent_sigint_handler);
+ 
+@@ -9234,10 +9234,9 @@
+ /* end confdefs.h.  */
+ 
+ #include <sgtty.h>
+-main()
++int main()
+ {
+   struct sgttyb tmp;
+-  exit(0);
+ }
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+@@ -9274,10 +9273,9 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <termio.h>
+-  main()
++  int main()
+   {
+     struct termio tmp;
+-    exit(0);
+   }
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+@@ -9312,10 +9310,9 @@
+ #  include <inttypes.h>
+ #  endif
+ #  include <termios.h>
+-  main()
++  int main()
+   {
+     struct termios tmp;
+-    exit(0);
+   }
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+@@ -9350,7 +9347,7 @@
+ #include <inttypes.h>
+ #endif
+ #include <termios.h>
+-main() {
++int main() {
+ #if defined(TCGETS) || defined(TCGETA)
+ 	return 0;
+ #else
+@@ -9388,7 +9385,7 @@
+ #include <inttypes.h>
+ #endif
+ #include <termios.h>
+-main() {
++int main() {
+ #ifdef TIOCGWINSZ
+ 	return 0;
+ #else
+@@ -9423,7 +9420,7 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-main(){
++int main(){
+ #ifdef CRAY
+ 	return 0;
+ #else
+@@ -9565,12 +9562,10 @@
+ 
+ extern char *tzname[2];
+ extern int daylight;
+-main()
++int main()
+ {
+   int *x = &daylight;
+   char **y = tzname;
+-
+-  exit(0);
+ }
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+diff --color -Naur expect5.45.4.orig/exp_chan.c expect5.45.4/exp_chan.c
+--- expect5.45.4.orig/exp_chan.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_chan.c	2025-04-22 11:16:42.222758025 +0800
+@@ -51,6 +51,8 @@
+ 		            int mask));
+ static int		ExpGetHandleProc _ANSI_ARGS_((ClientData instanceData,
+ 		            int direction, ClientData *handlePtr));
++void			exp_background_channelhandler _ANSI_ARGS_((ClientData,
++		            int));
+ 
+ /*
+  * This structure describes the channel type structure for Expect-based IO:
+@@ -58,7 +60,7 @@
+ 
+ Tcl_ChannelType expChannelType = {
+     "exp",				/* Type name. */
+-    ExpBlockModeProc,			/* Set blocking/nonblocking mode.*/
++    TCL_CHANNEL_VERSION_2,
+     ExpCloseProc,			/* Close proc. */
+     ExpInputProc,			/* Input proc. */
+     ExpOutputProc,			/* Output proc. */
+@@ -68,6 +70,7 @@
+     ExpWatchProc,			/* Initialize notifier. */
+     ExpGetHandleProc,			/* Get OS handles out of channel. */
+     NULL,				/* Close2 proc */
++    ExpBlockModeProc,			/* Set blocking/nonblocking mode.*/
+ };
+ 
+ typedef struct ThreadSpecificData {
+diff --color -Naur expect5.45.4.orig/exp_clib.c expect5.45.4/exp_clib.c
+--- expect5.45.4.orig/exp_clib.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_clib.c	2025-04-22 11:22:35.735989675 +0800
+@@ -37,6 +37,14 @@
+ # endif
+ #endif
+ 
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
++
++//#ifdef HAVE_SYS_WAIT_H
++# include <sys/wait.h>
++//#endif
++
+ #ifdef HAVE_SYS_FCNTL_H
+ #  include <sys/fcntl.h>
+ #else
+@@ -1727,13 +1735,14 @@
+ int exp_loguser = TRUE;		/* if TRUE, user sees interactions on stdout */
+ 
+ 
+-char *exp_printify();
++char *exp_printify(char *);
+ int exp_getptymaster();
+-int exp_getptyslave();
++int exp_getptyslave(int, int, CONST char *);
+ 
+ #define sysreturn(x)	return(errno = x, -1)
+ 
+ void exp_init_pty();
++void exp_init_tty();
+ 
+ /*
+    The following functions are linked from the Tcl library.  They
+@@ -2253,6 +2262,7 @@
+ 		argv[i] = va_arg(args,char *);
+ 		if (!argv[i]) break;
+ 	}
++	va_end(args);
+ 	i = exp_spawnv(argv[0],argv+1);
+ 	free((char *)argv);
+ 	return(i);
+@@ -2726,6 +2736,7 @@
+ 		/* Ultrix 4.2 compiler refuses enumerations comparison!? */
+ 		if ((int)type < 0 || (int)type >= (int)exp_bogus) {
+ 			fprintf(stderr,"bad type (set %d) in exp_expectl\n",i);
++			va_end(args);
+ 			sysreturn(EINVAL);
+ 		}
+ 
+@@ -2791,6 +2802,7 @@
+ 		/* Ultrix 4.2 compiler refuses enumerations comparison!? */
+ 		if ((int)type < 0 || (int)type >= (int)exp_bogus) {
+ 			fprintf(stderr,"bad type (set %d) in exp_expectl\n",i);
++			va_end(args);
+ 			sysreturn(EINVAL);
+ 		}
+ 
+diff --color -Naur expect5.45.4.orig/exp_command.h expect5.45.4/exp_command.h
+--- expect5.45.4.orig/exp_command.h	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_command.h	2025-04-22 11:15:02.579293854 +0800
+@@ -222,8 +222,8 @@
+ 
+ EXTERN void		exp_strftime(char *format, const struct tm *timeptr,Tcl_DString *dstring);
+ 
+-#define exp_deleteProc (void (*)())0
+-#define exp_deleteObjProc (void (*)())0
++#define exp_deleteProc NULL
++#define exp_deleteObjProc NULL
+ 
+ EXTERN int expect_key;
+ EXTERN int exp_configure_count;	/* # of times descriptors have been closed */
+@@ -321,7 +321,7 @@
+ EXTERN void		exp_init_most_cmds _ANSI_ARGS_((Tcl_Interp *));
+ EXTERN void		exp_init_trap_cmds _ANSI_ARGS_((Tcl_Interp *));
+ EXTERN void		exp_init_interact_cmds _ANSI_ARGS_((Tcl_Interp *));
+-EXTERN void		exp_init_tty_cmds();
++EXTERN void		exp_init_tty_cmds _ANSI_ARGS_((Tcl_Interp *));
+ 
+ EXTERN ExpState *	expStateCheck _ANSI_ARGS_((Tcl_Interp *,ExpState *,int,int,char *));
+ EXTERN ExpState *       expStateCurrent _ANSI_ARGS_((Tcl_Interp *,int,int,int));
+diff --color -Naur expect5.45.4.orig/exp_log.c expect5.45.4/exp_log.c
+--- expect5.45.4.orig/exp_log.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_log.c	2025-04-22 11:16:42.223164242 +0800
+@@ -174,7 +174,10 @@
+     force_stdout = TCL_VARARGS_START(int,arg1,args);
+     fmt = va_arg(args,char *);
+ 
+-    if ((!tsdPtr->logUser) && (!force_stdout) && (!tsdPtr->logAll)) return;
++    if ((!tsdPtr->logUser) && (!force_stdout) && (!tsdPtr->logAll)) {
++	va_end(args);
++	return;
++    }
+ 
+     (void) vsprintf(bigbuf,fmt,args);
+     expDiagWriteBytes(bigbuf,-1);
+diff --color -Naur expect5.45.4.orig/exp_main_sub.c expect5.45.4/exp_main_sub.c
+--- expect5.45.4.orig/exp_main_sub.c	2018-02-04 18:43:58.000000000 +0800
++++ expect5.45.4/exp_main_sub.c	2025-04-22 11:17:05.635391610 +0800
+@@ -49,14 +49,15 @@
+ #define NEED_TCL_MINOR		5
+ 
+ char *exp_argv0 = "this program";	/* default program name */
+-void (*exp_app_exit)() = 0;
+-void (*exp_event_exit)() = 0;
++void (*exp_app_exit) _ANSI_ARGS_((Tcl_Interp *)) = 0;
++void (*exp_event_exit) _ANSI_ARGS_((Tcl_Interp *)) = 0;
+ FILE *exp_cmdfile = 0;
+ char *exp_cmdfilename = 0;
+ int exp_cmdlinecmds = FALSE;
+ int exp_interactive =  FALSE;
+ int exp_buffer_command_input = FALSE;/* read in entire cmdfile at once */
+ int exp_fgets();
++int exp_tty_cooked_echo(Tcl_Interp *interp, exp_tty *tty_old, int *was_raw, int *was_echo);
+ 
+ Tcl_Interp *exp_interp;	/* for use by signal handlers who can't figure out */
+ 			/* the interpreter directly */
+@@ -920,7 +921,6 @@
+ 	    char file[200];
+ 	    char *home;
+ 	    int fd;
+-	    char *getenv();
+ 
+ 	    if ((NULL != (home = getenv("DOTDIR"))) ||
+ 		(NULL != (home = getenv("HOME")))) {
+diff --color -Naur expect5.45.4.orig/exp_pty.c expect5.45.4/exp_pty.c
+--- expect5.45.4.orig/exp_pty.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_pty.c	2025-04-22 11:17:41.627176185 +0800
+@@ -134,8 +134,8 @@
+ 	return(cc);
+ }
+ 
+-static RETSIGTYPE (*oldAlarmHandler)();
+-static RETSIGTYPE (*oldHupHandler)();
++static RETSIGTYPE (*oldAlarmHandler)(int);
++static RETSIGTYPE (*oldHupHandler)(int);
+ static time_t current_time;	/* time when testing began */
+ 
+ /* if TRUE, begin testing, else end testing */
+diff --color -Naur expect5.45.4.orig/exp_trap.c expect5.45.4/exp_trap.c
+--- expect5.45.4.orig/exp_trap.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_trap.c	2025-04-22 11:19:10.154722359 +0800
+@@ -53,7 +53,8 @@
+ 
+ int sigchld_count = 0;	/* # of sigchlds caught but not yet processed */
+ 
+-static int eval_trap_action();
++static int
++eval_trap_action(Tcl_Interp *, int, struct trap *, int);
+ 
+ static int got_sig;		/* this records the last signal received */
+ 				/* it is only a hint and can be wiped out */
+diff --color -Naur expect5.45.4.orig/exp_tty.c expect5.45.4/exp_tty.c
+--- expect5.45.4.orig/exp_tty.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_tty.c	2025-04-22 11:12:33.066206967 +0800
+@@ -572,7 +572,7 @@
+     char **argv)
+ {
+ 	int result = TCL_OK;
+-	RETSIGTYPE (*old)();	/* save old sigalarm handler */
++	RETSIGTYPE (*old)(int);	/* save old sigalarm handler */
+ #define MAX_ARGLIST 10240
+ 	int i;
+ 
+diff --color -Naur expect5.45.4.orig/exp_win.h expect5.45.4/exp_win.h
+--- expect5.45.4.orig/exp_win.h	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/exp_win.h	2025-04-22 11:21:03.990362077 +0800
+@@ -8,8 +8,8 @@
+ 
+ #include <tcl.h> /* For _ANSI_ARGS_ */
+ 
+-int exp_window_size_set();
+-int exp_window_size_get();
++int exp_window_size_set _ANSI_ARGS_ ((int));
++int exp_window_size_get _ANSI_ARGS_ ((int));
+ 
+ void  exp_win_rows_set    _ANSI_ARGS_ ((char* rows));
+ char* exp_win_rows_get    _ANSI_ARGS_ ((void));
+diff --color -Naur expect5.45.4.orig/pty_termios.c expect5.45.4/pty_termios.c
+--- expect5.45.4.orig/pty_termios.c	2018-02-03 03:15:52.000000000 +0800
++++ expect5.45.4/pty_termios.c	2025-04-22 11:23:56.897369591 +0800
+@@ -105,6 +105,7 @@
+ 
+ void expDiagLog();
+ void expDiagLogPtr();
++char *expErrnoMsg(int errorNo);
+ 
+ #include <errno.h>
+ /*extern char *sys_errlist[];*/
+@@ -189,6 +190,7 @@
+ #endif /* HAVE_SCO_CLIST_PTYS */
+ 
+ #ifdef HAVE_OPENPTY
++#include <pty.h>
+ static char master_name[64];
+ static char slave_name[64];
+ #endif
+@@ -204,7 +206,7 @@
+ {
+ #define MAX_ARGLIST 10240
+ 	char buf[MAX_ARGLIST];	/* overkill is easier */
+-	RETSIGTYPE (*old)();	/* save old sigalarm handler */
++	RETSIGTYPE (*old)(int);	/* save old sigalarm handler */
+ 	int pid;
+ 	
+ 	old = signal(SIGCHLD, SIG_DFL);
+@@ -264,7 +266,7 @@
+ {
+ #define MAX_ARGLIST 10240
+ 	char buf[MAX_ARGLIST];	/* overkill is easier */
+-	RETSIGTYPE (*old)();	/* save old sigalarm handler */
++	RETSIGTYPE (*old)(int);	/* save old sigalarm handler */
+ 
+ #ifdef STTY_READS_STDOUT
+ 	sprintf(buf,"%s %s > %s",STTY_BIN,s,name);
