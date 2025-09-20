@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_GUEST_AGENT_VERSION = 10.0.3
+QEMU_GUEST_AGENT_VERSION = 10.0.4
 QEMU_GUEST_AGENT_SOURCE = qemu-$(QEMU_GUEST_AGENT_VERSION).tar.xz
 QEMU_GUEST_AGENT_SITE = http://download.qemu.org
 QEMU_GUEST_AGENT_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -12,8 +12,15 @@ QEMU_GUEST_AGENT_LICENSE_FILES = COPYING COPYING.LIB
 # NOTE: there is no top-level license file for non-(L)GPL licenses;
 #       the non-(L)GPL license texts are specified in the affected
 #       individual source files.
+QEMU_GUEST_AGENT_CPE_ID_VENDOR = qemu
 
-QEMU_GUEST_AGENT_DEPENDENCIES = host-pkgconf libglib2 zlib
+QEMU_GUEST_AGENT_DEPENDENCIES = \
+	host-meson \
+	host-pkgconf \
+	host-python3 \
+	host-python-distlib \
+	libglib2 \
+	zlib
 
 # Need the LIBS variable because librt and libm are
 # not automatically pulled. :-(
