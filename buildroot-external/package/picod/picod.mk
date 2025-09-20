@@ -9,8 +9,10 @@ PICOD_SITE = $(call github,ef-gy,rpi-ups-pico,$(PICOD_VERSION))
 PICOD_LICENSE = MIT
 PICOD_LICENSE_FILES = LICENSE
 
+PICOD_DEPENDENCIES += i2c-tools
+
 define PICOD_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) CFLAGS+="-I../i2c-tools-4.0/include/" LDFLAGS+="-L../i2c-tools-4.0/lib -li2c" -C $(@D) all
+	$(MAKE) $(TARGET_CONFIGURE_OPTS) LDFLAGS+="-li2c" -C $(@D) all
 endef
 
 define PICOD_INSTALL_TARGET_CMDS

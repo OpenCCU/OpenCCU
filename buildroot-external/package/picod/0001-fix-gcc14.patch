@@ -4,7 +4,7 @@ Upstream: Not applicable
 
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
---- a/pico-i2cd.c.orig	2025-09-20 23:31:52.760180510 +0200
+--- a/pico-i2cd.c	2025-09-20 23:31:52.760180510 +0200
 +++ b/pico-i2cd.c	2025-09-20 23:30:04.804670057 +0200
 @@ -48,6 +48,8 @@
  /* for Linux input device macros */
