@@ -1,0 +1,17 @@
+pico-i2cd.c: fix gcc14 compatibility by adding missing i2c/smbus.h include
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/pico-i2cd.c.orig	2025-09-20 23:31:52.760180510 +0200
++++ b/pico-i2cd.c	2025-09-20 23:30:04.804670057 +0200
+@@ -48,6 +48,8 @@
+ /* for Linux input device macros */
+ #include <linux/uinput.h>
+ 
++#include <i2c/smbus.h>
++
+ /**\brief Daemon version
+  *
+  * The version number of this daemon. Will be increased around release time.
