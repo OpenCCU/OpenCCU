@@ -128,7 +128,7 @@ check process ifplugd.wlan0 with pidfile /var/run/ifplugd.wlan0.pid
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'ifplugd(wlan0) restarted' 'WatchDog: wlan0-restart' true"
     if filedescriptors > 95% for 5 cycles then
-      exec "/bin/triggerAlarm.tcl 'ifplugd(wlan0): high filedescriptor usage (>95%)' WatchDog: wlan0-highfd' true"
+      exec "/bin/triggerAlarm.tcl 'ifplugd(wlan0): high filedescriptor usage (>95%)' 'WatchDog: wlan0-highfd' true"
     depends on wlan0Exists, wlan0CheckEnabled
 
 # wlan0Exists
