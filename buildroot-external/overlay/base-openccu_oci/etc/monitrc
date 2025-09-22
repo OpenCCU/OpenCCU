@@ -35,8 +35,8 @@ check process syslogd with pidfile /var/run/syslogd.pid
 # udev daemon monitoring
 check process udevd with matching /sbin/udevd
     group system
-    start = "/etc/init.d/S00udev start"
-    stop = "/etc/init.d/S00udev stop"
+    start = "/etc/init.d/S00udevd start"
+    stop = "/etc/init.d/S00udevd stop"
     if not exist for 1 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'udevd restarted' 'WatchDog: udevd-restart' true"
