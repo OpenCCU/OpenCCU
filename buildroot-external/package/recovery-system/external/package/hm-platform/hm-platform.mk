@@ -13,7 +13,7 @@ ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
 endif
 
 ifeq ($(BR2_arm),y)
-	HM_PLATFORM_ARCH=arm-gnueabihf-gcc8
+	HM_PLATFORM_ARCH=arm-linux-gnueabihf
 endif
 
 ifeq ($(BR2_aarch64),y)
