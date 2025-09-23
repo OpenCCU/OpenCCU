@@ -24,10 +24,11 @@
  obj-$(CONFIG_CMD_STRINGS) += strings.o
 --- a/cmd/fileenv.c	1970-01-01 01:00:00.000000000 +0100
 +++ b/cmd/fileenv.c	2025-01-30 23:56:16.396279241 +0100
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,47 @@
 +#include <config.h>
 +#include <common.h>
 +#include <command.h>
++#include <vsprintf.h>
 +#include <fs.h>
 +#include <linux/ctype.h>
 +

@@ -44,9 +44,10 @@ new file mode 100644
 index 00000000000..4154c8df0f0
 --- /dev/null
 +++ b/cmd/fileenv.c
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,46 @@
 +#include <config.h>
 +#include <command.h>
++#include <vsprintf.h>
 +#include <fs.h>
 +#include <linux/ctype.h>
 +
