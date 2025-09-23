@@ -1,9 +1,9 @@
 {
   "os_list": [
     {
-      "name": "OpenCCU 3.83.6.20250824 (Pi 5)",
+      "name": "RaspberryMatic 3.83.6.20250824 (Pi 5)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/OpenCCU-3.83.6.20250824-rpi5.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/RaspberryMatic-3.83.6.20250824-rpi5.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager.png",
       "release_date": "2025-08-24",
       "extract_size": 1345249792,
@@ -16,9 +16,9 @@
       ]
     },
     {
-      "name": "OpenCCU 3.83.6.20250824 (Pi 4, Pi 400)",
+      "name": "RaspberryMatic 3.83.6.20250824 (Pi 4, Pi 400)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/OpenCCU-3.83.6.20250824-rpi4.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/RaspberryMatic-3.83.6.20250824-rpi4.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager.png",
       "release_date": "2025-08-24",
       "extract_size": 1345249792,
@@ -31,9 +31,9 @@
       ]
     },
     {
-      "name": "OpenCCU 3.83.6.20250824 (Pi 3, Pi Zero 2, ELV-Charly, CCU3)",
+      "name": "RaspberryMatic 3.83.6.20250824 (Pi 3, Pi Zero 2, ELV-Charly, CCU3)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/OpenCCU-3.83.6.20250824-rpi3.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/RaspberryMatic-3.83.6.20250824-rpi3.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager.png",
       "release_date": "2025-08-24",
       "extract_size": 1345249792,
@@ -46,9 +46,9 @@
       ]
     },
     {
-      "name": "OpenCCU 3.83.6.20250824 (Pi 2)",
+      "name": "RaspberryMatic 3.83.6.20250824 (Pi 2)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/OpenCCU-3.83.6.20250824-rpi2.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/RaspberryMatic-3.83.6.20250824-rpi2.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager.png",
       "release_date": "2025-08-24",
       "extract_size": 1345249792,
@@ -61,9 +61,9 @@
       ]
     },
     {
-      "name": "OpenCCU 3.83.6.20250824 (Pi Zero, Pi 1)",
+      "name": "RaspberryMatic 3.83.6.20250824 (Pi Zero, Pi 1)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/OpenCCU-3.83.6.20250824-rpi0.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/3.83.6.20250824/RaspberryMatic-3.83.6.20250824-rpi0.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager.png",
       "release_date": "2025-08-24",
       "extract_size": 1345249792,
