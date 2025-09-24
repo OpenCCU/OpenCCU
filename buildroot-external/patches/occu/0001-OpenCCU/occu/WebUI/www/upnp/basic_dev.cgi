@@ -43,15 +43,22 @@ proc get_ip_address {} {
     return $ip
 }
 
+# Robust file existence + trimmed content to avoid newlines in UDN/XML
 proc get_serial_number {} {
-    if {[file exist /var/board_sgtin]} {
-      set serial [exec cat /var/board_sgtin]
-    } elseif {[file exist /var/board_serial]} {
-      set serial [exec cat /var/board_serial]
-    } elseif {[file exist /sys/module/plat_eq3ccu2/parameters/board_serial]} {
-      set serial [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]
-    } else {
-      set serial ""
+    set serial ""
+    foreach path {/var/board_sgtin /var/board_serial /sys/module/plat_eq3ccu2/parameters/board_serial} {
+        if {[file exists $path]} {
+            if {![catch {
+                set fd [open $path r]
+                set data [read $fd]
+                close $fd
+                set serial [string trim $data]
+            }]} {
+                if {$serial ne ""} { break }
+            } else {
+                set serial ""
+            }
+        }
     }
     return $serial
 }
@@ -77,13 +84,27 @@ set RESOURCE(UPC) "123456789002"
 set RESOURCE(DEVTYPE) "urn:schemas-upnp-org:device:Basic:1"
 
 # --- base URLs -------------------------------------------------------------
-set MY_PORT [expr $env(SERVER_PORT)==80?"":":$env(SERVER_PORT)"]
+# Compute port (fallback to 80) and prefer HTTP_HOST (works with proxies)
+set _port [expr {[info exists env(SERVER_PORT)] ? $env(SERVER_PORT) : 80}]
+set MY_PORT [expr {$_port==80 ? "" : ":$_port"}]
 # Legacy placeholder (unused here) – kept to minimize diff and preserve intent:
 set ISE_PORT ""
-set RESOURCE(ROOT_URL) "http://[get_ip_address]$MY_PORT"
+if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
+    set host $env(HTTP_HOST)
+} else {
+    set host "[get_ip_address]$MY_PORT"
+}
+set RESOURCE(ROOT_URL) "http://$host"
 set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
 # Absolute presentationURL to the WebUI landing page:
 set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"
+
+# --- SERVER header (spec-ish: OS/Ver, UPnP/1.0, Product[/Ver]) ------------
+set _os "Unix"
+set _ver "1.0"
+catch { set _os [exec uname -s] }
+catch { set _ver [exec uname -r] }
+set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU"
 
 # --- output buffer ---------------------------------------------------------
 set output_buffer ""
@@ -158,16 +179,16 @@ proc send_description {} {
     out "</root>"
 }
 
-# --- optional SSDP response/notify formatting (kept compatible) -----------
+# --- SSDP response/notify formatting (emit all three variants) -------------
 proc send_response {} {
-    global RESOURCE env
+    global RESOURCE env SERVER_HEADER
 
-    for { set i 0 } { $i < 1 } { incr i } {
+    for { set i 0 } { $i < 3 } { incr i } {
         out "HTTP/1.1 200 OK"
         out "CACHE-CONTROL: max-age=5000"
         out "EXT:"
         out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
-        out "SERVER: OpenCCU"
+        out "SERVER: $SERVER_HEADER"
         switch $i {
             0 { out "ST: upnp:rootdevice"; out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice" }
             1 { out "ST: uuid:$RESOURCE(UUID)"; out "USN: uuid:$RESOURCE(UUID)" }
@@ -178,15 +199,15 @@ proc send_response {} {
 }
 
 proc send_alive {} {
-    global RESOURCE env
+    global RESOURCE env SERVER_HEADER
 
-    for { set i 0 } { $i < 1 } { incr i } {
+    for { set i 0 } { $i < 3 } { incr i } {
         out "NOTIFY * HTTP/1.1"
         out "HOST: 239.255.255.250:1900"
         out "CACHE-CONTROL: max-age=5000"
         out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
         out "NTS: ssdp:alive"
-        out "SERVER: OpenCCU"
+        out "SERVER: $SERVER_HEADER"
         switch $i {
             0 { out "NT: upnp:rootdevice"; out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice" }
             1 { out "NT: uuid:$RESOURCE(UUID)"; out "USN: uuid:$RESOURCE(UUID)" }
@@ -202,9 +223,14 @@ cgi_eval {
     cgi_input
     set ssdp "description"
     catch { import ssdp }
+    # Whitelist to avoid command injection via send_$ssdp
+    if {[lsearch -exact {description response alive} $ssdp] < 0} {
+        set ssdp description
+    }
     send_$ssdp
     puts "Content-Type: text/xml; charset=\"utf-8\"\r"
-    puts "Content-Length: [string length $output_buffer]\r"
+    # Content-Length in BYTES (UTF-8), not characters
+    puts "Content-Length: [string length [encoding convertto utf-8 $output_buffer]]\r"
     puts "\r"
     puts -nonewline $output_buffer
 }
