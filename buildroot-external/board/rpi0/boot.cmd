@@ -7,7 +7,6 @@ setenv bootfs 1
 setenv rootfs 2
 setenv userfs 3
 setenv gpio_button "GPIO24"
-setenv kernel_img "Image"
 setenv recoveryfs_initrd "recoveryfs-initrd"
 setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u"
 
@@ -15,9 +14,15 @@ setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:15
 itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
 itest.b ${devnum} == 1 && echo "U-boot loaded from eMMC"
 
-# test if the kernel does not exist and if not we use zImage
-if test ! -e ${devtype} ${devnum}:${rootfs} /${kernel_img}; then
-  setenv kernel_img "z${kernel_img}"
+# decide kernel image on rootfs
+if test -e ${devtype} ${devnum}:${rootfs} /zImage; then
+  setenv kernel_img /zImage
+  setenv kernel_bootcmd bootz
+else
+  if test -e ${devtype} ${devnum}:${rootfs} /Image; then
+    setenv kernel_img /Image
+    setenv kernel_bootcmd booti
+  fi
 fi
 
 # import environment from /boot/bootEnv.txt
@@ -31,13 +36,14 @@ fi
 gpio input ${gpio_button}
 if test $? -eq 0 \
    -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode \
-   -o ! -e ${devtype} ${devnum}:${rootfs} /${kernel_img}; then
+   -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
   echo "==== STARTING RECOVERY SYSTEM ===="
   # load the initrd file
   load ${devtype} ${devnum}:${bootfs} ${load_addr} ${recoveryfs_initrd}
   setenv rootfs_str "/dev/ram0"
   setenv initrd_addr_r ${load_addr}
-  setenv kernel_img "recoveryfs-zImage"
+  setenv kernel_img "/recoveryfs-zImage"
+  setenv kernel_bootcmd bootz
   setenv kernelfs ${bootfs}
 else
   echo "==== NORMAL BOOT ===="
@@ -59,7 +65,7 @@ setenv bootargs "dwc_otg.lpm_enable=0 sdhci_bcm2708.enable_llm=0 console=${conso
 load ${devtype} ${devnum}:${kernelfs} ${kernel_addr_r} ${kernel_img}
 
 # boot kernel
-bootz ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr}
+${kernel_bootcmd} ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr}
 
 echo "Boot failed, resetting..."
 reset
