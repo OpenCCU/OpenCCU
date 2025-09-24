@@ -49,7 +49,8 @@ proc get_ip_address {} {
     }
     # Fallback: legacy `ifconfig` (kept for older systems)
     if {[catch {exec /sbin/ifconfig} ifc]} { return "" }
-    if {[regexp -line {inet addr:([\d.]+).*Mask:} $ifc -> ip]} {
+    # Broaden regex to match BusyBox variants (inet 192.168.x.y OR inet addr:...)
+    if {[regexp -line {inet (?:addr:)?([\d.]+)} $ifc -> ip]} {
         return $ip
     }
     return ""
@@ -65,7 +66,8 @@ proc get_mac_address {} {
         }
         # Fallback via `ip link show <iface>`
         if {![catch {exec ip link show $iface} out]} {
-            if {[regexp {link/(?:ether|loopback) ([0-9a-f:]{17})} $out -> mac]} { return $mac }
+            # Prefer link/ether only (avoid matching loopback)
+            if {[regexp {link/ether ([0-9a-f:]{17})} $out -> mac]} { return $mac }
         }
     }
     # Last resort: return empty to avoid breaking output
@@ -176,8 +178,10 @@ proc send_description {} {
     out "\t\t<manufacturer>[xml_escape $RESOURCE(MANUFACTURER)]</manufacturer>"
     out "\t\t<manufacturerURL>[xml_escape $RESOURCE(MANUFACTURER_URL)]</manufacturerURL>"
     out "\t\t<modelDescription>[xml_escape $RESOURCE(DESCRIPTION)]</modelDescription>"
-    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName>"
-    out "\t\t<UDN>uuid:$RESOURCE(UUID)</UDN>"
+    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName]"
+    # XML-escape UDN to guard against unexpected serial contents
+    set _udn "uuid:$RESOURCE(UUID)"
+    out "\t\t<UDN>[xml_escape $_udn]</UDN>"
     out "\t\t<UPC>$RESOURCE(UPC)</UPC>"
 
     # Optional examples (kept commented for future use):
