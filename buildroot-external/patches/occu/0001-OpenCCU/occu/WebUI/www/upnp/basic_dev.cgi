@@ -26,13 +26,15 @@ source ../cgi.tcl
 
 # --- helpers ---------------------------------------------------------------
 proc get_mac_address {} {
-    set ifconfig_result [exec /sbin/ifconfig eth0]
+    # Harden against exec failure (missing ifconfig or no eth0)
+    if {[catch {exec /sbin/ifconfig eth0} ifconfig_result]} { return "" }
     if {! [regexp -line {HWaddr *([^ \t]+) *$} $ifconfig_result dummy mac_addr]} {return ""}
     return $mac_addr
 }
 
 proc get_ip_address {} {
-    set ifconfig_result [exec /sbin/ifconfig eth0]
+    # Harden against exec failure (missing ifconfig or no eth0)
+    if {[catch {exec /sbin/ifconfig eth0} ifconfig_result]} { return "" }
     if {! [regexp -line {inet addr:([\d.]+).*Mask:} $ifconfig_result dummy ip]} {return ""}
     return $ip
 }
@@ -57,7 +59,8 @@ proc get_serial_number {} {
     return $serial
 }
 
-proc get_hostname {} { return [exec hostname] }
+# Prefer [info hostname] (no external process)
+proc get_hostname {} { return [info hostname] }
 
 # --- branding & identity ---------------------------------------------------
 # NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
@@ -65,11 +68,12 @@ set hostname "[get_hostname]"
 set RESOURCE(TITLE) "OpenCCU - $hostname"
 set RESOURCE(MANUFACTURER) "OpenCCU"
 set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
-set RESOURCE(DESCRIPTION) "OpenCCU [get_serial_number]"
+set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
+# Avoid duplicate get_serial_number calls
+set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 set RESOURCE(MODEL_NAME) "OpenCCU"
 set RESOURCE(MODEL_NUMBER) "OpenCCU"
 set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
-set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
 set RESOURCE(UUID) "upnp-BasicDevice-1_0-$RESOURCE(SERIAL_NUMBER)"
 set RESOURCE(UPC) "123456789002"
 set RESOURCE(DEVTYPE) "urn:schemas-upnp-org:device:Basic:1"
@@ -82,8 +86,16 @@ set MY_PORT [expr {$_port==80 ? "" : ":$_port"}]
 set ISE_PORT ""
 if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
     set host [string trim $env(HTTP_HOST)]
+    # Allow only host[:port] (IPv4/hostname or [IPv6]); otherwise fall back
+    if {![regexp {^\[?[A-Za-z0-9\.\-:]+\]?(?::\d+)?$} $host]} {
+        set host "[get_ip_address]$MY_PORT"
+    }
 } else {
     set host "[get_ip_address]$MY_PORT"
+}
+if {$host eq ""} {
+    # Last-resort fallback to avoid invalid URL if IP/host could not be determined
+    set host "127.0.0.1$MY_PORT"
 }
 set RESOURCE(ROOT_URL) "http://$host"
 set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
@@ -102,6 +114,11 @@ proc out {s} {
     set output_buffer "$output_buffer$s\r\n"
 }
 
+# Minimal XML text escape for text nodes
+proc xml_escape {s} {
+    return [string map {& &amp; < &lt; > &gt; \" &quot; ' &apos;} $s]
+}
+
 # --- device description (no serviceList for Basic:1) -----------------------
 proc send_description {} {
     global RESOURCE
@@ -112,15 +129,16 @@ proc send_description {} {
     out "\t\t<major>1</major>"
     out "\t\t<minor>0</minor>"
     out "\t</specVersion>"
-    out "\t<URLBase>$RESOURCE(BASE_URL)</URLBase>"
+    # URLBase should typically point to the root, not a subpath
+    out "\t<URLBase>$RESOURCE(ROOT_URL)</URLBase>"
     out "\t<device>"
     out "\t\t<deviceType>$RESOURCE(DEVTYPE)</deviceType>"
-    out "\t\t<presentationURL>$RESOURCE(PRESENTATION_URL)</presentationURL>"
-    out "\t\t<friendlyName>$RESOURCE(TITLE)</friendlyName>"
-    out "\t\t<manufacturer>$RESOURCE(MANUFACTURER)</manufacturer>"
-    out "\t\t<manufacturerURL>$RESOURCE(MANUFACTURER_URL)</manufacturerURL>"
-    out "\t\t<modelDescription>$RESOURCE(DESCRIPTION)</modelDescription>"
-    out "\t\t<modelName>$RESOURCE(MODEL_NAME)</modelName>"
+    out "\t\t<presentationURL>[xml_escape $RESOURCE(PRESENTATION_URL)]</presentationURL>"
+    out "\t\t<friendlyName>[xml_escape $RESOURCE(TITLE)]</friendlyName>"
+    out "\t\t<manufacturer>[xml_escape $RESOURCE(MANUFACTURER)]</manufacturer>"
+    out "\t\t<manufacturerURL>[xml_escape $RESOURCE(MANUFACTURER_URL)]</manufacturerURL>"
+    out "\t\t<modelDescription>[xml_escape $RESOURCE(DESCRIPTION)]</modelDescription>"
+    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName>"
     out "\t\t<UDN>uuid:$RESOURCE(UUID)</UDN>"
     out "\t\t<UPC>$RESOURCE(UPC)</UPC>"
 
@@ -191,6 +209,10 @@ cgi_eval {
         set ssdp description
     }
     send_$ssdp
+
+    # Ensure output encoding matches Content-Length computation
+    fconfigure stdout -encoding utf-8
+
     puts "Content-Type: text/xml; charset=\"utf-8\"\r"
     # Content-Length in BYTES (UTF-8)
     puts "Content-Length: [string length [encoding convertto utf-8 $output_buffer]]\r"
