@@ -21,7 +21,9 @@ set CUR_YEAR [clock format [clock seconds] -format %Y]
 
 proc loadVarsFromShellFile {filename arrayName} {
     upvar 1 $arrayName array
-    set f [open $filename]
+    if {[catch {set f [open $filename r]} err]} {
+        return
+    }
     while {[gets $f line] >= 0} {
         if {[regexp {^\s*(\w+)=([""'']?)(.*)\2\s*$} $line -> key quote value]} {
             if {$value == ""} {
@@ -38,14 +40,25 @@ proc execCmd {varName cmd} {
   upvar 1 $varName variable
   set rc [catch {eval $cmd} resVar]
   if {$rc == 0} {
-    set variable $resVar
+    set variable [string trim $resVar]
   } else {
     set variable "n/a"
   }
 }
 
+proc html_escape {s} {
+  regsub -all -- &  $s "&amp;" s
+  regsub -all -- <  $s "&lt;"  s
+  regsub -all -- >  $s "&gt;"  s
+  regsub -all -- \" $s "&quot;" s
+  regsub -all -- '  $s "&#39;" s
+  return $s
+}
+
 proc putsVar {name value} {
-    puts "<div style='display: table-row;'><div style='display:table-cell; width: 50%; text-align: right;'>$name:</div><div style='display:table-cell; width: 50%; text-align: left;'>$value</div></div>"
+  set ename  [html_escape $name]
+  set evalue [html_escape $value]
+  puts "<div style='display: table-row;'><div style='display:table-cell; width: 50%; text-align: right;'>$ename:</div><div style='display:table-cell; width: 50%; text-align: left;'>$evalue</div></div>"
 }
 
 proc action_put_page {} {
