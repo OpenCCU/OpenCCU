@@ -518,6 +518,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          fetch-depth: 0
+          ref: master
 
       - name: Setup Environment
         run: |
