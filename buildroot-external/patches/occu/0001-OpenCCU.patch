@@ -673,6 +673,138 @@
  } elseif { "$hostname" == "homematic-ccu2" } {
      set RESOURCE(TITLE) "HomeMatic Central CCU2"
  } else {
+@@ -68,7 +70,7 @@
+ proc send_description {} {
+     global RESOURCE
+     
+-    out {<?xml version="1.0"?>}
++    out {<?xml version="1.0" encoding="UTF-8"?>}
+     out {<root xmlns="urn:schemas-upnp-org:device-1-0">}
+     out "\t<specVersion>"
+     out "\t\t<major>1</major>"
+@@ -85,32 +87,19 @@
+     out "\t\t<modelName>$RESOURCE(MODEL_NAME)</modelName>"
+     out "\t\t<UDN>uuid:$RESOURCE(UUID)</UDN>"
+     out "\t\t<UPC>$RESOURCE(UPC)</UPC>"
+-    
+-   
+-    out "\t\t<serviceList>"
+-    out "\t\t\t<service>"
+-    out "\t\t\t\t<serviceType>urn:schemas-upnp-org:service:dummy:1</serviceType>"
+-    out "\t\t\t\t<serviceId>urn:upnp-org:serviceId:dummy1</serviceId>"
+-    out "\t\t\t\t<controlURL></controlURL>"
+-    out "\t\t\t\t<eventSubURL></eventSubURL>"
+-    out "\t\t\t\t<SCPDURL></SCPDURL>"
+-    out "\t\t\t</service>"
+-    out "\t\t</serviceList>"
+-    
+-#    out "\t\t<modelNumber>$RESOURCE(MODEL_NUMBER)</modelNumber>"
+-#    out "\t\t<modelURL>$RESOURCE(MODEL_URL)</modelURL>"
+-#    out "\t\t<serialNumber>$RESOURCE(SERIAL_NUMBER)</serialNumber>"
+-    #out "\t\t<serviceList/>"
+-    #out "\t\t<deviceList/>"
+-    #out {    <iconList>}
+-    #out {      <icon>}
+-    #out {        <mimetype>image/format</mimetype>}
+-    #out {        <width>horizontal pixels</width>}
+-    #out {        <height>vertical pixels</height>}
+-    #out {        <depth>color depth</depth>}
+-    #out {        <url>URL to icon</url>}
+-    #out {      </icon>}
+-    #out {    </iconList>}
++    #    out "\t\t<modelNumber>$RESOURCE(MODEL_NUMBER)</modelNumber>"
++    #    out "\t\t<modelURL>$RESOURCE(MODEL_URL)</MODEL_URL>"
++    #    out "\t\t<serialNumber>$RESOURCE(SERIAL_NUMBER)</serialNumber]"
++    #    out "\t\t<deviceList/>"
++    #    out {    <iconList>}
++    #    out {      <icon>}
++    #    out {        <mimetype>image/format</mimetype>}
++    #    out {        <width>horizontal pixels</width>}
++    #    out {        <height>vertical pixels</height>}
++    #    out {        <depth>color depth</depth>}
++    #    out {        <url>URL to icon</url>}
++    #    out {      </icon>}
++    #    out {    </iconList>}
+     out "\t</device>"
+     out "</root>"
+ }
+@@ -120,22 +109,22 @@
+     
+     for { set i 0 } { $i < 1 } { incr i } {
+         out "HTTP/1.1 200 OK"
+-        out "CACHE-CONTROL:max-age=5000"
++        out "CACHE-CONTROL: max-age=5000"
+         out "EXT:"
+-        out "LOCATION:$RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
+-        out "SERVER:HomeMatic"
++        out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
++        out "SERVER: HomeMatic"
+         switch $i {
+             0 {
+-                out "ST:upnp:rootdevice"
+-                out "USN:uuid:$RESOURCE(UUID)::upnp:rootdevice"
++                out "ST: upnp:rootdevice"
++                out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice"
+             }
+             1 {
+-                out "ST:uuid:$RESOURCE(UUID)"
+-                out "USN:uuid:$RESOURCE(UUID)"
++                out "ST: uuid:$RESOURCE(UUID)"
++                out "USN: uuid:$RESOURCE(UUID)"
+             }
+             2 {
+-                out "ST:$RESOURCE(DEVTYPE)"
+-                out "USN:uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
++                out "ST: $RESOURCE(DEVTYPE)"
++                out "USN: uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
+             }
+         }
+         out ""
+@@ -147,24 +136,24 @@
+ 
+     for { set i 0 } { $i < 1 } { incr i } {
+         out "NOTIFY * HTTP/1.1"
+-        out "HOST:239.255.255.250:1900"
+-        out "CACHE-CONTROL:max-age=5000"
+-        out "LOCATION:$RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
+-        out "NTS:ssdp:alive"
+-        out "SERVER:HomeMatic"
++        out "HOST: 239.255.255.250:1900"
++        out "CACHE-CONTROL: max-age=5000"
++        out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
++        out "NTS: ssdp:alive"
++        out "SERVER: HomeMatic"
+         
+         switch $i {
+             0 {
+-                out "NT:upnp:rootdevice"
+-                out "USN:uuid:$RESOURCE(UUID)::upnp:rootdevice"
++                out "NT: upnp:rootdevice"
++                out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice"
+             }
+             1 {
+-                out "NT:uuid:$RESOURCE(UUID)"
+-                out "USN:uuid:$RESOURCE(UUID)"
++                out "NT: uuid:$RESOURCE(UUID)"
++                out "USN: uuid:$RESOURCE(UUID)"
+             }
+             2 {
+-                out "NT:$RESOURCE(DEVTYPE)"
+-                out "USN:uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
++                out "NT: $RESOURCE(DEVTYPE)"
++                out "USN: uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
+             }
+         }
+         out ""
+@@ -180,7 +169,7 @@
+     }
+ 
+     send_$ssdp
+-    puts "Content-type: text/xml\r"
++    puts "Content-Type: text/xml; charset=\"utf-8\"\r"
+     puts "Content-Length: [string length $output_buffer]\r"
+     puts "\r"
+     puts -nonewline $output_buffer
 --- occu/WebUI/www/webui/error/notready.html.orig
 +++ occu/WebUI/www/webui/error/notready.html
 @@ -12,8 +12,8 @@
