@@ -125,9 +125,9 @@ proc action_put_page {} {
   execCmd MAINETH {exec /sbin/ip -4 route get 1 | head -1 | awk {{ print $5 }}}
   execCmd MAINHOSTNAME {exec /bin/hostname}
   catch {set OSTYPE [string trim [read_var /etc/os-release PRETTY_NAME] '"']}
-  execCmd OSKERNEL "exec uname -s -r -m"
+  execCmd OSKERNEL {exec uname -s -r -m}
   set TCLVER [info patchlevel]
-  execCmd JAVAVER {exec 2>@stdout /opt/java/bin/java -version | head -1 | cut -d" -f2}
+  execCmd JAVAVER {exec 2>@stdout /opt/java/bin/java -version | head -1 | cut -d\" -f2}
   execCmd NODEVER {exec /usr/bin/node -v}
   execCmd TEMP {exec awk {{ printf("%.1f &deg;C", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
 
