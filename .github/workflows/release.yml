@@ -533,6 +533,8 @@ jobs:
         with:
           persist-credentials: false
           ssh-key: ${{ secrets.DEPLOY_KEY }}
+          fetch-depth: 0
+          ref: master
 
       - name: Bump HomeAssistant add-on version
         run: |
@@ -559,7 +561,6 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi5.mf
-
 
       - name: Bump rpi-imager version
         run: |
