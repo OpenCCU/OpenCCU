@@ -662,7 +662,7 @@
    set unknownVersion "0.0.0"
 --- occu/WebUI/www/upnp/basic_dev.cgi.orig
 +++ occu/WebUI/www/upnp/basic_dev.cgi
-@@ -1,187 +1,322 @@
+@@ -1,187 +1,314 @@
  #!/bin/tclsh
 +#------------------------------------------------------------------------------
 +# OpenCCU UPnP device description (Basic:1) CGI
@@ -694,9 +694,6 @@
 -    if {! [regexp -line {HWaddr *([^ \t]+) *$} $ifconfig_result dummy mac_addr]} {return ""}
 -    return $mac_addr
 +# --- helpers ---------------------------------------------------------------
-+# Prefer modern `ip` tooling and avoid hardcoding an interface name.
-+# Fall back to legacy `ifconfig` if `ip` is not available, errors out,
-+# or no default route can be determined.
 +proc _ip_route_get {} {
 +    if {[catch {exec ip -4 route get 1.1.1.1} out]} { return "" }
 +    return $out
@@ -719,8 +716,6 @@
 +    if {$out ne "" && [regexp {src ([0-9.]+)} $out -> ip]} {
 +        return $ip
 +    }
-+    # Fallback: legacy `ifconfig` (kept for older systems)
-+    if {[catch {exec /sbin/ifconfig} ifc]} { return "" }
 +    # Broaden regex to match BusyBox variants (inet 192.168.x.y OR inet addr:...)
 +    if {[regexp -line {inet (?:addr:)?([\d.]+)} $ifc -> ip]} {
 +        return $ip
@@ -777,21 +772,9 @@
  
 -proc get_hostname {} {
 -    return [exec hostname]
--}
-+# Prefer [info hostname] (no external process)
-+proc get_hostname {} { return [info hostname] }
- 
 +# --- branding & identity ---------------------------------------------------
 +# NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
- set hostname "[get_hostname]"
--if { "$hostname" == "homematic-ccu3" } {
--    set RESOURCE(TITLE) "HomeMatic Central CCU3"
--} elseif { "$hostname" == "homematic-raspi" } {
--    set RESOURCE(TITLE) "HomeMatic Central RaspberryMatic"
--} elseif { "$hostname" == "homematic-ccu2" } {
--    set RESOURCE(TITLE) "HomeMatic Central CCU2"
--} else {
--    set RESOURCE(TITLE) "HomeMatic Central - $hostname"
++set hostname "[info hostname]"
 +set RESOURCE(TITLE) "OpenCCU - $hostname"
 +set RESOURCE(MANUFACTURER) "OpenCCU"
 +set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
@@ -805,15 +788,25 @@
 +    }
  }
 -
+-set hostname "[get_hostname]"
+-if { "$hostname" == "homematic-ccu3" } {
+-    set RESOURCE(TITLE) "HomeMatic Central CCU3"
+-} elseif { "$hostname" == "homematic-raspi" } {
+-    set RESOURCE(TITLE) "HomeMatic Central RaspberryMatic"
+-} elseif { "$hostname" == "homematic-ccu2" } {
+-    set RESOURCE(TITLE) "HomeMatic Central CCU2"
+-} else {
+-    set RESOURCE(TITLE) "HomeMatic Central - $hostname"
++if {$RESOURCE(SERIAL_NUMBER) eq ""} {
++    set RESOURCE(SERIAL_NUMBER) $hostname
+ }
+-
 -set RESOURCE(MANUFACTURER) "EQ3"
 -set RESOURCE(MANUFACTURER_URL) "http://www.homematic.com"
 -set RESOURCE(PRESENTATION_URL) ""
 -set RESOURCE(DESCRIPTION) "HomeMatic Central [get_serial_number]"
 -set RESOURCE(MODEL_NAME) "HomeMatic Central"
 -set RESOURCE(MODEL_NUMBER) "HomeMatic Central"
-+if {$RESOURCE(SERIAL_NUMBER) eq ""} {
-+    set RESOURCE(SERIAL_NUMBER) $hostname
-+}
 +# Avoid duplicate get_serial_number calls
 +set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 +set RESOURCE(MODEL_NAME) "OpenCCU"
@@ -871,13 +864,13 @@
      global output_buffer
 -    set output_buffer "$output_buffer$s\r\n"
 +    append output_buffer $s "\r\n"
- }
- 
++}
++
 +# Minimal XML text escape for text nodes
 +proc xml_escape {s} {
 +    return [string map {& &amp; < &lt; > &gt; \" &quot; ' &apos;} $s]
-+}
-+
+ }
+ 
 +# --- device description (no serviceList for Basic:1) -----------------------
  proc send_description {} {
      global RESOURCE
