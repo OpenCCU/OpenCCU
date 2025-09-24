@@ -25,9 +25,6 @@
 source ../cgi.tcl
 
 # --- helpers ---------------------------------------------------------------
-# Prefer modern `ip` tooling and avoid hardcoding an interface name.
-# Fall back to legacy `ifconfig` if `ip` is not available, errors out,
-# or no default route can be determined.
 proc _ip_route_get {} {
     if {[catch {exec ip -4 route get 1.1.1.1} out]} { return "" }
     return $out
@@ -47,8 +44,6 @@ proc get_ip_address {} {
     if {$out ne "" && [regexp {src ([0-9.]+)} $out -> ip]} {
         return $ip
     }
-    # Fallback: legacy `ifconfig` (kept for older systems)
-    if {[catch {exec /sbin/ifconfig} ifc]} { return "" }
     # Broaden regex to match BusyBox variants (inet 192.168.x.y OR inet addr:...)
     if {[regexp -line {inet (?:addr:)?([\d.]+)} $ifc -> ip]} {
         return $ip
@@ -95,12 +90,9 @@ proc get_serial_number {} {
     return $serial
 }
 
-# Prefer [info hostname] (no external process)
-proc get_hostname {} { return [info hostname] }
-
 # --- branding & identity ---------------------------------------------------
 # NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
-set hostname "[get_hostname]"
+set hostname "[info hostname]"
 set RESOURCE(TITLE) "OpenCCU - $hostname"
 set RESOURCE(MANUFACTURER) "OpenCCU"
 set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
