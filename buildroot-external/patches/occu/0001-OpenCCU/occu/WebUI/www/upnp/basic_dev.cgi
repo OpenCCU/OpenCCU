@@ -178,7 +178,7 @@ proc send_description {} {
     out "\t\t<manufacturer>[xml_escape $RESOURCE(MANUFACTURER)]</manufacturer>"
     out "\t\t<manufacturerURL>[xml_escape $RESOURCE(MANUFACTURER_URL)]</manufacturerURL>"
     out "\t\t<modelDescription>[xml_escape $RESOURCE(DESCRIPTION)]</modelDescription>"
-    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName]"
+    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName>"
     # XML-escape UDN to guard against unexpected serial contents
     set _udn "uuid:$RESOURCE(UUID)"
     out "\t\t<UDN>[xml_escape $_udn]</UDN>"
