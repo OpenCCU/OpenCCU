@@ -25,37 +25,71 @@
 source ../cgi.tcl
 
 # --- helpers ---------------------------------------------------------------
-proc get_mac_address {} {
-    # Harden against exec failure (missing ifconfig or no eth0)
-    if {[catch {exec /sbin/ifconfig eth0} ifconfig_result]} { return "" }
-    if {! [regexp -line {HWaddr *([^ \t]+) *$} $ifconfig_result dummy mac_addr]} {return ""}
-    return $mac_addr
+# Prefer modern `ip` tooling and avoid hardcoding an interface name.
+# Fall back to legacy `ifconfig` if `ip` is not available, errors out,
+# or no default route can be determined.
+proc _ip_route_get {} {
+    if {[catch {exec ip -4 route get 1.1.1.1} out]} { return "" }
+    return $out
+}
+
+proc get_default_iface {} {
+    set out [_ip_route_get]
+    if {$out ne "" && [regexp {dev ([^ ]+)} $out -> iface]} {
+        return $iface
+    }
+    return ""
 }
 
 proc get_ip_address {} {
-    # Harden against exec failure (missing ifconfig or no eth0)
-    if {[catch {exec /sbin/ifconfig eth0} ifconfig_result]} { return "" }
-    if {! [regexp -line {inet addr:([\d.]+).*Mask:} $ifconfig_result dummy ip]} {return ""}
-    return $ip
+    # Primary attempt: `ip -4 route get` (extract "src <IPv4>")
+    set out [_ip_route_get]
+    if {$out ne "" && [regexp {src ([0-9.]+)} $out -> ip]} {
+        return $ip
+    }
+    # Fallback: legacy `ifconfig` (kept for older systems)
+    if {[catch {exec /sbin/ifconfig} ifc]} { return "" }
+    if {[regexp -line {inet addr:([\d.]+).*Mask:} $ifc -> ip]} {
+        return $ip
+    }
+    return ""
+}
+
+proc get_mac_address {} {
+    # Try to read MAC of the default interface from sysfs first
+    set iface [get_default_iface]
+    if {$iface ne ""} {
+        set p "/sys/class/net/$iface/address"
+        if {[file exists $p]} {
+            if {![catch {set mac [string trim [exec cat $p]]}]} { return $mac }
+        }
+        # Fallback via `ip link show <iface>`
+        if {![catch {exec ip link show $iface} out]} {
+            if {[regexp {link/(?:ether|loopback) ([0-9a-f:]{17})} $out -> mac]} { return $mac }
+        }
+    }
+    # Last resort: return empty to avoid breaking output
+    return ""
 }
 
 # Robust file existence + trimmed content to avoid newlines in UDN/XML
+# (Developer preference: keep the simple `cat` approach with exists checks.)
 proc get_serial_number {} {
     set serial ""
-    foreach path {/var/board_sgtin /var/board_serial /sys/module/plat_eq3ccu2/parameters/board_serial} {
-        if {[file exists $path]} {
-            if {![catch {
-                set fd [open $path r]
-                set data [read $fd]
-                close $fd
-                set serial [string trim $data]
-            }]} {
-                if {$serial ne ""} { break }
-            } else {
-                set serial ""
-            }
+    if {[file exists /var/board_sgtin]} {
+        if {![catch {exec cat /var/board_sgtin} content]} {
+            set serial [string trim $content]
+        }
+    } elseif {[file exists /var/board_serial]} {
+        if {![catch {exec cat /var/board_serial} content]} {
+            set serial [string trim $content]
+        }
+    } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
+        if {![catch {exec cat /sys/module/plat_eq3ccu2/parameters/board_serial} content]} {
+            set serial [string trim $content]
         }
     }
+    if {![info exists serial] || $serial eq ""} { set serial "" }
     return $serial
 }
 
@@ -79,8 +113,11 @@ set RESOURCE(UPC) "123456789002"
 set RESOURCE(DEVTYPE) "urn:schemas-upnp-org:device:Basic:1"
 
 # --- base URLs -------------------------------------------------------------
-# Determine port and prefer HTTP_HOST when present (proxy-friendly); trim host
-set _port [expr {[info exists env(SERVER_PORT)] ? $env(SERVER_PORT) : 80}]
+# Determine port safely and prefer HTTP_HOST when present; validate/trim host
+set _port 80
+if {[info exists env(SERVER_PORT)]} {
+    if {![catch {expr {int($env(SERVER_PORT))}} tmp]} { set _port $tmp }
+}
 set MY_PORT [expr {$_port==80 ? "" : ":$_port"}]
 # Legacy placeholder (unused here) – kept to minimize diff and preserve intent:
 set ISE_PORT ""
@@ -110,8 +147,9 @@ set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU"
 # --- output buffer ---------------------------------------------------------
 set output_buffer ""
 proc out {s} {
+    # Use append for efficiency; keep global buffer as agreed.
     global output_buffer
-    set output_buffer "$output_buffer$s\r\n"
+    append output_buffer $s "\r\n"
 }
 
 # Minimal XML text escape for text nodes
@@ -213,7 +251,9 @@ cgi_eval {
     # Ensure output encoding matches Content-Length computation
     fconfigure stdout -encoding utf-8
 
-    puts "Content-Type: text/xml; charset=\"utf-8\"\r"
+    # Content-Type based on payload type
+    set ctype [expr {$ssdp eq "description" ? "text/xml" : "text/plain"}]
+    puts "Content-Type: $ctype; charset=\"utf-8\"\r"
     # Content-Length in BYTES (UTF-8)
     puts "Content-Length: [string length [encoding convertto utf-8 $output_buffer]]\r"
     puts "\r"
