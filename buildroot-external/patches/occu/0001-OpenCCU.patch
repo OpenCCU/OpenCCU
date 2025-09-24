@@ -279,11 +279,11 @@
 +  catch {set SERIAL $hm(HM_HMIP_SERIAL)}
 +  if {$SERIAL == ""} {
 +    if {[file exists /var/board_sgtin]} {
-+      set SERIAL [exec cat /var/board_sgtin]
++      set SERIAL [string trim [exec cat /var/board_sgtin]]
 +    } elseif {[file exists /var/board_serial]} {
-+      set SERIAL [exec cat /var/board_serial]
++      set SERIAL [string trim [exec cat /var/board_serial]]
 +    } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
-+      set SERIAL [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]
++      set SERIAL [string trim [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]]
 +    } else {
 +      set SERIAL "n/a"
 +    }
@@ -662,7 +662,7 @@
    set unknownVersion "0.0.0"
 --- occu/WebUI/www/upnp/basic_dev.cgi.orig
 +++ occu/WebUI/www/upnp/basic_dev.cgi
-@@ -1,6 +1,36 @@
+@@ -1,187 +1,262 @@
  #!/bin/tclsh
 +#------------------------------------------------------------------------------
 +# OpenCCU UPnP device description (Basic:1) CGI
@@ -670,8 +670,8 @@
 +# Purpose
 +#   - Advertise the controller as a UPnP *Basic:1* device with a working
 +#     presentationURL to the WebUI, but **without** declaring services.
-+#   - This avoids Control Points requesting a non-existent SCPD (<scpd> root),
-+#     which previously caused parser errors when an empty <serviceList> was present.
++#   - Prevent Control Points from requesting a non-existent SCPD (<scpd> root),
++#     which previously caused parsing errors when an empty <serviceList> was present.
 +#
 +# Branding & Compatibility
 +#   - Friendly name and headers branded as "OpenCCU".
@@ -685,21 +685,24 @@
 +#     https://openconnectivity.org/upnp-specs/UPnP-arch-DeviceArchitecture-v1.1.pdf
 +#   - Basic:1 Device Definition (UPnP Forum):
 +#     https://upnp.org/specs/basic/UPnP-basic-Basic-v1-Device.pdf
-+#
-+# Best practices captured here
-+#   - No <serviceList> for Basic:1 unless real services (with SCPD) are provided.
-+#   - Normalize HTTP/SSDP headers (space after colon; consistent casing).
-+#   - Set explicit Content-Type charset and XML declaration (UTF-8).
-+#   - Keep comments short; keep spec URLs here (no long quotes inline).
 +#------------------------------------------------------------------------------
 +
  source ../cgi.tcl
  
 +# --- helpers ---------------------------------------------------------------
  proc get_mac_address {} {
-     set ifconfig_result [exec /sbin/ifconfig eth0]
+-    set ifconfig_result [exec /sbin/ifconfig eth0]
++    # Harden against exec failure (missing ifconfig or no eth0)
++    if {[catch {exec /sbin/ifconfig eth0} ifconfig_result]} { return "" }
      if {! [regexp -line {HWaddr *([^ \t]+) *$} $ifconfig_result dummy mac_addr]} {return ""}
-@@ -13,15 +43,22 @@
+     return $mac_addr
+ }
+ 
+ proc get_ip_address {} {
+-    set ifconfig_result [exec /sbin/ifconfig eth0]
++    # Harden against exec failure (missing ifconfig or no eth0)
++    if {[catch {exec /sbin/ifconfig eth0} ifconfig_result]} { return "" }
+     if {! [regexp -line {inet addr:([\d.]+).*Mask:} $ifconfig_result dummy ip]} {return ""}
      return $ip
  }
  
@@ -730,9 +733,12 @@
      }
      return $serial
  }
-@@ -30,45 +67,57 @@
-     return [exec hostname]
- }
+ 
+-proc get_hostname {} {
+-    return [exec hostname]
+-}
++# Prefer [info hostname] (no external process)
++proc get_hostname {} { return [info hostname] }
  
 +# --- branding & identity ---------------------------------------------------
 +# NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
@@ -753,41 +759,48 @@
 -set RESOURCE(DESCRIPTION) "HomeMatic Central [get_serial_number]"
 -set RESOURCE(MODEL_NAME) "HomeMatic Central"
 -set RESOURCE(MODEL_NUMBER) "HomeMatic Central"
-+# Keep hostname visible as requested:
+-set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
 +set RESOURCE(TITLE) "OpenCCU - $hostname"
 +set RESOURCE(MANUFACTURER) "OpenCCU"
 +set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
-+set RESOURCE(DESCRIPTION) "OpenCCU [get_serial_number]"
+ set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
++# Avoid duplicate get_serial_number calls
++set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 +set RESOURCE(MODEL_NAME) "OpenCCU"
 +set RESOURCE(MODEL_NUMBER) "OpenCCU"
- set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
- set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
++set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
  set RESOURCE(UUID) "upnp-BasicDevice-1_0-$RESOURCE(SERIAL_NUMBER)"
  set RESOURCE(UPC) "123456789002"
  set RESOURCE(DEVTYPE) "urn:schemas-upnp-org:device:Basic:1"
  
 -set MY_PORT [expr $env(SERVER_PORT)==80?"":":$env(SERVER_PORT)"]
 +# --- base URLs -------------------------------------------------------------
-+# Compute port (fallback to 80) and prefer HTTP_HOST (works with proxies)
++# Determine port and prefer HTTP_HOST when present (proxy-friendly); trim host
 +set _port [expr {[info exists env(SERVER_PORT)] ? $env(SERVER_PORT) : 80}]
 +set MY_PORT [expr {$_port==80 ? "" : ":$_port"}]
 +# Legacy placeholder (unused here) – kept to minimize diff and preserve intent:
  set ISE_PORT ""
 -set RESOURCE(ROOT_URL) "http://[get_ip_address]$MY_PORT"
 +if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
-+    set host $env(HTTP_HOST)
++    set host [string trim $env(HTTP_HOST)]
++    # Allow only host[:port] (IPv4/hostname or [IPv6]); otherwise fall back
++    if {![regexp {^\[?[A-Za-z0-9\.\-:]+\]?(?::\d+)?$} $host]} {
++        set host "[get_ip_address]$MY_PORT"
++    }
 +} else {
 +    set host "[get_ip_address]$MY_PORT"
 +}
++if {$host eq ""} {
++    # Last-resort fallback to avoid invalid URL if IP/host could not be determined
++    set host "127.0.0.1$MY_PORT"
++}
 +set RESOURCE(ROOT_URL) "http://$host"
  set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
-+# Absolute presentationURL to the WebUI landing page:
 +set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"
  
 -set output_buffer ""
 +# --- SERVER header (spec-ish: OS/Ver, UPnP/1.0, Product[/Ver]) ------------
-+set _os "Unix"
-+set _ver "1.0"
++set _os "Unix"; set _ver "1.0"
 +catch { set _os [exec uname -s] }
 +catch { set _ver [exec uname -r] }
 +set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU"
@@ -799,6 +812,11 @@
      set output_buffer "$output_buffer$s\r\n"
  }
  
++# Minimal XML text escape for text nodes
++proc xml_escape {s} {
++    return [string map {& &amp; < &lt; > &gt; \" &quot; ' &apos;} $s]
++}
++
 +# --- device description (no serviceList for Basic:1) -----------------------
  proc send_description {} {
      global RESOURCE
@@ -809,8 +827,25 @@
      out {<root xmlns="urn:schemas-upnp-org:device-1-0">}
      out "\t<specVersion>"
      out "\t\t<major>1</major>"
-@@ -85,103 +134,143 @@
-     out "\t\t<modelName>$RESOURCE(MODEL_NAME)</modelName>"
+     out "\t\t<minor>0</minor>"
+     out "\t</specVersion>"
+-    out "\t<URLBase>$RESOURCE(BASE_URL)</URLBase>"
++    # URLBase should typically point to the root, not a subpath
++    out "\t<URLBase>$RESOURCE(ROOT_URL)</URLBase>"
+     out "\t<device>"
+     out "\t\t<deviceType>$RESOURCE(DEVTYPE)</deviceType>"
+-    out "\t\t<presentationURL>$RESOURCE(PRESENTATION_URL)</presentationURL>"
+-    out "\t\t<friendlyName>$RESOURCE(TITLE)</friendlyName>"
+-    out "\t\t<manufacturer>$RESOURCE(MANUFACTURER)</manufacturer>"
+-    out "\t\t<manufacturerURL>$RESOURCE(MANUFACTURER_URL)</manufacturerURL>"
+-    out "\t\t<modelDescription>$RESOURCE(DESCRIPTION)</modelDescription>"
+-    out "\t\t<modelName>$RESOURCE(MODEL_NAME)</modelName>"
++    out "\t\t<presentationURL>[xml_escape $RESOURCE(PRESENTATION_URL)]</presentationURL>"
++    out "\t\t<friendlyName>[xml_escape $RESOURCE(TITLE)]</friendlyName>"
++    out "\t\t<manufacturer>[xml_escape $RESOURCE(MANUFACTURER)]</manufacturer>"
++    out "\t\t<manufacturerURL>[xml_escape $RESOURCE(MANUFACTURER_URL)]</manufacturerURL>"
++    out "\t\t<modelDescription>[xml_escape $RESOURCE(DESCRIPTION)]</modelDescription>"
++    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName>"
      out "\t\t<UDN>uuid:$RESOURCE(UUID)</UDN>"
      out "\t\t<UPC>$RESOURCE(UPC)</UPC>"
 -    
@@ -840,16 +875,11 @@
 -    #out {      </icon>}
 -    #out {    </iconList>}
 +
-+    # Optional fields below are intentionally commented out.
-+    # They are valid if you want them, but not required for Basic:1.
-+    # Keep them here so the maintainer can toggle them later.
-+
++    # Optional examples (kept commented for future use):
 +    # out "\t\t<modelNumber>$RESOURCE(MODEL_NUMBER)</modelNumber>"
 +    # out "\t\t<modelURL>$RESOURCE(MODEL_URL)</modelURL>"
 +    # out "\t\t<serialNumber>$RESOURCE(SERIAL_NUMBER)</serialNumber>"
 +    # out "\t\t<deviceList/>"
-+
-+    # Example icon list (fill with real data if ever used):
 +    # out {    <iconList>}
 +    # out {      <icon>}
 +    # out {        <mimetype>image/png</mimetype>}
@@ -860,15 +890,7 @@
 +    # out {      </icon>}
 +    # out {    </iconList>}
 +
-+    # ----------------------------------------------------------------------
-+    # OPTION B (COMMENTED): declare a vendor service with a valid SCPD
-+    # ----------------------------------------------------------------------
-+    # IMPORTANT:
-+    # - Only enable if you also serve the SCPD file AND handle (or reject)
-+    #   control requests at the controlURL to avoid client timeouts.
-+    # - Uncomment the block below AND provide the SCPD file shown at the end
-+    #   of this CGI (see "DeviceInfo SCPD example").
-+    #
++    # OPTION B (COMMENTED): vendor service with a valid SCPD (see footer)
 +    # out "\t\t<serviceList>"
 +    # out "\t\t  <service>"
 +    # out "\t\t    <serviceType>urn:schemas-openccu-org:service:DeviceInfo:1</serviceType>"
@@ -879,28 +901,21 @@
 +    # out "\t\t  </service>"
 +    # out "\t\t</serviceList>"
 +
-+    # Intentionally no <serviceList/> for Basic:1 by default.
      out "\t</device>"
      out "</root>"
  }
  
-+# --- SSDP response/notify formatting (emit all three variants) -------------
++# --- SSDP response/notify (emit ONE variant per invocation) ----------------
  proc send_response {} {
 -    global RESOURCE env
 -    
 -    for { set i 0 } { $i < 1 } { incr i } {
-+    global RESOURCE env SERVER_HEADER
-+
-+    for { set i 0 } { $i < 3 } { incr i } {
-         out "HTTP/1.1 200 OK"
+-        out "HTTP/1.1 200 OK"
 -        out "CACHE-CONTROL:max-age=5000"
-+        out "CACHE-CONTROL: max-age=5000"
-         out "EXT:"
+-        out "EXT:"
 -        out "LOCATION:$RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
 -        out "SERVER:HomeMatic"
-+        out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
-+        out "SERVER: $SERVER_HEADER"
-         switch $i {
+-        switch $i {
 -            0 {
 -                out "ST:upnp:rootdevice"
 -                out "USN:uuid:$RESOURCE(UUID)::upnp:rootdevice"
@@ -913,33 +928,32 @@
 -                out "ST:$RESOURCE(DEVTYPE)"
 -                out "USN:uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
 -            }
-+            0 { out "ST: upnp:rootdevice"; out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice" }
-+            1 { out "ST: uuid:$RESOURCE(UUID)"; out "USN: uuid:$RESOURCE(UUID)" }
-+            2 { out "ST: $RESOURCE(DEVTYPE)"; out "USN: uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)" }
-         }
-         out ""
-     }
+-        }
+-        out ""
+-    }
++    global RESOURCE env SERVER_HEADER
++    out "HTTP/1.1 200 OK"
++    out "CACHE-CONTROL: max-age=5000"
++    out "EXT:"
++    out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
++    out "SERVER: $SERVER_HEADER"
++    out "ST: upnp:rootdevice"
++    out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice"
++    out ""
  }
  
  proc send_alive {} {
 -    global RESOURCE env
-+    global RESOURCE env SERVER_HEADER
- 
+-
 -    for { set i 0 } { $i < 1 } { incr i } {
-+    for { set i 0 } { $i < 3 } { incr i } {
-         out "NOTIFY * HTTP/1.1"
+-        out "NOTIFY * HTTP/1.1"
 -        out "HOST:239.255.255.250:1900"
 -        out "CACHE-CONTROL:max-age=5000"
 -        out "LOCATION:$RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
 -        out "NTS:ssdp:alive"
 -        out "SERVER:HomeMatic"
 -        
-+        out "HOST: 239.255.255.250:1900"
-+        out "CACHE-CONTROL: max-age=5000"
-+        out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
-+        out "NTS: ssdp:alive"
-+        out "SERVER: $SERVER_HEADER"
-         switch $i {
+-        switch $i {
 -            0 {
 -                out "NT:upnp:rootdevice"
 -                out "USN:uuid:$RESOURCE(UUID)::upnp:rootdevice"
@@ -952,12 +966,19 @@
 -                out "NT:$RESOURCE(DEVTYPE)"
 -                out "USN:uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
 -            }
-+            0 { out "NT: upnp:rootdevice"; out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice" }
-+            1 { out "NT: uuid:$RESOURCE(UUID)"; out "USN: uuid:$RESOURCE(UUID)" }
-+            2 { out "NT: $RESOURCE(DEVTYPE)"; out "USN: uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)" }
-         }
-         out ""
-     }
+-        }
+-        out ""
+-    }
++    global RESOURCE env SERVER_HEADER
++    out "NOTIFY * HTTP/1.1"
++    out "HOST: 239.255.255.250:1900"
++    out "CACHE-CONTROL: max-age=5000"
++    out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
++    out "NTS: ssdp:alive"
++    out "SERVER: $SERVER_HEADER"
++    out "NT: upnp:rootdevice"
++    out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice"
++    out ""
  }
  
 +# --- CGI entrypoint --------------------------------------------------------
@@ -977,8 +998,12 @@
      send_$ssdp
 -    puts "Content-type: text/xml\r"
 -    puts "Content-Length: [string length $output_buffer]\r"
++
++    # Ensure output encoding matches Content-Length computation
++    fconfigure stdout -encoding utf-8
++
 +    puts "Content-Type: text/xml; charset=\"utf-8\"\r"
-+    # Content-Length in BYTES (UTF-8), not characters
++    # Content-Length in BYTES (UTF-8)
 +    puts "Content-Length: [string length [encoding convertto utf-8 $output_buffer]]\r"
      puts "\r"
      puts -nonewline $output_buffer
@@ -1010,7 +1035,8 @@
 +#     -->
 +#   </actionList>
 +#   <serviceStateTable>
-+#     <!-- Example state variables (optional):
++#     <!-- Example state variables (optional) -->
++#     <!--
 +#     <stateVariable sendEvents="no">
 +#       <name>OpenCCU.FriendlyName</name>
 +#       <dataType>string</dataType>
