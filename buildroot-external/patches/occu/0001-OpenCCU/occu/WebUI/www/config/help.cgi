@@ -119,30 +119,18 @@ proc action_put_page {} {
   execCmd TEMP {exec awk {{ printf("%.1f &deg;C", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
 
   set STATUS ""
-  if {[file exists /var/status/hasIP]} {
-    set STATUS "IP(1) $STATUS"
-  } else {
-    set STATUS "IP(0) $STATUS"
-  }
-  if {[file exists /var/status/hasInternet]} {
-    set STATUS "Internet(1) $STATUS"
-  } else {
-    set STATUS "Internet(0) $STATUS"
-  }
-  if {[file exists /var/status/hasLink]} {
-    set STATUS "Link(1) $STATUS"
-  } else {
-    set STATUS "Link(0) $STATUS"
-  }
-  if {[file exists /var/status/hasNTP]} {
-    set STATUS "NTP(1) $STATUS"
-  } else {
-    set STATUS "NTP(0) $STATUS"
-  }
-  if {[file exists /var/status/hasSD]} {
-    set STATUS "SD(1) $STATUS"
-  } else {
-    set STATUS "SD(0) $STATUS"
+  foreach {label path} {
+    IP       /var/status/hasIP
+    Internet /var/status/hasInternet
+    Link     /var/status/hasLink
+    NTP      /var/status/hasNTP
+    SD       /var/status/hasSD
+  } {
+    if {[file exists $path]} {
+      set STATUS "$label(1) $STATUS"
+    } else {
+      set STATUS "$label(0) $STATUS"
+    }
   }
   execCmd ROOTFSFREE {exec monit status rootfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
   execCmd ROOTFSTOTAL {exec monit status rootfs | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
