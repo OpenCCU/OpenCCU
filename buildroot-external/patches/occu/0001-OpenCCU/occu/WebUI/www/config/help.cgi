@@ -64,11 +64,11 @@ proc action_put_page {} {
   catch {set SERIAL $hm(HM_HMIP_SERIAL)}
   if {$SERIAL == ""} {
     if {[file exists /var/board_sgtin]} {
-      set SERIAL [exec cat /var/board_sgtin]
+      set SERIAL [string trim [exec cat /var/board_sgtin]]
     } elseif {[file exists /var/board_serial]} {
-      set SERIAL [exec cat /var/board_serial]
+      set SERIAL [string trim [exec cat /var/board_serial]]
     } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
-      set SERIAL [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]
+      set SERIAL [string trim [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]]
     } else {
       set SERIAL "n/a"
     }
