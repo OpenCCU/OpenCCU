@@ -63,31 +63,31 @@ proc action_put_page {} {
   set SERIAL ""
   catch {set SERIAL $hm(HM_HMIP_SERIAL)}
   if {$SERIAL == ""} {
-    if {[file exist /var/board_sgtin]} {
-      set SERIAL [exec cat /var/board_sgtin]
-    } elseif {[file exist /var/board_serial]} {
-      set SERIAL [exec cat /var/board_serial]
-    } elseif {[file exist /sys/module/plat_eq3ccu2/parameters/board_serial]} {
-      set SERIAL [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]
+    if {[file exists /var/board_sgtin]} {
+      set SERIAL [string trim [exec cat /var/board_sgtin]]
+    } elseif {[file exists /var/board_serial]} {
+      set SERIAL [string trim [exec cat /var/board_serial]]
+    } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
+      set SERIAL [string trim [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]]
     } else {
       set SERIAL "n/a"
     }
   }
 
   set HWMODEL "n/a"
-  if {[file exist /proc/device-tree/model]} {
+  if {[file exists /proc/device-tree/model]} {
     execCmd HWMODEL {exec cat /proc/device-tree/model}
-  } elseif {[file exist /sys/devices/virtual/dmi/id/board_vendor]} {
+  } elseif {[file exists /sys/devices/virtual/dmi/id/board_vendor]} {
     execCmd VENDOR {exec cat /sys/devices/virtual/dmi/id/board_vendor}
     set NAME ""
-    if {[file exist /sys/devices/virtual/dmi/id/board_name]} {
+    if {[file exists /sys/devices/virtual/dmi/id/board_name]} {
       execCmd NAME {exec cat /sys/devices/virtual/dmi/id/board_name}
     }
     set HWMODEL "$VENDOR $NAME"
-  } elseif {[file exist /sys/devices/virtual/dmi/id/sys_vendor]} {
+  } elseif {[file exists /sys/devices/virtual/dmi/id/sys_vendor]} {
     execCmd VENDOR {exec cat /sys/devices/virtual/dmi/id/sys_vendor}
     set NAME ""
-    if {[file exist /sys/devices/virtual/dmi/id/product_name]} {
+    if {[file exists /sys/devices/virtual/dmi/id/product_name]} {
       execCmd NAME {exec cat /sys/devices/virtual/dmi/id/product_name}
     }
     set HWMODEL "$VENDOR $NAME"
@@ -119,27 +119,27 @@ proc action_put_page {} {
   execCmd TEMP {exec awk {{ printf("%.1f &deg;C", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
 
   set STATUS ""
-  if {[file exist /var/status/hasIP]} {
+  if {[file exists /var/status/hasIP]} {
     set STATUS "IP(1) $STATUS"
   } else {
     set STATUS "IP(0) $STATUS"
   }
-  if {[file exist /var/status/hasInternet]} {
+  if {[file exists /var/status/hasInternet]} {
     set STATUS "Internet(1) $STATUS"
   } else {
     set STATUS "Internet(0) $STATUS"
   }
-  if {[file exist /var/status/hasLink]} {
+  if {[file exists /var/status/hasLink]} {
     set STATUS "Link(1) $STATUS"
   } else {
     set STATUS "Link(0) $STATUS"
   }
-  if {[file exist /var/status/hasNTP]} {
+  if {[file exists /var/status/hasNTP]} {
     set STATUS "NTP(1) $STATUS"
   } else {
     set STATUS "NTP(0) $STATUS"
   }
-  if {[file exist /var/status/hasSD]} {
+  if {[file exists /var/status/hasSD]} {
     set STATUS "SD(1) $STATUS"
   } else {
     set STATUS "SD(0) $STATUS"
