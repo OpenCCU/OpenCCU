@@ -662,7 +662,7 @@
    set unknownVersion "0.0.0"
 --- occu/WebUI/www/upnp/basic_dev.cgi.orig
 +++ occu/WebUI/www/upnp/basic_dev.cgi
-@@ -1,187 +1,314 @@
+@@ -1,187 +1,316 @@
  #!/bin/tclsh
 +#------------------------------------------------------------------------------
 +# OpenCCU UPnP device description (Basic:1) CGI
@@ -716,9 +716,11 @@
 +    if {$out ne "" && [regexp {src ([0-9.]+)} $out -> ip]} {
 +        return $ip
 +    }
-+    # Broaden regex to match BusyBox variants (inet 192.168.x.y OR inet addr:...)
-+    if {[regexp -line {inet (?:addr:)?([\d.]+)} $ifc -> ip]} {
-+        return $ip
++    # Fallback: parse from `ip -4 addr show` (BusyBox/variations)
++    if {![catch {exec ip -4 addr show scope global} aout]} {
++        if {[regexp {inet ([0-9.]+)} $aout -> ip]} {
++            return $ip
++        }
 +    }
 +    return ""
 +}
@@ -864,13 +866,13 @@
      global output_buffer
 -    set output_buffer "$output_buffer$s\r\n"
 +    append output_buffer $s "\r\n"
-+}
-+
+ }
+ 
 +# Minimal XML text escape for text nodes
 +proc xml_escape {s} {
 +    return [string map {& &amp; < &lt; > &gt; \" &quot; ' &apos;} $s]
- }
- 
++}
++
 +# --- device description (no serviceList for Basic:1) -----------------------
  proc send_description {} {
      global RESOURCE
