@@ -105,6 +105,14 @@ set RESOURCE(TITLE) "OpenCCU - $hostname"
 set RESOURCE(MANUFACTURER) "OpenCCU"
 set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
 set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
+# Fallback: derive a stable identifier from MAC if serial is empty
+if {$RESOURCE(SERIAL_NUMBER) eq ""} {
+    set _mac [get_mac_address]
+    if {$_mac ne ""} {
+        # Strip colons to keep legacy UDN pattern intact
+        set RESOURCE(SERIAL_NUMBER) [string map {: ""} $_mac]
+    }
+}
 # Avoid duplicate get_serial_number calls
 set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 set RESOURCE(MODEL_NAME) "OpenCCU"
