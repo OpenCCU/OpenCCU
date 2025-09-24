@@ -44,9 +44,11 @@ proc get_ip_address {} {
     if {$out ne "" && [regexp {src ([0-9.]+)} $out -> ip]} {
         return $ip
     }
-    # Broaden regex to match BusyBox variants (inet 192.168.x.y OR inet addr:...)
-    if {[regexp -line {inet (?:addr:)?([\d.]+)} $ifc -> ip]} {
-        return $ip
+    # Fallback: parse from `ip -4 addr show` (BusyBox/variations)
+    if {![catch {exec ip -4 addr show scope global} aout]} {
+        if {[regexp {inet ([0-9.]+)} $aout -> ip]} {
+            return $ip
+        }
     }
     return ""
 }
