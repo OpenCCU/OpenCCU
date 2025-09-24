@@ -14,14 +14,12 @@ setenv usbstoragequirks "0x2537:0x1066:u,0x2537:0x1068:u"
 echo "Boot script loaded from ${devtype} ${devnum}"
 
 # decide kernel image on rootfs
-if test -e ${devtype} ${devnum}:${rootfs} /zImage; then
+if test -e ${devtype} ${devnum}:${rootfs} /Image; then
+  setenv kernel_img /Image
+  setenv kernel_bootcmd booti
+else
   setenv kernel_img /zImage
   setenv kernel_bootcmd bootz
-else
-  if test -e ${devtype} ${devnum}:${rootfs} /Image; then
-    setenv kernel_img /Image
-    setenv kernel_bootcmd booti
-  fi
 fi
 
 # import environment from /boot/bootEnv.txt

@@ -18,10 +18,8 @@ if test -e ${devtype} ${devnum}:${rootfs} /zImage; then
   setenv kernel_img /zImage
   setenv kernel_bootcmd bootz
 else
-  if test -e ${devtype} ${devnum}:${rootfs} /Image; then
-    setenv kernel_img /Image
-    setenv kernel_bootcmd booti
-  fi
+  setenv kernel_img /Image
+  setenv kernel_bootcmd booti
 fi
 
 # import environment from /boot/bootEnv.txt

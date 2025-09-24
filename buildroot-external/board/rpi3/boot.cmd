@@ -15,14 +15,12 @@ itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
 itest.b ${devnum} == 1 && echo "U-boot loaded from eMMC"
 
 # decide kernel image on rootfs
-if test -e ${devtype} ${devnum}:${rootfs} /zImage; then
+if test -e ${devtype} ${devnum}:${rootfs} /Image; then
+  setenv kernel_img /Image
+  setenv kernel_bootcmd booti
+else
   setenv kernel_img /zImage
   setenv kernel_bootcmd bootz
-else
-  if test -e ${devtype} ${devnum}:${rootfs} /Image; then
-    setenv kernel_img /Image
-    setenv kernel_bootcmd booti
-  fi
 fi
 
 # import environment from /boot/bootEnv.txt
