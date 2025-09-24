@@ -127,9 +127,9 @@ proc action_put_page {} {
     SD       /var/status/hasSD
   } {
     if {[file exists $path]} {
-      set STATUS "$label(1) $STATUS"
+      set STATUS "${label}(1) $STATUS"
     } else {
-      set STATUS "$label(0) $STATUS"
+      set STATUS "${label}(0) $STATUS"
     }
   }
   execCmd ROOTFSFREE {exec monit status rootfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
