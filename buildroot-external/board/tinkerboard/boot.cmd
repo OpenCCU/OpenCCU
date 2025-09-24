@@ -7,12 +7,17 @@ setenv bootfs 1
 setenv rootfs 2
 setenv userfs 3
 setenv gpio_button "H23" # matches GPIO239
-setenv kernel_img "zImage"
+setenv kernel_img "Image"
 setenv recoveryfs_initrd "recoveryfs-initrd"
 setenv overlays ""
 setenv usbstoragequirks "0x2537:0x1066:u,0x2537:0x1068:u"
 
 echo "Boot script loaded from ${devtype} ${devnum}"
+
+# test if the kernel does not exist and if not we use zImage
+if test ! -e ${devtype} ${devnum}:${rootfs} /${kernel_img}; then
+  setenv kernel_img "z${kernel_img}"
+fi
 
 # import environment from /boot/bootEnv.txt
 if test -e ${devtype} ${devnum}:${bootfs} bootEnv.txt; then
@@ -23,7 +28,9 @@ fi
 # test if the gpio button is 0 (pressed) or if .recoveryMode exists in userfs
 # or if zImage doesn't exist in the root partition
 gpio input ${gpio_button}
-if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
+if test $? -eq 0 \
+   -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode \
+   -o ! -e ${devtype} ${devnum}:${rootfs} /${kernel_img}; then
   echo "==== STARTING RECOVERY SYSTEM ===="
   # load the initrd file
   load ${devtype} ${devnum}:${bootfs} ${ramdisk_addr_r} ${recoveryfs_initrd}

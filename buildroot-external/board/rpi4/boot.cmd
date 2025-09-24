@@ -15,6 +15,11 @@ setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:15
 itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
 itest.b ${devnum} == 1 && echo "U-boot loaded from eMMC"
 
+# test if the kernel does not exist and if not we use zImage
+if test ! -e ${devtype} ${devnum}:${rootfs} /${kernel_img}; then
+  setenv kernel_img "z${kernel_img}"
+fi
+
 # import environment from /boot/bootEnv.txt
 if test -e ${devtype} ${devnum}:${bootfs} bootEnv.txt; then
   load ${devtype} ${devnum}:${bootfs} ${load_addr} bootEnv.txt
@@ -24,7 +29,9 @@ fi
 # test if the gpio button is 0 (pressed) or if .recoveryMode exists in userfs
 # or if Image doesn't exist in the root partition
 gpio input ${gpio_button}
-if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
+if test $? -eq 0 \
+   -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode \
+   -o ! -e ${devtype} ${devnum}:${rootfs} /${kernel_img}; then
   echo "==== STARTING RECOVERY SYSTEM ===="
   # load the initrd file
   load ${devtype} ${devnum}:${bootfs} ${load_addr} ${recoveryfs_initrd}
