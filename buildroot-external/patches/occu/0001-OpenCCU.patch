@@ -662,7 +662,7 @@
    set unknownVersion "0.0.0"
 --- occu/WebUI/www/upnp/basic_dev.cgi.orig
 +++ occu/WebUI/www/upnp/basic_dev.cgi
-@@ -1,187 +1,306 @@
+@@ -1,187 +1,314 @@
  #!/bin/tclsh
 +#------------------------------------------------------------------------------
 +# OpenCCU UPnP device description (Basic:1) CGI
@@ -792,7 +792,18 @@
 -    set RESOURCE(TITLE) "HomeMatic Central CCU2"
 -} else {
 -    set RESOURCE(TITLE) "HomeMatic Central - $hostname"
--}
++set RESOURCE(TITLE) "OpenCCU - $hostname"
++set RESOURCE(MANUFACTURER) "OpenCCU"
++set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
++set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
++# Fallback: derive a stable identifier from MAC if serial is empty
++if {$RESOURCE(SERIAL_NUMBER) eq ""} {
++    set _mac [get_mac_address]
++    if {$_mac ne ""} {
++        # Strip colons to keep legacy UDN pattern intact
++        set RESOURCE(SERIAL_NUMBER) [string map {: ""} $_mac]
++    }
+ }
 -
 -set RESOURCE(MANUFACTURER) "EQ3"
 -set RESOURCE(MANUFACTURER_URL) "http://www.homematic.com"
@@ -800,16 +811,12 @@
 -set RESOURCE(DESCRIPTION) "HomeMatic Central [get_serial_number]"
 -set RESOURCE(MODEL_NAME) "HomeMatic Central"
 -set RESOURCE(MODEL_NUMBER) "HomeMatic Central"
--set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
-+set RESOURCE(TITLE) "OpenCCU - $hostname"
-+set RESOURCE(MANUFACTURER) "OpenCCU"
-+set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
- set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
 +# Avoid duplicate get_serial_number calls
 +set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 +set RESOURCE(MODEL_NAME) "OpenCCU"
 +set RESOURCE(MODEL_NUMBER) "OpenCCU"
-+set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
+ set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
+-set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
  set RESOURCE(UUID) "upnp-BasicDevice-1_0-$RESOURCE(SERIAL_NUMBER)"
  set RESOURCE(UPC) "123456789002"
  set RESOURCE(DEVTYPE) "urn:schemas-upnp-org:device:Basic:1"
@@ -892,7 +899,7 @@
 +    out "\t\t<manufacturer>[xml_escape $RESOURCE(MANUFACTURER)]</manufacturer>"
 +    out "\t\t<manufacturerURL>[xml_escape $RESOURCE(MANUFACTURER_URL)]</manufacturerURL>"
 +    out "\t\t<modelDescription>[xml_escape $RESOURCE(DESCRIPTION)]</modelDescription>"
-+    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName]"
++    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName>"
 +    # XML-escape UDN to guard against unexpected serial contents
 +    set _udn "uuid:$RESOURCE(UUID)"
 +    out "\t\t<UDN>[xml_escape $_udn]</UDN>"
