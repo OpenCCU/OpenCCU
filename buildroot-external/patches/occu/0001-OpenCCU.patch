@@ -227,7 +227,7 @@
  # set HOMEMATIC_URL "http://www.homematic.com"
  set HOMEMATIC_URL "http://www.eq-3.de"
  set HOMEMATIC_IP_URL "https://www.homematic-ip.com"
-@@ -19,13 +19,148 @@
+@@ -19,13 +19,147 @@
  set LANGUAGE "de"
  set CUR_YEAR [clock format [clock seconds] -format %Y]
  
@@ -259,7 +259,6 @@
 +}
 +
 +proc html_escape {s} {
-+  regsub -all -- &  $s "&amp;" s
 +  regsub -all -- <  $s "&lt;"  s
 +  regsub -all -- >  $s "&gt;"  s
 +  regsub -all -- \" $s "&quot;" s
@@ -379,7 +378,7 @@
  
    set sid ""
    catch {import sid}
-@@ -43,47 +178,90 @@
+@@ -43,47 +177,90 @@
        </script>
      }
    }
@@ -503,7 +502,7 @@
  
    puts "</table>"
  
-@@ -124,7 +302,7 @@
+@@ -124,7 +301,7 @@
      puts "\}"
  
      puts "loadExtHelp = function()\{"

@@ -47,7 +47,6 @@ proc execCmd {varName cmd} {
 }
 
 proc html_escape {s} {
-  regsub -all -- &  $s "&amp;" s
   regsub -all -- <  $s "&lt;"  s
   regsub -all -- >  $s "&gt;"  s
   regsub -all -- \" $s "&quot;" s
