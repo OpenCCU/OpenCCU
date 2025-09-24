@@ -662,7 +662,7 @@
    set unknownVersion "0.0.0"
 --- occu/WebUI/www/upnp/basic_dev.cgi.orig
 +++ occu/WebUI/www/upnp/basic_dev.cgi
-@@ -1,187 +1,314 @@
+@@ -1,187 +1,322 @@
  #!/bin/tclsh
 +#------------------------------------------------------------------------------
 +# OpenCCU UPnP device description (Basic:1) CGI
@@ -811,6 +811,9 @@
 -set RESOURCE(DESCRIPTION) "HomeMatic Central [get_serial_number]"
 -set RESOURCE(MODEL_NAME) "HomeMatic Central"
 -set RESOURCE(MODEL_NUMBER) "HomeMatic Central"
++if {$RESOURCE(SERIAL_NUMBER) eq ""} {
++    set RESOURCE(SERIAL_NUMBER) $hostname
++}
 +# Avoid duplicate get_serial_number calls
 +set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 +set RESOURCE(MODEL_NAME) "OpenCCU"
@@ -834,18 +837,23 @@
 -set RESOURCE(ROOT_URL) "http://[get_ip_address]$MY_PORT"
 +if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
 +    set host [string trim $env(HTTP_HOST)]
-+    # Allow only host[:port] (IPv4/hostname or [IPv6]); otherwise fall back
-+    if {![regexp {^\[?[A-Za-z0-9\.\-:]+\]?(?::\d+)?$} $host]} {
-+        set host "[get_ip_address]$MY_PORT"
++    # Allow only host[:port] where host is IPv4/hostname or bracketed IPv6; else fall back
++    if {![regexp {^(?:\[[0-9A-Fa-f:]+\]|[A-Za-z0-9\.\-]+)(?::\d+)?$} $host]} {
++        set _ip [get_ip_address]
++        if {$_ip eq ""} { set _ip "127.0.0.1" }
++        set host "${_ip}$MY_PORT"
 +    }
 +} else {
-+    set host "[get_ip_address]$MY_PORT"
++    set _ip [get_ip_address]
++    if {$_ip eq ""} { set _ip "127.0.0.1" }
++    set host "${_ip}$MY_PORT"
 +}
-+if {$host eq ""} {
-+    # Last-resort fallback to avoid invalid URL if IP/host could not be determined
-+    set host "127.0.0.1$MY_PORT"
++# Normalize bracketless pure-IPv6 host (defensive; typical HTTP_HOST uses brackets already)
++set _root_host $host
++if {[regexp {^[0-9A-Fa-f:]+$} $_root_host]} {
++    set _root_host "[$_root_host]"
 +}
-+set RESOURCE(ROOT_URL) "http://$host"
++set RESOURCE(ROOT_URL) "http://$_root_host"
  set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
 +set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"
  
@@ -863,13 +871,13 @@
      global output_buffer
 -    set output_buffer "$output_buffer$s\r\n"
 +    append output_buffer $s "\r\n"
-+}
-+
+ }
+ 
 +# Minimal XML text escape for text nodes
 +proc xml_escape {s} {
 +    return [string map {& &amp; < &lt; > &gt; \" &quot; ' &apos;} $s]
- }
- 
++}
++
 +# --- device description (no serviceList for Basic:1) -----------------------
  proc send_description {} {
      global RESOURCE
