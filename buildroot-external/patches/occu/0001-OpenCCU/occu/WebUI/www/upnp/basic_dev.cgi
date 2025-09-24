@@ -113,6 +113,9 @@ if {$RESOURCE(SERIAL_NUMBER) eq ""} {
         set RESOURCE(SERIAL_NUMBER) [string map {: ""} $_mac]
     }
 }
+if {$RESOURCE(SERIAL_NUMBER) eq ""} {
+    set RESOURCE(SERIAL_NUMBER) $hostname
+}
 # Avoid duplicate get_serial_number calls
 set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
 set RESOURCE(MODEL_NAME) "OpenCCU"
@@ -133,18 +136,23 @@ set MY_PORT [expr {$_port==80 ? "" : ":$_port"}]
 set ISE_PORT ""
 if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
     set host [string trim $env(HTTP_HOST)]
-    # Allow only host[:port] (IPv4/hostname or [IPv6]); otherwise fall back
-    if {![regexp {^\[?[A-Za-z0-9\.\-:]+\]?(?::\d+)?$} $host]} {
-        set host "[get_ip_address]$MY_PORT"
+    # Allow only host[:port] where host is IPv4/hostname or bracketed IPv6; else fall back
+    if {![regexp {^(?:\[[0-9A-Fa-f:]+\]|[A-Za-z0-9\.\-]+)(?::\d+)?$} $host]} {
+        set _ip [get_ip_address]
+        if {$_ip eq ""} { set _ip "127.0.0.1" }
+        set host "${_ip}$MY_PORT"
     }
 } else {
-    set host "[get_ip_address]$MY_PORT"
+    set _ip [get_ip_address]
+    if {$_ip eq ""} { set _ip "127.0.0.1" }
+    set host "${_ip}$MY_PORT"
 }
-if {$host eq ""} {
-    # Last-resort fallback to avoid invalid URL if IP/host could not be determined
-    set host "127.0.0.1$MY_PORT"
+# Normalize bracketless pure-IPv6 host (defensive; typical HTTP_HOST uses brackets already)
+set _root_host $host
+if {[regexp {^[0-9A-Fa-f:]+$} $_root_host]} {
+    set _root_host "[$_root_host]"
 }
-set RESOURCE(ROOT_URL) "http://$host"
+set RESOURCE(ROOT_URL) "http://$_root_host"
 set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
 set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"
 
