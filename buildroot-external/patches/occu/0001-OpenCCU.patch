@@ -435,7 +435,7 @@
 +        puts "<a target='_blank' href=\"$HM_INFO_URL\">\${homepage} \${LabelHomeMatic}</a><br/>"
 +        puts "<a target='_blank' href=\"$IP_INFO_URL\">\${homepage} \${dialogHelpLinkOnlineHelpB}</a><br/>"
 +        puts "<br/>Menu icons made by <a target='_blank' href=\"https://icons8.com/license/\">icons8.com</a><br/>"
-+        puts "<br/>\${dialogSettingsCMHintSoftwareUpdateOpenCCU}</a><br/><br/>"
++        puts "<br/>\${dialogSettingsCMHintSoftwareUpdateOpenCCU}<br/><br/>"
 +        puts "<h1 class='helpTitle'><u>\${menuHelpPage}</u></h1>"
 +        puts "<a target='_blank' href='https://github.com/openccu/openccu/wiki'>OpenCCU Documentation</a><br/>"
 +        puts "<a target='_blank' href=\'$HM_HELP_URL\'>\${dialogHelpLinkOnlineHelpA}</a><br/>"
