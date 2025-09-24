@@ -21,7 +21,9 @@ set CUR_YEAR [clock format [clock seconds] -format %Y]
 
 proc loadVarsFromShellFile {filename arrayName} {
     upvar 1 $arrayName array
-    set f [open $filename]
+    if {[catch {set f [open $filename r]} err]} {
+        return
+    }
     while {[gets $f line] >= 0} {
         if {[regexp {^\s*(\w+)=([""'']?)(.*)\2\s*$} $line -> key quote value]} {
             if {$value == ""} {
@@ -38,14 +40,24 @@ proc execCmd {varName cmd} {
   upvar 1 $varName variable
   set rc [catch {eval $cmd} resVar]
   if {$rc == 0} {
-    set variable $resVar
+    set variable [string trim $resVar]
   } else {
     set variable "n/a"
   }
 }
 
+proc html_escape {s} {
+  regsub -all -- <  $s "&lt;"  s
+  regsub -all -- >  $s "&gt;"  s
+  regsub -all -- \" $s "&quot;" s
+  regsub -all -- '  $s "&#39;" s
+  return $s
+}
+
 proc putsVar {name value} {
-    puts "<div style='display: table-row;'><div style='display:table-cell; width: 50%; text-align: right;'>$name:</div><div style='display:table-cell; width: 50%; text-align: left;'>$value</div></div>"
+  set ename  [html_escape $name]
+  set evalue [html_escape $value]
+  puts "<div style='display: table-row;'><div style='display:table-cell; width: 50%; text-align: right;'>$ename:</div><div style='display:table-cell; width: 50%; text-align: left;'>$evalue</div></div>"
 }
 
 proc action_put_page {} {
@@ -63,31 +75,31 @@ proc action_put_page {} {
   set SERIAL ""
   catch {set SERIAL $hm(HM_HMIP_SERIAL)}
   if {$SERIAL == ""} {
-    if {[file exist /var/board_sgtin]} {
-      set SERIAL [exec cat /var/board_sgtin]
-    } elseif {[file exist /var/board_serial]} {
-      set SERIAL [exec cat /var/board_serial]
-    } elseif {[file exist /sys/module/plat_eq3ccu2/parameters/board_serial]} {
-      set SERIAL [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]
+    if {[file exists /var/board_sgtin]} {
+      set SERIAL [string trim [exec cat /var/board_sgtin]]
+    } elseif {[file exists /var/board_serial]} {
+      set SERIAL [string trim [exec cat /var/board_serial]]
+    } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
+      set SERIAL [string trim [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]]
     } else {
       set SERIAL "n/a"
     }
   }
 
   set HWMODEL "n/a"
-  if {[file exist /proc/device-tree/model]} {
+  if {[file exists /proc/device-tree/model]} {
     execCmd HWMODEL {exec cat /proc/device-tree/model}
-  } elseif {[file exist /sys/devices/virtual/dmi/id/board_vendor]} {
+  } elseif {[file exists /sys/devices/virtual/dmi/id/board_vendor]} {
     execCmd VENDOR {exec cat /sys/devices/virtual/dmi/id/board_vendor}
     set NAME ""
-    if {[file exist /sys/devices/virtual/dmi/id/board_name]} {
+    if {[file exists /sys/devices/virtual/dmi/id/board_name]} {
       execCmd NAME {exec cat /sys/devices/virtual/dmi/id/board_name}
     }
     set HWMODEL "$VENDOR $NAME"
-  } elseif {[file exist /sys/devices/virtual/dmi/id/sys_vendor]} {
+  } elseif {[file exists /sys/devices/virtual/dmi/id/sys_vendor]} {
     execCmd VENDOR {exec cat /sys/devices/virtual/dmi/id/sys_vendor}
     set NAME ""
-    if {[file exist /sys/devices/virtual/dmi/id/product_name]} {
+    if {[file exists /sys/devices/virtual/dmi/id/product_name]} {
       execCmd NAME {exec cat /sys/devices/virtual/dmi/id/product_name}
     }
     set HWMODEL "$VENDOR $NAME"
@@ -112,37 +124,25 @@ proc action_put_page {} {
   execCmd MAINETH {exec /sbin/ip -4 route get 1 | head -1 | awk {{ print $5 }}}
   execCmd MAINHOSTNAME {exec /bin/hostname}
   catch {set OSTYPE [string trim [read_var /etc/os-release PRETTY_NAME] '"']}
-  execCmd OSKERNEL "exec uname -s -r -m"
+  execCmd OSKERNEL {exec uname -s -r -m}
   set TCLVER [info patchlevel]
-  execCmd JAVAVER {exec 2>@stdout /opt/java/bin/java -version | head -1 | cut -d" -f2}
+  execCmd JAVAVER {exec 2>@stdout /opt/java/bin/java -version | head -1 | cut -d\" -f2}
   execCmd NODEVER {exec /usr/bin/node -v}
   execCmd TEMP {exec awk {{ printf("%.1f &deg;C", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
 
   set STATUS ""
-  if {[file exist /var/status/hasIP]} {
-    set STATUS "IP(1) $STATUS"
-  } else {
-    set STATUS "IP(0) $STATUS"
-  }
-  if {[file exist /var/status/hasInternet]} {
-    set STATUS "Internet(1) $STATUS"
-  } else {
-    set STATUS "Internet(0) $STATUS"
-  }
-  if {[file exist /var/status/hasLink]} {
-    set STATUS "Link(1) $STATUS"
-  } else {
-    set STATUS "Link(0) $STATUS"
-  }
-  if {[file exist /var/status/hasNTP]} {
-    set STATUS "NTP(1) $STATUS"
-  } else {
-    set STATUS "NTP(0) $STATUS"
-  }
-  if {[file exist /var/status/hasSD]} {
-    set STATUS "SD(1) $STATUS"
-  } else {
-    set STATUS "SD(0) $STATUS"
+  foreach {label path} {
+    IP       /var/status/hasIP
+    Internet /var/status/hasInternet
+    Link     /var/status/hasLink
+    NTP      /var/status/hasNTP
+    SD       /var/status/hasSD
+  } {
+    if {[file exists $path]} {
+      set STATUS "${label}(1) $STATUS"
+    } else {
+      set STATUS "${label}(0) $STATUS"
+    }
   }
   execCmd ROOTFSFREE {exec monit status rootfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
   execCmd ROOTFSTOTAL {exec monit status rootfs | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
@@ -199,7 +199,7 @@ proc action_put_page {} {
         puts "<a target='_blank' href=\"$HM_INFO_URL\">\${homepage} \${LabelHomeMatic}</a><br/>"
         puts "<a target='_blank' href=\"$IP_INFO_URL\">\${homepage} \${dialogHelpLinkOnlineHelpB}</a><br/>"
         puts "<br/>Menu icons made by <a target='_blank' href=\"https://icons8.com/license/\">icons8.com</a><br/>"
-        puts "<br/>\${dialogSettingsCMHintSoftwareUpdateOpenCCU}</a><br/><br/>"
+        puts "<br/>\${dialogSettingsCMHintSoftwareUpdateOpenCCU}<br/><br/>"
         puts "<h1 class='helpTitle'><u>\${menuHelpPage}</u></h1>"
         puts "<a target='_blank' href='https://github.com/openccu/openccu/wiki'>OpenCCU Documentation</a><br/>"
         puts "<a target='_blank' href=\'$HM_HELP_URL\'>\${dialogHelpLinkOnlineHelpA}</a><br/>"
