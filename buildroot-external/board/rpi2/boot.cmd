@@ -7,21 +7,14 @@ setenv bootfs 1
 setenv rootfs 2
 setenv userfs 3
 setenv gpio_button "GPIO12"
+setenv kernel_img /zImage
+setenv kernel_bootcmd bootz
 setenv recoveryfs_initrd "recoveryfs-initrd"
 setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u"
 
 # output where we are booting from
 itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
 itest.b ${devnum} == 1 && echo "U-boot loaded from eMMC"
-
-# decide kernel image on rootfs
-if test -e ${devtype} ${devnum}:${rootfs} /zImage; then
-  setenv kernel_img /zImage
-  setenv kernel_bootcmd bootz
-else
-  setenv kernel_img /Image
-  setenv kernel_bootcmd booti
-fi
 
 # import environment from /boot/bootEnv.txt
 if test -e ${devtype} ${devnum}:${bootfs} bootEnv.txt; then
@@ -32,9 +25,7 @@ fi
 # test if the gpio button is 0 (pressed) or if .recoveryMode exists in userfs
 # or if zImage doesn't exist in the root partition
 gpio input ${gpio_button}
-if test $? -eq 0 \
-   -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode \
-   -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
+if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
   echo "==== STARTING RECOVERY SYSTEM ===="
   # load the initrd file
   load ${devtype} ${devnum}:${bootfs} ${load_addr} ${recoveryfs_initrd}
