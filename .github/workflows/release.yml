@@ -531,10 +531,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          persist-credentials: false
+          ref: master
+          persist-credentials: true
           ssh-key: ${{ secrets.DEPLOY_KEY }}
           fetch-depth: 0
-          ref: master
 
       - name: Bump HomeAssistant add-on version
         run: |
@@ -596,7 +596,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash
           git diff --quiet || git commit -a -m "release bump [${{ needs.release_draft.outputs.version }}]"
-          git push
+          git push origin HEAD:master
 
   helm:
     permissions:
