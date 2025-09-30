@@ -295,7 +295,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: env.SECRETS_ARE_AVAILABLE == 'true'
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
