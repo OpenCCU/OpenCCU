@@ -13,32 +13,9 @@
 / {
     compatible = "brcm,bcm2708";
 
-    // fragment to ensure we have the correct gpio pin
-    // setup for the HM-MOD-RPI-PCB
-    fragment@0 {
-        target = <&gpio>;
-        __overlay__ {
-            rpi_rf_mod_pins: rpi_rf_mod_pins {
-                brcm,pins = <18>;    // 18=reset (HM-MOD-RPI-PCB)
-                brcm,pull = <0>;     // 18=no-pullup
-                brcm,function = <0>; // 18=input
-            };
-        };
-    };
-
-    // fragment to define dedicated led nodes for
-    // each separate led supported by the RPI-RF-MOD
-    fragment@1 {
-        target = <&leds>;
-        __overlay__ {
-            pinctrl-names = "default";
-            pinctrl-0 = <&rpi_rf_mod_pins>;
-        };
-    };
-
     // fragment to define uart/serial dependencies for
     // generic_raw_uart
-    fragment@2 {
+    fragment@0 {
         target = <&uart0>;
         __overlay__ {
             compatible = "pivccu,pl011";
@@ -50,7 +27,7 @@
     // fragment to make sure that stdout-path under chosen
     // is empty so that the above uart0 fragment does not
     // interfere with u-boot trying to access serial drivers.
-    fragment@3 {
+    fragment@1 {
         target = <&chosen>;
         __overlay__ {
             stdout-path = "";
