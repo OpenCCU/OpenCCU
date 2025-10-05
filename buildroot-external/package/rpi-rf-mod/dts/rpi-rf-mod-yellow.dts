@@ -5,7 +5,7 @@
 ** Device Tree Overlay for eQ-3 HM-MOD-RPI-PCB
 ** for the HomeAssistant Yellow
 **
-** Copyright (c) 2023 Jens Maus <mail@jens-maus.de>
+** Copyright (c) 2023-2025 Jens Maus <mail@jens-maus.de>
 ** Licensed under Apache 2.0
 **
 */
@@ -20,7 +20,6 @@
         __overlay__ {
             compatible = "pivccu,pl011";
             status = "okay";
-            pivccu,reset-gpios = <&gpio 18 0>; // HM-MOD-RPI-PCB
         };
     };
 
