@@ -16,7 +16,7 @@ ifeq ($(or $(BR2_PACKAGE_INTEL_MICROCODE),$(BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE
 
 UCODE_FRAG := $(BINARIES_DIR)/linux-ucode.fragment
 
-# Hook: vor der Kernelkonfiguration Fragment erzeugen
+# Hook: Generate fragment before kernel configuration
 define GEN_UCODE_FRAGMENT
 	@echo ">> Generating $(UCODE_FRAG)"
 	@mkdir -p $(BINARIES_DIR)
