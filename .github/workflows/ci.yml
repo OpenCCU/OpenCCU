@@ -102,7 +102,7 @@ jobs:
       - name: Check Package consistency
         run: |
           pip install flake8
-          make check
+          make PRODUCT=raspmatic_ova check
 
   build:
     permissions:
@@ -172,7 +172,7 @@ jobs:
           mv -f release/updatepkg/${{ matrix.platform }}/EULA.en_nightly release/updatepkg/${{ matrix.platform }}/EULA.en
 
       # - name: remote debug tmate session
-      #   uses: mxschmitt/action-tmate@v1
+      #   uses: mxschmitt/action-tmate@v3
       #   if: matrix.platform == 'ova'
 
       # major build step
