@@ -2,7 +2,7 @@
 name: OpenCCU (snapshot)
 version: 3.83.6.20251024-d6041a6
 stage: experimental
-slug: raspberrymatic-dev
+slug: openccu-dev
 image: ghcr.io/openccu/openccu
 arch:
   - armv7
