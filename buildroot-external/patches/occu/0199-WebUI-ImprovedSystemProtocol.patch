@@ -54,7 +54,7 @@
    var s = "";
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -40670,10 +40670,10 @@
+@@ -40673,10 +40673,10 @@
        }
        else
        {

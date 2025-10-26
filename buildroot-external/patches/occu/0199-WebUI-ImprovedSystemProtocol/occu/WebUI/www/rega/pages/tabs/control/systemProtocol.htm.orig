@@ -43,10 +43,10 @@ ResetGAC();
 
 <table class="tTable filterTable" id="SysProtoList" cellspacing="0" cellpadding="0" style="display:none">
   <colgroup>
-    <col style="width:12%;"/>
-    <col style="width:12%;"/>
-    <col style="width:16%;"/>
-    <col style="width:60%;"/>
+    <col />
+    <col />
+    <col />
+    <col />
   </colgroup>
   <thead id="histlistheader">
       <tr>
