@@ -347,7 +347,7 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download all OCI artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_*.tgz
           merge-multiple: true
@@ -536,23 +536,23 @@ jobs:
 
       # download rpi manifest files
       - name: Download rpi0 manifest
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi0.mf
       - name: Download rpi2 manifest
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi2.mf
       - name: Download rpi3 manifest
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi3.mf
       - name: Download rpi4 manifest
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi4.mf
       - name: Download rpi5 manifest
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi5.mf
 
