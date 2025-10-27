@@ -282,7 +282,7 @@ jobs:
         id: upload-oci
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tgz
@@ -301,7 +301,7 @@ jobs:
       # manifest file artifact upload
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.mf
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.mf
