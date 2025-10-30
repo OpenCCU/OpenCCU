@@ -10,7 +10,7 @@ setenv gpio_button "GPIO12"
 setenv kernel_img /Image
 setenv kernel_bootcmd booti
 setenv recoveryfs_initrd "recoveryfs-initrd"
-setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u"
+setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u,152d:a578:u,152d:0583:u"
 
 # output where we are booting from
 itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
