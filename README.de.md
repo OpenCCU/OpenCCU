@@ -207,3 +207,4 @@ OpenCCU wird von einer breiten Community entwickelt. Die vollständige und aktue
 ## :construction: Changelog
 
 Eine detaillierte, versionsbezogene Liste der Änderungen findet sich unter **[Releases](https://github.com/OpenCCU/OpenCCU/releases/)** in diesem Repository. Jeder Release enthält Hinweise zu neuen Funktionen, Fehlerbehebungen und weiteren Anpassungen.
+
