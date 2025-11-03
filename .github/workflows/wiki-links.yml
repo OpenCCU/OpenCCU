@@ -1,0 +1,65 @@
+# OpenCCU Continious Integration Check Workflow
+# yamllint disable rule:truthy
+---
+name: Wiki Link Check
+
+on:
+  gollum:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *" # daily at 03:00 UTC
+
+jobs:
+  lychee-wiki:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout wiki
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+          path: wiki/.lycheecache
+          key: lychee-cache-${{ github.ref }}-${{ github.sha }}
+          restore-keys: lychee-cache-
+
+      - name: Prepare report folder
+        run: mkdir -p reports
+
+      - name: Link check wiki
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          workingDirectory: wiki
+          args: >
+            --cache
+            --max-cache-age 1d
+            --no-progress
+            --include-wikilinks
+            "./**/*.md" "./**/*.html"
+          format: markdown
+          output: ../reports/lychee-wiki.md
+          fail: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          jobSummary: true
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lychee-wiki-report
+          path: reports/lychee-wiki.md
+
+      #- name: Create issue from report
+      #  if: steps.lychee.outputs.exit_code != 0
+      #  uses: peter-evans/create-issue-from-file@v5
+      #  with:
+      #    title: "Wiki Link Checker Report"
+      #    content-filepath: reports/lychee-wiki.md
+      #    labels: automated-report, links
