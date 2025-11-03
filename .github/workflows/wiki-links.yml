@@ -7,7 +7,7 @@ on:
   gollum:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *" # daily at 03:00 UTC
+    - cron: "0 3 * * *"  # daily at 03:00 UTC
 
 jobs:
   lychee-wiki:
