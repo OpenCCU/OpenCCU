@@ -1,4 +1,4 @@
-# OpenCCU Continious Integration Check Workflow
+# OpenCCU Continuous Integration Check Workflow
 # yamllint disable rule:truthy
 ---
 name: Wiki Link Check
