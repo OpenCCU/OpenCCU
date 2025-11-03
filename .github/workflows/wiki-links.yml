@@ -39,7 +39,7 @@ jobs:
         with:
           workingDirectory: wiki
           args: >
-            --base-url https://github.com/OpenCCU/OpenCCU/wiki
+            --base-url https://github.com/OpenCCU/OpenCCU/wiki/page
             --cache
             --max-cache-age 1d
             --no-progress
