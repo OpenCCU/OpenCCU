@@ -56,10 +56,10 @@ jobs:
           name: lychee-wiki-report
           path: reports/lychee-wiki.md
 
-      #- name: Create issue from report
-      #  if: steps.lychee.outputs.exit_code != 0
-      #  uses: peter-evans/create-issue-from-file@v5
-      #  with:
-      #    title: "Wiki Link Checker Report"
-      #    content-filepath: reports/lychee-wiki.md
-      #    labels: automated-report, links
+      # - name: Create issue from report
+      #   if: steps.lychee.outputs.exit_code != 0
+      #   uses: peter-evans/create-issue-from-file@v5
+      #   with:
+      #     title: "Wiki Link Checker Report"
+      #     content-filepath: reports/lychee-wiki.md
+      #     labels: automated-report, links
