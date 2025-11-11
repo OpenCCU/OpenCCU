@@ -287,7 +287,7 @@ function ::CreateDoorStateTranseiver() {
               WriteLine("<tr>");
                 WriteLine("<td  class='CLASS02513'>");
                   WriteLine("<div align='center'>");
-                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
+                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
                   WriteLine("</div>");
                 WriteLine("</td>");
               WriteLine("</tr>");
@@ -393,7 +393,7 @@ function ::CreateDoorLockTranseiver() {
                 WriteLine("<tr>");
                   WriteLine("<td  class='CLASS02513'>");
                     WriteLine("<div align='center'>");
-                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
+                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
                     WriteLine("</div>");
                   WriteLine("</td>");
                 WriteLine("</tr>");
