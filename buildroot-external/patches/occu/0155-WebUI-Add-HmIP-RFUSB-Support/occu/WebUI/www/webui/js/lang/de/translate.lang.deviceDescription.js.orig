@@ -30,8 +30,13 @@ jQuery.extend(true,langJSON, {
     "ELV-SH-CRC" : "ELV Smart Home Taster Kompakt",
     "ELV-SH-CTH" : "ELV Smart Home<br/>Temperatur- und Luftfeuchtigkeitssensor<br/>Kompakt",
     "ELV-SH-CTV" : "ELV Smart Home<br/>Neigungs- und Ersch%FCtterungssensor<br/>Kompakt",
+    "ELV-SH-KRC" : "ELV Smart Home Schl%FCsselbundfernbedienung",
     "ELV-SH-KRCO" : "ELV Smart Home Taster Kompakt - Outdoor",
+
+    "ELV-SH-PTI2" : "ELV Smart Home Temperatursensor mit externen F%FChlern - 2-fach",
+
     "ELV-SH-SB8" : "ELV Smart Home<br/>Status-Board",
+    "ELV-SH-SMS2" : "ELV Smart Home<br/>Oberfl%E4chen-montierter Schalt-Aktor<br/>2-fach",
     "ELV-SH-SMSI" : "ELV Smart Home<br/>Bodenfeuchtesensor",
     "ELV-SH-SPS25" : "ELV Smart Home<br/>Spannungsversorgung, schaltbar",
     "ELV-SH-TACO" : "ELV Smart Home<br/>Temperatur- und Beschleunigungssensor<br/>Au%DFen",
@@ -211,6 +216,8 @@ jQuery.extend(true,langJSON, {
     "HmIP-FCI6": "Homematic IP Kontakt-Schnittstelle Unterputz - 6-fach",
     "HmIP-FLC" : "Homematic IP Universal Motorschloss Controller",
     "HmIP-FROLL": "Homematic IP Rollladenaktor, Unterputzmontage",
+    "HmIP-FS" : "Homematic IP Schaltaktor - Unterputz",
+    "HmIP-FSI6" : "Homematic IP Schaltaktor mit Tastereingang – Unterputz",
     "HmIP-FSI16" : "Homematic IP Schaltaktor mit Tastereingang (16 A) - Unterputz",
     "HmIP-FWI" : "Homematic IP Wiegand-Schnittstelle",
     "HmIP-HAP" : "LAN ROUTER",
@@ -254,8 +261,13 @@ jQuery.extend(true,langJSON, {
     "HmIP-SWO-B": "Homematic IP Wettersensor - basic",
     "HmIP-SWO-PL": "Homematic IP Wettersensor - plus",
     "HmIP-SWO-PR": "Homematic IP Wettersensor - pro",
+
+    "HmIP-UDI-PB2" : "Homematic IP Universal Dimmeraufsatz - Taster",
+
     "HmIP-USBSM" : "Homematic IP Schalt-Mess-Aktor f%FCr USB",
     "HmIP-WGC": "Homematic IP Garagentortaster",
+    "HmIP-WGD": "Homematic IP Funk Glasdisplay",
+    "HmIP-WGD-PL": "Homematic IP Funk Glasdisplay - plus",
     "HmIP-WGS": "Homematic IP Glastaster",
     "HmIP-WGT": "Homematic IP Glasthermostat - 230 V",
     "HmIP-WHS2": "Homematic IP Schaltaktor f%FCr Heiz-Systeme - 2 Kanal",

@@ -419,7 +419,7 @@
 +}
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1556,13 +1556,12 @@
+@@ -1589,13 +1589,12 @@
              }
  
              string sValueUnit = oDP.ValueUnit();
@@ -448,7 +448,7 @@
                      }
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -17320,7 +17320,7 @@
+@@ -17531,7 +17531,7 @@
      // Adds a selectbox for the temperature to the party mode dialog
      var selBox = "<select>";
      for (var loop = 5; loop <= 30; loop++) {
@@ -457,7 +457,7 @@
      }
      selBox += "</select>";
  
-@@ -31280,7 +31280,7 @@
+@@ -31591,7 +31591,7 @@
        value = min;
      }
  
@@ -466,7 +466,7 @@
        value = roundValue05(value);
      }
  
-@@ -38498,7 +38498,7 @@
+@@ -38811,7 +38811,7 @@
      this.min = min;
      this.max = max;
      this.factor = 100/(max-min);
@@ -475,7 +475,7 @@
      this.statusOFF = "OFF";
      this.statusON = "ON";
      this.opts = opts;
-@@ -38998,7 +38998,7 @@
+@@ -39311,7 +39311,7 @@
      this.max = (this.confTempMax > 30) ? 30 : this.confTempMax;
      this.off = (this.confTempMin < 5) ? this.offTemp : this.confTempMin;
      this.on = (this.confTempMax > 30) ? this.onTemp : this.confTempMax;
@@ -484,7 +484,7 @@
      this.factor = 100/(this.max-this.min);
      this.iViewOnly = false;
      this.bSliderPosFlag = false;
-@@ -39532,7 +39532,7 @@
+@@ -39845,7 +39845,7 @@
      this.min = min;
      this.max = max;
      this.factor = 100/(max-min);
@@ -493,7 +493,7 @@
      if(bSliderPosFlag) 
      {
          this.bSliderPosFlag = bSliderPosFlag;
-@@ -41221,12 +41221,19 @@
+@@ -41534,12 +41534,19 @@
    var isFarVal = false;
    if (!checkDecimal(tmpInput)) {
      // Zeichen für Temperaturangaben rausfiltern
@@ -513,7 +513,7 @@
      if (tmpInput.indexOf('°F') != -1) {
        tmpInput = tmpInput.substr(0, tmpInput.indexOf('°F'));
        isFarVal = true;      
-@@ -42066,7 +42073,7 @@
+@@ -42379,7 +42386,7 @@
    },
  
    changeToKilo: function() {
@@ -522,7 +522,7 @@
    },
  
    setEnergyCounterPanel: function() {
-@@ -42142,8 +42149,8 @@
+@@ -42455,8 +42462,8 @@
            energyCostCCU = ((energyConsumptionCCU * this.EnergyPrice) / unitFactorCCU).toFixed(2) + " " + this.energyConfig.currency,
            energyCostDevice = ((energyConsumptionDevice * this.EnergyPrice) / unitFactorDevice).toFixed(2) + " " + this.energyConfig.currency;
          if (this.measurementType == this.sensorTypeID.gas) {
@@ -533,7 +533,7 @@
          } else {
            j_energyCostCCU.text(energyCostCCU).show();
            j_energyCostDevice.text(energyCostDevice).show();
-@@ -49741,7 +49748,7 @@
+@@ -50273,7 +50280,7 @@
        //msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\"starttime_"   +dayidx +"_"+i+"\" disabled=\"disabled\" type=\"text\" value=\""+ this.tom_toTime( endtime) +"\">Uhr</td>";
        msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\""+prgNr+"starttime_" + dayidx + "_" + i + "\" disabled=\"disabled\" type=\"text\" value=\"" + this.tom_toTime(endtime) + "\">" + translateKey('lblProgramTimeExtension') + "</td>";
        msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\""+prgNr+"endtime_" + dayidx + "_" + i + "\" " + (i == timeouts.length - 1 ? 'disabled=\"disabled\"' : '') + " type=\"text\" value=\"" + this.tom_toTime(timeouts[i][tom_endtime]) + "\" onblur=\""+prgNr+"tom.tom_checkAndSetTime ('" + day + "', this, " + i + "); document.getElementById('"+prgNr+"starttime_" + dayidx + "_" + (i + 1) + "').value=this.value; \">" + translateKey('lblProgramTimeExtension') + "</td>";

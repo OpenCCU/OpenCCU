@@ -441,7 +441,7 @@ function ::UpdateUI()
 
 
   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
-  Write( 'if(showAPITools == "true") showHmAPITools();');
+  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
 
   !###################
   !# Systemvariablen #

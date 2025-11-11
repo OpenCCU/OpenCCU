@@ -243,7 +243,7 @@ proc getWGDScreenOrder {devType devAddress} {
     append iseScript "foreach(dev_id, dom.GetObject(ID_DEVICES).EnumUsedIDs()){"
       append iseScript "if (metaScreenOrder == \"-\") {"
         append iseScript "object dev=dom.GetObject(dev_id);"
-        append iseScript "if( (dev.Interface() != 65535) && (dev.Address() == \"$devAddress\") && (dev.Address() != \"\") && (dev.Address() != \"BidCoS-RF\") && (dev.Address() != \"BidCoS-Wir\") && (dev.Address() != \"System\") && ((dev.HssType() == \"HmIPW-WGD-PL\") || (dev.HssType() == \"HmIPW-WGD\"))) {"
+        append iseScript "if((dev.Interface() != 65535) && (dev.Address() == \"$devAddress\") && (dev.Address() != \"\") && (dev.Address() != \"BidCoS-RF\") && (dev.Address() != \"BidCoS-Wir\") && (dev.Address() != \"System\") && (dev.HssType().Find(\"-WGD\") != -1)) {"
             append iseScript "metaScreenOrder = dev.MetaData(\"screenOrder\") ;"
        append iseScript "}"
       append iseScript "}"
@@ -782,7 +782,16 @@ proc showHmIPChannel {devType direction address chType} {
   # HmIPW-WGD(-PL)
   # - Show only the relevant channels according to the selected screens
 
-  if {(($devType == "HMIPW-WGD") || ($devType == "HMIPW-WGD-PL")) && (($chType == "DISPLAY_INPUT_TRANSMITTER") || ($chType == "DISPLAY_LEVEL_INPUT_TRANSMITTER") || ($chType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER"))} {
+
+  if {([string first "-WGD" $devType] != -1)
+    && (($chType == "DISPLAY_INPUT_TRANSMITTER")
+    || ($chType == "DISPLAY_LEVEL_INPUT_TRANSMITTER")
+    || ($chType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER")
+    )} {
+
+    set isWired 0
+
+    if {[string first "HMIPW" $devType] != -1} {set isWired 1}
 
     # Quick Motion channel is always visible
     if {$ch == 41} {return 1}
@@ -803,9 +812,14 @@ proc showHmIPChannel {devType direction address chType} {
       set arUsedScreens ""
       set numberOfScreens [expr [llength $arScreenOrder] - 1]
       set indexEndScreen [lsearch $arScreenOrder $endID]
-      if {$numberOfScreens == 5} {set firstTileOfChannel "1 9 17 25 33"}
-      if {$numberOfScreens == 10} {set firstTileOfChannel "1 9 17 25 33 42 44 46 48 50"}
 
+      if {$isWired} {
+        if {$numberOfScreens == 5} {set firstTileOfChannel "1 9 17 25 33"}
+        if {$numberOfScreens == 10} {set firstTileOfChannel "1 9 17 25 33 42 44 46 48 50"}
+      } else {
+        if {$numberOfScreens == 6} {set firstTileOfChannel "1 9 17 25 33"}
+        if {$numberOfScreens == 11} {set firstTileOfChannel "1 9 17 25 33 42 44 46 48 50"}
+      }
 
       # Here we set the first and last tile of each selected screen depending on the number of selected tiles
       # - Do this only once and use it for all other channels
@@ -820,7 +834,15 @@ proc showHmIPChannel {devType direction address chType} {
 
         # get the screens in use
         for {set loop 0} {$loop < $indexEndScreen} {incr loop} {
-          lappend arUsedScreens [lindex $arScreenOrder $loop]
+          if {! $isWired} {
+            if {([string first "-PL" $devType] == -1) && ([lindex $arScreenOrder $loop] != 5)} {
+              lappend arUsedScreens [lindex $arScreenOrder $loop]
+            } elseif {([string first "-PL" $devType] != -1) && ([lindex $arScreenOrder $loop] != 10)} {
+              lappend arUsedScreens [lindex $arScreenOrder $loop]
+            }
+          } else {
+            lappend arUsedScreens [lindex $arScreenOrder $loop]
+          }
         }
 
         # sort the list

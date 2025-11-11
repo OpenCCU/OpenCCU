@@ -661,6 +661,38 @@
     },500);
   };
 
+  setWeatherDisplayReceiverController = function(regaDialogID, deviceType, chnAddress) {
+
+    var ch = DeviceList.getChannelByAddress(chnAddress),
+      channelType = (typeof ch.channelType != "undefined") ? ch.channelType : "";
+
+    var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
+      url = "/pages/msg/setWeatherDisplayReceiverCombinedParam.htm";
+    jQuery(elm).prop("disabled", true);
+
+    var req = jQuery.ajax({
+      url : url +"?sid=" + SessionId,
+      dataType: "html"
+    });
+
+    req.done(function(htmlContent) {
+      var dialog = new WGDWeatherCombinedParamDialog(translateKey("titleConfigDialog"), htmlContent, function(result) {
+        jQuery(elm).prop("disabled", false);
+        if (result != 0) {
+          conInfo("setWeatherDisplayReceiverController: Yes pressed");
+          var cfgString = this.getConfigString();
+          conInfo(cfgString);
+          elm.val(cfgString);
+          elm.change();
+        }
+      }, "html");
+      dialog.extraParam = {deviceType: deviceType, channelType: channelType, chnAddress: chnAddress, value: jQuery(elm).val()};
+      dialog.btnTextNo(translateKey("footerBtnCancel"));
+      dialog.btnTextYes(translateKey("footerBtnOk"));
+      dialog.setWidth(400);
+    });
+  };
+
   setCombinedParameter = function (regaDialogID, deviceType, chnAddress, type) {
     var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
         dialog,

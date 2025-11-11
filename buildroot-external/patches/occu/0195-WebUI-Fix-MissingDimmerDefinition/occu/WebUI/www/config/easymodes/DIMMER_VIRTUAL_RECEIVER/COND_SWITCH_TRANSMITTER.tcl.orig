@@ -243,16 +243,18 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     }
   }
 
-  # Set SHORT_COND_VALUE_HI/LO to the value of the configuration parameters COND_TX_DECISION_ABOVE/BELOW
-  array set sender_descrMaster [xmlrpc $iface_url($iface) getParamset [list string $dev_descr_sender(ADDRESS)] MASTER]
-  set condTXDecisionAbove $sender_descrMaster(COND_TX_DECISION_ABOVE)
-  set condTXDecisionBelow $sender_descrMaster(COND_TX_DECISION_BELOW)
-  set decisionValues "
-   {SHORT_COND_VALUE_HI {int $condTXDecisionAbove}}
-   {SHORT_COND_VALUE_LO {int $condTXDecisionBelow}}"
-  catch {puts "[xmlrpc $iface_url($iface) putParamset [list string $address] [list string $dev_descr_sender(ADDRESS)] [list struct $decisionValues]]"}
-  set ps(SHORT_COND_VALUE_HI) $condTXDecisionAbove
-  set ps(SHORT_COND_VALUE_LO) $condTXDecisionBelow
+  catch {
+    # Set SHORT_COND_VALUE_HI/LO to the value of the configuration parameters COND_TX_DECISION_ABOVE/BELOW
+    array set sender_descrMaster [xmlrpc $iface_url($iface) getParamset [list string $dev_descr_sender(ADDRESS)] MASTER]
+    set condTXDecisionAbove $sender_descrMaster(COND_TX_DECISION_ABOVE)
+    set condTXDecisionBelow $sender_descrMaster(COND_TX_DECISION_BELOW)
+    set decisionValues "
+     {SHORT_COND_VALUE_HI {int $condTXDecisionAbove}}
+     {SHORT_COND_VALUE_LO {int $condTXDecisionBelow}}"
+    catch {puts "[xmlrpc $iface_url($iface) putParamset [list string $address] [list string $dev_descr_sender(ADDRESS)] [list struct $decisionValues]]"}
+    set ps(SHORT_COND_VALUE_HI) $condTXDecisionAbove
+    set ps(SHORT_COND_VALUE_LO) $condTXDecisionBelow
+  }
 
 # die Texte der Platzhalter einlesen
   puts "<script type=\"text/javascript\">getLangInfo('$dev_descr_sender(TYPE)', '$dev_descr_receiver(TYPE)');</script>"
@@ -347,14 +349,15 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
   append HTML_PARAMS(separate_$prn) "<tr><td colspan=\"2\">$actor_off_hint</td></tr>"
 
-  set scvl SHORT_COND_VALUE_LO
-  incr pref
-  append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\" ><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvl\" value=\"$condTXDecisionBelow\"/></tr></td>"
+  catch {
+    set scvl SHORT_COND_VALUE_LO
+    incr pref
+    append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\" ><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvl\" value=\"$condTXDecisionBelow\"/></tr></td>"
 
-  set scvh SHORT_COND_VALUE_HI
-  incr pref
-  append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\"><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvh\" value=\"$condTXDecisionAbove\"/></tr></td>"
-
+    set scvh SHORT_COND_VALUE_HI
+    incr pref
+    append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\"><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvh\" value=\"$condTXDecisionAbove\"/></tr></td>"
+  }
 
   append HTML_PARAMS(separate_$prn) "</table></textarea></div>"
 
@@ -426,14 +429,15 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     append HTML_PARAMS(separate_$prn) [getSelectBehaviourElement PROFILE_$prn ${special_input_id} $param]
   }
 
-  set scvl SHORT_COND_VALUE_LO
-  incr pref
-  append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\" ><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvl\" value=\"$condTXDecisionBelow\"/></tr></td>"
+  catch {
+    set scvl SHORT_COND_VALUE_LO
+    incr pref
+    append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\" ><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvl\" value=\"$condTXDecisionBelow\"/></tr></td>"
 
-  set scvh SHORT_COND_VALUE_HI
-  incr pref
-  append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\"><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvh\" value=\"$condTXDecisionAbove\"/></tr></td>"
-
+    set scvh SHORT_COND_VALUE_HI
+    incr pref
+    append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\"><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvh\" value=\"$condTXDecisionAbove\"/></tr></td>"
+  }
 
   append HTML_PARAMS(separate_$prn) "</table></textarea></div>"
 
@@ -472,13 +476,15 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
   append HTML_PARAMS(separate_$prn) "<tr><td colspan=\"2\">$actor_off_hint</td></tr>"
 
-  set scvl SHORT_COND_VALUE_LO
-  incr pref
-  append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\" ><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvl\" value=\"$condTXDecisionBelow\"/></tr></td>"
+  catch {
+    set scvl SHORT_COND_VALUE_LO
+    incr pref
+    append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\" ><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvl\" value=\"$condTXDecisionBelow\"/></tr></td>"
 
-  set scvh SHORT_COND_VALUE_HI
-  incr pref
-  append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\"><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvh\" value=\"$condTXDecisionAbove\"/></tr></td>"
+    set scvh SHORT_COND_VALUE_HI
+    incr pref
+    append HTML_PARAMS(separate_$prn) "<tr class=\"hidden\"><td><input type=\"text\" id=\"separate_receiver_$prn\_$pref\" name=\"$scvh\" value=\"$condTXDecisionAbove\"/></tr></td>"
+  }
 
   append HTML_PARAMS(separate_$prn) "</table></textarea></div>"
 }

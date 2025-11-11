@@ -43,7 +43,7 @@
  </div>
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm
-@@ -821,7 +821,7 @@
+@@ -853,7 +853,7 @@
    ShowSysVarChooser = function(scid)
    {
      dlgResult = "";

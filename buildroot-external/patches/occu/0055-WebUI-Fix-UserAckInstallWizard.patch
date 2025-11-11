@@ -25,7 +25,7 @@
 +jsonrpc_response true
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -8976,9 +8976,23 @@
+@@ -9140,9 +9140,23 @@
          }
          */
  
@@ -50,7 +50,7 @@
            if (!result) {
              var checkUpdateContentRunning = window.setInterval(function () {
                if (!bUpdateContentRunning) {
-@@ -8998,9 +9012,9 @@
+@@ -9162,9 +9176,9 @@
  
            // User password set
            // The User will see a hint that new firewall settings are active

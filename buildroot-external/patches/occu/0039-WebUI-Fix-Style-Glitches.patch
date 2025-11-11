@@ -771,7 +771,7 @@
            WriteLine("</table>")
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1441,7 +1441,7 @@
+@@ -1474,7 +1474,7 @@
    string showParam = true;
  
    WriteLine( '<td class="CLASS02519">' );
@@ -1346,7 +1346,7 @@
        <td class="thCell CLASS04900" >${thActivity}</td>
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm
-@@ -1099,6 +1099,13 @@
+@@ -1131,6 +1131,13 @@
  
  <div id="prgcontent">
    <table id="ProgramTable" class="filterTable tTable j_translate" border="0" cellpadding="0" cellspacing="0">
@@ -1360,7 +1360,7 @@
      <thead>
        <tr>
          <td class="thCell CLASS04802" >${thName}</td>
-@@ -1110,11 +1117,11 @@
+@@ -1142,11 +1149,11 @@
      </thead>
      <tbody>
        <tr class="CLASS04803">
@@ -3684,7 +3684,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -25493,7 +25493,7 @@
+@@ -25804,7 +25804,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3693,7 +3693,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -25501,7 +25501,7 @@
+@@ -25812,7 +25812,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3702,7 +3702,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -27015,7 +27015,7 @@
+@@ -27326,7 +27326,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3711,7 +3711,7 @@
          "</tr>" +
        "</table>";
  
-@@ -31328,13 +31328,11 @@
+@@ -31639,13 +31639,11 @@
        case ID_ROOMS:
          this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
          this.setWidth75Perc();
@@ -3725,7 +3725,7 @@
          this.setFile( "/pages/msg/popupPropEditor.htm" );
          break;
        case ID_TRANSFER_PARAMETERS:
-@@ -32909,7 +32907,7 @@
+@@ -33220,7 +33218,7 @@
    var opts = {
      evalScripts: true,
      onComplete: function(trans) {
@@ -3734,7 +3734,7 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
-@@ -44773,7 +44771,7 @@
+@@ -45305,7 +45303,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3743,7 +3743,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -44825,8 +44823,8 @@
+@@ -45357,8 +45355,8 @@
    
    if (!form) return;
  
@@ -3754,7 +3754,7 @@
  
    switch (form[gd_type])
    {
-@@ -44922,7 +44920,7 @@
+@@ -45454,7 +45452,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;

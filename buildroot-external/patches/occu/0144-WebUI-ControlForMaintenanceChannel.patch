@@ -375,7 +375,7 @@
 \ No newline at end of file
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1296,6 +1296,12 @@
+@@ -1329,6 +1329,12 @@
          }
        }
      }

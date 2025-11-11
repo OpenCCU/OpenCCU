@@ -184,6 +184,10 @@ ATC_ON	${stringTableON}
 
 AUTO_HYDRAULIC_ADJUSTMENT	${stringTableAutoHydraulicAdjustment}
 AUTO_MODE	${stringTableClimateControlRTTransceiverAutoMode}
+
+AUTO_RELOCK_TRANSCEIVER|AUTO_RELOCK_STATE=TRUE	${stringTableAutoRelockState}: ${lblYes}
+AUTO_RELOCK_TRANSCEIVER|AUTO_RELOCK_STATE=FALSE	${stringTableAutoRelockState}: ${lblNo}
+
 AVERAGE_ILLUMINATION	${stringTableAverageIllumination}
 AVERAGE_ILLUMINATION_STATUS=NORMAL	${lblValue} ${stringTableAverageIllumination}: ${lblNormal}
 AVERAGE_ILLUMINATION_STATUS=0	${lblValue} ${stringTableAverageIllumination}: ${lblNormal}
@@ -658,7 +662,6 @@ DISPLAY|UNIT=WATT	${stringTableDisplayUnitWatt}
 DISPLAY|WINDOW	${stringTableDisplayWindow}
 
 DISPLAY_INPUT_TRANSMITTER	${stringTableDisplayInputTransmitterTitle}
-DISPLAY_INPUT_TRANSMITTER|DISPLAY_DATA_STRING	${stringTableWGDDisplayDataString}
 DISPLAY_LEVEL_INPUT_TRANSMITTER	${stringTableDisplayInputLevelTransmitterTitle}
 DISPLAY_THERMOSTAT_INPUT_TRANSMITTER	${stringTableDisplayInputThermostatTransmitterTitle}
 
@@ -719,11 +722,29 @@ DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=LOCKED	${stringTableDoorLockStateT
 DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=UNLOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}
 DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=OPEN	${stringTableDoorLockStateTransmitterLockTargetLevelOpen}
 
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelLocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=UNLOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=OPEN	${stringTableDoorLockStateTransmitterLockTargetLevelOpen}
+
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=RESET_TEACH_IN	${stringTableDoorLockStateTransceiverLockTargetLevelResetTeachIn}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=SET_NEUTRAL_LOCKED	${stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralLocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=SET_NEUTRAL_UNLOCKED	${stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralUnlocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TESTRUN_SAVE_LOCK_UNLOCK	${stringTableDoorLockStateTransceiverLockTargetLevelTestrunSaveLockUnlock}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_UNLOCKED	${stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_VERTICAL	${stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_HORIZONTAL	${stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOAD_CALIBRATION_CLOSED_DOOR	${stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOAD_CALIBRATION_OPEN_DOOR	${stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationOpenDoor}
+
 DOOR_RECEIVER	${stringTableDoorReceiverTitle}
 DOOR_STATE=CLOSED	${stringTableDoorStateClose}
 DOOR_STATE=OPEN	${stringTableDoorStateOpen}
 DOOR_STATE=POSITION_UNKNOWN	${stringTableDoorStateUnknown}
 DOOR_STATE=VENTILATION_POSITION	${stringTableDoorStateVentilationPosition}
+
+DOOR_STATE_TRANSCEIVER|STATE=CLOSED	${stringTableDoorStateClose}
+DOOR_STATE_TRANSCEIVER|STATE=OPEN	${stringTableDoorStateOpen}
+DOOR_STATE_TRANSCEIVER|CALIBRATE_DOOR_STATE=CALIBRATE	${stringTableDoorStateTransceiverCalibrate}
 
 DUAL_WHITE_BRIGHTNESS	${stringTableDualWhiteBrightnessTitle}
 DUAL_WHITE_COLOR	${stringTableDualWhiteColorTitle}
@@ -790,14 +811,14 @@ ERROR_COMMUNICATION_PARTICULATE_MATTER_SENSOR	${stringTableErrorCommunicationPar
 ERROR_COMMUNICATION_PARTICULATE_MATTER_SENSOR=FALSE	${stringTableErrorCommunicationParticulateMatterSensorFalse}
 ERROR_COMMUNICATION_PARTICULATE_MATTER_SENSOR=TRUE	${stringTableErrorCommunicationParticulateMatterSensorTrue}
 ERROR_COMMUNICATION_SENSOR	${stringTableErrorCommunicationSensor}
-ERROR_COMMUNICATION_SENSOR=TRUE	${stringTableErrorCommunicationSensorTrue}
 ERROR_COMMUNICATION_SENSOR=FALSE	${stringTableErrorCommunicationSensorFalse}
+ERROR_COMMUNICATION_SENSOR=TRUE	${stringTableErrorCommunicationSensorTrue}
 ERROR_COMMUNICATION_TEMP_AND_HUMIDITY_SENSOR	${stringTableErrorCommunicationTempAndHumiditySensor}
 ERROR_COMMUNICATION_TEMP_AND_HUMIDITY_SENSOR=FALSE	${stringTableErrorCommunicationTempAndHumiditySensorFalse}
 ERROR_COMMUNICATION_TEMP_AND_HUMIDITY_SENSOR=TRUE	${stringTableErrorCommunicationTempAndHumiditySensorTrue}
 ERROR_COPROCESSOR	${stringTableErrorCoProcessor}
-ERROR_COPROCESSOR=TRUE	${stringTableErrorCoprocessorTrue}
 ERROR_COPROCESSOR=FALSE	${stringTableErrorCoprocessorFalse}
+ERROR_COPROCESSOR=TRUE	${stringTableErrorCoprocessorTrue}
 ERROR_DALI_BUS	${stringTableErrorDaliBus}
 ERROR_DALI_BUS=FALSE	${stringTableErrorDaliBusFalse}
 ERROR_DALI_BUS=TRUE	${stringTableErrorDaliBusTrue}
@@ -806,11 +827,23 @@ ERROR_DEGRADED_CHAMBER=FALSE	${stringTableErrorDegradedChamberFalse}
 ERROR_FROST_PROTECTION	${stringTableErrorErrorFrostProtection}
 ERROR_FROST_PROTECTION=FALSE	${stringTableErrorErrorFrostProtectionFalse}
 ERROR_FROST_PROTECTION=TRUE	${stringTableErrorErrorFrostProtectionTrue}
+ERROR_JAMMED	${stringTableErrorJammed}
+ERROR_JAMMED=FALSE	${stringTableErrorJammed}: ${lblNo}
+ERROR_JAMMED=TRUE	${stringTableErrorJammed}: ${lblYes}
+ERROR_LOAD_TOO_LOW	${stringTableLoadTooLow}
+ERROR_LOAD_TOO_LOW=FALSE	${stringTableLoadTooLow}: ${lblNo}
+ERROR_LOAD_TOO_LOW=TRUE	${stringTableLoadTooLow}: ${lblYes}
 ERROR_MOUNTING_MODULE=FALSE	${stringTableErrorMountingModuleFalse}
 ERROR_MOUNTING_MODULE=TRUE	${stringTableErrorMountingModuleTrue}
 ERROR_NON_FLAT_POSITIONING	${stringTableErrorNonFlatPositioning}
 ERROR_NON_FLAT_POSITIONING=FALSE	${stringTableErrorNonFlatPositioningFalse}
 ERROR_NON_FLAT_POSITIONING=TRUE	${stringTableErrorNonFlatPositioningTrue}
+ERROR_NO_END_STOP_LOCK	${stringTableNoEndStopLock}
+ERROR_NO_END_STOP_LOCK=FALSE	${stringTableNoEndStopLock}: ${lblNo}
+ERROR_NO_END_STOP_LOCK=TRUE	${stringTableNoEndStopLock}: ${lblYes}
+ERROR_NO_END_STOP_UNLOCK	${stringTableNoEndStopUnLock}
+ERROR_NO_END_STOP_UNLOCK=FALSE	${stringTableNoEndStopUnLock}: ${lblNo}
+ERROR_NO_END_STOP_UNLOCK=TRUE	${stringTableNoEndStopUnLock}: ${lblYes}
 ERROR_OVERHEAT	${stringTableErrorOverheatTrue}
 ERROR_OVERHEAT=FALSE	${stringTableErrorOverheatFalse}
 ERROR_OVERHEAT=TRUE	${stringTableErrorOverheatTrue}
@@ -835,8 +868,8 @@ ERROR_POWER_SHORT_CIRCUIT_BUS_2=TRUE	${stringTableErrorPowerShortCircuitBus2True
 ERROR_REDUCED=FALSE	${stringTableErrorReducedFalse}
 ERROR_REDUCED=TRUE	${stringTableErrorReducedTrue}
 ERROR_RESTART_NEEDED	${stringTableErrorRestartNeeded}
-ERROR_RESTART_NEEDED=TRUE	${stringTableErrorRestartNeededTrue}
 ERROR_RESTART_NEEDED=FALSE	${stringTableErrorRestartNeededFalse}
+ERROR_RESTART_NEEDED=TRUE	${stringTableErrorRestartNeededTrue}
 ERROR_SABOTAGE=FALSE	${stringTableErrorSabotageFalse}
 ERROR_SABOTAGE=NO_ERROR	${stringTableSabotageContactOk}
 ERROR_SABOTAGE=SABOTAGE	${stringTableSabotage}
@@ -855,8 +888,8 @@ ERROR_UNDERVOLTAGE	${stringTableErrorUndervoltageTrue}
 ERROR_UNDERVOLTAGE=FALSE	${stringTableErrorUndervoltageFalse}
 ERROR_UNDERVOLTAGE=TRUE	${stringTableErrorUndervoltageTrue}
 ERROR_UPDATE	${stringTableErrorUpdateTrue}
-ERROR_UPDATE=TRUE	${stringTableErrorUpdateTrue}
 ERROR_UPDATE=FALSE	${stringTableErrorUpdateFalse}
+ERROR_UPDATE=TRUE	${stringTableErrorUpdateTrue}
 ERROR_VALVE_FAILURE	${stringTableErrorValveFailure}
 ERROR_VALVE_FAILURE=FALSE	${stringTableErrorValveFailureFalse}
 ERROR_VALVE_FAILURE=TRUE	${stringTableErrorValveFailureTrue}
@@ -865,8 +898,8 @@ ERROR_WATER_FAILURE=FALSE	${stringTableErrorWaterFailureFalse}
 ERROR_WATER_FAILURE=TRUE	${stringTableErrorWaterFailureTrue}
 ERROR_WIND_COMMUNICATION=FALSE	${stringTableErrorWindCommunicationFalse}
 ERROR_WIND_COMMUNICATION=TRUE	${stringTableErrorWindCommunicationTrue}
-ERROR_WIND_NORTH=TRUE	${stringTableErrorWindNorthTrue}
 ERROR_WIND_NORTH=FALSE	${stringTableErrorWindNorthFalse}
+ERROR_WIND_NORTH=TRUE	${stringTableErrorWindNorthTrue}
 EVENT_DELAYTIME	${stringTableEventDelayTime}
 EVENT_DELAY_UNIT	${stringTableEventDelayUnit}
 EVENT_DELAY_UNIT=100MS	${optionUnit100MS}
@@ -1094,6 +1127,34 @@ LEVEL_STATUS=1	${lblValue} ${stringTableLevelStatus}: ${lblUnknown}
 LIVE_MODE_RX	${stringTableLiveModeRX}
 LOCAL_RESET_DISABLE	${stringTableLocalResetDisable}
 LOCAL_RESET_DISABLED	${stringTableLocalResetDisable}
+
+
+LOCK_TEACH_IN_STATE	${stringTableLockTeachInState}
+
+LOCK_STATE_REASON	${stringTableLockStateReason}
+LOCK_STATE_REASON=UNKNOWN	${stringTableLockStateReason}=${dlpLockStateReason_0}
+LOCK_STATE_REASON=MOTOR	${stringTableLockStateReason}=${dlpLockStateReason_1}
+LOCK_STATE_REASON=MOTOR_INTERNAL_KEY	${stringTableLockStateReason}=${dlpLockStateReason_2}
+LOCK_STATE_REASON=MOTOR_INTERNAL_PROFILE	${stringTableLockStateReason}=${dlpLockStateReason_3}
+LOCK_STATE_REASON=MOTOR_AUTO_RELOCK_TIMER	${stringTableLockStateReason}=${dlpLockStateReason_4}
+LOCK_STATE_REASON=MOTOR_AUTO_RELOCK_STATE	${stringTableLockStateReason}=${dlpLockStateReason_5}
+LOCK_STATE_REASON=MOTOR_AFTER_OPEN_ACKED	${stringTableLockStateReason}=${dlpLockStateReason_6}
+LOCK_STATE_REASON=MOTOR_AFTER_OPEN	${stringTableLockStateReason}=${dlpLockStateReason_7}
+LOCK_STATE_REASON=MOTOR_AFTER_OPEN_INTERNAL_KEY	${stringTableLockStateReason}=${dlpLockStateReason_8}
+LOCK_STATE_REASON=MOTOR_AFTER_OPEN_INTERNAL_KEY	${stringTableLockStateReason}=${dlpLockStateReason_8}
+LOCK_STATE_REASON=MANUAL_OUTSIDE	${stringTableLockStateReason}=${dlpLockStateReason_9}
+LOCK_STATE_REASON=MANUAL_INSIDE	${stringTableLockStateReason}=${dlpLockStateReason_10}
+LOCK_STATE_REASON=MANUAL	${stringTableLockStateReason}=${dlpLockStateReason_11}
+
+LAST_LOCK_DRIVE_LOAD	${stringTableLastLockDriveLoad}
+
+LOCK_STATE	${stringTableLockState}
+LOCK_STATE=INVALID	${stringTableLockState}=${dlpLockState_3}
+LOCK_STATE=LOCKED	${stringTableLockState}=${dlpLockState_1}
+LOCK_STATE=UNKNOWN	${stringTableLockState}=${dlpLockState_0}
+LOCK_STATE=UNLOCKED	${stringTableLockState}=${dlpLockState_2}
+
+
 LOGGING	${stringTableLogging}
 LOGGING=FALSE	${stringTableLoggingFalse}
 LOGGING=OFF	${stringTableLoggingOff}
@@ -1209,10 +1270,30 @@ MAINTENANCE|CODE_USED_20=TRUE	${stringTableAccessTransCodeSCodeUsed20True}
 MAINTENANCE|CONFIG_PENDING	${stringTableConfigPending}
 MAINTENANCE|ERROR_BATTERY=BATTERY_DEFECT	${stringTableBatteryFailure}
 MAINTENANCE|ERROR_BATTERY=NO_ERROR	${stringTableBatteryOk}
-MAINTENANCE|ERROR_JAMMED	${stringTableErrorJammed}
 
-MAINTENANCE|ERROR_JAMMED=FALSE	${stringTableErrorJammedFalse}
-MAINTENANCE|ERROR_JAMMED=TRUE	${stringTableErrorJammedTrue}
+MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN	${stringTableErrorDoorLockedWhileOpen}
+MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN=TRUE	${stringTableErrorDoorLockedWhileOpen}: ${lblYes}
+MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN=FALSE	${stringTableErrorDoorLockedWhileOpen}:${lblNo}
+
+MAINTENANCE|ERROR_DOOR_OPENED_WHILE_LOCKED	${stringTableErrorDoorOpenedWhileLocked}
+MAINTENANCE|ERROR_DOOR_OPENED_WHILE_LOCKED=TRUE	${stringTableErrorDoorOpenedWhileLocked}: ${lblYes}
+MAINTENANCE|ERROR_DOOR_OPENED_WHILE_LOCKED=FALSE	${stringTableErrorDoorOpenedWhileLocked}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_ACCELERATION	${stringTableSabotageAcceleration}
+MAINTENANCE|SABOTAGE_ACCELERATION=TRUE	${stringTableSabotageAcceleration}: ${lblYes}
+MAINTENANCE|SABOTAGE_ACCELERATION=FALSE	${stringTableSabotageAcceleration}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_BATTERY	${stringTableSabotageBattery}
+MAINTENANCE|SABOTAGE_BATTERY=TRUE	${stringTableSabotageBattery}: ${lblYes}
+MAINTENANCE|SABOTAGE_BATTERY=FALSE	${stringTableSabotageBattery}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_MAGNETIC_FIELD	${stringTableSabotageMagneticField}
+MAINTENANCE|SABOTAGE_MAGNETIC_FIELD=TRUE	${stringTableSabotageMagneticField}: ${lblYes}
+MAINTENANCE|SABOTAGE_MAGNETIC_FIELD=FALSE	${stringTableSabotageMagneticField}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_VERTICAL	${stringTableSabotageVertical}
+MAINTENANCE|SABOTAGE_VERTICAL=TRUE	${stringTableSabotageVertical}: ${lblYes}
+MAINTENANCE|SABOTAGE_VERTICAL=FALSE	${stringTableSabotageVertical}: ${lblNo}
 
 MAINTENANCE|ERROR_OVERHEAT	${stringTableErrorOverheatTrue}
 MAINTENANCE|HMW_STICKY_UNREACH	${stringTableStickyUnreach}
@@ -2048,16 +2129,19 @@ WATERDETECTIONSENSOR|STATE=WET	${stringTableWDSStateWet}
 WATERLEVEL_DETECTED=TRUE	${stringTableWaterLevelDetectedTrue}
 WATERLEVEL_DETECTED=FALSE	${stringTableWaterLevelDetectedFalse}
 WEATHER	${stringTableWeatherTitle}
+
+WEATHER_DISPLAY_RECEIVER|DISPLAY_DATA_ID	${stringTableWeatherReceiverDataId}
 WEATHER_RECEIVER	${stringTableWeatherReceiver}
+
 WEATHER_TRANSMIT|ALARMSTATE=FALSE	${stringTableWeatherTransmitAlarmEventFalse}
 WEATHER_TRANSMIT|ALARMSTATE=TRUE	${stringTableWeatherTransmitAlarmEventTrue}
 WEATHER_TRANSMIT|HUMIDITY	${stringTableWeatherHumidity}
 WEATHER_TRANSMIT|TEMPERATURE	${stringTableWeatherTemperature}
 
-# WEATHER SENSOR
 
 AIR_PRESSURE	${stringTableWeatherAirPressure}
 BRIGHTNESS	${stringTableWeatherBrightness}
+DISPLAY_DATA_STRING	${stringTableWGDDisplayDataString}
 RAINING	${stringTableWeatherRaining}
 RAINING=FALSE	${stringTableWeatherRainingFalse}
 RAINING=TRUE	${stringTableWeatherRainingTrue}
@@ -2104,7 +2188,6 @@ WIND_SPEED_RESULT_SOURCE=AVERAGE_VALUE	${stringTableWeatherWindSpeedResultSource
 WIND_SPEED_RESULT_SOURCE=MAX_VALUE	${stringTableWeatherWindSpeedResultSourceMax}
 WIND_THRESHOLD_OVERRUN=FALSE	${stringTableWeatherWindThresholdOverrunFalse}
 WIND_THRESHOLD_OVERRUN=TRUE	${stringTableWeatherWindThresholdOverrunTrue}
-# END WEATHER SENSOR
 
 WEEK_PROGRAM_CHANNEL_LOCKS	${stringTableWeekProgramChannelLocks}
 WEEK_PROGRAM_TARGET_CHANNEL_LOCKS	${stringTableWeekProgramTargetChannelLocks}

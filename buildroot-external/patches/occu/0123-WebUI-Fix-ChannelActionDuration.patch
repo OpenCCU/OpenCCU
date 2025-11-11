@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -22463,7 +22463,7 @@
+@@ -22674,7 +22674,7 @@
        durationValue = (this.chkBoxTimeLimitElm.prop("checked") == false) ? 31 : this.durationValueElm.val();
  
        if (this.isOntimeAvailable()) {

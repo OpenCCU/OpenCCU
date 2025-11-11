@@ -221,9 +221,10 @@ proc get_bat_level {} {
 }
 
 proc getProduct {} {
-  set product 2
+  set product 3
   catch {
     set product [lindex [split [get_version] .] 0]
   }
   return "[expr $product*1]"
 }
+

@@ -405,7 +405,19 @@ function ::showHideHmIPChannel() {
       integer devFwMajor = 0;
       Call("/esp/functions.fn::getFirmwareVersion()");
 
-      if ((oDevHssType.Substr(0,6) == "HmIPW-") || (oDevHssType == "HmIP-DRSI1") || (oDevHssType == "HmIP-DRSI4") || (oDevHssType == "HmIP-DRG-DALI") || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))) {
+      if ((oDevHssType.Substr(0,6) == "HmIPW-")
+        || (oDevHssType == "HmIP-DRSI1")
+        || (oDevHssType == "HmIP-DRSI4")
+        || (oDevHssType == "HmIP-DRG-DALI")
+        || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))
+        || (oDevHssType == "HmIP-WGD")
+        || (oDevHssType == "HmIP-WGD-PL")
+        || (oDevHssType == "HmIP-UDI-PB2")
+        || (oDevHssType == "HmIP-UDI-PB2-A")
+        || (oDevHssType == "HmIP-UDI-SMI55")
+        || (oDevHssType == "HmIP-UDI-SMI55-A")
+        ) {
+
         object chnParam;
         ! A HmIPW-* device with a control for the parameter IDENTIFY_TARGET_LEVEL (MAINTENANCE channel)
         ! should be visible. So it's possible to use the identify function of HmIPW-devices.
@@ -504,6 +516,11 @@ function ::showHideHmIPChannel() {
       return;
     }
 
+    if (chn.HssType().Find("WEATHER_DISPLAY_RECEIVER") != -1)  {
+      bShowChannel = false;
+      return;
+    }
+
     if (user.UserEasyLinkMode() == true) {
       if ((chn.HssType().Find("DIMMER_TRANSMITTER") != -1)
       || ((chn.HssType().Find("SWITCH_TRANSMITTER") != -1) && (chn.HssType().Find("COND_") == -1))
@@ -566,7 +583,7 @@ function ::conditionIsParameterVisible() {
     excludeParams = excludeParams#"TIME_OF_OPERATION,TIME_OF_OPERATION_STATUS,COLOR_TEMPERATURE_STATUS,HUE_STATUS,SATURATION_STATUS,DIM2WARM_STATE,HUMAN_CENTRIC_LIGHT_STATE,INCLUSION_UNSUPPORTED_DEVICE,";
     excludeParams = excludeParams#"ERROR_CONTROL_GEAR_FAILURE,ERROR_LAMP_FAILURE,ERROR_LIMIT,ERROR_DALI_BUS,GAS_FLOW_STATUS,GAS_VOLUME_STATUS,POWER_STATUS,ENERGY_COUNTER_STATUS,SELF_CALIBRATION_RESULT,";
     excludeParams = excludeParams#"ENERGY_COUNTER_FEED_IN_OVERFLOW,ERROR_MOUNTING_MODULE,WATER_FLOW_STATUS,WATER_VOLUME_OVERFLOW,WATER_VOLUME_SINCE_OPEN_OVERFLOW,";
-    excludeParams = excludeParams#"SOIL_MOISTURE_STATUS,SOIL_MOISTURE_RAW_VALUE_STATUS,SOIL_TEMPERATURE_STATUS";
+    excludeParams = excludeParams#"SOIL_MOISTURE_STATUS,SOIL_MOISTURE_RAW_VALUE_STATUS,SOIL_TEMPERATURE_STATUS,LOCK_TEACH_IN_STATE";
 
     if ((oCC.HssType().Find("DIMMER_TRANSMITTER") != -1)
     || (oCC.HssType().Find("DIMMER_VIRTUAL_RECEIVER")!= -1)
@@ -753,7 +770,7 @@ function ::conditionIsParameterVisible() {
     }
 
     !HmIP-WGD(-PL) - Glass Display
-    if ((oCC.Label() == "HmIPW-WGD") || (oCC.Label() == "HmIPW-WGD-PL")) {
+    if (oCC.Label().Find("-WGD") != -1) {
       ! Hide the parameter DISPLAY_UPDATE_REQUEST_X (X = 1-39)
       if ( oCC.HssType().Find("MAINTENANCE") != -1) {
         if ( oDP.HSSID().Find("DISPLAY_UPDATE_REQUEST") != -1 ) {
@@ -901,9 +918,7 @@ function ::destinationIsParameterVisible() {
   }
 
   if ( oCH.HssType().Find("DIMMER_VIRTUAL_RECEIVER") != -1) {
-
-    !HmIP-WUA (UNIVERSAL-ACTOR (0 - 10 V)
-    if ((oCH.Label() == "HmIP-WUA") || (oCH.Label() == "ELV-SH-WUA") ) {
+    if ((oCH.Label().Find("-WUA") != -1) || (oCH.Label().Find("-UDI-SMI55") != -1)) {
       if ( oDP.HSSID().Find("COMBINED_PARAMETER") != -1 ) {
         showChannelParam = true;
       } else {
@@ -941,7 +956,7 @@ function ::destinationIsParameterVisible() {
   }
 
   !Hide some parameter which are handled with the COMBINED_PARAMETER
-  if ((oCH.Label() == "HmIPW-WGD") || (oCH.Label() == "HmIPW-WGD-PL") || ("HmIP-DRG-DALI")) {
+  if ((oCH.Label().Find("-WGD") != -1) || ("HmIP-DRG-DALI")) {
     if ( oCH.HssType().Find("MAINTENANCE") != -1) {
       ! Hide the following parameters. We do this with the COMBINED_PARAMETER
       if (
@@ -961,6 +976,26 @@ function ::destinationIsParameterVisible() {
     if ( (oDP.HSSID().Find("COMBINED_PARAMETER") == -1)) {
       showChannelParam = false;
     }
+  }
+
+  if ((oCH.HssType().Find("SWITCH_VIRTUAL_RECEIVER") != -1)
+    && ((oCH.Label().Find("ELV-SH-FS") != -1)
+    || (oCH.Label().Find("ELV-SH-FSI") != -1)
+    || (oCH.Label().Find("ELV-SH-SMS2") != -1)
+    || (oCH.Label().Find("HmIP-FS6") != -1)
+    || (oCH.Label().Find("HmIP-FSI6") != -1)
+    )) {
+    if ( (oDP.HSSID().Find("COMBINED_PARAMETER") == -1)) {
+      showChannelParam = false;
+    }
+  }
+
+  !HmIP-DLP
+  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
+  if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
+    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
   }
 
   return;

@@ -57,7 +57,7 @@
      "chType_ACCELERATION_TRANSCEIVER" : "Lage-/Beschleunigungssensor",
      "chType_ACCESS_RECEIVER" : "Benutzer",
      "chType_ACCESSPOINT_GENERIC_RECEIVER_1" : "Homematic IP Wired Bus Kanal 1",
-@@ -118,7 +169,7 @@
+@@ -117,7 +168,7 @@
      "chType_MULTI_MODE_INPUT_TRANSMITTER_4" : "Level",
      "chType_MULTI_MODE_INPUT_TRANSMITTER_5" : "Bedingung",
      "chType_OPTICAL_SIGNAL_RECEIVER" : "Farbsignal",
@@ -134,7 +134,7 @@
      "chType_ACCELERATION_TRANSCEIVER" : "Position/Acceleration sensor",
      "chType_ACCESS_RECEIVER" : "User",
      "chType_ACCESSPOINT_GENERIC_RECEIVER_1" : "Homematic IP Wired Bus Channel 1",
-@@ -114,7 +165,7 @@
+@@ -115,7 +166,7 @@
      "chType_MULTI_MODE_INPUT_TRANSMITTER_4" : "Level",
      "chType_MULTI_MODE_INPUT_TRANSMITTER_5" : "Condition",
      "chType_OPTICAL_SIGNAL_RECEIVER" : "Colour signal",

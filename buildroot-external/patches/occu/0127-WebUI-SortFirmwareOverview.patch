@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25251,6 +25251,15 @@
+@@ -25562,6 +25562,15 @@
                }
                conInfo("Check firmware version of all devices - number of devices: " + self.devList.length);
                if (self.devList.length > 0) {

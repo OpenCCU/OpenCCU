@@ -287,7 +287,7 @@ proc getTextField {param value chn prn {extraparam ""} {superExtra ""}} {
     }
   }
 
-  if {([string equal $dev_descr(TYPE) "HmIPW-WGD"] == 1) || ([string equal $dev_descr(TYPE) "HmIPW-WGD-PL"] == 1)} {
+  if {[string first "-WGD" $dev_descr(TYPE)] != 1} {
     if {$param == "MAIN_TEXT" || $param == "SUB_TEXT"} {
       set minValue "stringUTF8"
       set maxValue "stringUTF8"

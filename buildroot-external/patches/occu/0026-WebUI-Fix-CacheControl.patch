@@ -251,7 +251,7 @@
      request.done(function(result) {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -7293,21 +7293,10 @@
+@@ -7457,21 +7457,10 @@
    /*####################*/
    
    /**
@@ -273,7 +273,7 @@
      var xhr = XMLHttpRequest_create();
      
      if (null !== xhr)
-@@ -23517,7 +23506,6 @@
+@@ -23828,7 +23817,6 @@
      url: "/ise/htm/header.htm",
      dataType: "html",
      async: false,
@@ -281,7 +281,7 @@
      context: document.body
      }).done(function(response) {
        jQuery("#header").html(response);
-@@ -28096,7 +28084,7 @@
+@@ -28407,7 +28395,7 @@
        var script = document.createElement("script");
        script.id = "homematic_com_script_" + index;
        script.type = "text/javascript";
@@ -290,7 +290,7 @@
        $("body").appendChild(script);
        homematic.com.callback = callback;
    },
-@@ -28111,9 +28099,9 @@
+@@ -28422,9 +28410,9 @@
        // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
  
        if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
@@ -302,7 +302,7 @@
        }
        $("body").appendChild(script);
        homematic.com.callback = callback;
-@@ -44070,9 +44058,6 @@
+@@ -44602,9 +44590,6 @@
    scriptname = Get_ReGa_Path(scriptname);
    var params = poststr;
  

@@ -113,7 +113,7 @@
        }
 --- occu/WebUI/www/config/stringtable_de.txt.orig
 +++ occu/WebUI/www/config/stringtable_de.txt
-@@ -469,6 +469,8 @@
+@@ -473,6 +473,8 @@
  COND_TX_THRESHOLD_LO_POWER	${stringTableCondThresholdLoPower}
  CONFIG_PENDING=FALSE	${stringTableConfigPendingFalse}
  CONFIG_PENDING=TRUE	${stringTableConfigPendingTrue}
@@ -272,7 +272,7 @@
            {var virtualChannel = \"\"}\n
            {var classExpertOnly = \"hidden j_expertChannel\"}\n
            {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
-@@ -6080,6 +6078,8 @@
+@@ -6182,6 +6180,8 @@
  elvST['COND_TX_THRESHOLD_LO_POWER'] = '${stringTableCondThresholdLoPower}';
  elvST['CONFIG_PENDING=FALSE'] = '${stringTableConfigPendingFalse}';
  elvST['CONFIG_PENDING=TRUE'] = '${stringTableConfigPendingTrue}';
@@ -281,7 +281,7 @@
  elvST['CONF_BUTTON_TIME'] = '${stringTableConfButtonTime}';
  elvST['CONF_BUTTON_TIME=PERMANENT'] = '${stringTableConfButtonTimePermanent}';
  elvST['CONTROL_MODE=AUTO-MODE'] = '${stringTableClimateControlRTTransceiverAutoMode}';
-@@ -11509,6 +11509,7 @@
+@@ -11673,6 +11673,7 @@
        this.isWritable = data["isWritable"];      
        this.isEventable = data["isEventable"];
        this.isActive = data["isChannelActive"];
@@ -289,7 +289,7 @@
  
        if (typeof data["mode_multi_mode"] != "undefined") {
          this.multiMode = data["mode_multi_mode"];
-@@ -14717,9 +14718,7 @@
+@@ -14927,9 +14928,7 @@
        var self = this;
        if (this.match(channel)) {
          if (channel.device.interfaceName == this.HmIPIdentifier || channel.device.interfaceName == this.HmIPWIdentifier) {
@@ -300,7 +300,7 @@
          } else {
            result.push(channel);
          }
-@@ -26009,7 +26008,6 @@
+@@ -26320,7 +26319,6 @@
      var result = true;
      switch (channel.channelType) {
        case "ALARM_COND_SWITCH_TRANSMITTER":

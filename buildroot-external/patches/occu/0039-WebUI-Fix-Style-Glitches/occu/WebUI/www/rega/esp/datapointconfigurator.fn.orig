@@ -97,6 +97,7 @@ function ::dcCreate()
     var CN_ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER = "ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER.";
     var CN_ALARM_SWITCH_VIRTUAL_RECEIVER = "ALARM_SWITCH_VIRTUAL_RECEIVER.";
     var CN_ANALOG_INPUT = "ANALOG_INPUT.";
+    var CN_AUTO_RELOCK_TRANSCEIVER = "AUTO_RELOCK_TRANSCEIVER.";
     var CN_ARMING          = "ARMING.";
     var CN_BACKLIGHTING_RECEIVER  = "BACKLIGHTING_RECEIVER.";
     var CN_BLIND           = "BLIND.";
@@ -119,9 +120,11 @@ function ::dcCreate()
     var CN_DIMMER_REAL     = "DIMMER_REAL.";
     var CN_DOOR_LOCK_STATE_TRANSCEIVER = "DOOR_LOCK_STATE_TRANSCEIVER.";
     var CN_DOOR_LOCK_STATE_TRANSMITTER = "DOOR_LOCK_STATE_TRANSMITTER.";
+    var CN_DOOR_LOCK_TRANSCEIVER = "DOOR_LOCK_TRANSCEIVER.";
     var CN_DOOR_OPENER     = "DOOROPENER.";
     var CN_DOOR_RECEIVER     = "DOOR_RECEIVER.";
     var CN_DOOR_SENSOR     = "DOOR_SENSOR.";
+    var CN_DOOR_STATE_TRANSCEIVER = "DOOR_STATE_TRANSCEIVER.";
     var CN_DUAL_WHITE_BRIGHTNESS = "DUAL_WHITE_BRIGHTNESS";
     var CN_DUAL_WHITE_COLOR = "DUAL_WHITE_COLOR";
     var CN_FLOW_METER_TRANSMITTER = "FLOW_METER_TRANSMITTER";
@@ -557,6 +560,26 @@ function ::dcCreate()
             Call("/esp/controls/door_opener.fn::CreateDoorLockStateTranseiver()");
           }
 
+          !# DOOR_LOCK_TRANSCEIVER
+          bIsControl = ( sControlName.Find(CN_DOOR_LOCK_TRANSCEIVER) > -1 );
+          if( bIsControl && (sLastControlName != CN_DOOR_LOCK_TRANSCEIVER) )
+          {
+            WriteLine( "<script>conInfo('Control CN_DOOR_LOCK_TRANSCEIVER found.');</script>" );
+            isKnownControl = true;
+            sLastControlName = CN_DOOR_LOCK_TRANSCEIVER;
+            Call("/esp/controls/door_opener.fn::CreateDoorLockTranseiver()");
+          }
+
+          !# DOOR_STATE_TRANSCEIVER
+          bIsControl = ( sControlName.Find(CN_DOOR_STATE_TRANSCEIVER) > -1 );
+          if( bIsControl && (sLastControlName != CN_DOOR_STATE_TRANSCEIVER) )
+          {
+            WriteLine( "<script>conInfo('Control CN_DOOR_STATE_TRANSCEIVER found.');</script>" );
+            isKnownControl = true;
+            sLastControlName = CN_DOOR_STATE_TRANSCEIVER;
+            Call("/esp/controls/door_opener.fn::CreateDoorStateTranseiver()");
+          }
+
           !# DOOR_LOCK_STATE_TRANSMITTER
           bIsControl = ( sControlName.Find(CN_DOOR_LOCK_STATE_TRANSMITTER) > -1 );
           if( bIsControl && (sLastControlName != CN_DOOR_LOCK_STATE_TRANSMITTER) )
@@ -585,6 +608,16 @@ function ::dcCreate()
             isKnownControl = true;
             sLastControlName = CN_DOOR_RECEIVER;
             Call("/esp/controls/door_opener.fn::CreateDoorReceiver()");
+          }
+
+          !# AUTO_RELOCK_TRANSCEIVER
+          bIsControl = ( sControlName.Find(CN_AUTO_RELOCK_TRANSCEIVER) > -1 );
+          if( bIsControl && (sLastControlName!=CN_AUTO_RELOCK_TRANSCEIVER) )
+          {
+            WriteLine( "<script>conInfo('Control CN_AUTO_RELOCK_TRANSCEIVER found.');</script>" );
+            isKnownControl = true;
+            sLastControlName = CN_AUTO_RELOCK_TRANSCEIVER;
+            Call("/esp/controls/door_opener.fn::CreateAutoRelockTransceiver()");
           }
 
           !# DOOR_WINDOW_CONTACT
@@ -702,7 +735,7 @@ function ::dcCreate()
               WriteLine( "<script>conInfo('Control CN_HMIP_BUTTON found.');</script>" );
               isKnownControl = true;
               sLastControlName = CN_HMIP_BUTTON;
-            if ((ch.HssType() != "MULTI_MODE_INPUT_TRANSMITTER") || (ch.Label() == "ELV-SH-BM-S")) {
+            if ((ch.HssType() != "MULTI_MODE_INPUT_TRANSMITTER") || (ch.Label() == "ELV-SH-BM-S") || (ch.Label() == "ELV-SH-FSI")) {
                if (ch.Label().Substr(5,7) != "MOD-RC8") {
                 if ((ch.Label() == "ELV-SH-BM-S")) {
                   WriteLine( "<script>conInfo('ELV-SH-BM-S found');</script>" );

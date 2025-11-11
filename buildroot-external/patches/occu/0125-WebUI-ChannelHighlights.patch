@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -2804,6 +2804,8 @@
+@@ -2816,6 +2816,8 @@
  DEV_PATHS["HmIPW-DRAP"]["50"] = "/config/img/devices/50/162_hmipw-drap_thumb.png";
  DEV_PATHS["HmIPW-DRAP"]["250"] = "/config/img/devices/250/162_hmipw-drap.png";
  DEV_HIGHLIGHT["HmIPW-DRAP"] = new Object();
@@ -9,7 +9,7 @@
  DEV_LIST.push('263 130');
  DEV_DESCRIPTION["263 130"] = "263_130";
  DEV_PATHS["263 130"] = new Object();
-@@ -3147,6 +3149,22 @@
+@@ -3185,6 +3187,22 @@
  DEV_PATHS["HmIPW-DRS4"]["50"] = "/config/img/devices/50/160_hmipw-drs4_thumb.png";
  DEV_PATHS["HmIPW-DRS4"]["250"] = "/config/img/devices/250/160_hmipw-drs4.png";
  DEV_HIGHLIGHT["HmIPW-DRS4"] = new Object();
@@ -32,7 +32,7 @@
  DEV_LIST.push('VIR-LG-DIM');
  DEV_DESCRIPTION["VIR-LG-DIM"] = "VIR-LG-DIM";
  DEV_PATHS["VIR-LG-DIM"] = new Object();
-@@ -3366,14 +3384,14 @@
+@@ -3404,14 +3422,14 @@
  DEV_PATHS["HmIP-BSL"]["50"] = "/config/img/devices/50/173_hmip-bsl_thumb.png";
  DEV_PATHS["HmIP-BSL"]["250"] = "/config/img/devices/250/173_hmip-bsl.png";
  DEV_HIGHLIGHT["HmIP-BSL"] = new Object();
@@ -55,7 +55,7 @@
  DEV_LIST.push('HM-LC-Sw2PBU-FM');
  DEV_DESCRIPTION["HM-LC-Sw2PBU-FM"] = "HM-LC-Sw2PBU-FM";
  DEV_PATHS["HM-LC-Sw2PBU-FM"] = new Object();
-@@ -3924,18 +3942,18 @@
+@@ -3968,18 +3986,18 @@
  DEV_PATHS["HmIPW-WRC6"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
  DEV_PATHS["HmIPW-WRC6"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
  DEV_HIGHLIGHT["HmIPW-WRC6"] = new Object();
@@ -86,7 +86,7 @@
  DEV_HIGHLIGHT["HmIPW-WRC6"]["13"] = [5, '1', '2', '3', '4', '5', '6'];
  DEV_HIGHLIGHT["HmIPW-WRC6"]["1+2"] = [5, '1', '2'];
  DEV_HIGHLIGHT["HmIPW-WRC6"]["3+4"] = [5, '3', '4'];
-@@ -4498,6 +4516,38 @@
+@@ -4580,6 +4598,38 @@
  DEV_PATHS["HmIPW-DRS8"]["50"] = "/config/img/devices/50/161_hmipw-drs8_thumb.png";
  DEV_PATHS["HmIPW-DRS8"]["250"] = "/config/img/devices/250/161_hmipw-drs8.png";
  DEV_HIGHLIGHT["HmIPW-DRS8"] = new Object();
@@ -125,7 +125,7 @@
  DEV_LIST.push('ELV-SH-CTV');
  DEV_DESCRIPTION["ELV-SH-CTV"] = "ELV-SH-CTV";
  DEV_PATHS["ELV-SH-CTV"] = new Object();
-@@ -4671,12 +4721,12 @@
+@@ -4759,12 +4809,12 @@
  DEV_PATHS["HmIP-WRC6"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
  DEV_PATHS["HmIP-WRC6"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
  DEV_HIGHLIGHT["HmIP-WRC6"] = new Object();

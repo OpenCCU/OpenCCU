@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
-@@ -396,39 +396,14 @@
+@@ -396,51 +396,14 @@
    if (bShowChannel == true) {
  
      ! Interface HmIP-RF and HmIP-Wired
@@ -14,7 +14,19 @@
 -      integer devFwMajor = 0;
 -      Call("/esp/functions.fn::getFirmwareVersion()");
 -
--      if ((oDevHssType.Substr(0,6) == "HmIPW-") || (oDevHssType == "HmIP-DRSI1") || (oDevHssType == "HmIP-DRSI4") || (oDevHssType == "HmIP-DRG-DALI") || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))) {
+-      if ((oDevHssType.Substr(0,6) == "HmIPW-")
+-        || (oDevHssType == "HmIP-DRSI1")
+-        || (oDevHssType == "HmIP-DRSI4")
+-        || (oDevHssType == "HmIP-DRG-DALI")
+-        || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))
+-        || (oDevHssType == "HmIP-WGD")
+-        || (oDevHssType == "HmIP-WGD-PL")
+-        || (oDevHssType == "HmIP-UDI-PB2")
+-        || (oDevHssType == "HmIP-UDI-PB2-A")
+-        || (oDevHssType == "HmIP-UDI-SMI55")
+-        || (oDevHssType == "HmIP-UDI-SMI55-A")
+-        ) {
+-
 -        object chnParam;
 -        ! A HmIPW-* device with a control for the parameter IDENTIFY_TARGET_LEVEL (MAINTENANCE channel)
 -        ! should be visible. So it's possible to use the identify function of HmIPW-devices.
