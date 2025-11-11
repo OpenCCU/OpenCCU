@@ -532,6 +532,15 @@
                    WriteLine("</div>");
                  WriteLine("</td>");
                WriteLine("</tr>");
+@@ -218,7 +218,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ }
 @@ -249,7 +249,7 @@
                WriteLine("<tr>");
                  WriteLine("<td  class='CLASS02513'>");
@@ -541,6 +550,37 @@
                    WriteLine("</div>");
                  WriteLine("</td>");
                WriteLine("</tr>");
+@@ -257,7 +257,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ }
+@@ -295,7 +295,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ 
+@@ -348,9 +348,9 @@
+ 
+   if (
+     ((oErrorJammed) && (oErrorJammed.Value() == true))
+-    || ((oErrorLoadTooLow) && (oErrorLoadTooLow == true))
+-    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock == true))
+-    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock == true))
++    || ((oErrorLoadTooLow) && (oErrorLoadTooLow.Value() == true))
++    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock.Value() == true))
++    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock.Value() == true))
+     ) {
+     errorMsg = true;
+   }
 --- occu/WebUI/www/rega/esp/controls/door_window_contact.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/door_window_contact.fn
 @@ -5,7 +5,7 @@

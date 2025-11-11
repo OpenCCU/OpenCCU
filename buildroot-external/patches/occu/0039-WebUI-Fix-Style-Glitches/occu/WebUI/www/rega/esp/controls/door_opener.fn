@@ -218,7 +218,7 @@ function ::CreateDoorLockStateTransmitter() {
               WriteLine("</table>");
             WriteLine("</td>");
           WriteLine("</tr>");
-        WriteLine("</table");
+        WriteLine("</table>");
       WriteLine("</td>");
   }
 }
@@ -257,7 +257,7 @@ function ::CreateDoorLockStateTranseiver() {
               WriteLine("</table>");
             WriteLine("</td>");
           WriteLine("</tr>");
-        WriteLine("</table");
+        WriteLine("</table>");
       WriteLine("</td>");
   }
 }
@@ -295,7 +295,7 @@ function ::CreateDoorStateTranseiver() {
               WriteLine("</table>");
             WriteLine("</td>");
           WriteLine("</tr>");
-        WriteLine("</table");
+        WriteLine("</table>");
       WriteLine("</td>");
   }
 
@@ -348,9 +348,9 @@ function ::CreateDoorLockTranseiver() {
 
   if (
     ((oErrorJammed) && (oErrorJammed.Value() == true))
-    || ((oErrorLoadTooLow) && (oErrorLoadTooLow == true))
-    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock == true))
-    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock == true))
+    || ((oErrorLoadTooLow) && (oErrorLoadTooLow.Value() == true))
+    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock.Value() == true))
+    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock.Value() == true))
     ) {
     errorMsg = true;
   }
