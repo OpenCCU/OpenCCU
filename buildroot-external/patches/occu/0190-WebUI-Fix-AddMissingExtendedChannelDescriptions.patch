@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -36251,15 +36251,15 @@
+@@ -36268,15 +36268,15 @@
      multiMode = oChannelDescr.multiMode;
    var tmpDev;
  
@@ -20,7 +20,7 @@
  
    if (chType == "KEY_TRANSCEIVER") {
      if (deviceType.toLowerCase().indexOf("hmip-asir") != -1) {
-@@ -36338,6 +36338,7 @@
+@@ -36355,6 +36355,7 @@
          case "hmip-wgt-a":
          case "hmip-wgtc":
          case "hmip-wgtc-a":
@@ -28,7 +28,7 @@
            var channelMode = homematic("Interface.getMetadata", {
              "objectId": channel.id,
              "dataId": "channelMode"
-@@ -36458,13 +36459,15 @@
+@@ -36475,13 +36476,15 @@
          typeExt = "_" + multiMode;
        } else {
          if (channelAddress != "undefined") {

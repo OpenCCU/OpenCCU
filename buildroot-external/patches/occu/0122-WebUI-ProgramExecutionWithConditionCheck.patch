@@ -109,7 +109,7 @@
  .CLASS02105 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -34608,14 +34608,14 @@
+@@ -34625,14 +34625,14 @@
    return arTmp[0]+':'+arTmp[1];
  };
  
@@ -126,7 +126,7 @@
    pb += "}";
    var opts = {postBody: ReGa.encode(pb)};
    if(dbg)alert(pb);
-@@ -37990,13 +37990,15 @@
+@@ -38007,13 +38007,15 @@
   **/
  iseButtonProg = Class.create();
  iseButtonProg.prototype = {
@@ -144,7 +144,7 @@
      if ( progActive ) { ControlBtn.on(this.actBtn); }
      
      // Add event handlers
-@@ -38007,7 +38009,7 @@
+@@ -38024,7 +38026,7 @@
    onClickStart: function() 
    {
      ControlBtn.pushed(this.startBtn);

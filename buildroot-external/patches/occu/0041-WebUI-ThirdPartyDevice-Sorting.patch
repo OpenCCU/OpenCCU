@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25859,6 +25859,8 @@
+@@ -25876,6 +25876,8 @@
      {id: "INTERFACE_BIDCOS_WIRED", name: translateKey("BidCosWired-Filter")}, // BidCos-Wired
      {id: "INTERFACE_HMIP_RF", name: translateKey("HmIPRF")}, // HmIP-RF
      {id: "INTERFACE_VIRTUAL_DEVICES", name: translateKey("VirtualDevices")},

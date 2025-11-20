@@ -545,7 +545,7 @@
            append s1 "</td>"
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -46925,50 +46925,65 @@
+@@ -46942,50 +46942,65 @@
      srcElm.value = value;
    }
  
@@ -625,7 +625,7 @@
      }
      srcElm.setAttribute("valvalid", "true");
    }
-@@ -46976,9 +46991,9 @@
+@@ -46993,9 +47008,9 @@
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";

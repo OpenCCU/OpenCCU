@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -32151,7 +32151,11 @@
+@@ -32168,7 +32168,11 @@
      this.removeMessagebox();
    },
    LoadFromFile: function(fn,pb) {
@@ -13,7 +13,7 @@
      var t = this;
      var opt = 
      {
-@@ -50620,7 +50624,11 @@
+@@ -50637,7 +50641,11 @@
    },
    
    LoadFromFile: function(src, pb) {
@@ -26,7 +26,7 @@
      var t = this;
      var opt = 
      {
-@@ -50749,7 +50757,11 @@
+@@ -50766,7 +50774,11 @@
    
    LoadFromFile: function(src, pb)
    {

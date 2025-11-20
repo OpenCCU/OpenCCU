@@ -935,6 +935,7 @@ jQuery.extend(true,langJSON, {
     "stringTableWeatherSunshineTrue" : "Sunshine",
     "stringTableWeatherSunshineFalse" : "No sunshine",
     "stringTableWeatherTemperature" : "Temperature",
+    "stringTableWeatherTemperatureDiff" : "Temperature difference",
     "stringTableWeatherTitle" : "Weather sensor",
     "stringTableWeatherWindDir" : "Wind direction",
     "stringTableWeatherWindDirRange" : "Wind direction fluctuation range",

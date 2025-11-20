@@ -10,7 +10,7 @@
        urlParamInterfaces = jQuery.url().param('showInterfaces');
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25458,8 +25458,8 @@
+@@ -25475,8 +25475,8 @@
  
  StartPage = Singleton.create(Page, {
    MAINMENU_ID: "MAINMENU_STARTPAGE",
@@ -21,7 +21,7 @@
    fieldTestActive: "/etc/config/fieldTestActive",
    downloadURL : "",
    prevDownloadURL : "",
-@@ -29636,8 +29636,8 @@
+@@ -29653,8 +29653,8 @@
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
      this.m_product = "HM-RASPBERRYMATIC";

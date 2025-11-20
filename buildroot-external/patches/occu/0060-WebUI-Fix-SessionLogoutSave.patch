@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -33413,8 +33413,9 @@
+@@ -33430,8 +33430,9 @@
  logout = function() {
    regaMonitor.stop();
    InterfaceMonitor.stop();

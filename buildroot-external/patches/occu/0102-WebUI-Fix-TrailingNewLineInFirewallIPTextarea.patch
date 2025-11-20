@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -16900,7 +16900,7 @@
+@@ -16917,7 +16917,7 @@
      firewallPolicy = this.m_portListBox.getSelectedItem().id,
      hmscriptAccess = this.m_hmscriptListBox.getSelectedItem().id,
      mediolaAccess = this.m_mediolaListBox.getSelectedItem().id,

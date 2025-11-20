@@ -135,7 +135,7 @@
  DEV_LIST.push('HM-LC-Dim1T-CV-2');
  DEV_DESCRIPTION["HM-LC-Dim1T-CV-2"] = "HM-LC-Dim1T-CV";
  DEV_PATHS["HM-LC-Dim1T-CV-2"] = new Object();
-@@ -11400,7 +11406,8 @@
+@@ -11417,7 +11423,8 @@
      "HM-Sec-SD-Team",
      "HM-Sec-SD-2-Team",
      "HmIP-CCU3",
