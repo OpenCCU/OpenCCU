@@ -28,7 +28,7 @@ jobs:
     name: Check for Changes
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: commit-check
         run: echo "has-commits=$(git --no-pager log --pretty='format:%an' --since='24 hours ago' | grep -v github-actions | wc -l)" >> $GITHUB_OUTPUT
     outputs:
@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Dependencies
         run: |
@@ -331,7 +331,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Dependencies
         run: |
@@ -489,7 +489,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -517,7 +517,7 @@ jobs:
     if: github.event_name != 'pull_request'
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: master
           persist-credentials: true
