@@ -14,6 +14,10 @@ OPENVMTOOLS_CPE_ID_VENDOR = vmware
 OPENVMTOOLS_CPE_ID_PRODUCT = tools
 OPENVMTOOLS_CPE_ID_VERSION = $(OPENVMTOOLS_VERSION_MAJOR)
 
+# This CVE affects a Wordpress plugin. VMware information,
+# previously connected to this CVE ID because of a typo, is at CVE-2022-31693
+OPENVMTOOLS_IGNORE_CVES += CVE-2021-31693
+
 # False positives: CVEs are for open-vm-tools predecessor vm-support 0.88
 OPENVMTOOLS_IGNORE_CVES = CVE-2014-4199 CVE-2014-4200
 

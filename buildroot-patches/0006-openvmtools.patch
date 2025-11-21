@@ -2097,7 +2097,7 @@
  sha256  f734933bd7d49aef25aaf897ed7281ee822e8635056e69b895a7d2e668937fc5  COPYING
 --- buildroot/package/openvmtools/openvmtools.mk.orig
 +++ buildroot/package/openvmtools/openvmtools.mk
-@@ -4,17 +4,18 @@
+@@ -4,21 +4,22 @@
  #
  ################################################################################
  
@@ -2113,6 +2113,10 @@
  OPENVMTOOLS_CPE_ID_PRODUCT = tools
 +OPENVMTOOLS_CPE_ID_VERSION = $(OPENVMTOOLS_VERSION_MAJOR)
  
+ # This CVE affects a Wordpress plugin. VMware information,
+ # previously connected to this CVE ID because of a typo, is at CVE-2022-31693
+ OPENVMTOOLS_IGNORE_CVES += CVE-2021-31693
+ 
 -# 0013-Properly-check-authorization-on-incoming-guestOps-re.patch
 -OPENVMTOOLS_IGNORE_CVES += CVE-2022-31676
 +# False positives: CVEs are for open-vm-tools predecessor vm-support 0.88
@@ -2120,7 +2124,7 @@
  
  # 0014-CVE-2025-22247-1100-1225-VGAuth-updates.patch
  OPENVMTOOLS_IGNORE_CVES += CVE-2025-22247
-@@ -24,7 +25,8 @@
+@@ -28,7 +29,8 @@
  OPENVMTOOLS_CONF_OPTS = --with-dnet \
  	--without-icu --without-x --without-gtk2 \
  	--without-gtkmm --without-kernel-modules \
@@ -2130,7 +2134,7 @@
  OPENVMTOOLS_CONF_ENV += \
  	CUSTOM_DNET_CPPFLAGS=" " \
  	LIBS=$(TARGET_NLS_LIBS)
-@@ -35,7 +37,10 @@
+@@ -39,7 +41,10 @@
  	$(TARGET_NLS_DEPENDENCIES)
  
  ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
@@ -2141,7 +2145,7 @@
  endif
  
  ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
-@@ -44,7 +49,11 @@
+@@ -48,7 +53,11 @@
  
  # When libfuse is available, openvmtools can build vmblock-fuse, so
  # make sure that libfuse gets built first
