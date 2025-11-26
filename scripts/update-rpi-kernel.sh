@@ -16,10 +16,10 @@ ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | a
 if [[ -n "${ARCHIVE_HASH}" ]]; then
 
   # get old stable version
-  OLD_PACKAGE=$(sed -n 's/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="\(.*\)"/\1/p' buildroot-external/configs/raspmatic_rpi* | head -1 | xargs basename)
+  OLD_PACKAGE=$(sed -n 's/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="\(.*\)"/\1/p' buildroot-external/configs/rpi*.config | head -1 | xargs basename)
 
   # update package info
-  sed -i "s|BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION=\"${PROJECT_URL}/.*\"|BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION=\"${PROJECT_URL}/archive/${ID}.tar.gz\"|g" buildroot-external/configs/raspmatic_rpi*
+  sed -i "s|BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION=\"${PROJECT_URL}/.*\"|BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION=\"${PROJECT_URL}/archive/${ID}.tar.gz\"|g" buildroot-external/configs/rpi*.config
 
   # update hash files
   sed -i "/${OLD_PACKAGE}/d" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"

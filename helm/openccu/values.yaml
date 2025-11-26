@@ -1,0 +1,169 @@
+---
+#
+# IMPORTANT NOTE
+#
+# This chart inherits from bjw-s common library chart. You can check the default values/options here:
+# https://github.com/bjw-s-labs/helm-charts/blob/main/charts/library/common/values.yaml
+#
+
+image:
+  # -- image repository
+  repository: ghcr.io/openccu/openccu
+  # -- image pull policy
+  pullPolicy: IfNotPresent
+
+
+persistence:
+  data:
+    # -- enabling persistent data. See options at https://github.com/bjw-s-labs/helm-charts/tree/main/docs/common-library/storage/
+    enabled: false
+    mountPath: /usr/local
+  sys:
+    enabled: true
+    type: hostPath
+    hostPath: /sys
+  modules:
+    enabled: true
+    type: hostPath
+    hostPath: /lib/modules
+
+securityContext:
+  # -- Use privileged to access the Homematic HW
+  privileged: true
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  main:
+    ports:
+      ssh:
+        enabled: true
+        port: 22
+        protocol: TCP
+      http:
+        enabled: true
+        port: 80
+        protocol: HTTP
+      # -- WebUI access via proxy
+      http-proxy:
+        enabled: true
+        port: 8099
+        protocol: HTTP
+      https:
+        enabled: true
+        port: 443
+        protocol: HTTPS
+      # -- ReGaHss XmlRpc
+      xmlrpc:
+        enabled: true
+        port: 1999
+        protocol: TCP
+      # -- ReGaHss XmlRpc proxy
+      xmlrpc-proxy:
+        enabled: true
+        port: 31999
+        protocol: TCP
+      # -- ReGaHss XmlRpc TLS
+      xmlrpc-tls:
+        enabled: true
+        port: 41999
+        protocol: TCP
+      # -- wired Homematic (HS485D XmlRpc)
+      wired:
+        enabled: true
+        port: 2000
+        protocol: TCP
+      # -- wired Homematic (HS485D XmlRpc) proxy
+      wired-proxy:
+        enabled: true
+        port: 32000
+        protocol: TCP
+      # -- wired Homematic (HS485D XmlRpc) TLS
+      wired-tls:
+        enabled: true
+        port: 42000
+        protocol: TCP
+      # -- wireless Homematic (rfd)
+      rfd:
+        enabled: true
+        port: 2001
+        protocol: TCP
+      # -- wireless Homematic (rfd) proxy
+      rfd-proxy:
+        enabled: true
+        port: 32001
+        protocol: TCP
+      # -- wireless Homematic (rfd) TLS
+      rfd-tls:
+        enabled: true
+        port: 42001
+        protocol: TCP
+      # -- crRFD Legacy XmlRpc - Homematic IP
+      hmip:
+        enabled: true
+        port: 2010
+        protocol: TCP
+      # -- crRFD Legacy XmlRpc - Homematic IP proxy
+      hmip-proxy:
+        enabled: true
+        port: 32010
+        protocol: TCP
+      # -- crRFD Legacy XmlRpc - Homematic IP TLS
+      hmip-tls:
+        enabled: true
+        port: 42010
+        protocol: TCP
+      # -- Rega
+      rega:
+        enabled: true
+        port: 8181
+        protocol: TCP
+      # -- Rega proxy
+      rega-proxy:
+        enabled: true
+        port: 8183
+        protocol: TCP
+      # -- Rega TLS
+      rega-tls:
+        enabled: true
+        port: 48181
+        protocol: TCP
+      # -- HMServer - Virtual Devices
+      virt-dev:
+        enabled: true
+        port: 9292
+        protocol: TCP
+      # -- HMServer - Virtual Devices
+      virt-dev-proxy:
+        enabled: true
+        port: 39292
+        protocol: TCP
+      # -- HMServer - Virtual Devices TLS
+      virt-dev-tls:
+        enabled: true
+        port: 49292
+        protocol: TCP
+      snmp:
+        enabled: true
+        port: 161
+        protocol: UDP
+      # -- uPnP/ssdp
+      upnp:
+        enabled: true
+        port: 1900
+        protocol: UDP
+      # -- eq3configd
+      eq3configd:
+        enabled: true
+        port: 43439
+        protocol: UDP
+
+ingress:
+  # -- Enable and configure ingress settings for the chart under this key.
+  # @default -- See values.yaml
+  main:
+    enabled: false

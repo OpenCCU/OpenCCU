@@ -1,5 +1,5 @@
-BUILDROOT_VERSION=2025.05.1
-BUILDROOT_SHA256=639719adff2ea41206a97c392eb02fe4bf096c83587f24ce29679730fe1a1052
+BUILDROOT_VERSION=2025.08.2
+BUILDROOT_SHA256=1a30eca6d4cac375c6c57134d7df6c3a944a1875ebc4d8ca3b13aad9ad682cbc
 BUILDROOT_EXTERNAL=buildroot-external
 DEFCONFIG_DIR=$(BUILDROOT_EXTERNAL)/configs
 OCCU_VERSION=$(shell grep "OCCU_VERSION =" $(BUILDROOT_EXTERNAL)/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)
@@ -17,7 +17,7 @@ else
 	PRODUCT:=$(firstword $(PRODUCTS))
 endif
 
-PLATFORM:=$(shell echo -n $(PRODUCT) | cut -d'_' -f2- | sed 's/_\(amd64\|arm.*\)//')
+PLATFORM:=$(shell echo -n $(PRODUCT) | sed 's/_\(amd64\|arm.*\)//')
 
 .NOTPARALLEL: $(PRODUCTS) $(addsuffix -release, $(PRODUCTS)) $(addsuffix -clean, $(PRODUCTS)) build-all clean-all release-all
 .PHONY: all build release clean clean-all distclean default buildroot-help help updatePkg
@@ -32,7 +32,7 @@ buildroot-$(BUILDROOT_VERSION).tar.gz: $(BR2_DL_DIR)
 
 buildroot-$(BUILDROOT_VERSION): | buildroot-$(BUILDROOT_VERSION).tar.gz
 	@echo "[patching buildroot-$(BUILDROOT_VERSION)]"
-	if [ ! -d $@ ]; then tar xf buildroot-$(BUILDROOT_VERSION).tar.gz; for p in $(sort $(wildcard buildroot-patches/*.patch)); do echo "\nApplying $${p}"; patch -d buildroot-$(BUILDROOT_VERSION) --remove-empty-files -p1 < $${p} || exit 127; [ ! -x $${p%.*}.sh ] || $${p%.*}.sh buildroot-$(BUILDROOT_VERSION); done; fi
+	if [ ! -d $@ ]; then tar xf buildroot-$(BUILDROOT_VERSION).tar.gz; for p in $(sort $(wildcard buildroot-patches/*.patch)); do echo "\nApplying $${p}"; patch -d buildroot-$(BUILDROOT_VERSION) --remove-empty-files --no-backup-if-mismatch -p1 < $${p} || exit 127; [ ! -x $${p%.*}.sh ] || $${p%.*}.sh buildroot-$(BUILDROOT_VERSION); done; fi
 
 build-$(PRODUCT): | buildroot-$(BUILDROOT_VERSION)
 	mkdir $(shell pwd)/build-$(PRODUCT)
@@ -60,7 +60,7 @@ build: | buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
 ifneq ($(FAKE_BUILD),true)
 	cd $(shell pwd)/build-$(PRODUCT) && $(MAKE) O=$(shell pwd)/build-$(PRODUCT) -C ../buildroot-$(BUILDROOT_VERSION) BR2_EXTERNAL=../$(BUILDROOT_EXTERNAL) BR2_DL_DIR=$(BR2_DL_DIR) BR2_CCACHE_DIR=$(BR2_CCACHE_DIR) BR2_JLEVEL=$(BR2_JLEVEL) PRODUCT=$(PRODUCT) PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM)
 else
-	$(eval BOARD := $(shell echo $(PRODUCT) | cut -d'_' -f2-))
+	$(eval BOARD := $(shell echo $(PRODUCT)))
 	# Dummy build - mainly for testing CI
 	echo -n "FAKE_BUILD - generating fake release archives..."
 	mkdir -p build-$(PRODUCT)/images
@@ -75,12 +75,12 @@ else
 	echo DUMMY >$(TMPDIR)/LICENSE
 	tar -C $(TMPDIR) -cvf $(TMPDIR)/oci/layer.tar LICENSE sbin/init var/status/startupFinished
 	echo '[{"Layers":["oci/layer.tar"]}]' >$(TMPDIR)/manifest.json
-	tar -C $(TMPDIR) -cvf $(TMPDIR)/RaspberryMatic-$(PRODUCT_VERSION)-$(BOARD).tar oci manifest.json
-	mv $(TMPDIR)/RaspberryMatic-$(PRODUCT_VERSION)-$(BOARD).tar build-$(PRODUCT)/images/
+	tar -C $(TMPDIR) -cvf $(TMPDIR)/OpenCCU-$(PRODUCT_VERSION)-$(BOARD).tar oci manifest.json
+	mv $(TMPDIR)/OpenCCU-$(PRODUCT_VERSION)-$(BOARD).tar build-$(PRODUCT)/images/
 	rm -rf $(TMPDIR)
 	# create fake sdcard.img and ova
 	echo DUMMY >build-$(PRODUCT)/images/sdcard.img
-	echo DUMMY >build-$(PRODUCT)/images/RaspberryMatic.ova
+	echo DUMMY >build-$(PRODUCT)/images/OpenCCU.ova
 endif
 
 release-all: $(addsuffix -release, $(PRODUCTS))
@@ -89,7 +89,7 @@ $(addsuffix -release, $(PRODUCTS)): %:
 
 release: build
 	@echo "[creating release: $(PRODUCT)]"
-	$(eval BOARD_DIR := $(BUILDROOT_EXTERNAL)/board/$(shell echo $(PRODUCT) | cut -d'_' -f2- | sed 's/_\(amd64\|arm.*\)//'))
+	$(eval BOARD_DIR := $(BUILDROOT_EXTERNAL)/board/$(shell echo $(PRODUCT) | sed 's/_\(amd64\|arm.*\)//'))
 	if [ -x $(BOARD_DIR)/post-release.sh ]; then $(BOARD_DIR)/post-release.sh $(BOARD_DIR) $(PRODUCT) $(PRODUCT_VERSION); fi
 
 check-all: $(addsuffix -check, $(PRODUCTS))
@@ -98,7 +98,7 @@ $(addsuffix -check, $(PRODUCTS)): %:
 
 check: buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
 	@echo "[checking: $(PRODUCT)]"
-	$(eval BOARD_DIR := $(BUILDROOT_EXTERNAL)/board/$(shell echo $(PRODUCT) | cut -d'_' -f2- | sed 's/_\(amd64\|arm.*\)//'))
+	$(eval BOARD_DIR := $(BUILDROOT_EXTERNAL)/board/$(shell echo $(PRODUCT) | sed 's/_\(amd64\|arm.*\)//'))
 	@echo "[checking status: $(BUILDROOT_EXTERNAL)]"
 	buildroot-$(BUILDROOT_VERSION)/utils/check-package --exclude PackageHeader --br2-external $(BUILDROOT_EXTERNAL)/package/*/*
 	@echo "[checking apply patch status: OCCU $(OCCU_VERSION)]"
@@ -174,7 +174,7 @@ buildroot-help:
 	@$(MAKE) -C build-$(PRODUCT) PRODUCT=$(PRODUCT) PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM) help
 
 help:
-	@echo "HomeMatic/CCU Build Environment"
+	@echo "OpenCCU Build Environment"
 	@echo
 	@echo "Usage:"
 	@echo "  $(MAKE) <product>: build+create image for selected product"

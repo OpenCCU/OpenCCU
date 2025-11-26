@@ -532,6 +532,15 @@
                    WriteLine("</div>");
                  WriteLine("</td>");
                WriteLine("</tr>");
+@@ -218,7 +218,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ }
 @@ -249,7 +249,7 @@
                WriteLine("<tr>");
                  WriteLine("<td  class='CLASS02513'>");
@@ -541,6 +550,55 @@
                    WriteLine("</div>");
                  WriteLine("</td>");
                WriteLine("</tr>");
+@@ -257,7 +257,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ }
+@@ -287,7 +287,7 @@
+               WriteLine("<tr>");
+                 WriteLine("<td  class='CLASS02513'>");
+                   WriteLine("<div align='center'>");
+-                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
++                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
+                   WriteLine("</div>");
+                 WriteLine("</td>");
+               WriteLine("</tr>");
+@@ -295,7 +295,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ 
+@@ -348,9 +348,9 @@
+ 
+   if (
+     ((oErrorJammed) && (oErrorJammed.Value() == true))
+-    || ((oErrorLoadTooLow) && (oErrorLoadTooLow == true))
+-    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock == true))
+-    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock == true))
++    || ((oErrorLoadTooLow) && (oErrorLoadTooLow.Value() == true))
++    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock.Value() == true))
++    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock.Value() == true))
+     ) {
+     errorMsg = true;
+   }
+@@ -393,7 +393,7 @@
+                 WriteLine("<tr>");
+                   WriteLine("<td  class='CLASS02513'>");
+                     WriteLine("<div align='center'>");
+-                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
++                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
+                     WriteLine("</div>");
+                   WriteLine("</td>");
+                 WriteLine("</tr>");
 --- occu/WebUI/www/rega/esp/controls/door_window_contact.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/door_window_contact.fn
 @@ -5,7 +5,7 @@
@@ -771,7 +829,7 @@
            WriteLine("</table>")
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1441,7 +1441,7 @@
+@@ -1474,7 +1474,7 @@
    string showParam = true;
  
    WriteLine( '<td class="CLASS02519">' );
@@ -1346,7 +1404,7 @@
        <td class="thCell CLASS04900" >${thActivity}</td>
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm
-@@ -1099,6 +1099,13 @@
+@@ -1131,6 +1131,13 @@
  
  <div id="prgcontent">
    <table id="ProgramTable" class="filterTable tTable j_translate" border="0" cellpadding="0" cellspacing="0">
@@ -1360,7 +1418,7 @@
      <thead>
        <tr>
          <td class="thCell CLASS04802" >${thName}</td>
-@@ -1110,11 +1117,11 @@
+@@ -1142,11 +1149,11 @@
      </thead>
      <tbody>
        <tr class="CLASS04803">
@@ -2121,6 +2179,15 @@
  }
  
  /* Kopfzeile */
+@@ -305,7 +335,7 @@
+ {
+   /*position: absolute;*/
+   margin-left: 0px;
+-  margin-top: 6px;
++  margin-top: 0px;
+   padding-left: 10px;
+ }
+ 
 @@ -391,7 +421,9 @@
    text-align:center;
    border:solid 1px $_(black); /* black */
@@ -3675,7 +3742,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -25493,7 +25493,7 @@
+@@ -25821,7 +25821,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3684,7 +3751,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -25501,7 +25501,7 @@
+@@ -25829,7 +25829,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3693,7 +3760,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -27015,7 +27015,7 @@
+@@ -27343,7 +27343,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3702,7 +3769,7 @@
          "</tr>" +
        "</table>";
  
-@@ -31328,13 +31328,11 @@
+@@ -31656,13 +31656,11 @@
        case ID_ROOMS:
          this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
          this.setWidth75Perc();
@@ -3716,7 +3783,7 @@
          this.setFile( "/pages/msg/popupPropEditor.htm" );
          break;
        case ID_TRANSFER_PARAMETERS:
-@@ -32909,7 +32907,7 @@
+@@ -33237,7 +33235,7 @@
    var opts = {
      evalScripts: true,
      onComplete: function(trans) {
@@ -3725,7 +3792,7 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
-@@ -44773,7 +44771,7 @@
+@@ -45322,7 +45320,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3734,7 +3801,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -44825,8 +44823,8 @@
+@@ -45374,8 +45372,8 @@
    
    if (!form) return;
  
@@ -3745,7 +3812,7 @@
  
    switch (form[gd_type])
    {
-@@ -44922,7 +44920,7 @@
+@@ -45471,7 +45469,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;

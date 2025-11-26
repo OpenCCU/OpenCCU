@@ -1,4 +1,4 @@
-# RaspberryMatic Stale workflow
+# OpenCCU Stale workflow
 # yamllint disable rule:truthy
 ---
 name: Stale
@@ -22,7 +22,7 @@ jobs:
       # - No PRs marked as no-stale or pinned
       # - No issues marked as no-stale, help-wanted or pinned
       - name: 90 days stale issues & PRs policy
-        uses: actions/stale@v9.1.0
+        uses: actions/stale@v10.1.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-stale: 90
@@ -37,7 +37,7 @@ jobs:
             backlog manageable we have to clean old issues, as many of them have
             already been resolved with the latest updates.
 
-            Please make sure to update to the latest RaspberryMatic version and
+            Please make sure to update to the latest OpenCCU version and
             check if that solves the issue. Let us know if that works for you by
             adding a comment 👍
 

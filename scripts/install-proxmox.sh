@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2086
 #
-# Script to install a RaspberryMatic VM/CT in Proxmox programatically.
-# https://raw.githubusercontent.com/jens-maus/RaspberryMatic/master/scripts/install-proxmox.sh
+# Script to install a OpenCCU VM/CT in Proxmox programatically.
+# https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/scripts/install-proxmox.sh
 #
 # Inspired by https://github.com/whiskerz007/proxmox_hassos_install
 #
@@ -10,7 +10,7 @@
 # Apache 2.0 License applies
 #
 # Usage:
-# wget -qO - https://raspberrymatic.de/install-proxmox.sh | bash -
+# wget -qO - https://openccu.de/install-proxmox.sh | bash -
 #
 
 # Setup script environment
@@ -181,7 +181,7 @@ update() {
   info "Selecting container..."
   MSG_MAX_LENGTH=0
   while read -r line; do
-    # check if container is a raspberrymatic kind of
+    # check if container is a openccu kind of
     # container
     CTID=$(echo ${line} | awk '{ print $1 }')
     if grep -q "unrestricted.seccomp" /etc/pve/lxc/${CTID}.conf 2>/dev/null; then
@@ -200,7 +200,7 @@ update() {
   done < <(pct list)
 
   if [[ -z "${CONTAINER_MENU[*]}" ]]; then
-    die "No installed RaspberryMatic container (CT) identified. The 'update' procedure is only for CT-based installations of RaspberryMatic!"
+    die "No installed OpenCCU container (CT) identified. The 'update' procedure is only for CT-based installations of OpenCCU!"
   fi
 
   CONTAINER=
@@ -222,10 +222,10 @@ update() {
   # set the VMTYPE we are going to update
   VMTYPE="CT"
 
-  # select target raspberrymatic version
+  # select target openccu version
   select_version version url
 
-  # Download RaspberryMatic ova archive
+  # Download OpenCCU ova archive
   info "Downloading disk image..."
   # shellcheck disable=SC2154
   wget -q --show-progress "${url}"
@@ -252,7 +252,7 @@ update() {
   if [[ -z "${OLD_VERSION}" ]] ||
     ! grep -q "PLATFORM=lxc" ${ROOTFS_PATH}/VERSION 2>/dev/null; then
     pct unmount ${CONTAINER}
-    die "Container ${CONTAINER} does not seem to have a valid RaspberryMatic rootfs path"
+    die "Container ${CONTAINER} does not seem to have a valid OpenCCU rootfs path"
   fi
 
   # start to perform update
@@ -314,13 +314,13 @@ select_version() {
     esac
   fi
 
-  # Select RaspberryMatic ova version
-  info "Getting available RaspberryMatic versions..."
+  # Select OpenCCU ova version
+  info "Getting available OpenCCU versions..."
   RELEASES=$(cat<<EOF | python3
 import requests
 import os
 import re
-url = "https://api.github.com/repos/jens-maus/RaspberryMatic/releases"
+url = "https://api.github.com/repos/OpenCCU/OpenCCU/releases"
 r = requests.get(url).json()
 if "message" in r:
     print("ERROR")
@@ -333,7 +333,7 @@ for release in r:
         if asset["name"].endswith("${ENDSWITH}") == True:
             image_url = asset["browser_download_url"]
             name = asset["name"]
-            version = re.findall('RaspberryMatic-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
+            version = re.findall('OpenCCU-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
             if len(version) > 0 and num < 5:
                 print(version[0] + ' release ' + image_url)
                 num = num + 1
@@ -348,7 +348,7 @@ EOF
 import requests
 import os
 import re
-url = "https://api.github.com/repos/jens-maus/RaspberryMatic/releases/tags/snapshots"
+url = "https://api.github.com/repos/OpenCCU/OpenCCU/releases/tags/snapshots"
 r = requests.get(url).json()
 if "message" in r:
     print("ERROR")
@@ -357,7 +357,7 @@ for asset in r["assets"]:
     if asset["name"].endswith("${ENDSWITH}") == True:
         image_url = asset["browser_download_url"]
         name = asset["name"]
-        version = re.findall('RaspberryMatic-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
+        version = re.findall('OpenCCU-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
         if len(version) > 0:
           print(version[0] + ' snapshot ' + image_url)
         break
@@ -369,7 +369,7 @@ EOF
   fi
 
   if [[ -z "${RELEASES}${SNAPSHOTS}" ]]; then
-    die "No RaspberryMatic release or snapshot build for '${PLATFORM}' PVE version found."
+    die "No OpenCCU release or snapshot build for '${PLATFORM}' PVE version found."
   fi
 
   if [[ -n "${RELEASES}" ]] && [[ -n "${SNAPSHOTS}" ]]; then
@@ -391,9 +391,9 @@ EOF
     ((i=i+1))
   done < <(echo "${RELEASES}")
 
-  RELEASE=$(whiptail --title "Select RaspberryMatic Version" \
+  RELEASE=$(whiptail --title "Select OpenCCU Version" \
                      --menu \
-                       "Select RaspberryMatic version to install:\n\n" \
+                       "Select OpenCCU version to install:\n\n" \
                        16 $((MSG_MAX_LENGTH + 23)) 6 \
                        "${RELEASES_MENU[@]}" 3>&1 1>&2 2>&3) || exit
 
@@ -406,7 +406,7 @@ EOF
   eval ${2}="${URL}"
 }
 
-msg "RaspberryMatic Proxmox installation script v${VERSION}"
+msg "OpenCCU Proxmox installation script v${VERSION}"
 msg "Copyright (c) 2022-2025 Jens Maus <mail@jens-maus.de>"
 msg ""
 
@@ -444,7 +444,7 @@ elif [[ "${1-}" == "update" ]]; then
 fi
 
 VMTYPE=$(whiptail --title "Virtual machine type selection" \
-	          --radiolist "Please select the virtual machine type you want RaspberryMatic to be installed:" \
+	          --radiolist "Please select the virtual machine type you want OpenCCU to be installed:" \
 		    16 46 6 \
 		    "VM" "(OVA) Full Virtual Machine" ON \
 		    "CT" "(LXC) Lightweight LXC container" OFF \
@@ -455,7 +455,7 @@ info "Using ${VMTYPE} as target virtual machine type"
 if [[ "${VMTYPE}" == "CT" ]]; then
 
   text=$(cat <<EOF
-When running RaspberryMatic as a LXC container, the Proxmox host system
+When running OpenCCU as a LXC container, the Proxmox host system
 requires certain dependencies (e.g. kernel modules) to be installed.
 During the next steps, correct installation of these dependencies is
 checked and packages might get installed which require a manual reboot
@@ -646,7 +646,7 @@ EOF
 
 fi
 
-# ask for the raspberrymatic version
+# ask for the openccu version
 select_version RELEASE URL
 
 # Select storage location
@@ -690,7 +690,7 @@ info "Selecting virtual disk size"
 DISK_MINSIZE=4
 DISK_CURSIZE=6
 while true; do
-  if DISK_SIZE=$(whiptail --inputbox "Please enter the virtual disk size (GB) for the RaspberryMatic ${VMTYPE} (minimum is ${DISK_MINSIZE} GB)" 8 58 ${DISK_CURSIZE} --title "Virtual disk size" 3>&1 1>&2 2>&3); then
+  if DISK_SIZE=$(whiptail --inputbox "Please enter the virtual disk size (GB) for the OpenCCU ${VMTYPE} (minimum is ${DISK_MINSIZE} GB)" 8 58 ${DISK_CURSIZE} --title "Virtual disk size" 3>&1 1>&2 2>&3); then
     if [[ -z "${DISK_SIZE}" ]]; then
       DISK_SIZE=${DISK_MINSIZE}
     fi
@@ -728,7 +728,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
   if [[ -n "${USB_MENU[*]}" ]]; then
     info "Selecting HomeMatic-RF USB devices"
     USB_DEVICE=$(whiptail --title "HomeMatic-RF USB devices" --radiolist \
-    "Which HomeMatic-RF USB device should be bind to RaspberryMatic ${VMTYPE}?\n\n" \
+    "Which HomeMatic-RF USB device should be bind to OpenCCU ${VMTYPE}?\n\n" \
     16 $((MSG_MAX_LENGTH + 23)) 6 \
     "${USB_MENU[@]}" 3>&1 1>&2 2>&3) || exit
 
@@ -745,7 +745,7 @@ fi
 # Get next free VM/LXC ID and ask user
 NEXTID=$(pvesh get /cluster/nextid)
 while true; do
-  if VMID=$(whiptail --inputbox "Please enter the ID for the RaspberryMatic ${VMTYPE}\n(next free ID is: ${NEXTID})" 8 58 ${NEXTID} --title "Virtual Machine ID" 3>&1 1>&2 2>&3); then
+  if VMID=$(whiptail --inputbox "Please enter the ID for the OpenCCU ${VMTYPE}\n(next free ID is: ${NEXTID})" 8 58 ${NEXTID} --title "Virtual Machine ID" 3>&1 1>&2 2>&3); then
     if [[ -z "${VMID}" ]]; then
       VMID=${NEXTID}
     fi
@@ -766,7 +766,7 @@ while true; do
   fi
 done
 
-# Download RaspberryMatic ova archive
+# Download OpenCCU ova archive
 info "Downloading disk image..."
 wget -q --show-progress "${URL}"
 echo -en "\e[1A\e[0K" #Overwrite output from wget
@@ -775,18 +775,18 @@ FILE=$(basename "${URL}")
 # main installation steps
 if [[ "${VMTYPE}" == "VM" ]]; then
 
-  # Extract RaspberryMatic disk image
+  # Extract OpenCCU disk image
   info "Extracting disk image..."
   if [[ "${PLATFORM}" == "aarch64" ]]; then
     unzip "${FILE}" '*.img*'
-    IMG_FILE="$(ls RaspberryMatic-*-aarch64.img)"
+    IMG_FILE="$(ls OpenCCU-*-aarch64.img)"
     if [[ -f "${IMG_FILE}.sha256" ]]; then
       info "Verifying download checksum..."
       sha256sum -c "${IMG_FILE}.sha256" >>${LOGFILE}
     fi
   else
     tar xf "${FILE}"
-    IMG_FILE="RaspberryMatic.ovf"
+    IMG_FILE="OpenCCU.ovf"
   fi
 
   # Identify target format
@@ -804,7 +804,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
     qm create ${VMID} -bios ovmf \
                       -cores 2 \
                       -memory 1024 \
-                      -name "RaspberryMatic"
+                      -name "OpenCCU"
 
     # create EFI disk
     info "Allocating EFI disk..."
@@ -827,7 +827,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
       --acpi 1 \
       --agent 1,fstrim_cloned_disks=1,type=virtio \
       --hotplug network,disk,usb \
-      --description "[![RaspberryMatic](https://raw.githubusercontent.com/jens-maus/RaspberryMatic/master/release/logo.png 'RaspberryMatic')](https://raspberrymatic.de)" \
+      --description "[![OpenCCU](https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/logo.png 'OpenCCU')](https://openccu.de)" \
       --net0 virtio,bridge=vmbr0,firewall=1 \
       --onboot 1 \
       --tablet 1 \
@@ -855,7 +855,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
       --numa 1 \
       --agent 1,fstrim_cloned_disks=1,type=virtio \
       --hotplug network,disk,usb,cpu,memory \
-      --description "[![RaspberryMatic](https://raw.githubusercontent.com/jens-maus/RaspberryMatic/master/release/logo.png 'RaspberryMatic')](https://raspberrymatic.de)" \
+      --description "[![OpenCCU](https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/logo.png 'OpenCCU')](https://openccu.de)" \
       --net0 virtio,bridge=vmbr0,firewall=1 \
       --onboot 1 \
       --tablet 0 \
@@ -896,8 +896,8 @@ elif [[ "${VMTYPE}" == "CT" ]]; then
     --memory 1024 \
     --rootfs volume=${STORAGE}:1,mountoptions=noatime \
     --mp0 volume=${STORAGE}:${DISK_SIZE},mp=/usr/local,mountoptions=noatime \
-    --description "[![RaspberryMatic](https://raw.githubusercontent.com/jens-maus/RaspberryMatic/master/release/logo.png 'RaspberryMatic')](https://raspberrymatic.de)" \
-    --hostname "RaspberryMatic"
+    --description "[![OpenCCU](https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/logo.png 'OpenCCU')](https://openccu.de)" \
+    --hostname "OpenCCU"
 
   # patching container config
   info "Patching CT config..."
@@ -912,4 +912,4 @@ lxc.hook.pre-start: sh -c "sysctl -q -w kernel.sched_rt_runtime_us=-1"
 EOF
 fi
 
-info "Completed Successfully. New ${VMTYPE} is: \e[1m${VMID} (RaspberryMatic)\e[0m."
+info "Completed Successfully. New ${VMTYPE} is: \e[1m${VMID} (OpenCCU)\e[0m."

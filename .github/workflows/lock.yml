@@ -1,3 +1,6 @@
+# OpenCCU Lock Closed Issues workflow
+# yamllint disable rule:truthy
+---
 name: Lock Closed Issues
 
 on:
@@ -11,7 +14,7 @@ permissions:
 
 jobs:
   lock:
-    if: github.repository_owner == 'jens-maus'
+    if: github.repository_owner == 'OpenCCU'
     runs-on: ubuntu-latest
     steps:
       - uses: dessant/lock-threads@v5.0.1

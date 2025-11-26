@@ -38,8 +38,8 @@ support/scripts/genimage.sh -c "${BOARD_DIR}/genimage.cfg"
 # lets create an *.ova archive from the vmdk, template ovf file and
 # also create a *.mf manifest file
 OVADIR=$(mktemp -d)
-cp -a "${BINARIES_DIR}/sdcard.vmdk" "${OVADIR}/RaspberryMatic.vmdk"
-cp -a "${BOARD_DIR}/template.ovf" "${OVADIR}/RaspberryMatic.ovf"
-(cd "${OVADIR}" && "${HOST_DIR}/bin/openssl" sha256 RaspberryMatic.* | sed 's/SHA2-256/SHA256/' >RaspberryMatic.mf)
-tar -C "${OVADIR}" --owner=root --group=root -cf "${BINARIES_DIR}/RaspberryMatic.ova" RaspberryMatic.ovf RaspberryMatic.vmdk RaspberryMatic.mf
+cp -a "${BINARIES_DIR}/sdcard.vmdk" "${OVADIR}/OpenCCU.vmdk"
+cp -a "${BOARD_DIR}/template.ovf" "${OVADIR}/OpenCCU.ovf"
+(cd "${OVADIR}" && "${HOST_DIR}/bin/openssl" sha256 OpenCCU.* | sed 's/SHA2-256/SHA256/' >OpenCCU.mf)
+tar -C "${OVADIR}" --owner=root --group=root -cf "${BINARIES_DIR}/OpenCCU.ova" OpenCCU.ovf OpenCCU.vmdk OpenCCU.mf
 rm -rf "${OVADIR}"

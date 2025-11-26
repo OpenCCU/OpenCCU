@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-profile raspberrymatic flags=(attach_disconnected,mediate_deleted,complain) {
+profile openccu flags=(attach_disconnected,mediate_deleted,complain) {
   #include <abstractions/base>
 
   # Capabilities

@@ -352,7 +352,7 @@
  -ms-word-break: break-all;
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -30544,7 +30544,15 @@
+@@ -30872,7 +30872,15 @@
      pb += "integer iVisible   = '"+($(ctrlId).checked ? 1 : 0)+"';";
      new Ajax.Request(url, {postBody: ReGa.encode(pb)});  
    },

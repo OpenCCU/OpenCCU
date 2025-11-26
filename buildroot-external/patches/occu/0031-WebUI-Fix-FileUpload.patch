@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -61,10 +61,14 @@
+@@ -62,10 +62,14 @@
        puts "conInfo(\"EULA found\");"
        puts "jQuery('#fwUpload').hide();"
        puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
@@ -18,7 +18,7 @@
          puts "} else {"
            puts "jQuery('#fwUpload').hide();"
            puts "dlgPopup.hide();"
-@@ -77,16 +81,19 @@
+@@ -78,16 +82,19 @@
  
      puts "req.fail(function(data) {"
        puts "conInfo(\"EULA not available\");"
@@ -42,7 +42,7 @@
    http_head
    division {class="popupTitle"} {
      #puts "Softwareupdate - Best&auml;tigung"
-@@ -255,7 +262,7 @@
+@@ -256,7 +263,7 @@
  }
  
  proc action_firmware_update_cancel {} {
@@ -51,7 +51,7 @@
  
    if {[getProduct] < 3} {
      catch {exec rm /var/new_firmware.tar.gz}
-@@ -422,9 +429,7 @@
+@@ -423,9 +430,7 @@
              table_row {
                td {width="20"} {}
                table_data {colspan="2"} {
@@ -62,7 +62,7 @@
                    file_button firmware_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
-@@ -944,7 +949,7 @@
+@@ -945,7 +950,7 @@
  
  proc action_firmware_upload {} {
  
@@ -71,7 +71,7 @@
  
    if { [catch { import directDownload } error] } {
      set directDownload false
-@@ -953,10 +958,7 @@
+@@ -954,10 +959,7 @@
    http_head
    
    if { $directDownload } {
@@ -83,7 +83,7 @@
    }
  
    if {[getProduct] < 3} {
-@@ -1071,10 +1073,14 @@
+@@ -1072,10 +1074,14 @@
  
    cgi_javascript {
      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
@@ -102,7 +102,7 @@
    }
  }
  
-@@ -1356,10 +1362,10 @@
+@@ -1357,10 +1363,10 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -1119,7 +1119,7 @@
 +package provide cgi 1.10.0
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -8301,6 +8301,7 @@
+@@ -8482,6 +8482,7 @@
      this.currentPageOptions  = options;
      
      this.currentPage.enter(options);

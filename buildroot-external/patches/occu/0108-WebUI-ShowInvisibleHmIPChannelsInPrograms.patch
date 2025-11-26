@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -13960,7 +13960,7 @@
+@@ -14142,7 +14142,7 @@
  
      conInfo("filterHmIPChannels4ProgramConditions");
      // If the channel is visible and no KEY_TRANSCEIVER or *_WEEK_PROFILE then show the channel
@@ -9,7 +9,7 @@
        && (channel.channelType != "KEY_TRANSCEIVER")
        && (channel.channelType != "UNIVERSAL_LIGHT_RECEIVER")
        && (channel.channelType != "DISPLAY_INPUT_TRANSMITTER")
-@@ -13975,7 +13975,7 @@
+@@ -14157,7 +14157,7 @@
      // If the channel is a KEY_TRANSCEIVER and the device type no HmIP-PS / PSM (-IT/-CH/-PE/-UK) / PDT /PCBS then show the channel
      // A key press of the internal button doesn't work for the above-named devices
      if ((channel.channelType == "KEY_TRANSCEIVER")
@@ -18,7 +18,7 @@
        && (channelTypeName != "hmip-ps")
        && (channelTypeName.indexOf("hmip-psm") == -1)
        && (channelTypeName != "hmip-pdt")
-@@ -14156,7 +14156,7 @@
+@@ -14344,7 +14344,7 @@
      var channelTypeName = channel.typeName.toLowerCase(),
      oMaintChannel, deviceMode, endOfScreens = false;
  

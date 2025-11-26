@@ -1,5 +1,5 @@
 {
-  "name": "Home Assistant RaspberryMatic Add-on",
-  "url": "https://github.com/jens-maus/RaspberryMatic/",
-  "maintainer": "RaspberryMatic Team <mail@raspberrymatic.de>"
+  "name": "Home Assistant OpenCCU Add-on",
+  "url": "https://github.com/OpenCCU/OpenCCU/",
+  "maintainer": "OpenCCU Team <mail@openccu.de>"
 }

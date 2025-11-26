@@ -1,5 +1,8 @@
 config BR2_PACKAGE_RECOVERY_SYSTEM
-	bool "Creates a dedicated recovery system and provide it as an initrd"
+	bool "recovery-system"
+	help
+	  Creates a dedicated recovery system and provides it
+	  as an initrd.
 
 config BR2_PACKAGE_RECOVERY_SYSTEM_CONFIG_FRAGMENT_FILE
 	string "kconfig fragment file"

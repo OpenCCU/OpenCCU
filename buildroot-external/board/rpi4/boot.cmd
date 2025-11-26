@@ -7,9 +7,10 @@ setenv bootfs 1
 setenv rootfs 2
 setenv userfs 3
 setenv gpio_button "GPIO12"
-setenv kernel_img "Image"
+setenv kernel_img /Image
+setenv kernel_bootcmd booti
 setenv recoveryfs_initrd "recoveryfs-initrd"
-setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u"
+setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u,152d:a578:u,152d:0583:u"
 
 # output where we are booting from
 itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
@@ -30,7 +31,8 @@ if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${d
   load ${devtype} ${devnum}:${bootfs} ${load_addr} ${recoveryfs_initrd}
   setenv rootfs_str "/dev/ram0"
   setenv initrd_addr_r ${load_addr}
-  setenv kernel_img "recoveryfs-Image"
+  setenv kernel_img "/recoveryfs-Image"
+  setenv kernel_bootcmd booti
   setenv kernelfs ${bootfs}
 else
   echo "==== NORMAL BOOT ===="
@@ -52,7 +54,7 @@ setenv bootargs "dwc_otg.lpm_enable=0 sdhci_bcm2708.enable_llm=0 console=${conso
 load ${devtype} ${devnum}:${kernelfs} ${kernel_addr_r} ${kernel_img}
 
 # boot kernel
-booti ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr}
+${kernel_bootcmd} ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr}
 
 echo "Boot failed, resetting..."
 reset

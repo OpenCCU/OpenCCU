@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>OpenCCU Installation</title>
+</head>
+<body>
+<p><font color="red">Sie sind dabei eine experimentelle Version von
+OpenCCU auf ihrer CCU zu installieren. Bei der Nutzung dieser
+experimentellen Version kann es zu unvorhersehbaren Problemen kommen
+die ggf. bis zum Datenverlust Ihrer gesamten CCU Konfiguration reichen können.
+Wenn Sie stattdessen eine stabile Version von OpenCCU installieren
+wollen laden Sie diese bitte von folgender URL herunter:</font></p>
+<p>
+<a href="https://github.com/OpenCCU/OpenCCU/releases/latest">https://github.com/OpenCCU/OpenCCU/releases/latest</a>
+</p>
+<hr/>
+<p>Allgemeine Informationen:</p>
+<p>Sie sind dabei auf Ihrem CCU System eine Drittanbieterfirmware namens
+<a href=https://openccu.de/>OpenCCU</a> zu installieren.
+Vom Funktionsumfang entspricht diese Firmware dem Stand der entsprechenden
+CCU Firmware der Firma eQ-3 mit gleicher Versionsnummer, bringt jedoch
+gewisse Funktionserweiterungen mit sich, die in der Herstellerfirmware
+nicht enthalten sind.</p>
+<p>Bitte beachten Sie, das Sie jederzeit durch erneutes Installieren
+der originalen Herstellerfirmware Ihr CCU System auf den entsprechenden
+Auslieferungszustand zurücksetzen können. Des Weiteren werden durch
+dieses Firmware-Update Ihre sämtlichen Einstellungen übernommen. Wir
+raten Ihnen jedoch trotzdem dazu ein separates Backup vor dem Update auf
+diese Firmware durchzuführen und an einem sicheren Ort aufzubewahren.</p>
+<hr/>
+<p>Bei der "OpenCCU" Software/Firmware handelt es sich um ein freies,
+nicht-kommerzielles Open Source Projekt (<a href=https://openccu.de/>https://openccu.de/</a>)
+das selbst unter der <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache 2.0 Lizenz</a>
+frei zur Verfügung gestellt wird und von einer ausgewählten Community
+unabhängig entwickelt wird. Es enthält selbst freie Software Dritter,
+die unter verschiedenen Lizenzbedingungen weitergegeben wird. Eine
+Auflistung der freien Software, die in dieser Software zum Einsatz kommt,
+sowie die Lizenzbedingungen unter denen diese weitergegeben wird, finden
+Sie auf der oben genannten Projekthomepage.</p>
+<p>Bei Problemen/Hinweisen/Featurewünschen nutzen Sie bitte die das
+<a href=https://homematic-forum.de/forum/viewforum.php?f=65>OpenCCU-Diskussionsforum</a>
+oder im Falle von reproduzierbaren Fehlern bitte diese mittels direkter
+"Issue"-Meldung auf der Projekthomepage melden.</p>
+<p>Wenn Sie sich an der Weiterentwicklung des OpenCCU Projekt gerne
+direkt durch eigene Softwareentwicklung beteiligen wollen oder aber
+indirekt (z.B. durch das Schreiben von Dokumentation) so erhalten Sie
+auf unserer <a href=https://github.com/OpenCCU/OpenCCU>Projekt Homepage</a> weitere Informationen.
+<hr/>
+<p>Die Veröffentlichung dieser Software erfolgt, WIE BESEHEN OHNE
+GEWÄHR ODER VORBEHALTE - ganz gleich, ob ausdrücklich oder stillschweigend -
+insbesondere Gewährleistungen oder Vorbehalten des EIGENTUMS,
+NICHTVERLETZUNG VON RECHTEN DRITTER, HANDELSÜBLICHKEIT oder EIGNUNG
+FÜR EINEN BESTIMMTEN ZWECK. Sie allein sind verantwortlich für die
+Beurteilung, ob die Nutzung oder Weiterverbreitung dieser Software
+angemessen ist, und übernehmen die Risiken, die mit Ihrer Nutzung
+verbunden sind.</p>
+</body>
+</html>

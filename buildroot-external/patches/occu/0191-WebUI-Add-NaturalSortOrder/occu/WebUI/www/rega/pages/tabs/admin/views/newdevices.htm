@@ -2578,16 +2578,16 @@ createNecessarySysVarsAndPrograms = function (oDevice) {
         }
       }
 
-      if (oDevice.type == "HmIPW-WGD" ) {
+      if ((oDevice.type == "HmIPW-WGD") || (oDevice.type == "HmIP-WGD")) {
         if (channel.index == 0) {
-          var screenOrder = "0,1,2,3,4,END";
+          var screenOrder = (oDevice.type.includes("HmIPW")) ? "0,END,1,2,3,4" : "0,END,1,2,3,4,5";
           homematic("Interface.setMetadata", {"objectId": oDevice.id, "dataId": "screenOrder", "value": screenOrder});
         }
       }
 
-      if (oDevice.type == "HmIPW-WGD-PL" ) {
+      if ((oDevice.type == "HmIPW-WGD-PL") || (oDevice.type == "HmIP-WGD-PL")) {
         if (channel.index == 0) {
-          var screenOrder = "0,1,2,3,4,5,6,7,8,9,END";
+          var screenOrder = (oDevice.type.includes("HmIPW")) ? "0,END,1,2,3,4,5,6,7,8,9" : "0,END,1,2,3,4,5,6,7,8,9,10";
           homematic("Interface.setMetadata", {"objectId": oDevice.id, "dataId": "screenOrder", "value": screenOrder});
         }
       }

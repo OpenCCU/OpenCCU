@@ -11,7 +11,7 @@
    catch { exec rm -f /usr/local/tmp/last_backup.sbk }
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -1346,7 +1346,7 @@
+@@ -1347,7 +1347,7 @@
  proc action_download_logfile {} {
    set HOSTNAME [exec hostname]
    set iso8601_date [exec date -Iseconds]

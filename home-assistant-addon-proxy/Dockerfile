@@ -13,18 +13,18 @@ RUN chmod +x /app/entrypoint.sh
 ARG package_version
 # Labels
 LABEL \
-    org.opencontainers.image.title="RaspberryMatic HA Proxy-Addon" \
-    org.opencontainers.image.description="Proxy to externally running RaspberryMatic CCU" \
-    org.opencontainers.image.vendor="RasperryMatic OpenSource Project" \
-    org.opencontainers.image.authors="RaspberryMatic OpenSource Team" \
+    org.opencontainers.image.title="OpenCCU HA Proxy-Addon" \
+    org.opencontainers.image.description="Proxy to externally running OpenCCU" \
+    org.opencontainers.image.vendor="OpenCCU OpenSource Project" \
+    org.opencontainers.image.authors="OpenCCU OpenSource Team" \
     org.opencontainers.image.licenses="Apache-2.0" \
     org.opencontainers.image.url="https://raspberrymatic.de" \
-    org.opencontainers.image.source="https://github.com/jens-maus/RaspberyMatic" \
-    org.opencontainers.image.documentation="https://github.com/jens-maus/RaspberryMatic/wiki" \
+    org.opencontainers.image.source="https://github.com/OpenCCU/OpenCCU" \
+    org.opencontainers.image.documentation="https://github.com/OpenCCU/OpenCCU/wiki" \
     org.opencontainers.image.version=${package_version} \
-    io.hass.name="RaspberryMatic CCU (Proxy)" \
-    io.hass.description="Proxy to externally running RaspberryMatic CCU" \
-    io.hass.url=https://github.com/jens-maus/RaspberryMatic/tree/master/home-assistant-addon-proxy \
+    io.hass.name="OpenCCU (Proxy)" \
+    io.hass.description="Proxy to externally running OpenCCU" \
+    io.hass.url=https://github.com/OpenCCU/OpenCCU/tree/master/home-assistant-addon-proxy \
     io.hass.arch="armv7|aarch64|amd64" \
     io.hass.type="addon" \
     io.hass.version=${package_version}

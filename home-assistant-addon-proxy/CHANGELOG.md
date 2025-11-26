@@ -10,4 +10,4 @@
 
 For a recent ChangeLog please review the following information:
 
-- [RaspberryMatic Releases](https://github.com/jens-maus/RaspberryMatic/releases)
+- [OpenCCU Releases](https://github.com/OpenCCU/OpenCCU/releases)

@@ -9,7 +9,7 @@
 # Uses parts of bcm2835_raw_uart.c
 # Copyright (c) 2015 eQ-3 Entwicklung GmbH
 # https://github.com/eq-3/occu/tree/master/KernelDrivers
-# https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/bcm2835_raw_uart
+# https://github.com/openccu/openccu/tree/master/buildroot-external/package/bcm2835_raw_uart
 #
 ################################################################################
 

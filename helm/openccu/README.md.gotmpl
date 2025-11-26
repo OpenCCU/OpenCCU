@@ -1,0 +1,29 @@
+# OpenCCU
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+This is a helm chart for [OpenCCU]({{ template "chart.homepage" . }})
+
+
+### Installing the Chart
+
+Since this chart depends on HW to manage Homemtatic devices the setup goes beyond just installing the chart.
+
+Please follow the [OpenCCU Kubernetes installation Wiki](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Kubernetes) to deploy.
+
+## Uninstalling the Chart
+
+To uninstall/delete the `my-release` deployment:
+
+```console
+$ helm delete my-release --purge
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}

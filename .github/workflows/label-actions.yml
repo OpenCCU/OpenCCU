@@ -1,4 +1,4 @@
-# RaspberryMatic Label Actions workflow
+# OpenCCU Label Actions workflow
 # yamllint disable rule:truthy
 ---
 name: 'Label Actions'

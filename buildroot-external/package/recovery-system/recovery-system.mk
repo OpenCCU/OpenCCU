@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RECOVERY_SYSTEM_VER = 1.20.0
+RECOVERY_SYSTEM_VER = 1.21.0
 RECOVERY_SYSTEM_VERSION = $(RECOVERY_SYSTEM_VER)-$(BR2_VERSION)
 RECOVERY_SYSTEM_SOURCE =
 RECOVERY_SYSTEM_LICENSE = Apache-2.0

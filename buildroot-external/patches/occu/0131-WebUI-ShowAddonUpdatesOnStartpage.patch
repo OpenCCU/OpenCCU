@@ -99,7 +99,7 @@
  
              <%
                object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
-@@ -402,6 +408,7 @@
+@@ -403,6 +409,7 @@
        jQuery("#favSelector").show();
        jQuery("#favView").show();
        StartPage.showUpdate();
@@ -131,7 +131,7 @@
      "btnSelectRoomOrFunctionClose": "Close",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25387,6 +25387,44 @@
+@@ -25715,6 +25715,44 @@
      msgBoxHeight
      );
    },

@@ -20,7 +20,7 @@
      "stringTableDisplayInformation" : "Display information",
 --- occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl.orig
 +++ occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl
-@@ -3093,18 +3093,11 @@
+@@ -3143,18 +3143,11 @@
  
      append html "<table class=\"ProfileTbl\">"
      # left
@@ -41,7 +41,7 @@
      if { [info exists ps($param)] == 1  } {
        incr prn
        if { [info exists ps(TEMPERATURE_WINDOW_OPEN_COOLING)] == 1  } {
-@@ -3112,7 +3105,7 @@
+@@ -3162,7 +3155,7 @@
        } else {
          append html "<tr><td>\${stringTableTemperatureFallWindowOpen}</td>"
        }
@@ -50,7 +50,7 @@
        append html "</tr>"
      }
  
-@@ -3121,10 +3114,141 @@
+@@ -3171,10 +3164,141 @@
      if { [info exists ps($param)] == 1  } {
        incr prn
        append html "<tr><td>\${lblTemperatureWindowOpenCooling}</td>"
@@ -193,7 +193,7 @@
    append html "</table>"
  
    append html "<hr>"
-@@ -3139,7 +3263,32 @@
+@@ -3189,7 +3313,32 @@
      }
      append html "<tr><td>\${stringTableBoostTimePeriod}</td>"
        append html "<td>[get_ComboBox options $param separate_$CHANNEL\_$prn ps $param]&nbsp;[getHelpIcon $param]</td>"
@@ -226,7 +226,7 @@
    append html "</table>"
  
    if { ([info exists ps(CHANNEL_OPERATION_MODE)] == 1) || ([info exists ps(ACOUSTIC_ALARM_SIGNAL)] == 1) || ([info exists ps(EFFECT_ADAPTION_FADE_OUT_TIME_FACTOR)] == 1)  } {
-@@ -3162,7 +3311,7 @@
+@@ -3212,7 +3361,7 @@
          append html "<tr>"
            append html "<td>\${lblAcousticAlarmSignal}</td>"
            append html "<td>"

@@ -5,7 +5,7 @@
 ################################################################################
 
 CLOUDMATIC_VERSION = 4bc76aab7e0bd6b7f1ac1802ed9713d595f536de
-CLOUDMATIC_SITE = $(call github,jens-maus,CloudMatic-CCUAddon,$(CLOUDMATIC_VERSION))
+CLOUDMATIC_SITE = $(call github,OpenCCU,CloudMatic-CCUAddon,$(CLOUDMATIC_VERSION))
 CLOUDMATIC_LICENSE = BSD-3-Clause
 
 ifeq ($(BR2_arm),y)

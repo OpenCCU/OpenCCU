@@ -1,6 +1,6 @@
 ---
 name: 🐛 Bug Report
-description: Report a bug/issue related to RaspberryMatic
+description: Report a bug/issue related to OpenCCU
 labels: ":bug: bug-report"
 body:
   - type: markdown
@@ -10,11 +10,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        1. Do **NOT** use this ticket/issue system for support requests! It is meant to be used to report bugs only and not to search for help if you have problems using RaspberryMatic.
+        1. Do **NOT** use this ticket/issue system for support requests! It is meant to be used to report bugs only and not to search for help if you have problems using OpenCCU.
         2. Do **NOT** submit bug reports about anything but the two most recently released versions!
         3. Before you open a new bug/issue report here, please make sure that it hasn't been reported yet and please make sure to cross-check the discussion fora discussed below and try to discuss your problem there first before you are opening a new bug report here.
 
-        If you have problems while using RaspberryMatic and are seeking for help, please consult our [GitHub Community Forum](https://github.com/jens-maus/RaspberryMatic/discussions) or the public [RaspberryMatic Forum](https://homematic-forum.de/forum/viewforum.php?f=65).
+        If you have problems while using OpenCCU and are seeking for help, please consult our [GitHub Community Forum](https://github.com/OpenCCU/OpenCCU/discussions) or the public [OpenCCU Forum](https://homematic-forum.de/forum/viewforum.php?f=65).
   - type: markdown
     attributes:
       value: |
@@ -55,7 +55,7 @@ body:
       label: What is the version this bug report is based on?
       placeholder: 3.XX.YY-YYYYMMDD
       description: >
-        The RaspberryMatic version you are using Can be found in the help page of the WebUI and starts with `3.XX.YY-YYYYMMDD`.
+        The OpenCCU version you are using can be found in the help page of the WebUI and starts with `3.XX.YY-YYYYMMDD`.
   - type: dropdown
     validations:
       required: true
@@ -63,7 +63,7 @@ body:
       label: Which base platform are you running?
       default: 2
       description: >
-        This is the platform you are using to run RaspberryMatic on and corresponds to the image you are usually downloading for updating RaspberryMatic.
+        This is the platform you are using to run OpenCCU on and corresponds to the image you are usually downloading for updating OpenCCU.
       options:
         - rpi5 (RaspberryPi5, ARM64/aarch64)
         - rpi4 (RaspberryPi4, ARM64/aarch64)
@@ -108,7 +108,7 @@ body:
     attributes:
       label: Anything in the logs that might be useful for us?
       description: >
-        The RaspberryMatic logs can be found in the `/var/log` directory on the central.
+        The OpenCCU logs can be found in the `/var/log` directory on the central.
       render: txt
   - type: textarea
     attributes:

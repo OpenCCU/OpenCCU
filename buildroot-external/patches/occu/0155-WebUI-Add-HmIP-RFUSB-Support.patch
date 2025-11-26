@@ -11,7 +11,7 @@
    }
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -768,7 +768,7 @@
+@@ -801,7 +801,7 @@
                Call("/esp/controls/hap.fn::CreateHAP()");
              }
  
@@ -52,7 +52,7 @@
 + 
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.deviceDescription.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.deviceDescription.js
-@@ -188,7 +188,7 @@
+@@ -193,7 +193,7 @@
      "HmIP-BROLL-2": "Homematic IP Rollladenaktor f%FCr Markenschalter",
      "HmIP-BS2": "Homematic IP Wandtaster f%FCr Markenschalter - 2-fach",
      "HmIP-BSL": "Homematic IP Schaltaktor f%FCr Markenschalter - mit Signalleuchte",
@@ -61,7 +61,7 @@
      "HmIP-DRG-DALI": "Homematic IP DALI Gateway",
      "HmIP-DBB": "Homematic IP T%FCrklingeltaster",
      "HmIP-DLD" : "Homematic IP T%FCrschlossantrieb",
-@@ -230,6 +230,7 @@
+@@ -237,6 +237,7 @@
      "HmIP-PCBS2": "Homematic IP Schaltplatine - 2-fach",
      "HmIP-PMFS": "Homematic IP Netzausfall%FCberwachung",
      "HmIP-RCV-50": "Virtuelle Fernbedienung",
@@ -69,7 +69,7 @@
      "HmIP-RGBW" : "Homematic IP LED Controller - RGBW",
      "HmIP-SAM" :"Homematic IP Ersch%FCtterungs- / Beschleunigungssensor",
      "HmIP-SCI" : "Homematic IP Kontakt-Schnittstelle",
-@@ -326,7 +327,7 @@
+@@ -338,7 +339,7 @@
      "PSMCO": "Homematic IP Schalten/Messen",
      "RC8": "Homematic IP Fernbedienung, 8 Kanal",
      "RF-LAN-Sniffer" : "RF-LAN-Sniffer",
@@ -78,7 +78,7 @@
      "SMI": "Homematic IP Bewegungsmelder innen",
      "SMO": "Homematic IP Bewegungsmelder au%DFen",
      "SRH": "Homematic IP Fenster-/ Drehgriffkontakt",
-@@ -362,4 +363,4 @@
+@@ -374,4 +375,4 @@
      "ZEL_STG_RM_WT_2": "Funk-Wandtaster 2-fach im 55er Rahmen",
      "The END": ""
    }
@@ -87,7 +87,7 @@
 +});
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.deviceDescription.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.deviceDescription.js
-@@ -188,7 +188,7 @@
+@@ -191,7 +191,7 @@
      "HmIP-BROLL-2": "Homematic IP Blind Actuator for brand switch systems, flush-mount",
      "HmIP-BS2": "Homematic IP Remote Control for brand switches - 2 channels",
      "HmIP-BSL": "Homematic IP Switch Actuator with Signal Lamp - for brand switches",
@@ -96,7 +96,7 @@
      "HmIP-DRG-DALI": "Homematic IP DALI Gateway",
      "HmIP-DBB": "Homematic IP Doorbell Button",
      "HmIP-DLD" : "Homematic IP Door Lock Drive",
-@@ -230,6 +230,7 @@
+@@ -235,6 +235,7 @@
      "HmIP-PCBS2": "Homematic IP Switch Circuit Board - 2 channels",
      "HmIP-PMFS": "Homematic IP Mains Failure Surveillance",
      "HmIP-RCV-50": "Virtual Remote Control",
@@ -104,7 +104,7 @@
      "HmIP-RGBW" : "Homematic IP LED Controller - RGBW",
      "HmIP-SAM": "Homematic IP Acceleration Sensor",
      "HmIP-SCTH230" : "Homematic IP CO2 Sensor, 230 V",
-@@ -324,7 +325,7 @@
+@@ -332,7 +333,7 @@
      "PSMCO": "Homematic IP Switch and Meter",
      "RC8": "Homematic IP Remote Contro, 8-channel",
      "RF-LAN-Sniffer" : "RF-LAN-Sniffer",
@@ -113,7 +113,7 @@
      "SMI": "Homematic IP Motion Detector - indoor",
      "SMO": "Homematic IP Motion Detector, outdoor",
      "SRH": "Homematic IP Rotary Handle Sensor",
-@@ -360,4 +361,4 @@
+@@ -368,4 +369,4 @@
      "ZEL_STG_RM_WT_2": "Wireless Push-button 2-channel in 55mm frame",
      "The END": ""
    }
@@ -122,7 +122,7 @@
 +});
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -4422,6 +4422,12 @@
+@@ -4498,6 +4498,12 @@
  DEV_PATHS["RPI-RF-MOD"]["50"] = "/config/img/devices/50/CCU3_thumb.png";
  DEV_PATHS["RPI-RF-MOD"]["250"] = "/config/img/devices/250/CCU3.png";
  DEV_HIGHLIGHT["RPI-RF-MOD"] = new Object();
@@ -135,7 +135,7 @@
  DEV_LIST.push('HM-LC-Dim1T-CV-2');
  DEV_DESCRIPTION["HM-LC-Dim1T-CV-2"] = "HM-LC-Dim1T-CV";
  DEV_PATHS["HM-LC-Dim1T-CV-2"] = new Object();
-@@ -11236,7 +11242,8 @@
+@@ -11417,7 +11423,8 @@
      "HM-Sec-SD-Team",
      "HM-Sec-SD-2-Team",
      "HmIP-CCU3",

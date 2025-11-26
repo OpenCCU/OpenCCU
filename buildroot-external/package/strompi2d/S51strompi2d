@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010
+# shellcheck shell=dash disable=SC2169,SC3010,SC3014
 #
 # StromPi2 UPS Daemon starting and stopping
 #

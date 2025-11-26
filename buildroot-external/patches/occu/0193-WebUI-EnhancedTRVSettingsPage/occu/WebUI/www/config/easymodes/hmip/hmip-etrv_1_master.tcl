@@ -108,7 +108,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
   set CHANNEL $special_input_id
 
-  set chn [lindex [split $special_input_id _] 0]
+  set chn [getChannel $special_input_id]
 
   set hlpBoxWidth 450
   set hlpBoxHeight 160

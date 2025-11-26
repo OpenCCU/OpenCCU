@@ -1,0 +1,1316 @@
+--- occu/WebUI/www/api/methods/ccu/downloadFirmware.tcl.orig
++++ occu/WebUI/www/api/methods/ccu/downloadFirmware.tcl
+@@ -8,20 +8,12 @@
+ # Rueckgabewert: True wenn eine Firmware erfolgreich herunterladen wurde, ansonsten False.
+ ##
+ 
+-set result [catch {exec cat /VERSION | grep VERSION | sed s/VERSION=//} version]
+-set result [catch {exec cat /VERSION | grep VERSION | sed s/VERSION=// | sed s/\\..*//} major]
+-if { [string compare $major "3"] == 0 } {
+-  set result [catch {exec cat /var/board_serial} serial]
+-  set url "https://ccu3-update.homematic.com/firmware/download?cmd=download&version=$version&serial=$serial&lang=de&product=HM-CCU3"
+-} elseif { [string compare $major "2"] == 0 } {
+-  set result [catch {exec cat /sys/module/plat_eq3ccu2/parameters/board_serial} serial]
+-  set url "https://update.homematic.com/firmware/download?cmd=download&version=$version&serial=$serial&lang=de&product=HM-CCU2"
+-} else {
+-  set result [catch {exec echo "nomatch" >> /tmp/test} msg]
+-  jsonrpc_response false
+-}
++set result [catch {exec curl -s -L https://openccu.de/LATEST-VERSION.js} verstring]
++set result [regexp {homematic\.com\.setLatestVersion\('(.+)', 'HM-RASPBERRYMATIC'\);} $verstring match latest ]
++set result [catch {exec grep PLATFORM /VERSION | cut -d= -f2} platform]
++set url "https://github.com/openccu/openccu/releases/download/$latest/OpenCCU-$latest-$platform.zip"
+ 
+-set result [catch {exec wget -q --https-only -O /tmp/fup.tgz $url} error]
++set result [catch {exec wget -q --https-only -O /usr/local/tmp/firmwareUpdateFile $url} error]
+ if { $result != 0 } {
+   exec echo $error > /tmp/dwnld.error
+ }
+--- occu/WebUI/www/config/cp_maintenance.cgi.orig
++++ occu/WebUI/www/config/cp_maintenance.cgi
+@@ -365,20 +365,21 @@
+               table_data {align="left"} {colspan="2" id="actualSWVersion"} {
+                 puts "\${dialogSettingsCMLblActualSoftwareVersion}"
+               }
+-              table_data {
+-                puts "$cur_version"
++              table_data {align="left"} {
++                puts "$cur_version&nbsp;([get_platform])"
+               }
+             }
+             table_row {
+               table_data {align="left"} {colspan="2"} {
+                 puts "\${dialogSettingsCMLblAvailableSoftwareVersion}"
+               }
+-              table_data {id="availableSWVersion"} {
++              table_data {align="left"} {id="availableSWVersion"} {
+                 # This doesn�t work properly
+                 # puts [iframe "$REMOTE_FIRMWARE_SCRIPT?cmd=check_version&version=$cur_version&serial=$serial&lang=de&product=HM-CCU2" marginheight=0 marginwidth=0 frameborder=0 width=100 height=20 {scrolling="no"} ]
+                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
+               }
+             }
++            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+             table_row {
+               table_data {align="left"} {colspan="3"} {
+                 #puts "[bold "Software-Update durchf�hren"]"
+@@ -392,7 +393,7 @@
+                     table_row {
+                       table_data {
+                         division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
+-                        division {class="CLASS20905"}  "onClick=\"showCCULicense(true);\"" {puts "\${btnDirectFwUpload}"}
++                        division {class="CLASS20905"}  "onClick=\"performDirectDownload();\"" {puts "\${btnDirectFwUpload}"}
+                       }
+                     }
+                   }
+@@ -416,7 +417,7 @@
+                     table_row {
+                       table_data {
+                         division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
+-                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
++                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+                       }
+                     }
+                   }
+@@ -465,30 +466,18 @@
+                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
+               }
+             }
+-          }
+-        }
+-        table_data {align="left"} {class="CLASS20921"} {
+-          puts "\${dialogSettingsCMHintSoftwareUpdate1}"
+-          number_list {class="j_noForcedUpdate"} {
+-            li {
+-              ${dialogSettingsCMHintSoftwareUpdate2}            }
+-            li {
+-               ${dialogSettingsCMHintSoftwareUpdate3}
+-            }
+-            li {
+-               ${dialogSettingsCMHintSoftwareUpdate3a}
+-            }
+-            set bat_level [get_bat_level]
+-            if {$bat_level < 50} {
+-              set msg " \${dialogSettingsCMHintSoftwareUpdate4a} $bat_level%. "
+-              append msg  \${dialogSettingsCMHintSoftwareUpdate4b}
+-              li $msg
++            } else {
++              table_row {
++                table_data {align="left"} {colspan="3"} {
++                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
++                }
++              }
+             }
+           }
+-
+-          division {class="j_forcedUpdate" style="padding:10px;"} {
+-            puts "<br/>\${dialogSettingsCMHintSoftwareUpdate2}"
+-          }
++        }
++        table_data {align="center"} {class="CLASS20921"} {
++          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
++          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
+         }
+       }
+       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
+--- occu/WebUI/www/config/cp_network.cgi.orig
++++ occu/WebUI/www/config/cp_network.cgi
+@@ -225,6 +225,7 @@
+                 cgi_text hostname=$hostname {id="text_hostname"}
+               }
+             }
++            if {[get_platform] != "oci"} {
+             table_row {
+               set checked ""
+               if {! $dhcp} { set checked "checked=true" }
+@@ -315,6 +316,7 @@
+               }
+ 
+             }
++            }
+           }
+         }
+         table_data {class="CLASS21113"} {align="left"} {
+@@ -440,12 +442,21 @@
+       OnOK = function() {
+         var pb = "action=save_settings";
+         pb += "&hostname="+document.getElementById("text_hostname").value;
++        if(document.getElementById("radio_manual") !== null) {
+         pb += "&dhcp="+(document.getElementById("radio_manual").checked?"0":"1");
+         pb += "&ip="+document.getElementById("text_ip").value;
+         pb += "&mask="+document.getElementById("text_mask").value;
+         pb += "&gw="+document.getElementById("text_gw").value;
+         pb += "&dns1="+document.getElementById("text_dns1").value;
+         pb += "&dns2="+document.getElementById("text_dns2").value;
++        } else {
++        pb += "&dhcp=1";
++        pb += "&ip=0.0.0.0";
++        pb += "&mask=0.0.0.0";
++        pb += "&gw=0.0.0.0";
++        pb += "&dns1=0.0.0.0";
++        pb += "&dns2=0.0.0.0";
++        }
+         
+         var opts = {
+           postBody: pb,
+@@ -546,7 +557,9 @@
+         },timeDelay);
+       };
+     }
++    if {[get_platform] != "oci"} {
+     puts "enable_disable();"
++    }
+     puts "translatePage('#messagebox');"
+     puts "dlgPopup.readaptSize();"
+   }
+--- occu/WebUI/www/config/cp_time.cgi.orig
++++ occu/WebUI/www/config/cp_time.cgi
+@@ -190,6 +190,7 @@
+                       puts "."
+                       cgi_text year=$year {size="4"} {maxlength="4"} {id="text_year"}
+                     }
++                    if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+                     table_data {align="left"} {
+                       division {class="popupControls CLASS21506"} {
+                         division {class="CLASS21507"} {onClick="apply_time()"} {
+@@ -198,7 +199,9 @@
+                         }
+                       }
+                     }
++                    }
+                   }
++                  if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+                   table_row {
+                     table_data {colspan="2"} {}
+                     table_data {align="left"} {class="CLASS21510"} {
+@@ -210,12 +213,14 @@
+                       }
+                     }
+                   }
++                  }
+                 }
+               }
+             }
+           }
+         }
+       }
++      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+       table_row {class="CLASS21502"} {
+         table_data {class="CLASS21503"} {
+           #puts "NTP-Server"
+@@ -249,6 +254,7 @@
+           }
+         }
+       }
++      }
+       set country ""
+       foreach location $LOCATIONS {
+         if { [lindex $location 0] == "-" } {
+@@ -681,6 +687,8 @@
+   puts $fd "$TIMEZONES($timezone)"
+   close $fd
+   
++  catch {exec /bin/updateTZ.sh}
++
+   rega_script "var x=system.Longitude($lon);var y=system.Latitude($lat);var a=dom.ChangedTimeManually();"
+   
+   catch {exec /sbin/hwclock -wu}
+--- occu/WebUI/www/config/help.cgi.orig
++++ occu/WebUI/www/config/help.cgi
+@@ -3,8 +3,8 @@
+ source common.tcl
+ load tclrega.so
+ 
+-set PRODUCT_NAME "Zentrale"
+-set PRODUCT_ID "CCU[getProduct]"
++set PRODUCT_NAME "OpenCCU"
++set PRODUCT_ID "CCU"
+ # set HOMEMATIC_URL "http://www.homematic.com"
+ set HOMEMATIC_URL "http://www.eq-3.de"
+ set HOMEMATIC_IP_URL "https://www.homematic-ip.com"
+@@ -19,13 +19,147 @@
+ set LANGUAGE "de"
+ set CUR_YEAR [clock format [clock seconds] -format %Y]
+ 
++proc loadVarsFromShellFile {filename arrayName} {
++    upvar 1 $arrayName array
++    if {[catch {set f [open $filename r]} err]} {
++        return
++    }
++    while {[gets $f line] >= 0} {
++        if {[regexp {^\s*(\w+)=([""'']?)(.*)\2\s*$} $line -> key quote value]} {
++            if {$value == ""} {
++              set array($key) "n/a"
++            } else {
++              set array($key) $value
++            }
++        }
++    }
++    close $f
++}
++
++proc execCmd {varName cmd} {
++  upvar 1 $varName variable
++  set rc [catch {eval $cmd} resVar]
++  if {$rc == 0} {
++    set variable [string trim $resVar]
++  } else {
++    set variable "n/a"
++  }
++}
++
++proc html_escape {s} {
++  regsub -all -- <  $s "&lt;"  s
++  regsub -all -- >  $s "&gt;"  s
++  regsub -all -- \" $s "&quot;" s
++  regsub -all -- '  $s "&#39;" s
++  return $s
++}
++
++proc putsVar {name value} {
++  set ename  [html_escape $name]
++  set evalue [html_escape $value]
++  puts "<div style='display: table-row;'><div style='display:table-cell; width: 50%; text-align: right;'>$ename:</div><div style='display:table-cell; width: 50%; text-align: left;'>$evalue</div></div>"
++}
++
+ proc action_put_page {} {
+   global PRODUCT_NAME PRODUCT_ID HOMEMATIC_URL HOMEMATIC_IP_URL HM_HELP_URL IP_HELP_URL HM_INFO_URL IP_INFO_URL LANGUAGE CUR_YEAR env
+ 
+-  set SERIAL [read_var /var/ids SerialNumber]
+-  set VERSION [read_var /boot/VERSION VERSION]
+-  set HELP_ARGUMENTS "lang=$LANGUAGE&vers=$VERSION&serial=$SERIAL"
++  # get all variables from /var/hm_mode into $hm array
++  loadVarsFromShellFile /var/hm_mode hm
++
++  # get all variables from /VERSION into ver array
++  loadVarsFromShellFile /VERSION ver
++
++  # get all variables from /etc/config/netconfig into net array
++  loadVarsFromShellFile /etc/config/netconfig net
++
++  set SERIAL ""
++  catch {set SERIAL $hm(HM_HMIP_SERIAL)}
++  if {$SERIAL == ""} {
++    if {[file exists /var/board_sgtin]} {
++      set SERIAL [string trim [exec cat /var/board_sgtin]]
++    } elseif {[file exists /var/board_serial]} {
++      set SERIAL [string trim [exec cat /var/board_serial]]
++    } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
++      set SERIAL [string trim [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]]
++    } else {
++      set SERIAL "n/a"
++    }
++  }
++
++  set HWMODEL "n/a"
++  if {[file exists /proc/device-tree/model]} {
++    execCmd HWMODEL {exec cat /proc/device-tree/model}
++  } elseif {[file exists /sys/devices/virtual/dmi/id/board_vendor]} {
++    execCmd VENDOR {exec cat /sys/devices/virtual/dmi/id/board_vendor}
++    set NAME ""
++    if {[file exists /sys/devices/virtual/dmi/id/board_name]} {
++      execCmd NAME {exec cat /sys/devices/virtual/dmi/id/board_name}
++    }
++    set HWMODEL "$VENDOR $NAME"
++  } elseif {[file exists /sys/devices/virtual/dmi/id/sys_vendor]} {
++    execCmd VENDOR {exec cat /sys/devices/virtual/dmi/id/sys_vendor}
++    set NAME ""
++    if {[file exists /sys/devices/virtual/dmi/id/product_name]} {
++      execCmd NAME {exec cat /sys/devices/virtual/dmi/id/product_name}
++    }
++    set HWMODEL "$VENDOR $NAME"
++  } else {
++    execCmd MODEL {exec grep ^Model /proc/cpuinfo | cut -d: -f2 | xargs}
++    if {$MODEL != ""} {
++      set HWMODEL $MODEL
++    }
++  }
+ 
++  execCmd CPUMODEL {exec /usr/bin/lscpu --all --parse=MODELNAME | grep -m1 -ve "^#"}
++  execCmd CPUMHZ {exec /usr/bin/lscpu --all --parse=MHZ | grep -m1 -ve "^#" | xargs printf "%.0f"}
++  execCmd CPUSCALMHZ {exec /usr/bin/lscpu --all --parse=SCALMHZ% | grep -m1 -ve "^#"}
++  execCmd NUMCPU {exec nproc}
++  execCmd LOADAVG {exec awk {{ printf $1 " " $2 " " $3 }} /proc/loadavg}
++  execCmd MEM {exec free -h | grep Mem: | awk {{ print $2 }}}
++  execCmd MEMUSE {exec egrep "Mem(Total|Available)" /proc/meminfo | tr -d "\n" | awk {{ printf("%.1f %", 100-$4/$2*100) }}}
++  execCmd SWAPUSE {exec egrep "Swap(Total|Free)" /proc/meminfo | tr -d "\n" | awk {{ printf("%.1f %", 100-$4/$2*100) }}}
++  execCmd UPTIME {exec awk {{s=int($1);d=int(s/86400);h=int(s % 86400/3600);m=int(s % 3600 / 60); printf "%d d, %d h %d min", d, h, m}} /proc/uptime}
++  execCmd NTPOFFSET {exec /usr/bin/chronyc -n tracking | grep "Last offset" | awk {{ printf("%.3f ms", $4*1000) }}}
++  execCmd NTPSERVER {exec /usr/bin/chronyc -n tracking | grep "Reference ID" | awk -F "\[\(\)\]" {{ print $2 }}}
++  execCmd MAINETH {exec /sbin/ip -4 route get 1 | head -1 | awk {{ print $5 }}}
++  execCmd MAINHOSTNAME {exec /bin/hostname}
++  catch {set OSTYPE [string trim [read_var /etc/os-release PRETTY_NAME] '"']}
++  execCmd OSKERNEL {exec uname -s -r -m}
++  set TCLVER [info patchlevel]
++  execCmd JAVAVER {exec 2>@stdout /opt/java/bin/java -version | head -1 | cut -d\" -f2}
++  execCmd NODEVER {exec /usr/bin/node -v}
++  execCmd TEMP {exec awk {{ printf("%.1f &deg;C", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
++
++  set STATUS ""
++  foreach {label path} {
++    IP       /var/status/hasIP
++    Internet /var/status/hasInternet
++    Link     /var/status/hasLink
++    NTP      /var/status/hasNTP
++    SD       /var/status/hasSD
++  } {
++    if {[file exists $path]} {
++      set STATUS "${label}(1) $STATUS"
++    } else {
++      set STATUS "${label}(0) $STATUS"
++    }
++  }
++  execCmd ROOTFSFREE {exec monit status rootfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
++  execCmd ROOTFSTOTAL {exec monit status rootfs | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
++  execCmd USERFSFREE {exec monit status userfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
++  execCmd USERFSTOTAL {exec monit status userfs | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
++  execCmd USBDEVFREE {exec monit status usb1 | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
++  execCmd USBDEVTOTAL {exec monit status usb1 | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
++  execCmd STORAGEDEV {exec mountpoint -n /usr/local | awk {{ print $1 }} | xargs lsblk -l -n -o PKNAME -p}
++  execCmd STORAGE "exec lsblk -l -n -o SIZE,MODEL,KNAME -d -p $STORAGEDEV"
++  set HMRF_DUTYCYCLE "n/a"
++  catch { set HMRF_DUTYCYCLE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMRF_SERIAL)\") | .dutyCycle" /tmp/dutycycle.json] }
++  set HMRF_CARRIERSENSE "n/a"
++  catch { set HMRF_CARRIERSENSE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMRF_SERIAL)\") | .carrierSense" /tmp/dutycycle.json] }
++  set HMIP_DUTYCYCLE "n/a"
++  catch { set HMIP_DUTYCYCLE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMIP_SERIAL)\") | .dutyCycle" /tmp/dutycycle.json] }
++  set HMIP_CARRIERSENSE "n/a"
++  catch { set HMIP_CARRIERSENSE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMIP_SERIAL)\") | .carrierSense" /tmp/dutycycle.json] }
+ 
+   set sid ""
+   catch {import sid}
+@@ -43,47 +177,90 @@
+       </script>
+     }
+   }
+-  puts "<style>li {margin: 5px 0}</style>"
+ 
+-  puts "<table id='overviewHelpPage' width='100%' class='CLASS21300' cellspacing='20' style='display:none'>"
++  puts "<table id='overviewHelpPage' class='CLASS21300' style='display:none'>"
+     puts "<colgroup>"
+-    puts "<col style='width:25%;'/>"
+-    puts "<col style='width:25%;'/>"
+-    puts "<col style='width:25%;'/>"
+-    puts "<col style='width:25%;'/>"
++    puts "<col style='width:50%;'/>"
++    puts "<col style='width:50%;'/>"
+     puts "</colgroup>"
+     puts "<tr>"
+-      puts "<td id='tdOnline' class='CLASS21301a'  style='text-align:center;'>"
+-              # puts "<div onclick='loadExtHelp()' class='StdTableBtn'>\${dialogHelpBtnOnlineHelp}</div>"
+-              puts "<ul style='list-style:none; padding-right:12%'>"
+-                puts "<li><h1 class='helpTitle'><u>\${menuHelpPage}</u></h1></li>"
+-                puts "<li><a target='_blank' href=\'$HM_HELP_URL\'>\${dialogHelpLinkOnlineHelpA}</a></li>"
+-                puts "<li><a target='_blank' href=\'$IP_HELP_URL\'>\${dialogHelpLinkOnlineHelpB}</a></li>"
+-                puts "<li><a target='_blank' href='/licenseinfo.htm'>\${lblLicenseInformation}</a></li>"
+-              puts "</ul>"
+-      puts "</td>"
+ 
+       puts "<td id='tdInfo' class='CLASS21305a' >"
+-        puts "<ul style='list-style:none; padding-right:12%'>"
+-          puts "<li><h1><u>\${dialogHelpInfoTitle}</u></h1></li>"
+-          puts "<li>$PRODUCT_NAME $PRODUCT_ID</li>"
+-          # puts "<li>$PRODUCT_ID</li>"
+-          puts "<li>\${dialogHelpInfoLblSN} $SERIAL</li>"
+-          puts "<li>\${dialogHelpInfoLblVersion} $VERSION</li>"
+-          puts "<li>\${dialogHelpInfoLblCopyright} &copy; 2007 - $CUR_YEAR</li>"
+-          puts "<li>eQ-3 AG</li>"
+-          puts "<li>26789 Leer</li>"
+-          puts "<li>Germany</li>"
+-          # puts "<li>DOM [rega dom.BuildLabel()]</li>"
+-          puts "<li><a target='_blank' href=\"$HM_INFO_URL\">\${homepage} \${LabelHomeMatic}</a></li>"
+-          puts "<li><a target='_blank' href=\"$IP_INFO_URL\">\${homepage} \${dialogHelpLinkOnlineHelpB}</a></li>"
+-          puts "<li style='padding-top:25px;'><img src='/ise/img/homematic_logo_small.png'/></li>"
+-        puts "</ul>"
+-
++        puts "<img src='/ise/img/occu-logo_small.png'/><br/>"
++        puts "\${dialogHelpInfoLblVersion} $ver(VERSION) ($ver(PLATFORM))<br/>"
++        puts "<br/>\${dialogHelpInfoLblCopyright} &copy; 2016 - $CUR_YEAR<br/>"
++        puts "OpenCCU Contributors (<a target='_blank' href='https://github.com/openccu/openccu/graphs/contributors'>see here</a>)<br/>"
++        puts "Licensed under Apache 2.0 OpenSource license<br/>"
++        puts "<a target='_blank' href=\"https://github.com/openccu\">https://github.com/openccu</a><br/>"
++        puts "<a target='_blank' href=\"https://openccu.de/\">https://openccu.de/</a><br/>"
++        puts "<br/>Based on <a target='_blank' href=\"https://github.com/eq-3/occu\">OCCU-SDK</a>:<br/>"
++        puts "\${dialogHelpInfoLblCopyright} &copy; 2007 - $CUR_YEAR<br/>"
++        puts "eQ-3 AG, 26789 Leer, Germany<br/>"
++        puts "<a target='_blank' href=\"$HM_INFO_URL\">\${homepage} \${LabelHomeMatic}</a><br/>"
++        puts "<a target='_blank' href=\"$IP_INFO_URL\">\${homepage} \${dialogHelpLinkOnlineHelpB}</a><br/>"
++        puts "<br/>Menu icons made by <a target='_blank' href=\"https://icons8.com/license/\">icons8.com</a><br/>"
++        puts "<br/>\${dialogSettingsCMHintSoftwareUpdateOpenCCU}<br/><br/>"
++        puts "<h1 class='helpTitle'><u>\${menuHelpPage}</u></h1>"
++        puts "<a target='_blank' href='https://github.com/openccu/openccu/wiki'>OpenCCU Documentation</a><br/>"
++        puts "<a target='_blank' href=\'$HM_HELP_URL\'>\${dialogHelpLinkOnlineHelpA}</a><br/>"
++        puts "<a target='_blank' href=\'$IP_HELP_URL\'>\${dialogHelpLinkOnlineHelpB}</a><br/>"
++        puts "<a target='_blank' href='/licenseinfo.htm'>\${lblLicenseInformation}</a><br/>"
+       puts "</td>"
+ 
+-      puts "<td></td>"
+-      puts "<td></td>"
++      puts "<td id='tdOnline' class='CLASS21301a'  style='text-align:center;'>"
++        puts "<h1 class='helpTitle'><u>CCU Hardware Info</u></h1>"
++        puts "<div style='display: table; width: 100%;'>"
++          putsVar "Hardware Model" "$HWMODEL ($hm(HM_HOST))"
++          putsVar "CPU (Cores), Memory" "$CPUMODEL ($NUMCPU), $MEM"
++          putsVar "Storage" "$STORAGE"
++          putsVar "Real-Time-Clock" $hm(HM_RTC)
++          putsVar "Serial Number" $SERIAL
++        puts "</div>"
++        puts "<h1 class='helpTitle'><u>CCU Software Info</u></h1>"
++        puts "<div style='display: table; width: 100%;'>"
++          putsVar "Product" "$ver(PRODUCT) ($ver(VERSION))"
++          putsVar "ReGaHss" [rega dom.BuildLabel()]
++          putsVar "Engines" "Tcl ($TCLVER), Java ($JAVAVER), NodeJS ($NODEVER)"
++          putsVar "Status" $STATUS
++        puts "</div>"
++        puts "<h1 class='helpTitle'><u>Operating System Info</u></h1>"
++        puts "<div style='display: table; width: 100%;'>"
++          putsVar "OS Type (Kernel)" "$OSTYPE ($OSKERNEL)"
++          putsVar "Uptime" $UPTIME
++          if {$CPUSCALMHZ != ""} {
++            putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz ($CPUSCALMHZ)"
++          } else {
++            putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz"
++          }
++          putsVar "System Temperature" $TEMP
++          putsVar "Memory, Swap Utilization" "$MEMUSE, $SWAPUSE"
++          putsVar "NTP Offset (Server)" "$NTPOFFSET ($NTPSERVER)"
++          putsVar "rootfs Free Space" "$ROOTFSFREE / $ROOTFSTOTAL"
++          putsVar "userfs Free Space" "$USERFSFREE / $USERFSTOTAL"
++          putsVar "USB Free Space" "$USBDEVFREE / $USBDEVTOTAL"
++          putsVar "IP address" "$net(CURRENT_IP) ($MAINETH, $net(MODE))"
++          putsVar "Gateway (Netmask)" "$net(CURRENT_GATEWAY) ($net(CURRENT_NETMASK))"
++          putsVar "Nameservers" "$net(CURRENT_NAMESERVER1), $net(CURRENT_NAMESERVER2)"
++          putsVar "Hostname" "$MAINHOSTNAME"
++        puts "</div>"
++        puts "<h1 class='helpTitle'><u>homematicIP-RF (HmIP) Info</u></h1>"
++        puts "<div style='display: table; width: 100%;'>"
++          putsVar "RF-Module (Firmware)" "$hm(HM_HMIP_DEV) ($hm(HM_HMIP_VERSION))"
++          putsVar "Device-Node" "$hm(HM_HMIP_DEVNODE) ($hm(HM_HMIP_DEVTYPE))"
++          putsVar "Address" "$hm(HM_HMIP_ADDRESS) ($hm(HM_HMIP_ADDRESS_ACTIVE))"
++          putsVar "SGTIN" $hm(HM_HMIP_SGTIN)
++          putsVar "Serial" $hm(HM_HMIP_SERIAL)
++          putsVar "DutyCycle, CarrierSense" "$HMIP_DUTYCYCLE %, $HMIP_CARRIERSENSE %"
++        puts "</div>"
++        puts "<h1 class='helpTitle'><u>HomeMatic-RF (HmRF) Info</u></h1>"
++        puts "<div style='display: table; width: 100%;'>"
++          putsVar "RF-Module (Firmware)" "$hm(HM_HMRF_DEV) ($hm(HM_HMRF_VERSION))"
++          putsVar "Device-Node" "$hm(HM_HMRF_DEVNODE) ($hm(HM_HMRF_DEVTYPE))"
++          putsVar "Address" "$hm(HM_HMRF_ADDRESS) ($hm(HM_HMRF_ADDRESS_ACTIVE))"
++          putsVar "Serial" $hm(HM_HMRF_SERIAL)
++          putsVar "DutyCycle, CarrierSense" "$HMRF_DUTYCYCLE %, $HMRF_CARRIERSENSE %"
++        puts "</div>"
++      puts "</td>"
+ 
+   puts "</table>"
+ 
+@@ -124,7 +301,7 @@
+     puts "\}"
+ 
+     puts "loadExtHelp = function()\{"
+-    puts "  wndHelp = window.open(\"$HM_HELP_URL?lang=$LANGUAGE&vers=$VERSION&serial=$SERIAL\", \"Hilfe\", \"toolbar=yes,menubar=yes,location=yes,scrollbars=yes,resizable=yes,width=800,height=600\");"
++    puts "  wndHelp = window.open(\"$HM_HELP_URL?lang=$LANGUAGE&vers=$ver(VERSION)&serial=$SERIAL\", \"Hilfe\", \"toolbar=yes,menubar=yes,location=yes,scrollbars=yes,resizable=yes,width=800,height=600\");"
+     puts "\}"
+ 
+     puts "translatePage('#overviewHelpPage');"
+--- occu/WebUI/www/error/error-500.html.orig
++++ occu/WebUI/www/error/error-500.html
+@@ -95,7 +95,7 @@
+         <p>${ccuNotReadyHint}</p>
+       </div>
+       <div align="center" style="padding-top:250px;">
+-        <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
++        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
+       </div>
+     </div>
+ 
+--- occu/WebUI/www/error/error-503.html.orig
++++ occu/WebUI/www/error/error-503.html
+@@ -96,7 +96,7 @@
+         <p>${ccuNotReadyHint}</p>
+       </div>
+       <div align="center" style="padding-top:250px;">
+-        <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
++        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
+       </div>
+     </div>
+ 
+--- occu/WebUI/www/ise/htm/header.htm.orig
++++ occu/WebUI/www/ise/htm/header.htm
+@@ -7,7 +7,7 @@
+ </colgroup>
+ <tr>
+   <!-- Logo -->
+-          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/homematic_logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
++          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
+   <!-- Username und Pfad-->
+   <td class="CLASS11101">
+     <table class="CLASS11102">
+--- occu/WebUI/www/ise/js/functions.j_.orig
++++ occu/WebUI/www/ise/js/functions.j_
+@@ -1904,11 +1904,11 @@
+       {
+         if( $("headerLogo").src.indexOf("_red") >= 0 )
+         {
+-          $("headerLogo").src = "/ise/img/homematic_logo_small.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small.png";
+         }
+         else
+         {
+-          $("headerLogo").src = "/ise/img/homematic_logo_small_red.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
+         }
+       }
+     },
+@@ -1923,12 +1923,12 @@
+ 
+ SwitchOnFlashLight = function()
+ {
+-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small_red.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
+ };
+ 
+ SwitchOffFlashLight = function()
+ {
+-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
+ };
+ 
+ ShowAjaxLoad = function()
+--- occu/WebUI/www/rega/help.htm.orig
++++ occu/WebUI/www/rega/help.htm
+@@ -53,7 +53,7 @@
+           <td>http://www.homematic.com </td>
+         </tr>
+         <tr>
+-          <td><img src="/ise/img/homematic_logo_small_gray.png" /></td>
++          <td><img src="/ise/img/occu-logo_small_gray.png" /></td>
+         </tr>
+     </table>
+     </td>
+--- occu/WebUI/www/rega/index.htm.orig
++++ occu/WebUI/www/rega/index.htm
+@@ -105,7 +105,7 @@
+           %>
+         }
+ 
+-        top.window.location.href = sStartPage;
++        window.location.href = sStartPage;
+       };
+ 
+     </script>
+--- occu/WebUI/www/rega/login.htm.orig
++++ occu/WebUI/www/rega/login.htm
+@@ -69,7 +69,7 @@
+         <td id="navbar">
+           <table cellpadding="0" cellspacing="0">
+             <tr>
+-              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
++              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
+               <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
+               <td style="width: 100%;"></td>
+               <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
+@@ -191,4 +191,4 @@
+       translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
+     </script>
+   </body>
+-</html>
+\ No newline at end of file
++</html>
+--- occu/WebUI/www/rega/logout.htm.orig
++++ occu/WebUI/www/rega/logout.htm
+@@ -37,7 +37,7 @@
+         <td id="navbar">
+           <table cellpadding="0" cellspacing="0">
+           <tr>
+-            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
++            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
+             <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
+               <td style="width: 100%;"></td>
+               <td style="padding-right:63px;"><div class="clickable" onclick="loadHelp();"><img id="idHelp" src="/ise/img/help.png" width="48px" height="48px" alt="Hilfe" title="Hilfe"/></div></td>
+--- occu/WebUI/www/rega/pages/index.htm.orig
++++ occu/WebUI/www/rega/pages/index.htm
+@@ -72,7 +72,8 @@
+       /*########################################################################*/
+ 
+       PLATFORM = "Central";
+-      WEBUI_VERSION = "2.40.0-TRUNK";
++      WEBUI_VERSION = "XXX-WEBUI-VERSION-XXX";
++      PRODUCT = "XXX-PRODUCT-XXX";
+ 
+       /**
+        * Flags
+@@ -199,7 +200,7 @@
+     <div id="webuiloader_wrapper">
+       <div id="webuiloader_background">
+         <div id="webuiloader">
+-          <div id="webuiloader_icon"><img src="/ise/img/homematic_logo_small_gray.png" alt="" /></div>
++          <div id="webuiloader_icon"><img src="/ise/img/occu-logo_small_gray.png" /></div>
+           <!-- div id="webuiloader_caption">HomeMatic WebUI wird geladen...</div-->
+           <div id="webuiloader_caption"></div>
+           <script type="text/javascript">jQuery("#webuiloader_caption").html(translateKey("loadWebUI"));</script>
+--- occu/WebUI/www/tcl/eq3_old/common.tcl.orig
++++ occu/WebUI/www/tcl/eq3_old/common.tcl
+@@ -173,6 +173,10 @@
+     return [read_var /VERSION VERSION]
+ }
+ 
++proc get_platform { } {
++    return [read_var /VERSION PLATFORM]
++}
++
+ proc get_CoProVersion {} {
+   set cfgFile "/var/hm_mode"
+   set unknownVersion "0.0.0"
+--- occu/WebUI/www/upnp/basic_dev.cgi.orig
++++ occu/WebUI/www/upnp/basic_dev.cgi
+@@ -1,187 +1,316 @@
+ #!/bin/tclsh
++#------------------------------------------------------------------------------
++# OpenCCU UPnP device description (Basic:1) CGI
++#
++# Purpose
++#   - Advertise the controller as a UPnP *Basic:1* device with a working
++#     presentationURL to the WebUI, but **without** declaring services.
++#   - Prevent Control Points from requesting a non-existent SCPD (<scpd> root),
++#     which previously caused parsing errors when an empty <serviceList> was present.
++#
++# Branding & Compatibility
++#   - Friendly name and headers branded as "OpenCCU".
++#   - UUID/UDN format kept as "upnp-BasicDevice-1_0-<SERIAL>" for compatibility
++#     with existing discovery tools (e.g., eQ-3 NetFinder).
++#
++# Specs / References (stable URLs)
++#   - UPnP Device Architecture v2.0 (OCF):
++#     https://openconnectivity.org/upnp-specs/UPnP-arch-DeviceArchitecture-v2.0-20200417.pdf
++#   - UPnP Device Architecture v1.1 (UPnP Forum/OCF):
++#     https://openconnectivity.org/upnp-specs/UPnP-arch-DeviceArchitecture-v1.1.pdf
++#   - Basic:1 Device Definition (UPnP Forum):
++#     https://upnp.org/specs/basic/UPnP-basic-Basic-v1-Device.pdf
++#------------------------------------------------------------------------------
++
+ source ../cgi.tcl
+ 
+-proc get_mac_address {} {
+-    set ifconfig_result [exec /sbin/ifconfig eth0]
+-    if {! [regexp -line {HWaddr *([^ \t]+) *$} $ifconfig_result dummy mac_addr]} {return ""}
+-    return $mac_addr
++# --- helpers ---------------------------------------------------------------
++proc _ip_route_get {} {
++    if {[catch {exec ip -4 route get 1.1.1.1} out]} { return "" }
++    return $out
++}
++
++proc get_default_iface {} {
++    set out [_ip_route_get]
++    if {$out ne "" && [regexp {dev ([^ ]+)} $out -> iface]} {
++        return $iface
++    }
++    return ""
+ }
+ 
+ proc get_ip_address {} {
+-    set ifconfig_result [exec /sbin/ifconfig eth0]
+-    if {! [regexp -line {inet addr:([\d.]+).*Mask:} $ifconfig_result dummy ip]} {return ""}
+-    return $ip
++    # Primary attempt: `ip -4 route get` (extract "src <IPv4>")
++    set out [_ip_route_get]
++    if {$out ne "" && [regexp {src ([0-9.]+)} $out -> ip]} {
++        return $ip
++    }
++    # Fallback: parse from `ip -4 addr show` (BusyBox/variations)
++    if {![catch {exec ip -4 addr show scope global} aout]} {
++        if {[regexp {inet ([0-9.]+)} $aout -> ip]} {
++            return $ip
++        }
++    }
++    return ""
++}
++
++proc get_mac_address {} {
++    # Try to read MAC of the default interface from sysfs first
++    set iface [get_default_iface]
++    if {$iface ne ""} {
++        set p "/sys/class/net/$iface/address"
++        if {[file exists $p]} {
++            if {![catch {set mac [string trim [exec cat $p]]}]} { return $mac }
++        }
++        # Fallback via `ip link show <iface>`
++        if {![catch {exec ip link show $iface} out]} {
++            # Prefer link/ether only (avoid matching loopback)
++            if {[regexp {link/ether ([0-9a-f:]{17})} $out -> mac]} { return $mac }
++        }
++    }
++    # Last resort: return empty to avoid breaking output
++    return ""
+ }
+ 
++# Robust file existence + trimmed content to avoid newlines in UDN/XML
++# (Developer preference: keep the simple `cat` approach with exists checks.)
+ proc get_serial_number {} {
+-    if {[file exist /var/board_sgtin]} {
+-      set serial [exec cat /var/board_sgtin]
+-    } elseif {[file exist /var/board_serial]} {
+-      set serial [exec cat /var/board_serial]
+-    } elseif {[file exist /sys/module/plat_eq3ccu2/parameters/board_serial]} {
+-      set serial [exec cat /sys/module/plat_eq3ccu2/parameters/board_serial]
+-    } else {
+-      set serial ""
++    set serial ""
++    if {[file exists /var/board_sgtin]} {
++        if {![catch {exec cat /var/board_sgtin} content]} {
++            set serial [string trim $content]
++        }
++    } elseif {[file exists /var/board_serial]} {
++        if {![catch {exec cat /var/board_serial} content]} {
++            set serial [string trim $content]
++        }
++    } elseif {[file exists /sys/module/plat_eq3ccu2/parameters/board_serial]} {
++        if {![catch {exec cat /sys/module/plat_eq3ccu2/parameters/board_serial} content]} {
++            set serial [string trim $content]
++        }
+     }
++    if {![info exists serial] || $serial eq ""} { set serial "" }
+     return $serial
+ }
+ 
+-proc get_hostname {} {
+-    return [exec hostname]
++# --- branding & identity ---------------------------------------------------
++# NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
++set hostname "[info hostname]"
++set RESOURCE(TITLE) "OpenCCU - $hostname"
++set RESOURCE(MANUFACTURER) "OpenCCU"
++set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
++set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
++# Fallback: derive a stable identifier from MAC if serial is empty
++if {$RESOURCE(SERIAL_NUMBER) eq ""} {
++    set _mac [get_mac_address]
++    if {$_mac ne ""} {
++        # Strip colons to keep legacy UDN pattern intact
++        set RESOURCE(SERIAL_NUMBER) [string map {: ""} $_mac]
++    }
+ }
+-
+-set hostname "[get_hostname]"
+-if { "$hostname" == "homematic-ccu3" } {
+-    set RESOURCE(TITLE) "HomeMatic Central CCU3"
+-} elseif { "$hostname" == "homematic-raspi" } {
+-    set RESOURCE(TITLE) "HomeMatic Central RaspberryMatic"
+-} elseif { "$hostname" == "homematic-ccu2" } {
+-    set RESOURCE(TITLE) "HomeMatic Central CCU2"
+-} else {
+-    set RESOURCE(TITLE) "HomeMatic Central - $hostname"
++if {$RESOURCE(SERIAL_NUMBER) eq ""} {
++    set RESOURCE(SERIAL_NUMBER) $hostname
+ }
+-
+-set RESOURCE(MANUFACTURER) "EQ3"
+-set RESOURCE(MANUFACTURER_URL) "http://www.homematic.com"
+-set RESOURCE(PRESENTATION_URL) ""
+-set RESOURCE(DESCRIPTION) "HomeMatic Central [get_serial_number]"
+-set RESOURCE(MODEL_NAME) "HomeMatic Central"
+-set RESOURCE(MODEL_NUMBER) "HomeMatic Central"
++# Avoid duplicate get_serial_number calls
++set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
++set RESOURCE(MODEL_NAME) "OpenCCU"
++set RESOURCE(MODEL_NUMBER) "OpenCCU"
+ set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
+-set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
+ set RESOURCE(UUID) "upnp-BasicDevice-1_0-$RESOURCE(SERIAL_NUMBER)"
+ set RESOURCE(UPC) "123456789002"
+ set RESOURCE(DEVTYPE) "urn:schemas-upnp-org:device:Basic:1"
+ 
+-set MY_PORT [expr $env(SERVER_PORT)==80?"":":$env(SERVER_PORT)"]
++# --- base URLs -------------------------------------------------------------
++# Determine port safely and prefer HTTP_HOST when present; validate/trim host
++set _port 80
++if {[info exists env(SERVER_PORT)]} {
++    if {![catch {expr {int($env(SERVER_PORT))}} tmp]} { set _port $tmp }
++}
++set MY_PORT [expr {$_port==80 ? "" : ":$_port"}]
++# Legacy placeholder (unused here) – kept to minimize diff and preserve intent:
+ set ISE_PORT ""
+-set RESOURCE(ROOT_URL) "http://[get_ip_address]$MY_PORT"
++if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
++    set host [string trim $env(HTTP_HOST)]
++    # Allow only host[:port] where host is IPv4/hostname or bracketed IPv6; else fall back
++    if {![regexp {^(?:\[[0-9A-Fa-f:]+\]|[A-Za-z0-9\.\-]+)(?::\d+)?$} $host]} {
++        set _ip [get_ip_address]
++        if {$_ip eq ""} { set _ip "127.0.0.1" }
++        set host "${_ip}$MY_PORT"
++    }
++} else {
++    set _ip [get_ip_address]
++    if {$_ip eq ""} { set _ip "127.0.0.1" }
++    set host "${_ip}$MY_PORT"
++}
++# Normalize bracketless pure-IPv6 host (defensive; typical HTTP_HOST uses brackets already)
++set _root_host $host
++if {[regexp {^[0-9A-Fa-f:]+$} $_root_host]} {
++    set _root_host "[$_root_host]"
++}
++set RESOURCE(ROOT_URL) "http://$_root_host"
+ set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
++set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"
+ 
+-set output_buffer ""
++# --- SERVER header (spec-ish: OS/Ver, UPnP/1.0, Product[/Ver]) ------------
++set _os "Unix"; set _ver "1.0"
++catch { set _os [exec uname -s] }
++catch { set _ver [exec uname -r] }
++set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU"
+ 
++# --- output buffer ---------------------------------------------------------
++set output_buffer ""
+ proc out {s} {
++    # Use append for efficiency; keep global buffer as agreed.
+     global output_buffer
+-    set output_buffer "$output_buffer$s\r\n"
++    append output_buffer $s "\r\n"
+ }
+ 
++# Minimal XML text escape for text nodes
++proc xml_escape {s} {
++    return [string map {& &amp; < &lt; > &gt; \" &quot; ' &apos;} $s]
++}
++
++# --- device description (no serviceList for Basic:1) -----------------------
+ proc send_description {} {
+     global RESOURCE
+-    
+-    out {<?xml version="1.0"?>}
++
++    out {<?xml version="1.0" encoding="UTF-8"?>}
+     out {<root xmlns="urn:schemas-upnp-org:device-1-0">}
+     out "\t<specVersion>"
+     out "\t\t<major>1</major>"
+     out "\t\t<minor>0</minor>"
+     out "\t</specVersion>"
+-    out "\t<URLBase>$RESOURCE(BASE_URL)</URLBase>"
++    # URLBase should typically point to the root, not a subpath
++    out "\t<URLBase>$RESOURCE(ROOT_URL)</URLBase>"
+     out "\t<device>"
+     out "\t\t<deviceType>$RESOURCE(DEVTYPE)</deviceType>"
+-    out "\t\t<presentationURL>$RESOURCE(PRESENTATION_URL)</presentationURL>"
+-    out "\t\t<friendlyName>$RESOURCE(TITLE)</friendlyName>"
+-    out "\t\t<manufacturer>$RESOURCE(MANUFACTURER)</manufacturer>"
+-    out "\t\t<manufacturerURL>$RESOURCE(MANUFACTURER_URL)</manufacturerURL>"
+-    out "\t\t<modelDescription>$RESOURCE(DESCRIPTION)</modelDescription>"
+-    out "\t\t<modelName>$RESOURCE(MODEL_NAME)</modelName>"
+-    out "\t\t<UDN>uuid:$RESOURCE(UUID)</UDN>"
++    out "\t\t<presentationURL>[xml_escape $RESOURCE(PRESENTATION_URL)]</presentationURL>"
++    out "\t\t<friendlyName>[xml_escape $RESOURCE(TITLE)]</friendlyName>"
++    out "\t\t<manufacturer>[xml_escape $RESOURCE(MANUFACTURER)]</manufacturer>"
++    out "\t\t<manufacturerURL>[xml_escape $RESOURCE(MANUFACTURER_URL)]</manufacturerURL>"
++    out "\t\t<modelDescription>[xml_escape $RESOURCE(DESCRIPTION)]</modelDescription>"
++    out "\t\t<modelName>[xml_escape $RESOURCE(MODEL_NAME)]</modelName>"
++    # XML-escape UDN to guard against unexpected serial contents
++    set _udn "uuid:$RESOURCE(UUID)"
++    out "\t\t<UDN>[xml_escape $_udn]</UDN>"
+     out "\t\t<UPC>$RESOURCE(UPC)</UPC>"
+-    
+-   
+-    out "\t\t<serviceList>"
+-    out "\t\t\t<service>"
+-    out "\t\t\t\t<serviceType>urn:schemas-upnp-org:service:dummy:1</serviceType>"
+-    out "\t\t\t\t<serviceId>urn:upnp-org:serviceId:dummy1</serviceId>"
+-    out "\t\t\t\t<controlURL></controlURL>"
+-    out "\t\t\t\t<eventSubURL></eventSubURL>"
+-    out "\t\t\t\t<SCPDURL></SCPDURL>"
+-    out "\t\t\t</service>"
+-    out "\t\t</serviceList>"
+-    
+-#    out "\t\t<modelNumber>$RESOURCE(MODEL_NUMBER)</modelNumber>"
+-#    out "\t\t<modelURL>$RESOURCE(MODEL_URL)</modelURL>"
+-#    out "\t\t<serialNumber>$RESOURCE(SERIAL_NUMBER)</serialNumber>"
+-    #out "\t\t<serviceList/>"
+-    #out "\t\t<deviceList/>"
+-    #out {    <iconList>}
+-    #out {      <icon>}
+-    #out {        <mimetype>image/format</mimetype>}
+-    #out {        <width>horizontal pixels</width>}
+-    #out {        <height>vertical pixels</height>}
+-    #out {        <depth>color depth</depth>}
+-    #out {        <url>URL to icon</url>}
+-    #out {      </icon>}
+-    #out {    </iconList>}
++
++    # Optional examples (kept commented for future use):
++    # out "\t\t<modelNumber>$RESOURCE(MODEL_NUMBER)</modelNumber>"
++    # out "\t\t<modelURL>$RESOURCE(MODEL_URL)</modelURL>"
++    # out "\t\t<serialNumber>$RESOURCE(SERIAL_NUMBER)</serialNumber>"
++    # out "\t\t<deviceList/>"
++    # out {    <iconList>}
++    # out {      <icon>}
++    # out {        <mimetype>image/png</mimetype>}
++    # out {        <width>128</width>}
++    # out {        <height>128</height>}
++    # out {        <depth>24</depth>}
++    # out {        <url>/images/openccu-128.png</url>}
++    # out {      </icon>}
++    # out {    </iconList>}
++
++    # OPTION B (COMMENTED): vendor service with a valid SCPD (see footer)
++    # out "\t\t<serviceList>"
++    # out "\t\t  <service>"
++    # out "\t\t    <serviceType>urn:schemas-openccu-org:service:DeviceInfo:1</serviceType>"
++    # out "\t\t    <serviceId>urn:openccu-org:serviceId:DeviceInfo1</serviceId>"
++    # out "\t\t    <controlURL>/upnp/deviceinfo/control</controlURL>"
++    # out "\t\t    <eventSubURL>/upnp/deviceinfo/event</eventSubURL>"
++    # out "\t\t    <SCPDURL>/upnp/deviceinfo_scpd.xml</SCPDURL>"
++    # out "\t\t  </service>"
++    # out "\t\t</serviceList>"
++
+     out "\t</device>"
+     out "</root>"
+ }
+ 
++# --- SSDP response/notify (emit ONE variant per invocation) ----------------
+ proc send_response {} {
+-    global RESOURCE env
+-    
+-    for { set i 0 } { $i < 1 } { incr i } {
+-        out "HTTP/1.1 200 OK"
+-        out "CACHE-CONTROL:max-age=5000"
+-        out "EXT:"
+-        out "LOCATION:$RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
+-        out "SERVER:HomeMatic"
+-        switch $i {
+-            0 {
+-                out "ST:upnp:rootdevice"
+-                out "USN:uuid:$RESOURCE(UUID)::upnp:rootdevice"
+-            }
+-            1 {
+-                out "ST:uuid:$RESOURCE(UUID)"
+-                out "USN:uuid:$RESOURCE(UUID)"
+-            }
+-            2 {
+-                out "ST:$RESOURCE(DEVTYPE)"
+-                out "USN:uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
+-            }
+-        }
+-        out ""
+-    }
++    global RESOURCE env SERVER_HEADER
++    out "HTTP/1.1 200 OK"
++    out "CACHE-CONTROL: max-age=5000"
++    out "EXT:"
++    out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
++    out "SERVER: $SERVER_HEADER"
++    out "ST: upnp:rootdevice"
++    out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice"
++    out ""
+ }
+ 
+ proc send_alive {} {
+-    global RESOURCE env
+-
+-    for { set i 0 } { $i < 1 } { incr i } {
+-        out "NOTIFY * HTTP/1.1"
+-        out "HOST:239.255.255.250:1900"
+-        out "CACHE-CONTROL:max-age=5000"
+-        out "LOCATION:$RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
+-        out "NTS:ssdp:alive"
+-        out "SERVER:HomeMatic"
+-        
+-        switch $i {
+-            0 {
+-                out "NT:upnp:rootdevice"
+-                out "USN:uuid:$RESOURCE(UUID)::upnp:rootdevice"
+-            }
+-            1 {
+-                out "NT:uuid:$RESOURCE(UUID)"
+-                out "USN:uuid:$RESOURCE(UUID)"
+-            }
+-            2 {
+-                out "NT:$RESOURCE(DEVTYPE)"
+-                out "USN:uuid:$RESOURCE(UUID)::$RESOURCE(DEVTYPE)"
+-            }
+-        }
+-        out ""
+-    }
++    global RESOURCE env SERVER_HEADER
++    out "NOTIFY * HTTP/1.1"
++    out "HOST: 239.255.255.250:1900"
++    out "CACHE-CONTROL: max-age=5000"
++    out "LOCATION: $RESOURCE(ROOT_URL)$env(SCRIPT_NAME)"
++    out "NTS: ssdp:alive"
++    out "SERVER: $SERVER_HEADER"
++    out "NT: upnp:rootdevice"
++    out "USN: uuid:$RESOURCE(UUID)::upnp:rootdevice"
++    out ""
+ }
+ 
++# --- CGI entrypoint --------------------------------------------------------
+ cgi_eval {
+-   #cgi_debug on
++    # cgi_debug on
+     cgi_input
+     set ssdp "description"
+-    catch {
+-        import ssdp
++    catch { import ssdp }
++    # Whitelist to avoid command injection via send_$ssdp
++    if {[lsearch -exact {description response alive} $ssdp] < 0} {
++        set ssdp description
+     }
+-
+     send_$ssdp
+-    puts "Content-type: text/xml\r"
+-    puts "Content-Length: [string length $output_buffer]\r"
++
++    # Ensure output encoding matches Content-Length computation
++    fconfigure stdout -encoding utf-8
++
++    # Content-Type based on payload type
++    set ctype [expr {$ssdp eq "description" ? "text/xml" : "text/plain"}]
++    puts "Content-Type: $ctype; charset=\"utf-8\"\r"
++    # Content-Length in BYTES (UTF-8)
++    puts "Content-Length: [string length [encoding convertto utf-8 $output_buffer]]\r"
+     puts "\r"
+     puts -nonewline $output_buffer
+ }
++
++#------------------------------------------------------------------------------
++# DeviceInfo SCPD example (OPTION B) – place this as /www/upnp/deviceinfo_scpd.xml
++#------------------------------------------------------------------------------
++# <?xml version="1.0" encoding="UTF-8"?>
++# <scpd xmlns="urn:schemas-upnp-org:service-1-0">
++#   <specVersion><major>1</major><minor>0</minor></specVersion>
++#   <actionList>
++#     <!-- Example action (optional):
++#     <action>
++#       <name>GetInfo</name>
++#       <argumentList>
++#         <argument>
++#           <name>FriendlyName</name>
++#           <direction>out</direction>
++#           <relatedStateVariable>OpenCCU.FriendlyName</relatedStateVariable>
++#         </argument>
++#         <argument>
++#           <name>Version</name>
++#           <direction>out</direction>
++#           <relatedStateVariable>OpenCCU.Version</relatedStateVariable>
++#         </argument>
++#       </argumentList>
++#     </action>
++#     -->
++#   </actionList>
++#   <serviceStateTable>
++#     <!-- Example state variables (optional) -->
++#     <!--
++#     <stateVariable sendEvents="no">
++#       <name>OpenCCU.FriendlyName</name>
++#       <dataType>string</dataType>
++#     </stateVariable>
++#     <stateVariable sendEvents="no">
++#       <name>OpenCCU.Version</name>
++#       <dataType>string</dataType>
++#     </stateVariable>
++#     -->
++#   </serviceStateTable>
++# </scpd>
++#------------------------------------------------------------------------------
+--- occu/WebUI/www/webui/error/notready.html.orig
++++ occu/WebUI/www/webui/error/notready.html
+@@ -12,8 +12,8 @@
+     <p>Bitte warten Sie. Sie werden automatisch auf die Startseite weitergeleitet.</p>
+   </div>
+   <div align="center" style="padding-top:250px;">
+-    <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
++    <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
+   </div>
+ </body>
+ 
+-</html>
+\ No newline at end of file
++</html>
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
+@@ -816,7 +816,7 @@
+     "btnGarageClose" : "Schlie%DFen",
+     "btnGarageVent" : "L%FCften",
+     "btnGarageStop" : "Stopp",
+-    "dialogSettingsUSBStorageSettings" : "Externer USB-Speicher",
++    "dialogSettingsUSBStorageSettings" : "Externer Speicher",
+     "dialogSettingsStorageHintUSBStorageP1" : "Die Sicherung der Daten umfasst nur die Diagramme.",
+     "dialogSettingsSecurityTDAuth" : "Authentifizierung",
+     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentifizierung aktiv: ",
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
+@@ -1,8 +1,8 @@
+ jQuery.extend(true,HMIdentifier , {
+   "de" : {
+-    "CCUFullNameHeader" : "Homematic CCU",
+-    "CCUFullNameText" : "Homematic CCU",
+-    "CCUShortName" : "CCU",
++    "CCUFullNameHeader" : "OpenCCU",
++    "CCUFullNameText" : "OpenCCU",
++    "CCUShortName" : "OpenCCU",
+     "BidCosRF" : "Homematic Funk",
+     "BidCosWired" : "Homematic Wired",
+     "VirtualDevices" : "VirtualDevices",
+@@ -463,6 +463,7 @@
+     "dialogSettingsCMLblActualSoftwareVersion" : "Aktuelle Software-Version:",
+     "dialogSettingsCMLblAvailableSoftwareVersion" : "Verf%FCgbare Software-Version:",
+     "dialogSettingsCMLblPerformSoftwareUpdate" : "Software-Update durchf%FChren",
++    "dialogSettingsCMLblPerformSoftwareUpdateVirt" : "Wenn Sie ein Update der OpenCCU Version durchf%FChren wollen, so k%F6nnen Sie dies im Kontext ihrer eingesetzten Virtualisierungsl%F6sung (HomeAssistant, Docker, LXC, etc.) durchf%FChren. Bitte konsultieren Sie hierzu die entsprechende OpenCCU Dokumentation.",
+     "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Schritt 1: Neue Software herunterladen",
+     "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Schritt 2: Heruntergeladene Software ausw%E4hlen",
+     "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Schritt 3: Software auf " + HMIdentifier.de.CCUShortName + " laden",
+@@ -486,6 +487,7 @@
+     "dialogSettingsCMHintSoftwareUpdate3" : "F%FChren Sie vor dem Update eine Datensicherung durch.",
+     "dialogSettingsCMHintSoftwareUpdate4a" : "Der Ladezustand der Batterien betr%E4gt nur noch ",
+     "dialogSettingsCMHintSoftwareUpdate4b" : "Um einem Datenverlust durch Ausfall der Stromversorgung vorzubeugen, empfehlen wir, die Batterien vor dem Update zu erneuern.",
++    "dialogSettingsCMHintSoftwareUpdateOpenCCU" : "OpenCCU ist ein freies, nicht kommerzielles und gemeinschaftlich entwickeltes OpenSource Projekt. Wenn Sie sich gerne an der Weiterentwicklung beteiligen oder es auf anderem Wege gerne unterst%FCtzen wollen so schauen Sie doch einmal auf unserer <a href='https://github.com/openccu'>Projekt Homepage</a> vorbei.",
+     "dialogSettingsCMHintRestart" : "Zentrale neu starten. Ver%E4nderte Einstellungen werden vorher gespeichert.",
+     "dialogSettingsCMHintShutdown" : "Zentrale herunterfahren. Ver%E4nderte Einstellungen werden vorher gespeichert.",
+     "dialogSettingsCMHintRestartSafeMode" : "Homematic Zentrale einmalig im abgesicherten Modus starten. Im abgesicherten Modus wird die installierte Zusatzsoftware nicht gestartet. Ver%E4nderte Einstellungen werden vorher gespeichert.",
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.system.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.system.js
+@@ -15,8 +15,8 @@
+     "dialogSettingsInitialisingMessageTitle" : "Die microSD Karte wird zurzeit initialisiert",
+     "lblSysConfStorage" : "Speicherverwaltung",
+ 
+-    "dialogSettingsExternalStorageStateInitialised" : "externer USB-Speicher vorhanden.",
+-    "dialogSettingsExternalStorageStateNotPresent" : "Es wurde kein externer USB-Speicher gefunden."
++    "dialogSettingsExternalStorageStateInitialised" : "externer Speicher vorhanden.",
++    "dialogSettingsExternalStorageStateNotPresent" : "Es wurde kein externer Speicher gefunden."
+   }
+ });
+ 
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
+@@ -813,7 +813,7 @@
+     "btnGarageClose" : "Closing",
+     "btnGarageVent" : "Ventilation",
+     "btnGarageStop" : "Stop",
+-    "dialogSettingsUSBStorageSettings" : "External USB memory",
++    "dialogSettingsUSBStorageSettings" : "External storage",
+     "dialogSettingsStorageHintUSBStorageP1" : "Storage of data only includes the diagrams.",
+     "dialogSettingsSecurityTDAuth" : "Authentication",
+     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentication active: ",
+@@ -1076,4 +1076,4 @@
+ });
+ 
+ langJSON.en.hintActivateDetectorSelfTest += langJSON.en.checkSmokeDetectorSelfTest;
+-langJSON.en.hintReInclusionDetectorFailed += langJSON.en.checkSmokeDetectorSelfTest;
+\ No newline at end of file
++langJSON.en.hintReInclusionDetectorFailed += langJSON.en.checkSmokeDetectorSelfTest;
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
+@@ -1,8 +1,8 @@
+ jQuery.extend(true,HMIdentifier , {
+   "en" : {
+-    "CCUFullNameHeader" : "Homematic CCU",
+-    "CCUFullNameText" : "Homematic CCU",
+-    "CCUShortName" : "CCU",
++    "CCUFullNameHeader" : "OpenCCU",
++    "CCUFullNameText" : "OpenCCU",
++    "CCUShortName" : "OpenCCU",
+     "BidCosRF" : "Homematic RF",
+     "BidCosWired" : "BidCos-Wired",
+     "BidCosRF-Filter" : "BidCos-RF",
+@@ -462,6 +462,7 @@
+     "dialogSettingsCMLblActualSoftwareVersion" : "Current software version:",
+     "dialogSettingsCMLblAvailableSoftwareVersion" : "Available software version:",
+     "dialogSettingsCMLblPerformSoftwareUpdate" : "Perform software update",
++    "dialogSettingsCMLblPerformSoftwareUpdateVirt" : "If you want to update the OpenCCU version, you can do this in the context of the virtualization solution you are using (HomeAssistant, Docker, LXC, etc.). Please consult the corresponding OpenCCU documentation.",
+     "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Step 1: Download new software",
+     "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Step 2: Select downloaded software",
+     "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Step 3: Upload software to " + HMIdentifier.en.CCUShortName,
+@@ -485,6 +486,7 @@
+     "dialogSettingsCMHintSoftwareUpdate3" : "Please perform a data backup before starting the update.",
+     "dialogSettingsCMHintSoftwareUpdate4a" : "The charging status the batteries is only at ",
+     "dialogSettingsCMHintSoftwareUpdate4b" : "To prevent from data loss due to power failure, it is recommended to replace the batteries before starting the update.",
++    "dialogSettingsCMHintSoftwareUpdateOpenCCU" : "OpenCCU is a free, non-commercial and community driven OpenSource project. If you want to contribute to the project yourself or want to support it, please consider visiting our <a href='https://github.com/openccu'>project homepage</a>.",
+     "dialogSettingsCMHintRestart" : "Restart CCU. The changed settings will be saved before.",
+     "dialogSettingsCMHintShutdown" : "Shutdown CCU. The changed settings will be saved before.",
+     "dialogSettingsCMHintRestartSafeMode" : "Start Homematic Central Control Unit in safe mode once. In safe mode, the installed additional software will not be started. The changed settings will be saved before.",
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.system.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.system.js
+@@ -15,8 +15,8 @@
+     "dialogSettingsInitialisingMessageTitle" : "microSD card is currently being initialized.",
+     "lblSysConfStorage" : "Memory management",
+ 
+-    "dialogSettingsExternalStorageStateInitialised" : "external USB memory available.",
+-    "dialogSettingsExternalStorageStateNotPresent" : "No external USB memory found."
++    "dialogSettingsExternalStorageStateInitialised" : "external disk space available.",
++    "dialogSettingsExternalStorageStateNotPresent" : "No external disk space found."
+   }
+ });
+ 
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -24238,16 +24238,16 @@
+ 
+    // WebUI-Version
+   showCurrentFirmware: function() {
+-    //jQuery("#currentFirmware").text(WEBUI_VERSION);
++    jQuery("#currentFirmware").text(WEBUI_VERSION);
+ 
+-    homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function(result) {
+-      if (result != null) {
+-        WEBUI_VERSION = result.firmware;
+-      } else {
+-        WEBUI_VERSION = "0.0.0";
+-      }
+-      jQuery("#currentFirmware").text(WEBUI_VERSION);
+-    });
++    //homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function(result) {
++    //  if (result != null) {
++    //    WEBUI_VERSION = result.firmware;
++    //  } else {
++    //    WEBUI_VERSION = "0.0.0";
++    //  }
++    //  jQuery("#currentFirmware").text(WEBUI_VERSION);
++    //});
+   },
+ 
+   /*evalVersionAGreaterThanB: function(a, b) {
+@@ -28360,7 +28360,7 @@
+   {
+     this.m_ccuProduct = getProduct();
+     this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
+-    this.m_product ="HM-CCU" + this.m_ccuProduct;
++    this.m_product = "HM-RASPBERRYMATIC";
+     this.m_URLServer = (isHTTPS) ? "https://"+this.preURL+"update.homematic.com:8443" : "http://"+this.preURL+"update.homematic.com";
+     this.m_fieldTestURLServer = (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com" : "http://fieldtest-ccu3-update.homematic.com";
+ 
+@@ -28371,7 +28371,7 @@
+     var script = document.createElement("script");
+     script.id = "homematic_com_script";
+     script.type = "text/javascript";
+-    script.src = this.m_URLServer + "/firmware/download?cmd=js_check_version&version="+WEBUI_VERSION+"&product="+this.m_product+"&serial=" + this.serial;
++    script.src = "https://openccu.de/LATEST-VERSION.js?v=" + WEBUI_VERSION + "&p=" + PRODUCT;
+     $("body").appendChild(script);
+   },
+ 
+@@ -33747,11 +33747,11 @@
+       {
+         if( $("headerLogo").src.indexOf("_red") >= 0 )
+         {
+-          $("headerLogo").src = "/ise/img/homematic_logo_small.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small.png";
+         }
+         else
+         {
+-          $("headerLogo").src = "/ise/img/homematic_logo_small_red.png";
++          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
+         }
+       }
+     },
+@@ -33766,12 +33766,12 @@
+ 
+ SwitchOnFlashLight = function()
+ {
+-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small_red.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
+ };
+ 
+ SwitchOffFlashLight = function()
+ {
+-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/homematic_logo_small.png"; }
++  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
+ };
+ 
+ getAjaxLoadElem = function() {

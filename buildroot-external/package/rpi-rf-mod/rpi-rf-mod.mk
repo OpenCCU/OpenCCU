@@ -7,7 +7,7 @@
 # selected platforms
 #
 # Copyright (c) 2018-2023 Jens Maus <mail@jens-maus.de>
-# https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/rpi-rf-mod
+# https://github.com/openccu/openccu/tree/master/buildroot-external/package/rpi-rf-mod
 #
 ################################################################################
 

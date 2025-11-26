@@ -16,7 +16,7 @@ ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | a
 if [[ -n "${ARCHIVE_HASH}" ]]; then
 
   # update package info
-  sed -i "s|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\".*\"|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\"${ID}\"|g" buildroot-external/configs/raspmatic_rpi*
+  sed -i "s|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\".*\"|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\"${ID}\"|g" buildroot-external/configs/rpi*.config
 
   # update hash files
   sed -i "/rpi-firmware/d" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"

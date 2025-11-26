@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1851,14 +1851,14 @@
+@@ -1884,14 +1884,14 @@
  }
  
  function ::HideCertainParameters() {

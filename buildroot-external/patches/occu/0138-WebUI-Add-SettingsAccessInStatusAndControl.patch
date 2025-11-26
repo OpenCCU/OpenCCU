@@ -43,7 +43,7 @@
      system.SetSessionVar("sessionTAB", "programs");
      object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
      object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
-@@ -943,15 +944,15 @@
+@@ -975,15 +976,15 @@
    };
    CancelProgramEdit = function(copy)
    {
@@ -62,7 +62,7 @@
    };
    AddSubRuleSelectChange = function(idx,rid)
    {
-@@ -1082,7 +1083,7 @@
+@@ -1114,7 +1115,7 @@
    var s = "";
    s += "<table cellspacing='8'>";
    s += "<tr>";
@@ -71,7 +71,7 @@
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
-@@ -1133,4 +1134,4 @@
+@@ -1165,4 +1166,4 @@
    
  </div>
  
@@ -187,7 +187,7 @@
  .CLASS05005 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -30918,7 +30918,7 @@
+@@ -31246,7 +31246,7 @@
      };
      new Ajax.Request(url,opts);
    },
@@ -196,7 +196,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -30930,12 +30930,12 @@
+@@ -31258,12 +31258,12 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}
@@ -211,7 +211,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -30948,12 +30948,12 @@
+@@ -31276,12 +31276,12 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}
@@ -226,7 +226,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -30965,7 +30965,7 @@
+@@ -31293,7 +31293,7 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}

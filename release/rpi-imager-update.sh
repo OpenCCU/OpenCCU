@@ -63,16 +63,16 @@ RPI5_MF=$(readlink -f "${6}")
 
 # extract version and release date from first mf filename
 # shellcheck disable=SC2001
-NEW_VERSION=$(echo "${RPI0_MF}" | sed 's/.*Matic-\(.*\)-rpi.\.mf/\1/')
+NEW_VERSION=$(echo "${RPI0_MF}" | sed 's/.*\/OpenCCU-\(.*\)-rpi.\.mf/\1/')
 RELEASE_DATE=$(date --date="$(echo "${NEW_VERSION}" | cut -d'.' -f4 | head -c8)" +%Y-%m-%d)
 
 # common infos
 DESCRIPTION="Lightweight Linux OS for running a HomeMatic/homematicIP IoT central."
 if [[ ${NEW_VERSION} =~ "-" ]]; then
   NEW_VERSION=${NEW_VERSION::-1} # remove last char because of deploy-nightly action
-  DOWNLOAD_URL="https://github.com/jens-maus/RaspberryMatic/releases/download/snapshots/RaspberryMatic-VERSION"
+  DOWNLOAD_URL="https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-VERSION"
 else
-  DOWNLOAD_URL="https://github.com/jens-maus/RaspberryMatic/releases/download/VERSION/RaspberryMatic-VERSION"
+  DOWNLOAD_URL="https://github.com/OpenCCU/OpenCCU/releases/download/VERSION/OpenCCU-VERSION"
 fi
 
 # create temp dir and copy rpi-imager.json to it
@@ -94,7 +94,7 @@ function updateJSON() {
   ARCHIVE_URL="${DOWNLOAD_URL//VERSION/${NEW_VERSION}}-${platform}.zip"
   
   info "Patching rpi-imager.json [${platform}]..."
-  jq ".os_list[${id}].name = \"RaspberryMatic ${NEW_VERSION} (${descr})\" | \
+  jq ".os_list[${id}].name = \"OpenCCU ${NEW_VERSION} (${descr})\" | \
       .os_list[${id}].description = \"${DESCRIPTION}\" | \
       .os_list[${id}].url = \"${ARCHIVE_URL}\" | \
       .os_list[${id}].release_date = \"${RELEASE_DATE}\" | \

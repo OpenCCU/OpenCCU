@@ -723,7 +723,7 @@ fwinstall()
             /bin/dd if="${BOOTFS_LOOPROOTDEV}" of="${BOOTFS_ROOTDEV}" bs=512 count=10239 seek=1 skip=1 conv=fsync status=none
             result=$?
           else
-            # x86 RaspberryMatic with GRUB
+            # x86 with GRUB
             echo -ne "(GRUB)... "
             /bin/dd if="${BOOTFS_LOOPROOTDEV}" of="${BOOTFS_ROOTDEV}" bs=512 count=2047 seek=1 skip=1 conv=fsync status=none
             result=$?

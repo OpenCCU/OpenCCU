@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # helper script to patch the docker environment of homeassistant so that
-# the raspberrymatic will be additionally connected via a macvlan interface
+# the openccu will be additionally connected via a macvlan interface
 # to be able to connect a HmIP-HAP/HmIPW-DRAP.
 #
 # Can be called in full interactive mode by just calling it via:
@@ -34,16 +34,16 @@
 # network gateway (e.g. '192.168.178.1')
 : "${CCU_NETWORK_GATEWAY:=""}"
 
-# raspberrymatic container name (e.g. '5422eb72-raspberrymatic')
+# openccu container name (e.g. '5422eb72-openccu')
 : "${CCU_CONTAINER_NAME:=""}"
 
-# raspberrymatic container ip (e.g. '192.168.178.4')
+# openccu container ip (e.g. '192.168.178.4')
 : "${CCU_CONTAINER_IP:=""}"
 
 #############################################################
 #                         Main App                          #
 #############################################################
-echo "RaspberryMatic HA-Addon macvlan patch script v1.2"
+echo "OpenCCU HA-Addon macvlan patch script v1.2"
 echo "Copyright (c) 2023-2024 Jens Maus <mail@jens-maus.de>"
 echo
 
@@ -124,16 +124,16 @@ else
   echo "${CCU_NETWORK_GATEWAY}"
 fi
 
-echo -n "RaspberryMatic Add-on Hostname (e.g. 5422eb72-raspberrymatic): "
+echo -n "OpenCCU Add-on Hostname (e.g. 5422eb72-openccu): "
 if [[ -z "${CCU_CONTAINER_NAME}" ]]; then
-  CCU_CONTAINER_NAME=$(docker ps --format '{{.Names}}' | grep "_raspberrymatic" | cut -c7-)
+  CCU_CONTAINER_NAME=$(docker ps --format '{{.Names}}' | grep "_openccu" | cut -c7-)
   if [[ -z "${NON_INTERACTIVE}" ]]; then
     read -r -e -i "${CCU_CONTAINER_NAME}" CCU_CONTAINER_NAME </dev/tty
   else
     echo "${CCU_CONTAINER_NAME}"
   fi
   if [[ -z "${CCU_CONTAINER_NAME}" ]]; then
-    echo "ERROR: Must specify the hostname of the running RaspberryMatic add-on"
+    echo "ERROR: Must specify the hostname of the running OpenCCU add-on"
     exit 1
   fi
 else
@@ -141,7 +141,7 @@ else
 fi
 CCU_CONTAINER_NAME=$(echo "addon_${CCU_CONTAINER_NAME}" | sed 's/-rasp/_rasp/')
 
-echo -n "RaspberryMatic Add-on IP (e.g. 192.168.178.4): "
+echo -n "OpenCCU Add-on IP (e.g. 192.168.178.4): "
 if [[ -z "${CCU_CONTAINER_IP}" ]]; then
   CCU_CONTAINER_IP=$(echo "${CCU_NETWORK_GATEWAY}" | cut -d"." -f1-3)
   if [[ -z "${NON_INTERACTIVE}" ]]; then
@@ -150,7 +150,7 @@ if [[ -z "${CCU_CONTAINER_IP}" ]]; then
     echo "${CCU_CONTAINER_IP}"
   fi
   if [[ -z "${CCU_CONTAINER_IP}" ]] || [[ $(echo "${CCU_CONTAINER_IP}" | grep -o "\." | wc -l) -ne 3 ]]; then
-    echo "ERROR: Must specify a free and valid ip to assign to RaspberryMatic add-on"
+    echo "ERROR: Must specify a free and valid ip to assign to OpenCCU add-on"
     exit 1
   fi
 else
@@ -159,7 +159,7 @@ fi
 
 # check if add-on is running
 if ! docker inspect "${CCU_CONTAINER_NAME}" >/dev/null 2>&1; then
-  echo "ERROR: RaspberryMatic isn't running or hostname incorrect."
+  echo "ERROR: OpenCCU isn't running or hostname incorrect."
   exit 1
 fi
 

@@ -7,7 +7,8 @@ setenv bootfs 1
 setenv rootfs 2
 setenv userfs 3
 setenv gpio_button "H23" # matches GPIO239
-setenv kernel_img "zImage"
+setenv kernel_img /zImage
+setenv kernel_bootcmd bootz
 setenv recoveryfs_initrd "recoveryfs-initrd"
 setenv overlays ""
 setenv usbstoragequirks "0x2537:0x1066:u,0x2537:0x1068:u"
@@ -29,7 +30,8 @@ if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${d
   load ${devtype} ${devnum}:${bootfs} ${ramdisk_addr_r} ${recoveryfs_initrd}
   setenv rootfs_str "/dev/ram0"
   setenv initrd_addr_r ${ramdisk_addr_r}
-  setenv kernel_img "recoveryfs-zImage"
+  setenv kernel_img "/recoveryfs-zImage"
+  setenv kernel_bootcmd bootz
   setenv kernelfs ${bootfs}
 else
   echo "==== NORMAL BOOT ===="
@@ -74,7 +76,7 @@ setenv bootargs "console=${console} root=${rootfs_str} ro rootfstype=ext4 fsck.r
 load ${devtype} ${devnum}:${kernelfs} ${kernel_addr_r} ${kernel_img}
 
 # boot kernel
-bootz ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr_r}
+${kernel_bootcmd} ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr_r}
 
 echo "Boot failed, resetting..."
 reset

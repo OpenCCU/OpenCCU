@@ -211,15 +211,21 @@
              </tr>
  
            </table>
-@@ -296,8 +406,6 @@
-       StartPage.showAllDeviceFirmware();
-       jQuery("#forceUpdate").remove();
+@@ -306,14 +416,7 @@
+       } else {
+         WEBUI_VERSION = "0.0.0";
+       }
+-      product = getProduct();
+-      jQuery("#iFaceShowAll").text(translateKey("lblDutyCycleA") + product + ":");
+-      jQuery("#lblCarrierSense").text(translateKey("lblCarrierSenseA") + product + ":");
+     });
+-  } else {
+-    product = getProduct();
+-    jQuery("#iFaceShowAll").text(translateKey("lblDutyCycleA") + product + ":");
+-    jQuery("#lblCarrierSense").text(translateKey("lblCarrierSenseA") + product + ":");
    }
--  jQuery("#iFaceShowAll").text(translateKey("lblDutyCycleA") + getProduct()+ ":");
--  jQuery("#lblCarrierSense").text(translateKey("lblCarrierSenseA") + getProduct()+ ":");
+ 
    translatePage();
-   jQuery("#loadingGif").hide();
-   jQuery("#tblStartpageInfo").show();
 --- occu/WebUI/www/webui/css/extern/hmBootstrap.css.orig
 +++ occu/WebUI/www/webui/css/extern/hmBootstrap.css
 @@ -53,3 +53,19 @@
@@ -289,7 +295,7 @@
  .CLASS01812 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -8566,8 +8566,6 @@
+@@ -8747,8 +8747,6 @@
        window.setTimeout(function() {jQuery("#PagePath").css('color',"white");},100);
        ConfigData.isPresent = true;
        if (ConfigData.showMessage) { this.hideMessage(); }
@@ -298,7 +304,7 @@
        if (ConfigData.callback) { ConfigData.callback(); }
      });
    },
-@@ -8706,7 +8704,6 @@
+@@ -8887,7 +8885,6 @@
      if(typeof dcTimeout == "undefined") {
        dcTimeout = window.setTimeout(function () {
          showDutyCycle();
@@ -306,7 +312,7 @@
          delete dcTimeout;
        }, 10);
      }
-@@ -8940,7 +8937,6 @@
+@@ -9121,7 +9118,6 @@
        // Check the dutyCycle and carrierSense periodically
        new PeriodicalExecuter(function () {
          showDutyCycle();
@@ -314,7 +320,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35022,74 +35018,101 @@
+@@ -35352,74 +35348,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},

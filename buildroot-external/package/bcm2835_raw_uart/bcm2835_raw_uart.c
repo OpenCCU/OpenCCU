@@ -1,6 +1,6 @@
 /**
  * @file    bcm2835_raw_uart.c
- * @brief   Raw UART driver for HomeMatic (RaspberryMatic)
+ * @brief   Raw UART driver for HomeMatic (OpenCCU)
 **/
 /*-----------------------------------------------------------------------------
  * Copyright (c) 2015 by eQ-3 Entwicklung GmbH

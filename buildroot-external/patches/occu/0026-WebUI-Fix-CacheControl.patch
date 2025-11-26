@@ -1,6 +1,16 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -234,16 +234,6 @@
+@@ -54,7 +54,8 @@
+ 
+     puts "var req = jQuery.ajax({"
+       puts " url : \"/EULA.\"+lang,"
+-      puts " dataType: \"html\""
++      puts " dataType: \"html\","
++      puts " cache: false"
+     puts "});"
+ 
+     puts "req.done(function(data) {"
+@@ -234,16 +235,6 @@
      <p class="CLASS20914">
      ${dialogSettingsCMDialogPerformSoftwareUpdateP1}
      </p>
@@ -159,13 +169,6 @@
      <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
      <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
-@@ -195,4 +195,4 @@
-       translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
-     </script>
-   </body>
--</html>
-\ No newline at end of file
-+</html>
 --- occu/WebUI/www/rega/logout.htm.orig
 +++ occu/WebUI/www/rega/logout.htm
 @@ -2,7 +2,7 @@
@@ -187,8 +190,8 @@
 -    <meta http-equiv="pragma"        content="no-cache">
 -    <meta http-equiv="expires"       content="0">
  
-     <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-     <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
+     <link rel="shortcut icon" href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon"/>
+     <link rel="icon"          href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon" />
 @@ -215,6 +212,6 @@
          </div>
        </div>
@@ -248,7 +251,7 @@
      request.done(function(result) {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -7293,21 +7293,10 @@
+@@ -7474,21 +7474,10 @@
    /*####################*/
    
    /**
@@ -270,7 +273,7 @@
      var xhr = XMLHttpRequest_create();
      
      if (null !== xhr)
-@@ -23517,7 +23506,6 @@
+@@ -23845,7 +23834,6 @@
      url: "/ise/htm/header.htm",
      dataType: "html",
      async: false,
@@ -278,7 +281,7 @@
      context: document.body
      }).done(function(response) {
        jQuery("#header").html(response);
-@@ -28096,7 +28084,7 @@
+@@ -28424,7 +28412,7 @@
        var script = document.createElement("script");
        script.id = "homematic_com_script_" + index;
        script.type = "text/javascript";
@@ -287,7 +290,7 @@
        $("body").appendChild(script);
        homematic.com.callback = callback;
    },
-@@ -28111,9 +28099,9 @@
+@@ -28439,9 +28427,9 @@
        // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
  
        if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
@@ -299,7 +302,7 @@
        }
        $("body").appendChild(script);
        homematic.com.callback = callback;
-@@ -44070,9 +44058,6 @@
+@@ -44619,9 +44607,6 @@
    scriptname = Get_ReGa_Path(scriptname);
    var params = poststr;
  

@@ -33,17 +33,17 @@ touch "${TARGET_DIR}/usr/local/.doFactoryReset"
 docker version
 
 # build docker image
-DOCKER_REGISTRY=ghcr.io/jens-maus
-if ! DOCKER_BUILDKIT=1 docker build --file="${BOARD_DIR}/Dockerfile" --build-arg=tar_prefix=rootfs --platform=linux/${DOCKER_ARCH} --tag="${DOCKER_REGISTRY}/raspberrymatic:${DOCKER_ARCH}-${PRODUCT_VERSION}" --tag="${DOCKER_REGISTRY}/raspberrymatic:${DOCKER_ARCH}-latest" "${BINARIES_DIR}"; then
+DOCKER_REGISTRY=ghcr.io/openccu
+if ! DOCKER_BUILDKIT=1 docker build --file="${BOARD_DIR}/Dockerfile" --build-arg=tar_prefix=rootfs --platform=linux/${DOCKER_ARCH} --tag="${DOCKER_REGISTRY}/openccu:${DOCKER_ARCH}-${PRODUCT_VERSION}" --tag="${DOCKER_REGISTRY}/openccu:${DOCKER_ARCH}-latest" "${BINARIES_DIR}"; then
   exit 1
 fi
 
 # save docker image
-if ! docker save "${DOCKER_REGISTRY}/raspberrymatic:${DOCKER_ARCH}-${PRODUCT_VERSION}" >"${BINARIES_DIR}/RaspberryMatic-${PRODUCT_VERSION}-${BOARD_NAME}_${DOCKER_ARCH}.tar"; then
+if ! docker save "${DOCKER_REGISTRY}/openccu:${DOCKER_ARCH}-${PRODUCT_VERSION}" >"${BINARIES_DIR}/OpenCCU-${PRODUCT_VERSION}-${BOARD_NAME}_${DOCKER_ARCH}.tar"; then
   exit 1
 fi
 
 # cleanup temporarily built docker image
-if ! docker image rm --force "$(docker images --filter="reference=${DOCKER_REGISTRY}/raspberrymatic:${DOCKER_ARCH}-${PRODUCT_VERSION}" -q)"; then
+if ! docker image rm --force "$(docker images --filter="reference=${DOCKER_REGISTRY}/openccu:${DOCKER_ARCH}-${PRODUCT_VERSION}" -q)"; then
   exit 1
 fi

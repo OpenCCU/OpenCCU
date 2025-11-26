@@ -1,4 +1,4 @@
-# RaspberryMatic HA-Proxy Addon Release build
+# OpenCCU HA-Proxy Addon Release build
 # yamllint disable rule:truthy
 ---
 name: Release Build (HA Proxy-Addon)
@@ -12,7 +12,7 @@ jobs:
     name: Build HA Proxy-Addon
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Get information
         id: info
@@ -31,7 +31,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: env.BUILD_ARGS != '--test'
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -39,23 +39,23 @@ jobs:
 
       - name: Extract docker metadata
         id: meta
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         with:
           images: ${{ steps.info.outputs.image }}
           labels: |
-            org.opencontainers.image.title=RaspberryMatic HA Proxy-Addon
-            org.opencontainers.image.description=Proxy to externally running RaspberryMatic CCU
-            org.opencontainers.image.vendor=RasperryMatic OpenSource Project
-            org.opencontainers.image.authors=RaspberryMatic OpenSource Team
+            org.opencontainers.image.title=OpenCCU HA Proxy-Addon
+            org.opencontainers.image.description=Proxy to externally running OpenCCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
-            org.opencontainers.image.url=https://raspberrymatic.de
+            org.opencontainers.image.url=https://openccu.de
           annotations: |
-            org.opencontainers.image.title=RaspberryMatic HA Proxy-Addon
-            org.opencontainers.image.description=Proxy to externally running RaspberryMatic CCU
-            org.opencontainers.image.vendor=RasperryMatic OpenSource Project
-            org.opencontainers.image.authors=RaspberryMatic OpenSource Team
+            org.opencontainers.image.title=OpenCCU HA Proxy-Addon
+            org.opencontainers.image.description=Proxy to externally running OpenCCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
-            org.opencontainers.image.url=https://raspberrymatic.de
+            org.opencontainers.image.url=https://openccu.de
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 
@@ -82,18 +82,18 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           labels: |
-            org.opencontainers.image.title=RaspberryMatic HA Proxy-Addon
-            org.opencontainers.image.description=Proxy to externally running RaspberryMatic CCU
-            org.opencontainers.image.vendor=RasperryMatic OpenSource Project
-            org.opencontainers.image.authors=RaspberryMatic OpenSource Team
+            org.opencontainers.image.title=OpenCCU HA Proxy-Addon
+            org.opencontainers.image.description=Proxy to externally running OpenCCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.licenses=Apache-2.0
-            org.opencontainers.image.url=https://raspberrymatic.de
+            org.opencontainers.image.url=https://openccu.de
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/wiki
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
-            io.hass.name=RaspberryMatic CCU (Proxy)
-            io.hass.description=Proxy to externally running RaspberryMatic CCU
+            io.hass.name=OpenCCU (Proxy)
+            io.hass.description=Proxy to externally running OpenCCU
             io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon-proxy
             io.hass.version=${{ steps.info.outputs.version }}
             io.hass.type=addon

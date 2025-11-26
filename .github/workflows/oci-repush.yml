@@ -1,4 +1,4 @@
-# RaspberryMatic workflow to manually repush docker image/release
+# OpenCCU workflow to manually repush docker image/release
 # yamllint disable rule:truthy
 ---
 name: Release Build (OCI+Docker repush)
@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Environment
         run: |
@@ -38,7 +38,7 @@ jobs:
       - uses: robinraju/release-downloader@v1.12
         with:
           tag: ${{ github.event.inputs.release_tag }}
-          fileName: "RaspberryMatic-*-oci_*.tgz"
+          fileName: "OpenCCU-*-oci_*.tgz"
 
       # extract all OCI assets
       - name: Extract OCI artifacts
@@ -46,7 +46,7 @@ jobs:
           rm -rf oci_build
           mkdir -p oci_build
           cd oci_build || exit 1
-          for f in ../RaspberryMatic-${{ github.event.inputs.release_tag }}-oci_*.tgz; do
+          for f in ../OpenCCU-${{ github.event.inputs.release_tag }}-oci_*.tgz; do
             echo "extracting ${f}..."
             DIR=$(basename "${f}" .tgz)
             mkdir -p "${DIR}"
@@ -59,7 +59,7 @@ jobs:
       - name: Build OCI tags
         shell: bash
         run: |
-          BASE_TAG="ghcr.io/${{ github.repository_owner }}/raspberrymatic"
+          BASE_TAG="ghcr.io/${GITHUB_REPOSITORY@L}"
           UNIQUE_TAG="${BASE_TAG}:${{ github.event.inputs.release_tag }}"
           BRANCH="${GITHUB_REF##*/}"
           if [[ ${BRANCH} == 'master' ]]; then
@@ -67,6 +67,7 @@ jobs:
           else
             BRANCH_TAG="${BASE_TAG}:latest-${BRANCH}"
           fi
+          echo "base_tag=${BASE_TAG}" >> $GITHUB_OUTPUT
           echo "unique_tag=${UNIQUE_TAG}" >> $GITHUB_OUTPUT
           echo "branch_tag=${BRANCH_TAG}" >> $GITHUB_OUTPUT
         id: extract_branch
@@ -78,7 +79,7 @@ jobs:
           install: true
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -86,22 +87,22 @@ jobs:
 
       - name: Extract docker metadata
         id: meta
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ steps.extract_branch.outputs.base_tag }}
           labels: |
             org.opencontainers.image.description=Alternative OS for your homematicIP CCU
-            org.opencontainers.image.vendor=RasperryMatic OpenSource Project
-            org.opencontainers.image.authors=RaspberryMatic OpenSource Team
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.version=${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}
-            org.opencontainers.image.url=https://raspberrymatic.de
+            org.opencontainers.image.url=https://openccu.de
             org.opencontainers.image.created=${{ env.BUILD_DATETIME }}
           annotations: |
             org.opencontainers.image.description=Alternative OS for your homematicIP CCU
-            org.opencontainers.image.vendor=RasperryMatic OpenSource Project
-            org.opencontainers.image.authors=RaspberryMatic OpenSource Team
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.version=${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}
-            org.opencontainers.image.url=https://raspberrymatic.de
+            org.opencontainers.image.url=https://openccu.de
             org.opencontainers.image.created=${{ env.BUILD_DATETIME }}
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
@@ -115,22 +116,22 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           build-args: |
-            tar_prefix=RaspberryMatic-${{ github.event.inputs.release_tag }}-oci_
+            tar_prefix=OpenCCU-${{ github.event.inputs.release_tag }}-oci_
           labels: |
-            org.opencontainers.image.title=RaspberryMatic
+            org.opencontainers.image.title=OpenCCU
             org.opencontainers.image.description=Alternative OS for your homematicIP CCU
-            org.opencontainers.image.vendor=RasperryMatic OpenSource Project
-            org.opencontainers.image.authors=RaspberryMatic OpenSource Team
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.licenses=Apache-2.0
-            org.opencontainers.image.url=https://raspberrymatic.de
+            org.opencontainers.image.url=https://openccu.de
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/wiki
             org.opencontainers.image.created=${{ env.BUILD_DATETIME }}
             org.opencontainers.image.ref.name=${{ env.GIT_REF }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ github.event.inputs.release_tag }}
-            io.hass.name=RaspberryMatic CCU
-            io.hass.description=HomeMatic/homematicIP CCU central based on RaspberryMatic
+            io.hass.name=OpenCCU
+            io.hass.description=HomeMatic/homematicIP CCU central based on OpenCCU
             io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon
             io.hass.version=${{ github.event.inputs.release_tag }}
             io.hass.type=addon

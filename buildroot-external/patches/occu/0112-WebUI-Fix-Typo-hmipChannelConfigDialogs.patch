@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl.orig
 +++ occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl
-@@ -2999,13 +2999,13 @@
+@@ -3053,13 +3053,13 @@
          # left
          incr prn
          append html "<tr><td>\${ecoCoolingTemperature}</td>"

@@ -2,9 +2,9 @@
 # shellcheck shell=dash disable=SC3010
 
 if [[ ! -e /etc/config/internetCheckDisabled ]]; then
-  if ! /usr/bin/timeout 3 /usr/bin/wget -q --spider http://google.com/ >/dev/null 2>&1; then
+  if ! /usr/bin/timeout 3 /usr/bin/nc -z -w 3 google.com 443 >/dev/null 2>&1; then
     if ! /usr/bin/timeout 3 /bin/ping -q -W 3 -c 1 google.com >/dev/null 2>&1; then
-      if ! /usr/bin/timeout 3 /usr/bin/nc -z -w 3 google.com 80 >/dev/null 2>&1; then
+      if ! /usr/bin/timeout 3 /usr/bin/wget -q --spider http://google.com/ >/dev/null 2>&1; then
         echo "Assuming broken internet connectivity: Could not reach google.com."
         rm -f /var/status/hasInternet
         if [[ -e /var/status/hasInternet ]]; then
@@ -12,13 +12,13 @@ if [[ ! -e /etc/config/internetCheckDisabled ]]; then
         fi
         exit 1
       else
-        echo "Assuming internet connectivity: Could reach port 80 on google.com."
+        echo "Assuming internet connectivity: Could reach http://google.com via wget."
       fi
     else
       echo "Assuming internet connectivity: Could ping google.com."
     fi
   else
-    echo "Assuming internet connectivity: Could reach http://google.com via wget."
+    echo "Assuming internet connectivity: Could reach port 443 on google.com."
   fi
 else
   echo "InternetCheck disabled"

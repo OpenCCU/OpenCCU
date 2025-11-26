@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/login.htm.orig
 +++ occu/WebUI/www/rega/login.htm
-@@ -52,34 +52,13 @@
+@@ -51,34 +51,13 @@
            FormSubmit();
          }
        }
@@ -35,9 +35,9 @@
 -          <table cellpadding="0" cellspacing="0">
 +          <table>
              <tr>
-               <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/rm-logo_small.png" alt="RaspberryMatic Logo" /></div></td>
+               <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
                <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
-@@ -92,7 +71,7 @@
+@@ -91,7 +70,7 @@
        </tr>
        <tr>
          <td>
@@ -46,7 +46,7 @@
              <table id="login_content" style="width: 200px;">
                <tr>
                  <!-- Liste der Benutzer -->
-@@ -180,9 +159,6 @@
+@@ -179,9 +158,6 @@
  
  
      <script type="text/javascript">
@@ -58,7 +58,7 @@
        };
 --- occu/WebUI/www/rega/logout.htm.orig
 +++ occu/WebUI/www/rega/logout.htm
-@@ -21,33 +21,12 @@
+@@ -20,33 +20,12 @@
      <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
      <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
      <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
@@ -92,9 +92,9 @@
 -          <table cellpadding="0" cellspacing="0">
 +          <table>
            <tr>
-             <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/rm-logo_small.png" alt="RaspberryMatic Logo" /></div></td>
+             <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
              <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
-@@ -59,7 +38,7 @@
+@@ -58,7 +37,7 @@
        </tr>
        <tr>
          <td>
@@ -103,7 +103,7 @@
              <table id="logout_content" cellspacing="8">
                <tr>
                  <td style="vertical-align: top;">
-@@ -78,9 +57,6 @@
+@@ -77,9 +56,6 @@
      </table>
  
      <script type="text/javascript">
@@ -247,22 +247,25 @@
    loadChannels = function(id)
 --- occu/WebUI/www/rega/pages/tabs/startpage.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/startpage.htm
-@@ -392,7 +392,6 @@
- </div>
+@@ -393,7 +393,6 @@
  
  <script type="text/javascript">
+   var product = 0;
 -  WebUI.resize();
    StartPage.showUpdate();
    if (forceUpdate) {
        StartPage.showCurrentFirmware();
-@@ -404,6 +403,7 @@
-       StartPage.showAddonUpdate();
+@@ -402,9 +401,9 @@
+       jQuery("#favSelector").show();
+       jQuery("#favView").show();
+       StartPage.showUpdate();
+-      StartPage.showAddonUpdate();
        StartPage.showCurrentFirmware();
        StartPage.showAllDeviceFirmware();
 +      StartPage.showDutyCycle();
        jQuery("#forceUpdate").remove();
    }
-   translatePage();
+ 
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
 @@ -104,6 +104,8 @@
@@ -425,7 +428,7 @@
  
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -8522,7 +8522,6 @@
+@@ -8703,7 +8703,6 @@
           1 - user selected YES
           */
          if (action == 1) {
@@ -433,7 +436,7 @@
            jQuery(".Layer0").show();
            homematic("CCU.setSecurityHint");
            if (getProduct() >= 3) {
-@@ -8759,42 +8758,8 @@
+@@ -8940,42 +8939,8 @@
      this.currentPageOptions  = null;    // Argumente der aktuellen Seite
      this.previousPage        = null;    // Vorherige Seite
      this.previousPageOptions = null;    // Argumente der vorherigen Seite
@@ -476,7 +479,7 @@
    /*########################*/
    /*# Öffentliche Elemente #*/
    /*########################*/
-@@ -8994,8 +8959,6 @@
+@@ -9175,8 +9140,6 @@
  
  
      if (result) {
@@ -485,7 +488,7 @@
        if (!isFF) {
          jQuery(".Layer0").show();
          WebUI.enter(StartPage);
-@@ -9179,13 +9142,6 @@
+@@ -9360,13 +9323,6 @@
        throw new Error("content not defined");
      }
    },
@@ -499,7 +502,7 @@
    
    /**
     * Lädt eine Seite.
-@@ -25004,11 +24960,6 @@
+@@ -25332,11 +25288,6 @@
     **/
    leave: function() {},
    
@@ -511,7 +514,7 @@
  });
  /**
   * page.js
-@@ -25036,13 +24987,6 @@
+@@ -25364,13 +25315,6 @@
    {
    },
    
@@ -525,7 +528,7 @@
  });
  /**
   * StartPage.js
-@@ -25071,19 +25015,6 @@
+@@ -25399,19 +25343,6 @@
    initialize: function ()
    {
      this.deviceList = [];
@@ -545,7 +548,7 @@
    },
  
    /**
-@@ -25094,7 +25025,6 @@
+@@ -25422,7 +25353,6 @@
      iseInitUpdateArrays();
      setPath("");
      setFooter("");
@@ -553,7 +556,7 @@
    
      switch (getUPL())
      {
-@@ -25129,35 +25059,6 @@
+@@ -25457,35 +25387,6 @@
      this.prevDownloadURL = this.downloadURL;
      conInfo("Device Fw. downloadURL: " + this.downloadURL);
    },
@@ -589,7 +592,7 @@
  
    getPageMeasurement: function() {
      var pageElements = ["body","#header", "#menubar", "#favSelector", "#favView", "#footer"],
-@@ -25451,11 +25352,9 @@
+@@ -25779,11 +25680,9 @@
      }
    },
    
@@ -604,7 +607,7 @@
    
  });
  ControlPage = new function()
-@@ -25476,10 +25375,6 @@
+@@ -25804,10 +25703,6 @@
      }
    };
  
@@ -615,7 +618,7 @@
  }();
  ControlRoomsPage = new function()
  {
-@@ -25495,10 +25390,6 @@
+@@ -25823,10 +25718,6 @@
    {
    };
  
@@ -626,7 +629,7 @@
  }();
  ControlFunctionsPage = new function()
  {
-@@ -25514,10 +25405,6 @@
+@@ -25842,10 +25733,6 @@
    {
    };
  
@@ -637,7 +640,7 @@
  }();
  ControlFavoritesPage = new function()
  {
-@@ -25534,10 +25421,6 @@
+@@ -25862,10 +25749,6 @@
    {
    };
  
@@ -648,7 +651,7 @@
  }();
  ControlFavoritePage = new function()
  {
-@@ -25553,10 +25436,6 @@
+@@ -25881,10 +25764,6 @@
    {
    };
  
@@ -659,7 +662,7 @@
  }();
  ControlDevicesPage = new function()
  {
-@@ -25572,10 +25451,6 @@
+@@ -25900,10 +25779,6 @@
    {
    };
  
@@ -670,7 +673,7 @@
  }();
  ControlProgramsPage = new function()
  {
-@@ -25591,10 +25466,6 @@
+@@ -25919,10 +25794,6 @@
    {
    };
  
@@ -681,7 +684,7 @@
  }();
  ControlVariablesPage = new function()
  {
-@@ -25610,10 +25481,6 @@
+@@ -25938,10 +25809,6 @@
    {
    };
  
@@ -692,7 +695,7 @@
  }();
  ControlProtocolPage = new function()
  {
-@@ -25629,10 +25496,6 @@
+@@ -25957,10 +25824,6 @@
    {
    };
  
@@ -703,7 +706,7 @@
  }();
  LinksAndProgramsPage = new function()
  {
-@@ -25648,10 +25511,6 @@
+@@ -25976,10 +25839,6 @@
    {
    };
  
@@ -714,7 +717,7 @@
  }();
  LinkListPage = new function()
  {
-@@ -25676,10 +25535,6 @@
+@@ -26004,10 +25863,6 @@
    {
    };
  
@@ -725,7 +728,7 @@
  }();
  ProgramListPage = new function()
  {
-@@ -25695,10 +25550,6 @@
+@@ -26023,10 +25878,6 @@
    {
    };
  
@@ -736,7 +739,7 @@
  }();
  LinkEditProfilePage = new function()
  {
-@@ -25719,10 +25570,6 @@
+@@ -26047,10 +25898,6 @@
    {
    };
    
@@ -747,7 +750,7 @@
  };AlarmMessagesPage = new function()
  {
    
-@@ -25738,10 +25585,6 @@
+@@ -26066,10 +25913,6 @@
      if ($("msgAlarms")) { $("msgAlarms").removeClassName("Messages_Selected"); }
    };
  
@@ -758,7 +761,7 @@
  }();
  ServiceMessagesPage = new function()
  {
-@@ -25758,10 +25601,6 @@
+@@ -26086,10 +25929,6 @@
      if ($("msgServices")) { $("msgServices").removeClassName("Messages_Selected"); }
    };
  
@@ -769,7 +772,7 @@
  }();
  HelpPage = new function()
  {
-@@ -25778,10 +25617,6 @@
+@@ -26106,10 +25945,6 @@
    {
    };
  
@@ -780,7 +783,7 @@
  }();
  adminFirstStartup = new function()
  {
-@@ -25795,10 +25630,6 @@
+@@ -26123,10 +25958,6 @@
    {
    };
  
@@ -791,7 +794,7 @@
  }();
  userFirstStartup = new function()
  {
-@@ -25812,10 +25643,6 @@
+@@ -26140,10 +25971,6 @@
    {
    };
  
@@ -802,7 +805,7 @@
  }();
  /**
   * devielistpage.js
-@@ -26554,10 +26381,6 @@
+@@ -26882,10 +26709,6 @@
    {
    };
  
@@ -813,7 +816,7 @@
   }();
  
  }
-@@ -26575,10 +26398,6 @@
+@@ -26903,10 +26726,6 @@
    {
    };
  
@@ -824,7 +827,7 @@
  }();
  FunctionListPage = new function()
  {
-@@ -26593,10 +26412,6 @@
+@@ -26921,10 +26740,6 @@
    {
    };
  
@@ -835,7 +838,7 @@
  }();
  NewDeviceListPage = new function()
  {
-@@ -26620,10 +26435,6 @@
+@@ -26948,10 +26763,6 @@
    {
    };
  
@@ -846,7 +849,7 @@
  }();
  RoomListPage = new function()
  {
-@@ -26639,10 +26450,6 @@
+@@ -26967,10 +26778,6 @@
    {
    };
  
@@ -857,7 +860,7 @@
  }();
  SystemConfigPageUser = new function()
  {
-@@ -26658,10 +26465,6 @@
+@@ -26986,10 +26793,6 @@
    {
    };
  
@@ -868,7 +871,7 @@
  }();
  SystemConfigPage = new function()
  {
-@@ -26677,10 +26480,6 @@
+@@ -27005,10 +26808,6 @@
    {
    };
  
@@ -879,7 +882,7 @@
  }();
  UserAdminPageUser = new function()
  {
-@@ -26696,10 +26495,6 @@
+@@ -27024,10 +26823,6 @@
    {
    };
  
@@ -890,7 +893,7 @@
  }();
  UserAdminPageAdmin = new function()
  {
-@@ -26715,10 +26510,6 @@
+@@ -27043,10 +26838,6 @@
    {
    };
  
@@ -901,7 +904,7 @@
  }();
  SystemControlPage = new function()
  {
-@@ -26734,10 +26525,6 @@
+@@ -27062,10 +26853,6 @@
    {
    };
  
@@ -912,7 +915,7 @@
  }();
  CreateDiagramPage = new function()
  {
-@@ -26776,10 +26563,6 @@
+@@ -27104,10 +26891,6 @@
    {
    };
  
@@ -923,7 +926,7 @@
  }();
  CreateDiagramPage = new function()
  {
-@@ -26818,10 +26601,6 @@
+@@ -27146,10 +26929,6 @@
    {
    };
  
@@ -934,7 +937,7 @@
  }();
  DiagramListPage = new function()
  {
-@@ -26848,10 +26627,6 @@
+@@ -27176,10 +26955,6 @@
    {
    };
  
@@ -945,7 +948,7 @@
  }();
  CreateGroupPage = new function()
  {
-@@ -26880,10 +26655,6 @@
+@@ -27208,10 +26983,6 @@
    {
    };
  
@@ -956,7 +959,7 @@
  }();
  CreateTestPage = new function()
  {
-@@ -26910,10 +26681,6 @@
+@@ -27238,10 +27009,6 @@
    {
    };
  
@@ -967,7 +970,7 @@
  }();
  DeviceFirmware = new function()
  {
-@@ -26940,10 +26707,6 @@
+@@ -27268,10 +27035,6 @@
    {
    };
  
@@ -978,7 +981,7 @@
  }();
  function compare(a,b) {
    if (a.name < b.name)
-@@ -26994,10 +26757,6 @@
+@@ -27322,10 +27085,6 @@
    {
    };
  
@@ -989,7 +992,7 @@
  }();VariableListPage = new function()
  {
    var MAINMENU_ID = "MAINMENU_OPTIONS";
-@@ -27012,10 +26771,6 @@
+@@ -27340,10 +27099,6 @@
    {
    };
  
@@ -1000,7 +1003,7 @@
  }();
  DeviceConfigPage = new function()
  {
-@@ -27049,10 +26804,6 @@
+@@ -27377,10 +27132,6 @@
    {
    };
  
@@ -1011,7 +1014,7 @@
  }();
  getGatewayStatus = function()
  {
-@@ -27386,10 +27137,6 @@
+@@ -27714,10 +27465,6 @@
      InterfaceMonitor.start();
    },
    

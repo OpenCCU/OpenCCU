@@ -7,12 +7,20 @@ setenv rootfs 2
 setenv userfs 3
 #setenv gpio_button "23" # pin 32 (GPIOY_13)
 setenv gpio_button "disabled"
-setenv kernel_img "Image"
 setenv recoveryfs_initrd "recoveryfs-initrd"
 setenv overlays ""
 setenv usbstoragequirks "0x2537:0x1066:u,0x2537:0x1068:u"
 
 echo "Boot script loaded from ${devtype} ${devnum}"
+
+# decide kernel image on rootfs
+if test -e ${devtype} ${devnum}:${rootfs} /Image; then
+  setenv kernel_img /Image
+  setenv kernel_bootcmd booti
+else
+  setenv kernel_img /zImage
+  setenv kernel_bootcmd bootz
+fi
 
 # import environment from /boot/bootEnv.txt
 if test -e ${devtype} ${devnum}:${bootfs} bootEnv.txt; then
@@ -23,13 +31,16 @@ fi
 # test if the gpio button is 0 (pressed) or if .recoveryMode exists in userfs
 # or if Image doesn't exist in the root partition
 gpio input ${gpio_button}
-if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
+if test $? -eq 0 \
+   -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode \
+   -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
   echo "==== STARTING RECOVERY SYSTEM ===="
   # load the initrd file
   load ${devtype} ${devnum}:${bootfs} ${ramdisk_addr_r} ${recoveryfs_initrd}
   setenv rootfs_str "/dev/ram0"
   setenv initrd_addr_r ${ramdisk_addr_r}
-  setenv kernel_img "recoveryfs-Image"
+  setenv kernel_img "/recoveryfs-Image"
+  setenv kernel_bootcmd booti
   setenv kernelfs ${bootfs}
 else
   echo "==== NORMAL BOOT ===="
@@ -69,7 +80,7 @@ setenv bootargs "console=${console} root=${rootfs_str} ro rootfstype=ext4 fsck.r
 load ${devtype} ${devnum}:${kernelfs} ${kernel_addr_r} ${kernel_img}
 
 # boot kernel
-booti ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr_r}
+${kernel_bootcmd} ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr_r}
 
 echo "Boot failed, resetting..."
 reset

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# Script to install the RaspberryMatic container and its dependencies
-# https://github.com/jens-maus/RaspberryMatic/wiki/en.Installation-Docker-OCI
+# Script to install the OpenCCU container and its dependencies
+# https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Docker-OCI
 #
 # Copyright (c) 2022-2024 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 # Usage:
-# wget -qO - https://raspberrymatic.de/install-docker.sh | bash -
+# wget -qO - https://openccu.de/install-docker.sh | bash -
 #
 
 #############################################################
@@ -19,7 +19,7 @@
 : "${CCU_DATA_VOLUME:="ccu_data"}"
 
 # Container repository to use
-: "${CCU_OCI_REPO:="ghcr.io/jens-maus/raspberrymatic"}"
+: "${CCU_OCI_REPO:="ghcr.io/openccu/openccu"}"
 
 # CCU version to use
 : "${CCU_OCI_TAG:="latest"}"
@@ -210,7 +210,7 @@ cidr2network() {
 #                    PARAMETER QUERY                        #
 #############################################################
 
-msg "RaspberryMatic Docker installation script v${VERSION}"
+msg "OpenCCU Docker installation script v${VERSION}"
 msg "Copyright (c) 2022-2024 Jens Maus <mail@jens-maus.de>"
 msg ""
 
@@ -222,7 +222,7 @@ fi
 
 # check if docker exists
 if ! command -v docker >/dev/null; then
-  die "No docker installation found, check documentation (raspberrymatic.de)"
+  die "No docker installation found, check documentation (openccu.de)"
 fi
 
 # make sure apt/dpkg won't interact with us
@@ -264,10 +264,10 @@ if [[ "${CCU_NETWORK_NAME}" != "none" ]]; then
     CCU_CONTAINER_IP=$(echo "${CCU_NETWORK_GATEWAY}" | cut -d"." -f1-3)
     read -r -e -p 'Container IP (e.g. 192.168.178.4): ' -i "${CCU_CONTAINER_IP}." CCU_CONTAINER_IP </dev/tty
     if [[ -z "${CCU_CONTAINER_IP}" ]]; then
-      die "Must specify a free ip to assign to RaspberryMatic container"
+      die "Must specify a free ip to assign to OpenCCU container"
     fi
   else
-    msg "Used RaspberryMatic container ip: ${CCU_CONTAINER_IP}"
+    msg "Used OpenCCU container ip: ${CCU_CONTAINER_IP}"
   fi
 
   if [[ -z "${CCU_CONTAINER_IP_AUX}" ]]; then

@@ -5,18 +5,18 @@ ARG tar_prefix=rootfs
 
 ADD $tar_prefix$TARGETARCH.tar /
 
-LABEL maintainer="RaspberryMatic OpenSource Team" \
-      org.opencontainers.image.title=RaspberryMatic \
+LABEL maintainer="OpenCCU OpenSource Team" \
+      org.opencontainers.image.title=OpenCCU \
       org.opencontainers.image.description="Alternative OS for your homematicIP CCU" \
-      org.opencontainers.image.vendor="RasperryMatic OpenSource Project" \
-      org.opencontainers.image.authors="RaspberryMatic OpenSource Team" \
+      org.opencontainers.image.vendor="OpenCCU OpenSource Project" \
+      org.opencontainers.image.authors="OpenCCU OpenSource Team" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.url="https://raspberrymatic.de" \
-      org.opencontainers.image.source="https://github.com/jens-maus/RaspberyMatic" \
-      org.opencontainers.image.documentation="https://github.com/jens-maus/RaspberryMatic/wiki" \
-      io.hass.name="RaspberryMatic CCU" \
-      io.hass.description="HomeMatic/homematicIP CCU central based on RaspberryMatic" \
-      io.hass.url="https://github.com/jens-maus/RaspberyMatic/tree/master/home-assistant-addon" \
+      org.opencontainers.image.url="https://openccu.de" \
+      org.opencontainers.image.source="https://github.com/openccu/openccu" \
+      org.opencontainers.image.documentation="https://github.com/openccu/openccu/wiki" \
+      io.hass.name="OpenCCU" \
+      io.hass.description="HomeMatic/homematicIP OpenCCU central" \
+      io.hass.url="https://github.com/openccu/openccu/tree/master/home-assistant-addon" \
       io.hass.type=addon
 
 HEALTHCHECK --interval=60s --timeout=30s --start-period=240s --retries=3 \

@@ -13,7 +13,7 @@ set -e
 export LC_ALL=C
 
 OCCU_VERSION=$(grep "OCCU_VERSION =" ../../package/occu/occu.mk | cut -d' ' -f3)
-OCCU_URL="https://github.com/jens-maus/occu/archive/${OCCU_VERSION}/occu-${OCCU_VERSION}.tar.gz"
+OCCU_URL="https://github.com/openccu/occu/archive/${OCCU_VERSION}/occu-${OCCU_VERSION}.tar.gz"
 OCCU_DIR=/tmp/occu-${OCCU_VERSION}
 
 echo "retrieving OCCU ${OCCU_VERSION}..."

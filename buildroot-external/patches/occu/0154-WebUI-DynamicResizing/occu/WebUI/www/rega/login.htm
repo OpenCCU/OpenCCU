@@ -2,15 +2,14 @@
 
 <html lang="de">
   <head>
-    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('RaspberryMatic WebUI'); } else { Write(system.Name()); } %></title>
+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
 
-    <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-    <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
-    <link rel="apple-touch-icon" href="/ise/img/rm-touch-icon-iphone.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/rm-touch-icon-iphone-retina.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/ise/img/rm-favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/ise/img/rm-favicon-16x16.png">
-    <link rel="manifest" href="/webui/site.webmanifest">
+    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
+    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+    <link rel="manifest" href="/webui/site.webmanifest" />
     
     <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
     <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
@@ -60,7 +59,7 @@
         <td id="navbar">
           <table>
             <tr>
-              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/rm-logo_small.png" alt="RaspberryMatic Logo" /></div></td>
+              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
               <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
               <td style="width: 100%;"></td>
               <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->

@@ -4,17 +4,17 @@
  </colgroup>
  <tr>
    <!-- Logo -->
--          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/rm-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
+-          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
 +  <td class="CLASS11100">
-+    <img id="headerLogo" src="/ise/img/rm-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" />
-+    <img id="headerLogoRed" src="/ise/img/rm-logo_small_red.png" onclick="LogoClick();" class="SmallLogo hidden" alt="" />
++    <img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" />
++    <img id="headerLogoRed" src="/ise/img/occu-logo_small_red.png" onclick="LogoClick();" class="SmallLogo hidden" alt="" />
 +  </td>
    <!-- Username und Pfad-->
    <td class="CLASS11101">
      <table class="CLASS11102">
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -32822,37 +32822,31 @@
+@@ -33150,37 +33150,31 @@
  };
  
  setAlarmMessageCount = function (count) {
@@ -66,18 +66,18 @@
      }
    }
  };
-@@ -34899,12 +34893,14 @@
+@@ -35229,12 +35223,14 @@
  
  SwitchOnFlashLight = function()
  {
--  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small_red.png"; }
+-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
 +  if ($("headerLogo")) { $("headerLogo").classList.add('hidden'); }
 +  if ($("headerLogoRed")) { $("headerLogoRed").classList.remove('hidden'); }
  };
  
  SwitchOffFlashLight = function()
  {
--  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/rm-logo_small.png"; }
+-  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
 +  if ($("headerLogo")) { $("headerLogo").classList.remove('hidden'); }
 +  if ($("headerLogoRed")) { $("headerLogoRed").classList.add('hidden'); }
  };

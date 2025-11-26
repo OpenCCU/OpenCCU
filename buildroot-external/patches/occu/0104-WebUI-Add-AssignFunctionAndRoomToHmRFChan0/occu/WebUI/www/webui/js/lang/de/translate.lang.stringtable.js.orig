@@ -933,6 +933,7 @@ jQuery.extend(true,langJSON, {
     "stringTableWeatherSunshineTrue" : "aktuell Sonnenschein",
     "stringTableWeatherSunshineFalse" : "aktuell kein Sonnenschein",
     "stringTableWeatherTemperature" : "Temperatur",
+    "stringTableWeatherTemperatureDiff" : "Temperaturdifferenz",
     "stringTableWeatherTitle" : "Wettersensor",
     "stringTableWeatherWindDir" : "Windrichtung",
     "stringTableWeatherWindDirRange" : "Windrichtung Schwankungsbreite",

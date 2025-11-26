@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2086
 #
-# Script to install a RaspberryMatic LXC container programatically.
-# https://raw.githubusercontent.com/jens-maus/RaspberryMatic/master/scripts/install-lxc.sh
+# Script to install a OpenCCU LXC container programatically.
+# https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/scripts/install-lxc.sh
 #
 # Copyright (c) 2024-2025 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 # Usage:
-# wget -qO - https://raspberrymatic.de/install-lxc.sh | sudo bash -
+# wget -qO - https://openccu.de/install-lxc.sh | sudo bash -
 #
 
 # Setup script environment
@@ -162,7 +162,7 @@ update() {
   info "Selecting container..."
   MSG_MAX_LENGTH=0
   while read -r line; do
-    # check if container is a raspberrymatic kind of
+    # check if container is a openccu kind of
     # container
     if grep -q "PLATFORM=lxc" /var/lib/lxc/${line}/rootfs/VERSION 2>/dev/null; then
       RASPMATIC_VERSION=$(grep "VERSION=" /var/lib/lxc/${line}/rootfs/VERSION | cut -d= -f2)
@@ -175,7 +175,7 @@ update() {
   done < <(lxc-ls -1)
 
   if [[ -z "${CONTAINER_MENU[*]}" ]]; then
-    die "No RaspberryMatic container identified."
+    die "No OpenCCU container identified."
   fi
 
   CONTAINER=
@@ -192,10 +192,10 @@ update() {
     die "Container is currently running. Please stop with 'sudo lxc-stop ${CONTAINER}' first."
   fi
 
-  # select target raspberrymatic version
+  # select target openccu version
   select_version version url
 
-  # Download RaspberryMatic archive
+  # Download OpenCCU archive
   info "Downloading disk image..."
   # shellcheck disable=SC2154
   wget -q --show-progress "${url}"
@@ -238,13 +238,13 @@ select_version() {
     ;;
   esac
 
-  # Select RaspberryMatic version
-  info "Getting available RaspberryMatic versions..."
+  # Select OpenCCU version
+  info "Getting available OpenCCU versions..."
   RELEASES=$(cat<<EOF | python3
 import requests
 import os
 import re
-url = "https://api.github.com/repos/jens-maus/RaspberryMatic/releases"
+url = "https://api.github.com/repos/OpenCCU/OpenCCU/releases"
 r = requests.get(url).json()
 if "message" in r:
     print("ERROR")
@@ -257,7 +257,7 @@ for release in r:
         if asset["name"].endswith("${ENDSWITH}") == True:
             image_url = asset["browser_download_url"]
             name = asset["name"]
-            version = re.findall('RaspberryMatic-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
+            version = re.findall('OpenCCU-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
             if len(version) > 0 and num < 5:
                 print(version[0] + ' release ' + image_url)
                 num = num + 1
@@ -272,7 +272,7 @@ EOF
 import requests
 import os
 import re
-url = "https://api.github.com/repos/jens-maus/RaspberryMatic/releases/tags/snapshots"
+url = "https://api.github.com/repos/OpenCCU/OpenCCU/releases/tags/snapshots"
 r = requests.get(url).json()
 if "message" in r:
     print("ERROR")
@@ -281,7 +281,7 @@ for asset in r["assets"]:
     if asset["name"].endswith("${ENDSWITH}") == True:
         image_url = asset["browser_download_url"]
         name = asset["name"]
-        version = re.findall('RaspberryMatic-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
+        version = re.findall('OpenCCU-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
         if len(version) > 0:
           print(version[0] + ' snapshot ' + image_url)
         break
@@ -293,7 +293,7 @@ EOF
   fi
 
   if [[ -z "${RELEASES}${SNAPSHOTS}" ]]; then
-    die "No RaspberryMatic release or snapshot build for '${PLATFORM}' PVE version found."
+    die "No OpenCCU release or snapshot build for '${PLATFORM}' PVE version found."
   fi
 
   if [[ -n "${RELEASES}" ]] && [[ -n "${SNAPSHOTS}" ]]; then
@@ -315,9 +315,9 @@ EOF
     ((i=i+1))
   done < <(echo "${RELEASES}")
 
-  RELEASE=$(whiptail --title "Select RaspberryMatic Version" \
+  RELEASE=$(whiptail --title "Select OpenCCU Version" \
                      --menu \
-                       "Select RaspberryMatic version:\n\n" \
+                       "Select OpenCCU version:\n\n" \
                        16 $((MSG_MAX_LENGTH + 23)) 6 \
                        "${RELEASES_MENU[@]}" 3>&1 1>&2 2>&3) || exit
 
@@ -330,7 +330,7 @@ EOF
   eval ${2}="${URL}"
 }
 
-msg "RaspberryMatic LXC installation script v${VERSION}"
+msg "OpenCCU LXC installation script v${VERSION}"
 msg "Copyright (c) 2024 Jens Maus <mail@jens-maus.de>"
 msg ""
 
@@ -377,14 +377,14 @@ fi
 # by the user according to the documentation.
 MAIN_INTERFACE=$(ip route | grep ^default | awk '{ print $5 }')
 if ! command -v /usr/sbin/brctl >/dev/null; then
-  die "/usr/sbin/brctl tool (bridge-utils package) missing. Please refer to the LXC install documentation (raspberrymatic.de) to setup this host system correctly before executing this script."
+  die "/usr/sbin/brctl tool (bridge-utils package) missing. Please refer to the LXC install documentation (openccu.de) to setup this host system correctly before executing this script."
 fi
 if ! /usr/sbin/brctl show "${MAIN_INTERFACE}" >/dev/null 2>/dev/null; then
-  die "Network setup of host system is not adequate as a default network bridge (e.g. br0) interface is required. Please refer to the LXC install documentation (raspberrymatic.de) to setup this host system correctly before executing this script."
+  die "Network setup of host system is not adequate as a default network bridge (e.g. br0) interface is required. Please refer to the LXC install documentation (openccu.de) to setup this host system correctly before executing this script."
 fi
 
 text=$(cat <<EOF
-When running RaspberryMatic as a LXC container, the host system
+When running OpenCCU as a LXC container, the host system
 requires certain dependencies (e.g. kernel modules) to be installed.
 During the next steps, correct installation of these dependencies is
 checked and packages might get installed which require a manual reboot
@@ -579,15 +579,15 @@ if [[ "${CGROUP_CPU}" != "1" ]] || [[ "${CGROUP_MEM}" != "1" ]]; then
   fi
 fi
 
-# Select RaspberryMatic version
+# Select OpenCCU version
 select_version RELEASE URL
 
 # enter userfs storage location
 info "Entering userfs storage location"
 USERFS_PATH=$(whiptail --title "User storage location selection" \
-                       --inputbox "Please enter the user storage location/path that should\nbe used for the RaspberryMatic container." \
+                       --inputbox "Please enter the user storage location/path that should\nbe used for the OpenCCU container." \
                        10 75 \
-                       "/var/lib/raspberrymatic/userfs" \
+                       "/var/lib/openccu/userfs" \
                        3>&1 1>&2 2>&3)
 
 if [[ -e "${USERFS_PATH}" ]]; then
@@ -606,7 +606,7 @@ info "Entering container name"
 CONTAINER_NAME=$(whiptail --title "Container name" \
                           --inputbox "Please enter a unique container name." \
                           10 75 \
-                          "raspberrymatic" \
+                          "openccu" \
                           3>&1 1>&2 2>&3)
 
 if lxc-info -n "${CONTAINER_NAME}" >/dev/null 2>&1;  then
@@ -658,7 +658,7 @@ while true; do
   fi
 done
 
-# Download RaspberryMatic archive
+# Download OpenCCU archive
 info "Downloading disk image..."
 wget -q --show-progress "${URL}"
 echo -en "\e[1A\e[0K" #Overwrite output from wget
@@ -667,7 +667,7 @@ FILE=$(basename "${URL}")
 # main installation steps
 info "Creating LXC container config..."
 
-# create distribution/raspberrymatic specific config entries
+# create distribution/openccu specific config entries
 cat <<EOF >>"${TEMP_DIR}/config"
 lxc.include = LXC_TEMPLATE_CONFIG/common.conf
 lxc.signal.stop = SIGTERM
@@ -718,10 +718,10 @@ lxc-create -n "${CONTAINER_NAME}" \
 info "Completed Successfully. New LXC container is: \e[1m(${CONTAINER_NAME})\e[0m."
 msg "- Start container via \"sudo lxc-start ${CONTAINER_NAME}\""
 msg "- Access console via \"sudo lxc-console ${CONTAINER_NAME}\""
-msg "- Connect to WebUI via http://homematic-raspi/"
+msg "- Connect to WebUI via http://openccu/"
 msg "- Stop container via \"sudo lxc-stop ${CONTAINER_NAME}\""
 msg "- Destroy container via \"sudo lxc-destroy ${CONTAINER_NAME}\""
 msg "- Uninstall LXC host dependencies via:"
-msg "  sudo sh -c 'wget -qO - https://raspberrymatic.de/install-lxc.sh | bash -s uninstall'"
+msg "  sudo sh -c 'wget -qO - https://openccu.de/install-lxc.sh | bash -s uninstall'"
 msg "- Update LXC container via:"
-msg "  sudo sh -c 'wget -qO - https://raspberrymatic.de/install-lxc.sh | bash -s update'"
+msg "  sudo sh -c 'wget -qO - https://openccu.de/install-lxc.sh | bash -s update'"

@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -346,7 +346,8 @@
+@@ -347,7 +347,8 @@
      set styleMaxWidth ""
      #set styleMaxWidth "style=max-width:70px;"
  
@@ -10,7 +10,7 @@
        table_row {class="CLASS20902"} {
          table_data {class="CLASS20903"} $styleMaxWidth {
            #puts "Zentralen-<br>"
-@@ -665,6 +666,7 @@
+@@ -666,6 +667,7 @@
          }
        }
      }

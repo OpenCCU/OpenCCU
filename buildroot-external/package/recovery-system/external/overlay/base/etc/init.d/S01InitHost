@@ -97,7 +97,7 @@ identify_host() {
       HM_HOST="tinkerboard"
 
       # workaround issues when a first modprobe might cause Exec format
-      # errors (cf. https://github.com/jens-maus/RaspberryMatic/issues/1435)
+      # errors (cf. https://github.com/openccu/openccu/issues/1435)
       # Thus we perform the first modprobe early and expect the second to work
       modprobe lz4
 
