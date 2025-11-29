@@ -60,6 +60,7 @@ identify_host() {
       # identify the RaspberryPi model based on HWMODEL (device tree)
       case "${HWMODEL}" in
         *'Pi 5 Model B'*)         HM_HOST="rpi5" ;; # Raspberry Pi 5 Model B
+        *'Pi Compute Module 5'*)  HM_HOST="rpi5" ;; # Raspberry Pi Compute Module 5
         *'Pi 4 Model B'*)         HM_HOST="rpi4" ;; # Raspberry Pi 4 Model B
         *'Pi Compute Module 4'*)  HM_HOST="rpi4" ;; # Raspberry Pi Compute Module 4
         *'Pi 400'*)               HM_HOST="rpi4" ;; # Raspberry Pi 400
