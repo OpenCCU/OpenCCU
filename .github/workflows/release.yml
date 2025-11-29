@@ -532,8 +532,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: master
-          persist-credentials: true
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Bump HomeAssistant add-on version
@@ -589,14 +588,14 @@ jobs:
           git status
           git diff
 
-      - name: Commit changes
+      - name: Commit & Push changes
         if: github.event.inputs.test_workflow != 'true'
-        run: |
-          git config user.name "github-actions"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase --autostash
-          git diff --quiet || git commit -a -m "release bump [${{ needs.release_draft.outputs.version }}]"
-          git push origin HEAD:master
+        uses: actions-js/push@v1.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "release bump [${{ needs.release_draft.outputs.version }}]"
+          branch: 'master'
+          rebase: true
 
   helm:
     permissions:
