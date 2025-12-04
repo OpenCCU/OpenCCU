@@ -1,0 +1,166 @@
+<div id="sysvarsOffsetDiv" class="CLASS03300"></div>
+<script type="text/javascript">
+  ResetGAC();
+  iseUpdateSVArray = new Array();
+  <%
+    system.SetSessionVar("sessionTAB", "control/sysvars");
+
+    boolean firstSort = false;
+    object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+    if( (system.GetSessionVar("sessionCTV")=="true") )
+    {
+      firstSort = true;
+      system.SetSessionVar("sessionLS","");
+      oUser.UserTempViewIDs().RemoveAll();
+    
+      Write('iseClearLastSort();');
+      Write('lastSort = "name";');
+      Write('lastDir = 0;');
+
+      object oTmpArray = dom.GetObject(ID_SYSTEM_VARIABLES);
+      if( oTmpArray )
+      { 
+        oTmpArray.SortByName(soAsc,stNatural);
+        string sTmp;
+        foreach(sTmp,oTmpArray.EnumEnabledVisibleIDs())
+        {
+          object oTmp = dom.GetObject( sTmp );
+          if( oTmp )
+          {
+            oUser.UserTempViewIDs().Add( oTmp.ID() );
+          }
+        }
+      }
+    }
+  %>
+  //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; Systemvariable");
+  setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; "+translateKey('submenuSysVar'));
+  fltVR = new iseFilter("fltVR");
+  arItems = new Array();
+</script>
+
+<div id="prgcontent">
+  <table id="sysvarsListTable" class="tTable tblList CLASS03301 hidden" border="0" cellpadding="0" cellspacing="0" >
+    <colgroup>
+      <col />
+      <col />
+      <col />
+      <col />
+    </colgroup>
+      <tr>
+        <%string sCssName="Sort"; if(firstSort||(system.GetSessionVar("sessionLS")=="name")){sCssName="SortSelected";} %>
+        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></th>
+        <th class="tHeaderCell CLASS03303" >${thDescription}</th>
+        <th class="tHeaderCell CLASS03303" >${thLastChange}</th>
+        <th class="tHeaderCell CLASS03303" >${thState}</th>
+      </tr>
+      <tbody>
+<tr>
+   <td class="CLASS03304">
+      <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+      <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+          <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03307" NAME="ftName"/>
+          <div id="ftSetNameBtn" class='FilterSetButton CLASS03308' onclick="setSFilter(fltVR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+          <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
+      </div>
+  </td>
+  <td class="CLASS03304"></td>
+  <td class="CLASS03304"></td>
+  <td class="CLASS03304"></td>
+</tr>
+      
+        <%
+          if(oUser)
+          {
+            if (oUser.UserTempViewIDs().Count() == 0)
+            {
+              WriteLine("<script type='text/javascript'>");
+              WriteLine("Cursor.set(Cursor.NORMAL);");
+              WriteLine("</script>");
+            }
+            string sPID;
+            foreach( sPID, oUser.UserTempViewIDs().EnumIDs() )
+            {
+              object o = dom.GetObject( sPID );
+              if( o )
+              {
+                string trId = "sysvar"#o.ID();
+                WriteLine( '<tr id="'#trId#'" class="CLASS03305">' );
+                WriteLine( '<td class="tBodyCell">' # o.Name() # '</td>' );
+                WriteLine( '<td class="tBodyCell">' # o.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>') # '</td>' );
+                string sTimestamp = o.Timestamp();
+                Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
+                WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
+                if( oUser.UserLevel() == iulAdmin ) {
+                  WriteLine( '<td class="tBodyCell CLASS03905" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">' );
+                } else {
+                  WriteLine( '<td class="tBodyCell">' );
+                }
+                WriteLine( '<div id="dpc'#o.ID()#'">' );
+                
+                integer cId = o.ID();
+                integer iStatusOnly = 1;
+                Call("/esp/datapointconfigurator.fn::dcCreate()");
+                WriteLine( '</div></td>' );
+                WriteLine( '</tr>' );
+
+                Write("<script type='text/javascript'>");
+                Write("var tmp = new Object();");
+                Write("tmp['id'] = '"#o.ID()#"';");
+                Write("tmp['name'] = '"#o.Name()#"';");
+                Write("tmp['trid'] = '"#trId#"';");
+                Write("arItems[arItems.length] = tmp;");
+                Write("Cursor.set(Cursor.NORMAL);");
+                Write("</script>");
+              }
+            }
+          }
+        %>
+    </tbody>
+  </table>
+</div>
+
+<script type="text/javascript">
+var s = "";
+  
+  var mouseOpts =
+  {
+    onTopOver: function(divToShow)
+    {
+      selectFilters(fltVR, divToShow);
+    }
+  };
+
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "sysvarsListTable", {d:28, r:18}, mouseOpts, false, true);
+
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  
+  setFooter(s);
+
+  updateTable = function()
+  {
+    colorFilterBtns(fltVR);
+    for (var i = 0; i < arItems.length; i++)
+    {
+      if (!fltVR.objPassFilter(arItems[i]))
+      {
+        hide(arItems[i]['trid']);
+      }
+      else
+      {
+        show(arItems[i]['trid']);
+      }
+    }
+  };
+  translatePage("#sysvarsListTable");
+  jQuery("#sysvarsListTable").removeClass("hidden");
+</script>
