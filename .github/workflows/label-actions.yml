@@ -21,4 +21,4 @@ jobs:
   action:
     runs-on: ubuntu-24.04
     steps:
-      - uses: dessant/label-actions@v4
+      - uses: dessant/label-actions@v5
