@@ -194,7 +194,7 @@ jobs:
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.zip*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.zip
@@ -203,7 +203,7 @@ jobs:
       - name: Upload build artifact [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ env.VERSION }}-ccu3.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-ccu3.tgz
@@ -212,7 +212,7 @@ jobs:
       - name: Upload build artifact [ova]
         if: |
           matrix.platform == 'ova'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ env.VERSION }}.ova*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}.ova
@@ -221,7 +221,7 @@ jobs:
       - name: Upload build artifact [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tgz
@@ -230,7 +230,7 @@ jobs:
       - name: Upload build artifact [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tar.xz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tar.xz
@@ -442,7 +442,7 @@ jobs:
 
       - name: Upload debug information
         if: github.event.inputs.full_build == 'true'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: debug_output.tgz
           name: OpenCCU-debug_output-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}.tgz
