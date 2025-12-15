@@ -335,7 +335,7 @@ jobs:
 
       # download all artifact files
       - name: Download all workflow artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
 
       - name: Patch release draft
         shell: bash
@@ -394,7 +394,7 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download all OCI artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: OpenCCU-${{ needs.release_draft.outputs.version }}-oci_*.tgz
           merge-multiple: true
@@ -542,23 +542,23 @@ jobs:
 
       # download rpi manifest files
       - name: Download rpi0 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi0.mf
       - name: Download rpi2 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi2.mf
       - name: Download rpi3 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi3.mf
       - name: Download rpi4 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi4.mf
       - name: Download rpi5 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi5.mf
 
