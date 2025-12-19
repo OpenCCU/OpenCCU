@@ -52,7 +52,7 @@ jobs:
           jobSummary: true
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: lychee-wiki-report
           path: reports/lychee-wiki.md

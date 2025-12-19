@@ -99,7 +99,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: /tmp/release-template.md
           name: release-template.md
@@ -290,7 +290,7 @@ jobs:
         id: upload-oci
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
@@ -309,7 +309,7 @@ jobs:
       # manifest file artifact upload
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
