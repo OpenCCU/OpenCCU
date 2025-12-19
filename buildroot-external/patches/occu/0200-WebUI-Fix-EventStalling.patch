@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -441,7 +441,7 @@
+@@ -443,7 +443,7 @@
  
  
    Write( 'if(urlParamInterfaces == "true") showInterfaces();');

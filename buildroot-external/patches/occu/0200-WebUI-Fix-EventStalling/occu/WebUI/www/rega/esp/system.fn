@@ -301,7 +301,7 @@ function ::UpdateUI()
 
   string sTime = system.Date( "%H:%M" );
   string sDate = system.Date( "%d.%m.%Y" );
-  WriteLine('setTime("' # sTime # '");');
+  WriteLine('setTime("' # sDate # ',&nbsp;' # sTime #'");');
   WriteLine('setDate("' # sDate # '");');
 !  Write( 'if( $("maintime") ) $("maintime").innerHTML = "'#sTime#'";' );
 !  Write( 'if( $("maindate") ) $("maindate").innerHTML = "'#sDate#'";' );
@@ -311,6 +311,8 @@ function ::UpdateUI()
   {
     Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName()#'";' );
   }
+  
+  WriteLine("resetReGaSaveButton();");
   
   integer iAlCount = 0;
   object svCollection = dom.GetObject( ID_SYSTEM_VARIABLES );
@@ -353,7 +355,7 @@ function ::UpdateUI()
     {
       if( oAlarm.IsTypeOf(OT_ALARMDP) )
       {
-        if( oAlarm.AlState() == asOncoming )
+        if( (oAlarm.Used() == true) && (oAlarm.Enabled() == true) && (oAlarm.AlState() == asOncoming) )
         {
           iSvcCount = iSvcCount + 1;
           string sTimestamp = oAlarm.AlOccurrenceTime();
@@ -465,7 +467,14 @@ function ::UpdateUI()
       boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
       boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
       Call( "/esp/system.fn::getSysVarValAsString()" );
-      WriteLine("updateSysVar('" # svId # "', '" # sSysVarVal # "');");
+      ! Escape unwanted chars
+      sSysVarVal = sSysVarVal.Replace(^\\^, ^\\\\^);
+      sSysVarVal = sSysVarVal.Replace("`", "\\`");
+      sSysVarVal = sSysVarVal.Replace("${", "\\${");
+      WriteLine("if ($('SYSVAR_" # svId # "')) {");
+      ! use javascript string literal char (`) to ensure proper char escaping
+      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = translateString(`" # sSysVarVal # "`);");
+      WriteLine("}");
     }    
   }
 
@@ -537,7 +546,7 @@ function ::UpdateUI()
   foreach( s, dom.TestRunningIDs().EnumIDs() )
   {
     object oTestChannel = dom.GetObject( s );
-    if( oTestChannel )
+    if( (oTestChannel) && (oTestChannel.IsTypeOf( OT_CHANNEL )) )
     {
       Write("if($('TestButtonCH"#s#"'))$('TestButtonCH"#s#"').className = 'TestButtonDisabled';" );
       Write("if($('OkButtonCH"#s#"'))$('OkButtonCH"#s#"').className = 'OkButtonRunning';" );
@@ -810,6 +819,9 @@ function ::saveSysVar()
   !sv.ValueSubType(ist);
   sv.DPInfo( system.GetVar("sInfo") );
   sv.ValueUnit( system.GetVar("sUnit") );
+  sv.RemoveMetaData('MIN');
+  sv.RemoveMetaData('MAX');
+  var svValue;
   if (ist == istAlarm)
   {
     sv.ValueType( ivtBinary );
@@ -825,7 +837,7 @@ function ::saveSysVar()
     sv.ValueSubType( istBool );
     sv.ValueName1(system.GetVar("sTrue"));
     sv.ValueName0(system.GetVar("sFalse"));
-    sv.State(false);
+    svValue=false;
   }
   elseif (ist == istGeneric)
   {
@@ -833,20 +845,20 @@ function ::saveSysVar()
     sv.ValueSubType( istGeneric );
     sv.ValueMin(system.GetVar("iMinVal"));
     sv.ValueMax(system.GetVar("iMaxVal"));
-    sv.State(system.GetVar("iMinVal"));
+    svValue=system.GetVar("iMinVal");
   }
   elseif (ist == istEnum)
   {
     sv.ValueType( ivtInteger );
     sv.ValueSubType( istEnum );
     sv.ValueList(system.GetVar("sValList"));
-    sv.State(0);
+    svValue=0;
   }
   elseif (ist == istChar8859)
   {
     sv.ValueType(ivtString);
     sv.ValueSubType(istChar8859);
-    sv.State("???");
+    svValue="";
   }
 
   if (oChn) 
@@ -863,6 +875,9 @@ function ::saveSysVar()
     }
     sv.Channel( ID_ERROR );
   }
+  
+  if (system.GetVar("sValue")) { svValue = system.GetVar("sValue"); }  
+  sv.State(svValue);
   dom.RTUpdate(0);
   }
   return;
@@ -966,7 +981,9 @@ function ::saveTimeModule()
     sCI=sCI#"Try to set SunOffsetType to ["#system.GetVar("tmSot")#"] ";
     tmObj.SunOffsetType( system.GetVar("tmSot") );
     if( tmObj.SunOffsetType() == system.GetVar("tmSot") ) { sCI=sCI#"OK, "; } else { sCI=sCI#"FAILED, "; }
-    
+
+    if( tmObj.SunOffsetType() != sotNone ) { tmObj.TimeSeconds( system.GetVar("tmTime") ); }
+
     Write( 'dlgResult = '#tmObj.ID()#';' );
     Write( 'PopupClose();' );
   }
@@ -1022,17 +1039,21 @@ function ::TmToString() {
         sTm = sTm # s.Format("%H:%M") # " ${ruleConditionLblTimeClock} ";
       }
     }
-    if (tm.SunOffsetType() == sotAfterSunrise)
+    elseif ((tm.SunOffsetType() == sotSunrise) ||
+            (tm.SunOffsetType() == sotBeforeSunrise) ||
+            (tm.SunOffsetType() == sotAfterSunrise))
     {
       !sTm = sTm # "tagsüber ";
       sTm = sTm # "${ruleConditionLblTimeDuringDay} ";
     }
-    if (tm.SunOffsetType() == sotAfterSunset)
+    elseif ((tm.SunOffsetType() == sotSunset) ||
+            (tm.SunOffsetType() == sotBeforeSunset) ||
+            (tm.SunOffsetType() == sotAfterSunset))
     {
       !sTm = sTm # "nachts ";
       sTm = sTm # "${ruleConditionLblTimeDuringNight} ";
     }
-    if (tm.CalDuration() != 0) {
+    elseif (tm.CalDuration() != 0) {
       sTm = sTm # "${lblTo} ";
       sTm = sTm # (tm.TimeSeconds() + tm.CalDuration()).ToTime().Format("%H:%M");
       sTm = sTm # " ${ruleConditionLblTimeClock} ";
@@ -1167,7 +1188,7 @@ function ::deleteUser()
     oUser = dom.GetObject( system.GetVar("userid") );
     if( oUser )
     {
-      if( !oUser.Unerasable() )
+      if( (!oUser.Unerasable()) || (oUser.ID() == 1004) )
       {
         object oFavorites = dom.GetObject( ID_FAVORITES );
         if( oFavorites )
@@ -1261,16 +1282,26 @@ function ::writeProgCtrl()
   Write("<td>");
   string sClass = "ControlBtnOff";
   if( objProg.Active() ) { sClass = "ControlBtnOn"; }
-    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' >"); 
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject(uid);
+  if(oUser.UserLevel() == iulAdmin) {
+    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' onclick='isePrograms.SetActive("#pid#",!" #objProg.Active() # ")'>");
+  } else {
+    Write("<table class='"#sClass#" CLASS02102' style='cursor: default; border-top: solid 1px black; border-right: solid 1px black;' id='"#pid#"Act' >");
+  }
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
-          Write("<img src='/ise/img/cogs3.png' width='80px' height='75px' />");
+          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' />");
         Write("</div>");
       Write("</td>");
     Write("</tr>");
     !Write("<tr><td>Aktiv</td></tr>");
-    Write("<tr><td>${actionStatusControlLblActive}</td></tr>");
+    if( objProg.Active() ) {
+      Write("<tr><td>${actionStatusControlLblActive}</td></tr>");
+    } else {
+      Write("<tr><td>${actionStatusControlLblNotActive}</td></tr>");
+    }
     Write("</table>");
   Write("</td>");
   if (system.GetVar("iStatusOnly") == 0)
@@ -1279,15 +1310,17 @@ function ::writeProgCtrl()
     !Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>Start</div>");
     Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStart}</div>");
     Write("<script type='text/javascript'>");
-    Write("new iseButtonProg("#pid#", "#objProg.Active()#");");
+    Write("new iseButtonProg("#pid#", "#objProg.Active()#", false);");
     Write("</script>");
     Write("</td>");
+    Write("<td><div id='"#pid#"StartThenOnly' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStartThenOnly}</div>");
+    Write("<script type='text/javascript'> new iseButtonProg("#pid#", "#objProg.Active()#", true);</script></td>");
   }
   else
   {
-    Write("<td></td>");
+    Write("<td></td><td></td>");
   }
-  Write("<td></td><td></td><td></td>");
+  Write("<td></td><td></td>");
   
   Write("</tr>");
   Write("</table>");
@@ -1320,13 +1353,14 @@ function ::AddSysVarAndBuildTable() {
 ! [userId], [opt: sTmpVars]
 function ::BuildUserSvTable() {
   WriteLine('<table cellpadding="3" cellspacing="1" class="CLASS02105" width="100%">');
-  WriteLine('<colgroup> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:15%;" />');
+  WriteLine('<colgroup> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:11%;" /> <col style="width:4%;" />');
   WriteLine('</colgroup> <tbody> <tr> <th class="CLASS02106">${thName}</th>');
   WriteLine('<th class="CLASS02107">${thDescription}</th>');
   WriteLine('<th class="CLASS02107">${thTypeOfVariable}</th>');
   WriteLine('<th class="CLASS02107">${thValues}</th>');
   WriteLine('<th class="CLASS02107">${thUnit}</th>');
   WriteLine('<th class="CLASS02107">${thAction}</th>');
+  WriteLine('<th class="CLASS02107"></th>');                                                                  
   WriteLine('</tr> ');
   
   string enumTmp = "";
@@ -1348,7 +1382,7 @@ function ::BuildUserSvTable() {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
       WriteLine("<tr id='"#trid#"'>");
         WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name()#"</td>");
-        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo()#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
         
         WriteLine("<td class='GrayBkg'>");
         string s = "Unbekannt: " # sysvar.ValueSubType();
@@ -1392,6 +1426,13 @@ function ::BuildUserSvTable() {
             WriteLine("onclick='delFromTmpVars("#tmp#");'>${btnRemove}</div>");
           }
         WriteLine("</td>");
+        WriteLine("<td class='WhiteBkg CLASS02110'>");
+          !WriteLine("<table class='CLASS02108'>");                                                                                        
+          WriteLine("<table>");                                                                                        
+            WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
+            WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
+          WriteLine("</table>");
+        WriteLine("</td>");  
       WriteLine("</tr>");
     }
   }
@@ -1418,6 +1459,25 @@ function ::UserDeleteSysVarBuildTable() {
   }
   return;
 }
+
+function ::UserMoveSysVarBuildTable() {                                  
+  integer uid = system.GetSessionVar("sessionUserID");                   
+  object oUser = dom.GetObject( uid );                                   
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )                                            
+  {                                                                                                                   
+    integer targetUID = system.GetVar("userId");                         
+    if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )          
+    {                                                                    
+      object user = dom.GetObject(targetUID);                            
+      if (user)                                                          
+      {                                                                  
+        user.UserSharedObjects().MoveObject(system.GetVar("svId"),system.GetVar("svMoveDirection"));
+        Call("system.fn::BuildUserSvTable()");                                                      
+      }                                                                                             
+    }                                                                                               
+  }                                                                                                 
+  return;                                                                                                        
+} 
 
 ! [alPC], [alPDA]
 function ::setAutoLogin() {
@@ -1540,4 +1600,61 @@ function ::writeWarnStateJS()
 
 function ::keepAlive()
 {
+}
+
+function ::ShowInternalSystemVars()
+{
+  if( system.IsSessionVar("sessionSISV") )
+  {
+    string sEnable = system.GetSessionVar("sessionSISV");
+    if( sEnable == "1" )
+    {
+      system.SetSessionVar("sessionSISV","0");
+    }
+    else
+    {
+      system.SetSessionVar("sessionSISV","1");
+    }
+  }
+  else
+  {
+    system.SetSessionVar("sessionSISV","1");
+  }
+}
+
+function ::ShowInternalDeviceChannels()
+{
+  if( system.IsSessionVar("sessionSIDC") )
+  {
+    string sEnable = system.GetSessionVar("sessionSIDC");
+    if( sEnable == "1" )
+    {
+      system.SetSessionVar("sessionSIDC","0");
+    }
+    else
+    {
+      system.SetSessionVar("sessionSIDC","1");
+    }
+  }
+  else
+  {
+    system.SetSessionVar("sessionSIDC","1");
+  }
+}
+
+! [id], [iInternal]                                 
+function ::saveDpInternal() {
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )           
+  {                                                   
+    object obj = dom.GetObject(system.GetVar("dpId"));
+    if (obj) {
+      boolean b = false;
+      if (system.GetVar("iInternal") == 1) {
+        b = true;         
+      }
+      obj.Internal(b);            
+    }
+  }                                                                        
+  return;
 }
