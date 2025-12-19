@@ -1209,7 +1209,7 @@ function ::deleteUser()
   }
 }
 
-function ExecuteProgram()
+function ::ExecuteProgram()
 {
   object obj = dom.GetObject( system.GetVar("dpid") );
   if (obj)
