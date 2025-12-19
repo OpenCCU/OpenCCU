@@ -1,0 +1,19 @@
+--- occu/WebUI/www/rega/esp/system.fn.orig
++++ occu/WebUI/www/rega/esp/system.fn
+@@ -28,6 +28,7 @@
+       Call("/esp/TimeStamp.fn::TimeStampToString3()");
+       Write( sTimestamp );
+     }    
++  }
+ }
+ 
+ function ::SetScreenSize()
+@@ -682,7 +683,7 @@
+ 
+ ![sPageId], [sType], [sFilter]
+ function ::saveSFilter() {
+-  object uidata = dom.GetObject(system.GetSessionVar("sessionUiDataId");
++  object uidata = dom.GetObject(system.GetSessionVar("sessionUiDataId"));
+   string s = system.GetVar("sFilter");
+   Write(system.GetVar("sType"));
+   uidata.DataValue(system.GetVar("sPageId"), system.GetVar("sType"), s);
