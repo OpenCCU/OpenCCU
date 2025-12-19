@@ -1,0 +1,11 @@
+--- occu/WebUI/www/rega/esp/system.fn.orig
++++ occu/WebUI/www/rega/esp/system.fn
+@@ -441,7 +441,7 @@
+ 
+ 
+   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
+-  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
++  Write( 'if(showAPITools == "true") showHmAPITools();');
+ 
+   !###################
+   !# Systemvariablen #
