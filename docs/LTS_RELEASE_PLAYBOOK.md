@@ -9,12 +9,14 @@ It is designed to be directly actionable (copy/paste commands).
 ## 1. Repositories and branches
 
 ### 1.1 Upstream development repository
+
 - Repository: `OpenCCU/OpenCCU`
 - Branches:
   - `master` (default; all PRs land here via **Squash & Merge**)
   - `LTS` (maintenance line; receives selected backports + periodic baseline updates)
 
 ### 1.2 LTS release repository (fork)
+
 - Repository: `homematicip/OpenCCU-LTS` (fork of `OpenCCU/OpenCCU`)
 - Branches:
   - `LTS` (default; **all LTS releases are created here**)
@@ -42,7 +44,7 @@ It is designed to be directly actionable (copy/paste commands).
 
 OpenCCU tags follow this shape:
 
-```
+```text
 <MAJOR>.<MINOR>.<PATCH>.<YYYYMMDD>
 ```
 
@@ -176,7 +178,7 @@ Backport of OpenCCU/OpenCCU#1234 to LTS.
 
 ## 9. Workflow C — Periodic baseline update of upstream LTS from a master release tag
 
-This is done when you declare a `master` release tag “good enough” to become the next LTS baseline.
+This is done when you declare a `master` release tag "good enough" to become the next LTS baseline.
 
 ### 9.1 Merge the release tag into upstream LTS (no history rewrite)
 
@@ -193,7 +195,8 @@ git merge --no-ff <MASTER_RELEASE_TAG>
 git push origin LTS
 ```
 
-**Notes**
+### Notes
+
 - Prefer a real release tag as the baseline anchor.
 - Use `--no-ff` so the history clearly shows the baseline merge.
 
@@ -213,12 +216,13 @@ There are two operational models:
 
 This minimizes divergence and makes audits easier.
 
-### 10.1 Sync the fork’s `LTS` branch
+### 10.1 Sync the fork's `LTS` branch
 
-**Option 1: GitHub UI**
-- Use “Sync fork” (if available), or open a PR in the fork from upstream to fork.
+### Option 1: GitHub UI
 
-**Option 2: Git CLI (deterministic, explicit)**
+- Use "Sync fork" (if available), or open a PR in the fork from upstream to fork.
+
+### Option 2: Git CLI (deterministic, explicit)
 
 ```bash
 # ensure you have both remotes
@@ -264,14 +268,14 @@ git push ltsfork 3.85.7.20260215
 ### 10.3 Create a GitHub Release in the fork
 
 In GitHub (fork repo):
-- Releases → “Draft a new release”
+- Releases → "Draft a new release"
 - Select the tag you just pushed
 - Title: `OpenCCU LTS <tag>`
 - Notes: follow the template below
 
 ### 10.4 Ensure CI builds and artifacts are attached
 
-Your release is not “done” until:
+Your release is not "done" until:
 - build workflows completed successfully
 - all expected platform archives are attached
 - checksums (e.g., `.sha256` files) are present
@@ -322,42 +326,24 @@ See the assets attached to this release.
 ## 12. Release Captain checklist (detailed)
 
 ### 12.1 Scope and readiness
+
 1. Decide: baseline vs maintenance release.
 2. Confirm the list of included backports (and that each is approved for LTS).
 3. Ensure upstream `LTS` contains exactly what you want to ship.
 
 ### 12.2 Sync fork state
-4. Sync fork `LTS` to upstream `LTS` (Workflow D, Step 10.1).
-5. Verify `git log --oneline` on fork `LTS` matches upstream `LTS` for the release tip.
+
+1. Sync fork `LTS` to upstream `LTS` (Workflow D, Step 10.1).
+2. Verify `git log --oneline` on fork `LTS` matches upstream `LTS` for the release tip.
 
 ### 12.3 Tag and release
-6. Choose the tag name (policy in Section 4).
-7. Create annotated tag and push to the fork (Step 10.2).
-8. Draft GitHub release in the fork with correct notes (Section 11).
-9. Verify workflows succeeded and all assets + checksums are attached.
+
+1. Choose the tag name (policy in Section 4).
+2. Create annotated tag and push to the fork (Step 10.2).
+3. Draft GitHub release in the fork with correct notes (Section 11).
+4. Verify workflows succeeded and all assets + checksums are attached.
 
 ### 12.4 Aftercare
-10. Announce release (forum/site) with baseline and backport list.
-11. If a hotfix is needed, create a new maintenance tag with a newer date.
 
----
-
-## Appendix: quick commands
-
-List recent master tags:
-```bash
-git fetch origin --tags
-git tag --list '3.*' --sort=-v:refname | head -n 20
-```
-
-Show commits present in master but not in LTS:
-```bash
-git fetch origin
-git log --oneline origin/LTS..origin/master | head
-```
-
-Find a merged PR squash commit quickly (by PR number):
-```bash
-git fetch origin
-git log --oneline origin/master | grep -E '\(#1234\)'
-```
+1. Announce release (forum/site) with baseline and backport list.
+2. If a hotfix is needed, create a new maintenance tag with a newer date.
