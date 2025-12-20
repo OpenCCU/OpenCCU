@@ -1,0 +1,35 @@
+--- occu/WebUI/www/rega/esp/system.fn.orig
++++ occu/WebUI/www/rega/esp/system.fn
+@@ -28,6 +28,7 @@
+       Call("/esp/TimeStamp.fn::TimeStampToString3()");
+       Write( sTimestamp );
+     }    
++  }
+ }
+ 
+ function ::SetScreenSize()
+@@ -682,7 +683,7 @@
+ 
+ ![sPageId], [sType], [sFilter]
+ function ::saveSFilter() {
+-  object uidata = dom.GetObject(system.GetSessionVar("sessionUiDataId");
++  object uidata = dom.GetObject(system.GetSessionVar("sessionUiDataId"));
+   string s = system.GetVar("sFilter");
+   Write(system.GetVar("sType"));
+   uidata.DataValue(system.GetVar("sPageId"), system.GetVar("sType"), s);
+@@ -1208,7 +1209,7 @@
+   }
+ }
+ 
+-function ExecuteProgram()
++function ::ExecuteProgram()
+ {
+   object obj = dom.GetObject( system.GetVar("dpid") );
+   if (obj)
+@@ -1657,4 +1658,4 @@
+     }
+   }                                                                        
+   return;
+-}
+\ No newline at end of file
++}
