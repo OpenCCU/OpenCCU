@@ -1,6 +1,8 @@
 # OpenCCU LTS Maintainer Playbook
 
-This playbook describes how to maintain **OpenCCU** with a fast-moving `master` branch and a conservative `LTS` branch, while **publishing LTS releases from the fork** `homematicip/OpenCCU-LTS` (default branch: `LTS`).
+This playbook describes how to maintain **OpenCCU** with a fast-moving `master`
+branch and a conservative `LTS` branch, while **publishing LTS releases from
+the fork** `homematicip/OpenCCU-LTS` (default branch: `LTS`).
 
 It is designed to be directly actionable (copy/paste commands).
 
@@ -27,7 +29,7 @@ It is designed to be directly actionable (copy/paste commands).
 
 1. **All feature development** (and most changes) go to `master`.
 2. **Only selected, low-risk changes** are backported from `master` to `LTS`.
-3. **Periodically** (e.g., every 6 months), the LTS baseline is advanced to a known-good `master` release tag.
+3. **Periodically** (e.g., every ~6 months), the LTS baseline is advanced to a known-good `master` release tag.
 4. **LTS releases are published in the fork** (`homematicip/OpenCCU-LTS`) so that end users have one stable release channel.
 
 ---
@@ -54,7 +56,8 @@ Examples:
 
 ### 4.1 LTS tagging rule (recommended)
 
-To keep update tooling simple, **do not add suffixes** such as `-lts` to the tag name unless you have confirmed all tooling accepts it.
+To keep update tooling simple, **do not add suffixes** such as `-lts` to the tag name
+unless you have confirmed all tooling accepts it.
 
 Instead:
 
@@ -83,10 +86,10 @@ In release notes (and optionally in a `docs/lts/` file), record:
 Recommended labels in `OpenCCU/OpenCCU`:
 
 - `backport:LTS` — approved for backport to LTS
-- `risk:low|medium|high` — risk assessment for LTS
+- `backport-risk:low|medium|high` — risk classification for LTS backports
 - `backport:blocked` — desirable, but currently blocked (dependency/conflicts)
 
-**Rule of thumb:** Only backport `risk:low` changes unless there is a compelling reason.
+**Rule of thumb:** Only backport `backport-risk:low` changes unless there is a compelling reason.
 
 ---
 
@@ -99,7 +102,7 @@ Clone upstream once, then add the fork as a second remote.
 git clone https://github.com/OpenCCU/OpenCCU.git openccu
 cd openccu
 
-# add fork remote for publishing LTS releases
+# add fork remote for publishing LTS releases (optional for release captains)
 git remote add ltsfork https://github.com/homematicip/OpenCCU-LTS.git
 
 # optional: verify
@@ -112,17 +115,17 @@ git remote -v
 
 1. PR targets: `OpenCCU/OpenCCU:master`
 2. Maintainer merges via **Squash & Merge**
-3. If the change is LTS-worthy, apply label `backport:LTS` after merge.
+3. If the change is LTS-worthy, apply label `backport:LTS` and `backport-risk:low` (or other risk) after merge.
 
 **Why Squash helps:** Backporting becomes a single-commit cherry-pick.
 
 ---
 
-## 8. Workflow B — Backport a selected PR from master to upstream LTS
+## 8. Workflow B — Backport selected PRs from master to upstream LTS
 
 Because `master` is squash-merged, each PR corresponds to **one commit** on `master`.
 
-### 8.1 Identify the squash commit SHA
+### 8.1 Identify the squash commit SHA (manual)
 
 Options:
 
@@ -135,7 +138,7 @@ git log --oneline origin/master --max-count=80
 # find the commit that references the PR number, e.g. "(#1234)"
 ```
 
-### 8.2 Cherry-pick into a dedicated backport branch (based on upstream LTS)
+### 8.2 Manual backport (single PR)
 
 ```bash
 git fetch origin
@@ -152,7 +155,7 @@ git push -u origin backport/pr-1234-LTS
 
 Then open a PR: `backport/pr-1234-LTS` → `LTS`.
 
-### 8.3 If conflicts occur
+### 8.3 If conflicts occur (manual)
 
 ```bash
 git cherry-pick -x <SQUASH_SHA>
@@ -172,6 +175,68 @@ Backport of OpenCCU/OpenCCU#1234 to LTS.
 - Source (master squash commit): <SQUASH_SHA>
 - Risk: low
 - Notes: <tests performed / expected impact>
+```
+
+### 8.5 Semi-automated batch backports (recommended)
+
+For convenience, the repository provides a helper script:
+
+- `scripts/backport_prs_to_lts.sh`
+
+It can:
+
+- validate that PRs are **merged** and have labels `backport:LTS` AND `backport-risk:low`
+- auto-select PRs via a GitHub search query (`--search`)
+- detect whether a PR is already present in `origin/LTS` (via ancestry and commit-message provenance checks)
+- cherry-pick PR merge commits into a new backport branch
+- create a PR against `LTS`
+- print a mapping `PR -> backport commit SHA` (useful for later reverts)
+
+#### Prerequisites
+
+- `gh` (GitHub CLI) authenticated: `gh auth login`
+- clean working tree
+- `origin` remote points to `OpenCCU/OpenCCU`
+
+#### Examples
+
+Backport a specific list of PRs:
+
+```bash
+# dry-run first
+scripts/backport_prs_to_lts.sh --dry-run --verbose 3403 3404
+
+# execute: creates branch + opens PR against LTS
+scripts/backport_prs_to_lts.sh 3403 3404
+```
+
+Backport everything matching a search query (still enforced labels + merged + base master):
+
+```bash
+# example: pick all low-risk LTS candidates merged since a date
+scripts/backport_prs_to_lts.sh --dry-run --verbose --search 'merged:>=2025-12-01'
+scripts/backport_prs_to_lts.sh --search 'merged:>=2025-12-01'
+```
+
+> Note: The script applies its own filters (`--state merged`, `--base master`, required labels).
+> The `--search` string is an additional GitHub search constraint (typically date/range/keyword filters).
+
+#### IMPORTANT: How to merge the backport PR into `LTS`
+
+We want to be able to revert **individual backports** later.
+Therefore:
+
+- **Do NOT squash-merge** backport PRs into `LTS`.
+- Use **Create a merge commit** (regular merge).
+  This preserves the individual cherry-picked commits, making targeted reverts easy.
+
+Reverting a single backport later:
+
+```bash
+git checkout LTS
+git pull
+git revert <BACKPORT_COMMIT_SHA>
+git push
 ```
 
 ---
@@ -218,11 +283,11 @@ This minimizes divergence and makes audits easier.
 
 ### 10.1 Sync the fork's `LTS` branch
 
-### Option 1: GitHub UI
+#### Option 1: GitHub UI
 
 - Use "Sync fork" (if available), or open a PR in the fork from upstream to fork.
 
-### Option 2: Git CLI (deterministic, explicit)
+#### Option 2: Git CLI (deterministic, explicit)
 
 ```bash
 # ensure you have both remotes
@@ -241,8 +306,8 @@ git checkout -B sync/lts-to-fork origin/LTS
 git push ltsfork sync/lts-to-fork:LTS
 ```
 
-If you want to avoid direct updates to the fork's `LTS` branch, push `sync/lts-to-fork`
-as a separate branch and open a PR into `ltsfork:LTS`.
+If you want to avoid direct updates to the fork's `LTS` branch,
+push `sync/lts-to-fork` as a separate branch and open a PR into `ltsfork:LTS`.
 
 ### 10.2 Create the release tag in the fork
 
@@ -347,6 +412,8 @@ See the assets attached to this release.
 
 1. Announce release (forum/site) with baseline and backport list.
 2. If a hotfix is needed, create a new maintenance tag with a newer date.
+
+---
 
 ## Appendix: quick commands
 
