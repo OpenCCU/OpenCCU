@@ -347,3 +347,23 @@ See the assets attached to this release.
 
 1. Announce release (forum/site) with baseline and backport list.
 2. If a hotfix is needed, create a new maintenance tag with a newer date.
+
+## Appendix: quick commands
+
+List recent master tags:
+```bash
+git fetch origin --tags
+git tag --list '3.*' --sort=-v:refname | head -n 20
+```
+
+Show commits present in master but not in LTS:
+```bash
+git fetch origin
+git log --oneline origin/LTS..origin/master | head
+```
+
+Find a merged PR squash commit quickly (by PR number):
+```bash
+git fetch origin
+git log --oneline origin/master | grep -E '\(#1234\)'
+```
