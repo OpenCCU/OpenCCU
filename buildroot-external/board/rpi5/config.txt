@@ -48,6 +48,13 @@ dtparam=watchdog=on
 # start with heartbeat on PWR led and mmc0 on ACT led
 dtparam=pwr_led_trigger=timer,act_led_trigger=mmc0
 
+# special device tree options for Raspberry Pi 5 and Compute Module 5
+[pi5]
+dtparam=act_led_activelow=off
+
+# reset to apply to all platforms
+[all]
+
 # add device tree overlay for RPI-RF-MOD
 dtoverlay=rpi-rf-mod
 
