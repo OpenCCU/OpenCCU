@@ -16,10 +16,10 @@
 -  set result [catch {exec echo "nomatch" >> /tmp/test} msg]
 -  jsonrpc_response false
 -}
-+set result [catch {exec curl -s -L https://openccu.de/LATEST-VERSION.js} verstring]
++set result [catch {exec curl -s -L https://openccu.de/LATEST-VERSION-LTS.js} verstring]
 +set result [regexp {homematic\.com\.setLatestVersion\('(.+)', 'HM-RASPBERRYMATIC'\);} $verstring match latest ]
 +set result [catch {exec grep PLATFORM /VERSION | cut -d= -f2} platform]
-+set url "https://github.com/openccu/openccu/releases/download/$latest/OpenCCU-$latest-$platform.zip"
++set url "https://github.com/homematicip/openccu-lts/releases/download/$latest/OpenCCU-LTS-$latest-$platform.zip"
  
 -set result [catch {exec wget -q --https-only -O /tmp/fup.tgz $url} error]
 +set result [catch {exec wget -q --https-only -O /usr/local/tmp/firmwareUpdateFile $url} error]
@@ -67,7 +67,7 @@
                        table_data {
                          division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
 -                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
-+                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
++                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/homematicip/openccu-lts/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                        }
                      }
                    }
@@ -1281,7 +1281,7 @@
      script.id = "homematic_com_script";
      script.type = "text/javascript";
 -    script.src = this.m_URLServer + "/firmware/download?cmd=js_check_version&version="+WEBUI_VERSION+"&product="+this.m_product+"&serial=" + this.serial;
-+    script.src = "https://openccu.de/LATEST-VERSION.js?v=" + WEBUI_VERSION + "&p=" + PRODUCT;
++    script.src = "https://openccu.de/LATEST-VERSION-LTS.js?v=" + WEBUI_VERSION + "&p=" + PRODUCT;
      $("body").appendChild(script);
    },
  
