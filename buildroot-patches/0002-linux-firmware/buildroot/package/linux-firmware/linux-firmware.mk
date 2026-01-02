@@ -593,7 +593,7 @@ LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-2030-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000)$(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260),y)
+ifneq ($(filter y,$(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000) $(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260)),)
 LINUX_FIRMWARE_FILES += \
 	intel/iwlwifi/iwlwifi-Qu-b0-hr-b0-72.ucode \
 	intel/iwlwifi/iwlwifi-Qu-c0-hr-b0-72.ucode \
