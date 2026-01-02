@@ -50,23 +50,6 @@
  config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7650
  	bool "MediaTek MT7650"
  	help
-@@ -472,6 +508,16 @@
- 
- config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921
- 	bool "MediaTek MT7921"
-+	help
-+	  MediaTek MT7921
-+
-+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922
-+	bool "MediaTek MT7922"
-+	help
-+	  MediaTek MT7922
-+
-+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921
-+	bool "MediaTek MT7921"
- 	help
- 	  MediaTek MT7921
- 
 --- buildroot/package/linux-firmware/linux-firmware.mk.orig
 +++ buildroot/package/linux-firmware/linux-firmware.mk
 @@ -9,6 +9,19 @@
@@ -108,42 +91,7 @@
  # Qualcomm Atheros Rome 6174A Bluetooth
  ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT),y)
  LINUX_FIRMWARE_FILES += qca/rampatch_usb_00000302.bin qca/nvm_usb_00000302.bin
-@@ -188,6 +213,13 @@
- LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
- endif
- 
-+# rtw89
-+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW89),y)
-+LINUX_FIRMWARE_FILES += \
-+	rtw89/rtw*.bin
-+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
-+endif
-+
- # ar3011
- ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_AR3011),y)
- LINUX_FIRMWARE_FILES += ath3k-1.fw
-@@ -449,6 +481,20 @@
- LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
- endif
- 
-+# MT7921
-+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921),y)
-+LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin \
-+			mediatek/WIFI_RAM_CODE_MT7961_1.bin
-+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-+endif
-+
-+# MT7922
-+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922),y)
-+LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7922_patch_mcu_1_1_hdr.bin \
-+			mediatek/WIFI_RAM_CODE_MT7922_1.bin
-+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-+endif
-+
- # qca6174
- ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174),y)
- LINUX_FIRMWARE_FILES += ath10k/QCA6174
-@@ -581,12 +627,22 @@
+@@ -581,12 +606,22 @@
  endif
  
  ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000),y)
@@ -172,7 +120,7 @@
  LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
  endif
  
-@@ -1028,15 +1084,34 @@
+@@ -1028,15 +1063,34 @@
  # sure we canonicalize the pointed-to file, to cover the symlinks of the form
  # a/foo -> ../b/foo  where a/ (the directory where to put the symlink) does
  # not yet exist.
@@ -209,7 +157,7 @@
  		fi ; \
  	done
  endef
-@@ -1044,11 +1119,22 @@
+@@ -1044,11 +1098,22 @@
  endif  # LINUX_FIRMWARE_FILES || LINUX_FIRMWARE_DIRS
  
  define LINUX_FIRMWARE_INSTALL_TARGET_CMDS

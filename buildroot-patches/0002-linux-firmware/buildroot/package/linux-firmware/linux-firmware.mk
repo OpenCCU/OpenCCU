@@ -213,13 +213,6 @@ LINUX_FIRMWARE_FILES += \
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
 endif
 
-# rtw89
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW89),y)
-LINUX_FIRMWARE_FILES += \
-	rtw89/rtw*.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
-endif
-
 # ar3011
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_AR3011),y)
 LINUX_FIRMWARE_FILES += ath3k-1.fw
@@ -478,20 +471,6 @@ LINUX_FIRMWARE_FILES += \
 	mediatek/mt7986_wm_mt7975.bin \
 	mediatek/mt7986_wo_0.bin \
 	mediatek/mt7986_wo_1.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-endif
-
-# MT7921
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921),y)
-LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin \
-			mediatek/WIFI_RAM_CODE_MT7961_1.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-endif
-
-# MT7922
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922),y)
-LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7922_patch_mcu_1_1_hdr.bin \
-			mediatek/WIFI_RAM_CODE_MT7922_1.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 
