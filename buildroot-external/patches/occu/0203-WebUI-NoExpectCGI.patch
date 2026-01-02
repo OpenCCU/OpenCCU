@@ -1,0 +1,267 @@
+--- occu/WebUI/www/tcl/extern/cgi.tcl.orig
++++ occu/WebUI/www/tcl/extern/cgi.tcl
+@@ -1272,11 +1272,11 @@
+ 	} else {
+ 	    set fid stdin
+ 	}
+-	if {([info tclversion] >= 8.1) || [catch exp_version] || [info exists _cgi(no_binary_upload)]} {
++
++	    # call cgi_input_multipart because we use tcl >= 8.1 in OpenCCU
++	    # and _cgi_input_multipart is binary safe
+ 	    _cgi_input_multipart $fid
+-	} else {
+-	    _cgi_input_multipart_binary $fid
+-	}
++
+     } else {
+ 	if {![info exists env(REQUEST_METHOD)]} {
+ 	    set input $fakeinput
+@@ -1497,248 +1497,6 @@
+     if {[info exists dbg_fout]} {close $dbg_fout}
+ }
+ 
+-proc _cgi_input_multipart_binary {fin} {
+-    global env _cgi _cgi_uservar _cgi_userfile
+-
+-    log_user 0
+-    set timeout -1
+-
+-    cgi_debug -noprint {
+-	# save file for debugging purposes
+-	set dbg_filename [file join $_cgi(tmpdir) CGIdbg.[pid]]
+-	set _cgi(input) $dbg_filename
+-	spawn -open [open $dbg_filename w]
+-	set dbg_sid $spawn_id
+-    }
+-    spawn -open $fin
+-    set fin_sid $spawn_id
+-    remove_nulls 0
+-
+-    if {0} {
+-	# dump input to screen
+-	cgi_debug {
+-	    puts "<xmp>"
+-	    expect {
+-		-i $fin_sid
+-		-re ^\r {puts -nonewline "CR"; exp_continue}
+-		-re ^\n {puts "NL"; exp_continue}
+-		-re . {puts -nonewline $expect_out(buffer); exp_continue}
+-	    }
+-	    puts "</xmp>"
+-	    exit
+-	}
+-    }
+-
+-    # figure out boundary
+-    if {0==[regexp boundary=(.*) $env(CONTENT_TYPE) dummy boundary]} {
+-	set _cgi(client_error) 1
+-	error "Your browser failed to generate a \"boundary=\" definition in a multipart response (CONTENT_TYPE: $env(CONTENT_TYPE)).  Please upgrade (or fix) your browser."
+-    }
+-
+-    # make boundary into a legal regsub pattern by protecting #
+-    # legal boundary characters include ()+.? (among others)
+-    regsub -all "\\(" $boundary "\\(" boundary
+-    regsub -all "\\)" $boundary "\\)" boundary
+-    regsub -all "\\+" $boundary "\\+" boundary
+-    regsub -all "\\." $boundary "\\." boundary
+-    regsub -all "\\?" $boundary "\\?" boundary
+-
+-    set boundary --$boundary
+-    set linepat "(\[^\r]*)\r\n"
+-
+-    # get first boundary line
+-    expect {
+-	-i $fin_sid
+-	-re $linepat {
+-	    set buf $expect_out(1,string)
+-	    if {[info exists dbg_sid]} {send -i $dbg_sid -- $buf\n}
+-	}
+-	eof {
+-	    set _cgi(client_error) 1
+-	    error "Your browser failed to provide an initial boundary ($boundary) in a multipart response.  Please upgrade (or fix) your browser."
+-	}
+-    }
+-
+-    set _cgi(file,filecount) 0
+-
+-    while {1} {
+-	# process Content-Disposition:
+-	expect {
+-	    -i $fin_sid
+-	    -re $linepat {
+-		set buf $expect_out(1,string)
+-		if {[info exists dbg_sid]} {send -i $dbg_sid -- $buf\n}
+-	    }
+-	    eof break
+-	}
+-	catch {unset filename}
+-	regexp {name="([^"]*)"} $buf dummy varname
+-	if {0==[info exists varname]} {
+-	    set _cgi(client_error) 1
+-	    error "In response to a request for a multipart form, your browser generated a part header without a name field.  Please upgrade (or fix) your browser."
+-	}	    
+-
+-	# Lame-o encoding (on Netscape at least) doesn't escape field
+-	# delimiters (like quotes)!!  Since all we've ever seen is filename=
+-	# at end of line, assuming nothing follows.  Sigh.
+-	regexp {filename="(.*)"} $buf dummy filename
+-
+-	# Skip remaining headers until blank line.
+-	# Content-Type: can appear here.
+-	set conttype ""
+-	expect {
+-	    -i $fin_sid
+-	    -re $linepat {
+-		set buf $expect_out(1,string)
+-		if {[info exists dbg_sid]} {send -i $dbg_sid -- $buf\n}
+-		if {0!=[string compare $buf ""]} exp_continue
+-		regexp -nocase "^Content-Type:\[ \t]+(.*)\r" $buf x conttype
+-	    }
+-	    eof break
+-	}
+-
+-	if {[info exists filename]} {
+-	    if {$_cgi(file,filecount) > $_cgi(file,filelimit)} {
+-		error "Too many files submitted.  Max files allowed: $_cgi(file,filelimit)"
+-	    }
+-
+-	    # read the part into a file
+-	    set foutname [file join $_cgi(tmpdir) CGI[pid].[incr _cgi(file,filecount)]]
+-	    spawn -open [open $foutname w]
+-	    set fout_sid $spawn_id
+-
+-	    _cgi_set_uservar $varname [list $foutname $filename $conttype]
+-	    set _cgi_userfile($varname) [list $foutname $filename $conttype]
+-
+-	    # This is tricky stuff - be very careful changing anything here!
+-	    # In theory, all we have to is record everything up to
+-	    # \r\n$boundary\r\n.  Unfortunately, we can't simply wait on
+-	    # such a pattern because the input can overflow any possible
+-	    # buffer we might choose.  We can't simply catch buffer_full
+-	    # because the boundary might straddle a buffer.  I doubt that
+-	    # doing my own buffering would be any faster than taking the
+-	    # approach I've done here.
+-	    #
+-	    # The code below basically implements a simple scanner that
+-	    # keeps track of whether it's seen crlfs or pieces of them.
+-	    # The idea is that we look for crlf pairs, separated by
+-	    # things that aren't crlfs (or pieces of them).  As we encounter
+-	    # things that aren't crlfs (or pieces of them), or when we decide
+-	    # they can't be, we mark them for output and resume scanning for
+-	    # new pairs.
+-	    #
+-	    # The scanner runs tolerably fast because the [...]+ pattern picks
+-	    # up most things.  The \r and \n are ^-anchored so the pattern
+-	    # match is pretty fast and these don't happen that often so the
+-	    # huge \n action is executed rarely (once per line on text files).
+-	    # The null pattern is, of course, only used when everything
+-	    # else fails.
+-
+-	    # crlf	== "\r\n" if we've seen one, else == ""
+-	    # cr	== "\r" if we JUST saw one, else == ""
+-	    #           Yes, strange, but so much more efficient
+-	    #		that I'm willing to sacrifice readability, sigh.
+-	    # buf	accumulated data between crlf pairs
+-
+-	    set buf ""
+-	    set cr ""
+-	    set crlf ""
+-
+-	    expect {
+-		-i $fin_sid
+-		-re "^\r" {
+-		    if {$cr == "\r"} {
+-			append buf "\r"
+-		    }
+-		    set cr \r
+-		    exp_continue
+-		} -re "^\n" {
+-		    if {$cr == "\r"} {
+-			if {$crlf == "\r\n"} {
+-			    # do boundary test
+-			    if {[regexp ^[set boundary](--)?$ $buf dummy dashdash]} {
+-				if {$dashdash == "--"} {
+-				    set eof 1
+-				}
+-			    } else {
+-				# boundary test failed
+-				if {[info exists dbg_sid]} {send -i $dbg_sid -- \r\n$buf}
+-				send -i $fout_sid \r\n$buf ; set buf ""
+-				set cr ""
+-				exp_continue
+-			    }
+-			} else {
+-			    set crlf "\r\n"
+-			    set cr ""
+-			    if {[info exists dbg_sid]} {send -i $dbg_sid -- $buf}
+-			    send -i $fout_sid -- $buf ; set buf ""
+-			    exp_continue
+-			}
+-		    } else {
+-			if {[info exists dbg_sid]} {send -i $dbg_sid -- $crlf$buf\n}
+-			send -i $fout_sid -- $crlf$buf\n ; set buf ""
+-			set crlf ""
+-			exp_continue
+-		    }
+-		} -re "\[^\r\n]+" {
+-		    if {$cr == "\r"} {
+-			set buf $crlf$buf\r$expect_out(buffer)
+-			set crlf ""
+-			set cr ""
+-		    } else {
+-			append buf $expect_out(buffer)
+-		    }
+-		    exp_continue
+-		} null {
+-		    if {[info exists dbg_sid]} {
+-			send -i $dbg_sid -- $crlf$buf$cr
+-			send -i $dbg_sid -null
+-		    }
+-		    send -i $fout_sid -- $crlf$buf$cr ; set buf ""
+-		    send -i $fout_sid -null
+-		    set cr ""
+-		    set crlf ""
+-		    exp_continue
+-		} eof {
+-		    set _cgi(client_error) 1
+-		    error "Your browser failed to provide an ending boundary ($boundary) in a multipart response.  Please upgrade (or fix) your browser."
+-		}
+-	    }
+-	    exp_close -i $fout_sid    ;# implicitly closes fout
+-	    exp_wait -i $fout_sid
+-	    unset fout_sid
+-	} else {
+-	    # read the part into a variable
+-	    set val ""
+-	    expect {
+-		-i $fin_sid
+-		-re $linepat {
+-		    set buf $expect_out(1,string)
+-		    if {[info exists dbg_sid]} {send -i $dbg_sid -- $buf\n}
+-		    if {[regexp ^[set boundary](--)?$ $buf dummy dashdash]} {
+-			if {$dashdash == "--"} {set eof 1}
+-		    } else {
+-			regexp (.*)\r$ $buf dummy buf
+-			if {0!=[string compare $val ""]} {
+-			    append val \n
+-			}
+-			append val $buf
+-			exp_continue
+-		    }
+-		}
+-	    }
+-	    _cgi_set_uservar $varname $val
+-	}	    
+-        if {[info exists eof]} break
+-    }
+-    if {[info exists fout]} {
+-	exp_close -i $dbg_sid
+-	exp_wait -i $dbg_sid
+-    }
+-
+-    # no need to close fin, fin_sid, or dbg_sid
+-}
+-
+ # internal routine for defining user variables
+ proc _cgi_set_uservar {varname val} {
+     global _cgi _cgi_uservar
