@@ -17,6 +17,15 @@ config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_SST_DSP
 
 endmenu # Audio
 
+menu "CPU Microcode"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE
+	bool "amd-ucode"
+	help
+	  Firmware blobs for AMD CPUs (amd-ucode).
+
+endmenu # CPU Microcode
+
 menu "Video firmware"
 
 config BR2_PACKAGE_LINUX_FIRMWARE_AMDGPU
@@ -24,10 +33,26 @@ config BR2_PACKAGE_LINUX_FIRMWARE_AMDGPU
 	help
 	  Firmware files for AMD GPU video cards.
 
+config BR2_PACKAGE_LINUX_FIRMWARE_CDNS_MHDP8546
+	bool "Cadence MHDP8546"
+	help
+	  Firmware file for the Cadence MHDP8546 DPI/DP bridge.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_CNM_WAVE521C_K3_CODEC
+	bool "Chips&Media Wave 521C codec IP for K3"
+	help
+	  Firmware files for the Chips&Media Wave521C decoder
+	  needed by the Linux TI j721s2-wave521c driver.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_I915
 	bool "Intel i915 video card firmware"
 	help
 	  Firmware files for the Intel i915 video cards.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_XE
+	bool "Intel Xe video card firmware"
+	help
+	  Firmware files for the Intel Xe video cards.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_RADEON
 	bool "AMD Radeon video card firmware"
@@ -61,8 +86,8 @@ config BR2_PACKAGE_LINUX_FIRMWARE_AMLOGIC
 config BR2_PACKAGE_LINUX_FIRMWARE_IBT
 	bool "Intel Wireless Bluetooth"
 	help
-	  Firmware files for Intel 3160/7260/7265/8260/8265 Wireless
-	  bluetooth support.
+	  Firmware files for Intel 3160/7260/7265/8260/8265/9xxx/6E/7
+	  Wireless bluetooth support.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7650
 	bool "MediaTek MT7650"
@@ -78,6 +103,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922_BT
 	bool "MediaTek MT7922"
 	help
 	  Firmware files for MediaTek MT7922 bluetooth support
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7925_BT
+	bool "MediaTek MT7925"
+	help
+	  Firmware files for MediaTek MT7925 bluetooth support
 
 config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT
 	bool "Qualcomm Atheros Rome 6174A Bluetooth"
@@ -107,7 +137,7 @@ config BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX_BT
 config BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT
 	bool "Realtek 88xx Bluetooth"
 	help
-	  Realtek 8821a/8821c/8822b/8822cs/8822cu/8852au
+	  Firmware files for Realtek Bluetooth modules 88xx.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_TI_CC2560
 	bool "TI CC2560"
@@ -194,6 +224,42 @@ config BR2_PACKAGE_LINUX_FIRMWARE_CYPRESS_CYW54XXX
 	bool "Cypress CY cyw54xxx"
 	help
 	  Firmware files for the Cypress cyw54xxx FullMAC.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_100
+	bool "Intel iwlwifi 100"
+	help
+	  Firmware files for the Intel Wifi 100 devices supported by
+	  the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_105
+	bool "Intel iwlwifi 105"
+	help
+	  Firmware files for the Intel Wifi 105 devices supported by
+	  the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_135
+	bool "Intel iwlwifi 135"
+	help
+	  Firmware files for the Intel Wifi 135 devices supported by
+	  the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_1000
+	bool "Intel iwlwifi 1000"
+	help
+	  Firmware files for the Intel Wifi 1000 devices supported by
+	  the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_2000
+	bool "Intel iwlwifi 2000"
+	help
+	  Firmware files for the Intel Wifi 2000 devices supported by
+	  the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_2030
+	bool "Intel iwlwifi 2030"
+	help
+	  Firmware files for the Intel Wifi 2030 devices supported by
+	  the iwlwifi kernel driver.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000
 	bool "Intel iwlwifi 22000"
@@ -292,6 +358,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6E
 	bool "Intel iwlwifi 6/6E"
 	help
 	  Firmware files for the Intel Wi-Fi 6 and Wi-Fi 6E devices
+	  supported by the iwlwifi kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7
+	bool "Intel iwlwifi 7"
+	help
+	  Firmware files for the Intel Wi-Fi 7 (BE20x) devices
 	  supported by the iwlwifi kernel driver.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_QUZ
@@ -408,10 +480,32 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922
 	help
 	  MediaTek MT7922
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7925
+	bool "MediaTek MT7925"
+	help
+	  MediaTek MT7925
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7986
+	bool "MediaTek MT7986 SOC WiFi"
+	help
+	  MediaTek MT7986 SOC WiFi
+
 config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174
 	bool "Qualcomm Atheros 6174"
 	help
 	  Firmware files for the Qualcomm Atheros QCA6174 chip
+
+config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_QCN9274
+	bool "Qualcomm QCN9274"
+	help
+	  Firmware files for the Qualcomm 802.11be QCN9274 chip
+	  supported by the ath12k kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_WCN7850
+	bool "Qualcomm WCN7850"
+	help
+	  Firmware files for the Qualcomm 802.11be WCN7850 chip
+	  supported by the ath12k kernel driver.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT61
 	bool "Ralink rt2501/rt61"
@@ -460,6 +554,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9113
 	help
 	  Firmware files for WLAN and Bluetooth modules rs9113
 
+config BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9116
+	bool "Redpine rs9116"
+	help
+	  Firmware files for WLAN and Bluetooth modules rs9116
+
 config BR2_PACKAGE_LINUX_FIRMWARE_TI_WL127X
 	bool "TI wl127x"
 	help
@@ -475,6 +574,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_TI_WL18XX
 	bool "TI wl18xx"
 	help
 	  Firmware files for WLAN and Bluetooth modules wl18xx
+
+config BR2_PACKAGE_LINUX_FIRMWARE_TI_CC33XX
+	bool "TI cc33xx"
+	help
+	  Firmware files for cc33xx WLAN and BLE family of chips
 
 config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_WIL6210
 	bool "Qualcomm Atheros wil6210"
@@ -514,6 +618,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T5
 	  Firmware files for Chelsio T5 1Gb and 10Gb ethernet cards
 	  (cxgb4)
 
+config BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T6
+	bool "Chelsio T6"
+	help
+	  Firmware files for Chelsio T6 1/10/25/40/50/100 Gb ethernet
+	  cards (cxgb4)
+
 config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_E100
 	bool "Intel e100 825xx"
 	help
@@ -545,7 +655,7 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_4X
 	  (qede)
 
 config BR2_PACKAGE_LINUX_FIRMWARE_RTL_815X
-	bool "Realtek 8152/8153/8156 USB Ethernet Adapaters"
+	bool "Realtek 8152/8153/8156 USB Ethernet Adapters"
 	help
 	  Firmware files for Realtek 8152/8153/8156 based USB Ethernet
 	  adapters.
@@ -636,6 +746,50 @@ config BR2_PACKAGE_LINUX_FIRMWARE_CX23885
 	help
 	  Firmware files for Conexant Cx23885/7/8 PCIe broadcast
 	  A/V decoder needed by the Linux CX23885 driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_ATOMISP
+	bool "Intel AtomISP v2"
+	help
+	  Firmware files for Intel AtomISP v2 (also know as IPU2)
+	  needed by the Linux AtomISP v2 driver.
+
+endmenu
+
+menu "GPU Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_ARM_MALI_CSF
+	bool "Arm Mali CSF firmware"
+	help
+	  Firmware files for Arm Mali 10th generation GPU
+	  needed by the linux panthor kernel driver.
+
+config BR2_PACKAGE_LINUX_FIRMWARE_POWERVR_ROGUE
+	bool "PowerVR Technologies Rogue GPU firmware"
+	help
+	  Firmware files for PowerVR Technologies Rogue video cards.
+
+endmenu
+
+menu "Serial adapters firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RP2
+	bool "Comtrol RocketPort EXPRESS/INFINITY firmware"
+	help
+	  Firmware files for the Comtrol RocketPort EXPRESS/INFINITY
+	  needed by the Linux rp2 kernel driver.
+
+endmenu
+
+menu "NPU Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_NPU
+	bool "Intel NPU firmware"
+	help
+	  Firmware files for Intel NPU device. Intel NPU device is an
+	  AI inference accelerator integrated with Intel client CPUs.
+	  The full device name is Neural Processing Unit, but the
+	  Linux kernel driver uses the older name Versatile Processing
+	  Unit (VPU).
 
 endmenu
 

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINUX_FIRMWARE_VERSION = 20240115
+LINUX_FIRMWARE_VERSION = 20251011
 LINUX_FIRMWARE_SOURCE = linux-firmware-$(LINUX_FIRMWARE_VERSION).tar.xz
 LINUX_FIRMWARE_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/firmware
 LINUX_FIRMWARE_INSTALL_IMAGES = YES
@@ -28,14 +28,29 @@ LINUX_FIRMWARE_FILES += intel/fw_sst_0f28.bin-48kHz_i2s_master
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.fw_sst_0f28
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE),y)
+LINUX_FIRMWARE_DIRS += amd-ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.amd-ucode
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_AMDGPU),y)
 LINUX_FIRMWARE_DIRS += amdgpu
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.amdgpu
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CNM_WAVE521C_K3_CODEC),y)
+LINUX_FIRMWARE_FILES += cnm/wave521c_k3_codec_fw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.cnm
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_I915),y)
 LINUX_FIRMWARE_DIRS += i915
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.i915
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_XE),y)
+LINUX_FIRMWARE_DIRS += xe
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.xe
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RADEON),y)
@@ -66,7 +81,7 @@ endif
 
 # Amlogic SoC Bluetooth
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_AMLOGIC),y)
-LINUX_FIRMWARE_FILES += amlogic/bluetooth/*.bin
+LINUX_FIRMWARE_FILES += amlogic/*.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.amlogic
 endif
 
@@ -74,18 +89,6 @@ endif
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IBT),y)
 LINUX_FIRMWARE_FILES += intel/ibt-*
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ibt_firmware
-endif
-
-# Mediatek MT7921 Bluetooth
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7921_BT),y)
-LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7961_1_2_hdr.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-endif
-
-# Mediatek MT7922 Bluetooth
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7922_BT),y)
-LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7922_1_1_hdr.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 
 # Qualcomm Atheros Rome 6174A Bluetooth
@@ -104,8 +107,7 @@ endif
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX_BT),y)
 LINUX_FIRMWARE_FILES += \
 	rtl_bt/rtl8723a_fw.bin rtl_bt/rtl8723b_fw.bin \
-	rtl_bt/rtl8723bs_config-OBDA8723.bin \
-	rtl_bt/rtl8723bs_fw.bin rtl_bt/rtl8723d_config.bin \
+	rtl_bt/rtl8723bs_config.bin rtl_bt/rtl8723bs_fw.bin \
 	rtl_bt/rtl8723d_fw.bin rtl_bt/rtl8761a_fw.bin \
 	rtl_bt/rtl8761b_fw.bin rtl_bt/rtl8761b_config.bin \
 	rtl_bt/rtl8761bu_fw.bin rtl_bt/rtl8761bu_config.bin
@@ -115,16 +117,7 @@ endif
 # Realtek 88xx Bluetooth
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT),y)
 LINUX_FIRMWARE_FILES += \
-	rtl_bt/rtl8812ae_fw.bin rtl_bt/rtl8821a_fw.bin \
-	rtl_bt/rtl8821c_config.bin rtl_bt/rtl8821c_fw.bin \
-	rtl_bt/rtl8822b_config.bin rtl_bt/rtl8822b_fw.bin \
-	rtl_bt/rtl8822cs_config.bin rtl_bt/rtl8822cs_fw.bin \
-	rtl_bt/rtl8822cu_config.bin rtl_bt/rtl8822cu_fw.bin \
-	rtl_bt/rtl8851bu_fw.bin rtl_bt/rtl8851bu_config.bin \
-	rtl_bt/rtl8852au_fw.bin rtl_bt/rtl8852au_config.bin \
-	rtl_bt/rtl8852bu_fw.bin rtl_bt/rtl8852bu_config.bin \
-	rtl_bt/rtl8852cu_fw.bin rtl_bt/rtl8852cu_config.bin \
-	rtl_bt/rtl8852cu_fw_v2.bin
+	rtl_bt/rtl88*.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
 endif
 
@@ -198,13 +191,6 @@ endif
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW88),y)
 LINUX_FIRMWARE_FILES += \
 	rtw88/rtw*.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
-endif
-
-# rtw89
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_RTW89),y)
-LINUX_FIRMWARE_FILES += \
-	rtw89/rtw*.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
 endif
 
@@ -289,14 +275,14 @@ LINUX_FIRMWARE_FILES += ath10k/QCA9377/hw1.0/board-2.bin \
 			ath10k/QCA9377/hw1.0/firmware-5.bin \
 			ath10k/QCA9377/hw1.0/firmware-6.bin \
 			ath10k/QCA9377/hw1.0/firmware-sdio-5.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.atheros_firmware
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.QualcommAtheros_ath10k
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_10K_QCA998X),y)
 LINUX_FIRMWARE_FILES += ath10k/QCA988X/hw2.0/board.bin \
 			ath10k/QCA988X/hw2.0/firmware-4.bin \
 			ath10k/QCA988X/hw2.0/firmware-5.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.atheros_firmware
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.QualcommAtheros_ath10k
 endif
 
 # sd8686 v8
@@ -445,17 +431,34 @@ LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7922_1_1_hdr.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 
-# MT7921
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921),y)
-LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin \
-			mediatek/WIFI_RAM_CODE_MT7961_1.bin
+# MT7925
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7925),y)
+LINUX_FIRMWARE_FILES += \
+	mediatek/mt7925/WIFI_MT7925_PATCH_MCU_1_1_hdr.bin \
+	mediatek/mt7925/WIFI_RAM_CODE_MT7925_1_1.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 
-# MT7922
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7922),y)
-LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7922_patch_mcu_1_1_hdr.bin \
-			mediatek/WIFI_RAM_CODE_MT7922_1.bin
+# Mediatek MT7925 Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7925_BT),y)
+LINUX_FIRMWARE_FILES += mediatek/mt7925/BT_RAM_CODE_MT7925_1_1_hdr.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
+# Mediatek MT7986 SoC WiFi
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7986),y)
+LINUX_FIRMWARE_FILES += \
+	mediatek/mt7986_eeprom_mt7975_dual.bin \
+	mediatek/mt7986_eeprom_mt7976.bin \
+	mediatek/mt7986_eeprom_mt7976_dbdc.bin \
+	mediatek/mt7986_eeprom_mt7976_dual.bin \
+	mediatek/mt7986_rom_patch.bin \
+	mediatek/mt7986_rom_patch_mt7975.bin \
+	mediatek/mt7986_wa.bin \
+	mediatek/mt7986_wm.bin \
+	mediatek/mt7986_wm_mt7975.bin \
+	mediatek/mt7986_wo_0.bin \
+	mediatek/mt7986_wo_1.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 
@@ -467,6 +470,25 @@ LINUX_FIRMWARE_ALL_LICENSE_FILES += \
 	ath10k/QCA6174/hw2.1/notice_ath10k_firmware-5.txt \
 	ath10k/QCA6174/hw3.0/notice_ath10k_firmware-4.txt \
 	ath10k/QCA6174/hw3.0/notice_ath10k_firmware-6.txt
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_WCN7850),y)
+LINUX_FIRMWARE_FILES += \
+	ath12k/WCN7850/hw2.0/board-2.bin \
+	ath12k/WCN7850/hw2.0/amss.bin \
+	ath12k/WCN7850/hw2.0/m3.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += \
+	LICENSE.QualcommAtheros_ath10k \
+	ath12k/WCN7850/hw2.0/Notice.txt
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_QCN9274),y)
+LINUX_FIRMWARE_FILES += \
+	ath12k/QCN9274/hw2.0/board-2.bin \
+	ath12k/QCN9274/hw2.0/firmware-2.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += \
+	LICENSE.QualcommAtheros_ath10k \
+	ath12k/QCN9274/hw2.0/Notice.txt
 endif
 
 # CC2560(A)
@@ -527,48 +549,87 @@ LINUX_FIRMWARE_FILES += \
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ti-connectivity
 endif
 
+# cc33xx
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_TI_CC33XX),y)
+LINUX_FIRMWARE_FILES += \
+	ti-connectivity/cc33xx_2nd_loader.bin \
+	ti-connectivity/cc33xx_fw.bin \
+	ti-connectivity/cc33xx-conf.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ti-connectivity
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_WIL6210),y)
 LINUX_FIRMWARE_FILES += wil6210.*
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.QualcommAtheros_ath10k
 endif
 
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000),y)
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_100),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-100-*.ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_105),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-105-*.ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_135),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-135-*.ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_1000),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-1000-*.ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_2000),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-2000-*.ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_2030),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-2030-*.ucode
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifneq ($(filter y,$(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000) $(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260)),)
 LINUX_FIRMWARE_FILES += \
-	iwlwifi-Qu-b0-hr-b0-72.ucode \
-	iwlwifi-Qu-c0-hr-b0-72.ucode \
-	iwlwifi-Qu-b0-jf-b0-72.ucode \
-	iwlwifi-Qu-c0-jf-b0-72.ucode \
-	iwlwifi-QuZ-a0-hr-b0-72.ucode \
-	iwlwifi-QuZ-a0-jf-b0-72.ucode \
-	iwlwifi-cc-a0-72.ucode \
-	iwlwifi-so-a0-jf-b0-72.ucode \
-	iwlwifi-so-a0-hr-b0-72.ucode \
-	iwlwifi-so-a0-gf-a0-72.ucode \
-	iwlwifi-so-a0-gf-a0.pnvm \
-	iwlwifi-so-a0-gf4-a0-72.ucode \
-	iwlwifi-so-a0-gf4-a0.pnvm \
-	iwlwifi-ty-a0-gf-a0-72.ucode \
-	iwlwifi-ty-a0-gf-a0.pnvm
+	intel/iwlwifi/iwlwifi-Qu-b0-hr-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-Qu-c0-hr-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-Qu-b0-jf-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-Qu-c0-jf-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-QuZ-a0-hr-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-QuZ-a0-jf-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-cc-a0-72.ucode \
+	intel/iwlwifi/iwlwifi-so-a0-jf-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-so-a0-hr-b0-72.ucode \
+	intel/iwlwifi/iwlwifi-so-a0-gf-a0-72.ucode \
+	intel/iwlwifi/iwlwifi-so-a0-gf-a0.pnvm \
+	intel/iwlwifi/iwlwifi-so-a0-gf4-a0-72.ucode \
+	intel/iwlwifi/iwlwifi-so-a0-gf4-a0.pnvm \
+	intel/iwlwifi/iwlwifi-ty-a0-gf-a0-72.ucode \
+	intel/iwlwifi/iwlwifi-ty-a0-gf-a0.pnvm
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3160),y)
-LINUX_FIRMWARE_FILES += iwlwifi-3160-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-3160-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3168),y)
-LINUX_FIRMWARE_FILES += iwlwifi-3168-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-3168-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_3945),y)
-LINUX_FIRMWARE_FILES += iwlwifi-3945-2.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-3945-2.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_4965),y)
-LINUX_FIRMWARE_FILES += iwlwifi-4965-2.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-4965-2.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
@@ -577,76 +638,79 @@ endif
 # different versions of the firmware API. For now, we only install the
 # most recent one.
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_5000),y)
-LINUX_FIRMWARE_FILES += iwlwifi-5000-5.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-5000-5.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6000G2A),y)
-LINUX_FIRMWARE_FILES += iwlwifi-6000g2a-6.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-6000g2a-6.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6000G2B),y)
-LINUX_FIRMWARE_FILES += iwlwifi-6000g2b-6.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-6000g2b-6.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7260),y)
-LINUX_FIRMWARE_FILES += iwlwifi-7260-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-7260-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7265),y)
-LINUX_FIRMWARE_FILES += iwlwifi-7265-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-7265-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7265D),y)
-LINUX_FIRMWARE_FILES += iwlwifi-7265D-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-7265D-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_8000C),y)
-LINUX_FIRMWARE_FILES += iwlwifi-8000C-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-8000C-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_8265),y)
-LINUX_FIRMWARE_FILES += iwlwifi-8265-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-8265-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_9XXX),y)
-LINUX_FIRMWARE_FILES += iwlwifi-9???-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-9???-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-so-a0-jf-b0*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6E),y)
-LINUX_FIRMWARE_FILES += iwlwifi-so-a0-gf-a0*.{ucode,pnvm}
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-{so,ty}-a0-gf-a0*.{ucode,pnvm}
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7),y)
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-gl-c0-fm-c0*.{ucode,pnvm}
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_QUZ),y)
-LINUX_FIRMWARE_FILES += iwlwifi-QuZ-*.ucode
+LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-QuZ-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3),y)
 LINUX_FIRMWARE_FILES += tigon/*
-# No license file; the license is in the file WHENCE
-# which is installed unconditionally
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.tigon
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BNX2),y)
 LINUX_FIRMWARE_FILES += bnx2/*
-# No license file; the license is in the file WHENCE
-# which is installed unconditionally
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.bnx2
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BNX2X),y)
 LINUX_FIRMWARE_FILES += bnx2x/*
-# No license file; the license is in the file WHENCE
-# which is installed unconditionally
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.bnx2x
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T4),y)
@@ -656,6 +720,11 @@ endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T5),y)
 LINUX_FIRMWARE_FILES += cxgb4/t5fw*.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.chelsio_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T6),y)
+LINUX_FIRMWARE_FILES += cxgb4/t6fw*.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.chelsio_firmware
 endif
 
@@ -703,6 +772,7 @@ LINUX_FIRMWARE_FILES += \
 	rtl_nic/rtl8107e-2.fw \
 	rtl_nic/rtl8125a-3.fw \
 	rtl_nic/rtl8125b-2.fw \
+	rtl_nic/rtl8125d-1.fw \
 	rtl_nic/rtl8168d-1.fw \
 	rtl_nic/rtl8168d-2.fw \
 	rtl_nic/rtl8168e-1.fw \
@@ -874,18 +944,26 @@ LINUX_FIRMWARE_FILES += \
 # which is installed unconditionally
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_REDPINE_RS9116),y)
+LINUX_FIRMWARE_FILES += \
+	rsi/rs9116_wlan.rps \
+	rsi/rs9116_wlan_bt_classic.rps
+# No license file; the license is in the file WHENCE
+# which is installed unconditionally
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QAT_DH895XCC),y)
-LINUX_FIRMWARE_FILES += qat_895xcc.bin qat_895xcc_mmp.bin
+LINUX_FIRMWARE_FILES += intel/qat/qat_895xcc.bin intel/qat/qat_895xcc_mmp.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.qat_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QAT_C3XXX),y)
-LINUX_FIRMWARE_FILES += qat_c3xxx.bin qat_c3xxx_mmp.bin
+LINUX_FIRMWARE_FILES += intel/qat/qat_c3xxx.bin intel/qat/qat_c3xxx_mmp.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.qat_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QAT_C62X),y)
-LINUX_FIRMWARE_FILES += qat_c62x.bin qat_c62x_mmp.bin
+LINUX_FIRMWARE_FILES += intel/qat/qat_c62x.bin intel/qat/qat_c62x_mmp.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.qat_firmware
 endif
 
@@ -899,6 +977,11 @@ LINUX_FIRMWARE_FILES += ti_3410.fw ti_5052.fw \
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.moxa
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CDNS_MHDP8546),y)
+LINUX_FIRMWARE_FILES += cadence/mhdp8546.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.cadence
+endif
+
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CX231XX),y)
 LINUX_FIRMWARE_FILES += v4l-cx231xx-avcore-01.fw
 # No license file; the license is in the file WHENCE
@@ -909,6 +992,31 @@ ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CX23885),y)
 LINUX_FIRMWARE_FILES += v4l-cx23885-avcore-01.fw
 # No license file; the license is in the file WHENCE
 # which is installed unconditionally
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_INTEL_ATOMISP),y)
+LINUX_FIRMWARE_FILES += intel/ipu/shisp_2400b0_v21.bin
+LINUX_FIRMWARE_FILES += intel/ipu/shisp_2401a0_v21.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.ivsc
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_ARM_MALI_CSF),y)
+LINUX_FIRMWARE_FILES += arm/mali/arch*/mali_csffw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mali_csffw
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_POWERVR_ROGUE),y)
+LINUX_FIRMWARE_DIRS += powervr
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.powervr
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RP2),y)
+LINUX_FIRMWARE_FILES += rp2.fw
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_INTEL_NPU),y)
+LINUX_FIRMWARE_FILES += intel/vpu/vpu_*.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.intel_vpu
 endif
 
 ifneq ($(LINUX_FIRMWARE_FILES)$(LINUX_FIRMWARE_DIRS),)
