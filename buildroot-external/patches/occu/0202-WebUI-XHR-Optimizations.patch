@@ -1,0 +1,157 @@
+--- occu/WebUI/www/webui/js/lang/loadTextResource.js.orig
++++ occu/WebUI/www/webui/js/lang/loadTextResource.js
+@@ -105,6 +105,13 @@
+ 
+ function loadTextResource() {
+ 
++  // Ensure we only trigger language resource loading once.
++  if (window.__langTextResourcesDeferred) {
++    return window.__langTextResourcesDeferred.promise();
++  }
++
++  window.__langTextResourcesDeferred = jQuery.Deferred();
++
+   var arResource = [
+     "translate.lang.js",
+     "translate.lang.extension.js",
+@@ -121,21 +128,47 @@
+   ];
+   var url = "/webui/js/lang/" + getLang() + "/";
+ 
+-  jQuery.each(arResource, function(index, res){
+-    var request = jQuery.ajax({
+-      url: url + res,
+-      type:  "GET",
+-      async: false,
+-      contentType: "application/x-www-form-urlencoded;charset=ISO-8859-1"
++  /*
++   * Avoid synchronous XHR on the main thread.
++   *
++   * If we are still in the document parsing phase, we can preserve the original
++   * deterministic execution order by writing <script> tags into the parser stream.
++   * However, document.write() must NEVER be used after the document has finished
++   * loading, as it can implicitly call document.open() and wipe the DOM.
++   */
++  if ((document.readyState === "loading") && (typeof document.write === "function")) {
++    jQuery.each(arResource, function(index, res) {
++      document.write('<script type="text/javascript" charset="ISO-8859-1" src="' +
++                     url + res + '"><\/script>');
+     });
+ 
+-    request.done(function(result) {
+-    });
++    window.__langTextResourcesDeferred.resolve();
++    return window.__langTextResourcesDeferred.promise();
++  }
++
++  // Fallback: load sequentially via dynamic script injection (asynchronous).
++  var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
++  var idx = 0;
++
++  var loadNext = function() {
++    if (idx >= arResource.length) {
++      window.__langTextResourcesDeferred.resolve();
++      return;
++    }
++
++    var s = document.createElement("script");
++    s.type = "text/javascript";
++    s.charset = "ISO-8859-1";
++    s.src = url + arResource[idx++];
+ 
+-    request.fail(function( jqXHR, textStatus ) {
+-    });
++    s.onload = function() { loadNext(); };
++    s.onerror = function() { loadNext(); };
++
++    head.appendChild(s);
++  };
+ 
+-  });
++  loadNext();
++  return window.__langTextResourcesDeferred.promise();
+ };
+ 
+-loadTextResource();
+\ No newline at end of file
++loadTextResource();
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -9145,7 +9145,8 @@
+ 
+ 
+       jQuery(".Layer0").hide();
+-      HeaderBar.load();
++
++      var __afterHeaderLoaded = function() {
+ 
+       if (!forceUpdate) {
+         jQuery("#AlarmServiceMsg").show();
+@@ -9284,6 +9285,15 @@
+         }
+       }, 5);
+     }
++
++      };
++
++      try {
++        HeaderBar.load(__afterHeaderLoaded);
++      } catch (e) {
++        __afterHeaderLoaded();
++      }
++
+   },
+   
+   /**
+@@ -25219,23 +25229,41 @@
+ {
+ 
+   // This causes problems with Mac & Safari
+-  this.load_ = function()
++  // NOTE: This function is now asynchronous. If callers depend on the header
++  // being present immediately, they must wait for the callback.
++  this.load_ = function(callback)
+   {
+-    new Ajax.Updater("header", "/ise/htm/header.htm", {
++    var cb = (typeof(callback) === "function") ? callback : null;
++
++    return new Ajax.Updater("header", "/ise/htm/header.htm", {
+       evalScripts: true,
+-      asynchronous: false
++      asynchronous: true,
++      onComplete: function() { if (cb) { cb(); } },
++      onFailure:  function() { if (cb) { cb(); } },
++      onException:function() { if (cb) { cb(); } }
+     });
+   };
+ 
+-  this.load = function() {
+-    jQuery.ajax({
+-    url: "/ise/htm/header.htm",
+-    dataType: "html",
+-    async: false,
+-    context: document.body
+-    }).done(function(response) {
++  this.load = function(callback) {
++    var cb = (typeof(callback) === "function") ? callback : null;
++
++    var request = jQuery.ajax({
++      url: "/ise/htm/header.htm",
++     dataType: "html",
++      cache: false,
++      context: document.body
++    });
++
++    request.done(function(response) {
+       jQuery("#header").html(response);
++      if (cb) { cb(); }
+     });
++
++    request.fail(function() {
++      if (cb) { cb(); }
++    });
++
++    return request;
+   };
+ 
+ }();/**
