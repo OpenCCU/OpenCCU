@@ -91,18 +91,6 @@ LINUX_FIRMWARE_FILES += intel/ibt-*
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ibt_firmware
 endif
 
-# Mediatek MT7921 Bluetooth
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7921_BT),y)
-LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7961_1_2_hdr.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-endif
-
-# Mediatek MT7922 Bluetooth
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7922_BT),y)
-LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7922_1_1_hdr.bin
-LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-endif
-
 # Qualcomm Atheros Rome 6174A Bluetooth
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT),y)
 LINUX_FIRMWARE_FILES += qca/rampatch_usb_00000302.bin qca/nvm_usb_00000302.bin
@@ -605,7 +593,7 @@ LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-2030-*.ucode
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 
-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000),y)
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000)$(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260),y)
 LINUX_FIRMWARE_FILES += \
 	intel/iwlwifi/iwlwifi-Qu-b0-hr-b0-72.ucode \
 	intel/iwlwifi/iwlwifi-Qu-c0-hr-b0-72.ucode \

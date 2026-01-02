@@ -33,23 +33,6 @@
  menu "Audio firmware"
  
  config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_SST_DSP
-@@ -89,6 +115,16 @@
- 	  Firmware files for Intel 3160/7260/7265/8260/8265/9xxx/6E/7
- 	  Wireless bluetooth support.
- 
-+config BR2_PACKAGE_LINUX_FIRMWARE_MT7921_BT
-+	bool "MediaTek MT7921"
-+	help
-+	  Firmware files for MediaTek MT7921 bluetooth support
-+
-+config BR2_PACKAGE_LINUX_FIRMWARE_MT7922_BT
-+	bool "MediaTek MT7922"
-+	help
-+	  Firmware files for MediaTek MT7922 bluetooth support
-+
- config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7650
- 	bool "MediaTek MT7650"
- 	help
 --- buildroot/package/linux-firmware/linux-firmware.mk.orig
 +++ buildroot/package/linux-firmware/linux-firmware.mk
 @@ -9,6 +9,19 @@
@@ -72,35 +55,18 @@
  # Intel SST DSP
  ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_INTEL_SST_DSP),y)
  LINUX_FIRMWARE_FILES += intel/fw_sst_0f28.bin-48kHz_i2s_master
-@@ -78,6 +91,18 @@
- LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ibt_firmware
+@@ -580,13 +593,23 @@
+ LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
  endif
  
-+# Mediatek MT7921 Bluetooth
-+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7921_BT),y)
-+LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7961_1_2_hdr.bin
-+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-+endif
-+
-+# Mediatek MT7922 Bluetooth
-+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7922_BT),y)
-+LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7922_1_1_hdr.bin
-+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
-+endif
-+
- # Qualcomm Atheros Rome 6174A Bluetooth
- ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT),y)
- LINUX_FIRMWARE_FILES += qca/rampatch_usb_00000302.bin qca/nvm_usb_00000302.bin
-@@ -581,12 +606,22 @@
- endif
- 
- ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000),y)
+-ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000),y)
 -LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-QuZ-*.ucode intel/iwlwifi/iwlwifi-Qu-*.ucode
 -LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 -endif
 -
 -ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260),y)
 -LINUX_FIRMWARE_FILES += intel/iwlwifi/iwlwifi-cc-a0-*.ucode
++ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22000)$(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_22260),y)
 +LINUX_FIRMWARE_FILES += \
 +	intel/iwlwifi/iwlwifi-Qu-b0-hr-b0-72.ucode \
 +	intel/iwlwifi/iwlwifi-Qu-c0-hr-b0-72.ucode \
@@ -120,7 +86,7 @@
  LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
  endif
  
-@@ -1028,15 +1063,34 @@
+@@ -1028,15 +1051,34 @@
  # sure we canonicalize the pointed-to file, to cover the symlinks of the form
  # a/foo -> ../b/foo  where a/ (the directory where to put the symlink) does
  # not yet exist.
@@ -157,7 +123,7 @@
  		fi ; \
  	done
  endef
-@@ -1044,11 +1098,22 @@
+@@ -1044,11 +1086,22 @@
  endif  # LINUX_FIRMWARE_FILES || LINUX_FIRMWARE_DIRS
  
  define LINUX_FIRMWARE_INSTALL_TARGET_CMDS
