@@ -186,7 +186,7 @@ ifneq (,$(filter $(OCCU_RF_PROTOCOL), HM_HMIP HMIP))
 	cp -av HMserver/opt/HMServer/HMServer.jar $(TARGET_DIR)/opt/HMServer/
 	cp -av HMserver/opt/HmIP $(TARGET_DIR)/opt/
 	cp -av HMServer-Beta/opt/HmIP/hmip-copro-update.jar $(TARGET_DIR)/opt/HmIP/
-	cp -av HMServer-Beta/opt/HMServer/HMIPServer.jar $(TARGET_DIR)/opt/HMServer/
+	#cp -av HMServer-Beta/opt/HMServer/HMIPServer.jar $(TARGET_DIR)/opt/HMServer/
 	cp -av HMServer-Beta/opt/HMServer/HMServer.jar $(TARGET_DIR)/opt/HMServer/
 endif
 
