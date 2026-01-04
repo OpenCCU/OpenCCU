@@ -1,0 +1,198 @@
+<div id="programOffsetDiv" class="CLASS03700"></div>
+<script type="text/javascript">
+
+ResetGAC();
+
+<%
+  if( system.GetSessionVar("sessionTAB") != "control/programs" )
+  {
+    system.SetSessionVar("sessionTAB", "control/programs");
+    system.SetSessionVar("sessionTAB1", "");
+  }
+
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (system.GetSessionVar("sessionCTV")=="true") )
+  {
+    oUser.UserTempViewIDs().RemoveAll();
+    
+    Write('iseClearLastSort();');
+    Write('lastSort = "name";');
+    Write('lastDir = 0;');
+    system.SetSessionVar("sessionLS","name");
+
+    object oTmpArray = dom.GetObject(ID_PROGRAMS);
+    if( oTmpArray )
+    {
+      oTmpArray.SortByName(soAsc,stNatural);
+      string sTmp;
+      foreach(sTmp,oTmpArray.EnumIDs())
+      {
+        object oTmp = dom.GetObject( sTmp );
+        if( oTmp )
+        {
+          oUser.UserTempViewIDs().Add( oTmp.ID() );
+        }
+      }
+    }
+  }
+%>
+  //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; Programme");
+setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; "+translateKey('submenuPrograms'));
+  fltPR = new iseFilter("fltPR");
+  arProgs = new Array();
+</script>
+
+<div id="prgcontent" class="j_translate">
+  <table id="ProgramListTable" class="tblList tTable CLASS03701" border="0" cellpadding="0" cellspacing="0" >
+    <colgroup>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col style="width:250px;">
+    </colgroup>
+    <thead>
+      <tr class="CLASS03702">
+        <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arProgs,'name',true);" >${thName}</div></th>
+        <th class="tHeaderCell CLASS03303" >${thDescription}</th>
+        <th class="tHeaderCell CLASS03303" >${thActivity}</th>
+        <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
+        <th class="tHeaderCell CLASS03303" ><div><span>${thAction}</span><img src="/ise/img/help.png" style="cursor: pointer; width:24px; height:24px; vertical-align:middle;" onclick="MessageBox.show(translateKey('HelpTitle'), translateKey('actionStatusControlLblStartHelp'), '', 400, 250);"></div></th>
+      </tr>
+    </thead>
+      <tbody>
+        <tr>
+          <td class="CLASS03706">
+            <div id="btnFilterName" class="FilterBtn CLASS03707" >${thFilter}</div>
+            <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+                <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03708" NAME="ftName"/>
+                <div id="ftSetNameBtn" class='FilterSetButton CLASS03709' onclick="setSFilter(fltPR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+                <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide()">${filterClose}</div>
+            </div>
+          </td>
+          <td class="CLASS03706"></td>
+          <td class="CLASS03706"></td>
+          <td class="CLASS03706"></td>
+          <td class="CLASS03706"></td>
+        </tr>
+        <%
+          object oPrograms = dom.GetObject( ID_PROGRAMS );
+          if(oPrograms)
+          {
+            if (oUser.UserLevel() == iulAdmin) {
+              WriteLine("<script type='text/javascript'>EditProgram = function(id) { var opt={postBody: 'string action = \"SetProgram\"; string id = \"'+id+'\";',onComplete: function(t){if(t.responseText=='true') { loadPrograms(); }}};new Ajax.Request('/esp/programs.htm?sid='+SessionId,opt);};</script></td>");
+            }
+            string sPID;
+            foreach( sPID, oUser.UserTempViewIDs().EnumIDs() )
+            {
+              object o = dom.GetObject( sPID );
+              if( o )
+              {
+                if( (o.IsTypeOf( OT_PROGRAM )) && (o.ProgramCopyID()==ID_ERROR) && o.UserAccessRights(iulOtherThanAdmin)==iarFullAccess)
+                {
+                  string trId = "pr"#o.ID();
+                  WriteLine( '<tr id="'#trId#'" class="CLASS03702">' );
+                  if (oUser.UserLevel() == iulAdmin) {
+                    WriteLine( '<td class="tBodyCell CLASS03905" onclick="EditProgram('#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">'#o.Name()#'</td>' );
+                  } else {
+                    WriteLine( '<td class="tBodyCell">'#o.Name()#'</td>' );
+                  }
+                  WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
+                  object oPrgID = o.ID();
+                  WriteLine( '<td class="tBodyCell">' );
+                  string sRet = "";
+                  Call( "/esp/programs.fn::WriteDestinationText()" );
+                  Write( sRet );
+                  WriteLine( '</td>' );
+                  WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">' );
+                  var dtLastExecuteTime = o.ProgramLastExecuteTime();
+                  if( dtLastExecuteTime == 0 )
+                  {
+                    Write( '-' );
+                  }
+                  else
+                  {
+                    Write( dtLastExecuteTime.Format("%d.%m.%Y %H:%M:%S") );
+                  }
+                  WriteLine( '</span></td>' );
+                  WriteLine( '<td class="tBodyCell">' );
+                  Write( '<div id="dpc'#o.ID()#'">' );
+                  
+                  string progId = o.ID();
+                  string viewstatus = "";
+                  
+                  integer cId = o.ID();
+                  integer iStatusOnly = 0;
+                  Call("/esp/datapointconfigurator.fn::dcCreate()");
+
+                  Write( '</div>' );
+                  WriteLine( '</td>' );
+                  WriteLine( '</tr>' );
+                  Write("<script type='text/javascript'>");
+                  Write("var tmp = new Object();");
+                  Write("tmp['id'] = '"#o.ID()#"';");
+                  Write("tmp['name'] = '"#o.Name()#"';");
+                  Write("tmp['trid'] = '"#trId#"';");
+                  Write("arProgs[arProgs.length] = tmp;");
+                  Write("</script>");
+                }
+              }
+            }
+          }
+        %>
+        <script type="text/javascript">
+          Cursor.set(Cursor.NORMAL);
+        </script>
+    </tbody>
+  </table>
+</div>
+
+<script type="text/javascript">
+  filterOptions = new iseFilter();
+</script>
+
+<script type="text/javascript">
+
+  translatePage("#prgcontent");
+  $("prgcontent").style.display = 'contents';
+
+  var s = "";
+  
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='fltPR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  setFooter(s);
+  
+  var mouseOpts =
+  {
+    onTopOver: function(divToShow)
+    {
+      selectFilters(fltPR, divToShow);
+    }
+  };
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "ProgramListTable", {d: 16, r: 8}, mouseOpts, false, true);
+
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
+  updateTable = function()
+  {
+    colorFilterBtns(fltPR);
+    for( var i=0; i<arProgs.length; i++ )
+    {
+      if( !fltPR.objPassFilter(arProgs[i]) )
+      {
+        hide( arProgs[i]['trid'] );
+      }
+      else
+      {
+        show( arProgs[i]['trid'] );
+      }
+    }
+  }
+</script>
