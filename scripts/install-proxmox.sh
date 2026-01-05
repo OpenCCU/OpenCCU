@@ -6,7 +6,7 @@
 #
 # Inspired by https://github.com/whiskerz007/proxmox_hassos_install
 #
-# Copyright (c) 2022-2025 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 # Usage:
@@ -24,7 +24,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.17"
+VERSION="3.18"
 LOGFILE="/tmp/install-proxmox.log"
 LINE=
 
@@ -178,6 +178,27 @@ uninstall() {
 }
 
 update() {
+  info "Updating host system dependencies..."
+
+  if pkg_installed pivccu-modules-dkms ||
+     pkg_installed pivccu-devicetree-armbian ||
+     pkg_installed pivccu-modules-raspberrypi; then
+
+    apt update
+
+    if pkg_installed pivccu-modules-dkms; then
+      apt upgrade -y pivccu-modules-dkms
+    fi
+
+    if pkg_installed pivccu-devicetree-armbian; then
+      apt upgrade -y pivccu-devicetree-armbian
+    fi
+
+    if pkg_installed pivccu-modules-raspberrypi; then
+      apt upgrade -y pivccu-modules-raspberrypi
+    fi
+  fi
+
   info "Selecting container..."
   MSG_MAX_LENGTH=0
   while read -r line; do
@@ -407,7 +428,7 @@ EOF
 }
 
 msg "OpenCCU Proxmox installation script v${VERSION}"
-msg "Copyright (c) 2022-2025 Jens Maus <mail@jens-maus.de>"
+msg "Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>"
 msg ""
 
 # create temp dir
