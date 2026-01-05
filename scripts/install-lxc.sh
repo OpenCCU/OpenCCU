@@ -4,7 +4,7 @@
 # Script to install a OpenCCU LXC container programatically.
 # https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/scripts/install-lxc.sh
 #
-# Copyright (c) 2024-2025 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2024-2026 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 # Usage:
@@ -22,7 +22,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="1.19"
+VERSION="1.20"
 LOGFILE="/tmp/install-lxc.log"
 LINE=
 
@@ -159,17 +159,38 @@ uninstall() {
 }
 
 update() {
+  info "Updating host system dependencies..."
+
+  if pkg_installed pivccu-modules-dkms ||
+     pkg_installed pivccu-devicetree-armbian ||
+     pkg_installed pivccu-modules-raspberrypi; then
+
+    apt update
+
+    if pkg_installed pivccu-modules-dkms; then
+      apt upgrade -y pivccu-modules-dkms
+    fi
+
+    if pkg_installed pivccu-devicetree-armbian; then
+      apt upgrade -y pivccu-devicetree-armbian
+    fi
+
+    if pkg_installed pivccu-modules-raspberrypi; then
+      apt upgrade -y pivccu-modules-raspberrypi
+    fi
+  fi
+
   info "Selecting container..."
   MSG_MAX_LENGTH=0
   while read -r line; do
     # check if container is a openccu kind of
     # container
     if grep -q "PLATFORM=lxc" /var/lib/lxc/${line}/rootfs/VERSION 2>/dev/null; then
-      RASPMATIC_VERSION=$(grep "VERSION=" /var/lib/lxc/${line}/rootfs/VERSION | cut -d= -f2)
-      CONTAINER_MENU+=( "${line}" "${RASPMATIC_VERSION}" "OFF" )
+      OPENCCU_VERSION=$(grep "VERSION=" /var/lib/lxc/${line}/rootfs/VERSION | cut -d= -f2)
+      CONTAINER_MENU+=( "${line}" "${OPENCCU_VERSION}" "OFF" )
       OFFSET=2
-      if [[ $((${#RASPMATIC_VERSION} + ${#line} + OFFSET)) -gt ${MSG_MAX_LENGTH:-} ]]; then
-        MSG_MAX_LENGTH=$((${#RASPMATIC_VERSION} + ${#line} + OFFSET))
+      if [[ $((${#OPENCCU_VERSION} + ${#line} + OFFSET)) -gt ${MSG_MAX_LENGTH:-} ]]; then
+        MSG_MAX_LENGTH=$((${#OPENCCU_VERSION} + ${#line} + OFFSET))
       fi
     fi
   done < <(lxc-ls -1)
@@ -331,7 +352,7 @@ EOF
 }
 
 msg "OpenCCU LXC installation script v${VERSION}"
-msg "Copyright (c) 2024 Jens Maus <mail@jens-maus.de>"
+msg "Copyright (c) 2024-2026 Jens Maus <mail@jens-maus.de>"
 msg ""
 
 # create temp dir
