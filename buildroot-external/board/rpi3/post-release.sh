@@ -12,13 +12,13 @@ BOARD=${2}
 cd ./release
 
 # copy the *.img and create checksum
-cp -a "../build-${PRODUCT}/images/sdcard.img" "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.img"
-sha256sum "OpenCCU-${PRODUCT_VERSION}-${BOARD}.img" >"OpenCCU-${PRODUCT_VERSION}-${BOARD}.img.sha256"
+cp -a "../build-${PRODUCT}/images/sdcard.img" "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img"
+sha256sum "OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img" >"OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img.sha256"
 
 # prepare the release *.zip
-rm -f "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.zip"
-zip --junk-paths "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.zip" "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.img" "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.img.sha256" ../LICENSE "./updatepkg/${PRODUCT}/EULA.de" "./updatepkg/${PRODUCT}/EULA.en"
-sha256sum "OpenCCU-${PRODUCT_VERSION}-${BOARD}.zip" >"OpenCCU-${PRODUCT_VERSION}-${BOARD}.zip.sha256"
+rm -f "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.zip"
+zip --junk-paths "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.zip" "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img" "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img.sha256" ../LICENSE "./updatepkg/${PRODUCT}/EULA.de" "./updatepkg/${PRODUCT}/EULA.en"
+sha256sum "OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.zip" >"OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.zip.sha256"
 
 # prepare the CCU3 release tgz archive
 rm -rf "/tmp/${PRODUCT}-${PRODUCT_VERSION}" 2>/dev/null
@@ -34,14 +34,14 @@ done < "updatepkg/${PRODUCT}/files-images.txt"
 
 (cd "/tmp/${PRODUCT}-${PRODUCT_VERSION}" && sha256sum ./* >"${PRODUCT}-${PRODUCT_VERSION}.sha256")
 # shellcheck disable=SC2046
-tar -C "/tmp/${PRODUCT}-${PRODUCT_VERSION}" --owner=root --group=root -cvzhf "./OpenCCU-${PRODUCT_VERSION}-ccu3.tgz" $(ls "/tmp/${PRODUCT}-${PRODUCT_VERSION}")
-sha256sum "OpenCCU-${PRODUCT_VERSION}-ccu3.tgz" >"OpenCCU-${PRODUCT_VERSION}-ccu3.tgz.sha256"
+tar -C "/tmp/${PRODUCT}-${PRODUCT_VERSION}" --owner=root --group=root -cvzhf "./OpenCCU-LTS-${PRODUCT_VERSION}-ccu3.tgz" $(ls "/tmp/${PRODUCT}-${PRODUCT_VERSION}")
+sha256sum "OpenCCU-LTS-${PRODUCT_VERSION}-ccu3.tgz" >"OpenCCU-LTS-${PRODUCT_VERSION}-ccu3.tgz.sha256"
 rm -rf "/tmp/${PRODUCT}-${PRODUCT_VERSION}" 2>/dev/null
 
 # create manifest file with checksum+sizes
-rm -f "OpenCCU-${PRODUCT_VERSION}-${BOARD}.mf"
+rm -f "OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.mf"
 
 # shellcheck disable=SC2129
-echo "$(stat -c %s "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.img") $(cat "OpenCCU-${PRODUCT_VERSION}-${BOARD}.img.sha256")" >>"OpenCCU-${PRODUCT_VERSION}-${BOARD}.mf"
-echo "$(stat -c %s "./OpenCCU-${PRODUCT_VERSION}-${BOARD}.zip") $(cat "OpenCCU-${PRODUCT_VERSION}-${BOARD}.zip.sha256")" >>"OpenCCU-${PRODUCT_VERSION}-${BOARD}.mf"
-echo "$(stat -c %s "./OpenCCU-${PRODUCT_VERSION}-ccu3.tgz") $(cat "OpenCCU-${PRODUCT_VERSION}-ccu3.tgz.sha256")" >>"OpenCCU-${PRODUCT_VERSION}-${BOARD}.mf"
+echo "$(stat -c %s "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img") $(cat "OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.img.sha256")" >>"OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.mf"
+echo "$(stat -c %s "./OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.zip") $(cat "OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.zip.sha256")" >>"OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.mf"
+echo "$(stat -c %s "./OpenCCU-LTS-${PRODUCT_VERSION}-ccu3.tgz") $(cat "OpenCCU-LTS-${PRODUCT_VERSION}-ccu3.tgz.sha256")" >>"OpenCCU-LTS-${PRODUCT_VERSION}-${BOARD}.mf"
