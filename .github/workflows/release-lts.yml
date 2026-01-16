@@ -1,0 +1,203 @@
+# OpenCCU-LTS Release build
+# yamllint disable rule:truthy
+---
+name: Release Build (LTS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_date:
+        description: 'Release date override (YYYYMMDD)'
+        required: true
+        type: string
+        default: 'YYYYMMDD'
+      test_workflow:
+        description: 'Test workflow (dry-run)?'
+        required: true
+        type: 'boolean'
+        default: 'false'
+      platforms:
+        description: 'List of platforms to build (comma seperated, e.g. "rpi3","rpi4")'
+        required: true
+        default: 'rpi3'
+        type: string
+
+# default read-only permission
+permissions:
+  contents: read
+
+jobs:
+  release_draft:
+    if: github.ref == 'refs/heads/LTS'
+    permissions:
+      contents: write  # ncipollo/release-action
+    name: Release draft
+    runs-on: ubuntu-24.04
+    outputs:
+      upload_url: ${{ steps.release_drafter.outputs.upload_url }}
+      occu_version: ${{ steps.env.outputs.occu_version }}
+      version: ${{ steps.env.outputs.version }}
+      date: ${{ steps.env.outputs.date }}
+      tag: ${{ steps.env.outputs.tag }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        id: env
+        shell: bash
+        run: |
+          if [[ "${{ github.event.inputs.release_date }}" == "YYYYMMDD" ]]; then
+            BUILD_DATE=$(date +%Y%m%d)
+          else
+            BUILD_DATE=${{ github.event.inputs.release_date }}
+          fi
+          OCCU_VERSION=$(grep 'OCCU_VERSION =' buildroot-external/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)
+          echo "occu_version=${OCCU_VERSION}" >> $GITHUB_OUTPUT
+          echo "version=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
+          echo "date=${BUILD_DATE}" >> $GITHUB_OUTPUT
+          if [[ "${{ github.event.inputs.test_workflow }}" == "true" ]]; then
+            echo "tag=${OCCU_VERSION}.${BUILD_DATE}-draft" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1.4
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v4.6.2
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate release notes
+        shell: bash
+        run: |
+          FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
+          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}"
+          ${{ steps.changelog.outputs.changelog }}
+          EOF
+          )"
+          export VERSION=${{ steps.env.outputs.version }}
+          export PREVIOUS_TAG=${{ steps.previoustag.outputs.tag }}
+          envsubst <.github/release-template.md >/tmp/release-template.md
+
+      - name: Upload release-template.md artifact
+        uses: actions/upload-artifact@v6
+        with:
+          path: /tmp/release-template.md
+          name: release-template.md
+
+  build:
+    permissions:
+      contents: write      # actions/upload-artifact, shogo82148/actions-upload-release-asset
+      id-token: write      # actions/attest-build-provenance
+      attestations: write  # actions/attest-build-provenance
+    name: Release build [${{ matrix.platform }}]
+    if: github.repository == 'OpenCCU/OpenCCU' && github.ref == 'refs/heads/LTS'
+    runs-on: self-hosted
+    timeout-minutes: 300
+    needs: release_draft
+    outputs:
+      build_datetime: ${{ steps.env.outputs.build_datetime }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(format('[{0}]', (github.event.inputs.platforms == '' || github.event.inputs.platforms == 'all') && '"rpi0","rpi2","rpi3","rpi4","rpi5","tinkerboard","odroid-c2","odroid-c4","odroid-n2","ova","oci_amd64","oci_arm64","oci_arm","generic-x86_64","generic-aarch64","lxc_amd64","lxc_arm64","lxc_arm"' || github.event.inputs.platforms)) }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Install Dependencies
+        run: |
+          if ! dpkg-query -l wget bc cpio rsync zip python3 file >/dev/null 2>&1; then
+            apt update
+            apt install -y --no-install-recommends wget bc cpio rsync zip python3 file
+          fi
+          if ! getent group | grep -q ^builder:; then groupadd -g 48 builder; fi
+          if ! getent passwd | grep -q ^builder:; then useradd -m -u 1003 -g 48 -G sudo builder; fi
+          if ! grep -q ^builder /etc/sudoers; then echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" >>/etc/sudoers; fi
+          chown -R builder:builder /home/builder
+
+      - name: Setup Environment
+        id: env
+        run: |
+          JLEVEL=0
+          if [[ -f /sys/fs/cgroup/cpu.max ]]; then # cgroups v2
+            CPU_QUOTA=$(cut -d ' ' -f1 /sys/fs/cgroup/cpu.max)
+            if [[ "${CPU_QUOTA}" != "max" ]]; then
+              CPU_PERIOD=$(cut -d ' ' -f2 /sys/fs/cgroup/cpu.max)
+              JLEVEL=$((CPU_QUOTA / CPU_PERIOD + 1))
+            fi
+          elif [[ -f /sys/fs/cgroup/cpu/cpu.cfs_quota_us ]]; then # cgroups v1
+            CPU_QUOTA=$(cat /sys/fs/cgroup/cpu/cpu.cfs_quota_us)
+            if [[ "${CPU_QUOTA}" != "-1" ]]; then
+              CPU_PERIOD=$(cat /sys/fs/cgroup/cpu/cpu.cfs_period_us)
+              JLEVEL=$((CPU_QUOTA / CPU_PERIOD + 1))
+            fi
+          fi
+          echo "JLEVEL=${JLEVEL}" >> $GITHUB_ENV
+          if [[ "${{ github.event.inputs.test_workflow }}" == "true" ]]; then
+            echo "FAKE_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "FAKE_BUILD=" >> $GITHUB_ENV
+          fi
+          echo "build_datetime=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_OUTPUT
+
+      # - name: remote debug tmate session
+      #   uses: mxschmitt/action-tmate@v1
+      #   if: matrix.platform == 'ova'
+
+      # major build step
+      - name: Build
+        timeout-minutes: 300
+        run: |
+          rm -rf release/OpenCCU-* buildroot-????.*
+          sudo chown -R builder:builder "$GITHUB_WORKSPACE"
+          sudo -H -E -u builder nice -n 19 make DATE=${{ needs.release_draft.outputs.date }} BR2_DL_DIR=/mnt/download BR2_CCACHE_DIR=/mnt/ccache/${{ matrix.platform }} BR2_JLEVEL=${{ env.JLEVEL }} PRODUCT=${{ matrix.platform }} clean-all release
+
+      # cleanup
+      - name: Cleanup
+        run: |
+          sudo -H -E -u builder make clean-all
+          rm -rf release/*.img* buildroot-????.*
+
+      #######################
+      # artifact upload
+      #
+      - name: Upload build archive artifact [rpi3/ccu3]
+        id: upload-build
+        uses: actions/upload-artifact@v6
+        with:
+          name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
+          path: |
+            release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip
+            release/OpenCCU-${{ needs.release_draft.outputs.version }}-ccu3.tgz
+
+      - name: Attest build archive artifact provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
+          subject-digest: sha256:${{ steps.upload-build.outputs.artifact-digest }}
+        continue-on-error: true
+
+      - name: Upload manifest artifact
+        id: upload-manifest
+        uses: actions/upload-artifact@v6
+        with:
+          path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+          name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+
+      - name: Attest manifest artifact provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+          subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
+        continue-on-error: true
