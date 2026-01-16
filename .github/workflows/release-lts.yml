@@ -16,11 +16,6 @@ on:
         required: true
         type: 'boolean'
         default: 'false'
-      platforms:
-        description: 'List of platforms to build (comma seperated, e.g. "rpi3","rpi4")'
-        required: true
-        default: 'rpi3'
-        type: string
 
 # default read-only permission
 permissions:
@@ -109,7 +104,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJSON(format('[{0}]', github.event.inputs.platforms)) }}
+        platform: [rpi3] # rpi3/ccu3 only
 
     steps:
       - name: Checkout Code
