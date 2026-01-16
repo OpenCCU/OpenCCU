@@ -173,8 +173,8 @@ jobs:
         with:
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
           path: |
-            release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip
-            release/OpenCCU-${{ needs.release_draft.outputs.version }}-ccu3.tgz
+            release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip
+            release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-ccu3.tgz
 
       - name: Attest build archive artifact provenance
         uses: actions/attest-build-provenance@v3
@@ -187,7 +187,7 @@ jobs:
         id: upload-manifest
         uses: actions/upload-artifact@v6
         with:
-          path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+          path: release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
 
       - name: Attest manifest artifact provenance
