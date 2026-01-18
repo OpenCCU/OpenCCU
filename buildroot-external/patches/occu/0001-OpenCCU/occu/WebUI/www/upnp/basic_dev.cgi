@@ -95,8 +95,8 @@ proc get_serial_number {} {
 # --- branding & identity ---------------------------------------------------
 # NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
 set hostname "[info hostname]"
-set RESOURCE(TITLE) "OpenCCU - $hostname"
-set RESOURCE(MANUFACTURER) "OpenCCU"
+set RESOURCE(TITLE) "OpenCCU-LTS - $hostname"
+set RESOURCE(MANUFACTURER) "OpenCCU-LTS"
 set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
 set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
 # Fallback: derive a stable identifier from MAC if serial is empty
@@ -111,9 +111,9 @@ if {$RESOURCE(SERIAL_NUMBER) eq ""} {
     set RESOURCE(SERIAL_NUMBER) $hostname
 }
 # Avoid duplicate get_serial_number calls
-set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
-set RESOURCE(MODEL_NAME) "OpenCCU"
-set RESOURCE(MODEL_NUMBER) "OpenCCU"
+set RESOURCE(DESCRIPTION) "OpenCCU-LTS $RESOURCE(SERIAL_NUMBER)"
+set RESOURCE(MODEL_NAME) "OpenCCU-LTS"
+set RESOURCE(MODEL_NUMBER) "OpenCCU-LTS"
 set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
 set RESOURCE(UUID) "upnp-BasicDevice-1_0-$RESOURCE(SERIAL_NUMBER)"
 set RESOURCE(UPC) "123456789002"
@@ -154,7 +154,7 @@ set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"
 set _os "Unix"; set _ver "1.0"
 catch { set _os [exec uname -s] }
 catch { set _ver [exec uname -r] }
-set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU"
+set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU-LTS"
 
 # --- output buffer ---------------------------------------------------------
 set output_buffer ""
