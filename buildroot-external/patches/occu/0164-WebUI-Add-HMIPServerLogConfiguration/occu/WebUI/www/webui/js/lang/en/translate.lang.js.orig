@@ -1,8 +1,8 @@
 jQuery.extend(true,HMIdentifier , {
   "en" : {
-    "CCUFullNameHeader" : "OpenCCU",
-    "CCUFullNameText" : "OpenCCU",
-    "CCUShortName" : "OpenCCU",
+    "CCUFullNameHeader" : "OpenCCU-LTS",
+    "CCUFullNameText" : "OpenCCU-LTS",
+    "CCUShortName" : "OpenCCU-LTS",
     "BidCosRF" : "Homematic RF",
     "BidCosWired" : "BidCos-Wired",
     "BidCosRF-Filter" : "BidCos-RF",

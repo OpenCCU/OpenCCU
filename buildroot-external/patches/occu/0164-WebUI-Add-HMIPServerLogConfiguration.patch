@@ -187,9 +187,9 @@
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
 @@ -3,6 +3,7 @@
-     "CCUFullNameHeader" : "OpenCCU",
-     "CCUFullNameText" : "OpenCCU",
-     "CCUShortName" : "OpenCCU",
+     "CCUFullNameHeader" : "OpenCCU-LTS",
+     "CCUFullNameText" : "OpenCCU-LTS",
+     "CCUShortName" : "OpenCCU-LTS",
 +    "HomematicIP" : "Homematic IP",
      "BidCosRF" : "Homematic Funk",
      "BidCosWired" : "Homematic Wired",
@@ -223,10 +223,15 @@
      "maxEntriesReached_a" : "Maximum number of ",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -3,6 +3,7 @@
-     "CCUFullNameHeader" : "OpenCCU",
-     "CCUFullNameText" : "OpenCCU",
-     "CCUShortName" : "OpenCCU",
+@@ -1,8 +1,9 @@
+ jQuery.extend(true,HMIdentifier , {
+   "en" : {
+-    "CCUFullNameHeader" : "OpenCCU-LTS",
+-    "CCUFullNameText" : "OpenCCU-LTS",
+-    "CCUShortName" : "OpenCCU-LTS",
++    "CCUFullNameHeader" : "OpenCCU",
++    "CCUFullNameText" : "OpenCCU",
++    "CCUShortName" : "OpenCCU",
 +    "HomematicIP" : "Homematic IP",
      "BidCosRF" : "Homematic RF",
      "BidCosWired" : "BidCos-Wired",
