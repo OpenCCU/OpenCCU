@@ -3,7 +3,7 @@ source cgi.tcl
 source common.tcl
 load tclrega.so
 
-set PRODUCT_NAME "OpenCCU"
+set PRODUCT_NAME "OpenCCU-LTS"
 set PRODUCT_ID "CCU"
 # set HOMEMATIC_URL "http://www.homematic.com"
 set HOMEMATIC_URL "http://www.eq-3.de"

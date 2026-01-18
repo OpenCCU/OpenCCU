@@ -222,7 +222,7 @@
  
 -set PRODUCT_NAME "Zentrale"
 -set PRODUCT_ID "CCU[getProduct]"
-+set PRODUCT_NAME "OpenCCU"
++set PRODUCT_NAME "OpenCCU-LTS"
 +set PRODUCT_ID "CCU"
  # set HOMEMATIC_URL "http://www.homematic.com"
  set HOMEMATIC_URL "http://www.eq-3.de"
@@ -777,8 +777,8 @@
 +# --- branding & identity ---------------------------------------------------
 +# NOTE: Keep UUID pattern to avoid breaking legacy discovery tools.
 +set hostname "[info hostname]"
-+set RESOURCE(TITLE) "OpenCCU - $hostname"
-+set RESOURCE(MANUFACTURER) "OpenCCU"
++set RESOURCE(TITLE) "OpenCCU-LTS - $hostname"
++set RESOURCE(MANUFACTURER) "OpenCCU-LTS"
 +set RESOURCE(MANUFACTURER_URL) "https://openccu.de"
 +set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
 +# Fallback: derive a stable identifier from MAC if serial is empty
@@ -810,9 +810,9 @@
 -set RESOURCE(MODEL_NAME) "HomeMatic Central"
 -set RESOURCE(MODEL_NUMBER) "HomeMatic Central"
 +# Avoid duplicate get_serial_number calls
-+set RESOURCE(DESCRIPTION) "OpenCCU $RESOURCE(SERIAL_NUMBER)"
-+set RESOURCE(MODEL_NAME) "OpenCCU"
-+set RESOURCE(MODEL_NUMBER) "OpenCCU"
++set RESOURCE(DESCRIPTION) "OpenCCU-LTS $RESOURCE(SERIAL_NUMBER)"
++set RESOURCE(MODEL_NAME) "OpenCCU-LTS"
++set RESOURCE(MODEL_NUMBER) "OpenCCU-LTS"
  set RESOURCE(MODEL_URL) $RESOURCE(MANUFACTURER_URL)
 -set RESOURCE(SERIAL_NUMBER) "[get_serial_number]"
  set RESOURCE(UUID) "upnp-BasicDevice-1_0-$RESOURCE(SERIAL_NUMBER)"
@@ -857,7 +857,7 @@
 +set _os "Unix"; set _ver "1.0"
 +catch { set _os [exec uname -s] }
 +catch { set _ver [exec uname -r] }
-+set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU"
++set SERVER_HEADER "$_os/$_ver UPnP/1.0 OpenCCU-LTS"
  
 +# --- output buffer ---------------------------------------------------------
 +set output_buffer ""
@@ -1143,9 +1143,9 @@
 -    "CCUFullNameHeader" : "Homematic CCU",
 -    "CCUFullNameText" : "Homematic CCU",
 -    "CCUShortName" : "CCU",
-+    "CCUFullNameHeader" : "OpenCCU",
-+    "CCUFullNameText" : "OpenCCU",
-+    "CCUShortName" : "OpenCCU",
++    "CCUFullNameHeader" : "OpenCCU-LTS",
++    "CCUFullNameText" : "OpenCCU-LTS",
++    "CCUShortName" : "OpenCCU-LTS",
      "BidCosRF" : "Homematic Funk",
      "BidCosWired" : "Homematic Wired",
      "VirtualDevices" : "VirtualDevices",
@@ -1204,9 +1204,9 @@
 -    "CCUFullNameHeader" : "Homematic CCU",
 -    "CCUFullNameText" : "Homematic CCU",
 -    "CCUShortName" : "CCU",
-+    "CCUFullNameHeader" : "OpenCCU",
-+    "CCUFullNameText" : "OpenCCU",
-+    "CCUShortName" : "OpenCCU",
++    "CCUFullNameHeader" : "OpenCCU-LTS",
++    "CCUFullNameText" : "OpenCCU-LTS",
++    "CCUShortName" : "OpenCCU-LTS",
      "BidCosRF" : "Homematic RF",
      "BidCosWired" : "BidCos-Wired",
      "BidCosRF-Filter" : "BidCos-RF",
