@@ -116,7 +116,7 @@ jQuery.extend(true,langJSON, {
     "lblGeneralSettingsConditionNumber" : "Zustandszahl",
     "lblGeneralSettingsCurrent" : "Strom",
     "lblGeneralSettingsGas" : "Gas",
-    "lblGeneralSettingsHeatingValue" : "Brennwert kWh/m<sup>3",
+    "lblGeneralSettingsHeatingValue" : "Brennwert kWh/m<sup>3</sup>",
     "lblGenericLinkPartner" : "Verkn%FCpfungspartner",
     "lblGenericUnit" : "Einheit",
     "lblGetEnergyCounterToday" : "Bezug heute:",
