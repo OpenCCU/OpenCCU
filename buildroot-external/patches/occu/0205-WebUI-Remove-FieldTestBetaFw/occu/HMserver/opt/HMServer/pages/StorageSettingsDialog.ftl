@@ -104,10 +104,10 @@
     var opt = {
       onComplete: function(t) {
         var arResponse = t.responseText.split(","),
-        currency = arResponse[0];
-        priceCur = arResponse[1];
-        priceGas = arResponse[2];
-        gasHeatingValue = arResponse[3];
+        currency = arResponse[0],
+        priceCur = arResponse[1],
+        priceGas = arResponse[2],
+        gasHeatingValue = arResponse[3],
         gasConditionNumber = arResponse[4];
 
         if ((arResponse.length == 6) && (t.responseText != "noConfig")) {
@@ -277,7 +277,7 @@
                     <b>${"$"}{lblCurrency}</b>
                   </td>
                   <td>
-                    <select id="currency"/>
+                    <select id="currency"></select>
                   </td>
                 </tr>
                 <tr><td colspan="2"><hr></td></tr>
