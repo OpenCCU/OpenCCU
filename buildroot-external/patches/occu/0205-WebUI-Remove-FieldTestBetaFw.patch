@@ -1,0 +1,197 @@
+--- occu/HMserver/opt/HMServer/pages/StorageSettingsDialog.ftl.orig
++++ occu/HMserver/opt/HMServer/pages/StorageSettingsDialog.ftl
+@@ -356,21 +356,6 @@
+ 			</td>
+ 		</tr>
+ 
+-    <tr id="fieldTest" class="hidden">
+-      <td>${"$"}{lblBetaTest}</td>
+-      <td align="left" width="35%" class="CLASS21115">
+-        <table>
+-          <tr>
+-            <td class="CLASS21112"><label class="CLASS04904">${"$"}{showDeviceBetaFw}</label></td>
+-            <td><input id="inputShowBetaFw" type="checkbox" onClick="activateDeviceBetaFw()" /></td>
+-          </tr>
+-        </table>
+-      </td>
+-      <td class="CLASS21113" align="left">
+-        <p> ${"$"}{hintDeviceBetaFw} </p>
+-      </td>
+-    </tr>
+-
+     <tr id='setWebUIColor' class='hidden'>
+       <td>WebUI Color Scheme</td>
+       <td class='CLASS21115'>
+@@ -397,9 +382,4 @@
+    if (setWebUIColor == true) {
+      jQuery('#setWebUIColor').show();	
+    }
+-
+-   if (homematic("CCU.existsFile", {"file" : "/etc/config/fieldTestActive"})) {
+-      jQuery("#inputShowBetaFw").prop("checked",true);
+-   }
+-
+ </script>
+--- occu/WebUI/www/api/methods.conf.orig
++++ occu/WebUI/www/api/methods.conf
+@@ -1162,13 +1162,6 @@
+   ARGUMENTS {_session_id_ file}
+ }
+ 
+-CCU.removeFieldTestActive {
+-  LEVEL ADMIN
+-  SCRIPT_FILE ccu/removeFieldTestActive.tcl
+-  INFO {Entfernt die Datei /etc/config/fieldTestActive}
+-  ARGUMENTS {_session_id_}
+-}
+-
+ CCU.getAuthEnabled {
+   LEVEL ADMIN
+   SCRIPT_FILE ccu/getauthenabled.tcl
+--- occu/WebUI/www/api/methods/ccu/removeFieldTestActive.tcl.orig
++++ occu/WebUI/www/api/methods/ccu/removeFieldTestActive.tcl
+@@ -1,22 +0,0 @@
+-##
+-# CCU.removeFieldTestActive
+-# Entfernt die Datei /etc/config/fieldTestActive
+-#
+-# Parameter:
+-# keine
+-#
+-# Rückgabewert: result
+-#                 false - error
+-#                 true - ok
+-##
+-
+-set file "/etc/config/fieldTestActive"
+-set result false
+-
+-catch {exec rm $file} e
+-
+-if {[string trim $e] == ""} {
+-  set result true
+-}
+-
+-jsonrpc_response $result
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
+@@ -1083,10 +1083,6 @@
+     "stateDaliBus_2" : "<br/>%DCberlast",
+     "btnSearchDaliDevices" : "Pr%FCfen",
+     "titleSearchDaliDevices" : "Pr%FCfe Kan%E4le",
+-    "showDeviceBetaFw" : "Zeige unver%F6ffentlichte Ger%E4te-Fw.",
+-    "hintDeviceBetaFw" :
+-      "Bei aktiviertem Parameter werden einer geschlossenen Benutzergruppe auf der Startseite unter dem Punkt 'Ger%E4te-Update' " +
+-      "Vorabversionen geplanter Ger%E4te-Firmware Updates angeboten.",
+     "btnSensorDetection" : "Sensorerkennung",
+     "hintPressSysKeyTryAgain" : "Bet%E4tigen Sie die Systemtaste und versuchen Sie es noch einmal.",
+     "hintProblemSensorIdent" : "Bei der Erkennung des Sensors ist ein Fehler aufgetreten.",
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.label.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.label.js
+@@ -22,7 +22,6 @@
+     "lblBGColorBR" : "Hintergrund-<br/>Farbe",
+     "lblBehaviour" : "Verhalten",
+     "lblBellButton" : "Klingeltaster",
+-    "lblBetaTest" : "Feld-Tester",
+     "lblBlueLong" : "Blau lang",
+     "lblBlueShort" : "Blau kurz",
+     "lblBreak" : "Pause",
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
+@@ -1079,10 +1079,6 @@
+     "stateDaliBus_2" : "<br/>Overload",
+     "btnSearchDaliDevices" : "Check",
+     "titleSearchDaliDevices" : "Check channels",
+-    "showDeviceBetaFw" : "Show unpublished device firmware.",
+-    "hintDeviceBetaFw" :
+-      "When the parameter is activated, a closed user group is offered advance versions of planned "+
+-      "device firmware updates on the start page under the heading 'Device Update'.",
+     "btnSensorDetection" : "Sensor detection",
+     "hintPressSysKeyTryAgain" : "Press the system button and try again.",
+     "hintProblemSensorIdent" : "An error has occurred when detecting the sensor.",
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.label.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.label.js
+@@ -22,7 +22,6 @@
+     "lblBGColorBR" : "Background-<br/>Colour",
+     "lblBehaviour" : "Response",
+     "lblBellButton" : "Bell button",
+-    "lblBetaTest" : "Field tester",
+     "lblBlueLong" : "Blue long",
+     "lblBlueShort" : "Blue short",
+     "lblBreak" : "Pause",
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -25490,8 +25490,6 @@
+ StartPage = Singleton.create(Page, {
+   MAINMENU_ID: "MAINMENU_STARTPAGE",
+   downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
+-  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
+-  fieldTestActive: "/etc/config/fieldTestActive",
+   downloadURL : "",
+   prevDownloadURL : "",
+   devList: [],
+@@ -25535,11 +25533,7 @@
+ 
+     this.serial = homematic("CCU.getSerial");
+ 
+-    if (homematic('CCU.existsFile', {'file': this.fieldTestActive})) {
+-      this.downloadURL = this.fieldTestURLServer;
+-    } else {
+-      this.downloadURL = this.downloadURLServer;
+-    }
++    this.downloadURL = this.downloadURLServer;
+ 
+     if (this.prevDownloadURL != this.downloadURL) {
+       this.devList = [];
+@@ -29735,7 +29729,6 @@
+     this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
+     this.m_product = "HM-RASPBERRYMATIC";
+     this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
+-    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
+ 
+     this.serial = homematic("CCU.getSerial");
+     this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
+@@ -29803,19 +29796,13 @@
+   },
+ 
+   getListOfAvailableFirmware: function(callback) {
+-      var fieldTestActive = "/etc/config/fieldTestActive";
+-
+       // The server should return a string like "homematic.com.setDeviceFirmwareVersions([{"type":"HM-MOD-Re-8","version":"1.0.0"},{"type":"HM-MOD-Re-8","version":"1.0.0"}])"
+       var script = document.createElement("script");
+       script.id = "homematic_com_script_fw";
+       script.type = "text/javascript";
+       // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
+ 
+-      if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
+-        script.src = this.m_fieldTestURLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU"+getProduct()+"&version="+WEBUI_VERSION+"&serial=" + this.serial + "&ts=" + Date.now();
+-      } else {
+-        script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
+-      }
++      script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
+       $("body").appendChild(script);
+       homematic.com.callback = callback;
+   },
+@@ -37003,22 +36990,6 @@
+   dlg.resetHeight();
+ };
+ 
+-function activateDeviceBetaFw() {
+-  var showBetaDevFw = jQuery("#inputShowBetaFw").is(":checked"),
+-    fieldTestActive = "/etc/config/fieldTestActive";
+-
+-  if (showBetaDevFw) {
+-    if (! homematic('CCU.existsFile', {'file': fieldTestActive})) {
+-      homematic("CCU.createFile", {'file': fieldTestActive});
+-    }
+-  } else {
+-    if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
+-      homematic("CCU.removeFieldTestActive");
+-    }
+-  }
+-};
+-
+-
+ /**
+  *
+  * Tmporarily introduced with the HmIP-RGBW - this may not be the best place here
