@@ -359,7 +359,7 @@
     <tr id='setWebUIColor' class='hidden'>
       <td>WebUI Color Scheme</td>
       <td class='CLASS21115'>
-        <div class="StdButton CLASS04907" onClick="setColorWebUI();"">Set Color </div>
+        <div class="StdButton CLASS04907" onClick="setColorWebUI();">Set Color</div>
       </td>
       <td class='CLASS21115'></td>
     </tr>

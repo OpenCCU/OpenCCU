@@ -1,6 +1,6 @@
 --- occu/HMserver/opt/HMServer/pages/StorageSettingsDialog.ftl.orig
 +++ occu/HMserver/opt/HMServer/pages/StorageSettingsDialog.ftl
-@@ -356,21 +356,6 @@
+@@ -356,25 +356,10 @@
  			</td>
  		</tr>
  
@@ -22,6 +22,11 @@
      <tr id='setWebUIColor' class='hidden'>
        <td>WebUI Color Scheme</td>
        <td class='CLASS21115'>
+-        <div class="StdButton CLASS04907" onClick="setColorWebUI();"">Set Color </div>
++        <div class="StdButton CLASS04907" onClick="setColorWebUI();">Set Color</div>
+       </td>
+       <td class='CLASS21115'></td>
+     </tr>
 @@ -397,9 +382,4 @@
     if (setWebUIColor == true) {
       jQuery('#setWebUIColor').show();	
