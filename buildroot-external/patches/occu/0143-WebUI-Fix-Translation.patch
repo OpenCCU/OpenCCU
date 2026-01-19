@@ -104,6 +104,15 @@
   return;
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
+@@ -260,7 +260,7 @@
+     "replaceDeviceDlgConfirmContentRow1b" : ":",
+     "replaceDeviceDlgConfirmContentRow1c" : "<br/><br/>",
+     "replaceDeviceDlgConfirmContentRow2a" : "Die Ger%E4tetypen sind identisch und k%F6nnen problemlos getauscht werden.",
+-    "replaceDeviceDlgConfirmContentRow2b" : "Die Ger%E4tetypen sind <b>nicht<b/> identisch, k%F6nnen aber problemlos getauscht werden.<br/><br/>",
++    "replaceDeviceDlgConfirmContentRow2b" : "Die Ger%E4tetypen sind <b>nicht</b> identisch, k%F6nnen aber problemlos getauscht werden.<br/><br/>",
+     "replaceDeviceDlgConfirmContentRow3a" : "Das Ger%E4t mit der Adresse:",
+     "replaceDeviceDlgConfirmContentRow3b" : " wird aus dem System gel%F6scht.",
+     "replaceDeviceDlgConfirmFooter" : "<br/><br/>M%F6chten Sie die Ger%E4te tauschen?",
 @@ -353,6 +353,15 @@
      "actionStatusControlLocked" : "Ver-<br/>riegelt",
      "actionStatusControlLockedA" : "Verriegelt",
@@ -120,8 +129,35 @@
      "infoStatusControlStateUnknown" : "Zustand<br/>unbestimmt",
      "infoStatusControlCalculateFillingLevel" : "F&uuml;llmenge wird berechnet...",
      "infoStatusControlFillingLevel" : "F&uuml;llmenge:",
+@@ -883,7 +892,7 @@
+       "<li>Vollzugriff: Remote und lokaler Zugriff erlaubt</li>" +
+       "<li>Eingeschr%E4nkt: Nur lokaler Zugriff erlaubt</li>" +
+       "<li>Kein Zugriff: Zugriff nicht gestattet</li>" +
+-    "<ul>",
++    "</ul>",
+     "dialogSettingsFirewallLblHintIPAddresses" : "Sie k%F6nnen den Zugriff f%FCr einzelne IP-Adressen oder ganze Adressbereiche sowohl f%FCr IPv4 als auch f%FCr IPv6 freigeben. Geben Sie die Adressen durch ein ';' getrennt ein.",
+     "dialogSettingsFirewallLblHintIPAddressesWithoutIPv6" : "Sie k%F6nnen den Zugriff f%FCr einzelne IP-Adressen (z. B. 192.168.0.1) oder ganze Adressbereiche (z. B. 192.168.0.0/16) f%FCr IPv4 freigeben. Geben Sie die Adressen durch ein ';' getrennt ein.",
+     "dglUserNewFwSettingsTitle" : "Bitte beachten!",
+@@ -993,7 +1002,7 @@
+     "apMigrationErrorOrTimeout" : "Bei dem Firmware-Update ist ein Fehler aufgetreten. Bitte aktualisieren Sie die Ansicht und versuchen Sie es erneut.",
+     "apMigrationUpdateSuccessfulAddition" : "Sie k%F6nnen den Access Point jetzt %FCber &ldquo;Ger%E4te anlernen&rdquo; anlernen.",
+     "apMigrationUpdateSuccessfulAdditionMigrationMode" : "Der Access Point befindet sich jetzt im Posteingang.",
+-    "hintDeviceDoesNotSupportAction" : "Die aktuell installierte GerÃ¤te-Firmware unterstÃ¼tzt diese Funktion nicht.",
++    "hintDeviceDoesNotSupportAction" : "Die aktuell installierte Ger%E4te-Firmware unterst%FCtzt diese Funktion nicht.",
+     "noUpdateNeeded" : "Kein Update erforderlich.",
+     "notCompatible" : "Nicht kompatibel",
+     "aqiGood" : "Gut",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.label.js
+@@ -116,7 +116,7 @@
+     "lblGeneralSettingsConditionNumber" : "Zustandszahl",
+     "lblGeneralSettingsCurrent" : "Strom",
+     "lblGeneralSettingsGas" : "Gas",
+-    "lblGeneralSettingsHeatingValue" : "Brennwert kWh/m<sup>3",
++    "lblGeneralSettingsHeatingValue" : "Brennwert kWh/m<sup>3</sup>",
+     "lblGenericLinkPartner" : "Verkn%FCpfungspartner",
+     "lblGenericUnit" : "Einheit",
+     "lblGetEnergyCounterToday" : "Bezug heute:",
 @@ -149,8 +149,8 @@
      "lblInfoLevelReal" : "Realer Wert",
      "lblInfoLevelRealBrightness" : "Reale Helligkeit",
@@ -133,6 +169,13 @@
      "lblInfoStatusControlFrequency" : "Netzfrequenz",
      "lblInfoStatusControlGas" : "Verbrauch",
      "lblInfoStatusControlGasFlow" : "Gasdurchfluss",
+@@ -352,4 +352,4 @@
+ 
+     "noMOreKeys" : ""
+   }
+-});
+\ No newline at end of file
++});
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
 @@ -353,6 +353,15 @@
@@ -151,8 +194,35 @@
      "infoStatusControlStateUnknown" : "Status unknown",
      "infoStatusControlCalculateFillingLevel" : "Filling level is being calculated",
      "infoStatusControlFillingLevel" : "Filling level:",
+@@ -398,7 +407,7 @@
+     "dialogSettingsSecurityMessageSysBackupFWUpdateNecessaryContentB" : "<br>\nThis is a later version than the current version installed on the CCU. ",
+     "dialogSettingsSecurityMessageSysBackupFWUpdateNecessaryContentC" : ".<br>\nPlease perform an update of your CCU firmware first. Then, please start to import the system backup.",
+     "errorOpenFavorite" : "Favourites can not be opened!",
+-    "errorWrongPassword" : "Password incorret",
++    "errorWrongPassword" : "Password incorrect",
+     "dialogSettingsCreateProfileTemplateTitle" : "Profile template will be created...",
+     "dialogSettingsDeleteProfileTemplateTitle" : "Profile template will be deleted...",
+     "actionStatusControlHandleLock" : "e-handle lock operation",
+@@ -714,7 +723,7 @@
+     "btnSysConfCoupling" :  "Connections",
+     "couplingDialogTitle" : "Dialogue connections",
+     "enterIPAddress" :  "Manual IP input",
+-    "invalidIP" : "Invalid IP adress",
++    "invalidIP" : "Invalid IP address",
+     "invalidNetMask" : "Invalid Subnet mask",
+     "btnScanGateway" :  "Search gateway",
+     "btnScanDevices" :  "Search devices",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.label.js
+@@ -62,7 +62,7 @@
+     "lblCurrentFirmwareVersionNotKnown": "unknown",
+     "lblCurrentOperatingVoltage": "Actual operating voltage",
+     "lblCurrentPowerConsumption": "Actual current consumption",
+-    "lblCyanLong" : "Cyan short",
++    "lblCyanLong" : "Cyan long",
+     "lblCyanShort" : "Cyan short",
+     "lblDataInputPropertie" : "Data input settings",
+     "lblDelayExternalArming" : "External alarm activated with delay",
 @@ -149,8 +149,8 @@
      "lblInfoLevelReal" : "Actual value",
      "lblInfoLevelRealBrightness" : "Actual brightness",
@@ -164,3 +234,10 @@
      "lblInfoStatusControlFrequency" : "Frequency",
      "lblInfoStatusControlGas" : "Consumption",
      "lblInfoStatusControlGasFlow" : "Gas flow",
+@@ -352,4 +352,4 @@
+ 
+     "noMOreKeys" : ""
+   }
+-});
+\ No newline at end of file
++});
