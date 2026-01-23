@@ -359,12 +359,12 @@
 +      set STATUS "${label}(0) $STATUS"
 +    }
 +  }
-+  execCmd ROOTFSFREE {exec monit status rootfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
-+  execCmd ROOTFSTOTAL {exec monit status rootfs | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
-+  execCmd USERFSFREE {exec monit status userfs | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
-+  execCmd USERFSTOTAL {exec monit status userfs | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
-+  execCmd USBDEVFREE {exec monit status usb1 | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
-+  execCmd USBDEVTOTAL {exec monit status usb1 | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
++  execCmd ROOTFSFREE {exec monit status rootfs 2>/dev/null | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
++  execCmd ROOTFSTOTAL {exec monit status rootfs 2>/dev/null | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
++  execCmd USERFSFREE {exec monit status userfs 2>/dev/null | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
++  execCmd USERFSTOTAL {exec monit status userfs 2>/dev/null | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
++  execCmd USBDEVFREE {exec monit status usb1 2>/dev/null | grep -m1 "space free for non superuser" | awk {{ print substr($0,index($0,$6)) }}}
++  execCmd USBDEVTOTAL {exec monit status usb1 2>/dev/null | grep -m1 "space total" | awk {{ print $3 " " $4 }}}
 +  execCmd STORAGEDEV {exec mountpoint -n /usr/local | awk {{ print $1 }} | xargs lsblk -l -n -o PKNAME -p}
 +  execCmd STORAGE "exec lsblk -l -n -o SIZE,MODEL,KNAME -d -p $STORAGEDEV"
 +  set HMRF_DUTYCYCLE "n/a"
