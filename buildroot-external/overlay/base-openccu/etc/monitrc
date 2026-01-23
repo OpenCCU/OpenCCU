@@ -90,9 +90,9 @@ check program irqbalanceEnabled with path /bin/sh -c "/usr/bin/test $(nproc) -gt
 # dbus daemon monitoring
 check process dbus with pidfile /run/messagebus.pid
     group system
-    start = "/etc/init.d/S30dbus start"
-    stop = "/etc/init.d/S30dbus stop"
-    restart = "/etc/init.d/S30dbus restart"
+    start = "/etc/init.d/S30dbus-daemon start"
+    stop = "/etc/init.d/S30dbus-daemon stop"
+    restart = "/etc/init.d/S30dbus-daemon restart"
     if not exist for 1 cycles then restart
     if failed unixsocket /run/dbus/system_bus_socket for 5 cycles then restart
     if 1 restart within 1 cycles then
