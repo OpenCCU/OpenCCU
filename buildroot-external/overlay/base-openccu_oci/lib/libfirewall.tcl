@@ -376,6 +376,15 @@ proc FirewallInternal::Firewall_configureFirewallMostOpen { } {
 
   # user defined ports (the only reason to do this is to enable the user to override settings for services)
   foreach userport $Firewall_USER_PORTS {
+    set userport [string trim $userport]
+    if { $userport eq "" } {
+      continue
+    }
+    if { ![string is integer -strict $userport] || $userport < 1 || $userport > 65535 } {
+      exec logger -t firewall -p user.err "invalid user port '$userport' specified"
+      continue
+    }
+
     try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport $userport -j ACCEPT"
     try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport $userport -j ACCEPT"
     if { $has_ip6tables } {
@@ -394,6 +403,10 @@ proc FirewallInternal::Firewall_configureFirewallMostOpen { } {
           set prot udp
         }
         foreach ip $Firewall_IPS {
+          set ip [string trim $ip]
+          if { $ip eq "" } {
+            continue
+          }
           if { [regexp {:} $ip] } then {
             try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p $prot --dport $port -s $ip -j ACCEPT"
           } else {
@@ -507,6 +520,15 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
 
   # user defined ports
   foreach userport $Firewall_USER_PORTS {
+    set userport [string trim $userport]
+    if { $userport eq "" } {
+      continue
+    }
+    if { ![string is integer -strict $userport] || $userport < 1 || $userport > 65535 } {
+      exec logger -t firewall -p user.err "invalid user port '$userport' specified"
+      continue
+    }
+
     try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport $userport -m state --state NEW -j ACCEPT"
     try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport $userport -j ACCEPT"
     if { $has_ip6tables } {
@@ -528,8 +550,12 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
             set options ""
         }
         foreach ip $Firewall_IPS {
+          set ip [string trim $ip]
+          if { $ip eq "" } {
+            continue
+          }
           if { [ FirewallInternal::IsIPV4 $ip ] == 1 } then {
-          try_exec_cmd "/usr/sbin/iptables -A INPUT -p $prot --dport $port -s $ip $options -j ACCEPT"
+            try_exec_cmd "/usr/sbin/iptables -A INPUT -p $prot --dport $port -s $ip $options -j ACCEPT"
           } elseif { $has_ip6tables } {
             try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p $prot --dport $port -s $ip $options -j ACCEPT"
           }
