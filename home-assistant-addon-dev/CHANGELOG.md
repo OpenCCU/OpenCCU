@@ -11,10 +11,15 @@
 
 # What's Changed
 
-> [!IMPORTANT]
-> **🧪 Home Assistant OS 17.0+ required**
+> [!WARNING]
+> **`HmIP-RFUSB-TK` issues**
 >
-> This OpenCCU HA-Addon version requires at least Home Assistant OS version 17.0 or newer to be installed to work properly! So if you update
+> If you are using a `HmIP-RFUSB-TK` (with `-TK` in the product name) to communicate with your HomematicIP devices, please make sure to update to Home Assistant OS [17.1rc1](https://github.com/home-assistant/operating-system/releases/tag/17.1.rc1) or newer first, because only with 17.1 or newer full compatibility with `HmIP-RFUSB-TK` is restored!
+
+> [!IMPORTANT]
+> **🧪 Home Assistant OS 17.x required**
+>
+> This OpenCCU HA-Addon version requires at least [Home Assistant OS 17.x](https://github.com/home-assistant/operating-system/releases) or newer to be installed to work properly! So if you update
 > to this OpenCCU version please ensure that you have your Home Assistant OS version updated accordingly.
 
 For a recent ChangeLog please review the following information:
