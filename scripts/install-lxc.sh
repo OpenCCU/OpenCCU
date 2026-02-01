@@ -22,7 +22,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="1.20"
+VERSION="1.21"
 LOGFILE="/tmp/install-lxc.log"
 LINE=
 
