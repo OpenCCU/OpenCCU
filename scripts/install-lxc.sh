@@ -97,7 +97,7 @@ uninstall() {
        grep -q Raspberry /proc/cpuinfo; then
     # arm based RaspberryPiOS system
     info "Identified ${PLATFORM}-based RaspberryPiOS host system..."
-    HEADER_PKGS="raspberrypi-kernel-headers"
+    HEADER_PKGS="linux-headers-rpi-v8"
   elif [[ "${PLATFORM}" == "x86_64" ]]; then
     # full amd64/x86 based host system
     info "Identified x86-based host system..."
@@ -470,7 +470,7 @@ elif [[ "${PLATFORM}" =~ aarch64|arm ]] &&
      grep -q Raspberry /proc/cpuinfo; then
   # arm based RaspberryPiOS system
   info "Identified arm64-based RaspberryPiOS host system..."
-  HEADER_PKGS="raspberrypi-kernel-headers"
+  HEADER_PKGS="linux-headers-rpi-v8"
 elif [[ "${PLATFORM}" == "x86_64" ]]; then
   # full amd64/x86 based host system
   info "Identified x86-based host system..."
