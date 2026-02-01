@@ -24,7 +24,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.18"
+VERSION="3.19"
 LOGFILE="/tmp/install-proxmox.log"
 LINE=
 
@@ -117,7 +117,7 @@ uninstall() {
        grep -q Raspberry /proc/cpuinfo; then
     # arm based RaspberryPiOS system
     info "Identified arm64-based RaspberryPiOS Proxmox VE system..."
-    HEADER_PKGS="raspberrypi-kernel-headers"
+    HEADER_PKGS="linux-headers-rpi-v8"
   elif [[ "${PLATFORM}" == "x86_64" ]]; then
     # full amd64/x86 based Proxmox VE system
     info "Identified x86-based Proxmox VE system..."
@@ -535,7 +535,7 @@ EOF
        grep -q Raspberry /proc/cpuinfo; then
     # arm based RaspberryPiOS system
     info "Identified arm64-based RaspberryPiOS Proxmox VE system..."
-    HEADER_PKGS="raspberrypi-kernel-headers"
+    HEADER_PKGS="linux-headers-rpi-v8"
   elif [[ "${PLATFORM}" == "x86_64" ]]; then
     # full amd64/x86 based Proxmox VE system
     info "Identified x86-based Proxmox VE system..."

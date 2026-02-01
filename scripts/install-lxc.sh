@@ -22,7 +22,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="1.20"
+VERSION="1.21"
 LOGFILE="/tmp/install-lxc.log"
 LINE=
 
@@ -97,7 +97,21 @@ uninstall() {
        grep -q Raspberry /proc/cpuinfo; then
     # arm based RaspberryPiOS system
     info "Identified ${PLATFORM}-based RaspberryPiOS host system..."
-    HEADER_PKGS="raspberrypi-kernel-headers"
+    if [[ "${PLATFORM}" == "aarch64" ]]; then
+      # 64-bit: Try new package name first, fallback to old if not available
+      if dpkg -l linux-headers-rpi-v8 >/dev/null 2>&1 || apt-cache show linux-headers-rpi-v8 >/dev/null 2>&1; then
+        HEADER_PKGS="linux-headers-rpi-v8"
+      else
+        HEADER_PKGS="raspberrypi-kernel-headers"
+      fi
+    else
+      # 32-bit ARM (armv7l, etc.): Use appropriate 32-bit package
+      if dpkg -l linux-headers-rpi-v7l >/dev/null 2>&1 || apt-cache show linux-headers-rpi-v7l >/dev/null 2>&1; then
+        HEADER_PKGS="linux-headers-rpi-v7l"
+      else
+        HEADER_PKGS="raspberrypi-kernel-headers"
+      fi
+    fi
   elif [[ "${PLATFORM}" == "x86_64" ]]; then
     # full amd64/x86 based host system
     info "Identified x86-based host system..."
@@ -469,8 +483,22 @@ if [[ "${PLATFORM}" =~ aarch64|arm ]] &&
 elif [[ "${PLATFORM}" =~ aarch64|arm ]] &&
      grep -q Raspberry /proc/cpuinfo; then
   # arm based RaspberryPiOS system
-  info "Identified arm64-based RaspberryPiOS host system..."
-  HEADER_PKGS="raspberrypi-kernel-headers"
+  info "Identified ${PLATFORM}-based RaspberryPiOS host system..."
+  if [[ "${PLATFORM}" == "aarch64" ]]; then
+    # 64-bit: Try new package name first, fallback to old if not available
+    if apt-cache show linux-headers-rpi-v8 >/dev/null 2>&1; then
+      HEADER_PKGS="linux-headers-rpi-v8"
+    else
+      HEADER_PKGS="raspberrypi-kernel-headers"
+    fi
+  else
+    # 32-bit ARM: Try new package name first, fallback to old if not available
+    if apt-cache show linux-headers-rpi-v7l >/dev/null 2>&1; then
+      HEADER_PKGS="linux-headers-rpi-v7l"
+    else
+      HEADER_PKGS="raspberrypi-kernel-headers"
+    fi
+  fi
 elif [[ "${PLATFORM}" == "x86_64" ]]; then
   # full amd64/x86 based host system
   info "Identified x86-based host system..."
