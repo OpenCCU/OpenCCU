@@ -21,7 +21,7 @@
 <sub>[Deutschsprachiges 🇩🇪🇦🇹🇨🇭 ReadMe](README.de.md)</sub>
 ___
 
-OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, open-source operating system for running a **cloud-free smart-home hub** compatible with eQ-3’s [Homematic IP](https://www.homematic-ip.com/) and [HomeMatic](http://homematic.com/) devices. It targets **100% compatibility** with the vendor’s _CCU3_ and can be installed directly on [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit) and [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html) hardware. It also runs on common SBCs (e.g., [Raspberry Pi](https://www.raspberrypi.org/), [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/), [ASUS Tinker Board](https://www.asus.com/Single-Board-Computer/Tinker-Board-S/)) and generic x86 hardware such as [Intel NUC](https://www.intel.com/content/www/us/en/products/details/nuc.html). In addition, OpenCCU is available as a virtual appliance for popular hypervisors and container platforms (e.g., Proxmox VE, VMware ESXi, VirtualBox, Synology VMM, Docker/OCI, Kubernetes) and as a native [Home Assistant](https://www.home-assistant.io/) add-on. Beyond CCU3 parity, it provides **modern WebUI, OS-level, and connectivity enhancements** for a more advanced user experience.
+OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, open-source operating system for running a **cloud-free smart-home hub** compatible with eQ-3’s [Homematic IP](https://www.homematic-ip.com/) and [HomeMatic](http://homematic.com/) devices. It targets **100% compatibility** with the vendor’s _CCU3_ and can be installed directly on [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit) and [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html) hardware. It also runs on common 64-bit capable SBCs (e.g., [Raspberry Pi](https://www.raspberrypi.org/), [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/)) and generic x86 hardware such as [Intel NUC](https://www.intel.com/content/www/us/en/products/details/nuc.html). In addition, OpenCCU is available as a virtual appliance for popular hypervisors and container platforms (e.g., Proxmox VE, VMware ESXi, VirtualBox, Synology VMM, Docker/OCI, Kubernetes) and as a native [Home Assistant](https://www.home-assistant.io/) add-on. Beyond CCU3 parity, it provides **modern WebUI, OS-level, and connectivity enhancements** for a more advanced user experience.
 
 [more...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung)
 
@@ -35,12 +35,11 @@ OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, op
 
 ## :computer: Requirements
 
-OpenCCU can be installed on vendor CCU hardware, common SBCs, and x86 systems—or deployed virtually:
+OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and x86 systems—or deployed virtually:
 
 **Hardware**
 - [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit), [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html)
 - [Raspberry Pi](https://www.raspberrypi.org/)
-- [ASUS Tinker Board](https://www.asus.com/Single-Board-Computer/Tinker-Board-S/)
 - [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/)
 - [Intel NUC](https://www.intel.de/content/www/de/de/products/boards-kits/nuc.html)
 
@@ -87,7 +86,6 @@ OpenCCU can be installed on vendor CCU hardware, common SBCs, and x86 systems—
      * [CCU3](https://github.com/OpenCCU/OpenCCU/wiki/Installation-CCU3)
      * [ELV-Charly](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ELV-Charly)
      * [RaspberryPi](https://github.com/OpenCCU/OpenCCU/wiki/Installation-RaspberryPi)
-     * [ASUS Tinkerboard](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard)
      * [Hardkernel ODROID](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ODROID)
      * [Intel NUC](https://github.com/OpenCCU/OpenCCU/wiki/Installation-IntelNUC)
    * [Basic Installation (Virtual)](https://github.com/OpenCCU/OpenCCU/wiki/Installation#grundinstallation-virtuell)
