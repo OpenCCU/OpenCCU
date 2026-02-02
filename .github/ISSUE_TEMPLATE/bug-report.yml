@@ -68,7 +68,7 @@ body:
         - rpi5 (RaspberryPi5, ARM64/aarch64)
         - rpi4 (RaspberryPi4, ARM64/aarch64)
         - rpi3 (RaspberryPi3, ARM64/aarch64)
-        - odroid-c2 (ODROID C2, ARM/armhf)
+        - odroid-c2 (ODROID C2, ARM64/aarch64)
         - odroid-c4 (ODROID C4, ARM64/aarch64)
         - odroid-n2 (ODROID N2/N2+, ARM64/aarch64)
         - ova (Open Virtual Infrastructure, AMD64/x86_64)
