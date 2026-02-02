@@ -9,13 +9,8 @@
 : "${POWER_LOSS_CMD:=/bin/triggerAlarm.tcl 'Power Loss' 'WatchDog: picoups-powerloss' true}"
 
 # File descriptors
-if [[ ${HM_HOST} != "tinkerboard" ]]; then
-  : "${GPIO_PULSE:=22}"
-  : "${GPIO_CLOCK:=27}"
-else
-  : "${GPIO_PULSE:=167}"
-  : "${GPIO_CLOCK:=166}"
-fi
+: "${GPIO_PULSE:=22}"
+: "${GPIO_CLOCK:=27}"
 
 # Debounce time in while loop
 : "${DEBOUNCE_TIME:=0.3s}"

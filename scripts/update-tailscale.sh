@@ -29,6 +29,4 @@ sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" 
 
 # update package hashes
 updateHash amd64
-updateHash 386
-updateHash arm
 updateHash arm64

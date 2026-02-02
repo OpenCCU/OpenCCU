@@ -8,7 +8,7 @@
 init_rtc_device() {
 
   # load the i2c_dev module if this is not a virtual
-  # applicance but a real rpi/tinkerboard
+  # applicance but a real rpi
   if [[ ! "${HM_HOST}" =~ oci\|ova-\|nuc\|generic-\|lxc ]]; then
     modprobe i2c_dev
   fi
@@ -57,14 +57,8 @@ init_rtc_device() {
     return 1
   fi
 
-  # make sure we load the RTC kernel module for
-  # the tinkerboard
-  if [[ "${HM_HOST}" == "tinkerboard" ]]; then
-    modprobe rtc_rk808
-  fi
-
   # only continue if we don't have a valid rtc yet or otherwise
-  # this must be an onboard RTC (e.g. tinkerboard)
+  # this must be an onboard RTC
   [[ -c /dev/rtc0 ]] && return 0
 
   # check for MCP7940N RTC clock at 0x6f (PiFace Shim RTC)

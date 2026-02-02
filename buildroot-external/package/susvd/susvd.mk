@@ -11,9 +11,7 @@ SUSVD_LICENSE_FILES = copyright
 
 define SUSVD_INSTALL_TARGET_CMDS
 	cp -a $(SUSVD_PKGDIR)/rootfs-overlay/* $(TARGET_DIR)/
-	if [[ "$(PRODUCT)" == *"tinkerboard"* ]]; then \
-		cp -a $(SUSVD_PKGDIR)/rootfs-overlay-tinker/* $(TARGET_DIR)/; \
-	elif [[ "$(PRODUCT)" == *"rpi"* ]]; then \
+	if [[ "$(PRODUCT)" == *"rpi"* ]]; then \
 		cp -a $(SUSVD_PKGDIR)/rootfs-overlay-rpi/* $(TARGET_DIR)/; \
 	fi
 endef

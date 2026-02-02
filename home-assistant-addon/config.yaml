@@ -4,7 +4,6 @@ version: 3.85.7.20260131
 slug: openccu
 image: ghcr.io/openccu/openccu
 arch:
-  - armv7
   - aarch64
   - amd64
 description: HomeMatic/homematicIP CCU central based on OpenCCU

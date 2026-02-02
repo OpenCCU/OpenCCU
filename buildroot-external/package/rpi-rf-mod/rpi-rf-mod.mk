@@ -21,10 +21,6 @@ RPI_RF_MOD_DEPENDENCIES = host-dtc
 ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_RPI),y)
   # RaspberryPi DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod
-  RPI_RF_MOD_DTS_FILE_ALT = rpi-rf-mod-rpi1
-else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
-  # ASUS Tinkerboard DTS file
-  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C4),y)
   # ODROID-C4 DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c4
@@ -43,17 +39,11 @@ define RPI_RF_MOD_BUILD_CMDS
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
 		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/dts/rpi-rf-mod.dtbo $(@D)/dts/$(RPI_RF_MOD_DTS_FILE).dts; \
 	fi
-	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
-		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(@D)/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dts; \
-	fi
 endef
 
 define RPI_RF_MOD_INSTALL_TARGET_CMDS
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
 		$(INSTALL) -D -m 0644 $(@D)/dts/rpi-rf-mod.dtbo $(BINARIES_DIR)/; \
-	fi
-	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
-		$(INSTALL) -D -m 0644 $(@D)/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
 	fi
 endef
 

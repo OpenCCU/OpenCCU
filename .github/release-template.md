@@ -44,15 +44,6 @@ The following installation archives can be downloaded for different hardware pla
 <sub>📦 [OpenCCU-${VERSION}-rpi3.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-rpi3.zip)<br/>SHA256: XSHArpi3.zipX</sub>
 <sub>📦 [OpenCCU-${VERSION}-ccu3.tgz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-ccu3.tgz) (only for initial CCU3 Firmware -> OpenCCU Upgrade)<br/> SHA256: XSHAccu3.tgzX</sub>
 
-- RaspberryPi2 Model B – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-RaspberryPi)):
-<sub>📦 [OpenCCU-${VERSION}-rpi2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-rpi2.zip)<br/>SHA256: XSHArpi2.zipX</sub>
-
-- RaspberryPi Zero W, RaspberryPi Zero, RaspberryPi Compute Module 1, RaspberryPi1 (A+/B+) – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-RaspberryPi)):
-<sub>📦 [OpenCCU-${VERSION}-rpi0.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-rpi0.zip)<br/>SHA256: XSHArpi0.zipX</sub>
-
-- TinkerBoard S, TinkerBoard – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard)):
-<sub>📦 [OpenCCU-${VERSION}-tinkerboard.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-tinkerboard.zip)<br/>SHA256: XSHAtinkerboard.zipX</sub>
-
 - ODROID-N2/N2+/C4/C2 – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Odroid)):
 <sub>📦 [OpenCCU-${VERSION}-odroid-n2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-n2.zip)<br/>SHA256: XSHAn2.zipX</sub>
 <sub>📦 [OpenCCU-${VERSION}-odroid-c4.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-c4.zip)<br/>SHA256: XSHAc4.zipX</sub>
@@ -68,12 +59,10 @@ The following installation archives can be downloaded for different hardware pla
 - Docker / Open Container Initiative (OCI) – virtual appliance ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Docker-OCI)):
 <sub>📦 [OpenCCU-${VERSION}-oci_amd64.tgz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-oci_amd64.tgz) (amd64/x86_64)<br/>SHA256: XSHAoci_amd64.tgzX</sub>
 <sub>📦 [OpenCCU-${VERSION}-oci_arm64.tgz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-oci_arm64.tgz) (arm64/aarch64)<br/>SHA256: XSHAoci_arm64.tgzX</sub>
-<sub>📦 [OpenCCU-${VERSION}-oci_arm.tgz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-oci_arm.tgz) (arm/armhf)<br/>SHA256: XSHAoci_arm.tgzX</sub>
 
 - LXC Container – virtual appliance ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-LXC)):
 <sub>📦 [OpenCCU-${VERSION}-lxc_amd64.tar.xz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-lxc_amd64.tar.xz) (amd64/x86_64)<br/>SHA256: XSHAlxc_amd64.tar.xzX</sub>
 <sub>📦 [OpenCCU-${VERSION}-lxc_arm64.tar.xz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-lxc_arm64.tar.xz) (arm64/aarch64)<br/>SHA256: XSHAlxc_arm64.tar.xzX</sub>
-<sub>📦 [OpenCCU-${VERSION}-lxc_arm.tar.xz](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-lxc_arm.tar.xz) (arm/armhf)<br/>SHA256: XSHAlxc_arm.tar.xzX</sub>
 
 - Generic-aarch64 Appliance – ([ProxmoxVE](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Proxmox-VE)):
 <sub>📦 [OpenCCU-${VERSION}-generic-aarch64.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-generic-aarch64.zip)<br/>SHA256: XSHAaarch64.zipX</sub>
