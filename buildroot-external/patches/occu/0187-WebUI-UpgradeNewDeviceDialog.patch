@@ -1,0 +1,121 @@
+--- occu/WebUI/www/config/cp_add_device.cgi.orig
++++ occu/WebUI/www/config/cp_add_device.cgi
+@@ -184,6 +184,47 @@
+   set html ""
+   set iFace "HmIP-RF"
+ 
++  append html "<script type='text/javascript'>"
++    append html "QR_changed = function()"
++    append html "{"
++      append html "var qrcode = jQuery(\"#QRHmIPLocal_$iFace\").val();"
++      append html "if(qrcode == \"\") {"
++            append html "jQuery(\"#keyHmIPLocal_$iFace\").val(\"\");"
++            append html "jQuery(\"#serialHmIPLocal_$iFace\").val(\"\");"
++        append html "jQuery(\"#keyHmIPLocal_$iFace\").prop('disabled', false);"
++        append html "jQuery(\"#serialHmIPLocal_$iFace\").prop('disabled', false);"
++      append html "} else {"
++        append html "jQuery(\"#keyHmIPLocal_$iFace\").prop('disabled', true);"
++        append html "jQuery(\"#serialHmIPLocal_$iFace\").prop('disabled', true);"
++        append html "if(qrcode.length == 65){"
++          append html "var SubString1 = qrcode.substr(0,6);"
++          append html "var SubString2 = qrcode.substr(6,24);"
++          append html "var SubString3 = qrcode.substr(30,3);"
++          append html "var SubString4 = qrcode.substr(33,32);"
++          append html "if((SubString1 == \"EQ01SG\") && (SubString3 == \"DLK\")){"
++            append html "jQuery(\"#keyHmIPLocal_$iFace\").val(SubString2);"
++            append html "jQuery(\"#serialHmIPLocal_$iFace\").val(SubString4);"
++          append html "} else {"
++            append html "alert(translateKey(\"lblTeachInQRCodeFaulty\"));"
++          append html "}"	
++        append html "} else {"
++          append html "alert(translateKey(\"lblTeachInQRCodeFaulty\"));"
++        append html "}"
++      append html "}"
++    append html "};"
++
++    append html "KEY_OR_SGTIN_changed = function()"
++    append html "{"
++      append html "var key = jQuery(\"#keyHmIPLocal_$iFace\").val();"
++      append html "var sgtin = jQuery(\"#serialHmIPLocal_$iFace\").val();"
++      append html "if((key == \"\") && (sgtin == \"\")) {"
++        append html "jQuery(\"#QRHmIPLocal_$iFace\").prop('disabled', false);"
++      append html "} else if ((key == \"\") || (sgtin == \"\")){"
++        append html "jQuery(\"#QRHmIPLocal_$iFace\").prop('disabled', true);"
++      append html "}"
++    append html "};"
++  append html "</script>"
++
+   append html "<tr id='section$iFace' class='CLASS21202 hidden'>"
+ 
+    append html "<td class='CLASS21207'>"
+@@ -236,7 +277,7 @@
+                   append html "<span>\${lblTeachInKEY}</span>"
+                 append html "</td>"
+                 append html "<td>"
+-                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px'>"
++                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px' onchange='KEY_OR_SGTIN_changed()'>"
+                 append html "</td>"
+               append html "</tr>"
+ 
+@@ -245,7 +286,16 @@
+                   append html "<span>\${lblTeachInSGTIN}</span>"
+                 append html "</td>"
+                 append html "<td>"
+-                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px;'>"
++                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px' onchange='KEY_OR_SGTIN_changed()'>"
++                append html "</td>"
++              append html "</tr>"
++
++              append html "<tr>"
++                append html "<td style='text-align: right'>"
++                  append html "<span>\${lblTeachInQRCode}</span>"
++                append html "</td>"
++                append html "<td>"
++                  append html "<input id='QRHmIPLocal_$iFace' type='text' style='width:390px' onchange='QR_changed()'>"
+                 append html "</td>"
+               append html "</tr>"
+ 
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
+@@ -660,7 +660,7 @@
+     "dialogNewDevicesHmIPWithInternet" : "<h1>"+HMIdentifier.de.LabelHomematicIPText+" Ger%E4t mit Internetzugang anlernen</h1>",
+     "dialogNewDevicesHmIPWithoutInternet" : "<h1>"+HMIdentifier.de.LabelHomematicIPText+" Ger%E4t ohne Internetzugang anlernen</h1>",
+     "dialogNewDevicesHmIPRFLbl1" : HMIdentifier.de.LabelHomematicIPText+" Ger%E4te k%F6nnen auch %FCber die "+HMIdentifier.de.CCUShortName+" angelernt werden. Klicken Sie auf den Button &quot;HmIP Ger%E4t anlernen&quot;. Der Anlernmodus der "+HMIdentifier.de.CCUShortName+" ist dann f%FCr 60 Sekunden aktiv. Aktivieren Sie innerhalb dieser Zeit den Anlernmodus des "+HMIdentifier.de.LabelHomematicIPText+" Ger%E4tes, das angelernt werden soll.",
+-    "dialogNewDevicesHmIPRFLbl2" : HMIdentifier.de.LabelHomematicIPText+" Ger%E4te k%F6nnen auch ohne aktiven Internetzugang an die "+HMIdentifier.de.CCUShortName+" angelernt werden. Geben Sie den KEY und die SGTIN ein und klicken Sie auf &quot;HmIP Ger%E4t anlernen (lokal)&quot;.",
++    "dialogNewDevicesHmIPRFLbl2" : HMIdentifier.de.LabelHomematicIPText+" Ger%E4te k%F6nnen auch ohne aktiven Internetzugang an die "+HMIdentifier.de.CCUShortName+" angelernt werden. Geben Sie den KEY und die SGTIN ein oder scannen Sie alternativ den QR-Code und klicken Sie auf &quot;HmIP Ger%E4t anlernen (lokal)&quot;.",
+     "energyMeterTransmitterHeader" : "Verbrauchs- und Leistungsmessung",
+     "PMSwChannel2Hint_Energy" : "der Energieverbrauch um",
+     "controlChannelHasNoFunction" : "Der Kanal hat hier keine Funktion",
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.label.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.label.js
+@@ -304,6 +304,8 @@
+     "lblTDRegaVersion" :                         "Logikschicht<br/>Version",
+     "lblTeachInKEY" : "KEY",
+     "lblTeachInSGTIN" : "SGTIN",
++    "lblTeachInQRCode" : "QR-Code",
++    "lblTeachInQRCodeFaulty" : "Gescannter QR-Code ist fehlerhaft",
+     "lblText" : "Text",
+     "lblTextBlock" :  "Textblock",
+     "lblTextColorBR" : "Text-<br/>Farbe",
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
+@@ -660,7 +660,7 @@
+     "dialogNewDevicesHmIPWithInternet" : "<h1>Teaching-in of "+HMIdentifier.en.LabelHomematicIPText+" device with active Internet connection</h1>",
+     "dialogNewDevicesHmIPWithoutInternet" : "<h1>Teaching-in of "+HMIdentifier.en.LabelHomematicIPText+" device without Internet connection</h1>",
+     "dialogNewDevicesHmIPRFLbl1" : HMIdentifier.en.LabelHomematicIPText+" devices can be taught-in to the "+HMIdentifier.en.CCUShortName+" as well. Please click on the button&quot;Teach-in HmIP device&quot;. Teach-in mode of the "+HMIdentifier.en.CCUShortName+" remains activated for 60 seconds. Meanwhile, please activate the teach-in mode of the "+HMIdentifier.en.LabelHomematicIPText+" device you want to teach-in as well.",
+-    "dialogNewDevicesHmIPRFLbl2" : HMIdentifier.en.LabelHomematicIPText+" devices can be taught-in to the "+HMIdentifier.en.CCUShortName+" also without active Internet connection. Please enter the KEY and the SGTIN and click on &quot;Teach-in HmIP device (local)&quot;.",
++    "dialogNewDevicesHmIPRFLbl2" : HMIdentifier.en.LabelHomematicIPText+" devices can be taught-in to the "+HMIdentifier.en.CCUShortName+" also without active Internet connection. Please enter the KEY and the SGTIN or scan the QR-Code and click on &quot;Teach-in HmIP device (local)&quot;.",
+     "energyMeterTransmitterHeader" : "Consumption and power metering",
+     "PMSwChannel2Hint_Energy" : "the energy consumption by",
+     "controlChannelHasNoFunction" : "The channel has no function here",
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.label.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.label.js
+@@ -304,6 +304,8 @@
+     "lblTDRegaVersion" :                         "Logic tier<br/>version",
+     "lblTeachInKEY" : "KEY",
+     "lblTeachInSGTIN" : "SGTIN",
++    "lblTeachInQRCode" : "QR-Code",
++    "lblTeachInQRCodeFaulty" : "Scanned QR-Code is faulty",
+     "lblText" : "Text",
+     "lblTextBlock" :  "Text block",
+     "lblTextColorBR" : "Text-<br/>Colour",
