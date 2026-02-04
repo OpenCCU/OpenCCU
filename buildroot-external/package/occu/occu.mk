@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OCCU_VERSION = 3.85.7-2
+OCCU_VERSION = 3.87.1-1
 OCCU_SITE = $(call github,OpenCCU,occu,$(OCCU_VERSION))
 OCCU_LICENSE = HMSL
 OCCU_LICENSE_FILES = LicenseDE.txt
