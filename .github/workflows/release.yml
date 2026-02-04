@@ -182,7 +182,7 @@ jobs:
 
       #######################
       # release uploads
-      - name: Upload release snapshot [rpi*, tinkerboard, odroid-*, ova, generic-*]
+      - name: Upload release snapshot [rpi*, odroid-*, ova, generic-*]
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
@@ -193,7 +193,7 @@ jobs:
           asset_content_type: application/zip
           overwrite: true
 
-      - name: Upload build release checksum [rpi*, tinkerboard, ova, generic-*]
+      - name: Upload build release checksum [rpi*, ova, generic-*]
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
