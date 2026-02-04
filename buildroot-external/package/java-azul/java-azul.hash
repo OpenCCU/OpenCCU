@@ -1,4 +1,4 @@
 # Locally computed
 sha256  4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726  LICENSE
-sha256  17afea0d150657eacd7cd6597c5bfeaeb0ba13df8627fa31feec7d07e1a06f51  zulu11.86.19-ca-jre11.0.30-linux_x64.tar.gz
-sha256  e4a775f0606dfb5829835d04b4c50fa3648d9d650fb8511790261e18e66db628  zulu11.86.19-ca-jre11.0.30-linux_aarch64.tar.gz
+sha256  26ea2828c3111f2bfd3163b2f5dbd4d2429d7fdedf0a4b89d3065603c994dc50  zulu21.48.17-ca-jre21.0.10-linux_x64.tar.gz
+sha256  8ab3195ae5b1e79dca219ee7d60a0f302b67c146034f54ea533c594e215074d6  zulu21.48.17-ca-jre21.0.10-linux_aarch64.tar.gz

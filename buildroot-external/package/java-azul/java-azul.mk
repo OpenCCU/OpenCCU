@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JAVA_AZUL_VERSION = 11.86.19-ca-jre11.0.30
+JAVA_AZUL_VERSION = 21.48.17-ca-jre21.0.10
 JAVA_AZUL_SITE = https://cdn.azul.com/zulu/bin
 ifeq ($(call qstrip,$(BR2_ARCH)),aarch64)
 JAVA_AZUL_SOURCE = zulu$(JAVA_AZUL_VERSION)-linux_aarch64.tar.gz
