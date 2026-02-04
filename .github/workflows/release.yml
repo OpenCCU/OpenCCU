@@ -120,7 +120,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJSON(format('[{0}]', (github.event.inputs.platforms == '' || github.event.inputs.platforms == 'all') && '"rpi3","rpi4","rpi5","tinkerboard","odroid-c2","odroid-c4","odroid-n2","ova","oci_amd64","oci_arm64","generic-x86_64","generic-aarch64","lxc_amd64","lxc_arm64"' || github.event.inputs.platforms)) }}
+        platform: ${{ fromJSON(format('[{0}]', (github.event.inputs.platforms == '' || github.event.inputs.platforms == 'all') && '"rpi3","rpi4","rpi5","odroid-c2","odroid-c4","odroid-n2","ova","oci_amd64","oci_arm64","generic-x86_64","generic-aarch64","lxc_amd64","lxc_arm64"' || github.event.inputs.platforms)) }}
 
     steps:
       - name: Checkout Code

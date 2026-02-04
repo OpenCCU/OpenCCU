@@ -11,9 +11,9 @@ SUSVD_LICENSE_FILES = copyright
 
 define SUSVD_INSTALL_TARGET_CMDS
 	cp -a $(SUSVD_PKGDIR)/rootfs-overlay/* $(TARGET_DIR)/
-	if [[ "$(PRODUCT)" == *"rpi"* ]]; then \
-		cp -a $(SUSVD_PKGDIR)/rootfs-overlay-rpi/* $(TARGET_DIR)/; \
-	fi
+	case "$(PRODUCT)" in \
+		*rpi*) cp -a $(SUSVD_PKGDIR)/rootfs-overlay-rpi/* $(TARGET_DIR)/ ;; \
+	esac
 endef
 
 define SUSVD_INSTALL_INIT_SYSV
