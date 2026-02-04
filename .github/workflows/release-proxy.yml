@@ -79,7 +79,7 @@ jobs:
         id: docker_build
         with:
           context: home-assistant-addon-proxy
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           labels: |
             org.opencontainers.image.title=OpenCCU HA Proxy-Addon
@@ -97,7 +97,7 @@ jobs:
             io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon-proxy
             io.hass.version=${{ steps.info.outputs.version }}
             io.hass.type=addon
-            io.hass.arch=armv7|aarch64|amd64
+            io.hass.arch=aarch64|amd64
           tags: |
             ${{ steps.extract_branch.outputs.unique_tag }}
             ${{ steps.extract_branch.outputs.branch_tag }}

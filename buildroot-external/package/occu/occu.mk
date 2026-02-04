@@ -105,32 +105,12 @@ ifeq ($(BR2_PACKAGE_OCCU_WEBUI_REGAHSS_BETA),y)
   OCCU_WEBUI_REGAHSS_BETA=y
 endif
 
-ifeq ($(BR2_arm),y)
-  OCCU_COMMON=arm-gnueabihf-gcc8
-  ifneq (,$(findstring rpi0,$(PRODUCT)))
-    OCCU_ARCH32=
-  else
-    OCCU_ARCH32=arm-linux-gnueabihf
-  endif
-  OCCU_ARCH64=
-  OCCU_LIB32=lib
-  OCCU_LIB64=
-endif
-
 ifeq ($(BR2_aarch64),y)
   OCCU_COMMON=arm-gnueabihf-gcc8
   OCCU_ARCH32=
   OCCU_ARCH64=aarch64-linux-gnu
   OCCU_LIB32=
   OCCU_LIB64=$(BR2_ROOTFS_LIB_DIR)
-endif
-
-ifeq ($(BR2_i386),y)
-  OCCU_COMMON=X86_32_GCC8
-  OCCU_ARCH32=i686-linux-gnu
-  OCCU_ARCH64=
-  OCCU_LIB32=lib
-  OCCU_LIB64=
 endif
 
 ifeq ($(BR2_x86_64),y)

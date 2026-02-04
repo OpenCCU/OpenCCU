@@ -55,15 +55,13 @@ function cleanup() {
 RPI_IMAGER_PATH=$(readlink -f "${1}")
 
 # retrieve manifest file paths
-RPI0_MF=$(readlink -f "${2}")
-RPI2_MF=$(readlink -f "${3}")
-RPI3_MF=$(readlink -f "${4}")
-RPI4_MF=$(readlink -f "${5}")
-RPI5_MF=$(readlink -f "${6}")
+RPI3_MF=$(readlink -f "${2}")
+RPI4_MF=$(readlink -f "${3}")
+RPI5_MF=$(readlink -f "${4}")
 
 # extract version and release date from first mf filename
 # shellcheck disable=SC2001
-NEW_VERSION=$(echo "${RPI0_MF}" | sed 's/.*\/OpenCCU-\(.*\)-rpi.\.mf/\1/')
+NEW_VERSION=$(echo "${RPI3_MF}" | sed 's/.*\/OpenCCU-\(.*\)-rpi.\.mf/\1/')
 RELEASE_DATE=$(date --date="$(echo "${NEW_VERSION}" | cut -d'.' -f4 | head -c8)" +%Y-%m-%d)
 
 # common infos
@@ -112,7 +110,5 @@ cp -a "${RPI_IMAGER_PATH}" "${TEMP_DIR}/rpi-imager.json"
 updateJSON 0 rpi5 "${RPI5_MF}" "Pi 5"
 updateJSON 1 rpi4 "${RPI4_MF}" "Pi 4, Pi 400"
 updateJSON 2 rpi3 "${RPI3_MF}" "Pi 3, Pi Zero 2, ELV-Charly, CCU3"
-updateJSON 3 rpi2 "${RPI2_MF}" "Pi 2"
-updateJSON 4 rpi0 "${RPI0_MF}" "Pi Zero, Pi 1"
 
 cp -a "${TEMP_DIR}/rpi-imager.json" "${RPI_IMAGER_PATH}"

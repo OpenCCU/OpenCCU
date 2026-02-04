@@ -22,7 +22,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="1.21"
+VERSION="1.22"
 LOGFILE="/tmp/install-lxc.log"
 LINE=
 
@@ -267,9 +267,6 @@ select_version() {
     ;;
     aarch64)
       ENDSWITH="lxc_arm64.tar.xz"
-    ;;
-    arm*)
-      ENDSWITH="lxc_arm.tar.xz"
     ;;
   esac
 

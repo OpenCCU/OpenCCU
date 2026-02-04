@@ -25,13 +25,8 @@ case $1 in
 
         [[ -r /var/hm_mode ]] && . /var/hm_mode
 
-        if [[ "${HM_HOST}" == "tinkerboard" ]]; then
-          HCIATTACH=/usr/bin/rtk_hciattach
-          HCIATTACH_OPT="-s 115200 ${DEVICE} rtk_h5 115200 flow"
-        else
-          HCIATTACH=/usr/bin/hciattach
-          HCIATTACH_OPT="${DEVICE} bcm43xx 460800 noflow -"
-        fi
+        HCIATTACH=/usr/bin/hciattach
+        HCIATTACH_OPT="${DEVICE} bcm43xx 460800 noflow -"
 
         # first call will flash the firmware
         ${RFKILL} unblock bluetooth
