@@ -10,7 +10,7 @@ This version of the Home Assistant App of OpenCCU is an **experimental** build s
 
 If you are looking for the stable/latest version of the HomeAssistant App of OpenCCU please use the non-snapshot version in this App repository.
 
-For setup and documentation on how to use this add-on please refer to the documentation of the stable/latest version.
+For setup and documentation on how to use this App please refer to the documentation of the stable/latest version.
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
