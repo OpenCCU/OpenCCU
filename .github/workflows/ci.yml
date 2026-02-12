@@ -321,7 +321,7 @@ jobs:
 
       - name: Build and push container image
         if: github.event.inputs.full_build == 'true'
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.1
         id: docker_build
         with:
           context: oci_build
@@ -361,7 +361,7 @@ jobs:
 
       # Testing
       - name: Build and load container image for test
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.1
         id: docker_build_test
         with:
           context: oci_build

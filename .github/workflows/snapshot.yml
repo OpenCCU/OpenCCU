@@ -448,7 +448,7 @@ jobs:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 
       - name: Build and push container image
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.1
         id: docker_build
         with:
           context: oci_build

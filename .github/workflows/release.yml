@@ -469,7 +469,7 @@ jobs:
 
       - name: Build and push container image
         if: github.event.inputs.test_workflow != 'true'
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.1
         id: docker_build
         with:
           context: oci_build

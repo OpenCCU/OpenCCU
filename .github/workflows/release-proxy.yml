@@ -75,7 +75,7 @@ jobs:
           echo "branch_tag=${BRANCH_TAG}" >> $GITHUB_OUTPUT
 
       - name: Build and push container image
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.1
         id: docker_build
         with:
           context: home-assistant-addon-proxy
