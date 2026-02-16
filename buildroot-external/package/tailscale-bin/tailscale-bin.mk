@@ -4,14 +4,10 @@
 #
 ################################################################################
 
-TAILSCALE_BIN_VERSION = 1.92.5
+TAILSCALE_BIN_VERSION = 1.94.1
 TAILSCALE_BIN_SITE = https://pkgs.tailscale.com/stable
-ifeq ($(call qstrip,$(BR2_ARCH)),arm)
-TAILSCALE_BIN_SOURCE = tailscale_$(TAILSCALE_BIN_VERSION)_arm.tgz
-else ifeq ($(call qstrip,$(BR2_ARCH)),aarch64)
+ifeq ($(call qstrip,$(BR2_ARCH)),aarch64)
 TAILSCALE_BIN_SOURCE = tailscale_$(TAILSCALE_BIN_VERSION)_arm64.tgz
-else ifeq ($(call qstrip,$(BR2_ARCH)),i686)
-TAILSCALE_BIN_SOURCE = tailscale_$(TAILSCALE_BIN_VERSION)_386.tgz
 else ifeq ($(call qstrip,$(BR2_ARCH)),x86_64)
 TAILSCALE_BIN_SOURCE = tailscale_$(TAILSCALE_BIN_VERSION)_amd64.tgz
 endif
