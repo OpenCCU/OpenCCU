@@ -147,10 +147,10 @@
    return "$max"
  }
  
-@@ -22,12 +32,12 @@
-   if {[string equal $extraparam "TX_THRESHOLD_POWER"] == 1} {
-     switch [string tolower $devType] {
+@@ -24,12 +34,12 @@
        hmip-psm -
+       hmip-psmco -
+       elv-sh-psmci -
 -      hmip-fsm16 {return 3680.0}
 +      hmip-fsm16 {return 3680.00}
        hmip-psm-2 -
@@ -164,10 +164,10 @@
       default {return "<span class=\"attention\">max value not available</span>"}
      }
    }
-@@ -35,12 +45,12 @@
-   if {([string equal $extraparam "COND_TX_THRESHOLD_LO"] == 1) || ([string equal $extraparam "COND_TX_THRESHOLD_HI"] == 1)} {
-     switch [string tolower $devType] {
+@@ -39,12 +49,12 @@
        hmip-psm -
+       hmip-psmco -
+       elv-sh-psmci -
 -      hmip-fsm16 {return "3680.0"}
 +      hmip-fsm16 {return "3680.00"}
        hmip-psm-2 -
@@ -181,7 +181,7 @@
       default {return "<span class=\"attention\">max value not available</span>"}
      }
    }
-@@ -129,7 +139,7 @@
+@@ -133,7 +143,7 @@
  
    # Limit float to 1 decimal places
    if {([llength [split $min "."]] == 2) || ([llength [split $max "."]] == 2)} {
@@ -190,7 +190,7 @@
        set min [format {%1.1f} $min]
        set max [format {%1.1f} $max]
      } else {
-@@ -245,7 +255,7 @@
+@@ -251,7 +261,7 @@
        hmip-usbsm
         {
          if {$param == "TX_THRESHOLD_POWER"} {return "W (0.0 - [getUserDefinedMaxValue $devType $param])"}
@@ -199,7 +199,7 @@
        }
        default {return "<span class=\"attention\">missing description</span>"}
     }
-@@ -301,6 +311,12 @@
+@@ -307,6 +317,12 @@
        set maxValue "stringUTF8"
        set maxLength "maxLength=16"
        set sizeTextfield 16
@@ -212,7 +212,7 @@
      }
    }
  
-@@ -323,7 +339,7 @@
+@@ -329,7 +345,7 @@
  
    # Limit float to 2 decimal places
    if {[llength [split $value "."]] == 2} {
@@ -221,7 +221,7 @@
        catch {set value [format {%1.1f} $value]}
      } else {
        catch {set value [format {%1.3f} $value]}
-@@ -419,7 +435,7 @@
+@@ -425,7 +441,7 @@
    }
  
    set s "<input id=$elemIdTmp type=\"text\" size=\"5\" value=[format %.0f [expr $value * 100]] name=$param\_tmp onblur="
@@ -230,7 +230,7 @@
    append s "jQuery('#separate_CHANNEL\_$chn\_$prn').val(this.value / 100);\">"
  
    append s "<input id=$elemId type=\"text\" size=\"5\" class=\"hidden\" value=$value name=$param>"
-@@ -433,10 +449,18 @@
+@@ -439,10 +455,18 @@
    set select ""
    foreach val [lsort -real [array names optionValues]] {
  
@@ -252,6 +252,13 @@
       }
  
       append s "<option class=\"[extractParamFromTranslationKey $optionValues($val)]\" value=$val $select>$optionValues($val)</option>"
+@@ -1969,4 +1993,4 @@
+     append result "</script>"
+     return $result
+   }
+-}
+\ No newline at end of file
++}
 --- occu/WebUI/www/config/easymodes/hm-cc-vg-1_master.tcl.orig
 +++ occu/WebUI/www/config/easymodes/hm-cc-vg-1_master.tcl
 @@ -24,7 +24,12 @@
