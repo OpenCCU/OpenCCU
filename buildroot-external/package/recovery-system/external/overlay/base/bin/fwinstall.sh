@@ -1,13 +1,260 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010,SC3036 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3036,SC3014,SC3015 source=/dev/null
 #
 # General purpose shell script to prepare and install a firmware update
 # either archived or unarchived, verifies its validity and installs it
 # unattended accordingly.
 #
-# Copyright (c) 2018-2021 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2018-2026 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
+
+######
+# function that is called to resize the rootfs partition
+resize_rootfs()
+{
+  #
+  # Implements resizing of the rootfs partition by shifting the userfs
+  # filesystem (LABEL=userfs) to the right using e2image -O, then rewriting
+  # the partition table accordingly.
+  #
+  # Assumptions (OpenCCU default):
+  #   LABEL=bootfs, LABEL=rootfs, LABEL=userfs
+  #   MBR label-id is fixed to 0xdeedbeef (PARTUUID stability)
+  #
+  # Parameters:
+  #   $1: current size in bytes
+  #   $2: desired size in bytes
+  #
+
+  SRC_SIZE=${1}  # bytes
+  DST_SIZE=${2}  # bytes
+
+  # Resolve devnodes by LABEL
+  BOOT_DEV=$(/sbin/blkid --label bootfs 2>/dev/null || true)
+  ROOT_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
+  USER_DEV=$(/sbin/blkid --label userfs 2>/dev/null || true)
+  if [[ -z "${BOOT_DEV}" ]] || [[ -z "${ROOT_DEV}" ]] || [[ -z "${USER_DEV}" ]]; then
+    echo "ERROR (blkid labels)"
+    return 1
+  fi
+
+  echo -ne "${ROOT_DEV}: ${SRC_SIZE} => ${DST_SIZE}, "
+
+  if [[ ${DST_SIZE} -gt ${SRC_SIZE} ]]; then
+    echo -ne "enlarge, "
+  elif [[ ${DST_SIZE} -lt ${SRC_SIZE} ]]; then
+    echo -ne "reduce, "
+  else
+    echo "no change"
+    return 0
+  fi
+
+  # unmount (do not abort if already unmounted)
+  umount -f /bootfs 2>/dev/null || true
+  umount -f /rootfs 2>/dev/null || true
+  umount -f /userfs 2>/dev/null || true
+
+  # determine parent disk (handles /dev/mmcblk0p2 and /dev/nvme0n1p3)
+  DISK_DEV="/dev/$(lsblk -d -n -i -o PKNAME "${ROOT_DEV}")"
+  if [[ "${DISK_DEV}" == "/dev/" ]] || [[ ! -b "${DISK_DEV}" ]]; then
+    echo "ERROR (cannot determine disk devnode)"
+    return 1
+  fi
+
+  # sector size (default 512)
+  SECTOR_SIZE=$(/sbin/blockdev --getss "${DISK_DEV}" 2>/dev/null || echo 512)
+
+  # DST_SIZE must be sector-aligned (it should be, as it comes from fdisk/stat)
+  if [[ $((DST_SIZE % SECTOR_SIZE)) -ne 0 ]]; then
+    echo "ERROR (DST_SIZE not sector aligned: ${DST_SIZE} % ${SECTOR_SIZE})"
+    return 1
+  fi
+
+  SFDISK_DUMP=$(/sbin/sfdisk -d "${DISK_DEV}" 2>/dev/null)
+  if [[ -z "${SFDISK_DUMP}" ]]; then
+    echo "ERROR (sfdisk -d)"
+    return 1
+  fi
+
+  _get_line() {
+    local dev=${1}
+    echo "${SFDISK_DUMP}" | awk -v p="${dev}" '{ gsub(/\r/,"",$0); if (substr($0,1,length(p))==p) { print $0; exit } }'
+  }
+  _get_num() {
+    local line=${1}
+    local key=${2}
+    printf '%s\n' "${line}" | awk -v k="${key}" '
+      { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+        for(i=1;i<=NF;i++){
+          if($i==k"="){v=$(i+1); gsub(/[^0-9]/,"",v); print v; exit}
+          if(index($i,k"=")==1){v=$i; sub(k"=","",v); gsub(/[^0-9]/,"",v); print v; exit}
+        }
+      }'
+  }
+  _get_type() {
+    local line=${1}
+    printf '%s\n' "${line}" | awk '
+      { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+        for(i=1;i<=NF;i++){
+          if($i=="type="){v=$(i+1); gsub(/[^0-9A-Fa-f]/,"",v); print v; exit}
+          if(index($i,"type=")==1){v=$i; sub("type=","",v); gsub(/[^0-9A-Fa-f]/,"",v); print v; exit}
+        }
+      }'
+  }
+
+  LINE_BOOT=$(_get_line "${BOOT_DEV}")
+  LINE_ROOT=$(_get_line "${ROOT_DEV}")
+  LINE_USER=$(_get_line "${USER_DEV}")
+  if [[ -z "${LINE_BOOT}" ]] || [[ -z "${LINE_ROOT}" ]] || [[ -z "${LINE_USER}" ]]; then
+    echo "ERROR (cannot parse sfdisk lines)"
+    return 1
+  fi
+
+  BOOT_START=$(_get_num "${LINE_BOOT}" start)
+  BOOT_SIZE=$(_get_num "${LINE_BOOT}" size)
+  BOOT_TYPE=$(_get_type "${LINE_BOOT}")
+
+  ROOT_START=$(_get_num "${LINE_ROOT}" start)
+  ROOT_SIZE=$(_get_num "${LINE_ROOT}" size)
+  ROOT_TYPE=$(_get_type "${LINE_ROOT}")
+
+  USER_START=$(_get_num "${LINE_USER}" start)
+  USER_SIZE=$(_get_num "${LINE_USER}" size)
+  USER_TYPE=$(_get_type "${LINE_USER}")
+
+  if [[ -z "${ROOT_START}" ]] || [[ -z "${ROOT_SIZE}" ]] || [[ -z "${USER_START}" ]] || [[ -z "${USER_SIZE}" ]]; then
+    echo "ERROR (invalid partition geometry)"
+    return 1
+  fi
+
+  USER_END=$((USER_START + USER_SIZE - 1))
+
+  NEW_ROOT_SIZE=$((DST_SIZE / SECTOR_SIZE))
+  NEW_ROOT_END=$((ROOT_START + NEW_ROOT_SIZE - 1))
+  NEW_USER_START=$((NEW_ROOT_END + 1))
+  SHIFT_SECTORS=$((NEW_USER_START - USER_START))
+
+  # If shrinking rootfs would require a left-move of userfs, we keep userfs
+  # unchanged and accept a gap (safe, sufficient for smaller images).
+  if [[ ${SHIFT_SECTORS} -lt 0 ]]; then
+    echo -ne "shrink (gap left), "
+
+    # Now shrink only the rootfs partition; keep userfs partition unchanged (gap remains).
+    /sbin/sfdisk "${DISK_DEV}" <<EOF
+label: dos
+label-id: 0xdeedbeef
+device: ${DISK_DEV}
+unit: sectors
+sector-size: ${SECTOR_SIZE}
+
+${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootable
+${ROOT_DEV} : start=${ROOT_START}, size=${NEW_ROOT_SIZE}, type=${ROOT_TYPE}
+${USER_DEV} : start=${USER_START}, size=${USER_SIZE}, type=${USER_TYPE}
+EOF
+    partprobe "${DISK_DEV}" 2>/dev/null || true
+
+    # Final fresh mkfs because rootfs content will anyway be replaced next
+    mkfs.ext4 -F -L rootfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${ROOT_DEV}" || true
+
+    mount /bootfs
+    mount /rootfs
+    mount -o rw /userfs
+
+    echo "OK"
+    return 0
+
+  fi
+
+  # check if we need to realign userfs
+  if [[ ${SHIFT_SECTORS} -gt 0 ]]; then
+    # rootfs grow => move userfs right by SHIFT_SECTORS
+    SHIFT_BYTES=$((SHIFT_SECTORS * SECTOR_SIZE))
+    NEW_USER_SIZE=$((USER_END - NEW_USER_START + 1))
+    if [[ ${NEW_USER_SIZE} -le 0 ]]; then
+      echo "ERROR (not enough space: userfs would become <= 0)"
+      return 1
+    fi
+
+    echo -ne "move userfs +${SHIFT_SECTORS} sectors, "
+    e2fsck -f -y -v -C 0 "${USER_DEV}" || { echo "ERROR (e2fsck userfs)"; return 1; }
+
+    # --- Pre-check: ensure userfs can be shrunk enough before we attempt a move ---
+    # We must satisfy two constraints BEFORE rewriting the partition table:
+    #   (1) Filesystem size must be <= (old userfs partition bytes - SHIFT_BYTES)
+    #   (2) Filesystem size must be >= the ext4 minimum size (resize2fs -P)
+    # If this is not possible, abort early so we do NOT end up with an invalid userfs.
+
+    # ext4 block size (bytes)
+    FS_BLKSZ=$(/sbin/dumpe2fs -h "${USER_DEV}" 2>/dev/null | awk -F: '/Block size:/ {gsub(/ /,"",$2); print $2; exit}')
+    [[ -n "${FS_BLKSZ}" ]] || FS_BLKSZ=4096
+
+    # ext4 minimum blocks
+    MIN_BLKS=$(resize2fs -P "${USER_DEV}" 2>/dev/null | awk '{print $NF}' | tail -1)
+    if [[ -z "${MIN_BLKS}" ]]; then
+      echo "ERROR (cannot determine userfs minimum size via resize2fs -P)"
+      return 1
+    fi
+
+    # Maximum filesystem blocks we can keep so the FS fits *after* shifting right by SHIFT_BYTES
+    OLD_USER_BYTES=$((USER_SIZE * SECTOR_SIZE))
+    MAX_FS_BYTES=$((OLD_USER_BYTES - SHIFT_BYTES))
+    if [[ ${MAX_FS_BYTES} -le 0 ]]; then
+      echo "ERROR (shift too large for userfs device)"
+      return 1
+    fi
+    MAX_BLKS=$((MAX_FS_BYTES / FS_BLKSZ))
+
+    if [[ ${MAX_BLKS} -lt ${MIN_BLKS} ]]; then
+      echo "ERROR (userfs cannot be shrunk enough: min=${MIN_BLKS} blks, max=${MAX_BLKS} blks)"
+      echo "ERROR (aborting without rewriting partition table)"
+      return 1
+    fi
+
+    # Keep a small margin (in filesystem blocks) to avoid edge rounding issues.
+    # 1024 blocks @4KiB = 4MiB.
+    MARGIN_BLKS=1024
+    TARGET_BLKS=${MAX_BLKS}
+    if [[ ${TARGET_BLKS} -gt ${MARGIN_BLKS} ]]; then
+      TARGET_BLKS=$((TARGET_BLKS - MARGIN_BLKS))
+    fi
+    if [[ ${TARGET_BLKS} -lt ${MIN_BLKS} ]]; then
+      TARGET_BLKS=${MIN_BLKS}
+    fi
+
+    resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR (resize2fs userfs)"; return 1; }
+    e2image -ra -p -O "${SHIFT_BYTES}" "${USER_DEV}" || { echo "ERROR (e2image move userfs)"; return 1; }
+  else
+    echo "userfs already aligned, "
+  fi
+
+  /sbin/sfdisk "${DISK_DEV}" <<EOF
+label: dos
+label-id: 0xdeedbeef
+device: ${DISK_DEV}
+unit: sectors
+sector-size: ${SECTOR_SIZE}
+
+${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootable
+${ROOT_DEV} : start=${ROOT_START}, size=${NEW_ROOT_SIZE}, type=${ROOT_TYPE}
+${USER_DEV} : start=${NEW_USER_START}, size=${NEW_USER_SIZE}, type=${USER_TYPE}
+EOF
+
+  partprobe "${DISK_DEV}" 2>/dev/null || true
+
+  # Keep filesystems consistent if no dd overwrite happens.
+  e2fsck -f -y -v -C 0 "${ROOT_DEV}" || true
+  resize2fs -p "${ROOT_DEV}" || true
+  e2fsck -f -y -v -C 0 "${USER_DEV}" || true
+  resize2fs -p "${USER_DEV}" || true
+
+  # re-mount stuff again
+  mount /bootfs
+  mount /rootfs
+  mount -o rw /userfs
+
+  echo "OK"
+}
 
 ######
 # function that is called with the filename containing
@@ -54,6 +301,7 @@ fwprepare()
   # create tmpdir and output available disk space
   echo -ne "[3/7] Checking free disk space... "
   TMPDIR="${filename}-dir"
+  rm -rf "${TMPDIR}"
   if ! mkdir -p "${TMPDIR}"; then
     echo "ERROR: (mkdir tmpdir)"
     exit 1
@@ -200,6 +448,88 @@ fwprepare()
       if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
         echo "ERROR: (unzip)"
         exit 1
+      fi
+
+      # IMPORTANT:
+      # If a rootfs resize is required (rootfs in image larger than current rootfs),
+      # we must avoid filling userfs by fully unpacking the zip first, because that
+      # could prevent shrinking userfs. Therefore, do a "preflight" extract of only
+      # the *.img, decide whether resize is needed, and if so delete the img again,
+      # resize, then unpack the zip fully and continue.
+
+      # Preflight: extract only *.img (best-effort; if none found we fall back to full unpack)
+      PRE_IMG=""
+      for f in "${TMPDIR}"/*.img; do
+        [[ -f "${f}" ]] || break
+        PRE_IMG="${f}"
+        break
+      done
+
+      if [[ -n "${PRE_IMG}" ]]; then
+        # Determine if rootfs resize would be needed by comparing current rootfs partition
+        # size with the rootfs partition size inside the new image.
+        ROOTFS_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
+        if [[ -n "${ROOTFS_DEV}" ]]; then
+          ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" " 2>/dev/null || true)
+        else
+          ROOTFS_SIZE=""
+        fi
+
+        if [[ -n "${ROOTFS_SIZE}" ]]; then
+          # Determine rootfs partition size inside image:
+          # Use fdisk -l on the image file and parse the partition #2 ("<img>2").
+          ROOTFS_IMG="${PRE_IMG}2"
+          ROOTFS_IMG_SIZE=$(/sbin/fdisk --bytes -l "${PRE_IMG}" 2>/dev/null | awk -v p="${ROOTFS_IMG}" '
+            $1==p {
+              v=$5; gsub(/[^0-9]/,"",v); print v; exit
+            }
+          ')
+
+          # If resize is needed (image rootfs larger/smaller)
+          if [[ -n "${ROOTFS_IMG_SIZE}" ]]; then
+
+            # if image rootfs is larger remove extracted img now to free userfs space
+            # and perform resize BEFORE fully unpacking the zip.
+            if [[ "${ROOTFS_IMG_SIZE}" -gt "${ROOTFS_SIZE}" ]]; then
+              rm -rf "${TMPDIR}" 2>/dev/null || true
+              sync 2>/dev/null || true
+
+              echo -ne "resize rootfs, "
+              if ! resize_rootfs "${ROOTFS_SIZE}" "${ROOTFS_IMG_SIZE}"; then
+                echo "ERROR: (resize_rootfs)<br/>"
+                exit 1
+              fi
+
+              #############################
+              # now unarchive once again
+              mkdir -p "${TMPDIR}"
+
+              # check available space again
+              AVAILSPACE=$(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }')
+              echo -ne "${AVAILSPACE} bytes available, "
+              if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+                echo "ERROR: ${REQSIZE} bytes required!"
+                exit 1
+              fi
+
+              echo -ne "re-unarchiving.."
+              # unarchive the zip once more
+              if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
+                echo "ERROR: (unzip)"
+                exit 1
+              fi
+            elif [[ "${ROOTFS_IMG_SIZE}" -lt "${ROOTFS_SIZE}" ]]; then
+              # if image rootfs is smaller we just shrink the rootfs fs and
+              # partition but keep userfs untouched.
+              sync 2>/dev/null || true
+              echo -ne "resize rootfs, "
+              if ! resize_rootfs "${ROOTFS_SIZE}" "${ROOTFS_IMG_SIZE}"; then
+                echo "ERROR: (resize_rootfs)<br/>"
+                exit 1
+              fi
+            fi
+          fi
+        fi
       fi
 
       # stop the progress output
@@ -394,7 +724,7 @@ fwinstall()
       fi
 
       # get boot partition size in bytes
-      ROOTFS_SIZE=$(/sbin/fdisk -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" ")
       if [[ -z "${ROOTFS_SIZE}" ]]; then
         echo "ERROR: (fdisk)<br/>"
         exit 1
@@ -494,7 +824,7 @@ fwinstall()
       fi
 
       # get boot partition size in bytes
-      BOOTFS_SIZE=$(/sbin/fdisk -l "${BOOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      BOOTFS_SIZE=$(/sbin/fdisk --bytes -l "${BOOTFS_DEV}" | head -1 | cut -f5 -d" ")
       if [[ -z "${BOOTFS_SIZE}" ]]; then
         echo "ERROR: (fdisk)<br/>"
         exit 1
@@ -617,14 +947,14 @@ fwinstall()
       fi
 
       # get boot partition size in bytes
-      BOOTFS_SIZE=$(/sbin/fdisk -l "${BOOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      BOOTFS_SIZE=$(/sbin/fdisk --bytes -l "${BOOTFS_DEV}" | head -1 | cut -f5 -d" ")
       if [[ -z "${BOOTFS_SIZE}" ]]; then
         echo "ERROR: (fdisk bootfs)<br/>"
         exit 1
       fi
 
       # get boot lofs partition size in bytes
-      BOOTFS_LOOPSIZE=$(/sbin/fdisk -l "${BOOTFS_LOOPDEV}" | head -1 | cut -f5 -d" ")
+      BOOTFS_LOOPSIZE=$(/sbin/fdisk --bytes -l "${BOOTFS_LOOPDEV}" | head -1 | cut -f5 -d" ")
       if [[ -z "${BOOTFS_LOOPSIZE}" ]]; then
         echo "ERROR: (fdisk bootfs loopfs)<br/>"
         exit 1
@@ -745,14 +1075,14 @@ fwinstall()
       fi
 
       # get root partition size in bytes
-      ROOTFS_SIZE=$(/sbin/fdisk -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" ")
       if [[ -z "${ROOTFS_SIZE}" ]]; then
         echo "ERROR: (fdisk rootfs)<br/>"
         exit 1
       fi
 
       # get root lofs partition size in bytes
-      ROOTFS_LOOPSIZE=$(/sbin/fdisk -l "${ROOTFS_LOOPDEV}" | head -1 | cut -f5 -d" ")
+      ROOTFS_LOOPSIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_LOOPDEV}" | head -1 | cut -f5 -d" ")
       if [[ -z "${ROOTFS_LOOPSIZE}" ]]; then
         echo "ERROR: (fdisk rootfs loopfs)<br/>"
         exit 1
