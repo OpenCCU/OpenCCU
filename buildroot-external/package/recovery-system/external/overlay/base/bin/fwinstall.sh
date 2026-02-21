@@ -35,7 +35,7 @@ resize_rootfs()
   ROOT_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
   USER_DEV=$(/sbin/blkid --label userfs 2>/dev/null || true)
   if [[ -z "${BOOT_DEV}" ]] || [[ -z "${ROOT_DEV}" ]] || [[ -z "${USER_DEV}" ]]; then
-    echo "ERROR (blkid labels)"
+    echo "ERROR: (blkid labels)"
     return 1
   fi
 
@@ -58,7 +58,7 @@ resize_rootfs()
   # determine parent disk (handles /dev/mmcblk0p2 and /dev/nvme0n1p3)
   DISK_DEV="/dev/$(lsblk -d -n -i -o PKNAME "${ROOT_DEV}")"
   if [[ "${DISK_DEV}" == "/dev/" ]] || [[ ! -b "${DISK_DEV}" ]]; then
-    echo "ERROR (cannot determine disk devnode)"
+    echo "ERROR: (cannot determine disk devnode)"
     return 1
   fi
 
@@ -67,13 +67,13 @@ resize_rootfs()
 
   # DST_SIZE must be sector-aligned (it should be, as it comes from fdisk/stat)
   if [[ $((DST_SIZE % SECTOR_SIZE)) -ne 0 ]]; then
-    echo "ERROR (DST_SIZE not sector aligned: ${DST_SIZE} % ${SECTOR_SIZE})"
+    echo "ERROR: (DST_SIZE not sector aligned: ${DST_SIZE} % ${SECTOR_SIZE})"
     return 1
   fi
 
   SFDISK_DUMP=$(/sbin/sfdisk -d "${DISK_DEV}" 2>/dev/null)
   if [[ -z "${SFDISK_DUMP}" ]]; then
-    echo "ERROR (sfdisk -d)"
+    echo "ERROR: (sfdisk -d)"
     return 1
   fi
 
@@ -107,7 +107,7 @@ resize_rootfs()
   LINE_ROOT=$(_get_line "${ROOT_DEV}")
   LINE_USER=$(_get_line "${USER_DEV}")
   if [[ -z "${LINE_BOOT}" ]] || [[ -z "${LINE_ROOT}" ]] || [[ -z "${LINE_USER}" ]]; then
-    echo "ERROR (cannot parse sfdisk lines)"
+    echo "ERROR: (cannot parse sfdisk lines)"
     return 1
   fi
 
@@ -124,13 +124,13 @@ resize_rootfs()
   USER_TYPE=$(_get_type "${LINE_USER}")
 
   if [[ -z "${ROOT_START}" ]] || [[ -z "${ROOT_SIZE}" ]] || [[ -z "${USER_START}" ]] || [[ -z "${USER_SIZE}" ]]; then
-    echo "ERROR (invalid partition geometry)"
+    echo "ERROR: (invalid partition geometry)"
     return 1
   fi
 
   if [[ -z "${BOOT_START}" ]] || [[ -z "${BOOT_SIZE}" ]] || \
      [[ -z "${BOOT_TYPE}" ]] || [[ -z "${ROOT_TYPE}" ]] || [[ -z "${USER_TYPE}" ]]; then
-    echo "ERROR (invalid partition type/geometry for boot or type fields)"
+    echo "ERROR: (invalid partition type/geometry for boot or type fields)"
     return 1
   fi
 
@@ -163,17 +163,17 @@ ${USER_DEV} : start=${USER_START}, size=${USER_SIZE}, type=${USER_TYPE}
 EOF
     SFDISK_RC=$?
     if [[ ${SFDISK_RC} -ne 0 ]]; then
-      echo "ERROR (sfdisk rewrite)"
+      echo "ERROR: (sfdisk rewrite)"
       return 1
     fi
     partprobe "${DISK_DEV}" 2>/dev/null || true
 
     # Final fresh mkfs because rootfs content will anyway be replaced next
-    mkfs.ext4 -F -L rootfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${ROOT_DEV}" || true
+    mkfs.ext4 -F -L rootfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${ROOT_DEV}" || { echo "ERROR: (mkfs.ext4 rootfs)"; return 1; }
 
-    mount /bootfs       || { echo "ERROR (mount /bootfs)"; return 1; }
-    mount /rootfs       || { echo "ERROR (mount /rootfs)"; return 1; }
-    mount -o rw /userfs || { echo "ERROR (mount /userfs)"; return 1; }
+    mount /bootfs       || { echo "ERROR: (mount /bootfs)"; return 1; }
+    mount /rootfs       || { echo "ERROR: (mount /rootfs)"; return 1; }
+    mount -o rw /userfs || { echo "ERROR: (mount /userfs)"; return 1; }
 
     echo "OK"
     return 0
@@ -186,7 +186,7 @@ EOF
     SHIFT_BYTES=$((SHIFT_SECTORS * SECTOR_SIZE))
     NEW_USER_SIZE=$((USER_END - NEW_USER_START + 1))
     if [[ ${NEW_USER_SIZE} -le 0 ]]; then
-      echo "ERROR (not enough space: userfs would become <= 0)"
+      echo "ERROR: (not enough space: userfs would become <= 0)"
       return 1
     fi
 
@@ -194,7 +194,7 @@ EOF
     e2fsck -f -y -v -C 0 "${USER_DEV}"
     E2FSCK_RC=$?
     if [[ ${E2FSCK_RC} -ge 4 ]]; then
-      echo "ERROR (e2fsck userfs, rc=${E2FSCK_RC})"
+      echo "ERROR: (e2fsck userfs, rc=${E2FSCK_RC})"
       return 1
     fi
 
@@ -211,7 +211,7 @@ EOF
     # ext4 minimum blocks
     MIN_BLKS=$(resize2fs -P "${USER_DEV}" 2>/dev/null | awk '{print $NF}' | tail -1)
     if [[ -z "${MIN_BLKS}" ]]; then
-      echo "ERROR (cannot determine userfs minimum size via resize2fs -P)"
+      echo "ERROR: (cannot determine userfs minimum size via resize2fs -P)"
       return 1
     fi
 
@@ -219,14 +219,14 @@ EOF
     OLD_USER_BYTES=$((USER_SIZE * SECTOR_SIZE))
     MAX_FS_BYTES=$((OLD_USER_BYTES - SHIFT_BYTES))
     if [[ ${MAX_FS_BYTES} -le 0 ]]; then
-      echo "ERROR (shift too large for userfs device)"
+      echo "ERROR: (shift too large for userfs device)"
       return 1
     fi
     MAX_BLKS=$((MAX_FS_BYTES / FS_BLKSZ))
 
     if [[ ${MAX_BLKS} -lt ${MIN_BLKS} ]]; then
-      echo "ERROR (userfs cannot be shrunk enough: min=${MIN_BLKS} blks, max=${MAX_BLKS} blks)"
-      echo "ERROR (aborting without rewriting partition table)"
+      echo "ERROR: (userfs cannot be shrunk enough: min=${MIN_BLKS} blks, max=${MAX_BLKS} blks)"
+      echo "ERROR: (aborting without rewriting partition table)"
       return 1
     fi
 
@@ -241,10 +241,10 @@ EOF
       TARGET_BLKS=${MIN_BLKS}
     fi
 
-    resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR (resize2fs userfs)"; return 1; }
+    resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR: (resize2fs userfs)"; return 1; }
     OLD_USER_OFFSET=$((USER_START * SECTOR_SIZE))
     NEW_USER_OFFSET=$((NEW_USER_START * SECTOR_SIZE))
-    e2image -ra -p -o "${OLD_USER_OFFSET}" -O "${NEW_USER_OFFSET}" "${DISK_DEV}" || { echo "ERROR (e2image move userfs)"; return 1; }
+    e2image -ra -p -o "${OLD_USER_OFFSET}" -O "${NEW_USER_OFFSET}" "${DISK_DEV}" || { echo "ERROR: (e2image move userfs)"; return 1; }
   else
     echo "userfs already aligned, "
   fi
@@ -266,15 +266,17 @@ EOF
   e2fsck -f -y -v -C 0 "${USER_DEV}"
   E2FSCK_USER_RC=$?
   if [[ ${E2FSCK_USER_RC} -ge 4 ]]; then
-    echo "ERROR (e2fsck userfs post-move, rc=${E2FSCK_USER_RC})"
+    echo "ERROR: (e2fsck userfs post-move, rc=${E2FSCK_USER_RC})"
     return 1
   fi
-  resize2fs -p "${USER_DEV}" || true
+  if ! resize2fs -p "${USER_DEV}"; then
+    echo "WARNING: (resize2fs expand userfs failed, userfs may be smaller than partition)"
+  fi
 
   # re-mount stuff again
-  mount /bootfs       || { echo "ERROR (mount /bootfs)"; return 1; }
-  mount /rootfs       || { echo "ERROR (mount /rootfs)"; return 1; }
-  mount -o rw /userfs || { echo "ERROR (mount /userfs)"; return 1; }
+  mount /bootfs       || { echo "ERROR: (mount /bootfs)"; return 1; }
+  mount /rootfs       || { echo "ERROR: (mount /rootfs)"; return 1; }
+  mount -o rw /userfs || { echo "ERROR: (mount /userfs)"; return 1; }
 
   echo "OK"
 
@@ -291,14 +293,14 @@ fwprepare()
   echo -ne "[1/7] Checking uploaded data... "
   # check if filename exists
   if [[ ! -f "${filename}" ]]; then
-    echo "ERROR ('${filename}' exists)"
+    echo "ERROR: ('${filename}' exists)"
     exit 1
   fi
 
   # check file size to be > 0
   FILESIZE=$(stat -c%s "${filename}" 2>/dev/null)
   if [[ -z "${FILESIZE}" ]] || [[ "${FILESIZE}" -le 0 ]]; then
-    echo "ERROR (filesize: ${FILESIZE})"
+    echo "ERROR: (filesize: ${FILESIZE})"
     exit 1
   fi
   echo "${FILESIZE} bytes received, OK<br/>"
@@ -314,7 +316,7 @@ fwprepare()
   trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
 
   if ! CHKSUM=$(/usr/bin/sha256sum "${filename}" 2>/dev/null) || [[ -z "${CHKSUM}" ]]; then
-    echo "ERROR (sha256sum)"
+    echo "ERROR: (sha256sum)"
     exit 1
   fi
   # stop the progress output
@@ -489,20 +491,16 @@ fwprepare()
         # size with the rootfs partition size inside the new image.
         ROOTFS_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
         if [[ -n "${ROOTFS_DEV}" ]]; then
-          ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" " 2>/dev/null || true)
+          ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" 2>/dev/null | head -1 | cut -f5 -d" " || true)
         else
           ROOTFS_SIZE=""
         fi
 
         if [[ -n "${ROOTFS_SIZE}" ]]; then
-          # Determine rootfs partition size inside image:
-          # Use fdisk -l on the image file and parse the partition #2 ("<img>2").
-          ROOTFS_IMG="${PRE_IMG}2"
-          ROOTFS_IMG_SIZE=$(/sbin/fdisk --bytes -l "${PRE_IMG}" 2>/dev/null | awk -v p="${ROOTFS_IMG}" '
-            $1==p {
-              v=$5; gsub(/[^0-9]/,"",v); print v; exit
-            }
-          ')
+          # Determine rootfs partition size inside image using parted machine-readable output
+          # parted -sm format: number:start:end:size:filesystem:name:flags
+          ROOTFS_IMG_SIZE=$(/usr/sbin/parted -sm "${PRE_IMG}" unit B print 2>/dev/null | \
+            awk -F: '$1=="2" { gsub(/B$/,"",$4); print $4; exit }')
 
           # If resize is needed (image rootfs larger/smaller)
           if [[ -n "${ROOTFS_IMG_SIZE}" ]]; then
@@ -1088,7 +1086,7 @@ fwinstall()
           fi
           echo -ne "OK, "
         else
-          echo -ne "WARNING (${BOOTFS_START}:${BOOTFS_LOOPSTART}), "
+          echo -ne "WARNING: (${BOOTFS_START}:${BOOTFS_LOOPSTART}), "
         fi
       fi
     fi
