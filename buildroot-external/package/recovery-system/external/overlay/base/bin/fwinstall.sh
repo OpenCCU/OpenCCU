@@ -242,8 +242,9 @@ EOF
     fi
 
     resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR (resize2fs userfs)"; return 1; }
+    OLD_USER_OFFSET=$((USER_START * SECTOR_SIZE))
     NEW_USER_OFFSET=$((NEW_USER_START * SECTOR_SIZE))
-    e2image -ra -p -O "${NEW_USER_OFFSET}" "${USER_DEV}" "${DISK_DEV}" || { echo "ERROR (e2image move userfs)"; return 1; }
+    e2image -ra -p -o "${OLD_USER_OFFSET}" -O "${NEW_USER_OFFSET}" "${DISK_DEV}" || { echo "ERROR (e2image move userfs)"; return 1; }
   else
     echo "userfs already aligned, "
   fi
@@ -261,15 +262,6 @@ ${USER_DEV} : start=${NEW_USER_START}, size=${NEW_USER_SIZE}, type=${USER_TYPE}
 EOF
 
   partprobe "${DISK_DEV}" 2>/dev/null || true
-
-  # Keep filesystems consistent if no dd overwrite happens.
-  e2fsck -f -y -v -C 0 "${ROOT_DEV}"
-  E2FSCK_ROOT_RC=$?
-  if [[ ${E2FSCK_ROOT_RC} -ge 4 ]]; then
-    echo "ERROR (e2fsck rootfs post-move, rc=${E2FSCK_ROOT_RC})"
-    return 1
-  fi
-  resize2fs -p "${ROOT_DEV}" || true
 
   e2fsck -f -y -v -C 0 "${USER_DEV}"
   E2FSCK_USER_RC=$?
