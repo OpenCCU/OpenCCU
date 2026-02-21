@@ -242,7 +242,7 @@ EOF
     fi
 
     resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR (resize2fs userfs)"; return 1; }
-    e2image -ra -p -O "${SHIFT_BYTES}" "${USER_DEV}" || { echo "ERROR (e2image move userfs)"; return 1; }
+    e2image -ra -p -o "${SHIFT_BYTES}" "${USER_DEV}" "${DISK_DEV}" || { echo "ERROR (e2image move userfs)"; return 1; }
   else
     echo "userfs already aligned, "
   fi
@@ -524,7 +524,10 @@ fwprepare()
 
               #############################
               # now unarchive once again
-              mkdir -p "${TMPDIR}"
+              if ! mkdir -p "${TMPDIR}"; then
+                echo "ERROR: (mkdir tmpdir after resize)"
+                exit 1
+              fi
 
               # check available space again
               AVAILSPACE=$(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }')
