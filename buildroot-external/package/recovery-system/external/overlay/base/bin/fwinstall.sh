@@ -590,6 +590,31 @@ fwprepare()
         exit 1
       fi
 
+      # Determine if rootfs resize would be needed by comparing current rootfs partition
+      # size with the rootfs partition size inside the new image.
+      ROOTFS_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
+      if [[ -n "${ROOTFS_DEV}" ]]; then
+        ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" 2>/dev/null | head -1 | cut -f5 -d" " || true)
+      else
+        ROOTFS_SIZE=""
+      fi
+
+      if [[ -n "${ROOTFS_SIZE}" ]]; then
+        # Determine rootfs partition size inside image using parted machine-readable output
+        # parted -sm format: number:start:end:size:filesystem:name:flags
+        ROOTFS_IMG_SIZE=$(/usr/sbin/parted -sm "${filename}" unit B print 2>/dev/null | \
+          awk -F: '$1=="2" { gsub(/B$/,"",$4); print $4; exit }')
+
+        # If resize is needed (image rootfs larger or smaller)
+        if [[ -n "${ROOTFS_IMG_SIZE}" ]] && [[ "${ROOTFS_IMG_SIZE}" != "${ROOTFS_SIZE}" ]]; then
+          sync 2>/dev/null || true
+          echo -ne "resize rootfs, "
+          if ! resize_rootfs "${ROOTFS_SIZE}" "${ROOTFS_IMG_SIZE}"; then
+            echo "ERROR: (resize_rootfs)<br/>"
+            exit 1
+          fi
+        fi
+      fi
       mv -f "${filename}" "${TMPDIR}/new_firmware.img"
 
       FILETYPE="img"
