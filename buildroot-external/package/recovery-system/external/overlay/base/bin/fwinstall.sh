@@ -29,6 +29,11 @@ resize_rootfs()
 
   SRC_SIZE=${1}  # bytes
   DST_SIZE=${2}  # bytes
+  if [[ -z "${SRC_SIZE}" ]] || [[ -z "${DST_SIZE}" ]] || \
+     [[ "${SRC_SIZE}" -le 0 ]] || [[ "${DST_SIZE}" -le 0 ]]; then
+    echo "ERROR: (invalid resize_rootfs arguments: src=${SRC_SIZE} dst=${DST_SIZE})"
+    return 1
+  fi
 
   # Resolve devnodes by LABEL
   BOOT_DEV=$(/sbin/blkid --label bootfs 2>/dev/null || true)
