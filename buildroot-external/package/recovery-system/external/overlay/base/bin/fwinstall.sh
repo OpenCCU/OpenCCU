@@ -128,6 +128,12 @@ resize_rootfs()
     return 1
   fi
 
+  if [[ -z "${BOOT_START}" ]] || [[ -z "${BOOT_SIZE}" ]] || \
+     [[ -z "${BOOT_TYPE}" ]] || [[ -z "${ROOT_TYPE}" ]] || [[ -z "${USER_TYPE}" ]]; then
+    echo "ERROR (invalid partition type/geometry for boot or type fields)"
+    return 1
+  fi
+
   USER_END=$((USER_START + USER_SIZE - 1))
 
   NEW_ROOT_SIZE=$((DST_SIZE / SECTOR_SIZE))
@@ -155,6 +161,11 @@ ${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootabl
 ${ROOT_DEV} : start=${ROOT_START}, size=${NEW_ROOT_SIZE}, type=${ROOT_TYPE}
 ${USER_DEV} : start=${USER_START}, size=${USER_SIZE}, type=${USER_TYPE}
 EOF
+    SFDISK_RC=$?
+    if [[ ${SFDISK_RC} -ne 0 ]]; then
+      echo "ERROR (sfdisk rewrite)"
+      return 1
+    fi
     partprobe "${DISK_DEV}" 2>/dev/null || true
 
     # Final fresh mkfs because rootfs content will anyway be replaced next
@@ -180,7 +191,12 @@ EOF
     fi
 
     echo -ne "move userfs +${SHIFT_SECTORS} sectors, "
-    e2fsck -f -y -v -C 0 "${USER_DEV}" || { echo "ERROR (e2fsck userfs)"; return 1; }
+    e2fsck -f -y -v -C 0 "${USER_DEV}"
+    E2FSCK_RC=$?
+    if [[ ${E2FSCK_RC} -ge 4 ]]; then
+      echo "ERROR (e2fsck userfs, rc=${E2FSCK_RC})"
+      return 1
+    fi
 
     # --- Pre-check: ensure userfs can be shrunk enough before we attempt a move ---
     # We must satisfy two constraints BEFORE rewriting the partition table:
@@ -455,14 +471,8 @@ fwprepare()
         exit 1
       fi
 
-      # IMPORTANT:
-      # If a rootfs resize is required (rootfs in image larger than current rootfs),
-      # we must avoid filling userfs by fully unpacking the zip first, because that
-      # could prevent shrinking userfs. Therefore, do a "preflight" extract of only
-      # the *.img, decide whether resize is needed, and if so delete the img again,
-      # resize, then unpack the zip fully and continue.
-
-      # Preflight: extract only *.img (best-effort; if none found we fall back to full unpack)
+      # use the first found *.img as the image file we analyze regarding
+      # potential re-partitioning.
       PRE_IMG=""
       for f in "${TMPDIR}"/*.img; do
         [[ -f "${f}" ]] || break
@@ -495,6 +505,13 @@ fwprepare()
 
             # if image rootfs is larger remove extracted img now to free userfs space
             # and perform resize BEFORE fully unpacking the zip.
+            #
+            # IMPORTANT:
+            # If a rootfs resize is required (rootfs in image larger than current rootfs),
+            # we must avoid filling userfs by fully unpacking the zip first, because that
+            # could prevent shrinking userfs. Therefore, once we identified such a
+            # required userfs shrinking we remove TMPDIR later on and do a re-unzipping
+            # accordingly and continue.
             if [[ "${ROOTFS_IMG_SIZE}" -gt "${ROOTFS_SIZE}" ]]; then
               rm -rf "${TMPDIR}" 2>/dev/null || true
               sync 2>/dev/null || true
