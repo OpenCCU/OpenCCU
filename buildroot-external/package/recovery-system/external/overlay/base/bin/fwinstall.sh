@@ -135,6 +135,9 @@ resize_rootfs()
   NEW_USER_START=$((NEW_ROOT_END + 1))
   SHIFT_SECTORS=$((NEW_USER_START - USER_START))
 
+  # Default: keep userfs at its current size (overridden when shift > 0)
+  NEW_USER_SIZE=${USER_SIZE}
+
   # If shrinking rootfs would require a left-move of userfs, we keep userfs
   # unchanged and accept a gap (safe, sufficient for smaller images).
   if [[ ${SHIFT_SECTORS} -lt 0 ]]; then
@@ -157,9 +160,9 @@ EOF
     # Final fresh mkfs because rootfs content will anyway be replaced next
     mkfs.ext4 -F -L rootfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${ROOT_DEV}" || true
 
-    mount /bootfs
-    mount /rootfs
-    mount -o rw /userfs
+    mount /bootfs       || { echo "ERROR (mount /bootfs)"; return 1; }
+    mount /rootfs       || { echo "ERROR (mount /rootfs)"; return 1; }
+    mount -o rw /userfs || { echo "ERROR (mount /userfs)"; return 1; }
 
     echo "OK"
     return 0
@@ -249,11 +252,13 @@ EOF
   resize2fs -p "${USER_DEV}" || true
 
   # re-mount stuff again
-  mount /bootfs
-  mount /rootfs
-  mount -o rw /userfs
+  mount /bootfs       || { echo "ERROR (mount /bootfs)"; return 1; }
+  mount /rootfs       || { echo "ERROR (mount /rootfs)"; return 1; }
+  mount -o rw /userfs || { echo "ERROR (mount /userfs)"; return 1; }
 
   echo "OK"
+
+  return 0
 }
 
 ######
