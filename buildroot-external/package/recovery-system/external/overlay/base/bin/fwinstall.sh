@@ -152,7 +152,7 @@ resize_rootfs()
   # If shrinking rootfs would require a left-move of userfs, we keep userfs
   # unchanged and accept a gap (safe, sufficient for smaller images).
   if [[ ${SHIFT_SECTORS} -lt 0 ]]; then
-    echo -ne "shrink (gap left), "
+    echo -ne "no userfs shift needed (gap), "
 
     # Now shrink only the rootfs partition; keep userfs partition unchanged (gap remains).
     /sbin/sfdisk "${DISK_DEV}" <<EOF
@@ -501,7 +501,7 @@ fwprepare()
         # size with the rootfs partition size inside the new image.
         ROOTFS_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
         if [[ -n "${ROOTFS_DEV}" ]]; then
-          ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" 2>/dev/null | head -1 | cut -f5 -d" " || true)
+          ROOTFS_SIZE=$(/sbin/blockdev --getsize64 "${ROOTFS_DEV}" 2>/dev/null || true)
         else
           ROOTFS_SIZE=""
         fi
@@ -594,7 +594,7 @@ fwprepare()
       # size with the rootfs partition size inside the new image.
       ROOTFS_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
       if [[ -n "${ROOTFS_DEV}" ]]; then
-        ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" 2>/dev/null | head -1 | cut -f5 -d" " || true)
+        ROOTFS_SIZE=$(/sbin/blockdev --getsize64 "${ROOTFS_DEV}" 2>/dev/null || true)
       else
         ROOTFS_SIZE=""
       fi
@@ -785,10 +785,10 @@ fwinstall()
         exit 1
       fi
 
-      # get boot partition size in bytes
-      ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      # get rootfs partition size in bytes
+      ROOTFS_SIZE=$(/sbin/blockdev --getsize64 "${ROOTFS_DEV}")
       if [[ -z "${ROOTFS_SIZE}" ]]; then
-        echo "ERROR: (fdisk)<br/>"
+        echo "ERROR: (blockdev rootfs)<br/>"
         exit 1
       fi
 
@@ -885,10 +885,10 @@ fwinstall()
         exit 1
       fi
 
-      # get boot partition size in bytes
-      BOOTFS_SIZE=$(/sbin/fdisk --bytes -l "${BOOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      # get bootfs partition size in bytes
+      BOOTFS_SIZE=$(/sbin/blockdev --getsize64 "${BOOTFS_DEV}")
       if [[ -z "${BOOTFS_SIZE}" ]]; then
-        echo "ERROR: (fdisk)<br/>"
+        echo "ERROR: (blockdev bootfs)<br/>"
         exit 1
       fi
 
@@ -1009,16 +1009,16 @@ fwinstall()
       fi
 
       # get boot partition size in bytes
-      BOOTFS_SIZE=$(/sbin/fdisk --bytes -l "${BOOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      BOOTFS_SIZE=$(/sbin/blockdev --getsize64 "${BOOTFS_DEV}")
       if [[ -z "${BOOTFS_SIZE}" ]]; then
-        echo "ERROR: (fdisk bootfs)<br/>"
+        echo "ERROR: (blockdev bootfs)<br/>"
         exit 1
       fi
 
       # get boot lofs partition size in bytes
-      BOOTFS_LOOPSIZE=$(/sbin/fdisk --bytes -l "${BOOTFS_LOOPDEV}" | head -1 | cut -f5 -d" ")
+      BOOTFS_LOOPSIZE=$(/sbin/blockdev --getsize64 "${BOOTFS_LOOPDEV}")
       if [[ -z "${BOOTFS_LOOPSIZE}" ]]; then
-        echo "ERROR: (fdisk bootfs loopfs)<br/>"
+        echo "ERROR: (blockdev bootfs loopfs)<br/>"
         exit 1
       fi
 
@@ -1137,16 +1137,16 @@ fwinstall()
       fi
 
       # get root partition size in bytes
-      ROOTFS_SIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_DEV}" | head -1 | cut -f5 -d" ")
+      ROOTFS_SIZE=$(/sbin/blockdev --getsize64 "${ROOTFS_DEV}")
       if [[ -z "${ROOTFS_SIZE}" ]]; then
-        echo "ERROR: (fdisk rootfs)<br/>"
+        echo "ERROR: (blockdev rootfs)<br/>"
         exit 1
       fi
 
       # get root lofs partition size in bytes
-      ROOTFS_LOOPSIZE=$(/sbin/fdisk --bytes -l "${ROOTFS_LOOPDEV}" | head -1 | cut -f5 -d" ")
+      ROOTFS_LOOPSIZE=$(/sbin/blockdev --getsize64 "${ROOTFS_LOOPDEV}")
       if [[ -z "${ROOTFS_LOOPSIZE}" ]]; then
-        echo "ERROR: (fdisk rootfs loopfs)<br/>"
+        echo "ERROR: (blockdev rootfs loopfs)<br/>"
         exit 1
       fi
 
