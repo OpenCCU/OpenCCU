@@ -265,6 +265,11 @@ ${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootabl
 ${ROOT_DEV} : start=${ROOT_START}, size=${NEW_ROOT_SIZE}, type=${ROOT_TYPE}
 ${USER_DEV} : start=${NEW_USER_START}, size=${NEW_USER_SIZE}, type=${USER_TYPE}
 EOF
+  SFDISK_RC=$?
+  if [[ ${SFDISK_RC} -ne 0 ]]; then
+    echo "ERROR: (sfdisk rewrite)"
+    return 1
+  fi
 
   partprobe "${DISK_DEV}" 2>/dev/null || true
 
@@ -298,7 +303,7 @@ fwprepare()
   echo -ne "[1/7] Checking uploaded data... "
   # check if filename exists
   if [[ ! -f "${filename}" ]]; then
-    echo "ERROR: ('${filename}' exists)"
+    echo "ERROR: ('${filename}' does not exist)"
     exit 1
   fi
 
