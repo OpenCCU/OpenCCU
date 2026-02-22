@@ -20,7 +20,7 @@ resize_rootfs()
   #
   # Assumptions (OpenCCU default):
   #   LABEL=bootfs, LABEL=rootfs, LABEL=userfs
-  #   MBR label-id is preserved from the existing partition table (PARTUUID stability)
+  #   MBR label-id is fixed to 0xdeedbeef (PARTUUID stability)
   #
   # Parameters:
   #   $1: current size in bytes
@@ -40,7 +40,6 @@ resize_rootfs()
   local FS_BLKSZ MIN_BLKS MAX_BLKS MARGIN_BLKS TARGET_BLKS
   local OLD_USER_OFFSET NEW_USER_OFFSET
   local E2FSCK_RC E2FSCK_USER_RC
-  local LABEL_ID
   if [[ -z "${SRC_SIZE}" ]] || [[ -z "${DST_SIZE}" ]] || \
      [[ "${SRC_SIZE}" -le 0 ]] || [[ "${DST_SIZE}" -le 0 ]]; then
     echo "ERROR: (invalid resize_rootfs arguments: src=${SRC_SIZE} dst=${DST_SIZE})"
@@ -94,10 +93,10 @@ resize_rootfs()
     return 1
   fi
 
-  # Extract existing label-id to preserve PARTUUID stability
-  LABEL_ID=$(echo "${SFDISK_DUMP}" | awk '/^label-id:/ { print $2; exit }')
-  if [[ -z "${LABEL_ID}" ]]; then
-    LABEL_ID="0xdeedbeef"
+  # Validate that the disk uses the fixed OpenCCU label-id (0xdeedbeef)
+  if ! echo "${SFDISK_DUMP}" | grep -q '^label-id: 0xdeedbeef'; then
+    echo "ERROR: (disk label-id is not 0xdeedbeef, not an OpenCCU disk)"
+    return 1
   fi
 
   _get_line() {
@@ -175,7 +174,7 @@ resize_rootfs()
     # Now shrink only the rootfs partition; keep userfs partition unchanged (gap remains).
     /sbin/sfdisk "${DISK_DEV}" <<EOF
 label: dos
-label-id: ${LABEL_ID}
+label-id: 0xdeedbeef
 device: ${DISK_DEV}
 unit: sectors
 sector-size: ${SECTOR_SIZE}
@@ -275,7 +274,7 @@ EOF
 
   /sbin/sfdisk "${DISK_DEV}" <<EOF
 label: dos
-label-id: ${LABEL_ID}
+label-id: 0xdeedbeef
 device: ${DISK_DEV}
 unit: sectors
 sector-size: ${SECTOR_SIZE}
