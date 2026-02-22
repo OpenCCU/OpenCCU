@@ -27,8 +27,19 @@ resize_rootfs()
   #   $2: desired size in bytes
   #
 
-  SRC_SIZE=${1}  # bytes
-  DST_SIZE=${2}  # bytes
+  local SRC_SIZE=${1}  # bytes
+  local DST_SIZE=${2}  # bytes
+  local BOOT_DEV ROOT_DEV USER_DEV DISK_DEV SECTOR_SIZE SFDISK_DUMP
+  local LINE_BOOT LINE_ROOT LINE_USER
+  local BOOT_START BOOT_SIZE BOOT_TYPE
+  local ROOT_START ROOT_SIZE ROOT_TYPE
+  local USER_START USER_SIZE USER_TYPE
+  local USER_END NEW_ROOT_SIZE NEW_ROOT_END NEW_USER_START SHIFT_SECTORS
+  local NEW_USER_SIZE SFDISK_RC
+  local SHIFT_BYTES OLD_USER_BYTES MAX_FS_BYTES
+  local FS_BLKSZ MIN_BLKS MAX_BLKS MARGIN_BLKS TARGET_BLKS
+  local OLD_USER_OFFSET NEW_USER_OFFSET
+  local E2FSCK_RC E2FSCK_USER_RC
   if [[ -z "${SRC_SIZE}" ]] || [[ -z "${DST_SIZE}" ]] || \
      [[ "${SRC_SIZE}" -le 0 ]] || [[ "${DST_SIZE}" -le 0 ]]; then
     echo "ERROR: (invalid resize_rootfs arguments: src=${SRC_SIZE} dst=${DST_SIZE})"
@@ -79,6 +90,12 @@ resize_rootfs()
   SFDISK_DUMP=$(/sbin/sfdisk -d "${DISK_DEV}" 2>/dev/null)
   if [[ -z "${SFDISK_DUMP}" ]]; then
     echo "ERROR: (sfdisk -d)"
+    return 1
+  fi
+
+  # Validate that the disk uses the fixed OpenCCU label-id (0xdeedbeef)
+  if ! echo "${SFDISK_DUMP}" | grep -q '^label-id: 0xdeedbeef'; then
+    echo "ERROR: (disk label-id is not 0xdeedbeef, not an OpenCCU disk)"
     return 1
   fi
 
@@ -196,7 +213,7 @@ EOF
     fi
 
     echo -ne "move userfs +${SHIFT_SECTORS} sectors, "
-    e2fsck -f -y -v -C 0 "${USER_DEV}"
+    e2fsck -f -y "${USER_DEV}" >/dev/null 2>&1
     E2FSCK_RC=$?
     if [[ ${E2FSCK_RC} -ge 4 ]]; then
       echo "ERROR: (e2fsck userfs, rc=${E2FSCK_RC})"
@@ -249,9 +266,10 @@ EOF
     resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR: (resize2fs userfs)"; return 1; }
     OLD_USER_OFFSET=$((USER_START * SECTOR_SIZE))
     NEW_USER_OFFSET=$((NEW_USER_START * SECTOR_SIZE))
+    sync
     e2image -ra -p -o "${OLD_USER_OFFSET}" -O "${NEW_USER_OFFSET}" "${DISK_DEV}" || { echo "ERROR: (e2image move userfs)"; return 1; }
   else
-    echo "userfs already aligned, "
+    echo -ne "userfs already aligned, "
   fi
 
   /sbin/sfdisk "${DISK_DEV}" <<EOF
@@ -273,7 +291,10 @@ EOF
 
   partprobe "${DISK_DEV}" 2>/dev/null || true
 
-  e2fsck -f -y -v -C 0 "${USER_DEV}"
+  # Fresh mkfs because rootfs content will anyway be replaced in fwinstall()
+  mkfs.ext4 -F -L rootfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${ROOT_DEV}" || { echo "ERROR: (mkfs.ext4 rootfs)"; return 1; }
+
+  e2fsck -f -y "${USER_DEV}" >/dev/null 2>&1
   E2FSCK_USER_RC=$?
   if [[ ${E2FSCK_USER_RC} -ge 4 ]]; then
     echo "ERROR: (e2fsck userfs post-move, rc=${E2FSCK_USER_RC})"
@@ -486,6 +507,7 @@ fwprepare()
         echo "ERROR: (unzip)"
         exit 1
       fi
+      kill ${PROGRESS_PID} 2>/dev/null || true
 
       # use the first found *.img as the image file we analyze regarding
       # potential re-partitioning.
@@ -550,11 +572,17 @@ fwprepare()
               fi
 
               echo -ne "re-unarchiving.."
+              # restart progress indicator
+              awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
+              PROGRESS_PID=$!
+              # shellcheck disable=SC2064
+              trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
               # unarchive the zip once more
               if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
                 echo "ERROR: (unzip)"
                 exit 1
               fi
+              kill ${PROGRESS_PID} 2>/dev/null || true
             elif [[ "${ROOTFS_IMG_SIZE}" -lt "${ROOTFS_SIZE}" ]]; then
               # if image rootfs is smaller we just shrink the rootfs fs and
               # partition but keep userfs untouched.
@@ -569,8 +597,9 @@ fwprepare()
         fi
       fi
 
-      # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      # stop the progress output (may already be stopped on resize paths)
+      kill ${PROGRESS_PID} 2>/dev/null || true
+      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
 
       rm -f "${filename}"
 
