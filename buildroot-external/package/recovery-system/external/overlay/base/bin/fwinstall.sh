@@ -507,6 +507,7 @@ fwprepare()
         echo "ERROR: (unzip)"
         exit 1
       fi
+      kill ${PROGRESS_PID} 2>/dev/null || true
 
       # use the first found *.img as the image file we analyze regarding
       # potential re-partitioning.
@@ -581,6 +582,7 @@ fwprepare()
                 echo "ERROR: (unzip)"
                 exit 1
               fi
+              kill ${PROGRESS_PID} 2>/dev/null || true
             elif [[ "${ROOTFS_IMG_SIZE}" -lt "${ROOTFS_SIZE}" ]]; then
               # if image rootfs is smaller we just shrink the rootfs fs and
               # partition but keep userfs untouched.
