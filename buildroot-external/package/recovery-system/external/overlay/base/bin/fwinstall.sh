@@ -268,6 +268,7 @@ EOF
     NEW_USER_OFFSET=$((NEW_USER_START * SECTOR_SIZE))
     sync
     e2image -ra -p -o "${OLD_USER_OFFSET}" -O "${NEW_USER_OFFSET}" "${DISK_DEV}" || { echo "ERROR: (e2image move userfs)"; return 1; }
+    sync
   else
     echo -ne "userfs already aligned, "
   fi
