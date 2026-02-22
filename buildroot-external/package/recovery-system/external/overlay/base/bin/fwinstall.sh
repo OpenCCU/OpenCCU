@@ -639,8 +639,7 @@ fwprepare()
 
           # For enlarge: check whether the img file itself blocks the required userfs shrink.
           if [[ "${ROOTFS_IMG_SIZE}" -gt "${ROOTFS_SIZE}" ]]; then
-            SECTOR_SIZE_TMP=$(/sbin/blockdev --getss "$(lsblk -d -n -o PKNAME "${ROOTFS_DEV}")" 2>/dev/null || echo 512)
-            SHIFT_B=$(( (ROOTFS_IMG_SIZE - ROOTFS_SIZE) ))
+            SHIFT_B=$(( ROOTFS_IMG_SIZE - ROOTFS_SIZE ))
             IMG_BYTES=$(stat -c%s "${filename}" 2>/dev/null || echo 0)
             USERFS_DEV_TMP=$(/sbin/blkid --label userfs 2>/dev/null || true)
             if [[ -n "${USERFS_DEV_TMP}" ]]; then
