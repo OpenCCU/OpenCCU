@@ -597,8 +597,9 @@ fwprepare()
         fi
       fi
 
-      # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      # stop the progress output (may already be stopped on resize paths)
+      kill ${PROGRESS_PID} 2>/dev/null || true
+      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
 
       rm -f "${filename}"
 
