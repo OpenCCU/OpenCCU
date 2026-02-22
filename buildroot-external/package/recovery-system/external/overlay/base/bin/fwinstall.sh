@@ -301,7 +301,7 @@ EOF
     return 1
   fi
   if ! resize2fs -p "${USER_DEV}"; then
-    echo "WARNING: (resize2fs expand userfs failed, userfs may be smaller than partition)"
+    echo "WARNING: (resize2fs expand userfs failed on ${USER_DEV}, userfs may be smaller than partition)"
   fi
 
   # re-mount stuff again
@@ -636,6 +636,23 @@ fwprepare()
 
         # If resize is needed (image rootfs larger or smaller)
         if [[ -n "${ROOTFS_IMG_SIZE}" ]] && [[ "${ROOTFS_IMG_SIZE}" != "${ROOTFS_SIZE}" ]]; then
+
+          # For enlarge: check whether the img file itself blocks the required userfs shrink.
+          if [[ "${ROOTFS_IMG_SIZE}" -gt "${ROOTFS_SIZE}" ]]; then
+            SECTOR_SIZE_TMP=$(/sbin/blockdev --getss "$(lsblk -d -n -o PKNAME "${ROOTFS_DEV}")" 2>/dev/null || echo 512)
+            SHIFT_B=$(( (ROOTFS_IMG_SIZE - ROOTFS_SIZE) ))
+            IMG_BYTES=$(stat -c%s "${filename}" 2>/dev/null || echo 0)
+            USERFS_DEV_TMP=$(/sbin/blkid --label userfs 2>/dev/null || true)
+            if [[ -n "${USERFS_DEV_TMP}" ]]; then
+              USERFS_BYTES=$(/sbin/blockdev --getsize64 "${USERFS_DEV_TMP}" 2>/dev/null || echo 0)
+              if [[ $((USERFS_BYTES - SHIFT_B)) -lt ${IMG_BYTES} ]]; then
+                echo "ERROR: cannot enlarge rootfs — the uploaded img file (${IMG_BYTES} bytes) occupies"
+                echo "ERROR: the userfs space needed to complete the resize. Free userfs space first.<br/>"
+                exit 1
+              fi
+            fi
+          fi
+
           sync 2>/dev/null || true
           echo -ne "resize rootfs, "
           if ! resize_rootfs "${ROOTFS_SIZE}" "${ROOTFS_IMG_SIZE}"; then
