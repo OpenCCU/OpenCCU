@@ -40,7 +40,7 @@ resize_rootfs()
   local FS_BLKSZ MIN_BLKS MAX_BLKS MARGIN_BLKS TARGET_BLKS
   local OLD_USER_OFFSET NEW_USER_OFFSET
   local E2FSCK_RC E2FSCK_USER_RC
-  local LABEL_TYPE LABEL_ID
+  local LABEL_TYPE LABEL_ID FIRST_LBA
   local BOOT_UUID BOOT_NAME BOOT_ATTRS
   local ROOT_UUID ROOT_NAME ROOT_ATTRS
   local USER_UUID USER_NAME USER_ATTRS
@@ -100,6 +100,7 @@ resize_rootfs()
   # Detect partition table type (dos or gpt) and label-id
   LABEL_TYPE=$(echo "${SFDISK_DUMP}" | awk '/^label:/ {print $2; exit}')
   LABEL_ID=$(echo "${SFDISK_DUMP}" | awk '/^label-id:/ {print $2; exit}')
+  FIRST_LBA=$(echo "${SFDISK_DUMP}" | awk '/^first-lba:/ {print $2; exit}')
 
   # Validate that the disk uses the fixed OpenCCU label-id (MBR: 0xdeedbeef, GPT: DEEDBEEF-0000-0000-0000-000000000000)
   if ! echo "${SFDISK_DUMP}" | grep -E -i -q '^label-id: (0xdeedbeef|deedbeef-0000-0000-0000-000000000000)'; then
@@ -169,8 +170,8 @@ resize_rootfs()
       [[ -n "${ROOT_ATTRS}" ]] && _root_line="${_root_line}, attrs=${ROOT_ATTRS}"
       _user_line="${USER_DEV} : start=${_ust}, size=${_usz}, type=${USER_TYPE}, uuid=${USER_UUID}, name=${USER_NAME}"
       [[ -n "${USER_ATTRS}" ]] && _user_line="${_user_line}, attrs=${USER_ATTRS}"
-      printf 'label: gpt\nlabel-id: %s\ndevice: %s\nunit: sectors\nsector-size: %s\n\n%s\n%s\n%s\n' \
-        "${LABEL_ID}" "${DISK_DEV}" "${SECTOR_SIZE}" \
+      printf 'label: gpt\nlabel-id: %s\ndevice: %s\nunit: sectors\nsector-size: %s\nfirst-lba: %s\n\n%s\n%s\n%s\n' \
+        "${LABEL_ID}" "${DISK_DEV}" "${SECTOR_SIZE}" "${FIRST_LBA}" \
         "${_boot_line}" "${_root_line}" "${_user_line}" | /sbin/sfdisk "${DISK_DEV}"
     else
       /sbin/sfdisk "${DISK_DEV}" <<EOF
