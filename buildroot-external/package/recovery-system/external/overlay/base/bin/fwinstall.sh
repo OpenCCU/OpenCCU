@@ -20,7 +20,7 @@ resize_rootfs()
   #
   # Assumptions (OpenCCU default):
   #   LABEL=bootfs, LABEL=rootfs, LABEL=userfs
-  #   MBR label-id is fixed to 0xdeedbeef (PARTUUID stability)
+  #   MBR label-id is fixed to 0xdeedbeef, GPT label-id is DEEDBEEF-0000-0000-0000-000000000000 (PARTUUID stability)
   #
   # Parameters:
   #   $1: current size in bytes
@@ -40,6 +40,10 @@ resize_rootfs()
   local FS_BLKSZ MIN_BLKS MAX_BLKS MARGIN_BLKS TARGET_BLKS
   local OLD_USER_OFFSET NEW_USER_OFFSET
   local E2FSCK_RC E2FSCK_USER_RC
+  local LABEL_TYPE LABEL_ID FIRST_LBA
+  local BOOT_UUID BOOT_NAME BOOT_ATTRS
+  local ROOT_UUID ROOT_NAME ROOT_ATTRS
+  local USER_UUID USER_NAME USER_ATTRS
   if [[ -z "${SRC_SIZE}" ]] || [[ -z "${DST_SIZE}" ]] || \
      [[ "${SRC_SIZE}" -le 0 ]] || [[ "${DST_SIZE}" -le 0 ]]; then
     echo "ERROR: (invalid resize_rootfs arguments: src=${SRC_SIZE} dst=${DST_SIZE})"
@@ -93,9 +97,14 @@ resize_rootfs()
     return 1
   fi
 
-  # Validate that the disk uses the fixed OpenCCU label-id (0xdeedbeef)
-  if ! echo "${SFDISK_DUMP}" | grep -q '^label-id: 0xdeedbeef'; then
-    echo "ERROR: (disk label-id is not 0xdeedbeef, not an OpenCCU disk)"
+  # Detect partition table type (dos or gpt) and label-id
+  LABEL_TYPE=$(echo "${SFDISK_DUMP}" | awk '/^label:/ {print $2; exit}')
+  LABEL_ID=$(echo "${SFDISK_DUMP}" | awk '/^label-id:/ {print $2; exit}')
+  FIRST_LBA=$(echo "${SFDISK_DUMP}" | awk '/^first-lba:/ {print $2; exit}')
+
+  # Validate that the disk uses the fixed OpenCCU label-id (MBR: 0xdeedbeef, GPT: DEEDBEEF-0000-0000-0000-000000000000)
+  if ! echo "${SFDISK_DUMP}" | grep -E -i -q '^label-id: (0xdeedbeef|deedbeef-0000-0000-0000-000000000000)'; then
+    echo "ERROR: (disk label-id is not OpenCCU-standard, not an OpenCCU disk)"
     return 1
   fi
 
@@ -119,10 +128,64 @@ resize_rootfs()
     printf '%s\n' "${line}" | awk '
       { gsub(/\r/,"",$0); gsub(/,/,"",$0);
         for(i=1;i<=NF;i++){
-          if($i=="type="){v=$(i+1); gsub(/[^0-9A-Fa-f]/,"",v); print v; exit}
-          if(index($i,"type=")==1){v=$i; sub("type=","",v); gsub(/[^0-9A-Fa-f]/,"",v); print v; exit}
+          if($i=="type="){v=$(i+1); gsub(/[^0-9A-Fa-f-]/,"",v); print v; exit}
+          if(index($i,"type=")==1){v=$i; sub("type=","",v); gsub(/[^0-9A-Fa-f-]/,"",v); print v; exit}
         }
       }'
+  }
+  _get_uuid() {
+    local line=${1}
+    printf '%s\n' "${line}" | awk '
+      { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+        for(i=1;i<=NF;i++){
+          if(index($i,"uuid=")==1){v=$i; sub("uuid=","",v); print v; exit}
+        }
+      }'
+  }
+  _get_name() {
+    local line=${1}
+    printf '%s\n' "${line}" | awk '
+      { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+        for(i=1;i<=NF;i++){
+          if(index($i,"name=")==1){v=$i; sub("name=","",v); print v; exit}
+        }
+      }'
+  }
+  _get_attrs() {
+    local line=${1}
+    printf '%s\n' "${line}" | awk '
+      { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+        for(i=1;i<=NF;i++){
+          if(index($i,"attrs=")==1){v=$i; sub("attrs=","",v); print v; exit}
+        }
+      }'
+  }
+  _write_sfdisk() {
+    local _nrs=${1} _ust=${2} _usz=${3}
+    local _boot_line _root_line _user_line
+    if [[ "${LABEL_TYPE}" == "gpt" ]]; then
+      _boot_line="${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, uuid=${BOOT_UUID}, name=${BOOT_NAME}"
+      [[ -n "${BOOT_ATTRS}" ]] && _boot_line="${_boot_line}, attrs=${BOOT_ATTRS}"
+      _root_line="${ROOT_DEV} : start=${ROOT_START}, size=${_nrs}, type=${ROOT_TYPE}, uuid=${ROOT_UUID}, name=${ROOT_NAME}"
+      [[ -n "${ROOT_ATTRS}" ]] && _root_line="${_root_line}, attrs=${ROOT_ATTRS}"
+      _user_line="${USER_DEV} : start=${_ust}, size=${_usz}, type=${USER_TYPE}, uuid=${USER_UUID}, name=${USER_NAME}"
+      [[ -n "${USER_ATTRS}" ]] && _user_line="${_user_line}, attrs=${USER_ATTRS}"
+      printf 'label: gpt\nlabel-id: %s\ndevice: %s\nunit: sectors\nsector-size: %s\nfirst-lba: %s\n\n%s\n%s\n%s\n' \
+        "${LABEL_ID}" "${DISK_DEV}" "${SECTOR_SIZE}" "${FIRST_LBA}" \
+        "${_boot_line}" "${_root_line}" "${_user_line}" | /sbin/sfdisk "${DISK_DEV}"
+    else
+      /sbin/sfdisk "${DISK_DEV}" <<EOF
+label: dos
+label-id: 0xdeedbeef
+device: ${DISK_DEV}
+unit: sectors
+sector-size: ${SECTOR_SIZE}
+
+${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootable
+${ROOT_DEV} : start=${ROOT_START}, size=${_nrs}, type=${ROOT_TYPE}
+${USER_DEV} : start=${_ust}, size=${_usz}, type=${USER_TYPE}
+EOF
+    fi
   }
 
   LINE_BOOT=$(_get_line "${BOOT_DEV}")
@@ -144,6 +207,19 @@ resize_rootfs()
   USER_START=$(_get_num "${LINE_USER}" start)
   USER_SIZE=$(_get_num "${LINE_USER}" size)
   USER_TYPE=$(_get_type "${LINE_USER}")
+
+  # For GPT: extract per-partition uuid, name, and optional attrs
+  if [[ "${LABEL_TYPE}" == "gpt" ]]; then
+    BOOT_UUID=$(_get_uuid "${LINE_BOOT}")
+    BOOT_NAME=$(_get_name "${LINE_BOOT}")
+    BOOT_ATTRS=$(_get_attrs "${LINE_BOOT}")
+    ROOT_UUID=$(_get_uuid "${LINE_ROOT}")
+    ROOT_NAME=$(_get_name "${LINE_ROOT}")
+    ROOT_ATTRS=$(_get_attrs "${LINE_ROOT}")
+    USER_UUID=$(_get_uuid "${LINE_USER}")
+    USER_NAME=$(_get_name "${LINE_USER}")
+    USER_ATTRS=$(_get_attrs "${LINE_USER}")
+  fi
 
   if [[ -z "${ROOT_START}" ]] || [[ -z "${ROOT_SIZE}" ]] || [[ -z "${USER_START}" ]] || [[ -z "${USER_SIZE}" ]]; then
     echo "ERROR: (invalid partition geometry)"
@@ -172,17 +248,7 @@ resize_rootfs()
     echo -ne "no userfs shift needed (gap), "
 
     # Now shrink only the rootfs partition; keep userfs partition unchanged (gap remains).
-    /sbin/sfdisk "${DISK_DEV}" <<EOF
-label: dos
-label-id: 0xdeedbeef
-device: ${DISK_DEV}
-unit: sectors
-sector-size: ${SECTOR_SIZE}
-
-${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootable
-${ROOT_DEV} : start=${ROOT_START}, size=${NEW_ROOT_SIZE}, type=${ROOT_TYPE}
-${USER_DEV} : start=${USER_START}, size=${USER_SIZE}, type=${USER_TYPE}
-EOF
+    _write_sfdisk "${NEW_ROOT_SIZE}" "${USER_START}" "${USER_SIZE}"
     SFDISK_RC=$?
     if [[ ${SFDISK_RC} -ne 0 ]]; then
       echo "ERROR: (sfdisk rewrite)"
@@ -273,17 +339,7 @@ EOF
     echo -ne "userfs already aligned, "
   fi
 
-  /sbin/sfdisk "${DISK_DEV}" <<EOF
-label: dos
-label-id: 0xdeedbeef
-device: ${DISK_DEV}
-unit: sectors
-sector-size: ${SECTOR_SIZE}
-
-${BOOT_DEV} : start=${BOOT_START}, size=${BOOT_SIZE}, type=${BOOT_TYPE}, bootable
-${ROOT_DEV} : start=${ROOT_START}, size=${NEW_ROOT_SIZE}, type=${ROOT_TYPE}
-${USER_DEV} : start=${NEW_USER_START}, size=${NEW_USER_SIZE}, type=${USER_TYPE}
-EOF
+  _write_sfdisk "${NEW_ROOT_SIZE}" "${NEW_USER_START}" "${NEW_USER_SIZE}"
   SFDISK_RC=$?
   if [[ ${SFDISK_RC} -ne 0 ]]; then
     echo "ERROR: (sfdisk rewrite)"
@@ -610,10 +666,10 @@ fwprepare()
 
   # check for .img
   if [[ -z "${FILETYPE}" ]]; then
-    if /usr/bin/file -b "${filename}" | grep -E -q "DOS/MBR boot sector.*"; then
+    if /usr/bin/file -b "${filename}" | grep -E -q "(DOS/MBR boot sector|GUID Partition Table)"; then
       echo -ne "img identified, validating, "
 
-      # the file seems to be a full-fledged SD card image with MBR boot sector, etc. so lets
+      # the file seems to be a full-fledged disk image (MBR or GPT) so lets
       # check if we have exactly 3 partitions
       if ! /usr/sbin/parted -sm "${filename}" print 2>/dev/null | tail -1 | grep -E -q "3:.*:ext4:"; then
         echo "ERROR: (parted)"
