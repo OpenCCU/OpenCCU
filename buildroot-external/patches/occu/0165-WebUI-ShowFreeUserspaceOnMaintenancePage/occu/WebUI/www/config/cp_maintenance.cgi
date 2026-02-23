@@ -361,7 +361,7 @@ proc action_put_page {} {
       set USERFSFREE_MB 0
     }
     set USERFSFREE_GB [format "%.2f" [expr {$USERFSFREE_MB / 1024.0}]]
-    set USERFSFREE_MB_REQ 1843.2
+    set USERFSFREE_MB_REQ 2867.2
     set USERFSFREE_GB_REQ [format "%.1f" [expr {$USERFSFREE_MB_REQ / 1024.0}]]
   }
   
