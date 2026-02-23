@@ -897,9 +897,11 @@ proc action_put_page {} {
          if (userFreeMB < userFreeMBRequired) {
            jQuery('#availableUserSpace').css({ 'color': 'red', 'font-weight': 'bold' });
            jQuery('#btnSoftwareUpdateUpload').removeAttr('onclick');
-           jQuery('#btnSoftwareUpdateUpload').css({ 'color': 'gray' });
+           jQuery('#btnSoftwareUpdateUpload').css({ 'color': 'gray', 'pointer-events': 'none', 'cursor': 'default', 'opacity': '0.5' });
+           jQuery('#btnSoftwareUpdateUpload').attr('aria-disabled', 'true');
            jQuery('#btnFwDirectDownload2').removeAttr('onclick');
-           jQuery('#btnFwDirectDownload2').css({ 'color': 'gray' });
+           jQuery('#btnFwDirectDownload2').css({ 'color': 'gray', 'pointer-events': 'none', 'cursor': 'default', 'opacity': '0.5' });
+           jQuery('#btnFwDirectDownload2').attr('aria-disabled', 'true');
          }
        }
     }
