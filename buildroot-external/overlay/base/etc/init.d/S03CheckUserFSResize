@@ -22,13 +22,16 @@ check_userfs_resize() {
     PARTNUM=$(echo -n "${DEVNAME}" | tail -c 1)
     DEV="/dev/$(readlink "/sys/dev/block/${DEVNODE}" | awk -F/ '{print $(NF-1)}')"
 
-    # find out maximum size (in cylinders)
-    START_CHS=$(/usr/sbin/parted -s -f "${DEV}" unit chs print | grep "^ ${PARTNUM} " | awk '{print $2}')
-    END_CHS=$(/usr/sbin/parted -s -f "${DEV}" unit chs print | grep "^ ${PARTNUM} " | awk '{print $3}')
-    MAX_CHS=$(/usr/sbin/parted -s -f "${DEV}" unit chs print | grep "Disk ${DEV}" | cut -d' ' -f3)
+    # find out maximum size (in sectors)
+    PART_END_SECTOR=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "^ ${PARTNUM} " | awk '{print $3}' | tr -d 's')
+    DISK_SECTORS=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "Disk ${DEV}" | awk '{print $3}' | tr -d 's')
 
-    # only resize the partition if END_CHS != MAX_CHS
-    if [[ -n "${START_CHS}" && -n "${END_CHS}" && -n "${MAX_CHS}" && "${END_CHS}" != "${MAX_CHS}" ]]; then
+    # allow up to 2048 sectors (~1 MiB for 512B sectors) gap to account for GPT
+    # backup header reserved space (typically 33-34 sectors) plus safety margin
+    RESIZE_THRESHOLD=2048
+
+    # only resize the partition if remaining space exceeds the threshold
+    if [[ -n "${PART_END_SECTOR}" && -n "${DISK_SECTORS}" && $((DISK_SECTORS - PART_END_SECTOR)) -gt ${RESIZE_THRESHOLD} ]]; then
       echo -n "resizepart, "
 
       # check if we should do resizefs afterwards before we umount
