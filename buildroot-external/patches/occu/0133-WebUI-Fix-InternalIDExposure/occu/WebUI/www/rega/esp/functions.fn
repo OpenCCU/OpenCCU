@@ -957,7 +957,7 @@ function ::destinationIsParameterVisible() {
   !HmIP-DLP
   ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
-    // TODO - refactoring necessary
+    ! TODO - refactoring necessary
     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
