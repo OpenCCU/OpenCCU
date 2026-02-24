@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
-@@ -396,51 +396,14 @@
+@@ -396,52 +396,14 @@
    if (bShowChannel == true) {
  
      ! Interface HmIP-RF and HmIP-Wired
@@ -25,6 +25,7 @@
 -        || (oDevHssType == "HmIP-UDI-PB2-A")
 -        || (oDevHssType == "HmIP-UDI-SMI55")
 -        || (oDevHssType == "HmIP-UDI-SMI55-A")
+-        || (oDevHssType == "HmIP-DRBLI4")
 -        ) {
 -
 -        object chnParam;
