@@ -291,7 +291,7 @@ jobs:
       - name: Attest artifact provenance [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tgz
           subject-digest: sha256:${{ steps.upload-oci.outputs.artifact-digest }}
@@ -307,7 +307,7 @@ jobs:
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.mf
 
       - name: Attest artifact provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.mf
           subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
@@ -469,7 +469,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
       - name: Attest container provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         id: attest
         with:
           subject-name: ${{ steps.extract_branch.outputs.base_tag }}

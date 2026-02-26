@@ -177,7 +177,7 @@ jobs:
             release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-ccu3.tgz
 
       - name: Attest build archive artifact provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
           subject-digest: sha256:${{ steps.upload-build.outputs.artifact-digest }}
@@ -191,7 +191,7 @@ jobs:
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
 
       - name: Attest manifest artifact provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
