@@ -14,7 +14,7 @@ new file mode 100644
 index 000000000..dc337bee0
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts
-@@ -0,0 +1,751 @@
+@@ -0,0 +1,750 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2016 Fuzhou Rockchip Electronics Co., Ltd
@@ -25,7 +25,6 @@ index 000000000..dc337bee0
 +#include <dt-bindings/pwm/pwm.h>
 +#include <dt-bindings/usb/pd.h>
 +#include "rk3399.dtsi"
-+#include "rk3399-op1-opp.dtsi"
 +
 +/ {
 +	model = "Asus Tinker Board 2/2S";
