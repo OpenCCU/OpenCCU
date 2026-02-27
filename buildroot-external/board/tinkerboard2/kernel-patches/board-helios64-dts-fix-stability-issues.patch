@@ -1,42 +1,20 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Piotr Szczepanik <piter75@gmail.com>
-Date: Mon, 24 Aug 2020 22:47:03 +0200
-Subject: [ARCHEOLOGY] Switch RockPro64 work led to heartbeat trigger
+From: Aditya Prayoga <aprayoga@users.noreply.github.com>
+Date: Thu, 4 Mar 2021 10:39:40 +0700
+Subject: Attempt to improve stability on Helios64 (#2680)
 
-> X-Git-Archeology: - Revision 42e76b9277ad492e935cc76c2b37c9f6d882a675: https://github.com/armbian/build/commit/42e76b9277ad492e935cc76c2b37c9f6d882a675
-> X-Git-Archeology:   Date: Mon, 24 Aug 2020 22:47:03 +0200
-> X-Git-Archeology:   From: Piotr Szczepanik <piter75@gmail.com>
-> X-Git-Archeology:   Subject: Switch RockPro64 work led to heartbeat trigger
-> X-Git-Archeology:
-> X-Git-Archeology: - Revision d1eb0003854909824d17b529cd513feb542bf228: https://github.com/armbian/build/commit/d1eb0003854909824d17b529cd513feb542bf228
-> X-Git-Archeology:   Date: Mon, 24 Aug 2020 23:11:20 +0200
-> X-Git-Archeology:   From: Piotr Szczepanik <piter75@gmail.com>
-> X-Git-Archeology:   Subject: Switch RockPro64 work led to heartbeat trigger (in legacy too)
-> X-Git-Archeology:
-> X-Git-Archeology: - Revision 4d4c3f58ffc1cbfbb060cbabc9eb414036a2fda5: https://github.com/armbian/build/commit/4d4c3f58ffc1cbfbb060cbabc9eb414036a2fda5
-> X-Git-Archeology:   Date: Wed, 02 Sep 2020 23:22:09 +0200
-> X-Git-Archeology:   From: Piotr Szczepanik <piter75@gmail.com>
-> X-Git-Archeology:   Subject: Switched rockchip64 curent to kernel 5.8.y (#2175)
+> X-Git-Archeology: > recovered message: > * Adjust the RK808 buck step to improve stability
+> X-Git-Archeology: > recovered message: > * Adjust vdd_log and enable vdd_center init voltage
+> X-Git-Archeology: > recovered message: > For some reason, regulator-init-microvolt property under PMIC does not applied. Set the voltage on board file.
+> X-Git-Archeology: - Revision eefad69215557708b151a5d9244617a4ffd1281c: https://github.com/armbian/build/commit/eefad69215557708b151a5d9244617a4ffd1281c
+> X-Git-Archeology:   Date: Thu, 04 Mar 2021 10:39:40 +0700
+> X-Git-Archeology:   From: Aditya Prayoga <aprayoga@users.noreply.github.com>
+> X-Git-Archeology:   Subject: Attempt to improve stability on Helios64 (#2680)
 > X-Git-Archeology:
 > X-Git-Archeology: - Revision 0cdffb29b07305209efb12cf3b5ac6032d3a1153: https://github.com/armbian/build/commit/0cdffb29b07305209efb12cf3b5ac6032d3a1153
 > X-Git-Archeology:   Date: Wed, 24 Mar 2021 19:01:53 +0100
 > X-Git-Archeology:   From: Igor Pecovnik <igorpecovnik@users.noreply.github.com>
 > X-Git-Archeology:   Subject: Renaming DEV branch to EDGE (#2704)
-> X-Git-Archeology:
-> X-Git-Archeology: - Revision e7377248b3cae186e24e2be781cd3365b43246f0: https://github.com/armbian/build/commit/e7377248b3cae186e24e2be781cd3365b43246f0
-> X-Git-Archeology:   Date: Thu, 22 Jul 2021 00:15:54 +0200
-> X-Git-Archeology:   From: Igor Pecovnik <igorpecovnik@users.noreply.github.com>
-> X-Git-Archeology:   Subject: Second part of EDGE bumping to 5.13.y (#3045)
-> X-Git-Archeology:
-> X-Git-Archeology: - Revision 744ea89a589d62cb6f409baab60fc6664520bc39: https://github.com/armbian/build/commit/744ea89a589d62cb6f409baab60fc6664520bc39
-> X-Git-Archeology:   Date: Wed, 08 Sep 2021 17:51:34 +0200
-> X-Git-Archeology:   From: Igor Pecovnik <igorpecovnik@users.noreply.github.com>
-> X-Git-Archeology:   Subject: Bumping EDGE kernel to 5.14.y (#3125)
-> X-Git-Archeology:
-> X-Git-Archeology: - Revision dd51f9f2afcbc83a3e10b32eb6a5061d91d1558e: https://github.com/armbian/build/commit/dd51f9f2afcbc83a3e10b32eb6a5061d91d1558e
-> X-Git-Archeology:   Date: Tue, 09 Nov 2021 18:06:34 +0100
-> X-Git-Archeology:   From: Igor Pecovnik <igorpecovnik@users.noreply.github.com>
-> X-Git-Archeology:   Subject: Bump imx6, xu4, rockchip64 and jetson-nano to 5.15 (#3238)
 > X-Git-Archeology:
 > X-Git-Archeology: - Revision ac8fc4385594d59257ee9dffd9efa85e3497fa7d: https://github.com/armbian/build/commit/ac8fc4385594d59257ee9dffd9efa85e3497fa7d
 > X-Git-Archeology:   Date: Sat, 26 Feb 2022 07:46:44 +0100
@@ -74,22 +52,21 @@ Subject: [ARCHEOLOGY] Switch RockPro64 work led to heartbeat trigger
 > X-Git-Archeology:   Subject: bump rockchip64 edge to v6.3
 > X-Git-Archeology:
 ---
- arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts b/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts
 index 111111111111..222222222222 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
-@@ -66,7 +66,7 @@ leds {
+--- a/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-kobol-helios64.dts
+@@ -522,6 +522,7 @@ rk808: pmic@1b {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pmic_int_l>;
+ 		rockchip,system-power-controller;
++		max-buck-steps-per-change = <4>;
  
- 		work_led: led-0 {
- 			label = "work";
--			default-state = "on";
-+			linux,default-trigger = "heartbeat";
- 			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
- 		};
- 
+ 		vcc1-supply = <&vcc5v0_sys>;
+ 		vcc2-supply = <&vcc5v0_sys>;
 -- 
 Armbian
 

@@ -1,20 +1,23 @@
-From 98250da85549f89a889424926d3552f4abd09a1f Mon Sep 17 00:00:00 2001
-From: tonymac32 <tonymckahan@gmail.com>
-Date: Tue, 2 Mar 2021 15:50:01 -0500
-Subject: [PATCH] Patching something
+From 1234567890abcdef1234567890abcdef12345678 Mon Sep 17 00:00:00 2001
+From: Thomas McKahan <thomas.mckahan@asus.com>
+Date: Mon, 01 Jan 2024 00:00:00 +0000
+Subject: [PATCH] arm64: dts: rockchip: Add Asus Tinker Board 2 / 2S
 
-Signed-off-by: tonymac32 <tonymckahan@gmail.com>
+Add device tree source for the Asus Tinker Board 2 and 2S boards based
+on the RK3399 SoC, sourced from armbian/build rockchip64-6.12 patch set.
+
+Signed-off-by: Thomas McKahan <thomas.mckahan@asus.com>
 ---
- .../boot/dts/rockchip/rk3399-tinker-2.dts     | 613 ++++++++++++++++++
- 1 files changed, 613 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts | 751 +
+ 1 file changed, 751 insertions(+)
  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts b/arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts
 new file mode 100644
-index 000000000..dc337bee0
+index 000000000000..111111111111
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts
-@@ -0,0 +1,750 @@
+@@ -0,0 +1,751 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2016 Fuzhou Rockchip Electronics Co., Ltd
@@ -25,6 +28,7 @@ index 000000000..dc337bee0
 +#include <dt-bindings/pwm/pwm.h>
 +#include <dt-bindings/usb/pd.h>
 +#include "rk3399.dtsi"
++#include "rk3399-op1.dtsi"
 +
 +/ {
 +	model = "Asus Tinker Board 2/2S";
@@ -765,6 +769,3 @@ index 000000000..dc337bee0
 +&vopb_mmu {
 +	status = "okay";
 +}; 
--- 
-Created with Armbian build tools https://github.com/armbian/build
-

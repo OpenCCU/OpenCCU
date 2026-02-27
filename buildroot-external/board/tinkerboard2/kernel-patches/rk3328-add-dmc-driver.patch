@@ -1,30 +1,28 @@
-From 2fe9cfa1de2444f38b13d577a2ce67383ee0ccb6 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Paolo Sabatino <paolo.sabatino@gmail.com>
 Date: Tue, 12 Oct 2021 18:45:05 +0000
-Subject: [PATCH] rk3328 dmc driver
+Subject: rk3328 dmc driver
 
 ---
- .../rockchip/rk3328-dram-default-timing.dtsi  | 311 +++++++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  61 ++
- drivers/clk/rockchip/clk-ddr.c                | 131 +++
- drivers/clk/rockchip/clk-rk3328.c             |  13 +-
- drivers/clk/rockchip/clk.h                    |   3 +-
- drivers/devfreq/Kconfig                       |  12 +
- drivers/devfreq/Makefile                      |   1 +
- drivers/devfreq/event/rockchip-dfi.c          | 554 ++++++++++-
- drivers/devfreq/rk3328_dmc.c                  | 863 ++++++++++++++++++
- include/dt-bindings/clock/rockchip-ddr.h      |  63 ++
- include/dt-bindings/memory/rk3328-dram.h      | 159 ++++
- include/soc/rockchip/rockchip_sip.h           |  11 +
- 12 files changed, 2126 insertions(+), 56 deletions(-)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-dram-default-timing.dtsi
- create mode 100644 drivers/devfreq/rk3328_dmc.c
- create mode 100644 include/dt-bindings/clock/rockchip-ddr.h
- create mode 100644 include/dt-bindings/memory/rk3328-dram.h
+ arch/arm64/boot/dts/rockchip/rk3328-dram-default-timing.dtsi | 311 ++++
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi                     |  61 +
+ drivers/clk/rockchip/clk-ddr.c                               | 131 ++
+ drivers/clk/rockchip/clk-rk3328.c                            |  13 +-
+ drivers/clk/rockchip/clk.h                                   |   3 +-
+ drivers/devfreq/Kconfig                                      |  12 +
+ drivers/devfreq/Makefile                                     |   1 +
+ drivers/devfreq/event/rockchip-dfi.c                         |  77 +-
+ drivers/devfreq/rk3328_dmc.c                                 | 836 ++++++++++
+ include/dt-bindings/clock/rockchip-ddr.h                     |  63 +
+ include/dt-bindings/memory/rk3328-dram.h                     | 159 ++
+ include/soc/rockchip/rk3228_grf.h                            |  14 +
+ include/soc/rockchip/rk3328_grf.h                            |  14 +
+ include/soc/rockchip/rockchip_sip.h                          |  11 +
+ 14 files changed, 1692 insertions(+), 14 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3328-dram-default-timing.dtsi b/arch/arm64/boot/dts/rockchip/rk3328-dram-default-timing.dtsi
 new file mode 100644
-index 000000000..a3f5ff4bd
+index 000000000000..111111111111
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3328-dram-default-timing.dtsi
 @@ -0,0 +1,311 @@
@@ -340,10 +338,10 @@ index 000000000..a3f5ff4bd
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index e546c9d1d..3a3a366f1 100644
+index 111111111111..222222222222 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -564,6 +564,67 @@ tsadc: tsadc@ff250000 {
+@@ -595,6 +595,67 @@ tsadc: tsadc@ff250000 {
  		status = "disabled";
  	};
  
@@ -412,7 +410,7 @@ index e546c9d1d..3a3a366f1 100644
  		compatible = "rockchip,rk3328-efuse";
  		reg = <0x0 0xff260000 0x0 0x50>;
 diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 86718c54e..08b313495 100644
+index 111111111111..222222222222 100644
 --- a/drivers/clk/rockchip/clk-ddr.c
 +++ b/drivers/clk/rockchip/clk-ddr.c
 @@ -87,6 +87,134 @@ static const struct clk_ops rockchip_ddrclk_sip_ops = {
@@ -561,10 +559,10 @@ index 86718c54e..08b313495 100644
  		pr_err("%s: unsupported ddrclk type %d\n", __func__, ddr_flag);
  		kfree(ddrclk);
 diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index 2429b7c2a..c37fae805 100644
+index 111111111111..222222222222 100644
 --- a/drivers/clk/rockchip/clk-rk3328.c
 +++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -314,14 +314,15 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+@@ -315,14 +315,15 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
  			RK3328_CLKGATE_CON(14), 1, GFLAGS),
  
  	/* PD_DDR */
@@ -587,10 +585,10 @@ index 2429b7c2a..c37fae805 100644
  	GATE(0, "clk_ddrmon", "xin24m", CLK_IGNORE_UNUSED,
  			RK3328_CLKGATE_CON(0), 6, GFLAGS),
 diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 2271a8412..7405aaf96 100644
+index 111111111111..222222222222 100644
 --- a/drivers/clk/rockchip/clk.h
 +++ b/drivers/clk/rockchip/clk.h
-@@ -362,7 +362,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+@@ -539,7 +539,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
   * DDRCLK flags, including method of setting the rate
   * ROCKCHIP_DDRCLK_SIP: use SIP call to bl31 to change ddrclk rate.
   */
@@ -601,12 +599,12 @@ index 2271a8412..7405aaf96 100644
  struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
  					 const char *const *parent_names,
 diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 37dc40d1f..15fedc95a 100644
+index 111111111111..222222222222 100644
 --- a/drivers/devfreq/Kconfig
 +++ b/drivers/devfreq/Kconfig
-@@ -131,6 +131,18 @@ config ARM_TEGRA20_DEVFREQ
- 	  It reads Memory Controller counters and adjusts the operating
- 	  frequencies and voltages with OPP support.
+@@ -129,6 +129,18 @@ config ARM_MEDIATEK_CCI_DEVFREQ
+ 	  buck voltages and update a proper CCI frequency. Use the notification
+ 	  to get the regulator status.
  
 +config ARM_RK3328_DMC_DEVFREQ
 +	tristate "ARM RK3328 DMC DEVFREQ Driver"
@@ -624,675 +622,144 @@ index 37dc40d1f..15fedc95a 100644
  	tristate "ARM RK3399 DMC DEVFREQ Driver"
  	depends on (ARCH_ROCKCHIP && HAVE_ARM_SMCCC) || \
 diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-index 3ca1ad0ec..2fe9340f2 100644
+index 111111111111..222222222222 100644
 --- a/drivers/devfreq/Makefile
 +++ b/drivers/devfreq/Makefile
-@@ -12,6 +12,7 @@ obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
- obj-$(CONFIG_ARM_IMX_BUS_DEVFREQ)	+= imx-bus.o
+@@ -13,6 +13,7 @@ obj-$(CONFIG_ARM_IMX_BUS_DEVFREQ)	+= imx-bus.o
  obj-$(CONFIG_ARM_IMX8M_DDRC_DEVFREQ)	+= imx8m-ddrc.o
+ obj-$(CONFIG_ARM_MEDIATEK_CCI_DEVFREQ)	+= mtk-cci-devfreq.o
  obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
 +obj-$(CONFIG_ARM_RK3328_DMC_DEVFREQ)	+= rk3328_dmc.o
  obj-$(CONFIG_ARM_SUN8I_A33_MBUS_DEVFREQ)	+= sun8i-a33-mbus.o
- obj-$(CONFIG_ARM_TEGRA_DEVFREQ)	+= tegra30-devfreq.o
+ obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra30-devfreq.o
  
 diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-index 9a88faaf8..c034df869 100644
+index 111111111111..222222222222 100644
 --- a/drivers/devfreq/event/rockchip-dfi.c
 +++ b/drivers/devfreq/event/rockchip-dfi.c
-@@ -18,25 +18,66 @@
- #include <linux/list.h>
- #include <linux/of.h>
+@@ -24,6 +24,8 @@
+ #include <linux/perf_event.h>
  
--#include <soc/rockchip/rk3399_grf.h>
--
--#define RK3399_DMC_NUM_CH	2
--
-+#define PX30_PMUGRF_OS_REG2		0x208
-+
-+#define RK3128_GRF_SOC_CON0		0x140
-+#define RK3128_GRF_OS_REG1		0x1cc
-+#define RK3128_GRF_DFI_WRNUM		0x220
-+#define RK3128_GRF_DFI_RDNUM		0x224
-+#define RK3128_GRF_DFI_TIMERVAL		0x22c
-+#define RK3128_DDR_MONITOR_EN		((1 << (16 + 6)) + (1 << 6))
-+#define RK3128_DDR_MONITOR_DISB		((1 << (16 + 6)) + (0 << 6))
-+
-+#define RK3288_PMU_SYS_REG2		0x9c
-+#define RK3288_GRF_SOC_CON4		0x254
-+#define RK3288_GRF_SOC_STATUS(n)	(0x280 + (n) * 4)
-+#define RK3288_DFI_EN			(0x30003 << 14)
-+#define RK3288_DFI_DIS			(0x30000 << 14)
-+#define RK3288_LPDDR_SEL		(0x10001 << 13)
-+#define RK3288_DDR3_SEL			(0x10000 << 13)
-+
-+#define RK3328_GRF_OS_REG2		0x5d0
-+
-+#define RK3368_GRF_DDRC0_CON0		0x600
-+#define RK3368_GRF_SOC_STATUS5		0x494
-+#define RK3368_GRF_SOC_STATUS6		0x498
-+#define RK3368_GRF_SOC_STATUS8		0x4a0
-+#define RK3368_GRF_SOC_STATUS9		0x4a4
-+#define RK3368_GRF_SOC_STATUS10		0x4a8
-+#define RK3368_DFI_EN			(0x30003 << 5)
-+#define RK3368_DFI_DIS			(0x30000 << 5)
-+
-+#define MAX_DMC_NUM_CH			2
-+#define READ_DRAMTYPE_INFO(n)		(((n) >> 13) & 0x7)
-+#define READ_CH_INFO(n)			(((n) >> 28) & 0x3)
- /* DDRMON_CTRL */
--#define DDRMON_CTRL	0x04
--#define CLR_DDRMON_CTRL	(0x1f0000 << 0)
--#define LPDDR4_EN	(0x10001 << 4)
--#define HARDWARE_EN	(0x10001 << 3)
--#define LPDDR3_EN	(0x10001 << 2)
--#define SOFTWARE_EN	(0x10001 << 1)
--#define SOFTWARE_DIS	(0x10000 << 1)
--#define TIME_CNT_EN	(0x10001 << 0)
-+#define DDRMON_CTRL			0x04
-+#define CLR_DDRMON_CTRL			(0x3f0000 << 0)
-+#define DDR4_EN				(0x10001 << 5)
-+#define LPDDR4_EN			(0x10001 << 4)
-+#define HARDWARE_EN			(0x10001 << 3)
-+#define LPDDR2_3_EN			(0x10001 << 2)
-+#define SOFTWARE_EN			(0x10001 << 1)
-+#define SOFTWARE_DIS			(0x10000 << 1)
-+#define TIME_CNT_EN			(0x10001 << 0)
+ #include <soc/rockchip/rockchip_grf.h>
++#include <soc/rockchip/rk3228_grf.h>
++#include <soc/rockchip/rk3328_grf.h>
+ #include <soc/rockchip/rk3399_grf.h>
+ #include <soc/rockchip/rk3568_grf.h>
+ #include <soc/rockchip/rk3588_grf.h>
+@@ -99,6 +101,7 @@ struct rockchip_dfi {
  
- #define DDRMON_CH0_COUNT_NUM		0x28
- #define DDRMON_CH0_DFI_ACCESS_NUM	0x2c
- #define DDRMON_CH1_COUNT_NUM		0x3c
- #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
- 
-+/* pmu grf */
-+#define PMUGRF_OS_REG2			0x308
-+
-+enum {
-+	DDR4 = 0,
-+	DDR3 = 3,
-+	LPDDR2 = 5,
-+	LPDDR3 = 6,
-+	LPDDR4 = 7,
-+	UNUSED = 0xFF
-+};
-+
- struct dmc_usage {
- 	u32 access;
- 	u32 total;
-@@ -50,33 +91,261 @@ struct dmc_usage {
- struct rockchip_dfi {
- 	struct devfreq_event_dev *edev;
- 	struct devfreq_event_desc *desc;
--	struct dmc_usage ch_usage[RK3399_DMC_NUM_CH];
-+	struct dmc_usage ch_usage[MAX_DMC_NUM_CH];
  	struct device *dev;
  	void __iomem *regs;
- 	struct regmap *regmap_pmu;
 +	struct regmap *regmap_grf;
-+	struct regmap *regmap_pmugrf;
+ 	struct regmap *regmap_pmu;
  	struct clk *clk;
-+	u32 dram_type;
-+	/*
-+	 * available mask, 1: available, 0: not available
-+	 * each bit represent a channel
-+	 */
-+	u32 ch_msk;
-+};
-+
-+static void rk3128_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+ 	int usecount;
+@@ -669,6 +672,46 @@ static int rockchip_ddr_perf_init(struct rockchip_dfi *dfi)
+ }
+ #endif
+ 
++static int rk3228_dfi_init(struct rockchip_dfi *dfi)
 +{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	u32 val;
 +
-+	regmap_write(info->regmap_grf,
-+		     RK3128_GRF_SOC_CON0,
-+		     RK3128_DDR_MONITOR_EN);
-+}
++	regmap_read(dfi->regmap_grf, RK3228_GRF_OS_REG2, &val);
++	dfi->ddr_type = FIELD_GET(RK3228_GRF_OS_REG2_DDRTYPE, val);
 +
-+static void rk3128_dfi_stop_hardware_counter(struct devfreq_event_dev *edev)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++	dfi->channel_mask = GENMASK(0, 0);
++	dfi->max_channels = 1;
 +
-+	regmap_write(info->regmap_grf,
-+		     RK3128_GRF_SOC_CON0,
-+		     RK3128_DDR_MONITOR_DISB);
-+}
++	dfi->buswidth[0] = 2;  // 16 bit bus width
 +
-+static int rk3128_dfi_disable(struct devfreq_event_dev *edev)
-+{
-+	rk3128_dfi_stop_hardware_counter(edev);
++	dfi->ddrmon_stride = 0x0;  // single channel controller
++	dfi->ddrmon_ctrl_single = true;
++
++	dfi->clk = NULL;
 +
 +	return 0;
 +}
 +
-+static int rk3128_dfi_enable(struct devfreq_event_dev *edev)
++static int rk3328_dfi_init(struct rockchip_dfi *dfi)
 +{
-+	rk3128_dfi_start_hardware_counter(edev);
++	u32 val;
++
++	regmap_read(dfi->regmap_grf, RK3328_GRF_OS_REG2, &val);
++	dfi->ddr_type = FIELD_GET(RK3328_GRF_OS_REG2_DDRTYPE, val);
++
++	dfi->channel_mask = GENMASK(0, 0);
++	dfi->max_channels = 1;
++
++	dfi->buswidth[0] = 2;  // 16 bit bus width
++
++	dfi->ddrmon_stride = 0x0;  // single channel controller
++	dfi->ddrmon_ctrl_single = true;
++
++	dfi->clk = NULL;
 +
 +	return 0;
 +}
 +
-+static int rk3128_dfi_set_event(struct devfreq_event_dev *edev)
-+{
-+	return 0;
-+}
-+
-+static int rk3128_dfi_get_event(struct devfreq_event_dev *edev,
-+				struct devfreq_event_data *edata)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+	unsigned long flags;
-+	u32 dfi_wr, dfi_rd, dfi_timer;
-+
-+	local_irq_save(flags);
-+
-+	rk3128_dfi_stop_hardware_counter(edev);
-+
-+	regmap_read(info->regmap_grf, RK3128_GRF_DFI_WRNUM, &dfi_wr);
-+	regmap_read(info->regmap_grf, RK3128_GRF_DFI_RDNUM, &dfi_rd);
-+	regmap_read(info->regmap_grf, RK3128_GRF_DFI_TIMERVAL, &dfi_timer);
-+
-+	edata->load_count = (dfi_wr + dfi_rd) * 4;
-+	edata->total_count = dfi_timer;
-+
-+	rk3128_dfi_start_hardware_counter(edev);
-+
-+	local_irq_restore(flags);
-+
-+	return 0;
-+}
-+
-+static const struct devfreq_event_ops rk3128_dfi_ops = {
-+	.disable = rk3128_dfi_disable,
-+	.enable = rk3128_dfi_enable,
-+	.get_event = rk3128_dfi_get_event,
-+	.set_event = rk3128_dfi_set_event,
-+};
-+
-+static void rk3288_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+
-+	regmap_write(info->regmap_grf, RK3288_GRF_SOC_CON4, RK3288_DFI_EN);
-+}
-+
-+static void rk3288_dfi_stop_hardware_counter(struct devfreq_event_dev *edev)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+
-+	regmap_write(info->regmap_grf, RK3288_GRF_SOC_CON4, RK3288_DFI_DIS);
-+}
-+
-+static int rk3288_dfi_disable(struct devfreq_event_dev *edev)
-+{
-+	rk3288_dfi_stop_hardware_counter(edev);
-+
-+	return 0;
-+}
-+
-+static int rk3288_dfi_enable(struct devfreq_event_dev *edev)
-+{
-+	rk3288_dfi_start_hardware_counter(edev);
-+
-+	return 0;
-+}
-+
-+static int rk3288_dfi_set_event(struct devfreq_event_dev *edev)
-+{
-+	return 0;
-+}
-+
-+static int rk3288_dfi_get_busier_ch(struct devfreq_event_dev *edev)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+	u32 tmp, max = 0;
-+	u32 i, busier_ch = 0;
-+	u32 rd_count, wr_count, total_count;
-+
-+	rk3288_dfi_stop_hardware_counter(edev);
-+
-+	/* Find out which channel is busier */
-+	for (i = 0; i < MAX_DMC_NUM_CH; i++) {
-+		if (!(info->ch_msk & BIT(i)))
-+			continue;
-+		regmap_read(info->regmap_grf,
-+			    RK3288_GRF_SOC_STATUS(11 + i * 4), &wr_count);
-+		regmap_read(info->regmap_grf,
-+			    RK3288_GRF_SOC_STATUS(12 + i * 4), &rd_count);
-+		regmap_read(info->regmap_grf,
-+			    RK3288_GRF_SOC_STATUS(14 + i * 4), &total_count);
-+		info->ch_usage[i].access = (wr_count + rd_count) * 4;
-+		info->ch_usage[i].total = total_count;
-+		tmp = info->ch_usage[i].access;
-+		if (tmp > max) {
-+			busier_ch = i;
-+			max = tmp;
-+		}
-+	}
-+	rk3288_dfi_start_hardware_counter(edev);
-+
-+	return busier_ch;
-+}
-+
-+static int rk3288_dfi_get_event(struct devfreq_event_dev *edev,
-+				struct devfreq_event_data *edata)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+	int busier_ch;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	busier_ch = rk3288_dfi_get_busier_ch(edev);
-+	local_irq_restore(flags);
-+
-+	edata->load_count = info->ch_usage[busier_ch].access;
-+	edata->total_count = info->ch_usage[busier_ch].total;
-+
-+	return 0;
-+}
-+
-+static const struct devfreq_event_ops rk3288_dfi_ops = {
-+	.disable = rk3288_dfi_disable,
-+	.enable = rk3288_dfi_enable,
-+	.get_event = rk3288_dfi_get_event,
-+	.set_event = rk3288_dfi_set_event,
-+};
-+
-+static void rk3368_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+
-+	regmap_write(info->regmap_grf, RK3368_GRF_DDRC0_CON0, RK3368_DFI_EN);
-+}
-+
-+static void rk3368_dfi_stop_hardware_counter(struct devfreq_event_dev *edev)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+
-+	regmap_write(info->regmap_grf, RK3368_GRF_DDRC0_CON0, RK3368_DFI_DIS);
-+}
-+
-+static int rk3368_dfi_disable(struct devfreq_event_dev *edev)
-+{
-+	rk3368_dfi_stop_hardware_counter(edev);
-+
-+	return 0;
-+}
-+
-+static int rk3368_dfi_enable(struct devfreq_event_dev *edev)
-+{
-+	rk3368_dfi_start_hardware_counter(edev);
-+
-+	return 0;
-+}
-+
-+static int rk3368_dfi_set_event(struct devfreq_event_dev *edev)
-+{
-+	return 0;
-+}
-+
-+static int rk3368_dfi_get_event(struct devfreq_event_dev *edev,
-+				struct devfreq_event_data *edata)
-+{
-+	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
-+	unsigned long flags;
-+	u32 dfi0_wr, dfi0_rd, dfi1_wr, dfi1_rd, dfi_timer;
-+
-+	local_irq_save(flags);
-+
-+	rk3368_dfi_stop_hardware_counter(edev);
-+
-+	regmap_read(info->regmap_grf, RK3368_GRF_SOC_STATUS5, &dfi0_wr);
-+	regmap_read(info->regmap_grf, RK3368_GRF_SOC_STATUS6, &dfi0_rd);
-+	regmap_read(info->regmap_grf, RK3368_GRF_SOC_STATUS9, &dfi1_wr);
-+	regmap_read(info->regmap_grf, RK3368_GRF_SOC_STATUS10, &dfi1_rd);
-+	regmap_read(info->regmap_grf, RK3368_GRF_SOC_STATUS8, &dfi_timer);
-+
-+	edata->load_count = (dfi0_wr + dfi0_rd + dfi1_wr + dfi1_rd) * 2;
-+	edata->total_count = dfi_timer;
-+
-+	rk3368_dfi_start_hardware_counter(edev);
-+
-+	local_irq_restore(flags);
-+
-+	return 0;
-+}
-+
-+static const struct devfreq_event_ops rk3368_dfi_ops = {
-+	.disable = rk3368_dfi_disable,
-+	.enable = rk3368_dfi_enable,
-+	.get_event = rk3368_dfi_get_event,
-+	.set_event = rk3368_dfi_set_event,
+ static int rk3399_dfi_init(struct rockchip_dfi *dfi)
+ {
+ 	struct regmap *regmap_pmu = dfi->regmap_pmu;
+@@ -757,6 +800,8 @@ static int rk3588_dfi_init(struct rockchip_dfi *dfi)
  };
  
- static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
- {
- 	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
- 	void __iomem *dfi_regs = info->regs;
--	u32 val;
--	u32 ddr_type;
--
--	/* get ddr type */
--	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
--	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
--		    RK3399_PMUGRF_DDRTYPE_MASK;
+ static const struct of_device_id rockchip_dfi_id_match[] = {
++	{ .compatible = "rockchip,rk3228-dfi", .data = rk3228_dfi_init },
++	{ .compatible = "rockchip,rk3328-dfi", .data = rk3328_dfi_init },
+ 	{ .compatible = "rockchip,rk3399-dfi", .data = rk3399_dfi_init },
+ 	{ .compatible = "rockchip,rk3568-dfi", .data = rk3568_dfi_init },
+ 	{ .compatible = "rockchip,rk3588-dfi", .data = rk3588_dfi_init },
+@@ -786,14 +831,30 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dfi->regs))
+ 		return PTR_ERR(dfi->regs);
  
- 	/* clear DDRMON_CTRL setting */
- 	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+-	node = of_parse_phandle(np, "rockchip,pmu", 0);
+-	if (!node)
+-		return dev_err_probe(&pdev->dev, -ENODEV, "Can't find pmu_grf registers\n");
++	if (soc_init == rk3228_dfi_init ||
++	    soc_init == rk3328_dfi_init) {
++		node = of_parse_phandle(np, "rockchip,grf", 0);
++		if (!node)
++			return dev_err_probe(&pdev->dev, -ENODEV, "Can't find grf registers");
  
- 	/* set ddr type to dfi */
--	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
--		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
--	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
-+	if (info->dram_type == LPDDR3 || info->dram_type == LPDDR2)
-+		writel_relaxed(LPDDR2_3_EN, dfi_regs + DDRMON_CTRL);
-+	else if (info->dram_type == LPDDR4)
- 		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
-+	else if (info->dram_type == DDR4)
-+		writel_relaxed(DDR4_EN, dfi_regs + DDRMON_CTRL);
- 
- 	/* enable count, use software mode */
- 	writel_relaxed(SOFTWARE_EN, dfi_regs + DDRMON_CTRL);
-@@ -100,12 +369,22 @@ static int rockchip_dfi_get_busier_ch(struct devfreq_event_dev *edev)
- 	rockchip_dfi_stop_hardware_counter(edev);
- 
- 	/* Find out which channel is busier */
--	for (i = 0; i < RK3399_DMC_NUM_CH; i++) {
--		info->ch_usage[i].access = readl_relaxed(dfi_regs +
--				DDRMON_CH0_DFI_ACCESS_NUM + i * 20) * 4;
-+	for (i = 0; i < MAX_DMC_NUM_CH; i++) {
-+		if (!(info->ch_msk & BIT(i)))
-+			continue;
+-	dfi->regmap_pmu = syscon_node_to_regmap(node);
+-	of_node_put(node);
+-	if (IS_ERR(dfi->regmap_pmu))
+-		return PTR_ERR(dfi->regmap_pmu);
++		dfi->regmap_grf = syscon_node_to_regmap(node);
++		of_node_put(node);
++		if (IS_ERR(dfi->regmap_grf))
++			return PTR_ERR(dfi->regmap_grf);
++	}
 +
- 		info->ch_usage[i].total = readl_relaxed(dfi_regs +
- 				DDRMON_CH0_COUNT_NUM + i * 20);
--		tmp = info->ch_usage[i].access;
++	if (soc_init == rk3399_dfi_init ||
++	    soc_init == rk3568_dfi_init ||
++	    soc_init == rk3588_dfi_init) {
++		node = of_parse_phandle(np, "rockchip,pmu", 0);
++		if (!node)
++			return dev_err_probe(&pdev->dev, -ENODEV, "Can't find pmu_grf registers\n");
 +
-+		/* LPDDR4 BL = 16,other DDR type BL = 8 */
-+		tmp = readl_relaxed(dfi_regs +
-+				DDRMON_CH0_DFI_ACCESS_NUM + i * 20);
-+		if (info->dram_type == LPDDR4)
-+			tmp *= 8;
-+		else
-+			tmp *= 4;
-+		info->ch_usage[i].access = tmp;
-+
- 		if (tmp > max) {
- 			busier_ch = i;
- 			max = tmp;
-@@ -121,7 +400,8 @@ static int rockchip_dfi_disable(struct devfreq_event_dev *edev)
- 	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
++		dfi->regmap_pmu = syscon_node_to_regmap(node);
++		of_node_put(node);
++		if (IS_ERR(dfi->regmap_pmu))
++			return PTR_ERR(dfi->regmap_pmu);
++	}
  
- 	rockchip_dfi_stop_hardware_counter(edev);
--	clk_disable_unprepare(info->clk);
-+	if (info->clk)
-+		clk_disable_unprepare(info->clk);
+ 	dfi->dev = dev;
+ 	mutex_init(&dfi->mutex);
+@@ -818,6 +879,8 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	dev_notice(dfi->dev, "dfi initialized, dram type: 0x%x, channels: %d\n", dfi->ddr_type, dfi->max_channels);
++
+ 	platform_set_drvdata(pdev, dfi);
  
  	return 0;
- }
-@@ -131,10 +411,13 @@ static int rockchip_dfi_enable(struct devfreq_event_dev *edev)
- 	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
- 	int ret;
- 
--	ret = clk_prepare_enable(info->clk);
--	if (ret) {
--		dev_err(&edev->dev, "failed to enable dfi clk: %d\n", ret);
--		return ret;
-+	if (info->clk) {
-+		ret = clk_prepare_enable(info->clk);
-+		if (ret) {
-+			dev_err(&edev->dev, "failed to enable dfi clk: %d\n",
-+				ret);
-+			return ret;
-+		}
- 	}
- 
- 	rockchip_dfi_start_hardware_counter(edev);
-@@ -151,8 +434,11 @@ static int rockchip_dfi_get_event(struct devfreq_event_dev *edev,
- {
- 	struct rockchip_dfi *info = devfreq_event_get_drvdata(edev);
- 	int busier_ch;
-+	unsigned long flags;
- 
-+	local_irq_save(flags);
- 	busier_ch = rockchip_dfi_get_busier_ch(edev);
-+	local_irq_restore(flags);
- 
- 	edata->load_count = info->ch_usage[busier_ch].access;
- 	edata->total_count = info->ch_usage[busier_ch].total;
-@@ -167,22 +453,116 @@ static const struct devfreq_event_ops rockchip_dfi_ops = {
- 	.set_event = rockchip_dfi_set_event,
- };
- 
--static const struct of_device_id rockchip_dfi_id_match[] = {
--	{ .compatible = "rockchip,rk3399-dfi" },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, rockchip_dfi_id_match);
-+static __init int px30_dfi_init(struct platform_device *pdev,
-+				  struct rockchip_dfi *data,
-+				  struct devfreq_event_desc *desc)
-+{
-+	struct device_node *np = pdev->dev.of_node, *node;
-+	struct resource *res;
-+	u32 val;
- 
--static int rockchip_dfi_probe(struct platform_device *pdev)
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(data->regs))
-+		return PTR_ERR(data->regs);
-+
-+	node = of_parse_phandle(np, "rockchip,pmugrf", 0);
-+	if (node) {
-+		data->regmap_pmugrf = syscon_node_to_regmap(node);
-+		if (IS_ERR(data->regmap_pmugrf))
-+			return PTR_ERR(data->regmap_pmugrf);
-+	}
-+
-+	regmap_read(data->regmap_pmugrf, PX30_PMUGRF_OS_REG2, &val);
-+	data->dram_type = READ_DRAMTYPE_INFO(val);
-+	data->ch_msk = 1;
-+	data->clk = NULL;
-+
-+	desc->ops = &rockchip_dfi_ops;
-+
-+	return 0;
-+}
-+
-+static __init int rk3128_dfi_init(struct platform_device *pdev,
-+				  struct rockchip_dfi *data,
-+				  struct devfreq_event_desc *desc)
- {
--	struct device *dev = &pdev->dev;
--	struct rockchip_dfi *data;
--	struct devfreq_event_desc *desc;
- 	struct device_node *np = pdev->dev.of_node, *node;
- 
--	data = devm_kzalloc(dev, sizeof(struct rockchip_dfi), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
-+	node = of_parse_phandle(np, "rockchip,grf", 0);
-+	if (node) {
-+		data->regmap_grf = syscon_node_to_regmap(node);
-+		if (IS_ERR(data->regmap_grf))
-+			return PTR_ERR(data->regmap_grf);
-+	}
-+
-+	desc->ops = &rk3128_dfi_ops;
-+
-+	return 0;
-+}
-+
-+static __init int rk3288_dfi_init(struct platform_device *pdev,
-+				  struct rockchip_dfi *data,
-+				  struct devfreq_event_desc *desc)
-+{
-+	struct device_node *np = pdev->dev.of_node, *node;
-+	u32 val;
-+
-+	node = of_parse_phandle(np, "rockchip,pmu", 0);
-+	if (node) {
-+		data->regmap_pmu = syscon_node_to_regmap(node);
-+		if (IS_ERR(data->regmap_pmu))
-+			return PTR_ERR(data->regmap_pmu);
-+	}
-+
-+	node = of_parse_phandle(np, "rockchip,grf", 0);
-+	if (node) {
-+		data->regmap_grf = syscon_node_to_regmap(node);
-+		if (IS_ERR(data->regmap_grf))
-+			return PTR_ERR(data->regmap_grf);
-+	}
-+
-+	regmap_read(data->regmap_pmu, RK3288_PMU_SYS_REG2, &val);
-+	data->dram_type = READ_DRAMTYPE_INFO(val);
-+	data->ch_msk = READ_CH_INFO(val);
-+
-+	if (data->dram_type == DDR3)
-+		regmap_write(data->regmap_grf, RK3288_GRF_SOC_CON4,
-+			     RK3288_DDR3_SEL);
-+	else
-+		regmap_write(data->regmap_grf, RK3288_GRF_SOC_CON4,
-+			     RK3288_LPDDR_SEL);
-+
-+	desc->ops = &rk3288_dfi_ops;
-+
-+	return 0;
-+}
-+
-+static __init int rk3368_dfi_init(struct platform_device *pdev,
-+				  struct rockchip_dfi *data,
-+				  struct devfreq_event_desc *desc)
-+{
-+	struct device *dev = &pdev->dev;
-+
-+	if (!dev->parent || !dev->parent->of_node)
-+		return -EINVAL;
-+
-+	data->regmap_grf = syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(data->regmap_grf))
-+		return PTR_ERR(data->regmap_grf);
-+
-+	desc->ops = &rk3368_dfi_ops;
-+
-+	return 0;
-+}
-+
-+static __init int rockchip_dfi_init(struct platform_device *pdev,
-+				    struct rockchip_dfi *data,
-+				    struct devfreq_event_desc *desc)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = pdev->dev.of_node, *node;
-+	u32 val;
- 
- 	data->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->regs))
-@@ -202,21 +582,97 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
- 		if (IS_ERR(data->regmap_pmu))
- 			return PTR_ERR(data->regmap_pmu);
- 	}
--	data->dev = dev;
-+
-+	regmap_read(data->regmap_pmu, PMUGRF_OS_REG2, &val);
-+	data->dram_type = READ_DRAMTYPE_INFO(val);
-+	data->ch_msk = READ_CH_INFO(val);
-+
-+	desc->ops = &rockchip_dfi_ops;
-+
-+	return 0;
-+}
-+
-+static __init int rk3328_dfi_init(struct platform_device *pdev,
-+				  struct rockchip_dfi *data,
-+				  struct devfreq_event_desc *desc)
-+{
-+	struct device_node *np = pdev->dev.of_node, *node;
-+	struct resource *res;
-+	u32 val;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(data->regs))
-+		return PTR_ERR(data->regs);
-+
-+	node = of_parse_phandle(np, "rockchip,grf", 0);
-+	if (node) {
-+		data->regmap_grf = syscon_node_to_regmap(node);
-+		if (IS_ERR(data->regmap_grf))
-+			return PTR_ERR(data->regmap_grf);
-+	}
-+
-+	regmap_read(data->regmap_grf, RK3328_GRF_OS_REG2, &val);
-+	data->dram_type = READ_DRAMTYPE_INFO(val);
-+	data->ch_msk = 1;
-+	data->clk = NULL;
-+
-+	desc->ops = &rockchip_dfi_ops;
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rockchip_dfi_id_match[] = {
-+	{ .compatible = "rockchip,px30-dfi", .data = px30_dfi_init },
-+	{ .compatible = "rockchip,rk1808-dfi", .data = px30_dfi_init },
-+	{ .compatible = "rockchip,rk3128-dfi", .data = rk3128_dfi_init },
-+	{ .compatible = "rockchip,rk3288-dfi", .data = rk3288_dfi_init },
-+	{ .compatible = "rockchip,rk3328-dfi", .data = rk3328_dfi_init },
-+	{ .compatible = "rockchip,rk3368-dfi", .data = rk3368_dfi_init },
-+	{ .compatible = "rockchip,rk3399-dfi", .data = rockchip_dfi_init },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, rockchip_dfi_id_match);
-+
-+static int rockchip_dfi_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rockchip_dfi *data;
-+	struct devfreq_event_desc *desc;
-+	struct device_node *np = pdev->dev.of_node;
-+	const struct of_device_id *match;
-+	int (*init)(struct platform_device *pdev, struct rockchip_dfi *data,
-+		    struct devfreq_event_desc *desc);
-+
-+	data = devm_kzalloc(dev, sizeof(struct rockchip_dfi), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
- 
- 	desc = devm_kzalloc(dev, sizeof(*desc), GFP_KERNEL);
- 	if (!desc)
- 		return -ENOMEM;
- 
--	desc->ops = &rockchip_dfi_ops;
-+	match = of_match_node(rockchip_dfi_id_match, pdev->dev.of_node);
-+	if (match) {
-+		init = match->data;
-+		if (init) {
-+			if (init(pdev, data, desc))
-+				return -EINVAL;
-+		} else {
-+			return 0;
-+		}
-+	} else {
-+		return 0;
-+	}
-+
- 	desc->driver_data = data;
- 	desc->name = np->name;
- 	data->desc = desc;
-+	data->dev = dev;
- 
--	data->edev = devm_devfreq_event_add_edev(&pdev->dev, desc);
-+	data->edev = devm_devfreq_event_add_edev(dev, desc);
- 	if (IS_ERR(data->edev)) {
--		dev_err(&pdev->dev,
--			"failed to add devfreq-event device\n");
-+		dev_err(dev, "failed to add devfreq-event device\n");
- 		return PTR_ERR(data->edev);
- 	}
- 
 diff --git a/drivers/devfreq/rk3328_dmc.c b/drivers/devfreq/rk3328_dmc.c
 new file mode 100644
-index 00000000000..7665526f086
+index 000000000000..111111111111
 --- /dev/null
 +++ b/drivers/devfreq/rk3328_dmc.c
 @@ -0,0 +1,836 @@
@@ -2100,7 +1567,7 @@ index 00000000000..7665526f086
 +
 +}
 +
-+static int rk3328_dmcfreq_remove(struct platform_device *pdev)
++static void rk3328_dmcfreq_remove(struct platform_device *pdev)
 +{
 +	struct rk3328_dmcfreq *dmcfreq = dev_get_drvdata(&pdev->dev);
 +
@@ -2109,7 +1576,7 @@ index 00000000000..7665526f086
 +	 */
 +	rk3328_devfreq_fini(dmcfreq);
 +
-+	return 0;
++	return;
 +}
 +
 +static const struct of_device_id rk3328dmc_devfreq_of_match[] = {
@@ -2134,7 +1601,7 @@ index 00000000000..7665526f086
 +MODULE_DESCRIPTION("RK3328 dmcfreq driver with devfreq framework");
 diff --git a/include/dt-bindings/clock/rockchip-ddr.h b/include/dt-bindings/clock/rockchip-ddr.h
 new file mode 100644
-index 000000000..b065432e7
+index 000000000000..111111111111
 --- /dev/null
 +++ b/include/dt-bindings/clock/rockchip-ddr.h
 @@ -0,0 +1,63 @@
@@ -2203,7 +1670,7 @@ index 000000000..b065432e7
 +#endif
 diff --git a/include/dt-bindings/memory/rk3328-dram.h b/include/dt-bindings/memory/rk3328-dram.h
 new file mode 100644
-index 000000000..171f41c25
+index 000000000000..111111111111
 --- /dev/null
 +++ b/include/dt-bindings/memory/rk3328-dram.h
 @@ -0,0 +1,159 @@
@@ -2366,8 +1833,48 @@ index 000000000..171f41c25
 +#define PHY_DDR4_LPDDR3_RON_RTT_20ohm	(31)
 +
 +#endif /*_DT_BINDINGS_DRAM_ROCKCHIP_RK3328_H*/
+diff --git a/include/soc/rockchip/rk3228_grf.h b/include/soc/rockchip/rk3228_grf.h
+new file mode 100644
+index 000000000000..111111111111
+--- /dev/null
++++ b/include/soc/rockchip/rk3228_grf.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Rockchip General Register Files definitions for RK3228
++ *
++ * Author: Paolo Sabatino <paolo.sabatino@gmail.com>
++ */
++
++#ifndef __SOC_RK3228_GRF_H
++#define __SOC_RK3228_GRF_H
++
++#define RK3228_GRF_OS_REG2		0x5d0
++#define RK3228_GRF_OS_REG2_DDRTYPE	GENMASK(15, 13)
++
++#endif
+diff --git a/include/soc/rockchip/rk3328_grf.h b/include/soc/rockchip/rk3328_grf.h
+new file mode 100644
+index 000000000000..111111111111
+--- /dev/null
++++ b/include/soc/rockchip/rk3328_grf.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Rockchip General Register Files definitions for RK3328
++ *
++ * Author: Paolo Sabatino <paolo.sabatino@gmail.com>
++ */
++
++#ifndef __SOC_RK3328_GRF_H
++#define __SOC_RK3328_GRF_H
++
++#define RK3328_GRF_OS_REG2		0x5d0
++#define RK3328_GRF_OS_REG2_DDRTYPE	GENMASK(15, 13)
++
++#endif
 diff --git a/include/soc/rockchip/rockchip_sip.h b/include/soc/rockchip/rockchip_sip.h
-index c46a9ae2a..fa7e0a2d7 100644
+index 111111111111..222222222222 100644
 --- a/include/soc/rockchip/rockchip_sip.h
 +++ b/include/soc/rockchip/rockchip_sip.h
 @@ -16,5 +16,16 @@
@@ -2388,5 +1895,5 @@ index c46a9ae2a..fa7e0a2d7 100644
  
  #endif
 -- 
-2.30.2
+Armbian
 
