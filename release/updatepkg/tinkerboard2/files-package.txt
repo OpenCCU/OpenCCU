@@ -1,0 +1,3 @@
+EULA.de
+EULA.en
+update_script

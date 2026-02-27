@@ -1,0 +1,58 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169,SC3010,SC3036
+
+STARTPWD=$(pwd)
+BOOT_FS=boot.vfat.gz
+ROOT_FS=rootfs.ext4.gz
+
+# check that this is a tinkerboard2 and nothing else
+PLATFORM=$(grep PLATFORM= /VERSION | cut -d= -f2)
+if [[ "${PLATFORM}" != "tinkerboard2" ]]; then
+  echo "ERROR: (PLATFORM != tinkerboard2)<br/>"
+  exit 1
+fi
+
+RC=1
+if [[ -f "${STARTPWD}/${BOOT_FS}" ]]; then
+  BOOT_DEV=$(/bin/mount | grep "/bootfs" | cut -f1 -d" ")
+  if [[ -n "${BOOT_DEV}" ]]; then
+    echo -ne "Writing bootfs to ${BOOT_DEV}... "
+    /bin/umount -f /bootfs
+    if ! zcat "${STARTPWD}/${BOOT_FS}" | /bin/dd of="${BOOT_DEV}" bs=1M conv=fsync; then
+      echo "ERROR: (dd)"
+      RC=1
+    else
+      echo "OK<br/>"
+      RC=0
+    fi
+    /bin/mount /bootfs
+  else
+    echo "ERROR: no /bootfs found<br/>"
+    RC=1
+  fi
+else
+  echo "INFO: no bootfs update found, OK<br/>"
+fi
+
+if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
+  ROOT_DEV=$(/bin/mount | grep "/rootfs" | cut -f1 -d" ")
+  if [[ -n "${ROOT_DEV}" ]]; then
+    echo -ne "Writing rootfs to ${ROOT_DEV}... "
+    /bin/umount -f /rootfs
+    if ! zcat "${STARTPWD}/${ROOT_FS}" | /bin/dd of="${ROOT_DEV}" bs=1M conv=fsync; then
+      echo "ERROR: (dd)"
+      RC=1
+    else
+      echo "OK<br/>"
+      RC=0
+    fi
+    /bin/mount /rootfs
+  else
+    echo "ERROR: not /rootfs found<br/>"
+    RC=1
+  fi
+else
+  echo "INFO: no rootfs update found, OK<br/>"
+fi
+
+exit ${RC}

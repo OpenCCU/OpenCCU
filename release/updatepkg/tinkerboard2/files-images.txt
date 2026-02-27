@@ -1,0 +1,2 @@
+rootfs.ext4
+boot.vfat
