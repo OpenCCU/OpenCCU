@@ -83,7 +83,7 @@ jobs:
           envsubst <.github/release-template.md >/tmp/release-template.md
 
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: /tmp/release-template.md
           name: release-template.md
@@ -169,7 +169,7 @@ jobs:
       #
       - name: Upload build archive artifact [rpi3/ccu3]
         id: upload-build
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
           path: |
@@ -185,7 +185,7 @@ jobs:
 
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
