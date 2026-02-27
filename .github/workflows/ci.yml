@@ -260,11 +260,11 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download oci_amd64 artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_amd64.tgz
       - name: Download oci_arm64 artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_arm64.tgz
 
