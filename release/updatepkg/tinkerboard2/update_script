@@ -48,7 +48,7 @@ if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
     fi
     /bin/mount /rootfs
   else
-    echo "ERROR: not /rootfs found<br/>"
+    echo "ERROR: no /rootfs found<br/>"
     RC=1
   fi
 else
