@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/controls/heating_control.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/heating_control.fn
-@@ -583,7 +583,7 @@
+@@ -782,7 +782,7 @@
    WriteLine("<td>");
      WriteLine("<table class='ControlBtnInfo' style='width:200px'>");
        WriteLine("<tr>");
@@ -9,7 +9,7 @@
        WriteLine("</tr>");
      WriteLine("</table>");
    WriteLine("</td>");
-@@ -612,7 +612,7 @@
+@@ -811,7 +811,7 @@
  
      WriteLine("}");
  

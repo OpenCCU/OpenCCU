@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/programs.fn.orig
 +++ occu/WebUI/www/rega/esp/programs.fn
-@@ -274,7 +274,7 @@
+@@ -291,7 +291,7 @@
                        sValueUnit = "";
                      }
                      
@@ -9,7 +9,7 @@
                      {
                        oSC.ConditionType(6);
                        iCT1 = 6;
-@@ -291,6 +291,11 @@
+@@ -313,6 +313,11 @@
                      if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
                      !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
                      if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
@@ -32,7 +32,7 @@
          {
            oSC.ConditionType(6);
            iCT1 = 6;
-@@ -343,6 +343,10 @@
+@@ -349,6 +349,10 @@
          if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
          !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
          if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
@@ -54,7 +54,7 @@
      <table>
      <tr><td style="height: 15px;"></td></tr>
      <tr>
-@@ -85,7 +85,7 @@
+@@ -97,7 +97,7 @@
        <td>
          <% string sChecked = ""; if(iCT==5) { sChecked="checked"; } %>
          <input id="Radio0" type="radio" <% Write(sChecked); %> onclick="SetCT(this);" name="valueRange"/>
@@ -63,7 +63,7 @@
        </td>
        <td>
          <input id="Text0" type="text" value="<% Write(iRV1); %>" class="CLASS00806"/>
-@@ -93,7 +93,17 @@
+@@ -105,7 +105,17 @@
        </td>
      </tr>
  
@@ -82,7 +82,7 @@
  
      <tr>
        <td>
-@@ -177,6 +187,7 @@
+@@ -189,6 +199,7 @@
      if( elem.id=="Radio3" ) ct = 10;
      if( elem.id=="Radio4" ) ct = 9;
      if( elem.id=="Radio5" ) ct = 11;
@@ -90,7 +90,7 @@
    }
    SaveValueRange = function()
    {
-@@ -264,6 +275,18 @@
+@@ -271,6 +282,18 @@
          } else {
            if ( ( (rv1/1) < (min/1) ) || ( (rv1/1) > (max/1) ) ) {
              go = 6;
@@ -111,7 +111,7 @@
          break;
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -774,13 +774,15 @@
+@@ -780,7 +780,7 @@
      "ruleConditionSelectDeviceList" : "Ger%E4teauswahl",
      "ruleConditionLblWhen" : "bei",
      "ruleConditionSelectSystemState" : "Systemzustand",
@@ -119,7 +119,8 @@
 +    "ruleConditionLblWithinValueRange" : "im Wertebereich / mit Wert",
      "ruleConditionLblRangeFrom" : "von",
      "ruleConditionLblRangeLessThan" : "bis kleiner",
-     "ruleConditionLblGreaterThan" : "gr%F6%DFer als",
+     "ruleConditionLblRangeGreaterThan" : "und gr%F6%DFer",
+@@ -788,6 +788,8 @@
      "ruleConditionLblLessThan" : "kleiner als",
      "ruleConditionLblGreaterOrEqualThan" : "gr%F6%DFer oder gleich",
      "ruleConditionLblLessOrEqualThan" : "kleiner oder gleich",
@@ -130,24 +131,16 @@
      "ruleConditionLblTimePeriodically" : "Periodisch",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -213,7 +213,7 @@
-     "lblChannelMappingYes" : "with",
-     "lblChannelMappingNo" : "without",
-     "lblValueDescription" : "Value description",
--    "lblValueRange" : "Value range",
-+    "lblValueRange" : "Value range / with value",
-     "lblSystemVariable" : "System variable",
-     "lblLeft" : "Left",
-     "lblCenter" : "Centre",
-@@ -807,13 +807,15 @@
+@@ -813,7 +813,7 @@
      "ruleConditionLblWhen" : "when",
  
      "ruleConditionSelectSystemState" : "System state",
 -    "ruleConditionLblWithinValueRange" : "within value range",
 +    "ruleConditionLblWithinValueRange" : "within value range / with value",
      "ruleConditionLblRangeFrom" : "from",
-     "ruleConditionLblRangeLessThan" : "and less than",
-     "ruleConditionLblGreaterThan" : "more than",
+     "ruleConditionLblRangeLessThan" : "to less than",
+     "ruleConditionLblRangeGreaterThan" : "and more than",
+@@ -821,6 +821,8 @@
      "ruleConditionLblLessThan" : "less than",
      "ruleConditionLblGreaterOrEqualThan" : "more or equal",
      "ruleConditionLblLessOrEqualThan" : "less or equal",

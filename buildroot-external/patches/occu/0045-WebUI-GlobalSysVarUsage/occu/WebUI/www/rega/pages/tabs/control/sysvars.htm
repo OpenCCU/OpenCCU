@@ -42,14 +42,14 @@
 <div id="prgcontent">
   <table id="sysvarsListTable" class="tTable tblList CLASS03301 hidden" border="0" cellpadding="0" cellspacing="0" >
     <colgroup>
-      <col width="25%" />
-      <col width="25%" />
-      <col width="25%" />
-      <col width="25%" />
+      <col />
+      <col />
+      <col />
+      <col />
     </colgroup>
       <tr>
         <%string sCssName="Sort"; if(firstSort||(system.GetSessionVar("sessionLS")=="name")){sCssName="SortSelected";} %>
-        <th class="CLASS03302"><div id="name" class="tHeaderCell<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></th>
+        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></th>
         <th class="tHeaderCell CLASS03303" >${thDescription}</th>
         <th class="tHeaderCell CLASS03303" >${thLastChange}</th>
         <th class="tHeaderCell CLASS03303" >${thState}</th>
@@ -87,7 +87,7 @@
                 string trId = "sysvar"#o.ID();
                 WriteLine( '<tr id="'#trId#'" class="CLASS03305">' );
                 WriteLine( '<td class="tBodyCell">' # o.Name() # '</td>' );
-                WriteLine( '<td class="tBodyCell">' # o.DPInfo() # '</td>' );
+                WriteLine( '<td class="tBodyCell">' # o.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>') # '</td>' );
                 string sTimestamp = o.Timestamp();
                 Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
                 WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
@@ -134,8 +134,8 @@ var s = "";
 
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS03306' onclick='fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   

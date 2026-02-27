@@ -712,7 +712,7 @@ arChSv = new Array();
             Write( '</td>' );
           }
                    
-          Write('<td align="center" valign="middle" class="TblUserAdministration CLASS06321">');
+          Write('<td style="text-align:center; vertical-align: middle;" class="TblUserAdministration CLASS06321">');
             Write('<div class="StdButton CLASS06322" onclick="iseFavorites.RemoveFromList('#oFav.ID()#','#oEntry.ID()#');">${btnRemove}</div>');
           Write('</td>');
         Write('</tr>');
@@ -857,9 +857,9 @@ arChSv = new Array();
   var s = "";
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='iseFavorites.RemoveList(<%Write(oFav.ID());%>);'>${footerBtnCancel}</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS06327' onclick='CopyFavoriteList()'>${footerBtnSaveNewFav}</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='SaveFavoriteList()'>${footerBtnOk}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='iseFavorites.RemoveList(<%Write(oFav.ID());%>);'>${footerBtnCancel}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS06327' onclick='CopyFavoriteList()'>${footerBtnSaveNewFav}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='SaveFavoriteList()'>${footerBtnOk}</div></td>";
   s += "</tr>";
   s += "</table>";
   setFooter(s);
@@ -1023,7 +1023,7 @@ arChSv = new Array();
     };
   
     ChannelChooser.show(callback, ChannelChooser.SHOW_ALL);
-  }  
+  };
   
   ShowSysVarChooser = function(id)
   {
@@ -1037,7 +1037,7 @@ arChSv = new Array();
         iseFavorites.AddToList(id,dlgResult);
       }
     }
-  }
+  };
   
   ShowProgramChooser = function(id)
   {
@@ -1051,12 +1051,12 @@ arChSv = new Array();
         iseFavorites.AddToList(id,dlgResult);
       }
     }
-  }
+  };
   
   AddSeparator = function(id)
   {
     iseFavorites.AddSeparator(id);
-  }
+  };
   SaveFavoriteList = function()
   {
     var sArr = new Array();
@@ -1076,7 +1076,7 @@ arChSv = new Array();
       }
     %>    
     iseFavorites.SaveFavoriteList(<% Write( oFav.ID() ); %>, $('cbIsPC').checked, $('cbIsPDA').checked, $('cbIsCENTRAL').checked, sArr.join("\t") );
-  }
+  };
   
   CopyFavoriteList = function()
   {
@@ -1097,19 +1097,19 @@ arChSv = new Array();
       }
     %>    
     iseFavorites.CopyToNew(<% Write( oFav.ID() ); %>, $('cbIsPC').checked, $('cbIsPDA').checked, $('cbIsCENTRAL').checked, sArr.join("\t") );
-  }
+  };
   
   FavColCountSelect = function(idx)
   {
     iseFavorites.FavColumnCount( <% Write( oFav.ID() ); %>, idx );
-  }
+  };
   FavColAlignSelect = function(idx)
   {
     iseFavorites.FavColumnAlign( <% Write( oFav.ID() ); %>, idx );
-  }
+  };
   
   FavNamePosSelect = function(idx)
   {
     iseFavorites.FavNamePosition( <% Write( oFav.ID() ); %>, idx );
-  }
+  };
 </script>

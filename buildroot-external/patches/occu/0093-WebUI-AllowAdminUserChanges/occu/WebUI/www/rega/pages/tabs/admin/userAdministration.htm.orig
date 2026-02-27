@@ -39,20 +39,20 @@
 
 <table cellpadding="0" cellspacing="0" id="userAdmin" class="tTable" style="display:none">
 <colgroup>
-<col style="width:6%;" width="6%" />
-<col style="width:6%;" />
-<col style="width:6%;"/>
-<!-- <col style="width:6%;" /> -->
-<col style="width:6%;"/>
-<col style="width:8%;"/>
-<col style="width:8%;"/>
-<col style="width:6%;" />
-<col style="width:6%;" />
+  <col />
+  <col />
+  <col />
+  <!-- <col /> -->
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;" />
 </colgroup>
 
 <tr class="CLASS05300">
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th class="CLASS05301"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arUserNames,'name',true);">${thUserName}</div></th>
+  <th class="thCell CLASS05301"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arUserNames,'name',true);">${thUserName}</div></th>
   <th class="thCell">${thPassword}</th>
   <th class="thCell">${thBtnForLogin}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="level"){sCssName="SortSelected";} %>

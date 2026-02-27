@@ -111,7 +111,7 @@
     object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
     integer userID = oUser.ID();
     object user = dom.GetObject(userID);
-
+    integer virtChnCounter = 0;
 
     object func = dom.GetObject(system.GetVar("id"));
     if (func) {

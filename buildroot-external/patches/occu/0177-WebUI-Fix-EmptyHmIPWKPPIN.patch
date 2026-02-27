@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/easymodes/etc/uiElements.tcl.orig
 +++ occu/WebUI/www/config/easymodes/etc/uiElements.tcl
-@@ -175,7 +175,7 @@
+@@ -265,7 +265,7 @@
  
    # exec echo "getTextField: $extraparam" >> /tmp/textField.log
  

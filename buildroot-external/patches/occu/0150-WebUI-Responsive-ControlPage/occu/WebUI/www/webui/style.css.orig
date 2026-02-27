@@ -52,6 +52,10 @@ hr {
   min-width: 230px;
 }
 
+input[type=checkbox], input[type=radio] {
+  vertical-align: -2px;
+}
+
 .conditionEven
 {
   /*Wenn die Farbe nicht nur als Rahmen, sondern für die ganze Bedingung gelten soll,
@@ -192,6 +196,11 @@ a img {
 #GroupListBody
 {
   display: contents;
+}
+
+#divDL, #divRTD, #divFL, #divHTF, #divRL, #divHTR
+{
+  height: 100%;
 }
 
 /* Kopfzeile */
@@ -336,7 +345,7 @@ a img {
 {
   /*position: absolute;*/
   margin-left: 0px;
-  margin-top: 6px;
+  margin-top: 0px;
   padding-left: 10px;
 }
 
@@ -423,6 +432,8 @@ a img {
   border:solid 1px $_(black); /* black */
   background-color:$_(clickable);
   height:50px;
+  font-weight:normal;
+  color: $_(textColorA); /* white */
 }
 
 .filterTable td
@@ -632,13 +643,12 @@ a img {
 .tblList th {
   color: $_(textColorA); /* white */
   font-weight: normal;
-  background-color: $_(clickable);
 }
 
 .Sort
 {
   cursor: pointer;
-  height: 54px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -648,7 +658,7 @@ a img {
 {
   cursor: pointer;
   background-color: $_(active); /* #565657 */
-  height: 54px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -697,12 +707,12 @@ a img {
 .popupTableScript
 {
   width: 100%;
-  border: solid 1px $_(black); /* black */
   empty-cells: show;
   color: $_(textColorA); /* white */
   text-align: center;
   vertical-align: middle;
   font-weight: normal;
+  border-spacing: 2px;
 }
 
 .popupTableRow
@@ -888,6 +898,24 @@ a img {
   min-height: 30px;
 }
 
+.ControlBtnInfoActive {
+  background-color: $_(active);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoNotActive {
+  background-color: #89989b;
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
 .ControlBtnPushed {
   background-color: $_(clickable);
   color: $_(textColorB); /* black */
@@ -962,7 +990,6 @@ a img {
     border:1px solid $_(black); /* black */
     /* width:95%; */
     text-align:center;
-    height:20px;
     line-height:20px;
     vertical-align:middle;
     color: $_(textColorB); /* black */
@@ -1158,13 +1185,19 @@ a img {
   text-align:center;
 }
 .SysVarsTblPopup{
+  background-color:$_(activeBackground);
+  color: $_(textColorB); /* black */
+  height:60px;
+  text-align:center;
+  cursor:pointer;
+  word-break: break-word;
+}
+.SysVarsTblPopup_Highlight{
   background-color:$_(inactiveBackground);
   color: $_(textColorB); /* black */
   height:60px;
   text-align:center;
-  max-width: 215.333px;
-  -ms-word-break: break-all;
-  word-break: break-all;
+  cursor:pointer;
   word-break: break-word;
 }
 .WhiteBkgChannelPopup {
@@ -1509,6 +1542,7 @@ div.caption  { display: table-caption; }
   border:solid 1px $_(black); /* black */
   height:40px;
   text-align:center;
+  font-weight:normal;
 }
 
 .tdCellFilter
@@ -1656,6 +1690,7 @@ div.caption  { display: table-caption; }
 
 	background-color: $_(clickable);
 	text-align:center;
+	height: 50px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table tbody {
@@ -1666,7 +1701,6 @@ div.caption  { display: table-caption; }
 
 #ic_deviceparameters .parameter_area .parameters_table td {
 	border: 1px solid $_(black); /* black */
-	height: 50px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl
@@ -1674,6 +1708,7 @@ div.caption  { display: table-caption; }
 	border: 0;
 	height: auto;
 	background-color: $_(white); /* white */
+	border-spacing: 0px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl thead
@@ -1688,8 +1723,6 @@ div.caption  { display: table-caption; }
 {
 	border: 0;
 	background-color: $_(white); /* white */
-	padding: 2px;
-	height: auto;
 }
 
 #ic_deviceparameters #Timeouts_Area .TimeoutTable,
@@ -1834,6 +1867,21 @@ div.caption  { display: table-caption; }
   z-index:90;
 }
 
+#messagebox
+{
+  min-width: min-content;
+}
+
+#txVals
+{
+  resize: auto;
+}
+
+#txValue
+{
+  resize: auto;
+}
+
 #messagebox #id_messagebox
 {
   position:absolute;
@@ -1887,6 +1935,7 @@ background-color: $_(inactiveBackground);
 #ic_selchannel {
   display: initial;
   width: 100%;
+  margin: 10px;
 }
 
 #ic_selchannel #body_wrapper {
@@ -1895,7 +1944,7 @@ background-color: $_(inactiveBackground);
 
 #ic_selchannel #previous_step_wrapper {
 	background-color: $_(background); /* #183473 */
-	margin: 10px;
+	margin-bottom: 10px;
 }
 	
 #ic_selchannel #createLinkStep1 {
@@ -1930,6 +1979,8 @@ background-color: $_(inactiveBackground);
 #ic_selchannel .ChnListTbl {
 	border: 1px solid $_(black); /* black */
 	background-color: $_(background); /* #183473 */
+	width: 100%;
+	margin: 0px;
 }
 
 #ic_selchannel .ChnListTbl tr td {
@@ -2289,6 +2340,12 @@ table.center {
     color: $_(clickable);
 }
 
+.infoBckGnd {
+  background-color: $_(clickable) !important;
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+}
+
 .virtualChannelBckGnd {
   background-color: #BCC3C1 !important;
 }
@@ -2385,7 +2442,7 @@ progress::-webkit-progress-value { background: #3678c9; }
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorB); /* black */
-  /* font-weight:bold; */
+  font-weight:normal;
   text-align:left;
   vertical-align:middle;  
   height:20px !important;
@@ -2401,7 +2458,7 @@ progress::-webkit-progress-value { background: #3678c9; }
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorB); /* black */
-  /* font-weight:bold; */
+  font-weight:normal;
   text-align:left;
   vertical-align:middle;  
 }
@@ -2447,8 +2504,7 @@ progress::-webkit-progress-value { background: #3678c9; }
 }
 
 .FilterText {
-  width:96%;
-  margin:3px 2% 3px 2%;
+  margin:2px;
 }
 
 .FilterButton {
@@ -2458,8 +2514,7 @@ progress::-webkit-progress-value { background: #3678c9; }
   /*background-image: linear-gradient(to bottom, white 40%, gray );*/
   background-image: var(--btnGradient);
 
-  width:96%;
-  margin:3px 2% 3px 2%;
+  margin:2px;
   border:1px solid $_(black); /* black */
   color: $_(textColorB); /* white */
   font-weight:normal;
@@ -2671,7 +2726,6 @@ html, body {
   line-height:20px;
   cursor: pointer;
   white-space: nowrap;
-  border-top: 1px solid $_(black);
 }
 
 .MainMenuSubItem_Highlight {
@@ -2767,9 +2821,9 @@ html, body {
   top: 24px;
   left: 2px;
   width: 996px;
-  height: 520px;
+  height: 522px;
   background-color: $_(white); /* white */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #ChannelChooserFooter {
@@ -2815,7 +2869,6 @@ html, body {
   width:100%;
   height:auto;
   margin:0;
-  border:1px solid $_(black); /* black */
   padding:0;
   empty-cells:show;
 }
@@ -2827,7 +2880,7 @@ html, body {
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -2839,7 +2892,7 @@ html, body {
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -2910,7 +2963,7 @@ html, body {
   width: 996px;
   height: 520px;
   background-color: $_(white); /* white */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #MultiChannelChooserFooter {
@@ -3030,25 +3083,25 @@ html, body {
 }
 
 .DeviceListHead {
-  height:60px;
+  height:40px;
   margin:0;
   border:1px solid $_(black); /* black */
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
 
 .DeviceListHead_Active {
-  height:60px;
+  height:40px;
   margin:0;
   border:1px black solid;
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -3098,6 +3151,7 @@ html, body {
 .DeviceListThumbnail {
   border: 1px solid $_(black); /* black */
   text-align:center;
+  mix-blend-mode: multiply;
 }
 
 .DeviceListButton {
@@ -3158,7 +3212,7 @@ html, body {
   height: 520px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #ChannelConfigDialogFooter {
@@ -3280,8 +3334,7 @@ html, body {
   height: 391px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-/*  overflow: scroll;   */
-  overflow: hidden;   
+  overflow: auto;
 }
 
 #DeviceConfigDialogFooter {
@@ -3410,6 +3463,11 @@ html, body {
 .YesNoDialogContent, .YesNoDialogContentA {
   padding:5px;
   font-weight: bold;
+  color: $_(textColorB); /* black */
+}
+
+.YesNoDialogContentNoBold {
+  padding:5px;
   color: $_(textColorB); /* black */
 }
 
@@ -3626,6 +3684,7 @@ html, body {
   padding: 0;
   font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
   font-size: 12px;
+  overflow: hidden;
 }
 
 input, textarea, select, button, h1 {
@@ -4001,7 +4060,6 @@ application {
 }
 
 .CLASS00203 {
-	border: solid 1px $_(black); /* black */
 }
 
 .CLASS00204 {
@@ -4054,10 +4112,10 @@ application {
 /* rega\pages\msg\sysVarsSelection.htm */
 
 .CLASS00300 {
-	overflow: scroll;
-	width: 100%;
+	overflow: auto;
 	height:520px;
 	background-color:$_(white); /* white */
+	border:solid 1px $_(black); /* black */
 }
 
 .CLASS00301 {
@@ -4068,6 +4126,7 @@ application {
 	text-align:center;
 	background-color:$_(clickable);
 	height: 40px;
+	font-weight: normal;
 }
 
 .CLASS00303 {
@@ -4319,7 +4378,7 @@ application {
 
 .CLASS00717 {
 	height:200px;
-	overflow:scroll;
+	overflow: auto;
 	background-color:$_(white); /* white */
 }
 
@@ -4732,7 +4791,7 @@ application {
 /* rega\pages\msg\programChooser.htm */
 
 .CLASS01300 {
-	overflow: scroll;
+	overflow: auto;
 	width: 100%;
 	height: 400px;
 	background-color:$_(white); /* white */
@@ -4952,7 +5011,7 @@ application {
 }
 
 .CLASS01803 {
-	background-color:$_(white); /* #ffffff */
+	/*background-color:$_(white);*/ /* #ffffff */
 	text-align:center;
 	margin-left:4px;
 	margin-right:4px;
@@ -5009,7 +5068,6 @@ application {
 }
 
 .CLASS01811 {
-	padding-top: 5px;
     color: $_(textColorB); /* black */
 	border-collapse: collapse;
 }
@@ -5324,6 +5382,13 @@ application {
 	border:1px solid $_(black); /* black */
 }
 
+.CLASS02525a {
+	height:100px;
+	width:100px;
+	background-color:$_(okSignal);
+	border:1px solid $_(black); /* black */
+}
+
 .CLASS02525b {
 	height:96px;
 	width:96px;
@@ -5396,6 +5461,12 @@ application {
 	clear: both;
 	display: inline-block;
   line-height:25px;
+}
+
+.CLASS02532d {
+	font-size: 10px;
+	width:220px;
+	color: $_(white) ! important;
 }
 
 .CLASS02533 {
@@ -5537,6 +5608,20 @@ application {
 	width:100%;
 }
 
+.CLASS02550d {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:100px;
+}
+
+.CLASS02550e {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:120px;
+}
+
 .CLASS02551 {
 	cursor:pointer;
 	height:35px;
@@ -5553,6 +5638,13 @@ application {
 	cursor:pointer;
 	height:35px;
 	width:98%;
+}
+
+.CLASS02551c {
+	cursor:pointer;
+	height:35px;
+	width:100px;
+	margin-left: 11%;
 }
 
 .CLASS02552 {
@@ -5587,6 +5679,13 @@ application {
 .CLASS02557 {
 	height:96px;
 	width:96px;
+	background-color:$_(clickable);
+	border:1px solid $_(black); /* black */
+}
+
+.CLASS02557A {
+	height:100px;
+	width:100px;
 	background-color:$_(clickable);
 	border:1px solid $_(black); /* black */
 }
@@ -5778,7 +5877,7 @@ color: $_(textColorA) ! important; /* white */
 }
 
 .CLASS02803 {
-	font-weight:bold;
+	font-weight:normal;
   height: auto;
 }
 
@@ -6033,7 +6132,6 @@ color: $_(textColorA) ! important; /* white */
 }
 
 .CLASS03302 {
-	font-weight:bold;
 	text-align:center;
 	border:solid 1px $_(black); /* black */
 	padding:0px;
@@ -6279,12 +6377,14 @@ color: $_(textColorA); /* white */
 
 .CLASS03902 {
 	overflow:auto;
-	margin:10px;
+	margin-left:10px;
 	margin-right:2px;
 }
 
 .CLASS03903 {
 	border:solid 1px $_(black); /* black */
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS03904 {
@@ -6309,12 +6409,14 @@ color: $_(textColorA); /* white */
 
 .CLASS03908 {
 	overflow:auto;
-	margin:10px;
+	margin-right:10px;
 	margin-left:2px;
 }
 
 .CLASS03909 {
 	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .CLASS03910 {
@@ -6340,12 +6442,14 @@ color: $_(textColorA); /* white */
 
 .CLASS04002 {
 	overflow:auto;
-	margin:10px;
+	margin-right:10px;
 	margin-left:2px;
 }
 
 .CLASS04003 {
 	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .CLASS04004 {
@@ -6359,6 +6463,8 @@ color: $_(textColorA); /* white */
 
 .CLASS04006 {
 	border:solid 1px $_(black); /* black */
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS04007 {
@@ -6379,7 +6485,6 @@ color: $_(textColorA); /* white */
 .CLASS04102 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
-	font-size:10pt ! important;
 	height:44px ! important;
 }
 
@@ -6391,6 +6496,7 @@ color: $_(textColorA); /* white */
 .CLASS04104 {
 	background-color:$_(clickable);
   height:20px;
+  border: solid 1px $_(black); /* black */
 }
 
 .CLASS04105 {
@@ -6412,6 +6518,7 @@ color: $_(textColorA); /* white */
 .CLASS04109 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
   height:20px;
 }
 
@@ -6440,7 +6547,7 @@ color: $_(textColorA); /* white */
 
 .CLASS04201 {
 	overflow:auto;
-	margin:10px;
+	margin-left:10px;
 	margin-right:2px;
 }
 
@@ -6462,6 +6569,7 @@ color: $_(textColorA); /* white */
 
 .CLASS04206 {
 	background-color:$_(clickable);
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS04207 {
@@ -6483,6 +6591,7 @@ color: $_(textColorA); /* white */
 .CLASS04211 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS04212 {
@@ -6688,7 +6797,7 @@ color: $_(textColorA); /* white */
 
 .CLASS04900 {
 	color: $_(textColorA); /* white */
-	font-weight:bold;
+	font-weight:normal;
 }
 
 .CLASS04901 {
@@ -6710,7 +6819,7 @@ color: $_(textColorA); /* white */
 
 .CLASS04905 {
 	line-height:15px;
-	width:220px;
+	width:180px;
 }
 
 .CLASS04906 {
@@ -6834,6 +6943,10 @@ color: $_(textColorA); /* white */
 	color: $_(textColorB); /* black */
 }
 
+.CLASS05104 tbody {
+	border-width: 0;
+}
+
 .CLASS05105 {
 	text-align:left;
 }
@@ -6872,7 +6985,6 @@ color: $_(textColorA); /* white */
 .CLASS05200 {
 	text-align:center;
 	vertical-align:middle;
-	font-weight:bold;
 	height: auto;
 }
 
@@ -8261,6 +8373,7 @@ color: $_(textColorA); /* white */
 
   padding: 3px;
   text-align:center;
+  font-weight: bold;
   vertical-align:middle;
   margin:2px;
   cursor: pointer;
@@ -8483,7 +8596,9 @@ color: $_(textColorA); /* white */
 /* config\help.cgi */
 
 .CLASS21300 {
-  height:56%;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
 }
 
 .CLASS21301 {
@@ -8800,9 +8915,11 @@ color: $_(textColorA); /* white */
 
   color: $_(textColorB); /* black */
   border: 1px solid $_(black); /* black */
-  border-radius: 2px;
+  border-radius: 5px;
 
   cursor: pointer;
+  font-weight: bold;
+  padding: 2px;
 }
 
 .CLASS21905 {
@@ -8888,6 +9005,10 @@ color: $_(textColorA); /* white */
 .CLASS22001 {
   text-align: center;
   background-color: $_(activeBackground);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .CLASS22002 {
@@ -8897,11 +9018,17 @@ color: $_(textColorA); /* white */
 
 .CLASS22003 {
   background-color: $_(white);
+  height: 50px;
 }
 
 .CLASS22004 {
   background-color: $_(activeBackground);
   text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .CLASS22005 {
@@ -9153,6 +9280,7 @@ color: $_(textColorA); /* white */
   border-bottom: 1px solid black;
   text-align: left;
   font-family: monospace;
+  resize: vertical;
 }
 
 .CodeMirror-gutter-wrapper {

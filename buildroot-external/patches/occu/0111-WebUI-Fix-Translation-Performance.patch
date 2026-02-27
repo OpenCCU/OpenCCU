@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_security.cgi.orig
 +++ occu/WebUI/www/config/cp_security.cgi
-@@ -1497,7 +1497,7 @@
+@@ -1517,7 +1517,7 @@
          }
        };
      }
@@ -106,7 +106,7 @@
      }
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -21390,16 +21390,17 @@
+@@ -26726,16 +26726,17 @@
        setFooter(this.FLAT_FOOTER_HTML);
      }
  

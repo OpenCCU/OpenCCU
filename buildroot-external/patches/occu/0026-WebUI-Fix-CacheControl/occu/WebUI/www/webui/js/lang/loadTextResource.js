@@ -108,12 +108,15 @@ function loadTextResource() {
   var arResource = [
     "translate.lang.js",
     "translate.lang.extension.js",
-    "translate.lang.stringtable.js",
     "translate.lang.deviceDescription.js",
-    "translate.lang.diagram.js",
     "translate.lang.group.js",
     "translate.lang.system.js",
     "translate.lang.channelDescription.js",
+    "translate.lang.help.js",
+    "translate.lang.option.js",
+    "translate.lang.label.js",
+    "translate.lang.stringtable.js",
+    "translate.lang.diagram.js",
     "translate.lang.notTranslated.js"
   ];
   var url = "/webui/js/lang/" + getLang() + "/";

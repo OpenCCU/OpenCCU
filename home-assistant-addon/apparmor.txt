@@ -1,8 +1,9 @@
 #include <tunables/global>
 
-profile raspberrymatic flags=(attach_disconnected,mediate_deleted) {
+profile openccu flags=(attach_disconnected,mediate_deleted,complain) {
   #include <abstractions/base>
 
+  # Capabilities
   capability,
   file,
   mount,
@@ -35,10 +36,6 @@ profile raspberrymatic flags=(attach_disconnected,mediate_deleted) {
   /var/run/** mrwkl,
   /var/run/ mrwkl,
   /proc/self/attr/** mrwkl,
-  # Files required
-  /dev/sda1 mrwkl,
-  /dev/sdb1 mrwkl,
-  /dev/mmcblk0p1 mrwkl,
   /dev/* mrwkl,
   /tmp/** mrkwl,
 

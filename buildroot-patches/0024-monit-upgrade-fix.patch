@@ -1,0 +1,31 @@
+--- buildroot/package/monit/0002-configure.ac-fixes-missing-config-macro-dir.patch.orig
++++ buildroot/package/monit/0002-configure.ac-fixes-missing-config-macro-dir.patch
+@@ -23,7 +23,7 @@
+ +++ b/configure.ac
+ @@ -8,7 +8,7 @@ AC_PREREQ([2.53])
+  # Example: 5.0_beta2
+- AC_INIT([monit], [5.34.3], [monit-general@nongnu.org])
++ AC_INIT([monit], [5.35.2], [monit-general@nongnu.org])
+  AC_CONFIG_AUX_DIR(config)
+ -AC_CONFIG_MACRO_DIR([m4])
+ +AC_CONFIG_MACRO_DIRS([m4 config])
+--- buildroot/package/monit/monit.hash.orig
++++ buildroot/package/monit/monit.hash
+@@ -1,4 +1,4 @@
+-# From https://mmonit.com/monit/dist/monit-5.34.3.tar.gz.sha256
+-sha256  669d8b95ddec124d1444ba5264f67fdeae8e90e53b2929719f4750fc5ff3ba60  monit-5.34.3.tar.gz
++# From https://mmonit.com/monit/dist/monit-5.35.2.tar.gz.sha256
++sha256  4dfef54329e63d9772a9e1c36ac99bc41173b79963dc0d8235f2c32f4b9e078f  monit-5.35.2.tar.gz
+ # Locally computed
+ sha256  d5a4f52b1a5e1e7fe14e01a76aac8b08dc6bbea15466058f271456c97aac1ada  COPYING
+--- buildroot/package/monit/monit.mk.orig
++++ buildroot/package/monit/monit.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-MONIT_VERSION = 5.34.3
++MONIT_VERSION = 5.35.2
+ MONIT_SITE = https://mmonit.com/monit/dist
+ MONIT_LICENSE = AGPL-3.0 with OpenSSL exception
+ MONIT_LICENSE_FILES = COPYING

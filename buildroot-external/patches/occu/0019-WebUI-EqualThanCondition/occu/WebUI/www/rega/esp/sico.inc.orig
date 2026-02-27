@@ -333,8 +333,14 @@
         }
 
         if( iCT1 == 5 ) { sCT = "${ruleConditionLblIsEqual} "#iRV1.ToString(2)#sValueUnit; }
-        !if( iCT1 == 6 ) { sCT = "von "#iRV1.ToString(2)#sValueUnit#" bis kleiner "#iRV2.ToString(2)#sValueUnit; }
-        if( iCT1 == 6 ) { sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeLessThan} "#iRV2.ToString(2)#sValueUnit; }
+        if( iCT1 == 6 ) {
+          if (iRV1 < iRV2) {
+            sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeLessThan} "#iRV2.ToString(2)#sValueUnit;
+          } else {
+            sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeGreaterThan} "#iRV2.ToString(2)#sValueUnit;
+          }
+        }
+        if( iCT1 == 7 ) { sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeGreaterThan} "#iRV2.ToString(2)#sValueUnit; }
         !if( iCT1 == 8 ) { sCT = "größer als "#iRV1.ToString(2)#sValueUnit; }
         if( iCT1 == 8 ) { sCT = "${ruleConditionLblGreaterThan} "#iRV1.ToString(2)#sValueUnit; }
         !if( iCT1 == 10 ) { sCT = "kleiner als "#iRV1.ToString(2)#sValueUnit; }

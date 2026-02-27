@@ -69,28 +69,40 @@ iseInitUpdateArrays();
   Cursor.set(Cursor.NORMAL);
 </script>
 <table id="tblServices" class="filterTable tTable CLASS02601" border="0" cellpadding="0" cellspacing="0" style="display:none;">
+<colgroup>
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: 55px;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: 100px;">
+</colgroup>
 <tr>
  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="first"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="_first" class="_pt11 <%Write(sCssName);%>" style="height:auto;" onclick="IseSort(arServices,'first',true);">${thFirstMessageDateTime}</div></th>
-  <th align="center" valign="middle">${thLastMessageDateTime}</th>
+  <th class="thCell CLASS02603"><div id="_first" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'first',true);">${thFirstMessageDateTime}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'>${thLastMessageDateTime}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="name" class="pt11 <%Write(sCssName);%> " onclick="IseSort(arServices,'name',true);">${thName}</div></th>
-  <th align="center" valign="middle"><div class="pt11 Sort">${thPicture}</div></th>
+  <th class="thCell CLASS02603"><div id="name" class="pt11 <%Write(sCssName);%> " onclick="IseSort(arServices,'name',true);">${thName}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'><div>${thPicture}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="sn"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="sn" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'sn',true);">${thSerialNumber}</div></th>
+  <th class="thCell CLASS02603"><div id="sn" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'sn',true);">${thSerialNumber}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="func" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'func',true);">${thFunc}</div></th>
+  <th class="thCell CLASS02603"><div id="func" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'func',true);">${thFunc}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="room" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'room',true);">${thRoom}</div></th>
-  <th align="center" valign="middle">${thLastChange}</th>
+  <th class="thCell CLASS02603"><div id="room" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'room',true);">${thRoom}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'>${thLastChange}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="desc" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'desc',true);">${thServiceMessage}</div></th>
-  <th align="center" valign="middle"><div class="pt11 Sort">${thAction}</div></th>
+  <th class="thCell CLASS02603"><div id="desc" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'desc',true);">${thServiceMessage}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'><div>${thAction}</div></th>
 </tr>
 <tr id="trFlt">
-  <td align="center" valign="middle" class="CLASS02603"></td>
-  <td align="center" valign="middle" class="CLASS02603"></td>
-  <td align="center" valign="middle" class="CLASS02603">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603">
     <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
         <input id="ftName" type="text" size="15" class="CLASS02616" />
@@ -98,8 +110,8 @@ iseInitUpdateArrays();
         <div class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02603"></td>
-  <td align="center" valign="middle" class="CLASS02603">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603">
     <div id="btnFilterSN" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterSNSub" style="display:none">
         <input id="ftSN" type="text" size="15" class="CLASS02616" />
@@ -107,7 +119,7 @@ iseInitUpdateArrays();
         <div class='FilterSetButton' onclick="$('btnFilterSNSub').hide();">${filterClose}</div>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02603">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603">
     <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
   <div class="FilterSubMenu" id="btnFilterFuncSub" style="display:none">
     <% 
@@ -132,7 +144,7 @@ iseInitUpdateArrays();
     %>
   </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02603">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603">
     <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
       <% 
@@ -157,8 +169,8 @@ iseInitUpdateArrays();
       %>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02603"></td>
-  <td align="center" valign="middle" class="CLASS02603">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603">
     <div id="btnFilterDesc" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterDescSub" style="display:none">
       <input id="ftDesc" type="text" size="15" class="CLASS02616" />
@@ -166,7 +178,7 @@ iseInitUpdateArrays();
       <div class='FilterSetButton' onclick="$('btnFilterDescSub').hide()">${filterClose}</div>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02603"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
 </tr>
 <%
   integer iSvcCount = 0;
@@ -209,6 +221,7 @@ iseInitUpdateArrays();
           string sLastTriggerMessage = "";
           string sLastTriggerKey = "";
           integer iTmpTriggerID = oAlarm.LastTriggerID();
+          string sChnHssType = "";
           if( iTmpTriggerID == ID_ERROR )
           {
             iTmpTriggerID = oAlarm.AlTriggerDP();
@@ -257,7 +270,9 @@ iseInitUpdateArrays();
               if( oLastTrigger.IsTypeOf( OT_HSSDP ) )
               {
                 sSerialNumber = oLastTriggerChannel.Address();
-                
+                object trueChn = dom.GetObject(oLastTriggerChannel.ID());
+                string sChnHssType = oLastTriggerChannel.HssType();
+
                 string sLongKey = oLastTriggerChannel.ChnLabel()#"|"#oLastTrigger.HSSID();
                 string sShortKey = oLastTrigger.HSSID();
                 if( (oLastTrigger.ValueType() == ivtInteger) && (oLastTrigger.ValueSubType() == istEnum) )
@@ -267,8 +282,13 @@ iseInitUpdateArrays();
                 }
                 if( (oLastTrigger.ValueType() == ivtBinary ) && (oLastTrigger.ValueSubType() == istGeneric) )
                 {
-                  sLongKey = sLongKey#"=TRUE";
-                  sShortKey = sShortKey#"=FALSE";
+                  if (oLastTrigger.Value() == true) {
+                    sLongKey = sLongKey#"=TRUE";
+                    sShortKey = sShortKey#"=TRUE";
+                  } else {
+                    sLongKey = sLongKey#"=FALSE";
+                    sShortKey = sShortKey#"=FALSE";
+                  }
                 }
                 sServiceMessage = web.webKeyFromStringTable( sLongKey );
                 if( !sServiceMessage.Length() )
@@ -286,16 +306,16 @@ iseInitUpdateArrays();
     
           string sTrId = "al"#oAlarm.ID();
           Write( '<tr id="'#sTrId#'" class="CLASS02604">' );
-            Write( '<td align="center" valign="middle" class="CLASS02605">'#sFirstTimestamp#'</td>' );
-            Write( '<td id="sla'#sAID#'" align="center" valign="middle" class="CLASS02605">'#sLastTimestamp#'</td>' );
-            Write( '<td id="n'#oAlarm.ID()#'" align="center" valign="middle" class="CLASS02606">'#sAlarmName#'</td>' );
-            Write( '<td align="center" valign="top" class="CLASS02607">');
+            Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sFirstTimestamp#'</td>' );
+            Write( '<td id="sla'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastTimestamp#'</td>' );
+            Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName#'</td>' );
+            Write( '<td class="DeviceListThumbnail">');
             if (oLastTriggerChannel)
             {
               object devId = oLastTriggerChannel.Device();
               object dev = dom.GetObject(devId);
               string sPicDivId = "picDiv"#oAlarm.ID();
-              Write("<div id='"#sPicDivId#"' class='CLASS02608'");
+              Write("<div id='"#sPicDivId#"' class='thumbnail'");
               Write(" onmouseover='picDivShow(jg_250, \""#dev.Label()#"\", 250, -1, this);'");
               Write(" onmouseout='picDivHide(jg_250);'");
               Write("></div>");
@@ -309,15 +329,15 @@ iseInitUpdateArrays();
             {
               Write('ohne Bild</td>' );
             }
-            Write( '<td align="center" valign="middle" class="CLASS02609">'#sSerialNumber#'</td>' );
-            Write( '<td align="center" valign="middle" class="CLASS02610">'#sFunction#'</td>' );
-            Write( '<td align="center" valign="middle" class="CLASS02610">'#sRoom#'</td>' );
-            Write( '<td id="sgu'#sAID#'" align="center" valign="middle" class="CLASS02609">'#sLastUse#'</td>' );
-            Write( '<td id="m'#oAlarm.ID()#'" align="center" valign="middle" class="CLASS02611">'#sServiceMessage#'</td>' );
+            Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02609">'#sSerialNumber#'</td>' );
+            Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02610">'#sFunction#'</td>' );
+            Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02610">'#sRoom#'</td>' );
+            Write( '<td id="sgu'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastUse#'</td>' );
+            Write( '<td id="m'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;" class="CLASS02611">'#sServiceMessage#'</td>' );
             boolean bWrite = (oLastTrigger.Operations() & OPERATION_WRITE);
             if( oLastTrigger.Operations() & OPERATION_WRITE )
             {
-              Write( '<td align="center" valign="middle" class="CLASS02612"><input  type="button" name="btnConfirm" value="btnConfirm" onclick="ReceiptAlarm('#oAlarm.ID()#');" class="CLASS02613"/></td>' );
+              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02612"><input  type="button" name="btnConfirm" value="btnConfirm" onclick="ReceiptAlarm('#oAlarm.ID()#');" class="StdButton CLASS02613"/></td>' );
 
               if (oLastTrigger.HSSID() == "STICKY_UNREACH") {
                   Write( '<script type="text/javascript">' );
@@ -328,11 +348,11 @@ iseInitUpdateArrays();
             }
             else
             {
-               Write( '<td align="center" valign="middle" class="CLASS02612"><input type="button" name="btnConfirm" value="btnConfirm" disabled="disabled" class="CLASS02614"/></td>' );
+               Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02612"><input type="button" name="btnConfirm" value="btnConfirm" disabled="disabled" class="StdButton CLASS02614"/></td>' );
             }
           Write( '</tr>' );
           Write( '<script type="text/javascript">');
-           Write( 'if(screen.availWidth < 1200) {' );
+             Write( 'if(screen.availWidth < 1200) {' );
             ! Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut("'#sAlarmName#'", false, true);');
             ! Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut("'#sServiceMessage#'", false, true);');
 
@@ -340,28 +360,36 @@ iseInitUpdateArrays();
             Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sServiceMessage#'"), false, true);');
             
           Write( '}');
-          Write( 'var tmp = new Object();');
-          Write( 'tmp["id"] = '#oAlarm.ID()#'; ');
-          if( bWrite )
-          {
-            Write( 'tmp["write"] = true;' );
+          if ( (sChnHssType != "CLIMATECONTROL_FLOOR_TRANSCEIVER") || ((sChnHssType == "CLIMATECONTROL_FLOOR_TRANSCEIVER") && (trueChn.MetaData("chnActive") == true)) ) {
+
+            Write( 'var tmp = new Object();');
+            Write( 'tmp["id"] = '#oAlarm.ID()#'; ');
+            if( bWrite )
+            {
+              Write( 'tmp["write"] = true;' );
+            }
+            else
+            {
+              Write( 'tmp["write"] = false;' );
+            }
+            Write( 'tmp["first"] = "'#sFirstTimestamp#'"; ');
+            Write( 'tmp["name"] = "'#sAlarmName#'";');
+            Write( 'tmp["sn"] = "'#sSerialNumber#'";');
+            Write( 'tmp["func"] = "'#sFunction#'"; ');
+            Write( 'tmp["room"] = "'#sRoom#'"; ');
+            Write( 'tmp["desc"] = "'#sServiceMessage#'"; ');
+            Write( 'tmp["trid"] = "'#sTrId#'"; ');
+
+            Write( 'tmp["hssType"] = "'#sChnHssType#'"; ');
+
+            Write( 'tmp["fltOpts"] = new Object();');
+            Write( 'tmp["fltOpts"]["rooms"]="'#roomIDs#'";');
+            Write( 'tmp["fltOpts"]["funcs"]="'#funcIDs#'";');
+            Write('arServices[arServices.length] = tmp;');
+            Write( 'Cursor.set(Cursor.NORMAL);' );
+          } else {
+            Write("invisibleServiceMessages ++;");
           }
-          else
-          {
-            Write( 'tmp["write"] = false;' );
-          }
-          Write( 'tmp["first"] = "'#sFirstTimestamp#'"; ');
-          Write( 'tmp["name"] = "'#sAlarmName#'";');
-          Write( 'tmp["sn"] = "'#sSerialNumber#'";');
-          Write( 'tmp["func"] = "'#sFunction#'"; ');
-          Write( 'tmp["room"] = "'#sRoom#'"; ');
-          Write( 'tmp["desc"] = "'#sServiceMessage#'"; ');
-          Write( 'tmp["trid"] = "'#sTrId#'"; ');
-          Write( 'tmp["fltOpts"] = new Object();');
-          Write( 'tmp["fltOpts"]["rooms"]="'#roomIDs#'";');
-          Write( 'tmp["fltOpts"]["funcs"]="'#funcIDs#'";');
-          Write( 'arServices[arServices.length] = tmp;');
-          Write( 'Cursor.set(Cursor.NORMAL);' );
           Write( '</script>');
         }
       }
@@ -426,9 +454,9 @@ iseInitUpdateArrays();
   
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS02615' onclick='fltSM.clearFilters();updateTable();' >"+ translateKey('footerBtnResetFilter') +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS02615' onclick='ackAll();' >"+ translateKey('footerBtnConfirmAll') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS02615' onclick='fltSM.clearFilters();updateTable();' >"+ translateKey('footerBtnResetFilter') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS02615' onclick='ackAll();' >"+ translateKey('footerBtnConfirmAll') +"</div></td>";
   s += "</tr>";
   s += "</table>";
   
@@ -447,11 +475,16 @@ iseInitUpdateArrays();
 
   // Funktion wird von system.fn::UpdateUI() aufgerufen
   // Um Meldungen auszublenden die automatisch entfernt wurden
+  // invisibleServiceMessages wird zur Zeit für die FALMOT verwendet, da inaktivbe Kanäle eine Servicemeldung erzeugen, die nicht notwendig ist (die Kanäle sind ja inaktiv).
+  // Ob ein Kanal der FALMOT inaktiv ist, wird in den Konfigurationsparametern eingestellt.
   updateMessageView = function(iSvcMsgCount)
   {
-    if (iSvcMsgCount != arServices.length)
+    if (iSvcMsgCount != arServices.length + invisibleServiceMessages)
     {
-      if( $('svView') ) reloadPage();
+      if( $('svView') ) {
+        invisibleServiceMessages = 0;
+        reloadPage();
+      }
     }
   };
   translatePage("#tblServices, #NoServices");

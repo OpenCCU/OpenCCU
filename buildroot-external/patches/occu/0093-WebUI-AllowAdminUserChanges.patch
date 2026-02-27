@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -1164,7 +1164,7 @@
+@@ -1182,7 +1182,7 @@
      oUser = dom.GetObject( system.GetVar("userid") );
      if( oUser )
      {

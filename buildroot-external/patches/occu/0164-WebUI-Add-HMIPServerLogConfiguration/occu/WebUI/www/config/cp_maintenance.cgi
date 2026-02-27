@@ -62,7 +62,8 @@ proc action_acceptEula {} {
 
     puts "var req = jQuery.ajax({"
       puts " url : \"/EULA.\"+lang,"
-      puts " dataType: \"html\""
+      puts " dataType: \"html\","
+      puts " cache: false"
     puts "});"
 
     puts "req.done(function(data) {"
@@ -384,7 +385,7 @@ proc action_put_page {} {
                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
               }
             }
-            if {[get_platform] != "oci"} {
+            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "Software-Update durchf�hren"]"
@@ -417,12 +418,12 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep1}"
               }
             }
-            table_row {
+            table_data {
               td {width="20"} {}
               table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
                   division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/jens-maus/RaspberryMatic/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                 }
               }
             }
@@ -463,12 +464,18 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
               }
             }
+            } else {
+              table_row {
+                table_data {align="left"} {colspan="3"} {
+                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
+                }
+              }
             }
           }
         }
         table_data {align="center"} {class="CLASS20921"} {
-          puts "<img src='/ise/img/rm-logo_small_gray.png' alt='RaspberryMatic'><br/>"
-          puts "\${dialogSettingsCMHintSoftwareUpdateRaspMatic}"
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
@@ -528,7 +535,7 @@ proc action_put_page {} {
       }
 
       # Recovery Modus
-      if {[get_platform] != "oci"} {
+      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
         table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
             table_data {class="CLASS20903"} $styleMaxWidth {
                 #puts "Recovery<br>"
@@ -1369,13 +1376,7 @@ proc action_apply_logging {} {
     puts "Failure"
     return
   }
-  if {[getProduct] < 3 } {
-    catch {exec killall syslogd}
-    catch {exec killall klogd}
-    exec /etc/init.d/S01logging start
-  } else {
-    exec /etc/init.d/S07logging restart
-  }
+  exec /usr/bin/monit restart syslogd
   puts "Success -confirm"
 }
 

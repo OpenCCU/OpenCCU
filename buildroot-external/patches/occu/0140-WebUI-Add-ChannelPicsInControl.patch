@@ -1,7 +1,7 @@
 --- occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm
-@@ -37,15 +37,17 @@
- </script>
+@@ -40,15 +40,17 @@
+ 
  <table id="tblHDeviChannel" class="filterTable CLASS03500 j_translate" cellpadding="0" cellspacing="0" border="1" >
    <colgroup>
 -     <col style="width:12%;"/>
@@ -23,7 +23,7 @@
    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
    <th><div id="room" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'room',true);">${thRoom}</div></th>
    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
-@@ -68,6 +70,8 @@
+@@ -71,6 +73,8 @@
      </div>
    </td>
    <td class="CLASS03501">
@@ -32,7 +32,7 @@
      <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
      <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
        <% 
-@@ -190,6 +194,18 @@
+@@ -207,6 +211,18 @@
  
              Write("</td>");
              Write("<td class='GrayBkg'>");
@@ -84,7 +84,7 @@
      <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
      <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
        <% 
-@@ -149,6 +153,18 @@
+@@ -162,6 +166,18 @@
              }
  
              Write("</td>");
@@ -103,7 +103,7 @@
              Write("<td  class='GrayBkg'>");
              string rooms = "";
              string roomTmp = "";
-@@ -254,4 +270,4 @@
+@@ -267,4 +283,4 @@
    });
  
    jQuery("#btnFilterRoomSub").draggable();
@@ -142,7 +142,7 @@
      <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
      <div class="FilterSubMenu" id="btnFilterFuncSub" style="display:none">
        <% 
-@@ -155,6 +159,18 @@
+@@ -169,6 +173,18 @@
  
              Write("</td>");
              Write("<td class='GrayBkg'>");

@@ -2,9 +2,9 @@
 set -e
 
 ID=${1}
-PACKAGE_NAME="tailscale"
+PACKAGE_NAME="tailscale-bin"
 PROJECT_URL="https://pkgs.tailscale.com/stable"
-ARCHIVE_URL="${PROJECT_URL}/${PACKAGE_NAME}_${ID}_CPU.tgz"
+ARCHIVE_URL="${PROJECT_URL}/tailscale_${ID}_CPU.tgz"
 
 if [[ -z "${ID}" ]]; then
   echo "tag name or commit sha required (see ${URL})"
@@ -18,7 +18,7 @@ function updateHash() {
   ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL/CPU/${cpu}}" | sha256sum | awk '{ print $1 }')
   if [[ -n "${ARCHIVE_HASH}" ]]; then
     sed -i "/_${cpu}\.tgz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-    echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}_${ID}_${cpu}.tgz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+    echo "sha256  ${ARCHIVE_HASH}  tailscale_${ID}_${cpu}.tgz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   fi
 }
 
@@ -29,6 +29,4 @@ sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" 
 
 # update package hashes
 updateHash amd64
-updateHash 386
-updateHash arm
 updateHash arm64

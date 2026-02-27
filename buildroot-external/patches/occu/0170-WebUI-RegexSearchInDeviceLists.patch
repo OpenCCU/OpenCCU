@@ -1,76 +1,157 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -7882,11 +7882,8 @@
+@@ -9570,7 +9570,23 @@
+ 		document.body.style.cursor = cursorType;
+ 	}
+ 	
+-};/**
++};
++
++const isValidRegex = function(possiblyValidRegex)
++{
++  try
++  {
++    const r = new RegExp(possiblyValidRegex);
++  }
++  catch(err)
++  {
++    return false;
++  }
++
++  return true;
++}
++
++/**
+  * stringfilter.js
+  **/
+  
+@@ -9656,12 +9672,23 @@
      //var patternList = m_value.split("|");
      text            = text.toLowerCase();
      
 -    for (var i = 0, len = patternList.length; i < len; i++)
--    {
++    let searchString = m_value.toLowerCase();
++    if(isValidRegex(searchString))
+     {
 -      if (0 <= text.indexOf(patternList[i])) { return true; }
--    }
++      var r = new RegExp(searchString);
++      if (r.test(text) === true) { return true; }
++
++      return false;
++    }
++    else
++    {
++      for (var i = 0, len = patternList.length; i < len; i++)
++      {
++        if (0 <= text.indexOf(patternList[i])) { return true; }
++      }
++
++      return false;
+     }
 -    
-+    var r = new RegExp(m_value.toLowerCase());
-+    if (r.test(text) === true) {return true; }
-     return false;
+-    return false;
    };
    
-@@ -32410,7 +32407,8 @@
+   /**
+@@ -37259,7 +37286,15 @@
      {
        if (typeof obj['type'] != 'undefined') {
          if (obj['type'] === "")                      { return false; }
 -        if (obj['type'].toLowerCase().indexOf(this.filType) == -1) { return false; }
-+        var r = new RegExp(this.filType);                                           
-+        if (r.test(obj['type'].toLowerCase()) === false) {return false; }
++        if (isValidRegex(this.filType))
++        {
++          var r = new RegExp(this.filType);
++          if (r.test(obj['type'].toLowerCase()) === false) { return false; }
++        }
++        else
++        {
++          if (obj['type'].toLowerCase().indexOf(this.filType) == -1) { return false; }
++        }
        }
      }
      if (this.filDesc !== "")
-@@ -32420,7 +32418,8 @@
+@@ -37269,7 +37304,15 @@
        {
          //conInfo( "iseFilter: desc="+obj['desc'] );
          if (obj['desc'] === "")                      { return false; }
 -        if (obj['desc'].toLowerCase().indexOf(this.filDesc) == -1) { return false; }
-+        var r = new RegExp(this.filDesc);                                           
-+        if (r.test(obj['desc'].toLowerCase()) === false) {return false; }
++        if (isValidRegex(this.filDesc))
++        {
++          var r = new RegExp(this.filDesc);
++          if (r.test(obj['desc'].toLowerCase()) === false) { return false; }
++        }
++        else
++        {
++          if (obj['desc'].toLowerCase().indexOf(this.filDesc) == -1) { return false; }
++        }
        }
      }
      if (this.filName !== "")
-@@ -32429,7 +32428,8 @@
+@@ -37278,7 +37321,15 @@
        {
          if (obj['name'] === "")                      { return false; }
          var transName = translateString(obj['name']);
 -        if (transName.toLowerCase().indexOf(this.filName) == -1) { return false; }
-+        var r = new RegExp(this.filName);                                           
-+        if (r.test(transName.toLowerCase()) === false) {return false; }
++        if (isValidRegex(this.filName))
++        {
++          var r = new RegExp(this.filName);
++          if (r.test(transName.toLowerCase()) === false) { return false; }
++        }
++        else
++        {
++          if (transName.toLowerCase().indexOf(this.filName) == -1) { return false; }
++        }
        }
      }
      if (this.filSn !== "")
-@@ -32437,7 +32437,8 @@
+@@ -37286,7 +37337,15 @@
        if (typeof obj['sn'] != 'undefined')
        {
          if (obj['sn'] === "")                     { return false; }
 -        if (obj['sn'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
-+        var r = new RegExp(this.filSn);                                           
-+        if (r.test(obj['sn'].toLowerCase()) === false) {return false; }
++        if (isValidRegex(this.filSn))
++        {
++          var r = new RegExp(this.filSn);
++          if (r.test(obj['sn'].toLowerCase()) === false) { return false; }
++        }
++        else
++        {
++          if (obj['desc'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
++        }
        }
      }
      if (this.filUnit !== "")
-@@ -32445,7 +32446,8 @@
+@@ -37294,7 +37353,15 @@
        if (typeof obj['unit'] != 'undefined')
        {
          if (obj['unit'] === "")                      { return false; }
 -        if (obj['unit'].toLowerCase().indexOf(this.filUnit) == -1) { return false; }
-+        var r = new RegExp(this.filUnit);                                           
-+        if (r.test(obj['unit'].toLowerCase()) === false) {return false; }
++        if (isValidRegex(this.filUnit))
++        {
++          var r = new RegExp(this.filUnit);
++          if (r.test(obj['unit'].toLowerCase()) === false) { return false; }
++        }
++        else
++        {
++          if (obj['unit'].toLowerCase().indexOf(this.filUnit) == -1) { return false; }
++        }
        }
      }
  
-@@ -32469,7 +32471,8 @@
+@@ -37318,7 +37385,15 @@
      if (this.filChnLink !== "")
      {
        if (obj['chn'] === "")                         { return false; }
 -      if (obj['chn'].toLowerCase().indexOf(this.filChnLink) == -1) { return false; }
-+      var r = new RegExp(this.filChnLink);                                           
-+      if (r.test(obj['chn'].toLowerCase()) === false) {return false; }
++      if (isValidRegex(this.filChnLink))
++      {
++        var r = new RegExp(this.filChnLink);
++        if (r.test(obj['chn'].toLowerCase()) === false) { return false; }
++      }
++      else
++      {
++        if (obj['chn'].toLowerCase().indexOf(this.filChnLink) == -1) { return false; }
++      }
      }
  /*    
      if (this.filVarTypes !== "")

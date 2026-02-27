@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
 #
 # Starts rfd.
 #
@@ -28,6 +28,9 @@ init() {
   if grep -q "/etc/config/rfd/keys" /etc/config/rfd.conf; then
     cp -a ${CFG_TEMPLATE_DIR}/rfd.conf /etc/config/rfd.conf
   fi
+
+  # Cleanup rfd.conf (e.g. remove duplicate newlines)
+  sed -i '/^$/N;/^\n$/D' /etc/config/rfd.conf
 
   # only modify if real rf module found
   if [[ "${HM_HMRF_DEV}" == "HM-MOD-RPI-PCB" ]] ||

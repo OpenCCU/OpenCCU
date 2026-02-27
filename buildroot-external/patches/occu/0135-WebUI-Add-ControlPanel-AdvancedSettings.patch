@@ -714,10 +714,10 @@
  <html lang="de">
    <head>
 -    <title>HomeMatic WebUI</title>
-+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('RaspberryMatic WebUI'); } else { Write(system.Name()); } %></title>
++    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
  
-     <link rel="stylesheet" type="text/css" href="/webui/style.cgi?_version_=1.509pre1" />
-     <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+     <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+     <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
 --- occu/WebUI/www/rega/logout.htm.orig
 +++ occu/WebUI/www/rega/logout.htm
 @@ -1,7 +1,7 @@
@@ -725,24 +725,24 @@
  <html lang="de">
    <head>
 -    <title>HomeMatic WebUI</title>
-+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('RaspberryMatic WebUI'); } else { Write(system.Name()); } %></title>
++    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
  
-     <link rel="shortcut icon" href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon"/>
-     <link rel="icon"          href="/ise/img/rm-favicon.ico" type="image/vnd.microsoft.icon" />
+     <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+     <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
 @@ -24,7 +24,7 @@
-     <link rel="icon" type="image/png" sizes="16x16" href="/ise/img/rm-favicon-16x16.png">
-     <link rel="manifest" href="/webui/site.webmanifest">
+     <link rel="stylesheet" type="text/css" href="/webui/css/extern/msdropdown/dd.css" />
+     <link rel="stylesheet" type="text/css" href="/webui/css/extern/spectrum.css" />
  
 -    <title>HomeMatic WebUI</title>
-+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('RaspberryMatic WebUI'); } else { Write(system.Name()); } %></title>
++    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
  
  
      <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -463,6 +463,8 @@
+@@ -468,6 +468,8 @@
      "lblMenuStatusControlSysProtocolTime" : "Zeit",
      "lblMenuStatusControlSysProtocolChannelSysvar" : "Kanal / Systemvariable",
      "lblMenuStatusControlSysProtocolActivity" : "Aktivit%E4t",
@@ -751,7 +751,7 @@
      "btnSysConfCentralMaintenace" : "Zentralen-<br/>Wartung",
      "lblSysConfCentralMaintenance1" : "Software-Update der " + HMIdentifier.de.CCUFullNameText,
      "lblSysConfCentralMaintenance2" : HMIdentifier.de.CCUFullNameText + " neu starten",
-@@ -624,6 +626,53 @@
+@@ -630,6 +632,53 @@
      "dialogSettingsCentralDisplayLblOptionHours" : "Stunden",
      "dialogSettingsCentralDisplayLblOptionAlways" : "Immer an",
      "commentSettingsDialogCentralDisplayEnd" : "***********************************************",
@@ -792,7 +792,7 @@
 +    "dialogSettingsAdvancedSettingsHintSystem12" : "<b>Sicherheits%FCberpr%FCfung (Port-Forwarding):</b><br/>Um einen sicherheitskritischen Zugriff vom Internet aus via Port-Forwarding/Weiterleitung auszuschlie%DFen, wird jeden Sonntag um 04:00 Uhr nachts eine %DCberpr%FCfung der Internetverbindung durchgef%FChrt und ggf. bei erkanntem Port-Forwarding eine Alarmmeldung ausgegeben.",
 +    "dialogSettingsAdvancedSettingsHintSystem13" : "<b>Pr%FCfung auf aktualisierte Zusatzsoftware:</b><br/>Pr%FCft 1x t%E4glich online auf neue verf%FCgbare Versionen installierter Zusatzsoftware (CCU-Addons) und zeigt diese auf der Startseite an.",
 +    "dialogSettingsAdvancedSettingsHintSystem14" : "<b>CloudMatic Autostart:</b><br/>Bei Hochfahren der Zentrale wird automatisch der CloudMatic Dienst eingerichtet und gestartet, wenn dies hier aktiviert wurde.",
-+    "dialogSettingsAdvancedSettingsHintSystem15" : "<b>IP-Adresse (HB-RF-ETH):</b><br/>Falls ein <a href='https://github.com/alexreinert/HB-RF-ETH'>HB-RF-ETH Funkmoduladapter</a> zum Einsatz kommt kann hier die IP-Adresse eingetragen werden unter der dieser Adapter erreichbar ist (benötigt Neustart).",
++    "dialogSettingsAdvancedSettingsHintSystem15" : "<b>IP-Adresse (HB-RF-ETH):</b><br/>Falls ein <a href='https://github.com/alexreinert/HB-RF-ETH'>HB-RF-ETH Funkmoduladapter</a> zum Einsatz kommt kann hier die IP-Adresse eingetragen werden unter der dieser Adapter erreichbar ist (ben%F6tigt Neustart).",
 +    "dialogSettingsAdvancedSettingsExpert" : "Experten-Optionen",
 +    "dialogSettingsAdvancedSettingsDevConfig" : "DevConfig-Button verbergen",
 +    "dialogSettingsAdvancedSettingsHintExpert1" : "<b>DevConfig-Button verbergen:</b><br/>Wenn aktiviert wird der 'DevConfig' Button unter Systemsteuerung <i>nicht</i> angezeigt.",
@@ -805,9 +805,18 @@
      "commentSettingsDialogNetwork" : "***********************************************",
      "dialogSettingsNetworkTitle" : HMIdentifier.de.CCUShortName + " - Netzwerkeinstellungen",
      "dialogSettingsNetworkTDIPSettings" : "IP-Einstellungen",
+@@ -786,7 +835,7 @@
+     "actionStatusControlLblNotActive" : "nicht aktiv",
+     "actionStatusControlLblStart" : "Ausf%FChren",
+     "actionStatusControlLblStartThenOnly" : "Ausf%FChren<br/>(nur 1. DANN)",
+-    "actionStatusControlLblStartHelp" : "<b>Ausf%FChren:</b><br/><br/>Führt das Programm inkl. aller Bedingungspr%FCfungen aus. Es werden die Aktionen des &quot;DANN&quot; Teiles des Programmes ausgef%FChrt dessen Bedingungsblock &quot;WAHR&quot; ergibt. Andernfalls werden die Aktionen des &quot;SONST&quot; Teiles ausgef%FChrt.<br/><br/><b>Ausf%FChren (nur 1. DANN):</b><br/><br/>F%FChrt lediglich die Aktionen innerhalb des ersten &quot;DANN&quot; Teiles des Programmes - ohne jegliche Bedingungspr%FCfungen - aus.",
++    "actionStatusControlLblStartHelp" : "<b>Ausf%FChren:</b><br/><br/>F%FChrt das Programm inkl. aller Bedingungspr%FCfungen aus. Es werden die Aktionen des &quot;DANN&quot; Teiles des Programmes ausgef%FChrt dessen Bedingungsblock &quot;WAHR&quot; ergibt. Andernfalls werden die Aktionen des &quot;SONST&quot; Teiles ausgef%FChrt.<br/><br/><b>Ausf%FChren (nur 1. DANN):</b><br/><br/>F%FChrt lediglich die Aktionen innerhalb des ersten &quot;DANN&quot; Teiles des Programmes - ohne jegliche Bedingungspr%FCfungen - aus.",
+     "actionStatusControlLblOn" : "Ein",
+     "actionStatusControlLblOff" : "Aus",
+     "actionStatusControlLblShortKeyPress" : "Kurzer<br/>Tastendruck",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -462,6 +462,8 @@
+@@ -467,6 +467,8 @@
      "lblMenuStatusControlSysProtocolTime" : "Time",
      "lblMenuStatusControlSysProtocolChannelSysvar" : "Channel / system variable",
      "lblMenuStatusControlSysProtocolActivity" : "Activity",
@@ -816,7 +825,7 @@
      "btnSysConfCentralMaintenace" : "CCU maintenance",
      "lblSysConfCentralMaintenance1" : "Software update for " + HMIdentifier.en.CCUFullNameText,
      "lblSysConfCentralMaintenance2" : "Restart " + HMIdentifier.en.CCUFullNameText,
-@@ -624,6 +626,53 @@
+@@ -630,6 +632,53 @@
      "dialogSettingsCentralDisplayLblOptionHours" : "Hours",
      "dialogSettingsCentralDisplayLblOptionAlways" : "Always on",
      "commentSettingsDialogCentralDisplayEnd" : "***********************************************",
@@ -872,7 +881,7 @@
      "dialogSettingsNetworkTDIPSettings" : "IP settings",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -28601,15 +28601,25 @@
+@@ -33639,15 +33639,25 @@
  };
  
  setPath = function (path) {
@@ -880,7 +889,7 @@
 -  if ((path.length > 0) && $("PagePath")) {
 -    if ($("PagePath"))$("PagePath").innerHTML = s + " &gt; " + path;
 +  var title=document.title;
-+  if (title != 'RaspberryMatic WebUI') {
++  if (title != 'OpenCCU WebUI') {
 +    title = '[' + title + '] ';
 +  } else {
 +    title = '';
@@ -905,7 +914,7 @@
  
  
  
-@@ -30583,7 +30593,7 @@
+@@ -35572,7 +35582,7 @@
  
  
  showDutyCycle = function() {
@@ -914,7 +923,7 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
-@@ -42912,6 +42922,11 @@
+@@ -50717,6 +50727,11 @@
    CreateCPPopup("/config/cp_maintenance.cgi");
  };
  

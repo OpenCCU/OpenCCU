@@ -1,4 +1,15 @@
 function ::CreateWndRotSensor() {
+
+  object ch = dom.GetObject(chnId);
+
+  ! Locked
+  string locked = "${actionStatusControlLockedA}";
+
+  if (ch.Label() == "HmIP-MOD-WD-VK") {
+    ! Closed
+    locked = "${actionStatusControlLockedB}";
+  }
+
   WriteLine("<td>");
     WriteLine("<table class='ControlBtnOff CLASS02514' id='"#chnId#"OpenH' >");
     WriteLine("<tr>");
@@ -32,7 +43,7 @@ function ::CreateWndRotSensor() {
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
-    WriteLine("<tr><td>${actionStatusControlLockedA}</td></tr>");
+    WriteLine("<tr><td>"#locked#"</td></tr>");
     WriteLine("</table>");
   WriteLine("</td>");
 

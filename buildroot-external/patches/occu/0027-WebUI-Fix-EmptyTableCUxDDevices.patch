@@ -1,8 +1,8 @@
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -748,7 +748,7 @@
-       WriteLine( '</tr></table><table cellspacing="0" class="ctrlTbl CLASS02510" border="0" ><tr>' );
-       Call("/esp/datapointconfigurator.fn::CreateUnknown()");
+@@ -1348,7 +1348,7 @@
+         Call("/esp/datapointconfigurator.fn::CreateUnknown()");
+       }
      }
 -    if ( (isKnownControl) && (bSV)  && (oEName.Find("HmIP-RF.") == -1) )
 +    if ( (isKnownControl) && (bSV)  && (oEName.Find("HmIP-RF.") == -1) && (oEName.Find("CUxD.CUX") == -1) )

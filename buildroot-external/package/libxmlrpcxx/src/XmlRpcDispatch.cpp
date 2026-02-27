@@ -8,6 +8,7 @@
 
 #include <math.h>
 #include <sys/timeb.h>
+#include <time.h>
 
 #if defined(_WINDOWS)
 # include <winsock2.h>
@@ -82,11 +83,7 @@ XmlRpcDispatch::setSourceEvents(XmlRpcSource* source, unsigned eventMask)
 
 // Watch current set of sources and process events
 bool
-#if __BITS_TO_LONG == 32
-XmlRpcDispatch::work(long msTime)
-#else
 XmlRpcDispatch::work(int32_t msTime)
-#endif
 {
 	_doClear = false;
 	_inWork = true;
@@ -214,26 +211,21 @@ XmlRpcDispatch::clear()
   }
 }
 
+#define NSEC_PER_SEC      1000000000L
+#define NSEC_PER_MILLISEC 1000000L
+#define MSEC_PER_SEC      1000L
 
-#if __BITS_TO_LONG == 32
-unsigned long
-#else
-uint32_t
-#endif
+uint64_t
 XmlRpcDispatch::getTime()
 {
 #ifdef USE_FTIME
   struct timeb	tbuff;
 
   ftime(&tbuff);
-  return static_cast<uint32_t>((tbuff.time * 1000) + tbuff.millitm + (tbuff.timezone * 60000));
+  return static_cast<uint64_t>((tbuff.time * MSEC_PER_SEC) + tbuff.millitm + (tbuff.timezone * 60000));
 #else
-  struct timeval	tv;
-  struct timezone	tz;
-
-  gettimeofday(&tv, &tz);
-  return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+  struct timespec now;
+  clock_gettime(CLOCK_REALTIME, &now);
+  return now.tv_sec * MSEC_PER_SEC + now.tv_nsec / NSEC_PER_MILLISEC;
 #endif /* USE_FTIME */
 }
-
-

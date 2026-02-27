@@ -14,7 +14,7 @@ function ::CreateKeyShortOnly() {
     WriteLine("<tr>");
       WriteLine("<td class='CLASS02518'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img id='btn"#iShortId#"s' src='/ise/img/btn_no_press.png' width='80' height='80' />");
+          WriteLine("<img id='btn"#iShortId#"s' src='/ise/img/btn_no_press.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
@@ -50,7 +50,7 @@ function ::CreateKey() {
     WriteLine("<tr>");
       WriteLine("<td class='CLASS02518'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img id='btn"#iShortId#"s' src='/ise/img/btn_no_press.png' width='80' height='80' />");
+          WriteLine("<img id='btn"#iShortId#"s' src='/ise/img/btn_no_press.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
@@ -67,7 +67,7 @@ function ::CreateKey() {
     WriteLine("<tr>");
       WriteLine("<td  class='CLASS02518'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img id='btn"#iLongId#"l' src='/ise/img/btn_no_press.png' width='80px' height='80px' />");
+          WriteLine("<img id='btn"#iLongId#"l' src='/ise/img/btn_no_press.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");

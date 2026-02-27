@@ -54,7 +54,8 @@ proc action_acceptEula {} {
 
     puts "var req = jQuery.ajax({"
       puts " url : \"/EULA.\"+lang,"
-      puts " dataType: \"html\""
+      puts " dataType: \"html\","
+      puts " cache: false"
     puts "});"
 
     puts "req.done(function(data) {"
@@ -63,7 +64,7 @@ proc action_acceptEula {} {
       puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
         puts "var dlgPopup = parent.top.dlgPopup;"
         puts "if (dlgPopup === undefined) {"
-          puts "dlgPopup = window.open('', 'resize').dlgPopup;"
+          puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
         puts "}"
         puts "if (result == 1) {"
           puts "dlgPopup.hide();"
@@ -83,7 +84,7 @@ proc action_acceptEula {} {
       puts "conInfo(\"EULA not available\");"
       puts "var dlgPopup = parent.top.dlgPopup;"
       puts "if (dlgPopup === undefined) {"
-        puts "dlgPopup = window.open('', 'resize').dlgPopup;"
+        puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
       puts "}"
       puts "dlgPopup.hide();"
       puts "dlgPopup.setWidth(450);"
@@ -362,20 +363,21 @@ proc action_put_page {} {
               table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                 puts "\${dialogSettingsCMLblActualSoftwareVersion}"
               }
-              table_data {
-                puts "$cur_version"
+              table_data {align="left"} {
+                puts "$cur_version&nbsp;([get_platform])"
               }
             }
             table_row {
               table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblAvailableSoftwareVersion}"
               }
-              table_data {id="availableSWVersion"} {
+              table_data {align="left"} {id="availableSWVersion"} {
                 # This doesn�t work properly
                 # puts [iframe "$REMOTE_FIRMWARE_SCRIPT?cmd=check_version&version=$cur_version&serial=$serial&lang=de&product=HM-CCU2" marginheight=0 marginwidth=0 frameborder=0 width=100 height=20 {scrolling="no"} ]
                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
               }
             }
+            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "Software-Update durchf�hren"]"
@@ -396,7 +398,6 @@ proc action_put_page {} {
                 }
               }
             }
-            if {[get_platform] != "oci"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "i18n: Alternative Vorgehensweise:"]"
@@ -414,7 +415,7 @@ proc action_put_page {} {
                     table_row {
                       table_data {
                         division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/jens-maus/RaspberryMatic/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                       }
                     }
                   }
@@ -461,12 +462,18 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
               }
             }
+            } else {
+              table_row {
+                table_data {align="left"} {colspan="3"} {
+                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
+                }
+              }
             }
           }
         }
         table_data {align="center"} {class="CLASS20921"} {
-          puts "<img src='/ise/img/rm-logo_small_gray.png' alt='RaspberryMatic'><br/>"
-          puts "\${dialogSettingsCMHintSoftwareUpdateRaspMatic}"
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
@@ -526,7 +533,7 @@ proc action_put_page {} {
       }
 
       # Recovery Modus
-      if {[get_platform] != "oci"} {
+      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
         table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
             table_data {class="CLASS20903"} $styleMaxWidth {
                 #puts "Recovery<br>"
@@ -1071,7 +1078,7 @@ proc action_firmware_upload {} {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
     puts "var dlgPopup = parent.top.dlgPopup;"
     puts "if (dlgPopup === undefined) {"
-      puts "dlgPopup = window.open('', 'resize').dlgPopup;"
+      puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
     puts "}"
     puts "dlgPopup.hide();"
     puts "dlgPopup.setWidth(450);"
@@ -1330,13 +1337,7 @@ proc action_apply_logging {} {
     puts "Failure"
     return
   }
-  if {[getProduct] < 3 } {
-    catch {exec killall syslogd}
-    catch {exec killall klogd}
-    exec /etc/init.d/S01logging start
-  } else {
-    exec /etc/init.d/S07logging restart
-  }
+  exec /usr/bin/monit restart syslogd
   puts "Success -confirm"
 }
 

@@ -1,0 +1,207 @@
+--- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
+@@ -642,9 +642,14 @@
+     "dialogRenameVirtualGroupDeviceTitle" : "Umbenennung des virtuellen Ger%E4tes",
+     "dialogVirtualGroupDeviceContent" : "M%F6chten Sie das virtuelle Ger%e4t der Gruppe sowie die entsprechenden Kan%E4le mit dem Gruppennamen %FCberschreiben?",
+     "dialogShowDeviceFirmwareTitle" : "Es stehen Ger%E4te-Firmware-Updates zur Verf%FCgung",
+-    "dialogShowDeviceFirmwareTHDevice": "Ger%E4t",
+-    "dialogShowDeviceFirmwareTHCurFw": "Aktuell",
+-    "dialogShowDeviceFirmwareTHNewFw": "Neu",
++    "dialogShowDeviceFirmwareTHDevice": "Ger%E4tetyp",
++    "dialogShowDeviceFirmwareTHSerials": "Seriennummern",
++    "dialogShowDeviceFirmwareTHCurFw": "Aktuelle Version",
++    "dialogShowDeviceFirmwareTHNewFw": "Empfohlene Version",
++    "dialogShowDeviceFirmwareDescription": "Ausf%FChrung",
++    "dialogShowDeviceFirmwareDownloadInfo1": "1. Empfohlene Firmwareversion herunterladen",
++    "dialogShowDeviceFirmwareDownloadInfo2": "2. Firmwaredatei unter",
++    "dialogShowDeviceFirmwareDownloadInfo3": "hochladen",
+     "dialogShowDeviceFirmwareLinkDownload": "Zum Downloadbereich",
+     "hintDevFwAlreadyUploaded" : "" +
+       "Die aktuellste Firmware des Ger%E4tes befindet sich bereits auf der " + HMIdentifier.de.CCUShortName + ".\n"+
+@@ -1100,4 +1105,4 @@
+ });
+ 
+ langJSON.de.hintActivateDetectorSelfTest += langJSON.de.checkSmokeDetectorSelfTest;
+-langJSON.de.hintReInclusionDetectorFailed += langJSON.de.checkSmokeDetectorSelfTest;
+\ No newline at end of file
++langJSON.de.hintReInclusionDetectorFailed += langJSON.de.checkSmokeDetectorSelfTest;
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
+@@ -642,9 +642,14 @@
+     "dialogRenameVirtualGroupDeviceTitle" : "Rename the virtual device",
+     "dialogVirtualGroupDeviceContent" : "Would you like to rename the virtual device of the group and its channels to the group name?",
+     "dialogShowDeviceFirmwareTitle" : "There are new device firmware updates available",
+-    "dialogShowDeviceFirmwareTHDevice": "Device",
+-    "dialogShowDeviceFirmwareTHCurFw": "Current",
+-    "dialogShowDeviceFirmwareTHNewFw": "New",
++    "dialogShowDeviceFirmwareTHDevice": "Devicetype",
++    "dialogShowDeviceFirmwareTHSerials": "Serial numbers",
++    "dialogShowDeviceFirmwareTHCurFw": "Current Version",
++    "dialogShowDeviceFirmwareTHNewFw": "Recommended Version",
++    "dialogShowDeviceFirmwareDescription": "Instruction",
++    "dialogShowDeviceFirmwareDownloadInfo1": "1. Download recommended version",
++    "dialogShowDeviceFirmwareDownloadInfo2": "2. Upload firmware file via",
++    "dialogShowDeviceFirmwareDownloadInfo3": "",
+     "dialogShowDeviceFirmwareLinkDownload": "To download area",
+     "hintDevFwAlreadyUploaded" : "" +
+       "The latest firmware version of the device is alreay installed on the  " + HMIdentifier.en.CCUShortName + ".\n"+
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -18636,6 +18636,20 @@
+   MessageBox.show(title, content,'', 475, 450);
+ };
+ 
++function toggleSerialNumberDisplay() {
++  var tb = document.getElementById("fwUpdates");
++  if (tb) {
++    var th = tb.getElementsByTagName("th")[2];
++    if (th.style.display === "none") {
++      th.style.display = "block";
++      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'block')
++    } else {
++      th.style.display = "none";
++      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'none')
++    }
++  }
++};
++
+ StatusDisplayDialogAcousticEPaper = Class.create({
+  
+   initialize: function(title, content, value, callback, contentType) {
+@@ -25591,11 +25605,26 @@
+     return false;
+   },*/
+ 
++  cmpVersion: function (aa, bb) {
++    // 0   Version equal 
++    // >0  Version aa newer 
++    // <0  Version bb newer  
++    const aArr = aa.split(".");
++    const bArr = bb.split(".");
++    const min = Math.min(aArr.length, bArr.length);
++    for (let index = 0; index < min; index++) {
++        if (aArr[index] != bArr[index])
++            return (aArr[index] - bArr[index]);
++    }
++    return 0;
++  },
++
+   showAllDeviceFirmware: function() {
+     var self = this;
+     if (!this.fetchDeviceList) {
+       this.fetchDeviceList = true; // prevents this to be called multiple times (when clicking the start page)
+       this.messageBoxHTML = "";
++      this.DeviceUpdateList = {};
+       this.newFwCounter = 0;
+       this.devIndex = 0;
+       if (this.devList.length == 0) {
+@@ -25705,12 +25734,23 @@
+         newFW = resultMajorMinor;
+       }
+ 
++      // generate RefUpdateList with detailed Information per DeviceType for grouped list
+       if (devIsUpdatable && fwVersion && (fwVersion != "n/a") && (newFW != curFw)) {
++        if (!this.DeviceUpdateList[deviceType]) {
++          this.DeviceUpdateList[deviceType] = {};
++        }
++        var RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
++        if (!RefUpdateList) {
++          this.DeviceUpdateList[deviceType][curFw] = { DevCnt: 0, FWAvailable: 0, FWUpload: 0, Address: [], downloadURL: this.downloadURL, deviceTypeForUrl: deviceTypeForUrl, fwVersion: fwVersion, curVersion: curFw, availableFirmware: availableFW };
++          RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
++        }
++        RefUpdateList.DevCnt++;
++        RefUpdateList.Address.push(self.devList[self.devIndex].address);
+         // FW not yet available on the CCU
+         if (availableFW != newFW) {
+-          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + devAddress + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=\"window.location.href='" + self.downloadURL + "&serial="+self.serial+"&product=" + deviceTypeForUrl + "'\">" + fwVersion + "</td></tr>";
++          RefUpdateList.FWUpload++;
+         } else {
+-          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + self.devList[self.devIndex].address + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=alert(translateKey('hintDevFwAlreadyUploaded'));>" + fwVersion + "</td></tr>";
++          RefUpdateList.FWAvailable++;
+         }
+         self.newFwCounter++;
+       }
+@@ -25719,6 +25759,38 @@
+     if (self.devIndex < self.devList.length) {
+       self.fetchAndSetDeviceVersion();
+     } else {
++      for (const Typ of Object.keys(this.DeviceUpdateList).sort()) {
++        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort()) {
++          let Obj = this.DeviceUpdateList[Typ][curFw];
++          let curVersion = Obj.curVersion;
++          let color = "black";
++          if (this.cmpVersion(Obj.curVersion, Obj.fwVersion) > 0) {
++            curVersion = "<b>" + Obj.curVersion + "</b>";
++            color = "orange";
++          }
++          this.messageBoxHTML += "<tr>" +
++                                   "<td style='text-align:left;vertical-align:top;' height='15px'>" +
++                                     Typ +
++                                   "</td>" +
++                                   "<td style='text-align:center;vertical-align:top;' class='UILink' " +
++                                     "onClick='toggleSerialNumberDisplay()'>" +
++                                     Obj.DevCnt +
++                                   "</td>" +
++                                   "<td style='text-align:left;vertical-align:top;display:none;'>" +
++                                     Obj.Address.join('<br/>') +
++                                   "</td>" +
++                                   "<td style='text-align:left;vertical-align:top;color:" + color + "'>" +
++                                     curVersion +
++                                   "</td>" +
++                                   "<td style='text-align:left;vertical-align:top;' class='UILink' " +
++                                       "onClick=\"window.location.href='" +
++                                         Obj.downloadURL +
++                                         "&serial=0&product=" + Obj.deviceTypeForUrl + "'\">" +
++                                         Obj.fwVersion +
++                                   "</td>" +
++                                   "</tr>";
++        }
++      }
+       self.fetchDeviceList = false;
+       self.deleteScriptElements();
+       if (self.newFwCounter > 0) {
+@@ -25746,25 +25818,34 @@
+ 
+   showAvailableDeviceFirmware: function() {
+     var contentHeight = jQuery("#content").innerHeight(),
+-    maxMessageBoxHeight = (this.newFwCounter * 20) + 50,
++    maxMessageBoxHeight = (this.newFwCounter + 5) * 20,
+     msgBoxHeight = (maxMessageBoxHeight < contentHeight) ? maxMessageBoxHeight : contentHeight;
+ 
+     MessageBox.show(translateKey("dialogShowDeviceFirmwareTitle"),
+-    "<table>"+
++    "<table id='fwUpdates' style='width:100%;'>"+
+       "<colgroup>" +
+-      "<col style='width:200px;'>" +
+-      "<col style='width:100px;'>" +
+-      "<col style='width:100px;'>" +
++      "<col style='width:40%;'>" +
++      "<col style='width:19%;'>" +
++      "<col style='display:none;'>" +
++      "<col style='width:19%;'>" +
++      "<col style='width:19%;'>" +
+       "</colgroup>" +
+-      "<th align='left'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
+-      "<th align='left'>"+translateKey('thSerialNumber')+"</th>"+
+-      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
+-      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
++      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
++      "<th style='text-align:center;vertical-align:top;'>"+translateKey('lblQuantity')+"</th>"+
++      "<th style='text-align:left;vertical-align:top;display:none;'>"+translateKey('dialogShowDeviceFirmwareTHSerials')+"</th>"+
++      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
++      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
+       this.messageBoxHTML +
++      "<tr><td colspan='5' align='left'><br/><b>"+translateKey('dialogShowDeviceFirmwareDescription')+":</b><br/>" +
++      translateKey('dialogShowDeviceFirmwareDownloadInfo1') + "<br/>" +
++      translateKey('dialogShowDeviceFirmwareDownloadInfo2') + "&nbsp;" +
++        "'<div class='UILink' style='display: inline;' onclick='MessageBox.close();WebUI.enter(DeviceFirmware);'>"+translateKey('submenuDeviceFirmware')+"</div>" +
++        " => " + translateKey('footerBtnNew') + "'&nbsp;" +
++        translateKey('dialogShowDeviceFirmwareDownloadInfo3') +
+       //"<tr><td colspan='3' align='center'><a href='http://www.eq-3.de/downloads.html' target='_blank'>"+translateKey('dialogShowDeviceFirmwareLinkDownload')+"</a></td></tr>" +
+     "</table>",
+     "",
+-    400,
++    450,
+     msgBoxHeight
+     );
+   },

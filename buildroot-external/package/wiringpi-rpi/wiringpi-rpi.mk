@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WIRINGPI_RPI_VERSION = f97a6230160b819e6daea7eb242404afa708e421
+WIRINGPI_RPI_VERSION = 3.16
 WIRINGPI_RPI_SITE = $(call github,wiringpi,wiringpi,$(WIRINGPI_RPI_VERSION))
 
 WIRINGPI_RPI_LICENSE = LGPL-3.0+
@@ -26,7 +26,6 @@ define WIRINGPI_RPI_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/wiringPi install DESTDIR=$(TARGET_DIR) PREFIX=/usr LDCONFIG=true
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/devLib install DESTDIR=$(TARGET_DIR) PREFIX=/usr LDCONFIG=true
 	$(INSTALL) -D -m 0755 $(@D)/gpio/gpio $(TARGET_DIR)/usr/bin/gpio
-	$(INSTALL) -D -m 0755 $(@D)/gpio/pintest $(TARGET_DIR)/usr/bin/pintest
 endef
 
 $(eval $(generic-package))

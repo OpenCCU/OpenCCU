@@ -292,7 +292,10 @@ function ::saveDesc() {
 function ::UpdateUI()
 {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
-  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+
+  ! See SPHM-829
+  ! if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  if( oUser.UserLevel() != iulNone )
   {
   Write( '<script type="text/javascript">' );
 
@@ -440,7 +443,7 @@ function ::UpdateUI()
 
 
   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
-  Write( 'if(showAPITools == "true") showHmAPITools();');
+  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
 
   !###################
   !# Systemvariablen #
@@ -816,6 +819,9 @@ function ::saveSysVar()
   !sv.ValueSubType(ist);
   sv.DPInfo( system.GetVar("sInfo") );
   sv.ValueUnit( system.GetVar("sUnit") );
+  sv.RemoveMetaData('MIN');
+  sv.RemoveMetaData('MAX');
+  var svValue;
   if (ist == istAlarm)
   {
     sv.ValueType( ivtBinary );
@@ -831,7 +837,7 @@ function ::saveSysVar()
     sv.ValueSubType( istBool );
     sv.ValueName1(system.GetVar("sTrue"));
     sv.ValueName0(system.GetVar("sFalse"));
-    sv.State(false);
+    svValue=false;
   }
   elseif (ist == istGeneric)
   {
@@ -839,20 +845,20 @@ function ::saveSysVar()
     sv.ValueSubType( istGeneric );
     sv.ValueMin(system.GetVar("iMinVal"));
     sv.ValueMax(system.GetVar("iMaxVal"));
-    sv.State(system.GetVar("iMinVal"));
+    svValue=system.GetVar("iMinVal");
   }
   elseif (ist == istEnum)
   {
     sv.ValueType( ivtInteger );
     sv.ValueSubType( istEnum );
     sv.ValueList(system.GetVar("sValList"));
-    sv.State(0);
+    svValue=0;
   }
   elseif (ist == istChar8859)
   {
     sv.ValueType(ivtString);
     sv.ValueSubType(istChar8859);
-    sv.State("???");
+    svValue="";
   }
 
   if (oChn) 
@@ -869,7 +875,9 @@ function ::saveSysVar()
     }
     sv.Channel( ID_ERROR );
   }
-  sv.State(system.GetVar("sValue"));
+  
+  if (system.GetVar("sValue")) { svValue = system.GetVar("sValue"); }  
+  sv.State(svValue);
   dom.RTUpdate(0);
   }
   return;
@@ -1274,16 +1282,26 @@ function ::writeProgCtrl()
   Write("<td>");
   string sClass = "ControlBtnOff";
   if( objProg.Active() ) { sClass = "ControlBtnOn"; }
-    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' >"); 
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject(uid);
+  if(oUser.UserLevel() == iulAdmin) {
+    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' onclick='isePrograms.SetActive("#pid#",!" #objProg.Active() # ")'>");
+  } else {
+    Write("<table class='"#sClass#" CLASS02102' style='cursor: default; border-top: solid 1px black; border-right: solid 1px black;' id='"#pid#"Act' >");
+  }
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
-          Write("<img src='/ise/img/cogs3.png' width='80px' height='75px' />");
+          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' />");
         Write("</div>");
       Write("</td>");
     Write("</tr>");
     !Write("<tr><td>Aktiv</td></tr>");
-    Write("<tr><td>${actionStatusControlLblActive}</td></tr>");
+    if( objProg.Active() ) {
+      Write("<tr><td>${actionStatusControlLblActive}</td></tr>");
+    } else {
+      Write("<tr><td>${actionStatusControlLblNotActive}</td></tr>");
+    }
     Write("</table>");
   Write("</td>");
   if (system.GetVar("iStatusOnly") == 0)
@@ -1292,15 +1310,17 @@ function ::writeProgCtrl()
     !Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>Start</div>");
     Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStart}</div>");
     Write("<script type='text/javascript'>");
-    Write("new iseButtonProg("#pid#", "#objProg.Active()#");");
+    Write("new iseButtonProg("#pid#", "#objProg.Active()#", false);");
     Write("</script>");
     Write("</td>");
+    Write("<td><div id='"#pid#"StartThenOnly' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStartThenOnly}</div>");
+    Write("<script type='text/javascript'> new iseButtonProg("#pid#", "#objProg.Active()#", true);</script></td>");
   }
   else
   {
-    Write("<td></td>");
+    Write("<td></td><td></td>");
   }
-  Write("<td></td><td></td><td></td>");
+  Write("<td></td><td></td>");
   
   Write("</tr>");
   Write("</table>");
@@ -1566,7 +1586,8 @@ function ::writeWarnStateJS()
       Write( 'hide("work'#system.GetVar("cId")#'");' );
     }
     
-    if( oChnTmp.ExistServiceMsg() )
+  !  if( oChnTmp.ExistServiceMsg() )
+    if( oChnTmp.ExistServiceMsg() && ((oChnTmp.HssType() != "CLIMATECONTROL_FLOOR_TRANSCEIVER") || ((oChnTmp.HssType() == "CLIMATECONTROL_FLOOR_TRANSCEIVER") && (oChnTmp.MetaData("chnActive") == true))) )
     {
       Write( 'show("warn'#system.GetVar("cId")#'");' );
     }

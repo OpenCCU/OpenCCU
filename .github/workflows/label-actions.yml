@@ -1,4 +1,4 @@
-# RaspberryMatic Label Actions workflow
+# OpenCCU Label Actions workflow
 # yamllint disable rule:truthy
 ---
 name: 'Label Actions'
@@ -19,6 +19,6 @@ permissions:
 
 jobs:
   action:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: dessant/label-actions@v4
+      - uses: dessant/label-actions@v5

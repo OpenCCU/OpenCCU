@@ -1,0 +1,148 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169 source=/dev/null
+
+# make sure we have a secure umask
+umask 0002
+
+# source all data from /var/hm_mode
+[[ -r /var/hm_mode ]] && . /var/hm_mode
+
+# source in the network config
+[[ -r /etc/config/netconfig ]] && . /etc/config/netconfig
+
+# signal that we are about to setup the network
+# connection using a slow blinking blue LED
+if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
+  echo none >/sys/class/leds/rpi_rf_mod:green/trigger
+  echo none >/sys/class/leds/rpi_rf_mod:red/trigger
+  echo timer >/sys/class/leds/rpi_rf_mod:blue/trigger
+  echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_on
+  echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_off
+fi
+
+# we exit if if-up.d is called for "lo"
+if [[ "${IFACE}" == "lo" ]]; then
+  exit 0
+fi
+
+echo -n "${IFACE}:"
+
+# only continue if this network interface exists
+if [[ ! -L "/sys/class/net/${IFACE}" ]]; then
+  echo -n " missing, "
+  exit 1
+fi
+
+# only continue if another interface hasn't
+# setup everything correctly already
+if [[ -f /var/status/hasIP ]] &&
+   [[ -f /var/status/hasLink ]]; then
+
+  /sbin/ip link set "${IFACE}" down
+  echo -n " disabled, "
+
+  exit 0
+fi
+
+# depending on the interface we have to either setup
+# a ethernet interface or wifi
+case "${IFACE}" in
+
+  *)
+    # wait until the link is up
+    /sbin/ip link set "${IFACE}" up
+    i=0
+    while [[ "$(cat "/sys/class/net/${IFACE}/carrier")" == "0" ]]; do
+      sleep 2
+      i=$((i+1))
+      if [[ $i -ge 6 ]]; then
+        break
+      fi
+      echo -n "."
+    done
+
+    # if the link is not up we continue only if this is a
+    # static connectin and no wifi config is present
+    if [[ "$(cat "/sys/class/net/${IFACE}/carrier")" == "0" ]]; then
+      echo -n " link down, "
+      /sbin/ip link set "${IFACE}" down
+    else
+      echo -n " link up, "
+    fi
+  ;;
+esac
+
+mkdir -p /var/status
+rm -f /var/status/hasLink
+rm -f /var/status/hasIP
+rm -f /var/status/hasInternet
+
+RET=0
+case "${MODE}" in
+
+  # everything else means we are setting a static IP
+  *)
+    echo -n "fixed, "
+
+    # get IP data within container environment
+    IP=$(/sbin/ip -4 route get 1 | head -1 | cut -d' ' -f8 | tr -d '\n')
+    GATEWAY=$(/sbin/ip -4 route | grep default | awk '{print $3}')
+    NETMASK=$(/sbin/ifconfig "${IFACE}" | grep "inet addr" | cut -d: -f4)
+    NAMESERVER1=$(grep -E "^nameserver [[:digit:]]" /etc/resolv.conf | awk 'FNR==1{print $2}')
+    NAMESERVER2=$(grep -E "^nameserver [[:digit:]]" /etc/resolv.conf | awk 'FNR==2{print $2}')
+
+    # update CURRENT_XYZ in /etc/config/netconfig
+
+    # update /etc/config/netconfig
+    eq3configcmd netconfigcmd -i "${IP}" -g "${GATEWAY}" -n "${NETMASK}"
+
+    if [[ -n "${NAMESERVER1}" ]]; then
+      eq3configcmd netconfigcmd -d1 "${NAMESERVER1}"
+    else
+      eq3configcmd netconfigcmd -d1 ""
+    fi
+
+    if [[ -n "${NAMESERVER2}" ]]; then
+      eq3configcmd netconfigcmd -d2 "${NAMESERVER2}"
+    else
+      eq3configcmd netconfigcmd -d2 ""
+    fi
+
+    touch /var/status/hasIP
+
+    # we checked the link state already way earlier
+    case "${IFACE}" in
+      eth*)
+        if [[ "$(cat "/sys/class/net/${IFACE}/carrier")" != "0" ]]; then
+          touch /var/status/hasLink
+        else
+          RET=1
+        fi
+      ;;
+      *)
+        touch /var/status/hasLink
+      ;;
+    esac
+  ;;
+
+esac
+
+# init the firewall only in case
+# we are in normal startup mode
+if [[ "${HM_MODE}" == "NORMAL" ]]; then
+  # set firewall rules
+  /bin/setfirewall.tcl
+  echo -n "firewall, "
+fi
+
+# check internet connection
+/bin/checkInternet >/dev/null
+if [[ -f /var/status/hasInternet ]]; then
+  echo -n "inet up, "
+else
+  echo -n "inet down, "
+fi
+
+echo -n "${IP}, "
+
+exit ${RET}

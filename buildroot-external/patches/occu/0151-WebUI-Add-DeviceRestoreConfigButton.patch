@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/ic_deviceparameters.cgi.orig
 +++ occu/WebUI/www/config/ic_deviceparameters.cgi
-@@ -1133,6 +1133,29 @@
+@@ -1170,6 +1170,29 @@
    puts "</script>"
  }
  
@@ -30,7 +30,7 @@
  proc put_Header {} {
  
    #cgi_debug -on
-@@ -1144,6 +1167,7 @@
+@@ -1181,6 +1204,7 @@
  
    set HmIPIdentifier "HmIP-RF"
    set HmIPWIdentifier "HmIP-Wired"
@@ -38,7 +38,7 @@
    set type $dev_descr(TYPE)
  
    array set SENTRY ""
-@@ -1159,7 +1183,7 @@
+@@ -1196,7 +1220,7 @@
        set SENTRY(NAME) "$iface"
        append SENTRY(NAME) ".$address"
    }
@@ -47,7 +47,7 @@
    set SENTRY(IMAGE) "<div id=\"picDiv_thumb\" class=\"CLASS22005\" onmouseover=\"picDivShow(jg_250, '$dev_descr(TYPE)', 250, '-1', this);\" onmouseout=\"picDivHide(jg_250);\"></div>"
    append SENTRY(IMAGE) "<script type=\"text/javascript\">"
    append SENTRY(IMAGE) "var jg_thumb = new jsGraphics(\"picDiv_thumb\");"
-@@ -1170,6 +1194,9 @@
+@@ -1207,6 +1231,9 @@
    set SENTRY(FIRMWARE) "<table id=\"id_firmware_table_$address\" class=\"id_firmware_table\" cellspacing=\"0\">"
    #append SENTRY(FIRMWARE) "<tr><td>Version:</td><td class=\"CLASS22006\">$dev_descr(FIRMWARE)</td></tr>"
    append SENTRY(FIRMWARE) "<tr><td>\${lblFirmwareVersion}</td><td id=\"curFwVersion\" class=\"CLASS22006\">$dev_descr(FIRMWARE)</td></tr>"
@@ -57,7 +57,7 @@
    if {$MODE == "DEVICEPARAMETERS"} then {
      set fw_update_rows ""
      if {($iface != $HmIPIdentifier) && ($iface != $HmIPWIdentifier)} {
-@@ -1270,8 +1297,15 @@
+@@ -1307,8 +1334,15 @@
    puts "  <col />"
    #Interface
    puts "  <col />"
@@ -75,7 +75,7 @@
    puts "</colgroup>"
    
    puts "<THEAD>"
-@@ -1284,6 +1318,9 @@
+@@ -1321,6 +1355,9 @@
    puts "<TD>\${thSerialNumber}</TD>"
    puts "<TD>\${thInterface}</TD>"
    puts "<TD>\${thFirmware}</TD>"
@@ -85,7 +85,7 @@
    puts "</TR>"
    
    puts "</THEAD>"
-@@ -1298,6 +1335,9 @@
+@@ -1335,6 +1372,9 @@
    puts "<td>$SENTRY(ADDRESS)</td>"
    puts "<td>$SENTRY(IFACE)</td>"
    puts "<td>$SENTRY(FIRMWARE)</td>"
@@ -97,7 +97,7 @@
    puts "</TBODY>"
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -40186,6 +40186,19 @@
+@@ -49397,6 +49397,19 @@
    return false;
  };
  

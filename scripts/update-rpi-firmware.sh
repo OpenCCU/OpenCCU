@@ -1,11 +1,24 @@
 #!/bin/bash
 set -e
 
-if [ -z "$1" ]; then
-    echo "Need a tag/commit ID! e.g.: 1.20210303"
-    exit 1
+ID=${1}
+PACKAGE_NAME="rpi-firmware"
+PROJECT_URL="https://github.com/raspberrypi/firmware"
+ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${ID}.tar.gz"
+
+if [[ -z "${ID}" ]]; then
+  echo "tag name or commit sha required (see ${URL})"
+  exit 1
 fi
 
-sed -i "s|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\".*\"|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\"$1\"|g" buildroot-external/configs/raspmatic_rpi*
+# download archive for hash update
+ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')
+if [[ -n "${ARCHIVE_HASH}" ]]; then
 
-#git commit -m "RaspberryPi: Update firmware $1" "$2" buildroot/package/rpi-firmware
+  # update package info
+  sed -i "s|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\".*\"|BR2_PACKAGE_RPI_FIRMWARE_VERSION=\"${ID}\"|g" buildroot-external/configs/rpi*.config
+
+  # update hash files
+  sed -i "/rpi-firmware/d" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+  echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+fi

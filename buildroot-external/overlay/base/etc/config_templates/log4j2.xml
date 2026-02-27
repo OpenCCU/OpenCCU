@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+	<Appenders>
+		<File name="File" fileName="/var/log/hmserver.log" append="true">
+			<PatternLayout>
+				<Pattern>%d %c %-5p [%t] %m %n</Pattern>
+			</PatternLayout>
+		</File>
+		<Syslog name="SYSLOG" host="127.0.0.1" port="514" protocol="UDP"
+				facility="LOCAL0" appName="HmIPServer" format="RFC5424">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_BASIC} %c %pid %-5p [%t] %m</Pattern>
+			</PatternLayout>
+		</Syslog>
+	</Appenders>
+	<Loggers>
+		<Logger name="de.eq3" level="info"/>
+		<Logger name="org" level="error"/>
+		<Logger name="com" level="error"/>
+		<Root level="info">
+			<AppenderRef ref="File" />
+		</Root>
+	</Loggers>
+</Configuration>

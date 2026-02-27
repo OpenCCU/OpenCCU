@@ -49,7 +49,7 @@
       string trId = sID#"tr"#iCount;
       object chn = dom.GetObject(tmp);
       object oDev = dom.GetObject(chn.Device());
-      if (chn.IsTypeOf(OT_CHANNEL) && chn.ReadyConfig() && oDev.ReadyConfig() ) 
+      if (oDev && chn.IsTypeOf(OT_CHANNEL) && chn.ReadyConfig() && oDev.ReadyConfig() )
       {
         integer devId = chn.Device();
         if (devId != ID_ERROR) {
@@ -90,12 +90,6 @@
           rooms = rooms # objTmp.Name() # ";";
         }
        
-        integer iProgCount = 0;
-        if (chn.ChnDPUsageCount() != ID_ERROR)
-        {
-          iProgCount = chn.ChnDPUsageCount();
-        }
-
         object dev = dom.GetObject(chn.Device());
 
         Write("tmp = new Object();");
@@ -111,8 +105,6 @@
         Write("tmp['funcs'] = '"#functions#"';");
         Write("tmp['chnnr'] = '"#chn.ChnNumber()#"';");
         Write("tmp['devlbl'] = '"#sDevLbl#"';");
-        Write("tmp['progC'] = "#iProgCount#";");
-        Write("tmp['devC'] = "#(chn.ChnLinkCount())#";");
         Write("tmp['desc'] = DEV_getDescription('"#sDevLbl#"');");
         Write("tmp['devlbl'] = '"#sDevLbl#"';");
         Write("tmp['gm'] = 0;");
@@ -169,6 +161,7 @@ for (var i = 0; i < chnsTmp.length; i++) {
     iInsIdx++;
     iElemsAdded++;
     tr.id = chnsTmp[i]['trid'];
+    tr.className = 'CLASS04103';
     if (!fltSR.objPassFilter(chnsTmp[i]))
       tr.style.display = "none";
     else 

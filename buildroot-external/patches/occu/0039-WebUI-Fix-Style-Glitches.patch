@@ -19,7 +19,7 @@
        <tr>
 --- occu/HMserver/opt/HMServer/pages/DiagramSettingsDetailPage.ftl.orig
 +++ occu/HMserver/opt/HMServer/pages/DiagramSettingsDetailPage.ftl
-@@ -149,8 +149,12 @@
+@@ -193,8 +193,12 @@
  </style>
  </head>
  <body>
@@ -34,8 +34,8 @@
    <thead>
    <tr>
        <td class="thCell CLASS04900" >${"$"}{thParameter}</td>
-@@ -248,7 +252,15 @@
- 	
+@@ -292,7 +296,15 @@
+ 
    </tbody>
  </table>
 -<table id="dataSourcesTable" class="tTable"  border="0" cellpadding="0" cellspacing="0">
@@ -51,7 +51,7 @@
    <thead>
      <tr>
        <td class="thCell CLASS04900" colspan="6">
-@@ -592,4 +604,4 @@
+@@ -671,4 +683,4 @@
  </script>
  </form>
  </body>
@@ -183,6 +183,26 @@
      </colgroup>
      <tr class="CLASS21700">
      
+--- occu/WebUI/www/config/cp_add_device.cgi.orig
++++ occu/WebUI/www/config/cp_add_device.cgi
+@@ -224,7 +224,7 @@
+                   append html "<span>\${lblTeachInKEY}</span>"
+                 append html "</td>"
+                 append html "<td>"
+-                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px'>"
++                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px' oninput='let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);'>"
+                 append html "</td>"
+               append html "</tr>"
+ 
+@@ -233,7 +233,7 @@
+                   append html "<span>\${lblTeachInSGTIN}</span>"
+                 append html "</td>"
+                 append html "<td>"
+-                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px;'>"
++                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px' oninput='let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);'>"
+                 append html "</td>"
+               append html "</tr>"
+ 
 --- occu/WebUI/www/config/ic_deviceFirmwareOverview.cgi.orig
 +++ occu/WebUI/www/config/ic_deviceFirmwareOverview.cgi
 @@ -32,14 +32,14 @@
@@ -208,7 +228,7 @@
     puts "</colgroup>"
  
     puts "<th class=\"DeviceListHead\">\${thName}</th>"
-@@ -348,4 +348,4 @@
+@@ -359,4 +359,4 @@
      puts "</script>"
  
    }
@@ -217,7 +237,7 @@
 +}
 --- occu/WebUI/www/config/ic_deviceparameters.cgi.orig
 +++ occu/WebUI/www/config/ic_deviceparameters.cgi
-@@ -785,9 +785,9 @@
+@@ -776,9 +776,9 @@
    puts "<table id=\"id_channel_parameters_table\" class=\"parameters_table\" cellspacing=\"0\">"
    
    puts "<colgroup>"
@@ -230,7 +250,7 @@
    puts "</colgroup>"
  
    puts "<THEAD>"
-@@ -1259,19 +1259,19 @@
+@@ -1296,19 +1296,19 @@
  
    puts "<colgroup>"
    #Name
@@ -289,7 +309,7 @@
  
 --- occu/WebUI/www/config/ic_selchannel.cgi.orig
 +++ occu/WebUI/www/config/ic_selchannel.cgi
-@@ -46,7 +46,7 @@
+@@ -48,7 +48,7 @@
        if {$step < 3} then {
          # wegen dem IE muss das Style overflow:visible eingestellt sein
          puts "<div id=\"ChnTblContentDiv\" class=\"CLASS21908\" style=\"overflow:visible\" >"
@@ -298,7 +318,7 @@
          put_colgroup
          put_tableheader
  
-@@ -121,25 +121,25 @@
+@@ -123,25 +123,25 @@
  proc put_colgroup {} {
    puts "<colgroup>"
  #Name
@@ -333,7 +353,7 @@
    puts "</colgroup>"
  }
  
-@@ -350,12 +350,12 @@
+@@ -409,12 +409,12 @@
    puts "<table border=\"1\" id=\"createLinkStep1\" cellspacing=\"0\" class=\"j_translate\" >"
  
    puts "<colgroup>"
@@ -352,7 +372,7 @@
    puts "</colgroup>"
    
    puts "<THEAD>"
-@@ -516,7 +516,7 @@
+@@ -575,7 +575,7 @@
      puts "<div class=\"CLASS21915\">&nbsp;"
    } else {
      puts "<td id=\"id_filtertd_$colNr\" class=\"unfiltered\">"
@@ -512,6 +532,15 @@
                    WriteLine("</div>");
                  WriteLine("</td>");
                WriteLine("</tr>");
+@@ -218,7 +218,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ }
 @@ -249,7 +249,7 @@
                WriteLine("<tr>");
                  WriteLine("<td  class='CLASS02513'>");
@@ -521,6 +550,55 @@
                    WriteLine("</div>");
                  WriteLine("</td>");
                WriteLine("</tr>");
+@@ -257,7 +257,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ }
+@@ -287,7 +287,7 @@
+               WriteLine("<tr>");
+                 WriteLine("<td  class='CLASS02513'>");
+                   WriteLine("<div align='center'>");
+-                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
++                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
+                   WriteLine("</div>");
+                 WriteLine("</td>");
+               WriteLine("</tr>");
+@@ -295,7 +295,7 @@
+               WriteLine("</table>");
+             WriteLine("</td>");
+           WriteLine("</tr>");
+-        WriteLine("</table");
++        WriteLine("</table>");
+       WriteLine("</td>");
+   }
+ 
+@@ -348,9 +348,9 @@
+ 
+   if (
+     ((oErrorJammed) && (oErrorJammed.Value() == true))
+-    || ((oErrorLoadTooLow) && (oErrorLoadTooLow == true))
+-    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock == true))
+-    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock == true))
++    || ((oErrorLoadTooLow) && (oErrorLoadTooLow.Value() == true))
++    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock.Value() == true))
++    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock.Value() == true))
+     ) {
+     errorMsg = true;
+   }
+@@ -393,7 +393,7 @@
+                 WriteLine("<tr>");
+                   WriteLine("<td  class='CLASS02513'>");
+                     WriteLine("<div align='center'>");
+-                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
++                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
+                     WriteLine("</div>");
+                   WriteLine("</td>");
+                 WriteLine("</tr>");
 --- occu/WebUI/www/rega/esp/controls/door_window_contact.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/door_window_contact.fn
 @@ -5,7 +5,7 @@
@@ -648,7 +726,7 @@
 +}
 --- occu/WebUI/www/rega/esp/controls/rhs.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/rhs.fn
-@@ -4,7 +4,7 @@
+@@ -15,7 +15,7 @@
      WriteLine("<tr>");
        WriteLine("<td class='CLASS02513'>");
          WriteLine("<div align='center'>");
@@ -657,7 +735,7 @@
          WriteLine("</div>");
        WriteLine("</td>");
      WriteLine("</tr>");
-@@ -16,7 +16,7 @@
+@@ -27,7 +27,7 @@
      WriteLine("<tr>");
        WriteLine("<td class='CLASS02513'>");
          WriteLine("<div align='center'>");
@@ -666,7 +744,7 @@
          WriteLine("</div>");
        WriteLine("</td>");
      WriteLine("</tr>");
-@@ -28,7 +28,7 @@
+@@ -39,7 +39,7 @@
      WriteLine("<tr>");
        WriteLine("<td class='CLASS02513'>");
          WriteLine("<div align='center'>");
@@ -731,7 +809,7 @@
 +}
 --- occu/WebUI/www/rega/esp/controls/universal_light_receiver.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/universal_light_receiver.fn
-@@ -339,14 +339,14 @@
+@@ -427,14 +427,14 @@
              WriteLine("<tr>");
                WriteLine("<td style='text-align:left'><span>${lblColorTemperatureBR}</span></td>");
                WriteLine("<td class='CLASS02546' style='text-align:right'>");
@@ -751,7 +829,7 @@
            WriteLine("</table>")
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1201,7 +1201,7 @@
+@@ -1474,7 +1474,7 @@
    string showParam = true;
  
    WriteLine( '<td class="CLASS02519">' );
@@ -762,7 +840,7 @@
      string sEnum = "";
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -1262,7 +1262,7 @@
+@@ -1265,7 +1265,7 @@
      Write("<tr>");
      Write("<td  class='CLASS02103'>");
          Write("<div align='center'>");
@@ -1191,119 +1269,119 @@
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/newdevices.htm
 @@ -63,43 +63,43 @@
  <div class="CLASS04301">
-   <div id="noNewDevs" class="CLASS04302" style="display:none;">${noDeviceInPostBox}</div>
-   <table id="newDevTbl" class="tblList CLASS04303" cellpadding="0" cellspacing="0"
--         style="display:none; width:97%; margin:1%;">
-+         style="display:none;">
-     <colgroup>
--      <col style="width:2%;"  width="2%"/>
-+      <col style="width:25px;"/>
-       <!-- Plus/Minus Device-->
--      <col style="width:2%;"/>
-+      <col style="width:25px;"/>
-       <!-- Plus/Minus Group -->
--      <col style="width:2%;"/>
-+      <col />
-       <!-- Leere Zelle vor GroupMember -->
--      <col style="width:1%;"/>
--      <col style="width:3%;"/>
--      <col style="width:7%;"/>
--      <col style="width:7%;"/>
--      <col style="width:9%;"/>
--      <col style="width:7%;"/>
--      <col style="width:7%;"/>
--      <col style="width:7%;"/>
--      <col style="width:7%;"/>
--      <col style="width:7%;"/>
--      <col style="width:15%;"/>
--      <col style="width:7%;"/>
-+      <col />
-+      <col style="width:50px;"/>
-+      <col />
-+      <col />
-+      <col />
-+      <col />
-+      <col />
-+      <col />
-+      <col />
-+      <col />
-+      <col style="width:100px;"/>
-+      <col style="width:100px;"/>
-     </colgroup>
-     <tbody id="tblNewDevices">
-     <tr id="tblNewDevicesHeader">
-       <th id="tblListFold"></th>
+ <div id="noNewDevs" class="CLASS04302" style="display:none;">${noDeviceInPostBox}</div>
+ <table id="newDevTbl" class="tblList CLASS04303" cellpadding="0" cellspacing="0"
+-       style="display:none; width:97%; margin:1%;">
++       style="display:none;">
+ <colgroup>
+-  <col style="width:2%;"  width="2%"/>
++  <col style="width:25px;"/>
+   <!-- Plus/Minus Device-->
+-  <col style="width:2%;"/>
++  <col style="width:25px;"/>
+   <!-- Plus/Minus Group -->
+-  <col style="width:2%;"/>
++  <col />
+   <!-- Leere Zelle vor GroupMember -->
+-  <col style="width:1%;"/>
+-  <col style="width:3%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:9%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:7%;"/>
+-  <col style="width:15%;"/>
+-  <col style="width:7%;"/>
++  <col />
++  <col style="width:50px;"/>
++  <col />
++  <col />
++  <col />
++  <col />
++  <col />
++  <col />
++  <col />
++  <col />
++  <col style="width:100px;"/>
++  <col style="width:100px;"/>
+ </colgroup>
+ <tbody id="tblNewDevices">
+ <tr id="tblNewDevicesHeader">
+   <th id="tblListFold"></th>
  
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('type')" colspan='3'><b>${thTypeDescriptor}</b></th>
--      <th class="Sort CLASS04304 border1px"><b>${thPicture}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('desc')"><b>${thDescriptor}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('sn')"><b>${thSerialNumber}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('iface')"><b>${thInterfaceCategory}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('trans')"><b>${thTransmitMode}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('name')"><b>${thName}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('func')"><b>${thFunc}</b></th>
--      <th class="Sort CLASS04304 border1px" onclick="NewDevSort('room')"><b>${thRoom}</b></th>
--      <th class="Sort CLASS04304 border1px"><b>${thFunctionTest}</b></th>
--      <th class="Sort CLASS04304 border1px"><b>${thAction}</b></th>
--      <th class="Sort CLASS04304 border1px"><b>${thReady}</b></th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('type')" colspan='3'>${thTypeDescriptor}</th>
-+      <th class="DeviceListHead">${thPicture}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('desc')">${thDescriptor}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('sn')">${thSerialNumber}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('iface')">${thInterfaceCategory}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('trans')">${thTransmitMode}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('name')">${thName}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('func')">${thFunc}</th>
-+      <th class="DeviceListHead clickable" onclick="NewDevSort('room')">${thRoom}</th>
-+      <th class="DeviceListHead">${thFunctionTest}</th>
-+      <th class="DeviceListHead">${thAction}</th>
-+      <th class="DeviceListHead">${thReady}</th>
-     </tr>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('type')" colspan='3'><b>${thTypeDescriptor}</b></th>
+-  <th class="Sort CLASS04304 border1px"><b>${thPicture}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('desc')"><b>${thDescriptor}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('sn')"><b>${thSerialNumber}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('iface')"><b>${thInterfaceCategory}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('trans')"><b>${thTransmitMode}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('name')"><b>${thName}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('func')"><b>${thFunc}</b></th>
+-  <th class="Sort CLASS04304 border1px" onclick="NewDevSort('room')"><b>${thRoom}</b></th>
+-  <th class="Sort CLASS04304 border1px"><b>${thFunctionTest}</b></th>
+-  <th class="Sort CLASS04304 border1px"><b>${thAction}</b></th>
+-  <th class="Sort CLASS04304 border1px"><b>${thReady}</b></th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('type')" colspan='3'>${thTypeDescriptor}</th>
++  <th class="DeviceListHead">${thPicture}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('desc')">${thDescriptor}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('sn')">${thSerialNumber}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('iface')">${thInterfaceCategory}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('trans')">${thTransmitMode}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('name')">${thName}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('func')">${thFunc}</th>
++  <th class="DeviceListHead clickable" onclick="NewDevSort('room')">${thRoom}</th>
++  <th class="DeviceListHead">${thFunctionTest}</th>
++  <th class="DeviceListHead">${thAction}</th>
++  <th class="DeviceListHead">${thReady}</th>
+ </tr>
  
-     <script type="text/javascript">
+ <script type="text/javascript">
 @@ -381,7 +381,7 @@
-         var img = Builder.node('img', {src: "/ise/img/plus.png", id: "img" + arDevices[i]['id'], alt: "plus", onclick: "expandDevice(" + arDevices[i]['id'] + "," + i + ")"});
-         td.appendChild(img);
-         tr.appendChild(td);
--        td = Builder.node('td', {className: 'GrayBkg border1px', colSpan: 3}, strCut(arDevices[i]['type'], true));
-+        td = Builder.node('td', {className: 'GrayBkg border1px', colSpan: 3}, arDevices[i]['type']);
-         tr.appendChild(td);
-         td = Builder.node('td', {className: 'WhiteBkgPic CLASS04314 border1px'}, [
-           Builder.node('div', {id: 'picDiv' + arDevices[i]['id'], className: "CLASS04305",
+   var img = Builder.node('img', {src: "/ise/img/plus.png", id: "img" + arDevices[i]['id'], alt: "plus", onclick: "expandDevice(" + arDevices[i]['id'] + "," + i + ")"});
+   td.appendChild(img);
+   tr.appendChild(td);
+-  td = Builder.node('td', {className: 'GrayBkg border1px', colSpan: 3}, strCut(arDevices[i]['type'], true));
++  td = Builder.node('td', {className: 'GrayBkg border1px', colSpan: 3}, arDevices[i]['type']);
+   tr.appendChild(td);
+   td = Builder.node('td', {className: 'WhiteBkgPic CLASS04314 border1px'}, [
+     Builder.node('div', {id: 'picDiv' + arDevices[i]['id'], className: "CLASS04305",
 @@ -391,7 +391,7 @@
-         td = Builder.node('td', {className: 'GrayBkg border1px'}, arDevices[i]['desc'] );
-         td.innerHTML = translateKey(arDevices[i]['desc']);
-         tr.appendChild(td);
--        td = Builder.node('td', {className: 'GrayBkg border1px'}, strCut(arDevices[i]['sn']));
-+        td = Builder.node('td', {className: 'GrayBkg border1px'}, arDevices[i]['sn']);
-         tr.appendChild(td);
-         td = Builder.node('td', {className: 'GrayBkg border1px'}, arDevices[i]['iface']);
-         tr.appendChild(td);
+   td = Builder.node('td', {className: 'GrayBkg border1px'}, arDevices[i]['desc'] );
+   td.innerHTML = translateKey(arDevices[i]['desc']);
+   tr.appendChild(td);
+-  td = Builder.node('td', {className: 'GrayBkg border1px'}, strCut(arDevices[i]['sn']));
++  td = Builder.node('td', {className: 'GrayBkg border1px'}, arDevices[i]['sn']);
+   tr.appendChild(td);
+   td = Builder.node('td', {className: 'GrayBkg border1px'}, arDevices[i]['iface']);
+   tr.appendChild(td);
 @@ -401,13 +401,13 @@
  
-         if (NAV_IE) {
-           td = Builder.node('td', {className: 'WhiteBkg border1px'},
--            [Builder.node('div', {id: 'tdn' + arDevices[i]['id'], className: "CLASS04306", onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0, CALL_STRCUT)'}, strCut(arDevices[i]['name'], true)) ]);
-+          [Builder.node('div', {id: 'tdn' + arDevices[i]['id'], className: "CLASS04306", onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0)'}, arDevices[i]['name']) ]);
-           tr.appendChild(td);
-         }
-         else {
-           if (isDevTypeHmIPW(arDevices[i]['type'])) {
-             td = Builder.node('td', {className: 'WhiteBkg CLASS04307 border1px'});
--            divA = Builder.node('div', {id: 'tdn' + arDevices[i]['id']}, strCut(arDevices[i]['name'].replace(/:/g, ":<br/>"), false));
-+            divA = Builder.node('div', {id: 'tdn' + arDevices[i]['id']}, arDevices[i]['name'].replace(/:/g, ":<br/>"));
-             divB = Builder.node('div', {
-               id: 'btnRename_' + arDevices[i]["id"],
-               className: 'TestButton colorGradient borderRadius2px hidden',
+   if (NAV_IE) {
+     td = Builder.node('td', {className: 'WhiteBkg border1px'},
+-      [Builder.node('div', {id: 'tdn' + arDevices[i]['id'], className: "CLASS04306", onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0, CALL_STRCUT)'}, strCut(arDevices[i]['name'], true)) ]);
++      [Builder.node('div', {id: 'tdn' + arDevices[i]['id'], className: "CLASS04306", onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0)'}, arDevices[i]['name']) ]);
+     tr.appendChild(td);
+   }
+   else {
+     if (isDevTypeHmIPW(arDevices[i]['type'])) {
+       td = Builder.node('td', {className: 'WhiteBkg CLASS04307 border1px'});
+-      divA = Builder.node('div', {id: 'tdn' + arDevices[i]['id']}, strCut(arDevices[i]['name'].replace(/:/g, ":<br/>"), false));
++      divA = Builder.node('div', {id: 'tdn' + arDevices[i]['id']}, arDevices[i]['name'].replace(/:/g, ":<br/>"));
+       divB = Builder.node('div', {
+         id: 'btnRename_' + arDevices[i]["id"],
+         className: 'TestButton colorGradient borderRadius2px hidden',
 @@ -417,7 +417,7 @@
-             td.appendChild(divA);
-             td.appendChild(divB);
-           } else {
--            td = Builder.node('td', {className: 'WhiteBkg CLASS04307 border1px', id: 'tdn' + arDevices[i]['id'], onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0, CALL_STRCUT)'}, strCut(arDevices[i]['name'], true));
-+            td = Builder.node('td', {className: 'WhiteBkg CLASS04307 border1px', id: 'tdn' + arDevices[i]['id'], onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0)'}, arDevices[i]['name']);
-           }
+       td.appendChild(divA);
+       td.appendChild(divB);
+     } else {
+-      td = Builder.node('td', {className: 'WhiteBkg CLASS04307 border1px', id: 'tdn' + arDevices[i]['id'], onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0, CALL_STRCUT)'}, strCut(arDevices[i]['name'], true));
++      td = Builder.node('td', {className: 'WhiteBkg CLASS04307 border1px', id: 'tdn' + arDevices[i]['id'], onclick: 'textEdit(id, ' + arDevices[i]['id'] + ', false, 0)'}, arDevices[i]['name']);
+     }
  
-           tr.appendChild(td);
+     tr.appendChild(td);
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm
 @@ -57,9 +57,16 @@
@@ -1326,7 +1404,7 @@
        <td class="thCell CLASS04900" >${thActivity}</td>
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programs.htm
-@@ -960,6 +960,13 @@
+@@ -1131,6 +1131,13 @@
  
  <div id="prgcontent">
    <table id="ProgramTable" class="filterTable tTable j_translate" border="0" cellpadding="0" cellspacing="0">
@@ -1340,7 +1418,7 @@
      <thead>
        <tr>
          <td class="thCell CLASS04802" >${thName}</td>
-@@ -971,11 +978,11 @@
+@@ -1142,11 +1149,11 @@
      </thead>
      <tbody>
        <tr class="CLASS04803">
@@ -1532,7 +1610,7 @@
        string sStyle = "";
 --- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
-@@ -21,15 +21,10 @@
+@@ -21,19 +21,14 @@
    <tr>
      <!-- Linke Spalte -->
      <td id="contentLeft" class="hidden">
@@ -1548,16 +1626,26 @@
 -              </script>
                <table id="tblFunctionNames" class="StatViewTbl CLASS03903 j_translate" cellpadding="0" cellspacing="0" style="width:100%;">
                  <colgroup>
-                   <col style="width:80%;"/>
-@@ -92,7 +87,7 @@
+-                  <col style="width:50%;"/>
+-                  <col style="width:50%;"/>
++                  <col style="width:80%;"/>
++                  <col style="width:20%;"/>
+                 </colgroup>
+                 <tr>
+                   <th>${thName}</th>
+@@ -92,10 +87,10 @@
                          }
                          string trId = "devices"#devs.ID();
                          WriteLine('<tr id="'#trId#'" class="CLASS03904">');
--                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
+-                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' style='height: 80px;' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
 +                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                            Write(devs.Name());
                            Write("</td>");
-                           Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' >");
+-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' style='height: 80px;'>");
++                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
+                           
+                           string sPicDivId = "picDiv"#devs.ID();
+                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
 @@ -130,12 +125,7 @@
      <!-- Rechte Spalte -->
      <td id="contentRight">
@@ -1617,7 +1705,7 @@
             
 --- occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm
-@@ -209,7 +209,7 @@
+@@ -212,7 +212,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1639,7 +1727,7 @@
              integer cId = chn.ID();
 --- occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm
-@@ -167,7 +167,7 @@
+@@ -168,7 +168,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1889,7 +1977,7 @@
  </tr>
  <tr id="trFlt">
    <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
-@@ -294,13 +306,13 @@
+@@ -297,13 +309,13 @@
              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sFirstTimestamp#'</td>' );
              Write( '<td id="sla'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastTimestamp#'</td>' );
              Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName#'</td>' );
@@ -1905,7 +1993,7 @@
                Write(" onmouseover='picDivShow(jg_250, \""#dev.Label()#"\", 250, -1, this);'");
                Write(" onmouseout='picDivHide(jg_250);'");
                Write("></div>");
-@@ -317,12 +329,12 @@
+@@ -320,12 +332,12 @@
              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02609">'#sSerialNumber#'</td>' );
              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02610">'#sFunction#'</td>' );
              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02610">'#sRoom#'</td>' );
@@ -1920,7 +2008,7 @@
  
                if (oLastTrigger.HSSID() == "STICKY_UNREACH") {
                    Write( '<script type="text/javascript">' );
-@@ -333,7 +345,7 @@
+@@ -336,7 +348,7 @@
              }
              else
              {
@@ -2091,6 +2179,15 @@
  }
  
  /* Kopfzeile */
+@@ -305,7 +335,7 @@
+ {
+   /*position: absolute;*/
+   margin-left: 0px;
+-  margin-top: 6px;
++  margin-top: 0px;
+   padding-left: 10px;
+ }
+ 
 @@ -391,7 +421,9 @@
    text-align:center;
    border:solid 1px $_(black); /* black */
@@ -2200,7 +2297,7 @@
  }
  
  .ChnListTbl td {
-@@ -928,7 +959,6 @@
+@@ -946,7 +977,6 @@
      border:1px solid $_(black); /* black */
      /* width:95%; */
      text-align:center;
@@ -2208,7 +2305,7 @@
      line-height:20px;
      vertical-align:middle;
      color: $_(textColorB); /* black */
-@@ -967,7 +997,7 @@
+@@ -985,7 +1015,7 @@
    background-image:url(/ise/img/gradientButton25px.png);
    /*background-image: linear-gradient(to bottom, white 40%, gray);*/
    background-image: var(--btnGradient);
@@ -2217,7 +2314,7 @@
    border: solid 1px $_(gray); /* silver */
    border-radius: 5px;
    margin:2%;
-@@ -1095,6 +1125,7 @@
+@@ -1113,6 +1143,7 @@
  
  .StatViewTbl td{
    border: solid 1px $_(black); /* black */
@@ -2225,7 +2322,7 @@
  }
  
  
-@@ -1245,13 +1276,10 @@
+@@ -1273,13 +1304,10 @@
  .tTable
  {
    text-align:center;
@@ -2241,7 +2338,7 @@
  }
  /*
  .tTable th
-@@ -1308,8 +1336,8 @@
+@@ -1336,8 +1364,8 @@
  .tMain
  {
    border:solid 1px $_(black); /* black */
@@ -2252,7 +2349,7 @@
  }
  
  .tHeader
-@@ -1347,7 +1375,6 @@
+@@ -1375,7 +1403,6 @@
  
  .bcWhitePic
  {
@@ -2260,7 +2357,7 @@
  }
  
  .bcWhite
-@@ -1391,12 +1418,8 @@
+@@ -1419,12 +1446,8 @@
  
  .oLine
  {
@@ -2274,7 +2371,7 @@
  }
  
  .sysConfigHeight
-@@ -1443,7 +1466,7 @@
+@@ -1471,7 +1494,7 @@
    border:solid 1px $_(black); /* black */
    height:40px;
    text-align:center;
@@ -2283,7 +2380,7 @@
  }
  
  .tdCellFilter
-@@ -1457,7 +1480,7 @@
+@@ -1485,7 +1508,7 @@
  
  /* Weisser Zellenhintergrund für Bilder (Geräteübersicht u.ä.) */
  .WhiteBkgPic {
@@ -2292,7 +2389,7 @@
    color: $_(textColorB); /* black */
  }
  
-@@ -1495,9 +1518,20 @@
+@@ -1523,9 +1546,20 @@
  /* Buttons incl. Hilfe-Img. */
  .cpButton {
      width:230px;
@@ -2315,7 +2412,7 @@
  	background-color: $_(background); /* #183473 */
  }
  
-@@ -1513,7 +1547,7 @@
+@@ -1541,7 +1575,7 @@
  
  #ic_deviceparameters #DeviceInformation
  {
@@ -2324,7 +2421,7 @@
  	color: $_(textColorA); /* white */
  	border: 1px solid $_(black); /* black */
  }
-@@ -1537,7 +1571,6 @@
+@@ -1565,7 +1599,6 @@
  
  #ic_deviceparameters #DeviceInformation #DeviceImage
  {
@@ -2332,7 +2429,7 @@
  	width: 52px;
  	height: 56px;
  	margin: 0;
-@@ -1568,7 +1601,7 @@
+@@ -1596,7 +1629,7 @@
  
  #ic_deviceparameters .parameter_area .parameters_table 
  {
@@ -2341,7 +2438,7 @@
  	color: $_(textColorA); /* white */
  	border: 1px solid $_(black); /* black */
  }
-@@ -1577,6 +1610,7 @@
+@@ -1605,6 +1638,7 @@
  
  	background-color: $_(clickable);
  	text-align:center;
@@ -2349,7 +2446,7 @@
  }
  
  #ic_deviceparameters .parameter_area .parameters_table tbody {
-@@ -1587,7 +1621,6 @@
+@@ -1615,7 +1649,6 @@
  
  #ic_deviceparameters .parameter_area .parameters_table td {
  	border: 1px solid $_(black); /* black */
@@ -2357,7 +2454,7 @@
  }
  
  #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl
-@@ -1595,6 +1628,7 @@
+@@ -1623,6 +1656,7 @@
  	border: 0;
  	height: auto;
  	background-color: $_(white); /* white */
@@ -2365,7 +2462,7 @@
  }
  
  #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl thead
-@@ -1609,8 +1643,6 @@
+@@ -1637,8 +1671,6 @@
  {
  	border: 0;
  	background-color: $_(white); /* white */
@@ -2374,7 +2471,7 @@
  }
  
  #ic_deviceparameters #Timeouts_Area .TimeoutTable,
-@@ -1672,6 +1704,14 @@
+@@ -1700,6 +1732,14 @@
  	border: 0;
  }/*LinkList-Tabelle*/
  /*--------------------------------------------*/
@@ -2389,7 +2486,7 @@
  #ic_linkpeerlist #head_wrapper {
    border-bottom: 0;
    margin: 0;
-@@ -1687,17 +1727,16 @@
+@@ -1715,17 +1755,16 @@
  #ic_linkpeerlist #body_wrapper {
    margin: 0;
    padding: 0;
@@ -2410,7 +2507,7 @@
  }
  
  #ic_linkpeerlist .LinkListTbl td {
-@@ -1734,9 +1773,7 @@
+@@ -1762,9 +1801,7 @@
  
  #ic_linkpeerlist .LinkListTbl .LinkListTbl_img
  {
@@ -2420,7 +2517,29 @@
  }
  /*--------------------------------------------*/
  #modalbox #id_messagebox
-@@ -1798,15 +1835,27 @@
+@@ -1778,6 +1815,21 @@
+   z-index:90;
+ }
+ 
++#messagebox
++{
++  min-width: min-content;
++}
++
++#txVals
++{
++  resize: auto;
++}
++
++#txValue
++{
++  resize: auto;
++}
++
+ #messagebox #id_messagebox
+ {
+   position:absolute;
+@@ -1826,15 +1878,27 @@
  {
    height: 40px;
    background-color: $_(activeBackground);
@@ -2451,7 +2570,7 @@
  }
  
  #ic_selchannel #createLinkStep1 thead {
-@@ -1829,13 +1878,14 @@
+@@ -1857,13 +1921,14 @@
  	background-color: $_(white); /* white */
  }
  #ic_selchannel #createLinkStep1 .WhiteHeader input {
@@ -2468,7 +2587,7 @@
  }
  
  #ic_selchannel .ChnListTbl tr td {
-@@ -1964,14 +2014,7 @@
+@@ -1992,14 +2057,7 @@
  {
  	visibility: hidden;
  }
@@ -2483,7 +2602,7 @@
  /*--------------------------------------------*/
  
  /*Tabellenkörper Virtuelle Tasten*/
-@@ -1990,7 +2033,6 @@
+@@ -2018,7 +2076,6 @@
  /*Tabellenkörper Bilderspalte*/
  #ic_selchannel .ChnListTbl .chnListTbl_dev_img 
  {
@@ -2491,7 +2610,7 @@
  	text-align: left;
  	height: 50px;  
  }
-@@ -2004,10 +2046,12 @@
+@@ -2032,10 +2089,12 @@
  	height: auto;
  }
  /*--------------------------------------------*/
@@ -2507,7 +2626,7 @@
  	color: $_(textColorA); /* white */
  	border: 1px solid $_(black); /* black */
  }
-@@ -2090,7 +2134,7 @@
+@@ -2118,7 +2177,7 @@
  #ic_setprofiles #body_wrapper
  {
  	background-color: $_(background); /* #183473 */
@@ -2516,7 +2635,7 @@
  }
  
  #ic_setprofiles  #id_sender_group_receiver_profiles_wrapper
-@@ -2318,9 +2362,10 @@
+@@ -2352,9 +2411,10 @@
    padding:0;
    background-color:$_(clickable);
    color: $_(textColorB); /* black */
@@ -2528,7 +2647,7 @@
  }
  
  .FilterHeight20 {
-@@ -2333,7 +2378,7 @@
+@@ -2367,7 +2427,7 @@
    padding:0;
    background-color:$_(active); /* #565657 */
    color: $_(textColorB); /* black */
@@ -2537,7 +2656,7 @@
    text-align:left;
    vertical-align:middle;  
  }
-@@ -2379,8 +2424,7 @@
+@@ -2413,8 +2473,7 @@
  }
  
  .FilterText {
@@ -2547,7 +2666,7 @@
  }
  
  .FilterButton {
-@@ -2390,8 +2434,7 @@
+@@ -2424,8 +2483,7 @@
    /*background-image: linear-gradient(to bottom, white 40%, gray );*/
    background-image: var(--btnGradient);
  
@@ -2557,7 +2676,7 @@
    border:1px solid $_(black); /* black */
    color: $_(textColorB); /* white */
    font-weight:normal;
-@@ -2487,8 +2530,7 @@
+@@ -2521,8 +2579,7 @@
    border-bottom:solid 5px $_(navBarSeparator); /* #ffffff */
    background-color: $_(background); /* #183473 */
    z-index: 189;
@@ -2567,7 +2686,7 @@
  }
  
  .MainMenuItem_Left {
-@@ -2508,7 +2550,7 @@
+@@ -2542,7 +2599,7 @@
  }
  
  .MainMenuItem_Help {
@@ -2576,7 +2695,7 @@
  }
  
  .MainMenuItem_Highlight {
-@@ -2589,6 +2631,7 @@
+@@ -2623,6 +2680,7 @@
    background-color: $_(subMenuBackground);
    overflow:hidden;
    z-index:189;
@@ -2584,7 +2703,7 @@
  }
  
  .MainMenuSubItem {
-@@ -2603,7 +2646,6 @@
+@@ -2637,7 +2695,6 @@
    line-height:20px;
    cursor: pointer;
    white-space: nowrap;
@@ -2592,7 +2711,7 @@
  }
  
  .MainMenuSubItem_Highlight {
-@@ -2693,9 +2735,9 @@
+@@ -2727,9 +2784,9 @@
    top: 24px;
    left: 2px;
    width: 996px;
@@ -2604,7 +2723,7 @@
  }
  
  #ChannelChooserFooter {
-@@ -2741,7 +2783,6 @@
+@@ -2775,7 +2832,6 @@
    width:100%;
    height:auto;
    margin:0;
@@ -2612,7 +2731,7 @@
    padding:0;
    empty-cells:show;
  }
-@@ -2753,7 +2794,7 @@
+@@ -2787,7 +2843,7 @@
    padding:0;
    background-color:$_(clickable);
    color: $_(textColorA); /* white */
@@ -2621,7 +2740,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2765,7 +2806,7 @@
+@@ -2799,7 +2855,7 @@
    padding:0;
    background-color:$_(active); /* #565657 */
    color: $_(textColorA); /* white */
@@ -2630,7 +2749,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2789,7 +2830,6 @@
+@@ -2823,7 +2879,6 @@
  
  .ChannelChooserThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2638,7 +2757,7 @@
    text-align:left;
    height:80px;
  }
-@@ -2837,7 +2877,7 @@
+@@ -2871,7 +2926,7 @@
    width: 996px;
    height: 520px;
    background-color: $_(white); /* white */
@@ -2647,7 +2766,7 @@
  }
  
  #MultiChannelChooserFooter {
-@@ -2944,40 +2984,38 @@
+@@ -2978,40 +3033,38 @@
  
  .MultiChannelChooserThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2695,7 +2814,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2997,8 +3035,7 @@
+@@ -3031,8 +3084,7 @@
  }
  
  .DeviceListRow_Highlight {
@@ -2705,7 +2824,7 @@
    cursor:pointer;
  }
  
-@@ -3027,9 +3064,8 @@
+@@ -3061,9 +3113,8 @@
  
  .DeviceListThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2717,7 +2836,7 @@
  }
  
  .DeviceListButton {
-@@ -3090,7 +3126,7 @@
+@@ -3124,7 +3175,7 @@
    height: 520px;
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
@@ -2726,7 +2845,7 @@
  }
  
  #ChannelConfigDialogFooter {
-@@ -3212,8 +3248,7 @@
+@@ -3246,8 +3297,7 @@
    height: 371px;
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
@@ -2736,7 +2855,7 @@
  }
  
  #DeviceConfigDialogFooter {
-@@ -3483,18 +3518,12 @@
+@@ -3522,18 +3572,12 @@
      position: absolute;
      left: 4px
  }.bidcosrf_page {
@@ -2757,7 +2876,7 @@
  }
  
  .bidcosrf_button {
-@@ -3520,7 +3549,7 @@
+@@ -3559,7 +3603,7 @@
  .bidcosrf_table {
    border: 1px solid $_(black);
    border-spacing: 0px;
@@ -2766,7 +2885,7 @@
  }
  
  .bidcosrf_tableheader {
-@@ -3540,7 +3569,7 @@
+@@ -3579,7 +3623,7 @@
  }
  
  .bidcosrf_imagecell {
@@ -2775,7 +2894,7 @@
    border: 1px solid $_(black);
    empty-cells: show;
    text-align: center;
-@@ -3551,12 +3580,13 @@
+@@ -3590,12 +3634,13 @@
    border: 1px solid $_(black);
    empty-cells: show;
    text-align: center;
@@ -2791,7 +2910,7 @@
  html, body {
    border: 0 none;
    margin: 0;
-@@ -3939,7 +3969,6 @@
+@@ -3978,7 +4023,6 @@
  }
  
  .CLASS00203 {
@@ -2799,7 +2918,7 @@
  }
  
  .CLASS00204 {
-@@ -3992,10 +4021,10 @@
+@@ -4031,10 +4075,10 @@
  /* rega\pages\msg\sysVarsSelection.htm */
  
  .CLASS00300 {
@@ -2812,7 +2931,7 @@
  }
  
  .CLASS00301 {
-@@ -4006,6 +4035,7 @@
+@@ -4045,6 +4089,7 @@
  	text-align:center;
  	background-color:$_(clickable);
  	height: 40px;
@@ -2820,7 +2939,7 @@
  }
  
  .CLASS00303 {
-@@ -4259,7 +4289,7 @@
+@@ -4298,7 +4343,7 @@
  
  .CLASS00717 {
  	height:200px;
@@ -2829,7 +2948,7 @@
  	background-color:$_(white); /* white */
  }
  
-@@ -4673,7 +4703,7 @@
+@@ -4712,7 +4757,7 @@
  /* rega\pages\msg\programChooser.htm */
  
  .CLASS01300 {
@@ -2838,7 +2957,7 @@
  	width: 100%;
  	height: 400px;
  	background-color:$_(white); /* white */
-@@ -4911,13 +4941,13 @@
+@@ -4950,13 +4995,13 @@
  }
  
  .CLASS01805 {
@@ -2855,7 +2974,7 @@
  }
  
  .CLASS01807 {
-@@ -4936,9 +4966,7 @@
+@@ -4975,9 +5020,7 @@
  }
  
  .CLASS01809 {
@@ -2865,7 +2984,7 @@
  	height:100%;
  	overflow:hidden;
  }
-@@ -5156,6 +5184,7 @@
+@@ -5195,6 +5238,7 @@
  	color: $_(textColorB); /* black */
  	width:100%;
  	border:none;
@@ -2873,7 +2992,7 @@
  }
  
  .CLASS02511 {
-@@ -5177,6 +5206,7 @@
+@@ -5216,6 +5260,7 @@
  	border:1px Solid $_(black); /* black */
  	height:96px;
  	width:96px;
@@ -2881,7 +3000,7 @@
  }
  
  .CLASS02515 {
-@@ -5219,7 +5249,6 @@
+@@ -5258,7 +5303,6 @@
  
  .CLASS02520 {
  	color: $_(textColorB); /* black */
@@ -2889,7 +3008,7 @@
  	border:none;
  	background-color:$_(activeBackground);
  }
-@@ -5313,7 +5342,7 @@
+@@ -5352,7 +5396,7 @@
  	width:220px;
  	/*height:25px;*/
  	height:auto;
@@ -2898,7 +3017,7 @@
  	clear: both;
  	display: inline-block;
    /* line-height:25px; problem with controls with a long parameter name */
-@@ -5354,12 +5383,11 @@
+@@ -5399,12 +5443,11 @@
  }
  
  .CLASS02535 {
@@ -2914,7 +3033,7 @@
  }
  
  .CLASS02535A {
-@@ -5375,6 +5403,7 @@
+@@ -5420,6 +5463,7 @@
  	word-wrap: break-word;
  	max-width: 480px;
  	display: inline-block;
@@ -2922,7 +3041,7 @@
  }
  
  .CLASS02536 {
-@@ -5383,20 +5412,13 @@
+@@ -5428,20 +5472,13 @@
  
  .CLASS02537 {
  	text-align: center;
@@ -2943,7 +3062,7 @@
  }
  
  .CLASS02539 {
-@@ -5433,6 +5455,7 @@
+@@ -5478,6 +5515,7 @@
  
  .CLASS02543 {
  	border:1px solid $_(black); /* black */
@@ -2951,7 +3070,7 @@
  }
  
  .CLASS02544 {
-@@ -5517,6 +5540,7 @@
+@@ -5576,6 +5614,7 @@
  
  .CLASS02552 {
  	border:solid 1px $_(black); /* black */
@@ -2959,7 +3078,7 @@
  }
  
  .CLASS02553 {
-@@ -5578,12 +5602,10 @@
+@@ -5637,12 +5676,10 @@
  
  .CLASS02601 {
  	text-align:center;
@@ -2973,7 +3092,7 @@
  }
  
  .CLASS02603 {
-@@ -5595,6 +5617,7 @@
+@@ -5654,6 +5691,7 @@
  
  .CLASS02604 {
  	height: 58px;
@@ -2981,7 +3100,7 @@
  }
  
  .CLASS02605 {
-@@ -5602,76 +5625,52 @@
+@@ -5661,76 +5699,52 @@
  	background-color: $_(activeBackground);
  	border: solid 1px $_(black); /* black */
  	color: $_(textColorB); /* black */
@@ -3067,7 +3186,7 @@
  }
  
  .CLASS02615 {
-@@ -5765,10 +5764,12 @@
+@@ -5824,10 +5838,12 @@
  	vertical-align:middle;
  	border:solid 1px $_(black); /* #000000 */
  	font-weight:bold;
@@ -3081,7 +3200,7 @@
  }
  
  .CLASS02804 {
-@@ -5834,7 +5835,6 @@
+@@ -5893,7 +5909,6 @@
  }
  
  .CLASS02815 {
@@ -3089,7 +3208,7 @@
  }
  
  /* rega\pages\tabs\statusviews\svroomchannels.htm */
-@@ -6019,18 +6019,13 @@
+@@ -6078,18 +6093,13 @@
  }
  
  .CLASS03301 {
@@ -3109,7 +3228,7 @@
  }
  
  .CLASS03303 {
-@@ -6109,8 +6104,7 @@
+@@ -6168,8 +6178,7 @@
  
  .CLASS03500 {
  	border:solid 1px $_(black); /* black */
@@ -3119,7 +3238,7 @@
  }
  
  .CLASS03501 {
-@@ -6143,8 +6137,7 @@
+@@ -6202,8 +6211,7 @@
  
  .CLASS03600 {
  	border:solid 1px $_(black); /* black */
@@ -3129,7 +3248,7 @@
  }
  
  .CLASS03601 {
-@@ -6233,8 +6226,7 @@
+@@ -6292,8 +6300,7 @@
  
  .CLASS03800 {
  	border:solid 1px $_(black); /* black */
@@ -3139,7 +3258,7 @@
  }
  
  .CLASS03801 {
-@@ -6277,15 +6269,15 @@
+@@ -6336,15 +6343,15 @@
  }
  
  .CLASS03902 {
@@ -3159,7 +3278,7 @@
  }
  
  .CLASS03904 {
-@@ -6300,7 +6292,6 @@
+@@ -6359,7 +6366,6 @@
  .CLASS03906 {
  	vertical-align:middle;
  	text-align:left;
@@ -3167,7 +3286,7 @@
  }
  
  .CLASS03907 {
-@@ -6310,13 +6301,15 @@
+@@ -6369,13 +6375,15 @@
  }
  
  .CLASS03908 {
@@ -3186,7 +3305,7 @@
  }
  
  .CLASS03910 {
-@@ -6342,13 +6335,15 @@
+@@ -6401,13 +6409,15 @@
  }
  
  .CLASS04002 {
@@ -3205,7 +3324,7 @@
  }
  
  .CLASS04004 {
-@@ -6363,7 +6358,8 @@
+@@ -6422,7 +6432,8 @@
  
  .CLASS04006 {
  	border:solid 1px $_(black); /* black */
@@ -3215,7 +3334,7 @@
  }
  
  .CLASS04007 {
-@@ -6374,7 +6370,6 @@
+@@ -6433,7 +6444,6 @@
  
  .CLASS04100 {
  	text-align:center;
@@ -3223,7 +3342,7 @@
  	empty-cells:show;
  }
  
-@@ -6385,17 +6380,18 @@
+@@ -6444,17 +6454,18 @@
  .CLASS04102 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3243,7 +3362,7 @@
  }
  
  .CLASS04105 {
-@@ -6418,6 +6414,7 @@
+@@ -6477,6 +6488,7 @@
  .CLASS04109 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3251,7 +3370,7 @@
    height:20px;
  }
  
-@@ -6441,10 +6438,15 @@
+@@ -6500,10 +6512,15 @@
  
  .CLASS04200 {
  	text-align:center;
@@ -3268,7 +3387,7 @@
  .CLASS04202 {
  	height:40px;
  }
-@@ -6460,10 +6462,12 @@
+@@ -6519,10 +6536,12 @@
  
  .CLASS04205 {
  	height:auto;
@@ -3281,7 +3400,7 @@
  }
  
  .CLASS04207 {
-@@ -6486,6 +6490,7 @@
+@@ -6545,6 +6564,7 @@
  .CLASS04211 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3289,7 +3408,7 @@
  }
  
  .CLASS04212 {
-@@ -6516,7 +6521,8 @@
+@@ -6575,7 +6595,8 @@
  .CLASS04301 {
  	width:100%;
  	height:100%;
@@ -3299,7 +3418,7 @@
  }
  
  .CLASS04302 {
-@@ -6693,7 +6699,7 @@
+@@ -6752,7 +6773,7 @@
  
  .CLASS04900 {
  	color: $_(textColorA); /* white */
@@ -3308,7 +3427,7 @@
  }
  
  .CLASS04901 {
-@@ -6717,7 +6723,7 @@
+@@ -6776,7 +6797,7 @@
  .CLASS04905 {
  	line-height:15px;
  	font-size:smaller;
@@ -3317,7 +3436,7 @@
  }
  
  .CLASS04906 {
-@@ -6804,6 +6810,7 @@
+@@ -6863,6 +6884,7 @@
  .CLASS05012 {
  	color: $_(textColorB); /* black */
  	font-size:9pt;
@@ -3325,7 +3444,7 @@
  }
  
  /* rega\pages\tabs\admin\msg\timemodule.htm */
-@@ -6842,6 +6849,10 @@
+@@ -6901,6 +6923,10 @@
  	color: $_(textColorB); /* black */
  }
  
@@ -3336,7 +3455,7 @@
  .CLASS05105 {
  	text-align:left;
  }
-@@ -6880,7 +6891,6 @@
+@@ -6939,7 +6965,6 @@
  .CLASS05200 {
  	text-align:center;
  	vertical-align:middle;
@@ -3344,7 +3463,7 @@
  	height: auto;
  }
  
-@@ -6946,10 +6956,10 @@
+@@ -7005,10 +7030,10 @@
  }
  
  .CLASS05301 {
@@ -3356,7 +3475,7 @@
  }
  
  .CLASS05302 {
-@@ -7122,6 +7132,10 @@
+@@ -7181,6 +7206,10 @@
  
  /* rega\pages\tabs\favViewer.htm  */
  
@@ -3367,7 +3486,7 @@
  .CLASS05800 {
  	width:100%;
  	text-align:center;
-@@ -7250,11 +7264,13 @@
+@@ -7309,11 +7338,13 @@
  /* rega\pages\tabs\user\newFav.htm */
  
  .CLASS06300 {
@@ -3383,7 +3502,7 @@
  }
  
  .CLASS06302 {
-@@ -7542,7 +7558,6 @@
+@@ -7601,7 +7632,6 @@
  }
  
  .CLASS06409 {
@@ -3391,7 +3510,7 @@
  }
  
  .CLASS06410 {
-@@ -7705,7 +7720,7 @@
+@@ -7764,7 +7794,7 @@
  
  .CLASS10902 {
    border:1px solid $_(gray); /* #999999 */
@@ -3400,7 +3519,7 @@
    background-color:$_(inactiveButton); /* rgb(192,192,192) */
    cursor:default;
  }
-@@ -7820,7 +7835,6 @@
+@@ -7879,7 +7909,6 @@
  }
  
  .CLASS11105 {
@@ -3408,7 +3527,7 @@
    padding-top: 7px;
  }
  
-@@ -7847,7 +7861,6 @@
+@@ -7906,7 +7935,6 @@
  /* config/ic_setprofiles */
  
  .CLASS20001 {
@@ -3416,7 +3535,7 @@
  }
  
  .CLASS20002 {
-@@ -7869,7 +7882,7 @@
+@@ -7928,7 +7956,7 @@
  }
  
  .CLASS20006 {
@@ -3425,7 +3544,7 @@
  }
  
  .CLASS20007 {
-@@ -7905,7 +7918,6 @@
+@@ -7964,7 +7992,6 @@
  }
  
  .CLASS20010 {
@@ -3433,7 +3552,7 @@
  }
  
  /* config\easymodes\DIMMER\MOTION_DETECTOR.tcl */
-@@ -8206,6 +8218,7 @@
+@@ -8265,6 +8292,7 @@
  
    padding: 3px;
    text-align:center;
@@ -3441,7 +3560,7 @@
    vertical-align:middle;
    margin:2px;
    cursor: pointer;
-@@ -8434,7 +8447,9 @@
+@@ -8493,7 +8521,9 @@
  /* config\help.cgi */
  
  .CLASS21300 {
@@ -3452,7 +3571,7 @@
  }
  
  .CLASS21301 {
-@@ -8660,8 +8675,11 @@
+@@ -8719,8 +8749,11 @@
  
  /* config\control_panel.cgi */
  
@@ -3465,7 +3584,7 @@
  }
  
  .CLASS21701 {
-@@ -8732,7 +8750,8 @@
+@@ -8791,7 +8824,8 @@
  /* config\ic_selchannel.cgi */
  
  .CLASS21900 {
@@ -3475,7 +3594,7 @@
  }
  
  .CLASS21901 {
-@@ -8757,9 +8776,11 @@
+@@ -8816,9 +8850,11 @@
  
    color: $_(textColorB); /* black */
    border: 1px solid $_(black); /* black */
@@ -3488,7 +3607,7 @@
  }
  
  .CLASS21905 {
-@@ -8782,7 +8803,6 @@
+@@ -8841,7 +8877,6 @@
  
  .CLASS21908 {
    overflow: auto;
@@ -3496,7 +3615,7 @@
    width:100%;
  }
  
-@@ -8839,13 +8859,17 @@
+@@ -8898,13 +8933,17 @@
  /* config\ic_deviceparameters.cgi */
  
  .CLASS22000 {
@@ -3516,7 +3635,7 @@
  }
  
  .CLASS22002 {
-@@ -8855,11 +8879,17 @@
+@@ -8914,11 +8953,17 @@
  
  .CLASS22003 {
    background-color: $_(white);
@@ -3534,7 +3653,7 @@
  }
  
  .CLASS22005 {
-@@ -8917,7 +8947,8 @@
+@@ -8976,7 +9021,8 @@
  }
  
  .CLASS22101 {
@@ -3544,7 +3663,7 @@
  }
  
  .CLASS22102 {
-@@ -8939,9 +8970,8 @@
+@@ -8998,9 +9044,8 @@
  .CLASS22104 {
    left:0px;
    top:0px;
@@ -3555,7 +3674,7 @@
    position:relative;
    width:50px;
    height:50px;
-@@ -8951,10 +8981,12 @@
+@@ -9010,10 +9055,12 @@
    position:relative;
    width:50px;
    height:50px;
@@ -3570,7 +3689,7 @@
  .CLASS22107 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -328,7 +328,7 @@
+@@ -308,7 +308,7 @@
      <\/th>\n
    {\/if}\n
  {\/macro}\n
@@ -3579,7 +3698,7 @@
    <colgroup>\n
      <col style=\"width:11%;\"\/>\n
      <col style=\"width:11%;\"\/>\n
-@@ -418,25 +418,25 @@
+@@ -398,25 +398,25 @@
  <\/table>\n
  \n
  ";
@@ -3623,7 +3742,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -21528,7 +21528,7 @@
+@@ -25821,7 +25821,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3632,7 +3751,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -21536,7 +21536,7 @@
+@@ -25829,7 +25829,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3641,7 +3760,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -23051,7 +23051,7 @@
+@@ -27343,7 +27343,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3650,7 +3769,30 @@
          "</tr>" +
        "</table>";
  
-@@ -38032,7 +38032,7 @@
+@@ -31656,13 +31656,11 @@
+       case ID_ROOMS:
+         this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
+         this.setWidth75Perc();
+-        this.setHeight(700);
+         this.setFile( "/pages/msg/popupPropEditor.htm" );
+         break;
+       case ID_FUNCTIONS: 
+         this.setTitle( translateKey("dialogEditFunction") /*"Gewerk bearbeiten"*/ );
+         this.setWidth75Perc();
+-        this.setHeight(700);
+         this.setFile( "/pages/msg/popupPropEditor.htm" );
+         break;
+       case ID_TRANSFER_PARAMETERS:
+@@ -33237,7 +33235,7 @@
+   var opts = {
+     evalScripts: true,
+     onComplete: function(trans) {
+-      window.setTimeout(centerMessageBox, 200);
++      centerMessageBox();
+     }
+   };
+   var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
+@@ -45322,7 +45320,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3659,7 +3801,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -38084,8 +38084,8 @@
+@@ -45374,8 +45372,8 @@
    
    if (!form) return;
  
@@ -3670,7 +3812,7 @@
  
    switch (form[gd_type])
    {
-@@ -38181,7 +38181,7 @@
+@@ -45471,7 +45469,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;

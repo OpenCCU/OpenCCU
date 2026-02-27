@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3015 source=/dev/null
 #
 # Startup script to identify and setup RTC clocks
 #
@@ -7,25 +7,10 @@
 # initialize a potentially existing RTC clock
 init_rtc_device() {
 
-  # load the bcm2835 i2c kernel module if the host is
-  # a raspberrypi
-  if echo "${HM_HOST}" | grep -q rpi; then
-    modprobe i2c_bcm2835
-  fi
-
   # load the i2c_dev module if this is not a virtual
-  # applicance but a real rpi/tinkerboard
-  if ! echo "${HM_HOST}" | grep -E -q "oci|ova-|nuc"; then
+  # applicance but a real rpi
+  if [[ ! "${HM_HOST}" =~ oci\|ova-\|nuc\|generic-\|lxc ]]; then
     modprobe i2c_dev
-  fi
-
-  # check for RX8130-CE RTC clock at 0x32 (Epson RX8130CE) which
-  # is the RPI-RF-MOD onboard RTC.
-  if [[ ! -e /sys/module/rtc_ds1307/drivers/i2c:rtc-ds1307/1-0032 ]] &&
-     [[ ! -e /sys/module/rtc_rx8130/drivers/i2c:rtc-rx8130/1-0032 ]]; then
-    if i2cget -y 1 0x32 0x32 2>/dev/null >/dev/null; then
-      modprobe i2c:rx8130
-    fi
   fi
 
   if { [[ -e /sys/module/rtc_ds1307/drivers/i2c:rtc-ds1307/1-0032/name ]] &&
@@ -37,18 +22,22 @@ init_rtc_device() {
     # we found a RX8130, thus we assume the RPI-RF-MOD to
     # be present, thus we setup the LED GPIOs
 
-    # check if the HOST is a docker/oci host and if so make sure
+    # check if the HOST is a oci or lxc host and if so make sure
     # to load the rpi_rf_mod_led kernel module early if not present already
-    if [[ "${HM_HOST}" == "oci" ]] &&
+    if [[ "${HM_HOST}" =~ oci\|lxc ]] &&
+       [[ ! -e /sys/class/leds/rpi_rf_mod:green/trigger ]] &&
        ! grep -Eq "^rpi_rf_mod_led " /proc/modules; then
 
-      # check underlying hardware model
-      if grep -Eq "^Raspberry Pi" /proc/device-tree/model; then
-        # This is a RaspberryPi hardware
-        modprobe -q rpi_rf_mod_led red_gpio_pin="16" green_gpio_pin="20" blue_gpio_pin="21"
-      elif grep -Eq "Asus Tinker Board" /proc/device-tree/model; then
-        # This is a ASUS Tinkerboard hardware
-        modprobe -q rpi_rf_mod_led red_gpio_pin="223" green_gpio_pin="187" blue_gpio_pin="188"
+      # retrieve pin numbers from raw-uart kernel device
+      if [[ -e /sys/class/raw-uart/raw-uart/red_gpio_pin ]]; then
+        RED_PIN=$(cat /sys/class/raw-uart/raw-uart/red_gpio_pin)
+        GREEN_PIN=$(cat /sys/class/raw-uart/raw-uart/green_gpio_pin)
+        BLUE_PIN=$(cat /sys/class/raw-uart/raw-uart/blue_gpio_pin)
+
+        # load rpi_rf_mod_led with retrieved led gpio pins
+        modprobe -q rpi_rf_mod_led red_gpio_pin="${RED_PIN}" green_gpio_pin="${GREEN_PIN}" blue_gpio_pin="${BLUE_PIN}"
+      else
+        echo -n "WARN: no RPI-RF-MOD led pin info, "
       fi
     fi
 
@@ -65,27 +54,18 @@ init_rtc_device() {
       modprobe dummy_rx8130
     fi
 
-    return 0
-  fi
-
-  # make sure we load the RTC kernel module for
-  # the tinkerboard
-  if [[ "${HM_HOST}" == "tinkerboard" ]]; then
-    modprobe rtc_rk808
+    return 1
   fi
 
   # only continue if we don't have a valid rtc yet or otherwise
-  # this must be an onboard RTC (e.g. tinkerboard)
-  HM_RTC="onboard"
+  # this must be an onboard RTC
   [[ -c /dev/rtc0 ]] && return 0
 
-  HM_RTC=""
   # check for MCP7940N RTC clock at 0x6f (PiFace Shim RTC)
   if i2cget -y 1 0x6f 0x00 2>/dev/null >/dev/null; then
     # calibrate MCP7940N
     if i2cset -y 1 0x6f 0x08 0x47 2>/dev/null >/dev/null; then
       if modprobe i2c:mcp7941x; then
-        HM_RTC="mcp7941x"
         [[ -c /dev/rtc0 ]] && return 0
         echo mcp7941x 0x6f >/sys/class/i2c-dev/i2c-1/device/new_device
         [[ -c /dev/rtc0 ]] && return 0
@@ -94,37 +74,32 @@ init_rtc_device() {
     fi
   fi
 
-  HM_RTC=""
   # check for DS3231/DS1307 RTC clock at 0x68
   if i2cget -y 1 0x68 0x00 2>/dev/null >/dev/null; then
     # check for DS3231
     modprobe i2c:ds3231
     if modprobe i2c:ds3231; then
-      HM_RTC="mcp7941x"
       [[ -c /dev/rtc0 ]] && return 0
-      echo ds3231 0x68 >/sys/class/i2c-adapter/i2c-1/new_device
+      echo ds3231 0x68 >/sys/class/i2c-dev/i2c-1/device/new_device
       [[ -c /dev/rtc0 ]] && return 0
       echo 0x68 >/sys/class/i2c-dev/i2c-1/device/delete_device
     fi
 
     # check for DS1307
     if modprobe i2c:ds1307; then
-      HM_RTC="ds1307"
       [[ -c /dev/rtc0 ]] && return 0
-      echo ds1307 0x68 >/sys/class/i2c-adapter/i2c-1/new_device
+      echo ds1307 0x68 >/sys/class/i2c-dev/i2c-1/device/new_device
       [[ -c /dev/rtc0 ]] && return 0
       echo 0x68 >/sys/class/i2c-dev/i2c-1/device/delete_device
     fi
   fi
 
-  HM_RTC=""
   # check for PCF8563 RTC clock at 0x51
   if i2cget -y 1 0x51 0x00 2>/dev/null >/dev/null; then
     # check for PCF8563
     if modprobe i2c:pcf8563; then
-      HM_RTC="pcf8563"
       [[ -c /dev/rtc0 ]] && return 0
-      echo pcf8563 0x51 >/sys/class/i2c-adapter/i2c-1/new_device
+      echo pcf8563 0x51 >/sys/class/i2c-dev/i2c-1/device/new_device
       [[ -c /dev/rtc0 ]] && return 0
       echo 0x51 >/sys/class/i2c-dev/i2c-1/device/delete_device
     fi
@@ -140,15 +115,20 @@ start() {
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
-  init_rtc_device
+  # run init RTC method and set RTC name
+  # if functions runs throw
+  if init_rtc_device; then
+    if [[ -e /sys/class/rtc/rtc0/device/name ]]; then
+      HM_RTC=$(cat /sys/class/rtc/rtc0/device/name)
+    elif [[ -e /sys/class/rtc/rtc0/name ]]; then
+      HM_RTC=$(cat /sys/class/rtc/rtc0/name)
+    fi
+  fi
 
   # save all HM_ env variables
   set | grep '^HM_' >/var/hm_mode
 
-  if [[ -c /dev/rtc0 ]]; then
-    if [[ "${HM_HOST}" != "oci" ]]; then
-      hwclock --hctosys --utc
-    fi
+  if [[ -n "${HM_RTC}" ]]; then
     echo "${HM_RTC}, OK"
   else
     echo "no hardware found"
@@ -161,14 +141,15 @@ stop() {
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
-  if [[ -c /dev/rtc0 ]]; then
-    if [[ "${HM_HOST}" != "oci" ]]; then
-      hwclock --systohc --utc
-    fi
-    echo "OK"
-  else
-    echo "no hardware found"
+  # make sure to unload rpi_rf_mod_led which
+  # is necessary for docker/lxc-based environments
+  if [[ "${HM_HOST}" =~ oci\|lxc ]] &&
+     [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]] &&
+     grep -Eq "^rpi_rf_mod_led " /proc/modules; then
+    rmmod rpi_rf_mod_led 2>/dev/null
   fi
+
+  echo "OK"
 }
 
 restart() {

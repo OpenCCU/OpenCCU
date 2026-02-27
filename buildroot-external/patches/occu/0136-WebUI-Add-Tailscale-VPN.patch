@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_network.cgi.orig
 +++ occu/WebUI/www/config/cp_network.cgi
-@@ -304,8 +304,9 @@
+@@ -205,8 +205,9 @@
    set dhcp ""
    set dns1 ""
    set dns2 ""
@@ -11,7 +11,7 @@
    
    http_head
    
-@@ -433,6 +434,42 @@
+@@ -334,6 +335,42 @@
  
          }
        }
@@ -54,7 +54,7 @@
        table_row {class="CLASS21119"} {
          table_data {class="CLASS21116"} {
            #puts "Zertifikat<br />erstellen"
-@@ -632,6 +669,7 @@
+@@ -466,6 +503,7 @@
          pb += "&dns2=0.0.0.0";
          }
          
@@ -62,7 +62,7 @@
          var opts = {
            postBody: pb,
            sendXML: false,
-@@ -796,9 +834,9 @@
+@@ -617,9 +655,9 @@
      import dhcp
      import dns1
      import dns2
@@ -74,7 +74,7 @@
        puts "Success"
        # puts "\${dialogSettingsNetworkMessageSaveSettingsSucceed}"
        return
-@@ -832,8 +870,8 @@
+@@ -653,8 +691,8 @@
    return 0
  }
  
@@ -85,7 +85,7 @@
    set ifconfig_result [exec /sbin/ifconfig eth0]
    if {! [regexp -line {inet addr:([\d.]+).*Mask:([\d.]+)[^\d.]*$} $ifconfig_result dummy ip mask]} {return 0}
    set fd -1
-@@ -857,8 +895,8 @@
+@@ -678,8 +716,8 @@
    return 1
  }
  
@@ -96,7 +96,7 @@
    set fd -1
    catch {set fd [open "/etc/config/netconfig" r]}
    if { $fd <0 } { return 0 }
-@@ -872,10 +910,14 @@
+@@ -693,10 +731,14 @@
    if {! [get_property $netconfig "GATEWAY" gw] } {return 0}
    get_property $netconfig "NAMESERVER1" dns1
    get_property $netconfig "NAMESERVER2" dns2
@@ -112,7 +112,7 @@
    set fd -1
    catch {set fd [open "/etc/config/netconfig" r]}
    if { $fd <0 } { return 0 }
-@@ -902,6 +944,18 @@
+@@ -723,6 +765,18 @@
    puts -nonewline $fd $netconfig
    close $fd
  
@@ -133,7 +133,7 @@
  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -607,6 +607,7 @@
+@@ -682,6 +682,7 @@
      "commentSettingsDialogNetwork" : "***********************************************",
      "dialogSettingsNetworkTitle" : HMIdentifier.de.CCUShortName + " - Netzwerkeinstellungen",
      "dialogSettingsNetworkTDIPSettings" : "IP-Einstellungen",
@@ -141,7 +141,7 @@
      "dialogSettingsNetworkTDCreateCertificate" : "Zertifikat<br/>erstellen",
      "dialogSettingsNetworkIPSettingsLblHostname" : "Hostname: ",
      "dialogSettingsNetworkIPSettingsLblUseIPAdd" : "Folgende IP-Adresse verwenden: ",
-@@ -619,6 +620,10 @@
+@@ -694,6 +695,10 @@
      "dialogSettingsNetworkHintIPSettingsP1" : "Legen Sie die grundlegenden IP-Einstellungen Ihrer " + HMIdentifier.de.CCUFullNameText + " fest.",
      "dialogSettingsNetworkHintIPSettingsP2" : "%DCber den Hostnamen k%F6nnen Sie Ihrer " + HMIdentifier.de.CCUFullNameText + " einen Namen geben.",
      "dialogSettingsNetworkHintIPSettingsP3" : "Die " + HMIdentifier.de.CCUFullNameText + " bezieht ihre IP-Adresse und alle damit verbundenen Einstellungen von einem DHCP-Server. Falls sich in Ihrem Netzwerk kein solcher Server befindet, oder Sie aus anderen Gr%FCnden eigene Einstellungen verwenden m%F6chten, k%F6nnen Sie hier manuell eine IP-Adresse konfigurieren.",
@@ -154,7 +154,7 @@
      "dialogSettingsNetworkCertificateLblUpload" : "Hochladen",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -607,6 +607,7 @@
+@@ -682,6 +682,7 @@
      "commentSettingsDialogNetwork" : "***********************************************",
      "dialogSettingsNetworkTitle" : HMIdentifier.en.CCUShortName + " network settings",
      "dialogSettingsNetworkTDIPSettings" : "IP settings",
@@ -162,7 +162,7 @@
      "dialogSettingsNetworkTDCreateCertificate" : "Create certificate",
      "dialogSettingsNetworkIPSettingsLblHostname" : "Host name: ",
      "dialogSettingsNetworkIPSettingsLblUseIPAdd" : "Use the following IP address: ",
-@@ -619,6 +620,10 @@
+@@ -694,6 +695,10 @@
      "dialogSettingsNetworkHintIPSettingsP1" : "Please define the basic IP settings of your " + HMIdentifier.en.CCUFullNameText + ".",
      "dialogSettingsNetworkHintIPSettingsP2" : "You can assign a name to your " + HMIdentifier.en.CCUFullNameText + " via the host name.",
      "dialogSettingsNetworkHintIPSettingsP3" : "The " + HMIdentifier.en.CCUFullNameText + " gets the IP address and all corresponding settings from a DHCP server. If your network does not have a DHCP server or if you would like to use your own settings, you can manually configure an own IP address here.",

@@ -1,0 +1,29 @@
+--- occu/WebUI/www/config/cp_software.cgi.orig
++++ occu/WebUI/www/config/cp_software.cgi
+@@ -485,14 +485,14 @@
+   if { $loop > -1 } {
+     translatePage $loop
+   } else {
+-    puts "<script type=\"text/javascript\">translatePage('#messagebox')</script>"
++    puts "<script type=\"text/javascript\">translatePage('#messagebox');dlgPopup.readaptSize();</script>"
+   }
+ }
+ 
+ proc translatePage {loop} {
+ 
+ 
+-  puts "<script type=\"text/javascript\">translatePage('#messagebox')</script>"
++  puts "<script type=\"text/javascript\">translatePage('#messagebox');dlgPopup.readaptSize();</script>"
+   global swVersion swUpdate
+   cgi_javascript {
+     puts "function getVersion(url, callback) {"
+--- occu/WebUI/www/config/cp_time.cgi.orig
++++ occu/WebUI/www/config/cp_time.cgi
+@@ -1267,6 +1267,7 @@
+       });
+ 
+       translatePage('#messagebox');
++      dlgPopup.readaptSize();
+     }
+   }
+   puts "</div><script type=\"text/javascript\">new Draggable(\"dragTime\");</script>" 

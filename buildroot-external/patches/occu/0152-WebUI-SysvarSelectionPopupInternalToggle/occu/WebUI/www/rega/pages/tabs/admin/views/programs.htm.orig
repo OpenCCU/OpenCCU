@@ -1,6 +1,7 @@
 <script type="text/javascript" language="javascript">
 
   <%
+    string prevPage=system.GetSessionVar("sessionTAB");
     system.SetSessionVar("sessionTAB", "programs");
     object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
     object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
@@ -22,8 +23,10 @@
     destElm.change();
   };
 
-  SetSysVarDestValue = function( id, value, min, max, unit)
+  SetSysVarDestValue = function( id, value, min, max, unit, isSysVar)
   {
+    isSysVar = (typeof isSysVar == "undefined") ? false : isSysVar;
+
     var iPos = value.indexOf(":");
     if( iPos == -1 )
     {
@@ -34,7 +37,7 @@
       {
         //alert( id +'.........'+ value );
         iseSingleDestination.reload = true;
-        iseSingleDestination.SetValue( id, value, unit );
+        iseSingleDestination.SetValue( id, value, unit, isSysVar );
       }
       else
       {
@@ -48,7 +51,7 @@
       //alert( value.substr(0,iPos) +'::::::'+ value.substr(iPos+1) );
       iseSingleDestination.reload = true;
       //value.substr(0,iPos)
-      iseSingleDestination.SetValue( id, value.substr(iPos+1), '' );
+      iseSingleDestination.SetValue( id, value.substr(iPos+1), '', isSysVar);
     }    
   };
   
@@ -398,11 +401,16 @@
     var ch = DeviceList.getChannelByAddress(chAddress),
       virtChannelType = (typeof ch.virtChannelType != "undefined") ? ch.virtChannelType : "";
 
+    if (virtChannelType == "") {
+      if (ch.multiMode == "blind") {virtChannelType = "BLIND_VIRTUAL_RECEIVER";}
+      if (ch.multiMode == "shutter") {virtChannelType = "SHUTTER_VIRTUAL_RECEIVER";}
+    }
+
     var elm = jQuery("#prgStringOptionValue" + regaDialogID); // this is the element which contains the relevant string to transmit
 
     if (virtChannelType == "SHUTTER_VIRTUAL_RECEIVER") {
       var url = "/pages/msg/setShutterVirtualReceiverCombinedParam.htm";
-      elm.val(elm.val().split(",")[0]);
+      // see SPHM-1302 - elm.val(elm.val().split(",")[0]);
     } else {
       var url = "/pages/msg/setBlindVirtualReceiverCombinedParam.htm";
     }
@@ -459,6 +467,138 @@
     });
   };
 
+  setHmipRGBWTunableWhiteController = function(regaDialogID, deviceType, chnAddress) {
+    var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
+      url = "/pages/msg/setRGBWTunableWhiteCombinedParam.htm";
+    jQuery(elm).prop("disabled", true);
+
+    var req = jQuery.ajax({
+      url : url +"?sid=" + SessionId,
+      dataType: "html"
+    });
+
+    req.done(function(htmlContent) {
+      var dialog = new RGBWTunableWhiteControllerDialog(translateKey("titleConfigDialog"), htmlContent, deviceType, chnAddress ,jQuery(elm).val(), function(result) {
+        jQuery(elm).prop("disabled", false);
+        if (result != 0) {
+          conInfo("setRGBWTunableWhiteController: Yes pressed");
+          var cfgString = this.getConfigString();
+          conInfo(cfgString);
+          elm.val(cfgString);
+          elm.change();
+        }
+
+      }, "html");
+      dialog.btnTextNo(translateKey("footerBtnCancel"));
+      dialog.btnTextYes(translateKey("footerBtnOk"));
+      dialog.setWidth(500);
+    });
+  };
+
+  setDALI_CombinedParameter = function(regaDialogID, deviceType, chnAddress) {
+    // maxCap > 0 = SWITCH, 1 = DIMMER, 2 = Tunable White, 3 = RGB + Tunable White, 4 = RGBW + Tunable White
+    var optionString = "",
+      maxCap = homematic("Interface.getMasterValue", {"interface": "HmIP-RF", "address": chnAddress, "valueKey": "UNIVERSAL_LIGHT_MAX_CAPABILITIES"}),
+      optionElm = jQuery("#prgStringOptionValue" + regaDialogID);
+
+    if (deviceType == "HmIP-LSC") {maxCap = 3;}
+
+    switch (parseInt(maxCap)) {
+      case 0:
+        // Switch
+        optionString = optionElm.val();
+        if (optionString == "0") {
+          optionElm.val("S=true");
+        }
+        setCombinedParameter(regaDialogID,deviceType,chnAddress,"switchState");
+        break;
+      case 1:
+        // Dimmer
+        optionString = optionElm.val();
+        if (optionString == "0") {
+          optionElm.val("L=100,DV=31,DU=2,RTV=0,RTU=1,C=7");
+        }
+        setDimmerLevelController(regaDialogID,deviceType,chnAddress);
+        break;
+      case 2:
+        // Tunable White;
+        optionString = optionElm.val();
+        if (optionString == "0") {
+          optionElm.val("L=100,OT=0,RT=0,TC=4500,RTTDV=0,RTTDU=0");
+        }
+        //setHmipRGBWTunableWhiteController(regaDialogID, deviceType, chnAddress);
+        setHmipRGBWController(regaDialogID,deviceType,chnAddress);
+        break;
+      case 3:
+      case 4:
+        // RGB + Tunable White;
+        optionString = optionElm.val();
+        if (optionString == "0") {
+          optionElm.val( "L=100,OT=0,RT=0,H=0,SAT=100");
+        }
+        setHmipRGBWController(regaDialogID,deviceType,chnAddress);
+        break;
+      default :
+        console.log("setDALI_CombinedParameter: ERROR");
+        break;
+    }
+  };
+
+  setHmipRGBWController = function(regaDialogID, deviceType, chnAddress) {
+    var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
+      url = "/pages/msg/setRGBWCombinedParam.htm";
+    jQuery(elm).prop("disabled", true);
+
+    var req = jQuery.ajax({
+      url : url +"?sid=" + SessionId,
+      dataType: "html"
+    });
+
+    req.done(function(htmlContent) {
+      var dialog = new hmipRGBWControllerDialog(translateKey("titleConfigDialog"), htmlContent, deviceType, chnAddress ,jQuery(elm).val(), function(result) {
+        jQuery(elm).prop("disabled", false);
+        if (result != 0) {
+          conInfo("setHmipRGBWController: Yes pressed");
+          var cfgString = this.getConfigString();
+          conInfo(cfgString);
+          elm.val(cfgString);
+          elm.change();
+        }
+
+      }, "html");
+      dialog.btnTextNo(translateKey("footerBtnCancel"));
+      dialog.btnTextYes(translateKey("footerBtnOk"));
+      dialog.setWidth(500);
+    });
+  };
+
+  setWindowDriveReceiverLevelController = function(regaDialogID, deviceType, chnAddress) {
+    var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
+      url = "/pages/msg/setWindowDriveCombinedParam.htm";
+    jQuery(elm).prop("disabled", true);
+
+    var req = jQuery.ajax({
+      url : url +"?sid=" + SessionId,
+      dataType: "html"
+    });
+
+    req.done(function(htmlContent) {
+      var dialog = new SwitchCombinedParamDialog(translateKey("titleConfigDialog"), htmlContent, deviceType, chnAddress ,jQuery(elm).val(), function(result) {
+        jQuery(elm).prop("disabled", false);
+        if (result != 0) {
+          conInfo("setWindowDriveReceiverLevelController: Yes pressed");
+          var cfgString = this.getConfigString();
+          conInfo(cfgString);
+          elm.val(cfgString);
+          elm.change();
+        }
+
+      }, "html");
+      dialog.btnTextNo(translateKey("footerBtnCancel"));
+      dialog.btnTextYes(translateKey("footerBtnOk"));
+      dialog.setWidth(400);
+    });
+  };
   _setSwitchStateController = function (regaDialogID, deviceType, chnAddress) {
     var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
       url = "/pages/msg/setSwitchVirtualReceiverCombinedParam.htm";
@@ -510,7 +650,7 @@
     }
 
     var opts = {"deviceID": chn.device.id, "deviceLabel":chn.typeName, "chnAddress":chn.address, "chInterface":chnInterface, "channelLocks":"channelLocks", "userEasyLinkMode":userNoExpert};
-    if (chn.deviceType.id.toLowerCase() == "hmip-dld") {
+    if ((chn.deviceType.id.toLowerCase() == "hmip-dld") || (chn.deviceType.id.toLowerCase() == "hmip-dld-a") || (chn.deviceType.id.toLowerCase() == "hmip-dld-s")) {
       dialog = new iseHmIPWeeklyProgramAccessReceiver(regaDialogID, opts, callBack);
     } else {
       dialog = new iseHmIPWeeklyProgram(regaDialogID, opts, callBack);
@@ -520,6 +660,38 @@
      dialog.modeElm = jQuery("#wpChannelMode_" + regaDialogID);
      dialog.chnElems = jQuery("[name='wpChannelSel_"+regaDialogID+"']");
     },500);
+  };
+
+  setWeatherDisplayReceiverController = function(regaDialogID, deviceType, chnAddress) {
+
+    var ch = DeviceList.getChannelByAddress(chnAddress),
+      channelType = (typeof ch.channelType != "undefined") ? ch.channelType : "";
+
+    var elm = jQuery("#prgStringOptionValue" + regaDialogID), // this is the element which contains the relevant string to transmit
+      url = "/pages/msg/setWeatherDisplayReceiverCombinedParam.htm";
+    jQuery(elm).prop("disabled", true);
+
+    var req = jQuery.ajax({
+      url : url +"?sid=" + SessionId,
+      dataType: "html"
+    });
+
+    req.done(function(htmlContent) {
+      var dialog = new WGDWeatherCombinedParamDialog(translateKey("titleConfigDialog"), htmlContent, function(result) {
+        jQuery(elm).prop("disabled", false);
+        if (result != 0) {
+          conInfo("setWeatherDisplayReceiverController: Yes pressed");
+          var cfgString = this.getConfigString();
+          conInfo(cfgString);
+          elm.val(cfgString);
+          elm.change();
+        }
+      }, "html");
+      dialog.extraParam = {deviceType: deviceType, channelType: channelType, chnAddress: chnAddress, value: jQuery(elm).val()};
+      dialog.btnTextNo(translateKey("footerBtnCancel"));
+      dialog.btnTextYes(translateKey("footerBtnOk"));
+      dialog.setWidth(400);
+    });
   };
 
   setCombinedParameter = function (regaDialogID, deviceType, chnAddress, type) {
@@ -804,15 +976,15 @@
   };
   CancelProgramEdit = function(copy)
   {
-    isePrograms.Delete(copy);
+    isePrograms.Delete(copy, '<% Write(prevPage); %>');
   };
   SaveProgramEdit = function(orig,copy)
   {
-    setTimeout( "isePrograms.Restore("+orig+","+copy+")", 500 );
+    setTimeout( "isePrograms.Restore("+orig+","+copy+", '<% Write(prevPage); %>')", 500 );
   };
   CopyToNewProgram = function(copy)
   {
-    setTimeout( "isePrograms.CopyToNewProgram("+copy+")", 500 );
+    setTimeout( "isePrograms.CopyToNewProgram("+copy+", '<% Write(prevPage); %>')", 500 );
   };
   AddSubRuleSelectChange = function(idx,rid)
   {
@@ -943,7 +1115,7 @@
   var s = "";
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CancelProgramEdit(<% Write(oPrg.ID()); %>);'>${footerBtnCancel}</div></td>";
+    s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CancelProgramEdit(<% Write(oPrg.ID()); %>);'>${footerBtnPageBack}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
@@ -960,6 +1132,13 @@
 
 <div id="prgcontent">
   <table id="ProgramTable" class="filterTable tTable j_translate" border="0" cellpadding="0" cellspacing="0">
+    <colgroup>
+      <col />
+      <col />
+      <col />
+      <col />
+      <col style="width:100px;">
+    </colgroup>
     <thead>
       <tr>
         <td class="thCell CLASS04802" >${thName}</td>
@@ -971,11 +1150,11 @@
     </thead>
     <tbody>
       <tr class="CLASS04803">
-        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name() ); %></td>
-        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
+        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name() ); %></td>
+        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>
-        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label></td>
+        <td class="tBodyCell"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label></td>
       </tr>
       <tr>
         <td colspan="5">

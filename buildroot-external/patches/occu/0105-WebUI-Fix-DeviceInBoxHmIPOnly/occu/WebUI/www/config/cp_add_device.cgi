@@ -224,7 +224,7 @@ proc putSectionHMIP {} {
                   append html "<span>\${lblTeachInKEY}</span>"
                 append html "</td>"
                 append html "<td>"
-                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px'>"
+                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px' oninput='let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);'>"
                 append html "</td>"
               append html "</tr>"
 
@@ -233,7 +233,7 @@ proc putSectionHMIP {} {
                   append html "<span>\${lblTeachInSGTIN}</span>"
                 append html "</td>"
                 append html "<td>"
-                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px;'>"
+                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px' oninput='let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);'>"
                 append html "</td>"
               append html "</tr>"
 

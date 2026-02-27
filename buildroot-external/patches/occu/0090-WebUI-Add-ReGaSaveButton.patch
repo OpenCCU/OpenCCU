@@ -1,6 +1,6 @@
 --- occu/WebUI/www/ise/htm/header.htm.orig
 +++ occu/WebUI/www/ise/htm/header.htm
-@@ -63,6 +63,7 @@
+@@ -66,6 +66,7 @@
            <!-- Servicemeldungen -->
          <td class="CLASS11106"><img id="imgServices" src="/ise/img/dot/grey.png" alt="" /></td>
          <td class="CLASS11107"><div id="msgServices" class="CLASS11108 Messages " onclick="WebUI.enter(ServiceMessagesPage);" >&nbsp;</div></td>
@@ -8,7 +8,7 @@
        </tr>
      </table>
    </td>
-@@ -84,6 +85,7 @@
+@@ -87,6 +88,7 @@
        jQuery("#msgAlarms").text(translateKey("alarmMsg"));
        jQuery("#msgServices").text(translateKey("serviceMsg"));
        jQuery("#btnLogOut > div").text(translateKey("logout"));
@@ -18,7 +18,7 @@
        jQuery("#btnLogOutGuest > div").text(translateKey("logout"));
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -309,6 +309,8 @@
+@@ -312,6 +312,8 @@
      Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName()#'";' );
    }
    
@@ -49,7 +49,7 @@
      "menuControlPage" : "Status and control",
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -412,7 +412,7 @@
+@@ -454,7 +454,7 @@
  
    color: $_(textColorB); /* black */
    font-weight: bold;
@@ -60,7 +60,7 @@
    text-align: center;
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -26853,6 +26853,11 @@
+@@ -32913,6 +32913,11 @@
    if ($("maindate")) { $("maindate").innerHTML = date; }
  };
  
@@ -72,7 +72,7 @@
  setAlarmMessageCount = function (count) {
  
    if ($("msgAlarms")) {
-@@ -28877,6 +28882,9 @@
+@@ -34948,6 +34953,9 @@
  
  LogoClick = function()
  {

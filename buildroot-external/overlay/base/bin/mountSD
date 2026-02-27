@@ -1,9 +1,0 @@
-#!/bin/sh
-echo "Starte mountSD: $*" > /tmp/dudu
-if mount "$@"; then
-	touch /var/status/SDmounted
-	if [ -f /media/sd-mmcblk0/.initialised ] ; then
-		touch /var/status/SDinitialised
-	fi
-fi
-

@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -61,10 +61,14 @@
+@@ -62,10 +62,14 @@
        puts "conInfo(\"EULA found\");"
        puts "jQuery('#fwUpload').hide();"
        puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
@@ -18,7 +18,7 @@
          puts "} else {"
            puts "jQuery('#fwUpload').hide();"
            puts "dlgPopup.hide();"
-@@ -77,16 +81,19 @@
+@@ -78,16 +82,19 @@
  
      puts "req.fail(function(data) {"
        puts "conInfo(\"EULA not available\");"
@@ -42,7 +42,7 @@
    http_head
    division {class="popupTitle"} {
      #puts "Softwareupdate - Best&auml;tigung"
-@@ -266,7 +273,7 @@
+@@ -256,7 +263,7 @@
  }
  
  proc action_firmware_update_cancel {} {
@@ -51,7 +51,7 @@
  
    if {[getProduct] < 3} {
      catch {exec rm /var/new_firmware.tar.gz}
-@@ -432,9 +439,7 @@
+@@ -423,9 +430,7 @@
              table_row {
                td {width="20"} {}
                table_data {colspan="2"} {
@@ -62,7 +62,7 @@
                    file_button firmware_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
-@@ -1020,7 +1025,7 @@
+@@ -945,7 +950,7 @@
  
  proc action_firmware_upload {} {
  
@@ -71,7 +71,7 @@
  
    if { [catch { import directDownload } error] } {
      set directDownload false
-@@ -1029,10 +1034,7 @@
+@@ -954,10 +959,7 @@
    http_head
    
    if { $directDownload } {
@@ -83,7 +83,7 @@
    }
  
    if {[getProduct] < 3} {
-@@ -1102,10 +1104,14 @@
+@@ -1072,10 +1074,14 @@
  
    cgi_javascript {
      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
@@ -102,7 +102,7 @@
    }
  }
  
-@@ -1393,10 +1399,10 @@
+@@ -1357,10 +1363,10 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -142,7 +142,7 @@
 -  if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
 -    file copy -force -- "/var/server.pem" "/etc/config/server.pem"
 -    file delete "/var/server.pem"
-+  if { [string last " PRIVATE KEY-----" $line] != -1 } {
++  if { [string first "-----BEGIN " $line] != -1 } {
 +    catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
 +    file rename -force -- $filename "/etc/config/server.pem"
      
@@ -180,7 +180,7 @@
      }
      }
    }
-@@ -343,8 +350,7 @@
+@@ -345,8 +352,7 @@
              table_row {
                table_data {width="20"} {}
                table_data {colspan="2"} {
@@ -190,7 +190,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -708,13 +714,15 @@
+@@ -721,13 +727,15 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -212,7 +212,7 @@
  
 --- occu/WebUI/www/config/cp_security.cgi.orig
 +++ occu/WebUI/www/config/cp_security.cgi
-@@ -928,8 +928,6 @@
+@@ -940,8 +940,6 @@
  proc action_put_page {} {
    global env sid
  
@@ -221,7 +221,7 @@
    http_head
    division {class="popupTitle j_translate"} {
      puts "\${dialogSettingsSecurityTitle}"
-@@ -1022,8 +1020,7 @@
+@@ -1043,8 +1041,7 @@
              table_row {
                td {width="20"} {}
                table_data {align="left"} {colspan="2"} {
@@ -231,7 +231,7 @@
                    file_button backup_file size=20 maxlength=1000000
                  }
                  puts {<iframe name="config_upload_iframe" class="CLASS20820" style="display: none;"></iframe>}
-@@ -1536,19 +1533,21 @@
+@@ -1528,19 +1525,21 @@
  }
  
  proc action_backup_upload {} {
@@ -261,7 +261,7 @@
      }
    }
  }
-@@ -1617,14 +1616,16 @@
+@@ -1609,14 +1608,16 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -294,7 +294,7 @@
                    file_button firmware_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="image_upload_iframe" style="display: none;"></iframe>}
-@@ -487,24 +486,27 @@
+@@ -500,24 +499,27 @@
  }
  
  proc action_image_upload {} {
@@ -330,7 +330,7 @@
      }
    }
  }
-@@ -519,14 +521,16 @@
+@@ -536,14 +538,16 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -1119,7 +1119,7 @@
 +package provide cgi 1.10.0
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -7365,6 +7365,7 @@
+@@ -8482,6 +8482,7 @@
      this.currentPageOptions  = options;
      
      this.currentPage.enter(options);

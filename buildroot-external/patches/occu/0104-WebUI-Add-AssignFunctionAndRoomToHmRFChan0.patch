@@ -40,7 +40,7 @@
  	
 --- occu/WebUI/www/api/methods/device/listalldetail.tcl.orig
 +++ occu/WebUI/www/api/methods/device/listalldetail.tcl
-@@ -51,7 +51,7 @@
+@@ -52,7 +52,7 @@
      foreach(channelId, device.Channels())
      {
        var channel = dom.GetObject(channelId);
@@ -49,7 +49,7 @@
        {
          if (true != first) { Write(" "); } else { first = false; }
          Write("{");
-@@ -76,6 +76,12 @@
+@@ -77,6 +77,12 @@
            }
          }
  
@@ -62,15 +62,15 @@
          var isUsable = false;
          if (channel.UserAccessRights(iulOtherThanAdmin) == iarFullAccess)
          {
-@@ -123,6 +129,7 @@
+@@ -124,6 +130,7 @@
          Write(" EVENTABLE {" # eventable # "}");
          Write(" AES_AVAILABLE {" # isAesAvailable # "}");
          Write(" VIRTUAL {" # isVirtual # "}");
 +        Write(" INTERNAL {" # isInternal # "}");
          Write(" CHANNEL_TYPE {" # chnType # "}");
+         Write(" CHANNEL_NAME {" # channel.Label() # "}");
  
-         ! BLIND_* is necessary e. g. the HmIPW-DRBL4, which can be used as a BLIND or a SHUTTER. The metadata channelMode determines the current state.
-@@ -240,6 +247,7 @@
+@@ -263,6 +270,7 @@
      append result ",\"isEventable\":$channel(EVENTABLE)"
      append result ",\"isAesAvailable\":$channel(AES_AVAILABLE)"
      append result ",\"isVirtual\":$channel(VIRTUAL)"
@@ -113,7 +113,7 @@
        }
 --- occu/WebUI/www/config/stringtable_de.txt.orig
 +++ occu/WebUI/www/config/stringtable_de.txt
-@@ -443,6 +443,8 @@
+@@ -473,6 +473,8 @@
  COND_TX_THRESHOLD_LO_POWER	${stringTableCondThresholdLoPower}
  CONFIG_PENDING=FALSE	${stringTableConfigPendingFalse}
  CONFIG_PENDING=TRUE	${stringTableConfigPendingTrue}
@@ -153,9 +153,9 @@
        {
          object objTmp = dom.GetObject(tmp);
          if (objTmp && objTmp.IsTypeOf(OT_CHANNEL) && objTmp.ReadyConfig())
-@@ -369,7 +369,7 @@
-       integer iLinkCount = 0;
-       integer iProgCount = 0;
+@@ -367,7 +367,7 @@
+       
+       string sEnumPrgFilter = "";
        string tmp = "";
 -      foreach( tmp, elem.EnumEnabledIDs() )
 +      foreach( tmp, elem.EnumIDs() )
@@ -175,7 +175,7 @@
    else
 --- occu/WebUI/www/rega/pages/tabs/admin/views/rooms.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/rooms.htm
-@@ -330,7 +330,7 @@
+@@ -337,7 +337,7 @@
        string sStyle = "";
        integer iReadyCount = 0;
        string rdytmp = "";
@@ -184,9 +184,9 @@
          object oChnTmp = dom.GetObject(rdytmp);
          if (oChnTmp.ReadyConfig()) {
            iReadyCount = iReadyCount + 1;
-@@ -369,7 +369,7 @@
-       integer iLinkCount = 0;
-       integer iProgCount = 0;
+@@ -374,7 +374,7 @@
+       
+       string sEnumPrgFilter = "";
        string tmp = "";
 -      foreach( tmp, elem.EnumEnabledIDs() )
 +      foreach( tmp, elem.EnumIDs() )
@@ -226,7 +226,7 @@
      "stringTableCurrentDetectionBehavior" :  "Response",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -47,7 +47,7 @@
+@@ -69,7 +69,7 @@
        {eval}actualDeviceAddress = \"\";{\/eval}\n
  \n
        {for channel in channels}\n
@@ -235,7 +235,7 @@
            {var virtualChannel = \"\"}\n
            {var classExpertOnly = \"hidden j_expertChannel\"}\n
            {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
-@@ -92,6 +92,8 @@
+@@ -114,6 +114,8 @@
            {if channel.channelType == \"VIR-OL-GTW-CH\"} {var virtualChannel = \"hidden\"} {\/if}\n
            {if channel.channelType == \"VIR-HUE-GTW-CH\"} {var virtualChannel = \"hidden\"} {\/if}\n
  \n
@@ -244,11 +244,11 @@
            {if channel.channelType != \"_MAINTENANCE\"}\n
                <tr class=\"ChannelChooserRow ${virtualChannel}\" id=\"${PREFIX}${channel.id}\" onclick=\"ChannelChooser.select(this.id);\" onmouseover=\"this.className=\'ChannelChooserRow_Highlight\';\" onmouseout=\"this.className=\'ChannelChooserRow\';\">\n
                  <td class=\"ChannelChooserCell\">${channel.name}<br\/><br\/><span class=\"j_extChnDescr\">${channel.typeDescription}_${channel.address}<\/span><\/td>\n
-@@ -446,14 +448,10 @@
+@@ -502,14 +504,10 @@
      {for device in devices}\n
        {if !device.inInbox}\n
          <tr id=\"${PREFIX}${device.id}\" class=\"DeviceListRow\" onclick=\"DeviceListPage.selectDevice(\'${device.id}\');\" onmouseover=\"this.className=\'DeviceListRow_Highlight\';\" onmouseout=\"this.className=\'DeviceListRow\';\">\n
--          {if (device.typeName != \"HmIP-CCU3\") && (device.typeName != \"RPI-RF-MOD\")  && (device.typeName != \"HmIP-HAP\") && (device.typeName != \"HmIP-HAP-A\") && (device.typeName != \"HmIP-HAP-B1\") && (device.typeName != \"HmIP-HAP JS1\")}\n
+-          {if (device.typeName != \"HmIP-CCU3\") && (device.typeName != \"RPI-RF-MOD\")  && (device.typeName != \"HmIP-HAP\") && (device.typeName != \"HmIP-HAP-A\") && (device.typeName != \"HmIP-HAP2\") && (device.typeName != \"HmIP-HAP2-A\") && (device.typeName != \"HmIP-HAP-B1\") && (device.typeName != \"HmIP-HAP JS1\")}\n
 -            <td class=\"DeviceListCell_Invisible\" onclick=\"if (event) { Event.stop(event); } else { Event.stop(window.event); }\">\n
 -              <img id=\"${PREFIX}${device.id}PLUS\" onclick=\"DeviceListPage.expandDevice(event, \'${device.id}\');\" src=\"\/ise\/img\/plus.png\" width=\"16px\" height=\"16px\" alt=\"Kan&auml;le anzeigen\" title=\"Kan&auml;le anzeigen\" {if device._expanded} style=\"display:none;\"{\/if}\/>\n
 -              <img id=\"${PREFIX}${device.id}MINUS\" onclick=\"DeviceListPage.collapseDevice(event, \'${device.id}\');\" src=\"\/ise\/img\/minus.png\" width=\"16px\" height=\"16px\" alt=\"Kan&auml;le verbergen\" title=\"Kan&auml;le verbergen\" {if !device._expanded} style=\"display:none;\"{\/if}\/>\n
@@ -263,7 +263,7 @@
            <td class=\"DeviceListCell\" colspan=\"3\">${device.name}<\/td>\n
            <td class=\"DeviceListCell\" >${device.typeName}<\/td>\n
            <td class=\"DeviceListThumbnail\" ><div id=\"${PREFIX}${device.id}Thumbnail\" class=\"thumbnail\" onmouseover=\"picDivShow(jg_250, \'${device.deviceType.id}\', 250, \'\', this);\" onmouseout=\"picDivHide(jg_250);\">${device.getThumbnailHTML()}<\/div><\/td>\n
-@@ -656,7 +654,7 @@
+@@ -717,7 +715,7 @@
      <tbody>\n
        {eval}actualDeviceAddress = \"\";{\/eval}\n
        {for channel in channels}\n
@@ -272,7 +272,7 @@
            {var virtualChannel = \"\"}\n
            {var classExpertOnly = \"hidden j_expertChannel\"}\n
            {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
-@@ -5624,6 +5622,8 @@
+@@ -6182,6 +6180,8 @@
  elvST['COND_TX_THRESHOLD_LO_POWER'] = '${stringTableCondThresholdLoPower}';
  elvST['CONFIG_PENDING=FALSE'] = '${stringTableConfigPendingFalse}';
  elvST['CONFIG_PENDING=TRUE'] = '${stringTableConfigPendingTrue}';
@@ -281,15 +281,15 @@
  elvST['CONF_BUTTON_TIME'] = '${stringTableConfButtonTime}';
  elvST['CONF_BUTTON_TIME=PERMANENT'] = '${stringTableConfButtonTimePermanent}';
  elvST['CONTROL_MODE=AUTO-MODE'] = '${stringTableClimateControlRTTransceiverAutoMode}';
-@@ -10918,6 +10918,7 @@
-       this.isReadable = data["isReadable"];      
+@@ -11690,6 +11690,7 @@
        this.isWritable = data["isWritable"];      
        this.isEventable = data["isEventable"];
+       this.isActive = data["isChannelActive"];
 +      this.isInternal = data["isInternal"]
  
        if (typeof data["mode_multi_mode"] != "undefined") {
          this.multiMode = data["mode_multi_mode"];
-@@ -13795,9 +13796,7 @@
+@@ -14944,9 +14945,7 @@
        var self = this;
        if (this.match(channel)) {
          if (channel.device.interfaceName == this.HmIPIdentifier || channel.device.interfaceName == this.HmIPWIdentifier) {
@@ -300,7 +300,7 @@
          } else {
            result.push(channel);
          }
-@@ -24661,7 +24660,6 @@
+@@ -26337,7 +26336,6 @@
      var result = true;
      switch (channel.channelType) {
        case "ALARM_COND_SWITCH_TRANSMITTER":

@@ -32,12 +32,12 @@ do
   if [ "$IP" == "" ]
   then
     #echo  "Using Serial"
-    if eq3configcmd setlgwkey -s "$SERIAL" -c "$CURKEY" -n "$KEY" -f "$CONFFILE" -l 1; then
+    if /usr/bin/timeout 120 /bin/eq3configcmd setlgwkey -s "$SERIAL" -c "$CURKEY" -n "$KEY" -f "$CONFFILE" -l 1; then
       rm -f "$F"
     fi
   else
     #echo "Using IP"
-    if eq3configcmd setlgwkey -s "$SERIAL" -h "$IP" -c "$CURKEY" -n "$KEY" -f "$CONFFILE" -l 1; then
+    if /usr/bin/timeout 120 /bin/eq3configcmd setlgwkey -s "$SERIAL" -h "$IP" -c "$CURKEY" -n "$KEY" -f "$CONFFILE" -l 1; then
       rm -f "$F"
     fi
   fi

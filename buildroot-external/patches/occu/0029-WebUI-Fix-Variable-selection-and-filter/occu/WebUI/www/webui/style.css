@@ -854,6 +854,24 @@ a img {
   min-height: 30px;
 }
 
+.ControlBtnInfoActive {
+  background-color: $_(active);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoNotActive {
+  background-color: #89989b;
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
 .ControlBtnPushed {
   background-color: $_(clickable);
   color: $_(textColorB); /* black */
@@ -1128,6 +1146,7 @@ a img {
   height:60px;
   text-align:center;
   cursor:pointer;
+  word-break: break-word;
 }
 .SysVarsTblPopup_Highlight{
   background-color:$_(inactiveBackground);
@@ -1135,6 +1154,7 @@ a img {
   height:60px;
   text-align:center;
   cursor:pointer;
+  word-break: break-word;
 }
 .WhiteBkgChannelPopup {
   background-color: $_(white); /* white */
@@ -2209,6 +2229,12 @@ table.center {
     color: $_(clickable);
 }
 
+.infoBckGnd {
+  background-color: $_(clickable) !important;
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+}
+
 .virtualChannelBckGnd {
   background-color: #BCC3C1 !important;
 }
@@ -2496,6 +2522,7 @@ html, body {
   background-color: $_(background); /* #183473 */
   z-index: 189;
   padding: 2px;
+  margin-top: 2px;
 }
 
 .MainMenuItem_Left {
@@ -3349,6 +3376,11 @@ html, body {
 .YesNoDialogContent, .YesNoDialogContentA {
   padding:5px;
   font-weight: bold;
+  color: $_(textColorB); /* black */
+}
+
+.YesNoDialogContentNoBold {
+  padding:5px;
   color: $_(textColorB); /* black */
 }
 
@@ -4900,7 +4932,7 @@ application {
 }
 
 .CLASS01803 {
-	background-color:$_(white); /* #ffffff */
+	/*background-color:$_(white);*/ /* #ffffff */
 	text-align:center;
 	margin-left:4px;
 	margin-right:4px;
@@ -5267,6 +5299,13 @@ application {
 	border:1px solid $_(black); /* black */
 }
 
+.CLASS02525a {
+	height:100px;
+	width:100px;
+	background-color:$_(okSignal);
+	border:1px solid $_(black); /* black */
+}
+
 .CLASS02525b {
 	height:96px;
 	width:96px;
@@ -5342,6 +5381,12 @@ application {
 	clear: both;
 	display: inline-block;
   line-height:25px;
+}
+
+.CLASS02532d {
+	font-size: 10px;
+	width:220px;
+	color: $_(white) ! important;
 }
 
 .CLASS02533 {
@@ -5490,6 +5535,20 @@ application {
 	width:100%;
 }
 
+.CLASS02550d {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:100px;
+}
+
+.CLASS02550e {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:120px;
+}
+
 .CLASS02551 {
 	cursor:pointer;
 	height:35px;
@@ -5506,6 +5565,13 @@ application {
 	cursor:pointer;
 	height:35px;
 	width:98%;
+}
+
+.CLASS02551c {
+	cursor:pointer;
+	height:35px;
+	width:100px;
+	margin-left: 11%;
 }
 
 .CLASS02552 {
@@ -5539,6 +5605,13 @@ application {
 .CLASS02557 {
 	height:96px;
 	width:96px;
+	background-color:$_(clickable);
+	border:1px solid $_(black); /* black */
+}
+
+.CLASS02557A {
+	height:100px;
+	width:100px;
 	background-color:$_(clickable);
 	border:1px solid $_(black); /* black */
 }
@@ -6271,8 +6344,6 @@ color: $_(textColorA); /* white */
 
 .CLASS03903 {
 	border:solid 1px $_(black); /* black */
-	margin-top:0px;
-	width:235px;
 	margin-top:27px;
 }
 

@@ -1,0 +1,22 @@
+www/bin/hmFunc.cgi: fix hm func cgi by adding missing content-type
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/www/bin/hmFunc.cgi	2024-02-19 15:05:39.000000000 +0100
++++ b/www/bin/hmFunc.cgi	2024-02-26 17:51:44.781381364 +0100
+@@ -6,11 +6,6 @@
+ if {[session_requestisvalid 0] < 0 } {
+  exit
+ }
+-puts "{\"session\":\"valid\"}"
+-
+-
+-
+-
+-
+-
+ 
++puts -nonewline "Content-Type: application/json; charset=utf-8\r\n\r\n"
++puts "{\"session\":\"valid\"}"

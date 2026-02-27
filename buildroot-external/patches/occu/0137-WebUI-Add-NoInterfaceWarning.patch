@@ -45,7 +45,7 @@
      # End section BidCos-RF
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -698,6 +698,7 @@
+@@ -769,6 +769,7 @@
      "commentSettingsExtraSoftwareEnd" : "***********************************************",
      "commentDialogNewDevices" : "***********************************************",
      "dialogNewDevicesTitle" : "Ger%E4te anlernen",
@@ -55,7 +55,7 @@
      "dialogNewDevicesBidCosRFFetchmodeNotActive" : "Anlernmodus nicht aktiv",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -710,6 +710,8 @@
+@@ -781,6 +781,8 @@
  
      "dialogNewDevicesTitle" : "Teach-in devices",
  
@@ -64,3 +64,27 @@
      "dialogNewDevicesTDBidCosRF" : HMIdentifier.en.BidCosRF + "<br/>(Radio)",
      "dialogNewDevicesTDBidCosWired" : HMIdentifier.en.BidCosWired,
  
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -11639,14 +11639,16 @@
+         if (typeof devToConfigure != "undefined" || typeof blindChAddress == "undefined" || blindChAddress != devAddress) {
+           blindChAddress = devAddress;
+           var devDescr = homematic("Interface.getDeviceDescription", {"interface": "HmIP-RF", "address":devAddress});
+-          blindFw = devDescr.firmware;
+-          arBlindFW = blindFw.split(".");
+-          fwGTE16 = (arBlindFW[0] > 1 || ((arBlindFW[0] = 1) && (arBlindFW[1] >= 6)));
+-          window.setTimeout(function() {delete blindChAddress; delete blindFw; delete fwGTE16;},10000);
++          if (devDescr) {
++            blindFw = devDescr.firmware;
++            arBlindFW = blindFw.split(".");
++            fwGTE16 = (arBlindFW[0] > 1 || ((arBlindFW[0] = 1) && (arBlindFW[1] >= 6)));
++            window.setTimeout(function() {delete blindChAddress; delete blindFw; delete fwGTE16;},10000);
++          }
+         }
+ 
+ 
+-        if (fwGTE16) {
++        if (typeof fwGTE16 != "undefined" && fwGTE16) {
+           homematic("Interface.getMetadata_crRFD", {"interface": "HmIP-RF", "objectId": data["address"], "dataId": "channelMode"}, function(result) {
+             if (result == "") {
+               self.changedMultiMode = "shutter";

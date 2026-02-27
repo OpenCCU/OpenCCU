@@ -39,8 +39,8 @@
     <td class="CLASS00702">
         <table class="CLASS00703" cellpadding="5" cellspacing="0" >
         <colgroup>
-        <col width="50%" />
-        <col width="50%" />
+        <col style="width:50%;"/>
+        <col style="width:50%;"/>
         </colgroup>
         <tr>    
           <td class="CLASS00704">${lblUserName}</td>
@@ -68,7 +68,7 @@
        <!-- Select language -->
        <tr>
            <td class="CLASS00704">
-               <table id="selectUserLang" class="CLASS00708"><colgroup><col width="50%" /><col width="50%" /></colgroup>
+               <table id="selectUserLang" class="CLASS00708"><colgroup><col style="width:50%;"/><col style="width:50%;"/></colgroup>
                    <tr>
                        <td>${lblSelectLanguage}</td>
                        <td class="CLASS00709">
@@ -85,7 +85,7 @@
       <!-- End select language -->
       <tr>
         <td class="CLASS00704">
-          <table class="CLASS00708"><colgroup><col width="50%" /><col width="50%" /></colgroup>
+          <table class="CLASS00708"><colgroup><col style="width:50%;"/><col style="width:50%;"/></colgroup>
             <tr><td>${lblBtnForLogin}</td><td class="CLASS00709"><input id="cbUserS" type="checkbox" checked /></td></tr>
           </table>
         </td>
@@ -93,7 +93,7 @@
       </tr>
       <tr>
         <td class="CLASS00704">
-          <table class="CLASS00708"><colgroup><col width="50%" /><col width="50%" /></colgroup>
+          <table class="CLASS00708"><colgroup><col style="width:50%;"/><col style="width:50%;"/></colgroup>
             <tr><td>${lblAccessLevel}</td>
               <td class="CLASS00709">
                 <select onchange="ChangeLevel(this.selectedIndex);" id="selLevel" <% Write(sDisabled); %> >
@@ -109,7 +109,7 @@
       <tr>
 <!--      
         <td class="CLASS00704">
-          <table class="CLASS00708"><colgroup><col width="50%" /><col width="50%" /></colgroup>
+          <table class="CLASS00708"><colgroup><col style="width:50%;"/><col style="width:50%;"/></colgroup>
             <tr>
               <td>Endgeräteauswahl:</td> 
                <td class="CLASS00709">
@@ -135,7 +135,7 @@
           }
         %>
         <table class="CLASS00708" <%Write(tableStyle);%>>
-        <colgroup><col width="90%" /><col width="10%" /></colgroup>
+        <colgroup><col style="width:90%;" /><col style="width:10%;"/></colgroup>
         <tr><td>${lblEasyModeActive}</td><td class="CLASS00709"><input id="cbEasy" type="checkbox" checked NAME="cbEasy"/></td></tr>
         </table>
         </td>
@@ -143,28 +143,28 @@
       <tr>
         <td class="CLASS00704">
         <table class="CLASS00708" <%Write(tableStyle);%>>
-          <colgroup><col width="90%" /><col width="10%" /></colgroup>
+          <colgroup><col style="width:90%;" /><col style="width:10%;" /></colgroup>
           <tr><td>${lblHideStickyUnreach}</td><td class="CLASS00709"><input id="cbHideStickyUnreachServiceMessage" type="checkbox" NAME="cbStickyUnreach" onchange="onHideStickyUnreachChanged()"/></td></tr>
         </table>
         </td>
       </tr>
       <tr>
         <td class="CLASS00704">
-          <table class="CLASS00708"><colgroup><col width="50%" /><col width="50%" /></colgroup>
+          <table class="CLASS00708"><colgroup><col style="width:50%;" /><col style="width:50%;" /></colgroup>
             <tr><td>${lblPhoneNumber}</td><td class="CLASS00709"><input id="txtPhone" size="30" type="text" class="CLASS00709" /></td></tr>
           </table>
         </td>
       </tr>
       <tr>
         <td class="CLASS00704">
-          <table class="CLASS00708"><colgroup><col width="50%" /><col width="50%" /></colgroup>
+          <table class="CLASS00708"><colgroup><col style="width:50%;" /><col style="width:50%;" /></colgroup>
             <tr><td>${lblEMailAddress}</td><td class="CLASS00709"><input id="txtMail" size="40" type="text" class="CLASS00709" /></td></tr>
           </table>
         </td>
       </tr>
       <tr>
         <td>
-          <table class="CLASS00708"><colgroup><col width="80%" /><col width="20%" /></colgroup>
+          <table class="CLASS00708"><colgroup><col style="width:80%;" /><col style="width:20%;" /></colgroup>
             <tr><td></td><td class="CLASS00711"><div class="FooterButton CLASS00712" onclick="saveUser();">${btnAdoptSettings}</div></td></tr>
           </table>
         </td>
@@ -174,7 +174,7 @@
     </tr>
     <tr class="CLASS00713" id="svt1">
     <td colspan="2" class="CLASS00714">
-        <table class="CLASS00708"><colgroup><col width="80%" /><col width="20%" /></colgroup>
+        <table class="CLASS00708"><colgroup><col style="width:80%;" /><col style="width:20%;" /></colgroup>
           <tr>
             <td class="CLASS00715">${lblStartPageSystemInfo}</td>
             <td class="CLASS00709">
@@ -213,7 +213,7 @@
   // Deactivate this when the user language is not in use
   <%
     object user = dom.GetObject(uid);
-    Write("var lang = homematic('User.getLanguage', {'userID' : userId});");
+    Write("var lang = homematic('User.getLanguage', {'userID' : iUserId});");
     Write("lang = ((lang == null) || (lang > 2)) ? 0 : lang;");
     Write("$('userLanguage').value = lang;");
   %>
@@ -390,6 +390,7 @@
 
     var olduserlevel = -1;
     var bn = $("fullName").value;
+    bn = bn.trim();
     
     if ($("txtPw").value != $("txtPw2").value)
     {
@@ -409,6 +410,15 @@
       alert(translateKey("alertEmptyUsername"));
       return;
     }
+    
+    //check for white spaces
+    if(bn.search(/\w\s/) != -1) 
+    {
+      alert(translateKey("alertUsernameForbiddenChars"));
+      return;
+    }
+
+    //check for illegal special chars
     if (!(isTextAllowed(bn,1))) return;
     
     if (userExists(buildUserName()))
@@ -422,10 +432,13 @@
 
     if (languageChanged) {
       homematic("User.setLanguage", {"userName": user.userName, "userLang": user.language}, function () {
-        WebUI.USERLANGUAGE = user.language;
-        jQuery("#header").attr("lang", WebUI.USERLANGUAGE);
-        loadTextResource();
-        WebUI.start();
+        if (WebUI.USERNAME == bn) {
+          WebUI.USERLANGUAGE = user.language;
+          jQuery("#header").attr("lang", WebUI.USERLANGUAGE);
+          loadTextResource();
+          jQuery("#body").html("");
+          WebUI.start();
+        }
       });
     }
     if (hideStickyUnreachChanged) {

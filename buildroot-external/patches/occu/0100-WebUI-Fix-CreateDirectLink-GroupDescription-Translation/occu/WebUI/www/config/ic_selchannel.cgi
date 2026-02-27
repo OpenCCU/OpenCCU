@@ -19,6 +19,8 @@ ise_getChannelFunctions ise_FUNCTIONS
 array set ise_ROOMS ""
 ise_getChannelRooms ise_ROOMS
 
+set visibleChnsWGD ""
+
 #=====
 
 proc put_page {} {
@@ -46,7 +48,7 @@ proc put_page {} {
       if {$step < 3} then {
         # wegen dem IE muss das Style overflow:visible eingestellt sein
         puts "<div id=\"ChnTblContentDiv\" class=\"CLASS21908\" style=\"overflow:visible\" >"
-        puts "<table border=\"1\" id=\"ChnListTbl\" class=\"ChnListTbl\" width=\"100%\" cellspacing=\"0\">"
+        puts "<table border=\"1\" id=\"ChnListTbl\" class=\"ChnListTbl\" cellspacing=\"0\">"
         put_colgroup
         put_tableheader
 
@@ -121,25 +123,25 @@ proc put_page {} {
 proc put_colgroup {} {
   puts "<colgroup>"
 #Name
-  puts "  <col style=\"width:21%;\"/>"
+  puts "  <col />"
 #Typenbezeichnung
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
 #Bild
-  puts "  <col style=\"width:4%;\"/>"
+  puts "  <col style=\"width:55px;\"/>"
 #Bezeichnung
-  puts "  <col style=\"width:18%;\"/>"
+  puts "  <col />"
 #Seriennummer
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
 #Kategorie
-  puts "  <col style=\"width:5%;\"/>"
+  puts "  <col />"
 #Übertragungsmodus
   puts "  <col style=\"width:5%;\"/>"
 #Gewerk
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
 #Raum
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
 #Aktion
-  puts "  <col style=\"width:7%;\"/>"
+  puts "  <col style=\"width:100px;\" />"
   puts "</colgroup>"
 }
 
@@ -196,6 +198,60 @@ proc getExtendedLinkDescription {channelType channel} {
     }
   }
   return $result
+}
+
+# Hmip-RGBW - Mode RGBW=0 / RGW=1 / TunableWhite=2 / PWM=3
+proc getRGBWDeviceMode {devAddress} {
+  # Fetch the selected mode of the device
+  array_clear result
+
+  set iseScript "string dev_id;"
+  append iseScript "string chnID;"
+  append iseScript "string metaDevMode = \"-\";"
+  append iseScript "foreach(dev_id, dom.GetObject(ID_DEVICES).EnumUsedIDs())\{"
+    append iseScript "object dev=dom.GetObject(dev_id);"
+    append iseScript "if((dev.Interface() != 65535) && (dev.Address() != \"\") && (dev.Address() != \"BidCoS-RF\") && (dev.Address() != \"BidCoS-Wir\") && (dev.Address() != \"System\") && ((dev.HssType() == \"HmIP-RGBW\") && (dev.Address() == \"$devAddress\")) ) \{"
+      append iseScript "object device = dom.GetObject(dev.ID());"
+      append iseScript "object channel;"
+      append iseScript "string  chnId;"
+      append iseScript "string channelFound = \"\";"
+      append iseScript "foreach(chnId, device.Channels())\{"
+        append iseScript "if (channelFound == \"\") \{"
+         append iseScript "channelFound = chnId;"
+         append iseScript "channel = dom.GetObject(channelFound);"
+          append iseScript "metaDevMode = channel.MetaData(\"deviceMode\");"
+        append iseScript "\}"
+      append iseScript "\}"
+    append iseScript "\}"
+  append iseScript "\}"
+
+  array set result [rega_script $iseScript]
+
+  # Mode RGBW=0 / RGW=1 / TunableWhite=2 / PWM=3
+  return $result(metaDevMode)
+}
+
+# Hmip-WGD(-PL)
+proc getWGDScreenOrder {devType devAddress} {
+  # Fetch the active screens of the device
+  array_clear result
+  puts "$devType "
+
+    set iseScript "string dev_id;"
+    append iseScript "string metaScreenOrder = \"-\";"
+    append iseScript "integer loop = 0;"
+    append iseScript "foreach(dev_id, dom.GetObject(ID_DEVICES).EnumUsedIDs()){"
+      append iseScript "if (metaScreenOrder == \"-\") {"
+        append iseScript "object dev=dom.GetObject(dev_id);"
+        append iseScript "if((dev.Interface() != 65535) && (dev.Address() == \"$devAddress\") && (dev.Address() != \"\") && (dev.Address() != \"BidCoS-RF\") && (dev.Address() != \"BidCoS-Wir\") && (dev.Address() != \"System\") && (dev.HssType().Find(\"-WGD\") != -1)) {"
+            append iseScript "metaScreenOrder = dev.MetaData(\"screenOrder\") ;"
+       append iseScript "}"
+      append iseScript "}"
+    append iseScript "}"
+
+  # Screen order
+  array set result [rega_script $iseScript]
+  return $result(metaScreenOrder)
 }
 
 proc put_PreviousStep {} {
@@ -296,11 +352,14 @@ proc put_PreviousStep {} {
       }
     }
 
-    if {[string equal $dev_descr_sender(PARENT_TYPE) "HmIP-MOD-RC8"] == 0} {
-      # This is for all links where the sender is no HmIP-MOD-RC8
-      catch {set description1 "\${lblStandardLink} $dev_descr_sender(TYPE) $extSenderDescr - $dev_descr_receiver(TYPE) $extReceiverDescr"}
+    if {[string equal $dev_descr_sender(PARENT_TYPE) "HmIP-MOD-RC8"] == 1} {
+      # This is for all links where the sender is a HmIP-MOD-RC8
+      catch {set description1 "\${lblStandardLink} HmIP-MOD-RC8 - $dev_descr_receiver(TYPE) $extReceiverDescr"}
+    } elseif {([string equal $dev_descr_receiver(PARENT_TYPE) "HmIP-WUA"] == 1) || ([string equal $dev_descr_receiver(PARENT_TYPE) "ELV-SH-WUA"] == 1)} {
+      catch {set description1 "\${lblStandardLink} \${lblLinkDescrWUA} - $dev_descr_receiver(TYPE) $extReceiverDescr"}
     } else {
-      catch {set description1 "\${lblStandardLink} HmIP-MOD-RC8 $extSenderDescr - $dev_descr_receiver(TYPE) $extReceiverDescr"}
+      # Default for all other links
+      catch {set description1 "\${lblStandardLink} $dev_descr_sender(TYPE) $extSenderDescr - $dev_descr_receiver(TYPE) $extReceiverDescr"}
     }
     catch {set description2 "\${lblStandardLink} $dev_descr_sender(TYPE) $extSenderDescr - $dev_descr_receiver(TYPE) $extReceiverDescr"}
 
@@ -351,12 +410,12 @@ proc put_PreviousStep {} {
   puts "<table border=\"1\" id=\"createLinkStep1\" cellspacing=\"0\" class=\"j_translate\" >"
 
   puts "<colgroup>"
-  puts "  <col style=\"width:10%;\"/>"
-  puts "  <col style=\"width:10%;\"/>"
-  puts "  <col style=\"width:25%;\"/>"
-  puts "  <col style=\"width:25%;\"/>"
-  puts "  <col style=\"width:10%;\"/>"
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
+  puts "  <col style=\"width:150px;\"/>"
+  puts "  <col />"
+  puts "  <col />"
+  puts "  <col />"
+  puts "  <col style=\"width:150px;\"/>"
   puts "</colgroup>"
   
   puts "<THEAD>"
@@ -517,7 +576,7 @@ proc put_FilterControl {control colNr {entrylist ""} } {
     puts "<div class=\"CLASS21915\">&nbsp;"
   } else {
     puts "<td id=\"id_filtertd_$colNr\" class=\"unfiltered\">"
-    puts "<div onclick=\"ShowFilterControl($colNr);\">Filter</div>"
+    puts "<div class=\"FilterBtn\" onclick=\"ShowFilterControl($colNr);\">Filter</div>"
     puts "<div class=\"CLASS21915\">"
   }
   
@@ -618,7 +677,7 @@ proc linkIsExpertChannel {devType chType chNr} {
   upvar virtChnCounter virtChnCounter
 
   set devType [string tolower $devType]
-  set arChVirtType [list "DIMMER_VIRTUAL_RECEIVER" "SWITCH_VIRTUAL_RECEIVER" "BLIND_VIRTUAL_RECEIVER" "SHUTTER_VIRTUAL_RECEIVER" "ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER"]
+  set arChVirtType [list "DIMMER_VIRTUAL_RECEIVER" "SWITCH_VIRTUAL_RECEIVER" "BLIND_VIRTUAL_RECEIVER" "SHUTTER_VIRTUAL_RECEIVER" "ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER" "SERVO_VIRTUAL_RECEIVER"]
 
   set result 1
 
@@ -647,12 +706,13 @@ proc showHmIPChannel {devType direction address chType} {
 
   upvar virtChnCounter virtChnCounter
 
+  set parentAddress [lindex [split $address ":"] 0]
   set ch [lindex [split $address ":"] 1]
 
   set major 0
 
-  if {[string toupper $devType] == "HMIP-PSM"} {
-    set parentAddress [lindex [split $address ":"] 0]
+  if {[string equal -nocase -length 8 $devType "HMIP-PSM"] == 1} {
+    # set parentAddress [lindex [split $address ":"] 0]
     set url $iface_url(HmIP-RF)
     array set dev_descr [xmlrpc $url getDeviceDescription [list string $parentAddress]]
     set firmware $dev_descr(FIRMWARE)
@@ -663,19 +723,16 @@ proc showHmIPChannel {devType direction address chType} {
   set devType [string toupper $devType]
 
   # The internal device button of some devices aren`t allowed for external links
-  # The next code filters e. g. a HMIP-PSM AND a HMIP-PSM-UK or a HmIP-PCBS AND a HmIP-PCBS-BAT
+  # The next code filters e. g. a HMIP-PSM AND a HMIP-PSM-UK or a HmIP-PCBS AND HmIP-PCBS-BAT as well as ELV-SH-SW1-BAT
+  # Also don't show the channel COND_SWITCH_TRANSMITTER for PSM's with a fw. < 2.x.y (see TWIST-1648)
   if {(
     ($devType == "HMIP-PS")
     || (([string equal -nocase -length 8 $devType "HMIP-PSM"] == 1) && ($major < 2))
     || (([string equal -nocase -length 8 $devType "HMIP-PSM"] == 1) && ($chType == "KEY_TRANSCEIVER"))
     || ([string equal -nocase -length 8 $devType "HMIP-PDT"] == 1)
     || ([string equal -nocase -length 9 $devType "HMIP-PCBS"] == 1)
+    || ([string equal -nocase $devType "ELV-SH-SW1-BAT"] == 1)
     ) && $direction == 1} { #; channel is sender
-
-    if {$chType == "COND_SWITCH_TRANSMITTER"} {
-      # show the channel
-      # return 1
-    }
 
     # don't show the channel
     return 0
@@ -696,6 +753,176 @@ proc showHmIPChannel {devType direction address chType} {
   if {([string first "HMIP-ASIR" $devType] != -1) && ($chType == "KEY_TRANSCEIVER")} {
    # don't show the channel
     return 0
+  }
+
+  # HmIP-RGBW - show only the relevant channels for each mode.
+  if {($devType == "HMIP-RGBW") && ($chType == "UNIVERSAL_LIGHT_RECEIVER")} {
+
+    # selectedMode RGBW=0 / RGW=1 / TunableWhite=2 / PWM=3
+    set selectedMode [getRGBWDeviceMode $parentAddress]
+
+    # return 0 = hide the channel
+    # return 1 = show the channel
+
+    switch $selectedMode {
+     "0" {# show only ch 1
+        if {$ch == 1} {return 1} else {return 0}
+      }
+     "1" {# show only ch 1
+        if {$ch == 1} {return 1} else {return 0}
+      }
+     "2" {# show ch 1 and 2
+        if {($ch == 1) || ($ch == 2)} {return 1} else {return 0}
+      }
+     "3" {# show all channels
+        return 1
+      }
+    }
+  }
+
+  # HmIPW-WGD(-PL)
+  # - Show only the relevant channels according to the selected screens
+
+
+  if {([string first "-WGD" $devType] != -1)
+    && (($chType == "DISPLAY_INPUT_TRANSMITTER")
+    || ($chType == "DISPLAY_LEVEL_INPUT_TRANSMITTER")
+    || ($chType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER")
+    )} {
+
+    set isWired 0
+
+    if {[string first "HMIPW" $devType] != -1} {set isWired 1}
+
+    # Quick Motion channel is always visible
+    if {$ch == 41} {return 1}
+
+    # screenOrder and visibleChnsWGD are global because they were determined only with the first channel (chn. 1) and then used for all other channels of the device
+    global iface_url screenOrder visibleChnsWGD
+    set endID "END"
+
+    # - Do this only once and use it for all other channels
+    # - For this we check only on channel 1
+    if {$ch == 1} {
+      set screenOrder [getWGDScreenOrder $devType $parentAddress]
+      set visibleChnsWGD ""
+    }
+
+    if {[info exists screenOrder]} {
+      set arScreenOrder [split $screenOrder ","]
+      set arUsedScreens ""
+      set numberOfScreens [expr [llength $arScreenOrder] - 1]
+      set indexEndScreen [lsearch $arScreenOrder $endID]
+
+      if {$isWired} {
+        if {$numberOfScreens == 5} {set firstTileOfChannel "1 9 17 25 33"}
+        if {$numberOfScreens == 10} {set firstTileOfChannel "1 9 17 25 33 42 44 46 48 50"}
+      } else {
+        if {$numberOfScreens == 6} {set firstTileOfChannel "1 9 17 25 33"}
+        if {$numberOfScreens == 11} {set firstTileOfChannel "1 9 17 25 33 42 44 46 48 50"}
+      }
+
+      # Here we set the first and last tile of each selected screen depending on the number of selected tiles
+      # - Do this only once and use it for all other channels
+      if {$ch == 1} {
+        # get the number of tiles per screen
+        set devAddress [lindex [split $address ":"] 0]
+        set url $iface_url(HmIP-RF)
+        array set ch_ps [xmlrpc $url getParamset [list string $devAddress:0] [list string MASTER]]
+        for {set loop 1} {$loop <= $numberOfScreens} {incr loop} {
+          set activeTilesWGD(SCREEN_LAYOUT_TILE_LAYOUT_$loop) $ch_ps(SCREEN_LAYOUT_TILE_LAYOUT_$loop)
+        }
+
+        # get the screens in use
+        for {set loop 0} {$loop < $indexEndScreen} {incr loop} {
+          if {! $isWired} {
+            if {([string first "-PL" $devType] == -1) && ([lindex $arScreenOrder $loop] != 5)} {
+              lappend arUsedScreens [lindex $arScreenOrder $loop]
+            } elseif {([string first "-PL" $devType] != -1) && ([lindex $arScreenOrder $loop] != 10)} {
+              lappend arUsedScreens [lindex $arScreenOrder $loop]
+            }
+          } else {
+            lappend arUsedScreens [lindex $arScreenOrder $loop]
+          }
+        }
+
+        # sort the list
+        set usedScreensWGD [lsort $arUsedScreens]
+
+        # determine the first and last ch of the screen depending on the number of selected tiles
+        foreach scrn $usedScreensWGD {
+          set visibleTiles $activeTilesWGD(SCREEN_LAYOUT_TILE_LAYOUT_[expr $scrn + 1])
+
+          if {([expr $scrn + 1] <= 5) || ($numberOfScreens == 5)} {
+            # Default value
+            set chnCounter 7
+            if {$visibleTiles == 0} {
+              set chnCounter 1
+            } elseif {$visibleTiles == 1} {
+              set chnCounter 3
+            } elseif {$visibleTiles == 2} {
+              set chnCounter 7
+            }
+          } elseif {([expr $scrn + 1] > 5) && ($numberOfScreens == 10)} {
+            # Default value
+            set chnCounter 1
+              if {$visibleTiles == 0} {
+                set chnCounter 0
+              } elseif {$visibleTiles == 1} {
+                set chnCounter 1
+              }
+          }
+
+          set  firstTile [lindex $firstTileOfChannel $scrn]
+          set  lastTile [expr $firstTile + $chnCounter]
+
+          # visibleChnsWGD contains a list with visible channels. Channels not in this list are not displayed
+          for {set loop $firstTile } {$loop <= $lastTile} {incr loop} {
+            lappend visibleChnsWGD $loop
+          }
+        }
+      }
+
+      # puts "<script type='text/javascript'>console.log('$devType -  visibleChnsWGD: $visibleChnsWGD');</script>"
+
+      if {[lsearch $visibleChnsWGD $ch] != -1} {
+        # return 1 = show the channel
+        return 1
+      }
+    }
+    # return 0 = hide the channel
+    return 0
+  }
+
+  # HmIP-DRG-DALI
+  # - Show only the relevant channels according to the connected hardware
+  if {$devType == "HMIP-DRG-DALI"} {
+    set url $iface_url(HmIP-RF)
+    array set ch_ps [xmlrpc $url getParamset [list string $address] [list string MASTER]]
+
+    if {[info exists ch_ps(DALI_ADDRESS)] == 1} {
+      if {$ch_ps(DALI_ADDRESS) == 255} {return 0} else {return 1}
+    } elseif  {($ch >= 33) && ($ch <=48)} {
+      if {$ch_ps(UNIVERSAL_LIGHT_MAX_CAPABILITIES) == 5} {
+        # hide the channel
+        return 0
+      }
+    }
+  }
+
+  if {(($devType == "HMIP-WGS") || ($devType == "HMIP-WGS-A")) && ($chType == "KEY_TRANSCEIVER")} {
+    # Determine the selected layout mode of the device
+    set devAddress [lindex [split $address ":"] 0]
+    set url $iface_url(HmIP-RF)
+    array set ch_ps [xmlrpc $url getParamset [list string $devAddress:0] [list string MASTER]]
+    set mode $ch_ps(DEVICE_INPUT_LAYOUT_MODE)
+
+    if {$mode == 0} {
+      if {($ch == 2) || ($ch == 3) || ($ch == 4) } {return 0} ;# hide chn 2, 3 and 4
+    }
+    if {($mode == 1) || ($mode == 2)} {
+      if {($ch == 3) || ($ch == 4)} {return 0} ;# hide chn 3 and 4
+    }
   }
 
   # Hide the virtual channel 2 and 3 of HmIP devices when the expert mode is not activated.

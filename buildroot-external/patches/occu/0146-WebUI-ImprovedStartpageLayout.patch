@@ -132,7 +132,7 @@
      "login" : "Login",
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -86,6 +86,19 @@
+@@ -89,6 +89,19 @@
    padding: 4px;*/
  }
  
@@ -154,7 +154,7 @@
    margin:0;
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -20476,14 +20476,18 @@
+@@ -25758,14 +25758,18 @@
    showUpdate: function() {
      var fn = function() {
        var result = homematic.com.isUpdateAvailable();

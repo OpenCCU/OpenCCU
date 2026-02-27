@@ -10,8 +10,8 @@
       }
 
     </style>
-    <script type="text/javascript" src="/webui/js/extern/jquery.js?_version_=2.0pre1"></script>
-    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js?_version_=2.0pre1"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
     <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
     <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
     <script type="text/javascript">
@@ -95,7 +95,7 @@
         <p>${ccuNotReadyHint}</p>
       </div>
       <div align="center" style="padding-top:250px;">
-        <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
+        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
       </div>
     </div>
 

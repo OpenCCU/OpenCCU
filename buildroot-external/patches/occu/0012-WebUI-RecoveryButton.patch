@@ -1,6 +1,6 @@
 --- occu/WebUI/www/api/methods.conf.orig
 +++ occu/WebUI/www/api/methods.conf
-@@ -953,6 +953,13 @@
+@@ -991,6 +991,13 @@
    ARGUMENTS {_session_id_ level}
  }
  
@@ -42,12 +42,12 @@
 +jsonrpc_response true
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -595,6 +595,27 @@
+@@ -535,6 +535,27 @@
          }
        }
  
 +      # Recovery Modus
-+      if {[get_platform] != "oci"} {
++      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
 +        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
 +            table_data {class="CLASS20903"} $styleMaxWidth {
 +                #puts "Recovery<br>"
@@ -70,7 +70,7 @@
        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
          table_data {class="CLASS20903"} $styleMaxWidth  {
            #puts "Fehler-<br>"
-@@ -772,6 +793,18 @@
+@@ -712,6 +733,18 @@
          }
          });
        }
@@ -91,7 +91,7 @@
  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -382,6 +382,7 @@
+@@ -390,6 +390,7 @@
      "dialogNo" : "Nein",
      "dialogBack" : "Zur%FCck",
      "dialogSafetyCheck" : "Sicherheitsabfrage",
@@ -99,7 +99,7 @@
      "dialogInfo" : "Info",
      "dialogHint" : "Hinweis",
      "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm wirklich l%F6schen?",
-@@ -394,6 +395,7 @@
+@@ -402,6 +403,7 @@
      "dialogQuestionRestart" : "Best%E4tigen Sie hier, um den Neustart durchzuf%FChren.",
      "dialogQuestionShutdown" : "Best%E4tigen Sie hier, um das Herunterfahren durchzuf%FChren.",
      "dialogQuestionRestartSafeMode" : "M%F6chten Sie die " + HMIdentifier.de.CCUFullNameText + " wirklich im abgesicherten Modus starten?",
@@ -107,7 +107,7 @@
      "dialogUserAccountTitle" : "Benutzerkonto - Konfiguration",
      "dialogProgChoseSysVar" : "Programme - Systemvariablenauswahl",
      "dialogEditRoom" : "Raum bearbeiten",
-@@ -416,7 +418,9 @@
+@@ -424,7 +426,9 @@
      "dialogChooseBidCosInterface" : "Auswahl BidCos-Interface",
      "dialogChooseChannel" : "Kanalauswahl",
      "dialogRestartSafeModeTitle" : "Neustart",
@@ -116,8 +116,8 @@
 +    "dialogRestartRecoveryModeContent" : "Die Zentrale startet nun im Recovery Modus. Klicken Sie auf \"OK\", um sich neu anzumelden.",
      "dialogBtnPerformRestart" : "Neustart ",
      "dialogBtnPerformShutdown" : "Herunterfahren",
-     "dialogEditRoomBtnClose" : "Schliessen",
-@@ -451,6 +455,7 @@
+     "dialogEditRoomBtnClose" : "Schlie%DFen",
+@@ -459,6 +463,7 @@
      "dialogSettingsCMTDCCURestart" : HMIdentifier.de.CCUShortName + "<br/>Neustart",
      "dialogSettingsCMTDCCUShutdown" : "Herunterfahren",
      "dialogSettingsCMTDCCUSafeMode" : "Abgesicherter<br/>Modus",
@@ -125,7 +125,7 @@
      "dialogSettingsCMTDErrorProtocol" : "Fehler-<br/>protokoll",
      "dialogSettingsCMLblActualSoftwareVersion" : "Aktuelle Software-Version:",
      "dialogSettingsCMLblAvailableSoftwareVersion" : "Verf%FCgbare Software-Version:",
-@@ -469,6 +474,7 @@
+@@ -478,6 +483,7 @@
      "dialogSettingsCMBtnCCURestart" : "Neustart",
      "dialogSettingsCMBtnCCUShutdown" : "Herunterfahren",
      "dialogSettingsCMBtnCCURestartSafe" : "Neustart im abgesicherten Modus",
@@ -133,7 +133,7 @@
      "dialogSettingsCMBtnLogSysLogServerAddress" : "Einstellungen %FCbernehmen",
      "dialogSettingsCMBtnLogLoadLogFile" : "Logdatei herunterladen",
      "dialogSettingsCMErrorTitle" : "Softwareupdate - Fehler",
-@@ -481,6 +487,7 @@
+@@ -491,6 +497,7 @@
      "dialogSettingsCMHintRestart" : "Zentrale neu starten. Ver%E4nderte Einstellungen werden vorher gespeichert.",
      "dialogSettingsCMHintShutdown" : "Zentrale herunterfahren. Ver%E4nderte Einstellungen werden vorher gespeichert.",
      "dialogSettingsCMHintRestartSafeMode" : "Homematic Zentrale einmalig im abgesicherten Modus starten. Im abgesicherten Modus wird die installierte Zusatzsoftware nicht gestartet. Ver%E4nderte Einstellungen werden vorher gespeichert.",
@@ -143,7 +143,7 @@
      "dialogSettingsCMLogLevel1" : "Information",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -381,6 +381,7 @@
+@@ -389,6 +389,7 @@
      "dialogNo" : "No",
      "dialogBack" : "Back",
      "dialogSafetyCheck" : "Confirmation prompt",
@@ -151,7 +151,7 @@
      "dialogInfo" : "Info",
      "dialogHint" : "Please note",
      "dialogQuestionRemoveProgram" : "Do you really want to delete the program?",
-@@ -393,6 +394,7 @@
+@@ -401,6 +402,7 @@
      "dialogQuestionRestart" : "Please click here to perform the restart?",
      "dialogQuestionShutdown" : "Please click here to perform the shutdown?",
      "dialogQuestionRestartSafeMode" : "Do you really want to start the " + HMIdentifier.en.CCUFullNameText + " in the safe mode?",
@@ -159,7 +159,7 @@
      "dialogUserAccountTitle" : "User account configuration",
      "dialogProgChoseSysVar" : "Programs - system variable selection",
      "dialogEditRoom" : "Edit room",
-@@ -415,7 +417,9 @@
+@@ -423,7 +425,9 @@
      "dialogChooseBidCosInterface" : "Selection BidCos-Interface",
      "dialogChooseChannel" : "Channel selection",
      "dialogRestartSafeModeTitle" : "Restart",
@@ -169,7 +169,7 @@
      "dialogBtnPerformRestart" : "Restart ",
      "dialogBtnPerformShutdown" : "Shutdown",
      "dialogEditRoomBtnClose" : "Close",
-@@ -450,6 +454,7 @@
+@@ -458,6 +462,7 @@
      "dialogSettingsCMTDCCURestart" : HMIdentifier.en.CCUShortName + "<br/>restart",
      "dialogSettingsCMTDCCUShutdown" : "Shutdown",
      "dialogSettingsCMTDCCUSafeMode" : "Safe<br/>mode",
@@ -177,7 +177,7 @@
      "dialogSettingsCMTDErrorProtocol" : "Error<br/>log",
      "dialogSettingsCMLblActualSoftwareVersion" : "Current software version:",
      "dialogSettingsCMLblAvailableSoftwareVersion" : "Available software version:",
-@@ -468,6 +473,7 @@
+@@ -477,6 +482,7 @@
      "dialogSettingsCMBtnCCURestart" : "Restart",
      "dialogSettingsCMBtnCCUShutdown" : "Shutdown",
      "dialogSettingsCMBtnCCURestartSafe" : "Restart in safe mode",
@@ -185,7 +185,7 @@
      "dialogSettingsCMBtnLogSysLogServerAddress" : "Apply settings",
      "dialogSettingsCMBtnLogLoadLogFile" : "Download log file",
      "dialogSettingsCMErrorTitle" : "Software update - error",
-@@ -480,6 +486,7 @@
+@@ -490,6 +496,7 @@
      "dialogSettingsCMHintRestart" : "Restart CCU. The changed settings will be saved before.",
      "dialogSettingsCMHintShutdown" : "Shutdown CCU. The changed settings will be saved before.",
      "dialogSettingsCMHintRestartSafeMode" : "Start Homematic Central Control Unit in safe mode once. In safe mode, the installed additional software will not be started. The changed settings will be saved before.",

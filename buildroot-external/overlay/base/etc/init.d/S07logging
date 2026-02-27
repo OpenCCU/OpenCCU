@@ -4,7 +4,7 @@
 # Start logging
 #
 
-SYSLOGD_ARGS="-n -m 0 -s 4096 -b 1 -D"
+SYSLOGD_ARGS="-n -m 0 -s 0 -b 0 -D"
 KLOGD_ARGS="-n"
 
 [[ ! -e /etc/config/syslog ]] && cp /etc/config_templates/syslog /etc/config/

@@ -21,7 +21,6 @@ umask 0002
 
 # start psplash
 /usr/bin/psplash -n 2>/dev/null &
-PSPLASH_PID=$!
 
 for i in /etc/init.d/S??* ;do
 
@@ -77,5 +76,5 @@ MSG=$(echo -en "${MSG}\n\n-- Press ALT+F2 for service console")
 
 /usr/bin/psplash-write "MSG ${MSG}"
 
-# kill psplash after 2 seconds
-(sleep 2; kill ${PSPLASH_PID}) &
+# quit psplash after 5 seconds
+(sleep 5; /usr/bin/psplash-write "QUIT") &

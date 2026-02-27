@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_network.cgi.orig
 +++ occu/WebUI/www/config/cp_network.cgi
-@@ -905,11 +905,13 @@
+@@ -723,11 +723,13 @@
    if {! [get_property $netconfig "HOSTNAME" hostname] } {return 0}
    if {! [get_property $netconfig "MODE" mode] } {return 0}
    set dhcp [expr {"$mode"=="DHCP"}]

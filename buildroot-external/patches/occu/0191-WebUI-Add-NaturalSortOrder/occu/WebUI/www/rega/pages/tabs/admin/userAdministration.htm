@@ -1,0 +1,222 @@
+<%
+  system.SetSessionVar("sessionTAB", "userAdministration");
+%>
+
+<script type="text/javascript">
+  ResetGAC();
+  setPath("<span onclick='WebUI.enter(SystemConfigPage);'>"+ translateKey("menuSettingsPage") +"</span> &gt; "+ translateKey("submenuUserManagement"));
+  arUserNames = new Array();
+<%
+  boolean firstSort = false;
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser && (system.GetSessionVar("sessionCTV")=="true") )
+  { 
+    firstSort = true;
+    oUser.UserTempViewIDs().RemoveAll();
+    system.SetSessionVar("sessionLS","name");
+    Write('iseClearLastSort();');
+    Write('lastSort = "name";');
+    Write('lastDir = 0;');
+    object oUserArray = dom.GetObject( ID_USERS );
+    if( oUserArray )
+    {
+      oUserArray.SortByName(soAsc,stNatural);
+      string sTmp;
+      foreach( sTmp, oUserArray.EnumEnabledVisibleIDs() )
+      {
+        object oTmp = dom.GetObject( sTmp );
+        if( oTmp )
+        {
+          oUser.UserTempViewIDs().Add( oTmp.ID() );
+        }
+      }
+    }
+  }
+%>
+</script>
+
+<div id="dummy" style="display:none"></div>
+
+<table cellpadding="0" cellspacing="0" id="userAdmin" class="tTable" style="display:none">
+<colgroup>
+  <col />
+  <col />
+  <col />
+  <!-- <col /> -->
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;" />
+</colgroup>
+
+<tr class="CLASS05300">
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05301"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arUserNames,'name',true);">${thUserName}</div></th>
+  <th class="thCell">${thPassword}</th>
+  <th class="thCell">${thBtnForLogin}</th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="level"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05301"><div id="level" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arUserNames,'level',true);">${thEntitlement}</div></th>
+<!--  <th class="thCell">Endger&auml;t</th> -->
+  <th class="thCell">${thEMail}</th>
+  <th class="thCell">${thPhoneNumber}</th>
+  <th class="thCell">${thAutomaticLogin}</th>
+  <th class="thCell">${thAction}</th>
+</tr>
+
+<%
+    if (oUser.UserTempViewIDs().Count() <= 1)
+    {
+      WriteLine("<script type='text/javascript'>");
+      WriteLine("Cursor.set(Cursor.NORMAL);");
+      WriteLine("</script>");
+    }  
+    object obj = dom.GetObject(ID_USERS);
+    string tmp = "";
+    foreach(tmp, oUser.UserTempViewIDs()) 
+    { 
+     object user = dom.GetObject(tmp);
+     if (user.Visible()) 
+     {
+        Write("<tr class='CLASS05302' id='ut"#user.ID()#"' >")
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>")
+        string sUserFullName = user.UserFirstName()#' '#user.UserLastName();
+        if( sUserFullName == ' ' ){ sUserFullName = user.Name(); }
+        Write(sUserFullName);
+        Write("</td>")
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>")
+        if (user.UserPwd() != "") {
+          Write("*****");
+        }
+        else {
+          Write("${lblNotSet}");
+        }
+        Write("</td>")
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration CLASS05302'>")
+        string sChecked = "";
+        if (user.UserShowLogin()) {
+          sChecked = "checked";
+        }
+        Write("<input id='cb"#user.ID()#"' disabled='disabled' "#sChecked#" type='checkbox' />")
+        Write("</td>")
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>");
+        
+        if (user.UserLevel() == iulAdmin)
+        { 
+          Write("${lblAdmin}");
+        }
+        
+        if(user.UserLevel() == iulUser)
+        {
+          Write("${lblUser}");
+        }
+        
+        if(user.UserLevel() == iulGuest)
+        {
+          Write("${lblGuest}");
+        }
+                
+        Write("</td>")
+
+! Endgerät        
+!        Write("<td style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>")
+!        integer uc = user.UserClient();
+!        if (uc == dwcAuto) { Write("automatisch"); }
+!        if (uc == dwcPDA) { Write("PDA"); }
+!        if (uc == dwcPC) { Write("PC"); }
+!        if (uc == dwcHandy) { Write("Handy"); }
+!        Write("</td>")
+        
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>")
+        Write(user.UserMailAddress());
+        Write("</td>")
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>")
+        Write(user.UserPhoneNumber());
+        Write("</td>")
+        Write("<td  style='text-align:center; vertical-align: middle;' class='TblUserAdministration'>")
+        if (user.ID() == obj.UsersDefaultLogin(dwcPC)) {
+          Write("${lblActiv}");
+!          Write("PC<br>");
+        }
+!        if (user.ID() == obj.UsersDefaultLogin(dwcPDA)) {
+!          Write("PDA");
+!        }
+        Write("</td>")
+        Write("<td style='text-align:center; vertical-align: middle;' class='TblUserAdministration CLASS05303' >")
+          Write("<div class='StdButton CLASS05304' onclick='editUser("#user.ID()#")'>${btnEdit}</div>")
+          if (system.GetSessionVar('sessionUserID') != user.ID()) {
+            Write("<div class='StdButton CLASS05304' onclick='deleteUser("#user.ID()#",\""#user.Name()#"\")'>${btnRemove}</div>")
+          }
+        Write("</td>")
+        Write("</tr>")
+        
+        Write("<script type='text/javascript'>");
+        Write("var tmp = new Object();");
+        Write("tmp['id'] = '"#user.ID()#"';");
+        Write("tmp['name'] = '"#sUserFullName#"';");
+        Write("tmp['level'] = '"#user.UserLevel()#"';");
+        Write("arUserNames[arUserNames.length] = tmp;");
+        Write("Cursor.set(Cursor.NORMAL);");
+        Write("</script>");
+      }
+    }
+  %>
+
+
+</table>
+
+<script type="text/javascript">
+  var s = "";
+  
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
+    s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton' onclick='newUser();'>${footerBtnNew}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05305' onclick='showAutoLogin()'>${footerBtnAutoLogin}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05305' onclick='showSystemLanguage()'>${footerBtnSystemLanguage}</div></td>";
+  s += "</tr>";
+  s += "</table>";
+
+  setFooter(s);
+  
+  newUser = function() {
+    CreatePopup(ID_USER_ACCOUNT_CONFIG_ADMIN, 0);
+  }
+  
+  editUser = function(id) {
+    CreatePopup(ID_USER_ACCOUNT_CONFIG_ADMIN, id);
+  }
+  
+  deleteUser = function(id,name)
+  {
+    var _id_ = id;
+	var _name_ = name;
+    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveUser").replace(/%s/, _name_), function(result) {
+      if (result == YesNoDialog.RESULT_YES)
+      {  
+        var url = "/esp/system.htm?sid=" + SessionId;
+        var pb = "string action = 'deleteUser';";
+        pb += "integer userid = " + id + ";";
+        var opts = {
+          postBody: pb,
+          onSuccess: function() {
+            hide("ut" + id);
+          }
+        };
+        new Ajax.Request(url, opts);
+      }
+    });
+  };
+  
+  showAutoLogin = function() {
+    CreatePopup(ID_AUTO_LOGIN_CONFIG);
+  }
+
+  showSystemLanguage = function() {
+    CreatePopup(ID_SYSTEM_LANGUAGE_CONFIG);
+  }
+  
+  translatePage("#userAdmin");
+  jQuery("#userAdmin").show();
+
+</script>

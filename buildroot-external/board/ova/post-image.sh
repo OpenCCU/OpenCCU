@@ -3,9 +3,11 @@
 # Stop on error
 set -e
 
-#MKIMAGE=${HOST_DIR}/usr/bin/mkimage
 BOARD_DIR="$(dirname "$0")"
-BOARD_NAME="$(basename "${BOARD_DIR}")"
+#BOARD_NAME="$(basename "${BOARD_DIR}")"
+
+# Use our own cmdline.txt
+cp "${BOARD_DIR}/cmdline.txt" "${BINARIES_DIR}/"
 
 #
 # Create user filesystem
@@ -26,7 +28,7 @@ mkdir -p "${BINARIES_DIR}/boot/grub"
 cp -a "${BOARD_DIR}/grub.cfg" "${BINARIES_DIR}/boot/grub/"
 
 # create *.img file using genimage
-support/scripts/genimage.sh -c "${BR2_EXTERNAL_EQ3_PATH}/board/${BOARD_NAME}/genimage.cfg"
+support/scripts/genimage.sh -c "${BOARD_DIR}/genimage.cfg"
 
 # lets create vmdk/vhdx/vdi files
 "${HOST_DIR}/bin/qemu-img" convert -O vmdk -o subformat=streamOptimized "${BINARIES_DIR}/sdcard.img" "${BINARIES_DIR}/sdcard.vmdk"
@@ -36,8 +38,8 @@ support/scripts/genimage.sh -c "${BR2_EXTERNAL_EQ3_PATH}/board/${BOARD_NAME}/gen
 # lets create an *.ova archive from the vmdk, template ovf file and
 # also create a *.mf manifest file
 OVADIR=$(mktemp -d)
-cp -a "${BINARIES_DIR}/sdcard.vmdk" "${OVADIR}/RaspberryMatic.vmdk"
-cp -a "${BOARD_DIR}/template.ovf" "${OVADIR}/RaspberryMatic.ovf"
-(cd "${OVADIR}" && "${HOST_DIR}/bin/openssl" sha256 RaspberryMatic.* >RaspberryMatic.mf)
-tar -C "${OVADIR}" --owner=root --group=root -cf "${BINARIES_DIR}/RaspberryMatic.ova" RaspberryMatic.ovf RaspberryMatic.vmdk RaspberryMatic.mf
+cp -a "${BINARIES_DIR}/sdcard.vmdk" "${OVADIR}/OpenCCU.vmdk"
+cp -a "${BOARD_DIR}/template.ovf" "${OVADIR}/OpenCCU.ovf"
+(cd "${OVADIR}" && "${HOST_DIR}/bin/openssl" sha256 OpenCCU.* | sed 's/SHA2-256/SHA256/' >OpenCCU.mf)
+tar -C "${OVADIR}" --owner=root --group=root -cf "${BINARIES_DIR}/OpenCCU.ova" OpenCCU.ovf OpenCCU.vmdk OpenCCU.mf
 rm -rf "${OVADIR}"

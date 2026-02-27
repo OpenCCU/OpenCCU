@@ -1,0 +1,111 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
+
+NAME=chrony
+DAEMON=/usr/sbin/chronyd
+CLIENT=/usr/bin/chronyc
+CFG_TEMPLATE_DIR=/etc/config_templates
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+init() {
+  if [[ ! -e /etc/config/ntpclient ]]; then
+    cp $CFG_TEMPLATE_DIR/ntpclient /etc/config
+  fi
+
+  if [[ -r /etc/config/ntpclient ]]; then
+    . /etc/config/ntpclient
+  fi
+
+  # make sure "ntp.homematic.com" is not used anymore
+  if [[ "${NTPSERVERS}" == "ntp.homematic.com" ]]; then
+    cp ${CFG_TEMPLATE_DIR}/ntpclient /etc/config/
+    . /etc/config/ntpclient
+  fi
+
+  # add the DHCP queried NTP servers at the beginning of NTPSERVERS
+  if [[ -s /var/etc/ntp-dhcp.conf ]] &&
+     [[ ! -f /etc/config/noDHCPNTP ]]; then
+    . /var/etc/ntp-dhcp.conf
+    NTPSERVERS="${NTPSERVERS_DHCP} ${NTPSERVERS}"
+  fi
+
+  # if still empty we add the default gateway as a potential NTP
+  # source
+  if [[ -z "${NTPSERVERS}" ]]; then
+    # try the gateway
+    NTPSERVERS=$(/sbin/ip route | grep default | head -1 | cut -d' ' -f3)
+  fi
+
+  # make sure /var/lib/chrony exists so that the drift file
+  # can be saved later on
+  mkdir -p /var/lib/${NAME}
+  chown chrony:chrony /var/lib/${NAME}
+}
+
+case "$1" in
+  start)
+    init
+    echo -n "Starting $NAME: "
+
+    # call ntpdate to perform a single sync to the servers
+    # shellcheck disable=SC2086
+    if ! /usr/bin/ntpdate -b -s -u ${NTPSERVERS} 2>/dev/null; then
+      # use default NTP servers because the user selected
+      # ones didn't work out
+      echo -n "using default NTPs, "
+      . "${CFG_TEMPLATE_DIR}/ntpclient"
+
+      # shellcheck disable=SC2086
+      if ! /usr/bin/ntpdate -b -s -u ${NTPSERVERS} 2>/dev/null; then
+        echo "could not sync to '${NTPSERVERS}', FAIL"
+        exit 0
+      fi
+    fi
+
+    # start daemon
+    if start-stop-daemon -S -q -x ${DAEMON}; then
+      # use client to add ntp servers
+      for server in ${NTPSERVERS}; do
+        STATUS_CODE=$(${CLIENT} add server "${server}" 2>&1 | cut -d' ' -f1)
+        if [[ "${STATUS_CODE}" == "200" ]] ||    # "OK"
+           [[ "${STATUS_CODE}" == "511" ]]; then # "Source already present"
+          touch /var/status/hasNTP
+        else
+          echo -n "WARN: could not add '${server}' (${STATUS_CODE}), "
+        fi
+      done
+    fi
+
+    if [[ -e /var/status/hasNTP ]]; then
+      ${CLIENT} burst 2/10 >/dev/null 2>&1
+      echo "OK"
+    else
+      echo "FAIL"
+
+      # make sure chronyd is stopped
+      start-stop-daemon -K -q -p /var/run/chrony/chronyd.pid
+    fi
+    ;;
+  stop)
+    echo -n "Stopping $NAME: "
+    if start-stop-daemon -K -q -p /var/run/chrony/chronyd.pid; then
+      echo "OK"
+    else
+      echo "FAIL"
+    fi
+    rm -f /var/status/hasNTP
+    ;;
+  restart|reload)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|reload}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

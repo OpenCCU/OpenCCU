@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -1226,6 +1226,7 @@
+@@ -1279,6 +1279,7 @@
    background-color: $_(active); /* #565657 */
    text-align: center;
    vertical-align: middle;

@@ -1,6 +1,6 @@
 --- occu/WebUI/www/api/methods.conf.orig
 +++ occu/WebUI/www/api/methods.conf
-@@ -1009,6 +1009,13 @@
+@@ -1047,6 +1047,13 @@
    ARGUMENTS {_session_id_}
  }
  
@@ -86,7 +86,7 @@
 +#puts "$result"
 --- occu/WebUI/www/rega/pages/tabs/startpage.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/startpage.htm
-@@ -213,6 +213,12 @@
+@@ -212,6 +212,12 @@
                <td>${deviceUpdate}</td>
                <td class="firmwareAvailable">${lblNewDeviceFirmwareAvailable}&nbsp;<span id="devFwAvailableCounter"></span></td>
              </tr>
@@ -99,7 +99,7 @@
  
              <%
                object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
-@@ -283,6 +289,7 @@
+@@ -403,6 +409,7 @@
        jQuery("#favSelector").show();
        jQuery("#favView").show();
        StartPage.showUpdate();
@@ -109,9 +109,9 @@
        jQuery("#forceUpdate").remove();
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -7,6 +7,8 @@
-     "ruleConditionSelectValue" : "Wert",
-     "ruleConditionSelectText" : "Text",
+@@ -9,6 +9,8 @@
+     "ruleConditionLblIsEqual" : "gleich ",
+     "ruleDescrHexString" : "Parameterzeichenkette",
      "btnChoice" : "Auswahl",
 +    "addonUpdate" : "Zusatzsoftware-Updates:",
 +    "lblNewAddonUpdatesAvailable" : "Neue Zusatzsoftware verf%FCgbar",
@@ -120,9 +120,9 @@
      "btnSelectRoomOrFunctionClose" : "Schlie%DFen",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -7,6 +7,8 @@
-     "ruleConditionSelectValue": "Value",
-     "ruleConditionSelectText": "Text",
+@@ -9,6 +9,8 @@
+     "ruleConditionLblIsEqual" : "equal to ",
+     "ruleDescrHexString" : "parameter string",
      "btnChoice": "Selection",
 +    "addonUpdate" : "Addon-Updates:",
 +    "lblNewAddonUpdatesAvailable" : "New addons available",
@@ -131,7 +131,7 @@
      "btnSelectRoomOrFunctionClose": "Close",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -20258,6 +20258,44 @@
+@@ -25715,6 +25715,44 @@
      msgBoxHeight
      );
    },

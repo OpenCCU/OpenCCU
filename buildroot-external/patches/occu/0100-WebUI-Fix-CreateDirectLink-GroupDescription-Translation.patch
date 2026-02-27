@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/ic_selchannel.cgi.orig
 +++ occu/WebUI/www/config/ic_selchannel.cgi
-@@ -318,7 +318,8 @@
+@@ -377,7 +377,8 @@
        #puts "descrElem.attr(\"value\",translateString(descrElem.val()));"
        puts "jQuery(descrElem).val(translateString(descrElem.val()));"
  

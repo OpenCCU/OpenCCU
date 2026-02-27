@@ -21,7 +21,7 @@
          jQuery(".YesNoDialog_yesButton").hide().text(translateKey("dialogSettingsCMBtnPerformSoftwareUpdateUpload"));
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -405,19 +405,16 @@
+@@ -406,19 +406,16 @@
              }
              table_row {
                td {width="20"} {}
@@ -31,7 +31,7 @@
                }
 -              table_data {
 +            }
-+            table_row {
++            table_data {
 +              td {width="20"} {}
 +              table_data {align="left"} {colspan="2"} {
                  division {class="popupControls CLASS20905"} {
@@ -39,16 +39,16 @@
 -                    table_row {
 -                      table_data {
 -                        division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
--                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/jens-maus/RaspberryMatic/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+-                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
 -                      }
 -                    }
 -                  }
 +                  division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-+                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/jens-maus/RaspberryMatic/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
++                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                  }
                }
              }
-@@ -429,28 +426,25 @@
+@@ -430,28 +427,25 @@
              }
              table_row {
                td {width="20"} {}
@@ -88,7 +88,7 @@
                }
 --- occu/WebUI/www/config/cp_network.cgi.orig
 +++ occu/WebUI/www/config/cp_network.cgi
-@@ -348,9 +348,9 @@
+@@ -389,9 +389,9 @@
              }
              table_row {
                table_data {width="20"} {}
@@ -100,7 +100,7 @@
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
                }
-@@ -361,17 +361,14 @@
+@@ -402,17 +402,14 @@
                  #puts "Schritt 3: Zertifikat auf Zentrale laden"
                  puts "\${dialogSettingsNetworkCertificateLblStep3}"
                }
@@ -127,7 +127,7 @@
                }
 --- occu/WebUI/www/config/cp_security.cgi.orig
 +++ occu/WebUI/www/config/cp_security.cgi
-@@ -1037,17 +1037,20 @@
+@@ -1043,17 +1043,20 @@
                td {width="20"} {}
                table_data {align="left"} {colspan="2"} {
                  form "/config/fileupload.ccc?sid=$sid&action=backup_upload&url=$env(SCRIPT_NAME)" name=backup_form {target=config_upload_iframe} enctype=multipart/form-data method=post {
@@ -154,7 +154,7 @@
                  }
 --- occu/WebUI/www/tcl/extern/cgi.tcl.orig
 +++ occu/WebUI/www/tcl/extern/cgi.tcl
-@@ -2082,7 +2082,12 @@
+@@ -2086,7 +2086,12 @@
      if {[info exists _cgi(formtype)] && ("multipart/form-data" != $_cgi(form,enctype))} {
  	error "cgi_file_button requires that cgi_form have the argument enctype=multipart/form-data"
      }
@@ -170,7 +170,7 @@
  # establish a per-file limit for uploads
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -1058,6 +1058,8 @@
+@@ -1060,6 +1060,8 @@
      "btnSysConfAdditionalSoft" : "Zusatzsoftware",
      "lblSysConfAdditionalSoft1" : "Zusatzsoftware verwalten",
      "lblSysConfAdditionalSoft2" : "Zusatzsoftware installieren",
@@ -181,7 +181,7 @@
      "Belgium" : "Belgien",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -1135,6 +1135,9 @@
+@@ -1137,6 +1137,9 @@
      "lblSysConfAdditionalSoft1" : "Manage additional software",
      "lblSysConfAdditionalSoft2" : "Install additional software",
  
@@ -193,7 +193,7 @@
      "Belgium" : "Belgium",
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -9251,3 +9251,30 @@
+@@ -9353,3 +9353,30 @@
  .CodeMirror-gutter-wrapper {
    font-family: monospace;
  }

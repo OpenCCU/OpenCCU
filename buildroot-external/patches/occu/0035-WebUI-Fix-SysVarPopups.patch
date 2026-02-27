@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -1266,7 +1266,7 @@
+@@ -1348,7 +1348,7 @@
        string trid = "u" # system.GetVar("userId") # "s" # tmp;
        WriteLine("<tr id='"#trid#"'>");
          WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name()#"</td>");
@@ -62,7 +62,7 @@
          Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"');");
 --- occu/WebUI/www/rega/pages/tabs/admin/systemvars.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/systemvars.htm
-@@ -143,7 +143,7 @@
+@@ -146,7 +146,7 @@
      Write("</td>");
      
      Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
@@ -71,7 +71,7 @@
      Write("</td>");
      
      Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
-@@ -258,7 +258,7 @@
+@@ -261,7 +261,7 @@
        Write("tmp['id'] = '"#sv.ID()#"';");
        Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
        Write("tmp['name'] = '"#sv.Name()#"';");
@@ -113,10 +113,3 @@
            }
            
            if( bProgram )
-@@ -1112,4 +1112,4 @@
-   {
-     iseFavorites.FavNamePosition( <% Write( oFav.ID() ); %>, idx );
-   }
--</script>
-\ No newline at end of file
-+</script>

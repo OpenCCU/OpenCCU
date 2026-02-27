@@ -358,10 +358,10 @@ proc put_linkimage_dev {} {
 
   puts "<table cellspacing=\"10\" border=\"0\">"
   puts "<tr>"
-  puts "<td align=\"center\">$img_devi</td>"
+  puts "<td style=\"text-align:center;\">$img_devi</td>"
   puts "</tr>"
   puts "<tr>"
-  puts "<td align=\"center\">$devi_descr(TYPE)</td>"
+  puts "<td style=\"text-align:center;\">$devi_descr(TYPE)</td>"
   puts "</tr>"
   puts "</table>"
 }
@@ -399,14 +399,14 @@ proc put_linkimages {} {
 
   puts "<table cellspacing=\"10\" border=\"0\">"
   puts "<tr>"
-  puts "<td align=\"center\">$img_devi</td>"
-  puts "<td align=\"center\">===</td>"
-  puts "<td align=\"center\">$img_peer</td>"
+  puts "<td style=\"text-align:center;\">$img_devi</td>"
+  puts "<td style=\"text-align:center;\">===</td>"
+  puts "<td style=\"text-align:center;\">$img_peer</td>"
   puts "</tr>"
     puts "<tr>"
-  puts "<td align=\"center\">$devi_descr(TYPE)</td>"
-  puts "<td align=\"center\">&nbsp;</td>"
-  puts "<td align=\"center\">$peer_descr(TYPE)</td>"
+  puts "<td style=\"text-align:center;\">$devi_descr(TYPE)</td>"
+  puts "<td style=\"text-align:center;\">&nbsp;</td>"
+  puts "<td style=\"text-align:center;\">$peer_descr(TYPE)</td>"
   puts "</tr>"
   puts "</table>"
 }
@@ -764,7 +764,7 @@ proc put_picDiv {} {
   puts "<div id=\"picDiv\" style=\"position:absolute; left:0px; top:0px; width:200px; height:200px; z-index:1; display:none;\">"
   puts "  <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"CLASS21804\">"
   puts "    <tr>"
-  puts "      <td style=\"CLASS21807\" align=\"center\" valign=\"middle\"><img width=\"200\" alt=\"Loading...\" src=\"img/loading.gif\" id=\"picDivImg\" /></td>"
+  puts "      <td style=\"CLASS21807\"  style=\"text-align:center; vertical-align:middle;\"\"><img width=\"200\" alt=\"Loading...\" src=\"img/loading.gif\" id=\"picDivImg\" /></td>"
   puts "    </tr>"
   puts "  </table>"
   puts "</div>"
@@ -809,7 +809,7 @@ proc put_picDiv_wz { {width 250} {height 250} } {
   #puts "<div id=\"picDiv\" style=\"position:absolute; left:0px; top:0px; width:$css_w height:$css_h; z-index:1; visibility: hidden; margin: 0; padding: 0; background-color: white;\">"
   #puts "  <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"width:$css_w; height:$css_h; border: 1px solid #000066\">"
   #puts "    <tr>"
-  #puts "      <td bgcolor=\"#FFFFFF\" align=\"center\" valign=\"middle\"><img alt=\"Loading...\" src=\"img/loading.gif\" id=\"picDivImg\" /></td>"
+  #puts "      <td bgcolor=\"#FFFFFF\"  style=\"text-align:center; vertical-align:middle;\"><img alt=\"Loading...\" src=\"img/loading.gif\" id=\"picDivImg\" /></td>"
   #puts "    </tr>"
   #puts "  </table>"
   #puts "<img alt=\"Loading...\" src=\"img/loading.gif\" id=\"picDivImg\" />"
@@ -840,7 +840,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
   set new_profile_is_set ""
   set cur_profile ""
   catch { set cur_profile $ps(UI_HINT) }
-  
   if { (![info exist env(IC_OPTIONS)]) || ([string first NO_PROFILE_MAPPING $env(IC_OPTIONS)] < 0) } {
       # Verknuepfungen dem array map_link zuweisen
       read_links
@@ -850,10 +849,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
           if {[info exists map_link($sender_address-$receiver_address)]} {
             set new_profile_is_set "true"
           }
-
-
-        #1
-
         # Wenn noch nicht geschehen, dann die Profile beim Wechsel von
         # Firmwareversionen < 1.4 auf die neue Profilstruktur in >= 1.4 mappen
         if {$cur_profile != "" && $new_profile_is_set == ""} then {
@@ -875,17 +870,17 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
     #Existiert dieses Benutzerprofil noch?
     if {[regexp {^([0-9]+)\.([0-9]+)$} $cur_profile dummy f_base_pnr f_user_pnr]} then {
       #Es ist ein vom User erstelltes Benutzerprofil
-      if {! [info exists PROFILES_MAP($cur_profile)]} then { set cur_profile $f_base_pnr }
+      if {! [info exists PROFILES_MAP($cur_profile)]} then {
+        set cur_profile $f_base_pnr
+        return $cur_profile
+      }
     }
-    return $cur_profile
   }
-  
+
   #Expertenprofil ist 0:
   set cur_profile 0
   for {set pnr 1} {$pnr < [array size PROFILES_MAP]} {incr pnr} {
-    
     upvar PROFILE_$pnr PROFILE
-    
     catch {
       if {($ps(SHORT_ACTION_TYPE) == 0) && ($ps(LONG_ACTION_TYPE) == 0) && ( [catch {set tmp $PROFILE(UI_VIRTUAL) }] == 0 ) } {
         set cur_profile $pnr
@@ -908,7 +903,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
       
     foreach param [array names PROFILE] { 
         #Wenn Geraet in der Blacklist, dann abbrechen und mit dem nächsten Profil weiter.  
-
         if {$param  == "UI_BLACKLIST" } then {
           if {[lsearch $PROFILE($param) $peer_type] != -1 } then {
             set match "false"
@@ -936,7 +930,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
         }
       
       # wird nur aufgerufen, wenn ein "range" im Parameter vorkommt
-        
         if {[lindex $PROFILE($param) 1] == "range"} then {
           set min [lindex $PROFILE($param) 2]
           set max [lindex $PROFILE($param) 4]
@@ -960,14 +953,12 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
                  ## puts "MATCH -- $param&nbsp;Profil Nr $pnr '$PROFILES_MAP($pnr)': [lindex $PROFILE($param) $loop]&nbsp;Aktor: $ps($param)<br/>"
                 break
             } 
-          }; # for 
-    
-        }; # else 
-      
+          }
+        }
 
-        if { [lindex $PROFILE($param) 0] != [ expr $ps($param) ] } then { 
+        if { [lindex $PROFILE($param) 0] != [ expr $ps($param) ] } then {
           ## puts "MISMATCH -- $param&nbsp;Profil Nr $pnr '$PROFILES_MAP($pnr)': [lindex $PROFILE($param) 0]&nbsp;Aktor: $ps($param)<br/>"
-          set match "false" 
+          set match "false"
           break 
         }
     };# foreach
@@ -1104,7 +1095,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
     set max  $param_descr(MAX)
     set flags $param_descr(FLAGS)
     set operations $param_descr(OPERATIONS)
-    set value ""
+    set value $min
 
     if {[info exists unit] == 0} {
      set unit ""
@@ -1122,9 +1113,9 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
     set idval "separate_${pnr}_$j"
 
     if { ! ($operations & 3) } then { continue }
-    if {    $operations & 1  } then { set value $ps($param_id) }
+    if {    $operations & 1  } then { catch {set value $ps($param_id)} }
     if {    $operations & 2  } then { set access "" } else { set access "disabled=\"disabled\"" }
-        
+
     append s "<tr>"
     if {$ps_type == "MASTER" && $parent_type == "" } then {
       append s "<td><span class=\"stringtable_value\">${param_id}</span></td>"
@@ -1284,7 +1275,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
 
           append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id                 $access style=\"visibility:hidden;display:none;\" />"
           append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
-          append s "  onkeyup=\"ProofAndSetValue('$input_idval', '${idval}', parseInt($min), parseInt($max), parseFloat([expr 1 / $factor]));\" /></td>"
+          append s "  onblur=\"ProofAndSetValue('$input_idval', '${idval}', parseInt($min), parseInt($max), parseFloat([expr 1 / $factor]));\" /></td>"
           append s "<td><div id=\"${input_idval}_unit\" $hidden class=\"_stringtable_value\">$unit ($min-$max)</div></td>"
       }
       "FLOAT" {
@@ -1299,6 +1290,18 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
 
         set value_orig $value
         set formatString "%.1f"
+
+        if {$iface == "HmIP-RF"} {
+          # SPHM-801
+          if {([string first "_LEVEL" $param_id] != -1) || ([string first "_SATURATION" $param_id] != -1)} {
+            set formatString "%.3f"
+          }
+
+          # SPHM-845
+          if {[string first "RAMP_START_STEP" $param_id] != -1} {
+            set formatString "%.2f"
+          }
+        }
 
         set value         [format $formatString [expr $value         * $factor]]
         
@@ -1375,9 +1378,9 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
             append s "</select>"
           }
 
-          append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id                 $access style=\"visibility:hidden;display:none;\" />"
+          append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
           append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
-          append s "  onkeyup=\" ProofAndSetValue('$input_idval', '${idval}', parseFloat($min), parseFloat($max), parseFloat([expr 1 / $factor]));\" /></td>"
+          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', [expr $min + 0.001], [expr $max + 0.001], parseFloat([expr 1 / $factor]));\" /></td>"
           append s "<td><div id=\"${input_idval}_unit\" $hidden>$unit ($min-$max)</div></td>"
       }
       "ENUM" {
@@ -1529,6 +1532,16 @@ proc ConvTime {value} {
   
 }
 
+proc ConvFreeValue {param value} {
+  set freeValue $value
+  set unit ""
+  if {[string first "DIM_STEP_COLOR_TEMPERATURE" $param] != -1} {
+    set unit "K"
+  }
+  append freeValue " $unit"
+  return $freeValue
+}
+
 proc ConvPercent {value} {
 
   global unit_perc
@@ -1575,8 +1588,7 @@ proc get_ComboBox2 {val_arr name id selectedvalue {extraparam ""}} {
   set selectedvalue [lindex $selectedvalue 0]
   
   foreach option [array names arr ] {
-  
-    if {$option == $selectedvalue} {set doppelt "true"} ; # prüfen, ob es den Menüeintrag schon gibt. 
+    if {$option == $selectedvalue} {set doppelt "true"} ; # prüfen, ob es den Menüeintrag schon gibt.
   }  
 
   foreach option [array names arr] {
@@ -1587,6 +1599,7 @@ proc get_ComboBox2 {val_arr name id selectedvalue {extraparam ""}} {
     "99999999"  { if {$doppelt == "false"} {set arr($selectedvalue) [ConvTime $selectedvalue]}} 
     "99999998"  { if {$doppelt == "false"} {set arr($selectedvalue) [ConvPercent $selectedvalue]}}
     "99999997"  { if {$doppelt == "false"} {set arr($selectedvalue) [ConvTemp $selectedvalue]}}  
+    "99999990"  { if {$doppelt == "false"} {set arr($selectedvalue) [ConvFreeValue $name $selectedvalue]}}
     }
   }  
   set s "<select class=\"$selectedvalue\" name=\"$name\" id=\"$id\" $extraparam [expr {[array size arr]<=1?"disabled=\"disabled\" ":" "} ]>"
@@ -1897,6 +1910,12 @@ proc getExistingParamId {paramids} {
   
   if {$paramids != ""} then {
     foreach filename $paramids {
+
+      # This is because nowadays a device type identifier can contain a whitespace - which is quite silly
+      set arFilename [split $filename =]
+      if {[llength $arFilename] == 2} {
+        set filename [lindex $arFilename 1]
+      }
 
       if { [file exists easymodes/$filename.tcl] || [file exists easymodes/hmip/$filename.tcl] } then {
         set paramid $filename

@@ -29,6 +29,7 @@
   if( action == "BuildUserSvTable"           ) { Call( "system.fn::BuildUserSvTable()" );           }
   if( action == "AddSysVarAndBuildTable"     ) { Call( "system.fn::AddSysVarAndBuildTable()" );     }
   if( action == "UserDeleteSysVarBuildTable" ) { Call( "system.fn::UserDeleteSysVarBuildTable()" ); }
+  if( action == "UserMoveSysVarBuildTable"   ) { Call( "system.fn::UserMoveSysVarBuildTable()" );   }
   if( action == "setAutoLogin"               ) { Call( "system.fn::setAutoLogin()" );               }
   if( action == "getLastTimeOfChn"           ) { Call( "system.fn::getLastTimeOfChn()" );           }
   if( action == "checkName"                  ) { Call( "system.fn::checkName()");                   }

@@ -38,14 +38,73 @@ function ::CreateDoorWindowContact() {
 
   ! chnAddress > global from function CreateContent
   object oState = dom.GetObject("HmIP-RF."#chnAddress#".STATE");
+  object oValue = dom.GetObject("HmIP-RF."#chnAddress#".VALUE_8BIT");
 
   WriteLine("<script type='text/javascript'>");
-    WriteLine("ibdc"#cObj.ID()#" = new iseButtonsDoorContact("#chnId#", '"#oState.Value()#"');");
+    if (oState) {
+      WriteLine("ibdc"#cObj.ID()#" = new iseButtonsDoorContact("#chnId#", '"#oState.Value()#"');");
+    }
+
+    if (oValue) {
+      WriteLine("ibdc"#cObj.ID()#" = new iseButtonsDoorContact("#chnId#", '"#oValue.Value()#"');");
+    }
+
     Write("jQuery('#"#chnId#"txtClosed').text(translateKey('infoStatusControlLblClosed')).show();");
     Write("jQuery('#"#chnId#"txtOpen').text(translateKey('infoStatusControlLblOpen')).show();");
   WriteLine("</script>");
   return;
 }
+
+function ::CreateContactInfoControl() {
+  object oValue8Bit = cObj.DPByControl("MULTI_MODE_INPUT_TRANSMITTER.VALUE_8BIT");
+  integer value8Bit = 0;
+
+  ! value8Bit ß = open;
+  ! value8Bit > ß = closed;
+
+  string status = "ControlBtnOff";
+  string lblStatus = "${lblPosClosed}";
+
+  if( oValue8Bit ) {
+    value8Bit = oValue8Bit.Value().ToInteger();
+
+    ! WriteLine( "<script>console.log("#value8Bit#");</script>" );
+
+    if (value8Bit == 0) {
+      status = "ControlBtnOn";
+      lblStatus = "${lblPosOpen}";
+    }
+
+    WriteLine("<td class='CLASS02521'>");
+      WriteLine("<div class='"#status#" CLASS02522 j_translate'>"#lblStatus#"</div>");
+    WriteLine("</td>");
+
+  } else {
+    Call("/esp/controls/key_switch_sc.fn::CreateNoFunction()");
+  }
+}
+
+
+function ::CreateLevelInfoControl() {
+  object oValue8Bit = cObj.DPByControl("MULTI_MODE_INPUT_TRANSMITTER.VALUE_8BIT");
+  integer value8Bit = 0;
+
+  string status = "ControlBtnOff";
+
+  if( oValue8Bit ) {
+    value8Bit = oValue8Bit.Value().ToInteger();
+
+    ! WriteLine( "<script>console.log("#value8Bit#");</script>" );
+
+    WriteLine("<td class='CLASS02521'>");
+      WriteLine("<div class='"#status#" CLASS02522 j_translate'>"#value8Bit#"</div>");
+    WriteLine("</td>");
+
+  } else {
+    Call("/esp/controls/key_switch_sc.fn::CreateNoFunction()");
+  }
+}
+
 
 function ::CreateNoFunction() {
   WriteLine("<td>");
@@ -98,8 +157,54 @@ function ::CreateContent() {
   WriteLine("</td>");
 
   WriteLine("<script>");
-    WriteLine("jbdc"#cObj.ID()#" = new iseMOD_RC8("#chnId#", '"#ch.Address()#"');");
+   WriteLine("jbdc"#cObj.ID()#" = new iseMOD_RC8("#chnId#", '"#ch.Address()#"');");
   WriteLine("</script>");
+
+  return;
+}
+
+function ::CreateContentA() {
+  object ch = dom.GetObject(chnId);
+  string chnAddress = ch.Address();
+
+  var mode = ch.MetaData("channelMode");
+
+  if (mode) {
+    mode = mode.ToInteger();
+  } else {
+    mode = 0;
+  }
+
+  ! WriteLine( "<script>console.log('"#ch.Address()#" mode: "#mode#"');</script>" );
+
+  boolean showNowFunction = true;
+
+  ! mode 0 = not active (no function)
+  ! mode 1 = Key        (no function)
+  ! mode 2 = Switch     (no function)
+  ! mode 3 = Contact    (contact state - open/closed)
+  ! mode 4 = Level      (no function)
+  ! mode 5 = Condition  (no function)
+
+  WriteLine("<td>");
+    WriteLine("<table>");
+
+      if (mode == 3) {
+        showNowFunction = false;
+        WriteLine("<tr>");
+          Call("/esp/controls/key_switch_sc.fn::CreateContactInfoControl()");
+        WriteLine("</tr>");
+      }
+
+      if (showNowFunction) {
+        WriteLine("<tr>" );
+          Call("/esp/controls/key_switch_sc.fn::CreateNoFunction()");
+        WriteLine("</tr>");
+      }
+
+    WriteLine("</table>");
+  WriteLine("</td>");
+
 
   return;
 }

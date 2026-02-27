@@ -39,6 +39,13 @@ system.getEnergyPrice {
   ARGUMENTS {}
 }
 
+system.getTweak {
+  LEVEL USER
+  SCRIPT_FILE system/gettweak.tcl
+  INFO  {Ließt einen Key aus der Datei /etc/config/tweaks}
+  ARGUMENTS {_session_id_ key}
+}
+
 Interface.activateLinkParamset {
   LEVEL ADMIN
   SCRIPT_FILE interface/dispatch.tcl
@@ -191,6 +198,14 @@ Interface.getServiceMessageCount {
   ARGUMENTS {_session_id_ interface}
 }
 
+Interface.getSuppressedServiceMessages {
+  LEVEL USER
+  SCRIPT_FILE interface/dispatch.tcl
+  METHOD_FILE interface/getsuppressedservicemessages.tcl
+  INFO {Liefert ein Array mit Kanalparametern, deren Service Nachrichten unterdrückt werden.}
+  ARGUMENTS {_session_id_ interface channelAddress}
+}
+
 Interface.getValue {
   LEVEL GUEST
   SCRIPT_FILE interface/dispatch.tcl
@@ -202,7 +217,7 @@ Interface.getValue {
 Interface.getDutyCycle {
   LEVEL USER
   SCRIPT_FILE interface/getdutycycle.tcl
-  INFO {Gibt ein Array mit den DutyCycle Werten alle Interfaces zurueck}
+  INFO {Gibt ein Array mit den DutyCycle Werten aller Gateways/Interfaces zurueck}
   ARGUMENTS {_session_id_}
 }
 
@@ -371,6 +386,22 @@ Interface.setValue {
   METHOD_FILE interface/setvalue.tcl
   INFO {Setzt einen einzelnen Wert im Parameterset "Values"}
   ARGUMENTS {_session_id_ interface address valueKey type value}
+}
+
+Interface.searchDaliDevices {
+  LEVEL GUEST
+  SCRIPT_FILE interface/dispatch.tcl
+  METHOD_FILE interface/searchdalidevices.tcl
+  INFO {Setzt einen einzelnen Wert im Parameterset "Values"}
+  ARGUMENTS {_session_id_ interface address valueKey type value}
+}
+
+Interface.suppressServiceMessages {
+  LEVEL ADMIN
+  SCRIPT_FILE interface/dispatch.tcl
+  METHOD_FILE interface/suppressservicemessages.tcl
+  INFO {Unterdrückt Service Nachrichten für einen Kanal oder Kanalparameter. Wird für parameterId ein leerer String übergeben, gilt der Aufruf für alle Service Parameter.}
+  ARGUMENTS {_session_id_ interface channelAddress parameterId suppress}
 }
 
 Interface.updateFirmware {
@@ -953,6 +984,13 @@ WebUI.getColors {
   ARGUMENTS { }
 }
 
+WebUI.setWebUIColors {
+  LEVEL USER
+  SCRIPT_FILE webui/setwebuicolor.tcl
+  INFO {Setzt die Systemfarben der HomeMatic WebUI}
+  ARGUMENTS {_session_id_ key color cpFile}
+}
+
 SafeMode.enter {
   LEVEL ADMIN
   SCRIPT_FILE safemode/enter.tcl
@@ -988,13 +1026,6 @@ CCU.getSerial {
   ARGUMENTS {_session_id_}
 }
 
-CCU.getListOfDraps {
-  LEVEL ADMIN
-  SCRIPT_FILE ccu/getlistofdraps.tcl
-  INFO {Liefert die angelernten DRAPs der HomeMatic Zentrale}
-  ARGUMENTS {_session_id_ pathOfFile}
-}
-
 CCU.getHeatingGroupList {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getheatinggrouplist.tcl
@@ -1006,6 +1037,13 @@ CCU.getAddress {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getaddress.tcl
   INFO {Liefert die Adresse der HomeMatic Zentrale}
+  ARGUMENTS {_session_id_}
+}
+
+CCU.getHmIPAddress {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/gethmipaddress.tcl
+  INFO {Liefert die HmIP-Adresse der HomeMatic Zentrale}
   ARGUMENTS {_session_id_}
 }
 
@@ -1101,6 +1139,13 @@ CCU.existsFile {
   SCRIPT_FILE ccu/existsfile.tcl
   INFO {Prüft, ob eine Datei oder ein Verzeichniss vorhanden ist}
   ARGUMENTS {_session_id_ file}
+}
+
+CCU.removeFieldTestActive {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/removeFieldTestActive.tcl
+  INFO {Entfernt die Datei /etc/config/fieldTestActive}
+  ARGUMENTS {_session_id_}
 }
 
 CCU.getAuthEnabled {
@@ -1244,13 +1289,6 @@ User.deleteCertificate {
         SCRIPT_FILE user/deletecertificate.tcl
         INFO {Löscht ein vorhandenes Zertifikat (server.pem) unter /etc/config}
         ARGUMENTS {_session_id_}
-}
-
-User.createCertificate {
-        LEVEL ADMIN
-        SCRIPT_FILE user/createcertificate.tcl
-        INFO {Generiert ein neues Zertifikat (server.pem) unter /etc/config}
-        ARGUMENTS {_session_id_ country hostname email serial}
 }
 
 User.restartLighttpd {

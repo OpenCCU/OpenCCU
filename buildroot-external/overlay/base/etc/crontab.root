@@ -1,3 +1,2 @@
-*/11 * * * * [ -c /dev/rtc0 ] && /sbin/hwclock --systohc --utc
 14 4 * * * /bin/SetInterfaceClock
-0 4 * * * /usr/sbin/logrotate /etc/logrotate.conf || logger -p error -t "logrotate" "logrotate aborted with error $?"
+*/15 * * * * /usr/sbin/logrotate /etc/logrotate.conf || logger -p error -t "logrotate" "logrotate aborted with error $?"

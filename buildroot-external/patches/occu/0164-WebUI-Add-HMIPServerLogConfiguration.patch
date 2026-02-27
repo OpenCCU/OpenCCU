@@ -64,7 +64,7 @@
  array set REGA_LOGLEVELS {
    0 "\${dialogSettingsCMLogLevel0}"
    1 "\${dialogSettingsCMLogLevel1}"
-@@ -333,7 +341,7 @@
+@@ -334,7 +342,7 @@
  }
  
  proc action_put_page {} {
@@ -73,7 +73,7 @@
    http_head
  
    division {class="popupTitle j_translate"} {
-@@ -553,6 +561,21 @@
+@@ -560,6 +568,21 @@
                  table {class="CLASS20909"} {
                    table_row {
                      table_data {align="left"} {
@@ -95,7 +95,7 @@
                        puts "\${dialogSettingsCMLblLogBidCosRF}"
                      }
                      table_data {align="right"} {
-@@ -675,6 +698,7 @@
+@@ -682,6 +705,7 @@
      puts {
        apply_logging = function() {
          var pb = "action=apply_logging";
@@ -103,7 +103,7 @@
          pb += "&level_rfd="+document.getElementById("select_log_rfd").value;
          pb += "&level_hs485d="+document.getElementById("select_log_hs485d").value;
          //pb += "&level_pfmd="+document.getElementById("select_log_pfmd").value;
-@@ -1281,14 +1305,21 @@
+@@ -1288,14 +1312,21 @@
  }
  
  proc get_logserver {} {
@@ -127,7 +127,7 @@
    set fd -1
    catch {set fd [open "/etc/config/syslog" w]}
    if { $fd <0 } { return 0 }
-@@ -1300,13 +1331,26 @@
+@@ -1307,13 +1338,26 @@
    puts $fd "LOGLEVEL_HS485D=$level_hs485d"
    # puts $fd "LOGLEVEL_PFMFD=$level_pfmd"
    puts $fd "LOGLEVEL_REGA=$level_rega"
@@ -159,7 +159,7 @@
    return 1
  }
  
-@@ -1316,11 +1360,12 @@
+@@ -1323,11 +1367,12 @@
    import level_hs485d
    # import level_pfmd
    import level_rega
@@ -175,26 +175,26 @@
    }
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -393,7 +393,7 @@
-     "lblValue" : "Wert",
-     "lblRangeOfValue" : "Wertebereich",
+@@ -371,7 +371,7 @@
+     "sysVarRainYesterdayDescr" : "Regenmenge vorheriger Tag",
+     "actionStatusControlActivate" : "Bet%E4tigen",
      "transferConfigData" : "Ger%E4te-/Kanaleinstellungen werden an Komponenten %FCbertragen...",
 -    "setLoggingSuccess" : "Setzen der Logging-Einstellungen erfolgreich!",
 +    "setLoggingSuccess" : "Setzen der Logging-Einstellungen erfolgreich!\n\nBitte beachten: Ver%E4nderte Einstellungen des Homematic IP-Dienstes werden erst nach einem Neustart der Zentrale aktiv.",
      "setLoggingFailure" : "Setzen der Logging-Einstellungen fehlgeschlagen:\n",
-     "comment" : "RF_REPEATER.txt",
      "maxEntriesReachedTitle" : "Achtung!",
+     "maxEntriesReached_a" : "Die maximale Anzahl von ",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
 @@ -3,6 +3,7 @@
-     "CCUFullNameHeader" : "RaspberryMatic",
-     "CCUFullNameText" : "RaspberryMatic",
-     "CCUShortName" : "RaspMatic",
+     "CCUFullNameHeader" : "OpenCCU",
+     "CCUFullNameText" : "OpenCCU",
+     "CCUShortName" : "OpenCCU",
 +    "HomematicIP" : "Homematic IP",
      "BidCosRF" : "Homematic Funk",
      "BidCosWired" : "Homematic Wired",
      "VirtualDevices" : "VirtualDevices",
-@@ -491,6 +492,7 @@
+@@ -494,6 +495,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Schritt 2: Heruntergeladene Software ausw%E4hlen",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Schritt 3: Software auf " + HMIdentifier.de.CCUShortName + " laden",
      "dialogSettingsCMLblPerformSoftwareUpdateStep4" : "Schritt 4: Update starten",
@@ -202,7 +202,7 @@
      "dialogSettingsCMLblLogBidCosRF" : HMIdentifier.de.BidCosRF,
      "dialogSettingsCMLblLogBidCosWired" : HMIdentifier.de.BidCosWired,
      "dialogSettingsCMLblLogCentralControl" : HMIdentifier.de.CCUShortName + "-Steuerung",
-@@ -522,6 +524,7 @@
+@@ -525,6 +527,7 @@
      "dialogSettingsCMLogLevel2" : "Nur Warnungen",
      "dialogSettingsCMLogLevel3" : "Nur Fehler",
      "dialogSettingsCMLogLevel4" : "Kein Logging",
@@ -212,9 +212,9 @@
      "dialogSettingsSecurityTitle" : HMIdentifier.de.CCUShortName + "-Sicherheit",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -393,7 +393,7 @@
-     "lblValue" : "Value",
-     "lblRangeOfValue" : "Value range",
+@@ -371,7 +371,7 @@
+     "sysVarRainYesterdayDescr" : "Rainfall previous day",
+     "actionStatusControlActivate" : "Operate",
      "transferConfigData" : "Device/channel settings will be transmitted to devices.",
 -    "setLoggingSuccess" : "Saving the logging settings was successful!",
 +    "setLoggingSuccess" : "Saving the logging settings was successful!\n\nPlease note: Changed settings for the Homematic IP service will be applied after a restart of the central only.",
@@ -224,14 +224,14 @@
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
 @@ -3,6 +3,7 @@
-     "CCUFullNameHeader" : "RaspberryMatic",
-     "CCUFullNameText" : "RaspberryMatic",
-     "CCUShortName" : "RaspMatic",
+     "CCUFullNameHeader" : "OpenCCU",
+     "CCUFullNameText" : "OpenCCU",
+     "CCUShortName" : "OpenCCU",
 +    "HomematicIP" : "Homematic IP",
      "BidCosRF" : "Homematic RF",
      "BidCosWired" : "BidCos-Wired",
      "BidCosRF-Filter" : "BidCos-RF",
-@@ -490,6 +491,7 @@
+@@ -493,6 +494,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Step 2: Select downloaded software",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Step 3: Upload software to " + HMIdentifier.en.CCUShortName,
      "dialogSettingsCMLblPerformSoftwareUpdateStep4" : "Step 4: Start update",
@@ -239,7 +239,7 @@
      "dialogSettingsCMLblLogBidCosRF" : HMIdentifier.en.BidCosRF,
      "dialogSettingsCMLblLogBidCosWired" : HMIdentifier.en.BidCosWired,
      "dialogSettingsCMLblLogCentralControl" : HMIdentifier.en.CCUShortName + " control",
-@@ -521,6 +523,7 @@
+@@ -524,6 +526,7 @@
      "dialogSettingsCMLogLevel2" : "Only alerts",
      "dialogSettingsCMLogLevel3" : "Only errors",
      "dialogSettingsCMLogLevel4" : "No logging",

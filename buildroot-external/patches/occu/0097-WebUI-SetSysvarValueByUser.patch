@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -807,6 +807,9 @@
+@@ -819,6 +819,9 @@
    !sv.ValueSubType(ist);
    sv.DPInfo( system.GetVar("sInfo") );
    sv.ValueUnit( system.GetVar("sUnit") );
@@ -10,7 +10,7 @@
    if (ist == istAlarm)
    {
      sv.ValueType( ivtBinary );
-@@ -822,7 +825,7 @@
+@@ -834,7 +837,7 @@
      sv.ValueSubType( istBool );
      sv.ValueName1(system.GetVar("sTrue"));
      sv.ValueName0(system.GetVar("sFalse"));
@@ -19,7 +19,7 @@
    }
    elseif (ist == istGeneric)
    {
-@@ -830,20 +833,20 @@
+@@ -842,20 +845,20 @@
      sv.ValueSubType( istGeneric );
      sv.ValueMin(system.GetVar("iMinVal"));
      sv.ValueMax(system.GetVar("iMaxVal"));
@@ -43,7 +43,7 @@
    }
  
    if (oChn) 
-@@ -860,6 +863,9 @@
+@@ -872,6 +875,9 @@
      }
      sv.Channel( ID_ERROR );
    }
@@ -475,7 +475,7 @@
    %>
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -109,6 +109,7 @@
+@@ -110,6 +110,7 @@
      "thFirmware" : "Firmware",
      "thTypeOfVariable" : "Variablentyp",
      "thValues" : "Werte",
@@ -483,7 +483,7 @@
      "thUnit" : "Ma%DFeinheit",
      "thLastUpdate" : "Letzte<br/>Aktualisierung",
      "thControl" : "Bedienung",
-@@ -412,6 +413,7 @@
+@@ -415,6 +416,7 @@
      "dialogChannelOverView" : "Kanal%FCbersicht",
      "dialogCreateNewSysVar" : "Systemvariable neu anlegen",
      "dialogEditSysVar" : "Systemvariable bearbeiten",
@@ -493,7 +493,7 @@
      "dialogEnterValue" : "Wert eingeben",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -107,6 +107,7 @@
+@@ -109,6 +109,7 @@
      "thFirmware" : "Firmware",
      "thTypeOfVariable" : "Variable type",
      "thValues" : "Values",
@@ -501,7 +501,7 @@
      "thUnit" : "Unit of measurement",
      "thLastUpdate" : "Last<br/>update",
      "thControl" : "Control",
-@@ -408,6 +409,7 @@
+@@ -414,6 +415,7 @@
      "dialogChannelOverView" : "Channel overview",
      "dialogCreateNewSysVar" : "Create new system variable",
      "dialogEditSysVar" : "Edit system variable",
@@ -511,7 +511,7 @@
      "dialogEnterValue" : "Enter value",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -26133,14 +26133,22 @@
+@@ -31912,14 +31912,22 @@
          this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
          this.addToPostBody( 'integer varid = 0;' );
          this.addToPostBody( 'integer createNew = 1;' );
@@ -536,7 +536,7 @@
          this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
          break;
        case ID_CREATE_SCRIPT:
-@@ -27017,6 +27025,8 @@
+@@ -32804,6 +32812,8 @@
  dbg = false;
  rfr = true;
  

@@ -32,7 +32,7 @@
       }
     }
   %>
-  fltVR = new iseFilter("fltVR");
+  fltPL = new iseFilter("fltPL");
   arItems = new Array();
 </script>
 
@@ -71,7 +71,7 @@
         <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
           <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03307" NAME="ftName"/>
-          <div id="ftSetNameBtn" class='FilterSetButton CLASS03308' onclick="setSFilter(fltVR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+          <div id="ftSetNameBtn" class='FilterSetButton CLASS03308' onclick="setSFilter(fltPL, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
           <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
         </div>
       </td>
@@ -79,7 +79,7 @@
         <div id="btnFilterDesc" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterDescSub" style="display:none">
           <input id="ftDesc" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDescBtn', 'ftCancelDescBtn')" type="text" size="15" class="CLASS03307" NAME="ftDesc"/>
-          <div id="ftSetDescBtn" class="FilterSetButton CLASS03308" onclick="setSFilter(fltVR, 'ftDesc', FIL_DESC);updateTable();$('btnFilterDescSub').hide();" >${filterSet}</div>
+          <div id="ftSetDescBtn" class="FilterSetButton CLASS03308" onclick="setSFilter(fltPL, 'ftDesc', FIL_DESC);updateTable();$('btnFilterDescSub').hide();" >${filterSet}</div>
           <div id="ftCancelDescBtn" class='FilterSetButton' onclick="$('btnFilterDescSub').hide();">${filterClose}</div>
         </div>
       </td>
@@ -399,7 +399,7 @@
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='NewProgram();'>"+ translateKey('footerBtnNew') +"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltPL.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
     //s += "<td  style='text-align:center;' valign='middle'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >Systeminterne Programme<br /><% Write(sInternalBtnText); %>blenden</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >"+translateKey(internalBtnText) +"</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04906' onclick='new HMScriptExecutor();' >"+translateKey('footerBtnTestScript')+ "</div></td>";
@@ -418,7 +418,7 @@
   {
     onTopOver: function(divToShow)
     {
-      selectFilters(fltVR, divToShow);
+      selectFilters(fltPL, divToShow);
     }
   };
 
@@ -435,10 +435,10 @@
 
   updateTable = function()
   {
-    colorFilterBtns(fltVR);
+    colorFilterBtns(fltPL);
     for (var i = 0; i < arItems.length; i++)
     {
-      if (!fltVR.objPassFilter(arItems[i]))
+      if (!fltPL.objPassFilter(arItems[i]))
       {
         hide(arItems[i]['trid']);
       }

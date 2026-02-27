@@ -105,15 +105,15 @@ echo "${BACKUP_VERSION}, OK<br>"
 
 # verify security key settings
 echo -ne "[5/8] Verifying security key settings... "
-SYSTEM_HAS_USER_KEY=$(/bin/crypttool -v -t 0)
+SYSTEM_HAS_USER_KEY=$(/bin/crypttool -v -t 0 >/dev/null; echo $?)
 STORED_SIGNATURE=$(cat "${TMPDIR}/signature")
 CALCED_SIGNATURE=$(/bin/crypttool -s -t 0 <"${TMPDIR}/usr_local.tar.gz")
 
 # check for syskey
-if [ -n "${SYSTEM_HAS_USER_KEY}" ]; then
-  echo -ne "NO syskey, "
-else
+if [ "${SYSTEM_HAS_USER_KEY}" == "1" ]; then
   echo -ne "syskey, "
+else
+  echo -ne "NO syskey, "
 fi
 
 # check for userkey
@@ -137,7 +137,7 @@ echo "OK<br>"
 
 # set seckey if no syskey is present but there is a user key
 echo -ne "[6/8] Setting security key... "
-if [ -n "${SYSTEM_HAS_USER_KEY}" ] && [ "${STORED_SIGNATURE}" != "${CALCED_SIGNATURE}" ]; then
+if [ "${SYSTEM_HAS_USER_KEY}" == "0" ] && [ "${STORED_SIGNATURE}" != "${CALCED_SIGNATURE}" ]; then
   STORED_KEYINDEX=$(cat "${TMPDIR}/key_index")
   if [ -n "${STORED_KEYINDEX}" ]; then
     if ! /bin/crypttool -S -i "${STORED_KEYINDEX}" -k "${SECKEY}"; then

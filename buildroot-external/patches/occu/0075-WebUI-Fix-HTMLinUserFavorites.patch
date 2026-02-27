@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -462,7 +462,14 @@
+@@ -465,7 +465,14 @@
        boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
        boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
        Call( "/esp/system.fn::getSysVarValAsString()" );
@@ -18,7 +18,7 @@
  
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -26600,23 +26600,6 @@
+@@ -32953,23 +32953,6 @@
    new Ajax.Request(url,opt);
  };
  

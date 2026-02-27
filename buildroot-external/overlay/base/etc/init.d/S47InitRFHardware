@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC2034 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC2034,SC3010,SC3028,SC3015 source=/dev/null
 #
 # Startup script checking for RF capabale hardware
 #
@@ -82,11 +82,6 @@ identify_rf_hardware() {
       # RaspberryPi
       rpi*)
         [[ -c /dev/ttyAMA0 ]] && RF_DEVNODES="ttyAMA0"
-      ;;
-
-      # ASUS Tinkerboard
-      tinkerboard*)
-        [[ -c /dev/ttyS1 ]] && RF_DEVNODES="ttyS1"
       ;;
     esac
 
@@ -207,7 +202,6 @@ query_rf_parameters() {
         # now check if we have a BidCos-RF/HmRF device already
         # set and if not use this device for BidCos-RF/HmRF
         if [[ -n "${RF_HMRF_ADDRESS}" ]] &&
-           [[ "${RF_HMRF_ADDRESS}" != "0x000000" ]] &&
            [[ -n "${RF_SERIAL}" ]] &&
            [[ -z "${RFUSB_DEVNODE}" ]] &&
            [[ "${RF_HARDWARE}" != "HMIP-RFUSB-TK" ]]; then
@@ -217,6 +211,14 @@ query_rf_parameters() {
           if [[ -z "${HM_HMRF_DEV}" ]] ||
              { [[ "${RF_HARDWARE}" == "HM-MOD-RPI-PCB" ]] &&
                [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]]; }; then
+
+            # there might be situations where the RF_HMRF_ADDRESS
+            # returned by detect_radio_module might be 0x000000 while
+            # the rf module might still be HMRF capable. Thus we need
+            # to generate a random RF address between 0xFF0000-0xFFFFFE
+            if [[ "${RF_HMRF_ADDRESS}" == "0x000000" ]]; then
+              RF_HMRF_ADDRESS=$(awk -v r=${RANDOM} 'BEGIN{srand(r);printf("0x%X", int(rand()*(0xFFFFFE-0xFF0000))+0xFF0000) }')
+            fi
 
             HM_HMRF_DEV=${RF_HARDWARE}
             HM_HMRF_DEVNODE="/dev/${dev}"
@@ -319,7 +321,7 @@ query_rf_parameters() {
       start-stop-daemon -K -q -p /var/run/hss_led.pid
       if [[ -x /bin/hss_led ]]; then
         sleep 2
-        if [[ "${HM_HOST}" != "oci" ]]; then
+        if [[ "${HM_HOST}" =~ oci\|lxc ]]; then
           start-stop-daemon -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
         else
           start-stop-daemon -S -q -b -m -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6

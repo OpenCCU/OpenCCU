@@ -7,65 +7,47 @@
 # initialize a potentially existing RTC clock
 init_rtc_device() {
 
-  # load the bcm2835 i2c kernel module if the host is
-  # a raspberrypi
-  if echo "${HM_HOST}" | grep -q rpi; then
-    modprobe i2c_bcm2835
-  fi
-
   # load the i2c_dev module if this is not a virtual
-  # applicance but a real rpi/tinkerboard
-  if ! echo "${HM_HOST}" | grep -E -q "ova-|nuc"; then
+  # applicance but a real rpi
+  if ! echo "${HM_HOST}" | grep -E -q "ova-|nuc|generic-"; then
     modprobe i2c_dev
   fi
 
   # check for RX8130-CE RTC clock at 0x32 (Epson RX8130CE) which
   # is the RPI-RF-MOD onboard RTC.
-  if i2cget -y 1 0x32 0x32 2>/dev/null >/dev/null; then
-    modprobe i2c:rx8130
-    if [[ -e /sys/module/rtc_ds1307/drivers/i2c:rtc-ds1307/1-0032/name ]] &&
-       [[ $(cat /sys/module/rtc_ds1307/drivers/i2c:rtc-ds1307/1-0032/name) == "rx8130" ]]; then
-      HM_RTC="rx8130"
+  if [[ -e /sys/module/rtc_ds1307/drivers/i2c:rtc-ds1307/1-0032/name ]] &&
+     [[ $(cat /sys/module/rtc_ds1307/drivers/i2c:rtc-ds1307/1-0032/name) == "rx8130" ]]; then
+    HM_RTC="rx8130"
 
-      # we found a RX8130, thus we assume the RPI-RF-MOD to
-      # be present, thus we setup the LED GPIOs to show a
-      # slowly blinking magenta light
-      if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-        echo none >/sys/class/leds/rpi_rf_mod:green/trigger
-        echo timer >/sys/class/leds/rpi_rf_mod:red/trigger
-        echo timer >/sys/class/leds/rpi_rf_mod:blue/trigger
-        echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_on
-        echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_off
-        echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_on
-        echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_off
-      fi
-
-      # in addition, we load the dummy_rx8130 kernel module so
-      # that the hss_led process assumes a RPI-RF-MOD present
-      modprobe dummy_rx8130
-
-      return 0
+    # we found a RX8130, thus we assume the RPI-RF-MOD to
+    # be present, thus we setup the LED GPIOs to show a
+    # slowly blinking magenta light
+    if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
+      echo none >/sys/class/leds/rpi_rf_mod:green/trigger
+      echo timer >/sys/class/leds/rpi_rf_mod:red/trigger
+      echo timer >/sys/class/leds/rpi_rf_mod:blue/trigger
+      echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_on
+      echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_off
+      echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_on
+      echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_off
     fi
-  fi
 
-  # make sure we load the RTC kernel module for
-  # the tinkerboard
-  if [[ "${HM_HOST}" == "tinkerboard" ]]; then
-    modprobe rtc_rk808
+    # in addition, we load the dummy_rx8130 kernel module so
+    # that the hss_led process assumes a RPI-RF-MOD present
+    modprobe dummy_rx8130
+
+    return 1
   fi
 
   # only continue if we don't have a valid rtc yet or otherwise
-  # this must be an onboard RTC (e.g. tinkerboard)
-  HM_RTC="onboard"
+  # this must be an onboard RTC
   [[ -c /dev/rtc0 ]] && return 0
 
-  HM_RTC=""
   # check for MCP7940N RTC clock at 0x6f (PiFace Shim RTC)
   if i2cget -y 1 0x6f 0x00 2>/dev/null >/dev/null; then
     # calibrate MCP7940N
     if i2cset -y 1 0x6f 0x08 0x47 2>/dev/null >/dev/null; then
       if modprobe i2c:mcp7941x; then
-        HM_RTC="mcp7941x"
         [[ -c /dev/rtc0 ]] && return 0
         echo mcp7941x 0x6f >/sys/class/i2c-dev/i2c-1/device/new_device
         [[ -c /dev/rtc0 ]] && return 0
@@ -74,36 +56,31 @@ init_rtc_device() {
     fi
   fi
 
-  HM_RTC=""
   # check for DS3231/DS1307 RTC clock at 0x68
   if i2cget -y 1 0x68 0x00 2>/dev/null >/dev/null; then
     # check for DS3231
     if modprobe i2c:ds3231; then
-      HM_RTC="mcp7941x"
       [[ -c /dev/rtc0 ]] && return 0
-      echo ds3231 0x68 >/sys/class/i2c-adapter/i2c-1/new_device
+      echo ds3231 0x68 >/sys/class/i2c-dev/i2c-1/device/new_device
       [[ -c /dev/rtc0 ]] && return 0
       echo 0x68 >/sys/class/i2c-dev/i2c-1/device/delete_device
     fi
 
     # check for DS1307
     if modprobe i2c:ds1307; then
-      HM_RTC="ds1307"
       [[ -c /dev/rtc0 ]] && return 0
-      echo ds1307 0x68 >/sys/class/i2c-adapter/i2c-1/new_device
+      echo ds1307 0x68 >/sys/class/i2c-dev/i2c-1/device/new_device
       [[ -c /dev/rtc0 ]] && return 0
       echo 0x68 >/sys/class/i2c-dev/i2c-1/device/delete_device
     fi
   fi
 
-  HM_RTC=""
   # check for PCF8563 RTC clock at 0x51
   if i2cget -y 1 0x51 0x00 2>/dev/null >/dev/null; then
     # check for PCF8563
     if modprobe i2c:pcf8563; then
-      HM_RTC="pcf8563"
       [[ -c /dev/rtc0 ]] && return 0
-      echo pcf8563 0x51 >/sys/class/i2c-adapter/i2c-1/new_device
+      echo pcf8563 0x51 >/sys/class/i2c-dev/i2c-1/device/new_device
       [[ -c /dev/rtc0 ]] && return 0
       echo 0x51 >/sys/class/i2c-dev/i2c-1/device/delete_device
     fi
@@ -119,13 +96,20 @@ start() {
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
-  init_rtc_device
+  # run init RTC method and set RTC name
+  # if functions runs throw
+  if init_rtc_device; then
+    if [[ -e /sys/class/rtc/rtc0/device/name ]]; then
+      HM_RTC=$(cat /sys/class/rtc/rtc0/device/name)
+    elif [[ -e /sys/class/rtc/rtc0/name ]]; then
+      HM_RTC=$(cat /sys/class/rtc/rtc0/name)
+    fi
+  fi
 
   # save all HM_ env variables
   set | grep '^HM_' >/var/hm_mode
 
-  if [[ -c /dev/rtc0 ]]; then
-    hwclock --hctosys --utc
+  if [[ -n "${HM_RTC}" ]]; then
     echo "${HM_RTC}, OK"
   else
     echo "no hardware found"
@@ -135,12 +119,7 @@ start() {
 stop() {
   echo -n "Cleaning up RTC Clock: "
 
-  if [[ -c /dev/rtc0 ]]; then
-    hwclock --systohc --utc
-    echo "OK"
-  else
-    echo "no hardware found"
-  fi
+  echo "OK"
 }
 
 restart() {

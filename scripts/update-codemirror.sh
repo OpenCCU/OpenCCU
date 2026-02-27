@@ -28,16 +28,16 @@ unzip-strip() (
 wget -O /tmp/codemirror.zip "https://codemirror.net/codemirror.zip"
 
 # remove old stuff
-rm -rf buildroot-external/overlay/WebUI-raspmatic/www/webui/js/extern/codemirror/*
+rm -rf buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror/*
 
 # unzip with top-level dir skipping
-unzip-strip /tmp/codemirror.zip buildroot-external/overlay/WebUI-raspmatic/www/webui/js/extern/codemirror/
+unzip-strip /tmp/codemirror.zip buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror/
 
 # run inline patch to embed x-rega language definition in clike.js
-patch -p1 -d buildroot-external/overlay/WebUI-raspmatic/www/webui/js/extern/codemirror <<'EOF'
+patch -p1 -d buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror <<'EOF'
 --- codemirror/mode/clike/clike.js.orig	2022-01-18 10:36:39.293844757 +0100
 +++ codemirror/mode/clike/clike.js	2022-01-18 10:35:32.751543181 +0100
-@@ -932,4 +932,126 @@
+@@ -932,4 +933,127 @@
      }
    });
  
@@ -120,7 +120,8 @@ patch -p1 -d buildroot-external/overlay/WebUI-raspmatic/www/webui/js/extern/code
 +      "iarNone iarRead iarWrite iarCreate iarChange iarExecute iarFullAccess " +
 +      "OPERATOR_NONE OPERATOR_AND OPERATOR_OR OPERATOR_XOR " +
 +      "iufNone iufVisible iufInternal iufReadyState iufOperated iufVirtualChn " +
-+      "iufReadable iufWriteable iufEventable iufAll"
++      "iufReadable iufWriteable iufEventable iufAll" +
++      "soAsc soDesc stAlpha stNatural"
 +    ),
 +    indentStatements: false,
 +    indentSwitch: false,

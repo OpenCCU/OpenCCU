@@ -1,6 +1,6 @@
 --- occu/WebUI/www/ise/htm/header.htm.orig
 +++ occu/WebUI/www/ise/htm/header.htm
-@@ -78,6 +78,10 @@
+@@ -82,6 +82,10 @@
    if ($("UserName"))
    {
      $("UserName").appendChild(document.createTextNode(userName));
@@ -13,7 +13,7 @@
    if (getUPL() != UPL_GUEST) {
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
-@@ -131,7 +131,13 @@
+@@ -142,7 +142,13 @@
          object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
          string sUserFullName = oUser.UserFirstName()#' '#oUser.UserLastName();
          if( sUserFullName == ' ' ){ sUserFullName = oUser.Name(); }
@@ -30,7 +30,7 @@
  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -201,6 +201,9 @@
+@@ -204,6 +204,9 @@
      "lblBtnForLogin" : "Benutzername-Button in der Anmeldung: ",
      "lblAccessLevel" : "Berechtigungsstufe: ",
      "lblEasyModeActive" : "Modus vereinfachte<br/>Verkn%FCpfungskonfiguration aktivieren: ",
@@ -42,7 +42,7 @@
      "lblStartPageSystemInfo" : "Startseite - Systeminformation",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -200,6 +200,9 @@
+@@ -203,6 +203,9 @@
      "lblBtnForLogin" : "User name - button for login: ",
      "lblAccessLevel" : "Permission level: ",
      "lblEasyModeActive" : "Expert mode not visible",

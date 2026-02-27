@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
 #
 # Starts eq3configcmd setlgwkey.
 #
@@ -11,8 +11,12 @@
 
 start() {
   echo -n "Setting LAN Gateway keys: "
-  /bin/setlgwkey.sh
-  echo "OK"
+  if ls /etc/config/*.keychange >/dev/null 2>&1; then
+    /bin/setlgwkey.sh
+    echo "OK"
+  else
+    echo "not required"
+  fi
 }
 
 restart() {

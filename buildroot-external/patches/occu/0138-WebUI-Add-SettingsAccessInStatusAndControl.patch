@@ -24,7 +24,7 @@
        puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div id='footerButtonTake' class='FooterButton' onclick='goBack=true; SaveDeviceParameters();'>\"+translateKey('footerBtnTransfer')+\"</div></td>\";"
        puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div id='footerButtonOK' class='FooterButton' onclick='goBack=false; SaveDeviceParameters();'>\"+translateKey('footerBtnOk')+\"</div></td>\";"
        puts "  s += \"</tr>\";"
-@@ -1326,7 +1326,7 @@
+@@ -1363,7 +1363,7 @@
    
    puts "<TR>"
    puts "<td class=\"CLASS22012\" onclick=\"SaveDeviceParameters();\"><div class=\"CLASS21000\">OK</div></td>"
@@ -43,7 +43,7 @@
      system.SetSessionVar("sessionTAB", "programs");
      object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
      object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
-@@ -804,15 +805,15 @@
+@@ -975,15 +976,15 @@
    };
    CancelProgramEdit = function(copy)
    {
@@ -62,7 +62,7 @@
    };
    AddSubRuleSelectChange = function(idx,rid)
    {
-@@ -943,7 +944,7 @@
+@@ -1114,7 +1115,7 @@
    var s = "";
    s += "<table cellspacing='8'>";
    s += "<tr>";
@@ -71,7 +71,7 @@
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
-@@ -987,4 +988,4 @@
+@@ -1165,4 +1166,4 @@
    
  </div>
  
@@ -80,18 +80,18 @@
 +<script>translatePage('#ProgramTable')</script>
 --- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
-@@ -79,7 +79,7 @@
-                           Call("/esp/datapointconfigurator.fn::StringCut()");
-                           Write(sName);
+@@ -90,7 +90,7 @@
+                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                           Write(devs.Name());
                            Write("</td>");
--                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' >");
-+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")' >");
+-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
++                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                            
                            string sPicDivId = "picDiv"#devs.ID();
                            Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
 --- occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm
-@@ -176,7 +176,11 @@
+@@ -193,7 +193,11 @@
              string trId = device.ID()#tmp;
              boolean showExtDesc = false;
              Write("<tr id='"#trId#"'>");
@@ -106,7 +106,7 @@
  
 --- occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm
-@@ -140,7 +140,11 @@
+@@ -149,7 +149,11 @@
            if( bShow && chn.ReadyConfig() && oDev.ReadyConfig())
            {
              boolean showExtDesc = false;
@@ -121,7 +121,7 @@
  
 --- occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm
-@@ -144,7 +144,11 @@
+@@ -154,7 +154,11 @@
              string trId = room.ID()#tmp;
              boolean showExtDesc = false;
              Write("<tr id='"#trId#"'>");
@@ -136,7 +136,7 @@
  
 --- occu/WebUI/www/rega/pages/tabs/control/programs.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/programs.htm
-@@ -73,6 +73,9 @@
+@@ -80,6 +80,9 @@
            object oPrograms = dom.GetObject( ID_PROGRAMS );
            if(oPrograms)
            {
@@ -146,7 +146,7 @@
              string sPID;
              foreach( sPID, oUser.UserTempViewIDs().EnumIDs() )
              {
-@@ -83,7 +86,11 @@
+@@ -90,7 +93,11 @@
                  {
                    string trId = "pr"#o.ID();
                    WriteLine( '<tr id="'#trId#'" class="CLASS03702">' );
@@ -161,7 +161,7 @@
                    WriteLine( '<td class="tBodyCell">' );
 --- occu/WebUI/www/rega/pages/tabs/control/sysvars.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/sysvars.htm
-@@ -95,7 +95,12 @@
+@@ -91,7 +91,12 @@
                  string sTimestamp = o.Timestamp();
                  Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
                  WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
@@ -177,17 +177,17 @@
                  integer iStatusOnly = 1;
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -6273,6 +6273,7 @@
- 	vertical-align:middle;
- 	text-align:left;
+@@ -6845,6 +6845,7 @@
+ 
+ .CLASS05004 {
  	background-color:$_(white); /* white */
 +	cursor:pointer;
  }
  
- .CLASS03907 {
+ .CLASS05005 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25655,7 +25655,7 @@
+@@ -31246,7 +31246,7 @@
      };
      new Ajax.Request(url,opts);
    },
@@ -196,7 +196,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -25667,12 +25667,12 @@
+@@ -31258,12 +31258,12 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}
@@ -211,7 +211,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -25685,12 +25685,12 @@
+@@ -31276,12 +31276,12 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}
@@ -226,7 +226,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -25702,7 +25702,7 @@
+@@ -31293,7 +31293,7 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}

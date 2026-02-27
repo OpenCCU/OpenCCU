@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -1317,13 +1317,14 @@
+@@ -1335,13 +1335,14 @@
  ! [userId], [opt: sTmpVars]
  function ::BuildUserSvTable() {
    WriteLine('<table cellpadding="3" cellspacing="1" class="CLASS02105" width="100%">');
@@ -16,7 +16,7 @@
    WriteLine('</tr> ');
    
    string enumTmp = "";
-@@ -1389,6 +1390,13 @@
+@@ -1407,6 +1408,13 @@
              WriteLine("onclick='delFromTmpVars("#tmp#");'>${btnRemove}</div>");
            }
          WriteLine("</td>");
@@ -30,7 +30,7 @@
        WriteLine("</tr>");
      }
    }
-@@ -1416,6 +1424,25 @@
+@@ -1434,6 +1442,25 @@
    return;
  }
  
@@ -68,7 +68,7 @@
    if( action == "checkName"                  ) { Call( "system.fn::checkName()");                   }
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -1389,6 +1389,30 @@
+@@ -1452,6 +1452,30 @@
    cursor:pointer;
  }
  
@@ -98,10 +98,10 @@
 +
  .oLine
  {
-   background-color: $_(background); /* #183473 */
+   width: 100%;
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25920,6 +25920,27 @@
+@@ -31694,6 +31694,27 @@
      new Ajax.Updater("userSysVarTbl", url, opts);
    },
    

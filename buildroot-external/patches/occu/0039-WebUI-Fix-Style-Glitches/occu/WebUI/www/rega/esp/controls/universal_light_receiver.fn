@@ -1,6 +1,11 @@
 function ::getEffectPanel()
 {
 
+  object oDevice = dom.GetObject(cObj.Device());
+
+  if (! rLevel) {real rLevel = 0.0;}
+
+  string controlBtn_1 = "ControlBtnOff";
   string controlBtn_3 = "ControlBtnOff";
   string controlBtn_5 = "ControlBtnOff";
   string controlBtn_7 = "ControlBtnOff";
@@ -12,6 +17,7 @@ function ::getEffectPanel()
   string controlBtn_19 = "ControlBtnOff";
 
   if (iEffect) {
+    if (iEffect == 1) {controlBtn_1 = "ControlBtnOn";}
     if (iEffect == 3) {controlBtn_3 = "ControlBtnOn";}
     if (iEffect == 5) {controlBtn_5 = "ControlBtnOn";}
     if (iEffect == 7) {controlBtn_7 = "ControlBtnOn";}
@@ -25,56 +31,104 @@ function ::getEffectPanel()
 
     WriteLine("<table style='margin: 0 auto;'>");
       WriteLine("<tr>");
-        WriteLine("<td colspan='3'><hr></td>");
+        WriteLine("<td colspan='5'><hr></td>");
       WriteLine("</tr>");
       WriteLine("<tr>");
-        WriteLine("<td colspan='3'>");
+        WriteLine("<td colspan='5'>");
           WriteLine("<div class='controlHeader'>${lblEffect}</div>");
         WriteLine("</td>");
       WriteLine("</tr>");
 
       WriteLine("<tr>");
-      !  WriteLine("<td>");
-      !    WriteLine("<div id='ulrEffect_0_"#chnId#"' class='CLASS02550e "#controlBtn#"' align='center' onclick=\"setULREffect(this, 0, '"#chnAddress#"', "#iState#");\">Aus</div>");
-      !  WriteLine("</td>");
+
       ! WriteLine("<td>");
-      !  WriteLine("<div id='ulrEffect_1_"#chnId#"' class='CLASS02550e "#controlBtn#"' align='center' onclick=\"setULREffect(this, 1, '"#chnAddress#"', "#iState#");\">1</div>");
+      !    WriteLine("<div id='ulrEffect_0_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_0#"' align='center' onclick=\"setULREffect(this, 0, '"#chnAddress#"',"#rLevel#");\">Aus</div>");
       !  WriteLine("</td>");
+
+        string effectName = oDevice.MetaData("effectName_1");
+        if (! effectName) {effectName = "${lblCampfire}";}
         WriteLine("<td>");
-          WriteLine("<div id='ulrEffect_2_"#chnId#"' class='CLASS02550e "#controlBtn_3#"' align='center' onclick=\"setULREffect(this, 3, '"#chnAddress#"', "#iState#");\">${optionRainbow}</div>");
+          WriteLine("<div id='ulrEffect_1_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_1#"' align='center' onclick=\"setULREffect(this, 1, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
         WriteLine("</td>");
+
+
+        string effectName = oDevice.MetaData("effectName_2");
+        if (! effectName) {effectName = "${lblRainbow}";}
         WriteLine("<td>");
-          WriteLine("<div id='ulrEffect_3_"#chnId#"' class='CLASS02550e "#controlBtn_5#"' align='center' onclick=\"setULREffect(this, 5, '"#chnAddress#"', "#iState#");\">${optionSunrise}</div>");
+          WriteLine("<div id='ulrEffect_2_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_3#"' align='center' onclick=\"setULREffect(this, 3, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
         WriteLine("</td>");
+
+        string effectName = oDevice.MetaData("effectName_3");
+        if (! effectName) {effectName = "${lblSunrise}";}
         WriteLine("<td>");
-          WriteLine("<div id='ulrEffect_4_"#chnId#"' class='CLASS02550e "#controlBtn_7#"' align='center' onclick=\"setULREffect(this, 7, '"#chnAddress#"', "#iState#");\">${optionSunset}</div>");
+          WriteLine("<div id='ulrEffect_3_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_5#"' align='center' onclick=\"setULREffect(this, 5, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
         WriteLine("</td>");
-      !  WriteLine("<td>");
-      !    WriteLine("<div id='ulrEffect_5_"#chnId#"' class='CLASS02550e "#controlBtn_9#"' align='center' onclick=\"setULREffect(this, 9, '"#chnAddress#"', "#iState#");\">5</div>");
-      !  WriteLine("</td>");
+
+        string effectName = oDevice.MetaData("effectName_4");
+        if (! effectName) {effectName = "${lblSunset}";}
+        WriteLine("<td>");
+          WriteLine("<div id='ulrEffect_4_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_7#"' align='center' onclick=\"setULREffect(this, 7, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
+        WriteLine("</td>");
+
+        string effectName = oDevice.MetaData("effectName_5");
+        if (! effectName) {effectName = "${lblWaterfall}";}
+        WriteLine("<td>");
+          WriteLine("<div id='ulrEffect_5_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_9#"' align='center' onclick=\"setULREffect(this, 9, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
+        WriteLine("</td>");
+
       WriteLine("</tr>");
       WriteLine("<tr>");
+
+      string effectName = oDevice.MetaData("effectName_6");
+      if (! effectName) {effectName = "${lblForest}";}
         WriteLine("<td>");
-          WriteLine("<div id='ulrEffect_6_"#chnId#"' class='CLASS02550e "#controlBtn_11#"' align='center' onclick=\"setULREffect(this, 11, '"#chnAddress#"', "#iState#");\">${optionForrest}</div>");
+          WriteLine("<div id='ulrEffect_6_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_11#"' align='center' onclick=\"setULREffect(this, 11, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
         WriteLine("</td>");
-      !  WriteLine("<td>");
-      !    WriteLine("<div id='ulrEffect_7_"#chnId#"' class='CLASS02550e "#controlBtn_13#"' align='center' onclick=\"setULREffect(this, 13, '"#chnAddress#"', "#iState#");\">7</div>");
-      !  WriteLine("</td>");
-      !  WriteLine("<td>");
-      !    WriteLine("<div id='ulrEffect_8_"#chnId#"' class='CLASS02550e "#controlBtn_15#"' align='center' onclick=\"setULREffect(this, 15, '"#chnAddress#"', "#iState#");\">8</div>");
-      !  WriteLine("</td>");
+
+      string effectName = oDevice.MetaData("effectName_7");
+      if (! effectName) {effectName = "${lblEffect7}";}
         WriteLine("<td>");
-          WriteLine("<div id='ulrEffect_9_"#chnId#"' class='CLASS02550e "#controlBtn_17#"' align='center' onclick=\"setULREffect(this, 17, '"#chnAddress#"', "#iState#");\">${optionSignalingRed}</div>");
+          WriteLine("<div id='ulrEffect_7_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_13#"' align='center' onclick=\"setULREffect(this, 13, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
         WriteLine("</td>");
         WriteLine("<td>");
-          WriteLine("<div id='ulrEffect_10_"#chnId#"' class='CLASS02550e "#controlBtn_19#"' align='center' onclick=\"setULREffect(this, 19, '"#chnAddress#"', "#iState#");\">${optionGreenBillow}</div>");
+
+      string effectName = oDevice.MetaData("effectName_8");
+      if (! effectName) {effectName = "${lblEffect8}";}
+          WriteLine("<div id='ulrEffect_8_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_15#"' align='center' onclick=\"setULREffect(this, 15, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
         WriteLine("</td>");
+
+      string effectName = oDevice.MetaData("effectName_9");
+      if (! effectName) {effectName = "${lblRedFlashing}";}
+        WriteLine("<td>");
+          WriteLine("<div id='ulrEffect_9_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_17#"' align='center' onclick=\"setULREffect(this, 17, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
+        WriteLine("</td>");
+
+      string effectName = oDevice.MetaData("effectName_10");
+      if (! effectName) {effectName = "${lblGreenWobble}";}
+        WriteLine("<td>");
+          WriteLine("<div id='ulrEffect_10_"#chnId#"' name='urlEffect_"#chnId#"' class='CLASS02550e "#controlBtn_19#"' align='center' onclick=\"setULREffect(this, 19, '"#chnAddress#"',"#rLevel#");\">"#effectName#"</div>");
+        WriteLine("</td>");
+
       WriteLine("</tr>");
+
+      string effectMode = cObj.MetaData("effectMode");
+      WriteLine("<tr>");
+        WriteLine("<td colspan='5'><div class='ControlBtnOff'>");
+          WriteLine("${lblResorePreviousStatus}");
+        if (effectMode == 'true') {
+          WriteLine("<input id='effectMode_"#chnId#"' type='checkbox' checked='checked' onchange='setULReffectMode(this, "#chnId#");'>");
+        } else {
+          WriteLine("<input id='effectMode_"#chnId#"' type='checkbox' onchange='setULReffectMode(this, "#chnId#");'>");
+        }
+        WriteLine("</div></td>");
+      WriteLine("</tr>");
+
     WriteLine("</table>");
 
-  !  WriteLine("<script type='text/javascript'>");
-  !    WriteLine("setULREffectToolTips("#chnId#")");
-  !  WriteLine("</script>");
+    WriteLine("<script type='text/javascript'>");
+  !   WriteLine("setULREffectToolTips("#chnId#");");
+      WriteLine("setURLEffectBtnActive("#chnId#",'"#oDevice.Address()#":0');");
+    WriteLine("</script>");
 }
 
 
@@ -86,6 +140,9 @@ function ::CreateRGBWControlMode01()
   object oIface = dom.GetObject(iFaceID);
   string sInterface = oIface.Name();
 
+  ! object oDevice = dom.GetObject(cObj.Device());
+  object oEffect = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.EFFECT");
+
   object oChannel = dom.GetObject(chnId);
   string chAddress = oChannel.Address();
 
@@ -93,14 +150,29 @@ function ::CreateRGBWControlMode01()
   integer iOldLvlDpId = 0;
   integer iState = 0;
 
+  integer iEffect = 0;
+  real rLevel = 0.0;
+
+  if ((oEffect) && (oEffect.Value() != "")) {
+    iEffect = oEffect.Value();
+  }
+
   object oHue = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.HUE");
   object oSaturation = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.SATURATION");
   object oLevel = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.LEVEL");
+  object oHueStatus = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.HUE_STATUS");
+
+  boolean hueStatus = 0;
+
+  if (oHueStatus) {
+    hueStatus = oHueStatus.Value();
+  }
 
   if( oLevel )
   {
     iLvlDpId = oLevel.ID();
     iState = oLevel.Value() * 100;
+    rLevel = oLevel.Value();
   }
 
   WriteLine("<td>");
@@ -149,7 +221,7 @@ function ::CreateRGBWControlMode01()
 
         ! Inputs of the color picker
         WriteLine("<td>");
-          WriteLine("<table class='ControlBtnInfo'>");
+          WriteLine("<table class='ControlBtnInfo j_ControlBtnInfo'>");
 
             WriteLine("<tr>");
                 WriteLine("<td><span style='color:white'>H</span></td>");
@@ -170,7 +242,7 @@ function ::CreateRGBWControlMode01()
             WriteLine("<tr>");
               WriteLine("<td></td>");
               WriteLine("<td>");
-                WriteLine("<div id='bckGndlmId_"#chnId#"' style='width:auto;' >&nbsp;</div>");
+                WriteLine("<div id='bckGndlmId_"#chnId#"' style='cursor:pointer; width:auto;' >&nbsp;</div>");
               WriteLine("</td>");
             WriteLine("</tr>");
 
@@ -178,10 +250,13 @@ function ::CreateRGBWControlMode01()
         WriteLine("</td>");
       WriteLine("</tr>");
     WriteLine("</table>");
-    ! HmIP-RGBW - doesn't work properly - Call("/esp/controls/universal_light_receiver.fn::getEffectPanel()");
+    Call("/esp/controls/universal_light_receiver.fn::getEffectPanel()");
   WriteLine("</td>");
 
   WriteLine("<script type='text/javascript'>");
+
+    WriteLine("var effectValue = 0;");
+
     if (oHue.Value()) {
       WriteLine("var hueValue = '" #oHue.Value()#"';");
       WriteLine("if (hueValue == '') {hueValue = 0;}");
@@ -197,12 +272,18 @@ function ::CreateRGBWControlMode01()
       WriteLine("if (levelValue == '') {levelValue = 0;}");
     } else {WriteLine("levelValue = 0;");}
 
+    if (oEffect) {
+      WriteLine("effectValue = '"#iEffect#"';");
+    }
+
     WriteLine("var opts = {};");
     WriteLine("opts.iface = '"#sInterface#"';");
     WriteLine("opts.chAddress = '"#chAddress#"';");
     WriteLine("opts.hue = hueValue;");
     WriteLine("opts.saturation = satValue;");
+    WriteLine("opts.hueStatus = '"#hueStatus#"';");
     WriteLine("opts.level = levelValue;");
+    WriteLine("opts.effect = parseInt(effectValue);");
 
     WriteLine("ibd"#chnId#" = new iseButtonsDimmer("#chnId#", "#iState#", "#iLvlDpId#", "#iOldLvlDpId#", "#system.GetVar("iStatusOnly")#", "#system.GetVar('bSliderFlag')#", '"#cObj.Label()#"' );");
     WriteLine("opts.oDimmerSlider= ibd"#chnId); ! Slider of the usual dimmer control
@@ -223,14 +304,21 @@ function ::CreateRGBWControlMode2()
   object oChannel = dom.GetObject(chnId);
   string chAddress = oChannel.Address();
 
+  object oEffect = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.EFFECT");
+
   ! Dimmer control & slider for the color temperature
 
   integer iLvlDpId = 0;
   integer iOldLvlDpId = 0;
   integer iState = 0;
-
-
   integer colorTempID = -1;
+
+  integer iEffect = 0;
+  real rLevel = 0.0;
+  
+  if ((oEffect) && (oEffect.Value() != "")) {
+    iEffect = oEffect.Value();
+  }
 
   object oLevel = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.LEVEL");
   object oColorTemp = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.COLOR_TEMPERATURE");
@@ -270,7 +358,6 @@ function ::CreateRGBWControlMode2()
     }
   }
 
-
   if( oLevel )
   {
     iLvlDpId = oLevel.ID();
@@ -279,6 +366,7 @@ function ::CreateRGBWControlMode2()
       iState = 0;
     } else {
       iState = oLevel.Value() * 100;
+      rLevel = oLevel.Value();
     }
   }
 
@@ -335,7 +423,7 @@ function ::CreateRGBWControlMode2()
         WriteLine("</td>");
 
         WriteLine("<td id='trSliderPanel"#chnId#"' class="#classSliderPanel#">");
-          WriteLine("<table id='sliderPanel"#chnId#"' class='ControlBtnOff' style='width: 250px; margin-left: 5px;'>");
+          WriteLine("<table id='sliderPanel"#chnId#"' class='ControlBtnOff j_Button_"#chnId#"' style='width: 250px; margin-left: 5px;'>");
             WriteLine("<tr>");
               WriteLine("<td style='text-align:left'><span>${lblColorTemperatureBR}</span></td>");
               WriteLine("<td class='CLASS02546' style='text-align:right'>");
@@ -357,10 +445,10 @@ function ::CreateRGBWControlMode2()
           WriteLine("<table width='100%' height='100%' cellspacing='10'>");
             WriteLine("<tr>");
               WriteLine("<td>");
-                WriteLine("<div id='btnHCL"#chnId#"'  class='ControlBtnOff CLASS02545 j_translate'>${btnHCL}</div>");
+                WriteLine("<div id='btnHCL"#chnId#"'  class='ControlBtnOff CLASS02545 j_Button_"#chnId#"' j_translate'>${btnHCL}</div>");
               WriteLine("</td>");
               WriteLine("<td style='padding-left:10px;'>");
-                WriteLine("<div id='btnDim2Warm"#chnId#"'  class='ControlBtnOff CLASS02545 j_translate'>${btnDim2Warm}</div>");
+                WriteLine("<div id='btnDim2Warm"#chnId#"'  class='ControlBtnOff CLASS02545 j_Button_"#chnId#"' j_translate'>${btnDim2Warm}</div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");
@@ -369,9 +457,12 @@ function ::CreateRGBWControlMode2()
       WriteLine("</tr>");
 
     WriteLine("</table>");
+    Call("/esp/controls/universal_light_receiver.fn::getEffectPanel()");
   WriteLine("</td>");
 
   WriteLine("<script type='text/javascript'>");
+
+    WriteLine("var effectValue = 0;");
 
     WriteLine("ibd"#chnId#" = new iseButtonsDimmer("#chnId#", "#iState#", "#iLvlDpId#", "#iOldLvlDpId#", "#system.GetVar("iStatusOnly")#", "#system.GetVar('bSliderFlag')#", '"#cObj.Label()#"' );");
     Write("jQuery('#"#chnId#"Off').html(translateKey('actionStatusControlLblOff')).show();");
@@ -383,33 +474,47 @@ function ::CreateRGBWControlMode2()
       WriteLine("if (isNaN(colorTemp)) {colorTemp = 0;}");
     } else {WriteLine("colorTemp = 0;");}
 
+    if (oEffect) {
+      WriteLine("effectValue = '"#iEffect#"';");
+    }
+
+
     WriteLine("var chnDescription = homematic('Interface.getParamset', {'interface':'"#sInterface#"', 'address':'"#chAddress#"', 'paramsetKey': 'MASTER'});");
+    WriteLine("var defaultColorTempMin = 2000, defaultColorTempMax = 6500, colorTempMin, colorTempMax;");
 
     WriteLine("var opts = {};");
     WriteLine("opts.iface = '"#sInterface#"';");
     WriteLine("opts.chAddress = '"#chAddress#"';");
     WriteLine("opts.colorTempID = '"#colorTempID#"';");
     WriteLine("opts.colorTemp = colorTemp;");
-    WriteLine("opts.colorTempMin = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
-    WriteLine("opts.colorTempMax = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+
+    WriteLine("colorTempMin = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
+    WriteLine("opts.colorTempMin = (!isNaN(colorTempMin)) ? colorTempMin : defaultColorTempMin;");
+
+    WriteLine("colorTempMax = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+    WriteLine("opts.colorTempMax = (!isNaN(colorTempMax)) ? colorTempMax : defaultColorTempMax;");
+
     WriteLine("opts.hcl = '"#hcl#"';");
     WriteLine("opts.dim2Warm = '"#dim2Warm#"';");
     WriteLine("opts.devLabel = '"#cObj.Label()#"';");
+    WriteLine("opts.effect = parseInt(effectValue);");
 
     WriteLine("sliderOpts = {};");
     WriteLine("sliderOpts.animate = 'fast';");
     !WriteLine("sliderOpts.value = "#oColorTemp.Value()#";");
     WriteLine("sliderOpts.value = colorTemp;");
-    WriteLine("sliderOpts.min = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
-    WriteLine("sliderOpts.max = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+
+    WriteLine("colorTempMin = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
+    WriteLine("sliderOpts.min = (!isNaN(colorTempMin)) ? colorTempMin : defaultColorTempMin;");
+
+    WriteLine("colorTempMax = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+    WriteLine("sliderOpts.max = (!isNaN(colorTempMax)) ? colorTempMax : defaultColorTempMax;");
+
     WriteLine("sliderOpts.step = "#colorStep#";");
     WriteLine("sliderOpts.orientation = 'horizontal';");
 
     WriteLine("opts.oSlider = jQuery('#slider"#chnId#"').slider(sliderOpts);");
 
-   ! if (classSliderPanel != "hidden") {
-   !   WriteLine("jQuery('#trSliderPanel"#chnId#"').show();");
-   ! }
     WriteLine("ipm"#chnId#" = new iseHmIPUniversalLightRGBWSlider("#chnId#", opts);");
 
   WriteLine("</script>");
@@ -507,13 +612,20 @@ function ::CreateRGBWControlMode_RGB_TW()
   object oHCL = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.HUMAN_CENTRIC_LIGHT_STATE");
   object oDim2Warm = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.DIM2WARM_STATE");
 
+  object oHueStatus = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.HUE_STATUS");
+
   object oEffect = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.EFFECT");
 
   boolean hcl = 0;
   boolean dim2Warm = 0;
+  boolean hueStatus = 0;
 
   string classBtnColorTemp = "";
   string classSliderPanel = "";
+
+  if (oHueStatus) {
+    hueStatus = oHueStatus.Value();
+  }
 
   if (oHCL) {
     if (oHCL.Value().ToString() == "") {
@@ -538,6 +650,8 @@ function ::CreateRGBWControlMode_RGB_TW()
   real colorTempMax = 10200;
   integer colorStep = 50;
   integer colorTemp;
+  real rLevel = 0.0;
+
 
   integer colorTempID = -1;
 
@@ -545,9 +659,8 @@ function ::CreateRGBWControlMode_RGB_TW()
     colorTempID = oColorTemp.ID();
     colorTempMin = oColorTemp.MetaData("MIN");
     colorTempMax = oColorTemp.MetaData("MAX");
-  }
 
-  if (oColorTemp) {
+    ! string metaColorTemp = oChannel.MetaData("lastValColorTemp");
 
     if (oColorTemp.Value().ToString() != "") {
       colorTemp = oColorTemp.Value();
@@ -572,6 +685,7 @@ function ::CreateRGBWControlMode_RGB_TW()
       iState = 0;
     } else {
       iState = oLevel.Value() * 100;
+      rLevel = oLevel.Value();
     }
   }
   iState = iState.ToString(0);
@@ -634,7 +748,7 @@ function ::CreateRGBWControlMode_RGB_TW()
 
         ! Inputs of the color picker
         WriteLine("<td>");
-          WriteLine("<table class='ControlBtnInfo'>");
+          WriteLine("<table class='ControlBtnInfo j_ControlBtnInfo'>");
 
             WriteLine("<tr>");
                 WriteLine("<td><span style='color:white'>H</span></td>");
@@ -655,7 +769,7 @@ function ::CreateRGBWControlMode_RGB_TW()
             WriteLine("<tr>");
               WriteLine("<td></td>");
               WriteLine("<td>");
-                WriteLine("<div id='bckGndlmId_"#chnId#"' style='width:auto;' >&nbsp;</div>");
+                WriteLine("<div id='bckGndlmId_"#chnId#"' style='cursor:pointer; width:auto;' >&nbsp;</div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");
@@ -668,11 +782,11 @@ function ::CreateRGBWControlMode_RGB_TW()
       WriteLine("<tr>");
 
         WriteLine("<td id='trBtnColorTemp"#chnId#"' class="#classBtnColorTemp#">");
-          WriteLine("<div id='btnColorTemp"#chnId#"' class='ControlBtnOff CLASS02551 j_translate' style='margin:auto;'>${lblColorTemperatureBR}</div>");
+          WriteLine("<div id='btnColorTemp"#chnId#"' class='ControlBtnOff CLASS02551 j_translate j_Button_"#chnId#"' style='margin:auto;'>${lblColorTemperatureBR}</div>");
         WriteLine("</td>");
 
         WriteLine("<td id='trSliderPanel"#chnId#"' class="#classSliderPanel#">");
-          WriteLine("<table id='sliderPanel"#chnId#"' class='ControlBtnOff' style='width: 250px; margin-left: 5px;'>");
+          WriteLine("<table id='sliderPanel"#chnId#"' class='ControlBtnOff j_Button_"#chnId#"' style='width: 250px; margin-left: 5px;'>");
             WriteLine("<tr>");
               WriteLine("<td style='text-align:left'><span>${lblColorTemperatureBR}</span></td>");
               WriteLine("<td class='CLASS02546' style='text-align:right'>");
@@ -694,10 +808,10 @@ function ::CreateRGBWControlMode_RGB_TW()
           WriteLine("<table width='100%' height='100%' cellspacing='10'>");
             WriteLine("<tr>");
               WriteLine("<td>");
-                WriteLine("<div id='btnHCL"#chnId#"'  class='ControlBtnOff CLASS02545 j_translate'>${btnHCL}</div>");
+                WriteLine("<div id='btnHCL"#chnId#"'  class='ControlBtnOff CLASS02545 j_translate j_Button_"#chnId#"'>${btnHCL}</div>");
               WriteLine("</td>");
               WriteLine("<td style='padding-left:10px;'>");
-                WriteLine("<div id='btnDim2Warm"#chnId#"'  class='ControlBtnOff CLASS02545 j_translate'>${btnDim2Warm}</div>");
+                WriteLine("<div id='btnDim2Warm"#chnId#"'  class='ControlBtnOff CLASS02545 j_translate j_Button_"#chnId#"'>${btnDim2Warm}</div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");
@@ -711,6 +825,8 @@ function ::CreateRGBWControlMode_RGB_TW()
   WriteLine("</td>");
 
   WriteLine("<script type='text/javascript'>");
+
+    WriteLine("var effectValue = 0;");
 
     if (oHue.Value()) {
       WriteLine("var hueValue = '" #oHue.Value()#"';");
@@ -728,7 +844,7 @@ function ::CreateRGBWControlMode_RGB_TW()
     } else {WriteLine("levelValue = 0;");}
 
     if (oEffect) {
-      WriteLine("var effectValue = '"#iEffect#"';");
+      WriteLine("effectValue = '"#iEffect#"';");
     }
 
     WriteLine("var opts = {};");
@@ -736,8 +852,9 @@ function ::CreateRGBWControlMode_RGB_TW()
     WriteLine("opts.chAddress = '"#chAddress#"';");
     WriteLine("opts.hue = hueValue;");
     WriteLine("opts.saturation = satValue;");
+    WriteLine("opts.hueStatus = '"#hueStatus#"';");
     WriteLine("opts.level = levelValue;");
-    WriteLine("opts.effect = effectValue;");
+    WriteLine("opts.effect = parseInt(effectValue);");
 
     WriteLine("opts.oDimmerSlider= ibd"#chnId); ! Slider of the usual dimmer control
 
@@ -745,34 +862,46 @@ function ::CreateRGBWControlMode_RGB_TW()
 
     ! Color Temp Slider
     if (oColorTemp) {
-      WriteLine("var colorTemp =  parseInt('"#oColorTemp.Value()#"');");
+      WriteLine("var colorTemp =  parseInt('"#colorTemp#"');");
       WriteLine("if (isNaN(colorTemp)) {colorTemp = 0;}");
     } else {WriteLine("colorTemp = 0;");}
 
     WriteLine("var chnDescription = homematic('Interface.getParamset', {'interface':'"#sInterface#"', 'address':'"#chAddress#"', 'paramsetKey': 'MASTER'});");
+
+    WriteLine("var defaultColorTempMin = 2000, defaultColorTempMax = 6500, colorTempMin, colorTempMax;");
 
     WriteLine("var opts = {};");
     WriteLine("opts.iface = '"#sInterface#"';");
     WriteLine("opts.chAddress = '"#chAddress#"';");
     WriteLine("opts.colorTempID = '"#colorTempID#"';");
     WriteLine("opts.colorTemp = colorTemp;");
-    WriteLine("opts.colorTempMin = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
-    WriteLine("opts.colorTempMax = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+
+    WriteLine("colorTempMin = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
+    WriteLine("opts.colorTempMin = (!isNaN(colorTempMin)) ? colorTempMin : defaultColorTempMin;");
+
+    WriteLine("colorTempMax = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+    WriteLine("opts.colorTempMax = (!isNaN(colorTempMax)) ? colorTempMax : defaultColorTempMax;");
+
     WriteLine("opts.hcl = '"#hcl#"';");
     WriteLine("opts.dim2Warm = '"#dim2Warm#"';");
+    WriteLine("opts.hueStatus = '"#hueStatus#"';");
     WriteLine("opts.devLabel = '"#cObj.Label()#"';");
+    WriteLine("opts.effect = parseInt(effectValue);");
 
     WriteLine("sliderOpts = {};");
     WriteLine("sliderOpts.animate = 'fast';");
-    !WriteLine("sliderOpts.value = "#oColorTemp.Value()#";");
     WriteLine("sliderOpts.value = colorTemp;");
-    WriteLine("sliderOpts.min = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
-    WriteLine("sliderOpts.max = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+
+    WriteLine("colorTempMin = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_WARM_WHITE);");
+    WriteLine("sliderOpts.min = (!isNaN(colorTempMin)) ? colorTempMin : defaultColorTempMin;");
+
+    WriteLine("colorTempMax = parseInt(chnDescription.HARDWARE_COLOR_TEMPERATURE_COLD_WHITE);");
+    WriteLine("sliderOpts.max = (!isNaN(colorTempMax)) ? colorTempMax : defaultColorTempMax;");
+
     WriteLine("sliderOpts.step = "#colorStep#";");
     WriteLine("sliderOpts.orientation = 'horizontal';");
 
     WriteLine("opts.oSlider = jQuery('#slider"#chnId#"').slider(sliderOpts);");
-
 
     WriteLine("ipm"#chnId#" = new iseHmIPUniversalLightRGBWSlider("#chnId#", opts);");
 
@@ -780,3 +909,154 @@ function ::CreateRGBWControlMode_RGB_TW()
   WriteLine("</script>");
 }
 
+function ::CreateRGBWControlModeLSI()
+{
+
+  ! Determine the name of the interface
+  integer iFaceID = cObj.Interface();
+  object oIface = dom.GetObject(iFaceID);
+  string sInterface = oIface.Name();
+
+  object oDevice = dom.GetObject(cObj.Device());
+  object oEffect = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.EFFECT");
+  object oChannel = dom.GetObject(chnId);
+  string chAddress = oChannel.Address();
+
+  integer iLvlDpId = 0;
+  integer iOldLvlDpId = 0;
+  integer iState = 0;
+
+  integer iEffect = 0;
+  real rLevel = 0.0;
+
+  if ((oEffect) && (oEffect.Value() != "")) {
+    iEffect = oEffect.Value();
+  }
+
+  object oHue = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.HUE");
+  object oSaturation = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.SATURATION");
+  object oHueStatus = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.HUE_STATUS");
+  object oLevel = cObj.DPByControl("UNIVERSAL_LIGHT_RECEIVER.LEVEL");
+
+  boolean hueStatus = 0;
+
+  if (oHueStatus) {
+    hueStatus = oHueStatus.Value();
+  }
+
+  if( oLevel )
+  {
+    iLvlDpId = oLevel.ID();
+    iState = oLevel.Value() * 100;
+    rLevel = oLevel.Value();
+  }
+
+  WriteLine("<td>");
+    WriteLine("<table>")
+      WriteLine("<tr>");
+       ! The usual dimmer element
+        WriteLine("<td>");
+          WriteLine("<table>");
+            WriteLine("<tr>");
+              !****************
+              WriteLine("<td colspan='1' id='slidCtrl"#cObj.ID()#"' class='CLASS02529'></td>");
+              WriteLine("<td class='CLASS02529'>");
+                WriteLine("<div class='PercBtn' >");
+                  WriteLine("<table width='100%' height='100%'>");
+                    WriteLine("<tr class='CLASS02531'>");
+                      string sReadOnly = "";
+                      if( system.GetVar("iStatusOnly") == 1 )
+                      {
+                        sReadOnly = "readonly";
+                      }
+                      WriteLine("<td colspan='2' class='CLASS02541'><input id='"#chnId#"Perc' type='text' value='"#iState#"' size='3' class='CLASS02542' "#sReadOnly#" /><span style='color:white'><b>%</b></span></td>");
+                    WriteLine("</tr>");
+                    WriteLine("<tr>");
+                      WriteLine("<td style='text-align: center' class='CLASS02544'>");
+                      WriteLine("<table cellspacing='0' cellpadding='0'><tr><td><img id='"#chnId#"Up' height='12px' width='40px' src='/ise/img/up.png' class='CLASS02543'/></td></tr><tr><td><img id='"#chnId#"Down' height='12px' width='40px' src='/ise/img/down.png' class='CLASS02543' /></td></tr></table>");
+                      WriteLine("</td><td style='text-align: center' class='CLASS02544'><img src='/ise/img/enter.png' width='40px' height='25px' class='CLASS02543' /></td>");
+                    WriteLine("</tr>");
+                  WriteLine("</table>");
+                WriteLine("</div>");
+              WriteLine("</td>");
+
+              WriteLine("<td class='CLASS02529'>");
+                WriteLine("<table width='100%' height='100%' cellspacing='10'>");
+                  WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtnOn CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
+                  WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtnOff CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
+                WriteLine("</table>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+          WriteLine("</table>");
+        WriteLine("</td>");
+
+        ! Color picker
+        WriteLine("<td style='width:90px;'>");
+          WriteLine("<div id='colorPicker_"#chnId#"' ></div>");
+        WriteLine("</td>");
+
+        ! Inputs of the color picker
+        WriteLine("<td>");
+          WriteLine("<table class='ControlBtnInfo j_ControlBtnInfo'>");
+
+            WriteLine("<tr>");
+                WriteLine("<td><span style='color:white'>H</span></td>");
+              WriteLine("<td>");
+                WriteLine("<input id='hueElmId_"#chnId#"' type='text' size='3' style='text-align:center'>");
+              WriteLine("</td>");
+                WriteLine("<td><span style='color:white'>°</span></td>");
+            WriteLine("</tr>");
+
+            WriteLine("<tr>");
+                WriteLine("<td><span style='color:white'>S</span></td>");
+              WriteLine("<td>");
+                WriteLine("<input id='satElmId_"#chnId#"' type='text' size='3' style='text-align:center'>");
+              WriteLine("</td>");
+                WriteLine("<td><span style='color:white'>%</span></td>");
+            WriteLine("</tr>");
+
+            WriteLine("<tr>");
+              WriteLine("<td></td>");
+              WriteLine("<td>");
+                WriteLine("<div id='bckGndlmId_"#chnId#"' style='cursor:pointer; width:auto;' >&nbsp;</div>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+
+          WriteLine("</table>");
+        WriteLine("</td>");
+      WriteLine("</tr>");
+    WriteLine("</table>");
+    Call("/esp/controls/universal_light_receiver.fn::getEffectPanel()");
+  WriteLine("</td>");
+
+  WriteLine("<script type='text/javascript'>");
+    if (oHue.Value()) {
+      WriteLine("var hueValue = '" #oHue.Value()#"';");
+      WriteLine("if (hueValue == '') {hueValue = 0;}");
+    } else {WriteLine("hueValue = 0;");}
+
+    if (oSaturation) {
+      WriteLine("var satValue = '" #oSaturation.Value()#"';");
+      WriteLine("if (satValue == '') {satvalue = 0;}");
+    } else {WriteLine("satvalue = 0;");}
+
+    if (oLevel) {
+      WriteLine("var levelValue = '" #oLevel.Value()#"';");
+      WriteLine("if (levelValue == '') {levelValue = 0;}");
+    } else {WriteLine("levelValue = 0;");}
+
+    WriteLine("var opts = {};");
+    WriteLine("opts.iface = '"#sInterface#"';");
+    WriteLine("opts.chAddress = '"#chAddress#"';");
+    WriteLine("opts.hue = hueValue;");
+    WriteLine("opts.saturation = satValue;");
+    WriteLine("opts.hueStatus = '"#hueStatus#"';");
+    WriteLine("opts.level = levelValue;");
+
+    WriteLine("ibd"#chnId#" = new iseButtonsDimmer("#chnId#", "#iState#", "#iLvlDpId#", "#iOldLvlDpId#", "#system.GetVar("iStatusOnly")#", "#system.GetVar('bSliderFlag')#", '"#cObj.Label()#"' );");
+    WriteLine("opts.oDimmerSlider= ibd"#chnId); ! Slider of the usual dimmer control
+
+   WriteLine("ipm"#chnId#" = new iseUniversalLightReceiver("#chnId#", opts);");
+
+  WriteLine("</script>");
+}

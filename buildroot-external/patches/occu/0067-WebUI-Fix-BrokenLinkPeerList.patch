@@ -9,7 +9,7 @@
        puts "  var s = \"\";"
        puts "  s += \"<table cellspacing='8'>\";"
        puts "  s += \"<tr>\";"
-@@ -501,13 +501,19 @@
+@@ -517,13 +517,19 @@
          set internalKeyCSS ""
          set this_sender $SENTRY(SENDERNAME)
  
@@ -31,7 +31,7 @@
  
             # Under certain circumstances hide the button for adding more link partners (e. g. PS/PSM/PDT aren't allowed)
             if {([lindex [split $SENTRY(SENDERADDR) ":"] 0] != [lindex [split $SENTRY(RECEIVERADDR) ":"] 0]) || ([areMoreLinksAllowed $SENTRY(SENDER_PARENT_TYPE) $SENTRY(SENDER_TYPE)] == 1)} {
-@@ -560,7 +566,11 @@
+@@ -576,7 +582,11 @@
  
          set this_receiver $SENTRY(RECEIVERNAME)
          

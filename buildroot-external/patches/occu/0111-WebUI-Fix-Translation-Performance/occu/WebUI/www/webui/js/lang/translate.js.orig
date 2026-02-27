@@ -91,7 +91,7 @@ function translateButtons(key) {
  * The value of the name attribute has to be the key for the translation table.
  * When a key is successful translated the innerHTML of the elem will be set to the translated text.
  * This is necessary because some html-pages are templates using TrimPath (e. g. devicelist_tree.jst).
- * ItÂ´s not possible to translate these pages with our usual translatePage() because TrimPath is unfortunately using the same
+ * It´s not possible to translate these pages with our usual translatePage() because TrimPath is unfortunately using the same
  * placeholder char ($) like setTextContent() which is being used by translatePage().
  * @param container {string} The container as jQuery selector, e. g. ".class" or "#id"
  */

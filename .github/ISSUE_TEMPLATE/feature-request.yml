@@ -1,6 +1,6 @@
 ---
 name: 🚀 Feature Request
-description: Suggest a feature/idea for RaspberryMatic
+description: Suggest a feature/idea for OpenCCU
 labels: ":bulb: enhancement-ideas"
 body:
   - type: markdown
@@ -11,10 +11,10 @@ body:
     attributes:
       value: |
         1. Do **NOT** use this form for support requests! It is meant to be used to request new feature or report your ideas on enhancements only.
-        2. Make sure that the requested feature is not already implemented in the latest stable or even nightly build version of RaspberryMatic.
+        2. Make sure that the requested feature is not already implemented in the latest stable or even nightly build version of OpenCCU.
         3. Before you open a new feature/enhancement request here, please make sure that it hasn't been requested already and please make sure to cross-check the discussion fora discussed below and try to discuss your idea there first before you are opening a new feature request here.
 
-        If you have problems while using RaspberryMatic and are seeking for help, please consult our [GitHub Community Forum](https://github.com/jens-maus/RaspberryMatic/discussions) or the public [RaspberryMatic Forum](https://homematic-forum.de/forum/viewforum.php?f=65).
+        If you have problems while using OpenCCU and are seeking help, please consult our [GitHub Community Forum](https://github.com/OpenCCU/OpenCCU/discussions) or the public [OpenCCU Forum](https://homematic-forum.de/forum/viewforum.php?f=65).
   - type: markdown
     attributes:
       value: |

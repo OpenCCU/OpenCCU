@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/pages/msg/editScript.htm.orig
 +++ occu/WebUI/www/rega/pages/msg/editScript.htm
-@@ -66,7 +66,7 @@
+@@ -169,7 +169,7 @@
      var url = '/esp/system.htm?sid='+SessionId;
      var pb = "";
      pb += 'string action = "SyntaxCheck";';
@@ -11,7 +11,7 @@
      pb += 'string src = "'+src+'";';
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25244,7 +25244,7 @@
+@@ -31573,7 +31573,7 @@
      var pb = '';
      pb += 'string action = "SetScript";';
      pb += 'string id = "'+id+'";';

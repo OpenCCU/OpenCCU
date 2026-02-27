@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_software.cgi.orig
 +++ occu/WebUI/www/config/cp_software.cgi
-@@ -286,7 +286,7 @@
+@@ -310,7 +310,7 @@
                          table {
                            table_row {
                              table_data {

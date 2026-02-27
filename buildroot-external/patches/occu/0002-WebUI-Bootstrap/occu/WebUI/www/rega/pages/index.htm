@@ -55,6 +55,7 @@
     <script type="text/javascript" src="/webui/js/common/viewmodels.js"></script>
     <script type="text/javascript" src="/webui/js/extern/json2min.js"></script>
     <script type="text/javascript" src="/webui/js/extern/spectrum.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/iro.js"></script>
 
 
 
@@ -79,7 +80,8 @@
       /*########################################################################*/
 
       PLATFORM = "Central";
-      WEBUI_VERSION = "2.40.0-TRUNK";
+      WEBUI_VERSION = "XXX-WEBUI-VERSION-XXX";
+      PRODUCT = "XXX-PRODUCT-XXX";
 
       /**
        * Flags
@@ -122,7 +124,8 @@
       createNewProgram = false;
       showAPITools = jQuery.url().param('showAPITools');
       showRFAddress = (jQuery.url().param('showRFAddress') == "true") ? true : false;
-
+      invisibleServiceMessages = 0;
+      //measureLoadingConfigData = true;
 
       /**
        * jg_250
@@ -205,7 +208,7 @@
     <div id="webuiloader_wrapper">
       <div id="webuiloader_background">
         <div id="webuiloader">
-          <div id="webuiloader_icon"><img src="/ise/img/homematic_logo_small_gray.png" alt="" /></div>
+          <div id="webuiloader_icon"><img src="/ise/img/occu-logo_small_gray.png" /></div>
           <!-- div id="webuiloader_caption">HomeMatic WebUI wird geladen...</div-->
           <div id="webuiloader_caption"></div>
           <script type="text/javascript">jQuery("#webuiloader_caption").html(translateKey("loadWebUI"));</script>

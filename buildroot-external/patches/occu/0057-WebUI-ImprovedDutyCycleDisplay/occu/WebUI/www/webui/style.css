@@ -1,6 +1,5 @@
-* {
-	font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif ! important;
-	font-size: 12px ! important;
+:root {
+  --btnGradient: linear-gradient(to bottom, #ffffff, #a1a1a1);
 }
 
 .j_translate, .j_startPage
@@ -15,6 +14,10 @@
 .attention {
     color: $_(attention);
     font-weight: bold;
+}
+
+hr {
+  border: solid 1px $_(navBarSeparator);
 }
 
 .height20px {
@@ -41,8 +44,16 @@
 	width:160px;
 }
 
+.minWidth210px {
+  min-width: 210px;
+}
+
 .minWidth230px {
   min-width: 230px;
+}
+
+input[type=checkbox], input[type=radio] {
+  vertical-align: -2px;
 }
 
 .conditionEven
@@ -62,11 +73,15 @@
 }
 
 .colorGradient {
-  background-image:url(/ise/img/gradientButton25px.png) !important;
+  /*background-image:url(/ise/img/gradientButton25px.png) !important;*/
+  /*background-image: linear-gradient(to bottom, white 40%, gray) !important;*/
+  background-image: var(--btnGradient) !important;
 }
 
 .colorGradient50px {
-  background-image:url(/ise/img/gradientButton50px.png) !important;
+  /*background-image:url(/ise/img/gradientButton50px.png) !important;*/
+  /*(to bottom, white 40%, gray) !important;*/
+  background-image: var(--btnGradient) !important;
 }
 
 .startPageInfo {
@@ -149,6 +164,28 @@ a img {
 {
     background-color: $_(contentBackground);
     overflow: auto;
+    display: flex;
+    align-items: flex-start;
+}
+
+#prgcontent
+{
+  display: contents;
+}
+
+#prgcontent.j_translate
+{
+  display: none;
+}
+
+#GroupListBody
+{
+  display: contents;
+}
+
+#divDL, #divRTD, #divFL, #divHTF, #divRL, #divHTR
+{
+  height: 100%;
 }
 
 /* Kopfzeile */
@@ -259,11 +296,11 @@ a img {
 }
 
 #chnListBody td {
-  /*border: solid 1px $_(black); /* black */*/
+  /*border: solid 1px $_(black); /* black */
   text-align: center;  
 }
 #chnListBody th {
-  /*border: solid 1px $_(black); /* black */*/
+  /*border: solid 1px $_(black); /* black */
   text-align: center;  
 }
 
@@ -293,7 +330,7 @@ a img {
 {
   /*position: absolute;*/
   margin-left: 0px;
-  margin-top: 6px;
+  margin-top: 0px;
   padding-left: 10px;
 }
 
@@ -316,7 +353,9 @@ a img {
 /* Standard-Button (z.B. Benutzernamen bei Login) */
 .Button {
   background-color: $_(clickable);
-  background-image:url(/ise/img/gradientButton50px.png) !important;
+  /*background-image:url(/ise/img/gradientButton50px.png) !important;*/
+  /*background-image: linear-gradient(to bottom, white 40%, gray) !important;*/
+  background-image: var(--btnGradient) !important;
   color: $_(textColorB); /* black */
   font-weight: bold;
   width: 200px;
@@ -377,7 +416,9 @@ a img {
   text-align:center;
   border:solid 1px $_(black); /* black */
   background-color:$_(clickable);
-  height: 20px;
+  height:50px;
+  font-weight:normal;
+  color: $_(textColorA); /* white */
 }
 
 .filterTable td
@@ -385,7 +426,6 @@ a img {
   text-align:center;
   border:solid 1px $_(black); /* black */
   color: $_(textColorB); /* black */
-  height: 40px;
 }
 
 .filterTable .leftAlign {
@@ -409,6 +449,8 @@ a img {
 {
   background-color: $_(logoutButton);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
 
   color: $_(textColorB); /* black */
   font-weight: bold;
@@ -419,7 +461,6 @@ a img {
   border: solid 1px $_(black); /* black */
   cursor: pointer;
   border-radius: 5px;
-  font-size: 15px;
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -471,6 +512,8 @@ a img {
 .Messages {
   background-color: $_(messagesBackground);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
 
   overflow: auto;
 
@@ -483,7 +526,7 @@ a img {
 
 .Messages_Selected {
   background-color: $_(active); /* #565657 */
-};
+}
 
 /* Kopfzeile der Alarm-/Servicemeldungen */
 .MsgTblHeader {
@@ -528,7 +571,9 @@ a img {
   overflow: hidden;
   border-radius: 10px;
   margin-left: 10px;
-  background-image:url(/ise/img/gradientButton50px.png);
+  /*background-image:url(/ise/img/gradientButton50px.png);*/
+  background-image: linear-gradient(to bottom, white 40%, gray);
+  background-image: var(--btnGradient);
 }
 
 .StdTableBtnHelp {
@@ -574,37 +619,39 @@ a img {
 
 /* Tabelle zur Listendarstellung von Elementen (z.B. Raumübersicht) */
 .tblList {
-  margin-top: 20px;
-  width: 100%;
+  margin: 10px;
   empty-cells: show;
+  border: solid 1px $_(black); /* black */
+  width: 100%;
 }
 
 .tblList th {
   color: $_(textColorA); /* white */
   font-weight: normal;
-  background-color: $_(clickable);
 }
 
 .Sort
 {
   cursor: pointer;
-  text-align: center;
-  vertical-align: middle;
-  height: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .SortSelected
 {
   cursor: pointer;
   background-color: $_(active); /* #565657 */
-  text-align: center;
-  vertical-align: middle;
-  height: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pt11
 {
-  padding-top: 11px;
+  
 }
 
 .tblList td {
@@ -617,7 +664,6 @@ a img {
 /* Kopfzeile eines Popup-Fenster */
 .popupTitle {
   color: $_(textColorB); /* black */
-  width: 99.4%;
   background-color: $_(white); /* white */
   border: solid 1px $_(black); /* black */
   padding-left: 4px;
@@ -646,12 +692,12 @@ a img {
 .popupTableScript
 {
   width: 100%;
-  border: solid 1px $_(black); /* black */
   empty-cells: show;
   color: $_(textColorA); /* white */
   text-align: center;
   vertical-align: middle;
   font-weight: normal;
+  border-spacing: 2px;
 }
 
 .popupTableRow
@@ -686,13 +732,14 @@ a img {
 
 .popupControls {
   background-color: $_(white); /* white */
-  width: 100%;
   border: solid 1px $_(black); /* black */
 }
 
 .popupControls div {
   background-color: $_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
 
   color: $_(textColorB); /* black */
   text-align: center;
@@ -713,8 +760,8 @@ a img {
 
 /* KanalListe */
 .ChnListTbl {
-  width: 100%;
   background-color: $_(black); /* black */
+  margin: 10px;
 }
 
 .ChnListTbl td {
@@ -739,7 +786,8 @@ a img {
 
 .FilterBtn {
   background-image:url(/ise/img/gradientButton25px.png);
-
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
   color: $_(textColorB); /* black */
 
   cursor: pointer;
@@ -774,6 +822,8 @@ a img {
 .FilterSetButton {
   background-color: $_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
 
   color: $_(textColorB); /* black */
   border: solid 1px $_(black); /* black */
@@ -784,6 +834,10 @@ a img {
   width: 90%;
   cursor:pointer;
   z-index:501;
+}
+
+.Filter_Active .FilterCaption {
+  color: red;
 }
 
 .ControlBtnOff {
@@ -822,6 +876,24 @@ a img {
 
 .ControlBtnInfo {
   background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoActive {
+  background-color: $_(active);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoNotActive {
+  background-color: #89989b;
   color: $_(textColorA); /* white */
   border: solid 1px $_(black); /* black */
   padding: 5px;
@@ -885,6 +957,8 @@ a img {
 {
   background-color: $_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
 
   color: $_(textColorB); /* white */
   border: solid 1px $_(black); /* black */
@@ -895,11 +969,12 @@ a img {
 .StdButton {
     background-color: $_(clickable);
     background-image:url(/ise/img/gradientButton25px.png);
+    /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+    background-image: var(--btnGradient);
     margin:2%;
     border:1px solid $_(black); /* black */
     /* width:95%; */
     text-align:center;
-    height:20px;
     line-height:20px;
     vertical-align:middle;
     color: $_(textColorB); /* black */
@@ -912,7 +987,9 @@ a img {
 
 .StdButtonBig {
     background-color: $_(clickable);
-    background-image:url(/ise/img/gradientButton50px.png);
+    /*background-image:url(/ise/img/gradientButton50px.png);*/
+    background-image: linear-gradient(to bottom, white 40%, gray);
+    background-image: var(--btnGradient);
     margin:2%;
     border:1px solid $_(black); /* black */
     /* width:95%; */
@@ -934,7 +1011,9 @@ a img {
 {
   background-color: $_(activeBackground); /* #dddddd */
   background-image:url(/ise/img/gradientButton25px.png);
-  color: $_(textColorA); /* #ffffff */
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+  color: $_(gray);
   border: solid 1px $_(gray); /* silver */
   border-radius: 5px;
   margin:2%;
@@ -992,7 +1071,9 @@ a img {
 .FooterButton {
 
   background-color: $_(clickable);
-  background-image:url(/ise/img/gradientButton50px.png);
+  /*background-image:url(/ise/img/gradientButton50px.png);*/
+  background-image: linear-gradient(to bottom, white 40%, gray);
+  background-image: var(--btnGradient);
 
   overflow: auto;
 
@@ -1060,6 +1141,7 @@ a img {
 
 .StatViewTbl td{
   border: solid 1px $_(black); /* black */
+  height: 50px;
 }
 
 
@@ -1088,10 +1170,20 @@ a img {
   text-align:center;
 }
 .SysVarsTblPopup{
+  background-color:$_(activeBackground);
+  color: $_(textColorB); /* black */
+  height:60px;
+  text-align:center;
+  cursor:pointer;
+  word-break: break-word;
+}
+.SysVarsTblPopup_Highlight{
   background-color:$_(inactiveBackground);
   color: $_(textColorB); /* black */
   height:60px;
   text-align:center;
+  cursor:pointer;
+  word-break: break-word;
 }
 .WhiteBkgChannelPopup {
   background-color: $_(white); /* white */
@@ -1210,13 +1302,10 @@ a img {
 .tTable
 {
   text-align:center;
-  margin-left:10px;
-  margin-top:10px;
-  margin-right:10px;
+  margin:10px;
   empty-cells: show;
-  width:97%;
-  /*width:1200px;*/
   border:solid 1px $_(black); /* black */
+  width: 100%;
 }
 /*
 .tTable th
@@ -1226,9 +1315,10 @@ a img {
 
 .tTable td
 {
-  color: $_(textColorB); /* black */
+  color: $_(textColorB);
 }
 */
+
 .bgWhite
 {
   background-color: $_(white); /* white */
@@ -1272,8 +1362,8 @@ div.caption  { display: table-caption; }
 .tMain
 {
   border:solid 1px $_(black); /* black */
-  margin-left:20px;
-  margin-top:20px;
+  margin:10px;
+  width:100%;
 }
 
 .tHeader
@@ -1311,7 +1401,6 @@ div.caption  { display: table-caption; }
 
 .bcWhitePic
 {
-  background-color: $_(white); /* #ffffff */
 }
 
 .bcWhite
@@ -1355,12 +1444,8 @@ div.caption  { display: table-caption; }
 
 .oLine
 {
-  background-color: $_(background); /* #183473 */
-  width: 90%;
+  width: 100%;
   height: 6px;
-  border-bottom-width: 5px;
-  border-bottom-style: solid;
-  border-bottom-color: $_(white); /* #ffffff */
 }
 
 .sysConfigHeight
@@ -1407,7 +1492,7 @@ div.caption  { display: table-caption; }
   border:solid 1px $_(black); /* black */
   height:40px;
   text-align:center;
-  padding: 2px;
+  font-weight:normal;
 }
 
 .tdCellFilter
@@ -1421,7 +1506,7 @@ div.caption  { display: table-caption; }
 
 /* Weisser Zellenhintergrund für Bilder (Geräteübersicht u.ä.) */
 .WhiteBkgPic {
-  background-color: $_(white); /* #ffffff */
+  background-color: $_(activeBackground); /* #f0f0f0 */
   color: $_(textColorB); /* black */
 }
 
@@ -1451,15 +1536,28 @@ div.caption  { display: table-caption; }
 
 #_body {
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
 
 }
 
 /* Buttons incl. Hilfe-Img. */
 .cpButton {
     width:230px;
-}#ic_deviceparameters #id_body
+}
+
+#id_body
 {
-	margin-top: 10px;
+  display: inherit;
+}
+
+#ic_deviceparameters
+{
+  display: contents;
+}
+
+#ic_deviceparameters #id_body
+{
 	background-color: $_(background); /* #183473 */
 }
 
@@ -1475,7 +1573,7 @@ div.caption  { display: table-caption; }
 
 #ic_deviceparameters #DeviceInformation
 {
-	width: 99%;
+	width: 100%;
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
 }
@@ -1499,7 +1597,6 @@ div.caption  { display: table-caption; }
 
 #ic_deviceparameters #DeviceInformation #DeviceImage
 {
-	background-color: $_(white); /* white */
 	width: 52px;
 	height: 56px;
 	margin: 0;
@@ -1530,7 +1627,7 @@ div.caption  { display: table-caption; }
 
 #ic_deviceparameters .parameter_area .parameters_table 
 {
-	width: 99%;
+	width: 100%;
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
 }
@@ -1539,6 +1636,7 @@ div.caption  { display: table-caption; }
 
 	background-color: $_(clickable);
 	text-align:center;
+	height: 50px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table tbody {
@@ -1549,7 +1647,6 @@ div.caption  { display: table-caption; }
 
 #ic_deviceparameters .parameter_area .parameters_table td {
 	border: 1px solid $_(black); /* black */
-	height: 50px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl
@@ -1557,6 +1654,7 @@ div.caption  { display: table-caption; }
 	border: 0;
 	height: auto;
 	background-color: $_(white); /* white */
+	border-spacing: 0px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl thead
@@ -1571,8 +1669,6 @@ div.caption  { display: table-caption; }
 {
 	border: 0;
 	background-color: $_(white); /* white */
-	padding: 2px;
-	height: auto;
 }
 
 #ic_deviceparameters #Timeouts_Area .TimeoutTable,
@@ -1634,6 +1730,14 @@ div.caption  { display: table-caption; }
 	border: 0;
 }/*LinkList-Tabelle*/
 /*--------------------------------------------*/
+#ic_linkpeerlist {
+  display: contents;
+}
+
+#ic_linkpeerlist.j_translate {
+  display: none;
+}
+
 #ic_linkpeerlist #head_wrapper {
   border-bottom: 0;
   margin: 0;
@@ -1649,17 +1753,16 @@ div.caption  { display: table-caption; }
 #ic_linkpeerlist #body_wrapper {
   margin: 0;
   padding: 0;
-  width: 100%;
-  background-color: $_(background); /* #183473 */
+  display: inherit;
 }
 
 #ic_linkpeerlist .LinkListTbl {
   empty-cells: show;
   padding:0;
-  margin: 20px 0 0 0;
-  width: 100%;
+  margin: 10px;
   height: auto;
   border: 1px solid $_(black); /* black */
+  width: 100%;
 }
 
 #ic_linkpeerlist .LinkListTbl td {
@@ -1696,9 +1799,7 @@ div.caption  { display: table-caption; }
 
 #ic_linkpeerlist .LinkListTbl .LinkListTbl_img
 {
-	background-color: $_(white); /* white */
 	text-align: left;
-	height: 80px;  
 }
 /*--------------------------------------------*/
 #modalbox #id_messagebox
@@ -1710,6 +1811,21 @@ div.caption  { display: table-caption; }
   left:0;
   top:0;
   z-index:90;
+}
+
+#messagebox
+{
+  min-width: min-content;
+}
+
+#txVals
+{
+  resize: auto;
+}
+
+#txValue
+{
+  resize: auto;
 }
 
 #messagebox #id_messagebox
@@ -1760,15 +1876,27 @@ background-color: $_(inactiveBackground);
 {
   height: 40px;
   background-color: $_(activeBackground);
-}#ic_selchannel #previous_step_wrapper {
+}
+
+#ic_selchannel {
+  display: initial;
+  width: 100%;
+  margin: 10px;
+}
+
+#ic_selchannel #body_wrapper {
+  display: inherit;
+}
+
+#ic_selchannel #previous_step_wrapper {
 	background-color: $_(background); /* #183473 */
-	margin: 20px;
+	margin-bottom: 10px;
 }
 	
 #ic_selchannel #createLinkStep1 {
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
-	width: 90%;
+	width: 100%;
 }
 
 #ic_selchannel #createLinkStep1 thead {
@@ -1791,13 +1919,14 @@ background-color: $_(inactiveBackground);
 	background-color: $_(white); /* white */
 }
 #ic_selchannel #createLinkStep1 .WhiteHeader input {
-	width: 99%;
-
+	width: -webkit-fill-available;
 }
 
 #ic_selchannel .ChnListTbl {
 	border: 1px solid $_(black); /* black */
 	background-color: $_(background); /* #183473 */
+	width: 100%;
+	margin: 0px;
 }
 
 #ic_selchannel .ChnListTbl tr td {
@@ -1926,14 +2055,7 @@ background-color: $_(inactiveBackground);
 {
 	visibility: hidden;
 }
-/*--------------------------------------------*/
 
-/*Tabellenkörper Virtuelle Tasten*/
-#ic_selchannel #body_wrapper
-{
-	background-color: $_(background); /* #183473 */
-	margin-top: 10px;
-}
 /*--------------------------------------------*/
 
 /*Tabellenkörper Virtuelle Tasten*/
@@ -1952,7 +2074,6 @@ background-color: $_(inactiveBackground);
 /*Tabellenkörper Bilderspalte*/
 #ic_selchannel .ChnListTbl .chnListTbl_dev_img 
 {
-	background-color: $_(white); /* white */
 	text-align: left;
 	height: 50px;  
 }
@@ -1966,10 +2087,12 @@ background-color: $_(inactiveBackground);
 	height: auto;
 }
 /*--------------------------------------------*/
+#ic_setprofiles {
+	width: 100%;
+}
+
 #ic_setprofiles .SetProfLinkTbl {
-	width: 99%;
-	margin-top: 0;
-	margin-bottom: 0;
+	width: 100%;
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
 }
@@ -2052,7 +2175,7 @@ background-color: $_(inactiveBackground);
 #ic_setprofiles #body_wrapper
 {
 	background-color: $_(background); /* #183473 */
-	margin-top: 10px;
+	margin: 10px;
 }
 
 #ic_setprofiles  #id_sender_group_receiver_profiles_wrapper
@@ -2163,6 +2286,12 @@ table.center {
     color: $_(clickable);
 }
 
+.infoBckGnd {
+  background-color: $_(clickable) !important;
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+}
+
 .virtualChannelBckGnd {
   background-color: #BCC3C1 !important;
 }
@@ -2216,6 +2345,25 @@ table.center {
    -moz-text-align-last: center;
 }
 
+.controlHeader {
+  text-align:center;
+  background-color:#89989b;
+  color:white;
+  font-weight: bold;
+}
+
+.controlHeader150px {
+  text-align:center;
+  background-color:#89989b;
+  color:white;
+  font-weight: bold;
+  min-width: 150px;
+}
+
+.controlRedBorder {
+  border: 1px solid red !important;
+}
+
 progress[value] {
 
   /* Reset the default appearance */
@@ -2240,9 +2388,10 @@ progress::-webkit-progress-value { background: #3678c9; }
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorB); /* black */
-  /* font-weight:bold; */
+  font-weight:normal;
   text-align:left;
   vertical-align:middle;  
+  height:20px !important;
 }
 
 .FilterHeight20 {
@@ -2255,7 +2404,7 @@ progress::-webkit-progress-value { background: #3678c9; }
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorB); /* black */
-  /* font-weight:bold; */
+  font-weight:normal;
   text-align:left;
   vertical-align:middle;  
 }
@@ -2264,6 +2413,8 @@ progress::-webkit-progress-value { background: #3678c9; }
 
   background-color:$_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
 
   color: $_(textColorB); /* black */
 
@@ -2299,17 +2450,17 @@ progress::-webkit-progress-value { background: #3678c9; }
 }
 
 .FilterText {
-  width:96%;
-  margin:3px 2% 3px 2%;
+  margin:2px;
 }
 
 .FilterButton {
 
   background-color:$_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
 
-  width:96%;
-  margin:3px 2% 3px 2%;
+  margin:2px;
   border:1px solid $_(black); /* black */
   color: $_(textColorB); /* white */
   font-weight:normal;
@@ -2405,7 +2556,7 @@ html, body {
   border-bottom:solid 5px $_(navBarSeparator); /* #ffffff */
   background-color: $_(background); /* #183473 */
   z-index: 189;
-  padding: 2px;
+  padding-top: 2px;
 }
 
 .MainMenuItem_Left {
@@ -2425,7 +2576,7 @@ html, body {
 }
 
 .MainMenuItem_Help {
-    margin-right: 18px;
+    margin-right: 10px;
 }
 
 .MainMenuItem_Highlight {
@@ -2456,6 +2607,8 @@ html, body {
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr= #ffffff, endColorstr=#d0d0d0)";*/
 
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
 
   overflow: auto;
 
@@ -2478,6 +2631,8 @@ html, body {
 .MainMenuItemCaption {
   background-color: $_(mainMenuBackground);
   background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
 
   border: 1px solid $_(black);
   /* padding-left: 5px;
@@ -2502,6 +2657,7 @@ html, body {
   background-color: $_(subMenuBackground);
   overflow:hidden;
   z-index:189;
+  margin-left: 5px;
 }
 
 .MainMenuSubItem {
@@ -2516,7 +2672,6 @@ html, body {
   line-height:20px;
   cursor: pointer;
   white-space: nowrap;
-  border-top: 1px solid $_(black);
 }
 
 .MainMenuSubItem_Highlight {
@@ -2563,7 +2718,7 @@ html, body {
   left: 200px;
   height: 50px;
   line-height:50px;
-  text-align: middle;
+  text-align: center;
   color: $_(textColorB); /* #000000 */
 }
 
@@ -2606,9 +2761,9 @@ html, body {
   top: 24px;
   left: 2px;
   width: 996px;
-  height: 520px;
+  height: 522px;
   background-color: $_(white); /* white */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #ChannelChooserFooter {
@@ -2654,7 +2809,6 @@ html, body {
   width:100%;
   height:auto;
   margin:0;
-  border:1px solid $_(black); /* black */
   padding:0;
   empty-cells:show;
 }
@@ -2666,7 +2820,7 @@ html, body {
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -2678,7 +2832,7 @@ html, body {
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -2702,7 +2856,6 @@ html, body {
 
 .ChannelChooserThumbnail {
   border: 1px solid $_(black); /* black */
-  background-color:$_(white); /* white */
   text-align:left;
   height:80px;
 }
@@ -2750,7 +2903,7 @@ html, body {
   width: 996px;
   height: 520px;
   background-color: $_(white); /* white */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #MultiChannelChooserFooter {
@@ -2857,40 +3010,38 @@ html, body {
 
 .MultiChannelChooserThumbnail {
   border: 1px solid $_(black); /* black */
-  background-color:$_(white); /* white */
   text-align:left;
   height:80px;
 }
 #DeviceListTable {
-  width:97%;
   height:auto;
-  margin:1%;
-  border:0 none;
-/*  border:1px black solid; */
+  margin:10px;
+  border:1px black solid;
   padding:0;
   empty-cells:show;
+  width:100%;
 }
 
 .DeviceListHead {
-  height:60px;
+  height:40px;
   margin:0;
   border:1px solid $_(black); /* black */
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
 
 .DeviceListHead_Active {
-  height:60px;
+  height:40px;
   margin:0;
   border:1px black solid;
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -2910,8 +3061,7 @@ html, body {
 }
 
 .DeviceListRow_Highlight {
-  /* background-color: $_(inactiveBackground); */
-  background-color: $_(deviceListRowHighlight);
+  background-color: $_(inactiveBackground);
   cursor:pointer;
 }
 
@@ -2940,19 +3090,17 @@ html, body {
 
 .DeviceListThumbnail {
   border: 1px solid $_(black); /* black */
-  background-color:$_(white); /* white */
-  text-align:left;
-  height:80px;
+  text-align:center;
+  mix-blend-mode: multiply;
 }
 
 .DeviceListButton {
-
   background-color: $_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
-
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
   margin:2%;
   border:1px solid $_(black); /* black */
-  border-radius: 3px;
   width:95%;
   text-align:center;
   height:20px;
@@ -3004,7 +3152,7 @@ html, body {
   height: 520px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #ChannelConfigDialogFooter {
@@ -3126,8 +3274,7 @@ html, body {
   height: 371px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-/*  overflow: scroll;   */
-  overflow: hidden;   
+  overflow: auto;
 }
 
 #DeviceConfigDialogFooter {
@@ -3256,6 +3403,11 @@ html, body {
 .YesNoDialogContent, .YesNoDialogContentA {
   padding:5px;
   font-weight: bold;
+  color: $_(textColorB); /* black */
+}
+
+.YesNoDialogContentNoBold {
+  padding:5px;
   color: $_(textColorB); /* black */
 }
 
@@ -3397,18 +3549,12 @@ html, body {
     position: absolute;
     left: 4px
 }.bidcosrf_page {
-  margin: 20px;
+  margin: 10px;
+  width: 100%;
 }
 
 
 .bidcosrf_footer {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  margin-left: 10%;
-  width: 80%;
-  background-color: $_(white);
-  height:2px;
-  overflow: hidden;
 }
 
 .bidcosrf_button {
@@ -3434,7 +3580,7 @@ html, body {
 .bidcosrf_table {
   border: 1px solid $_(black);
   border-spacing: 0px;
-  width: 95%;
+  width: 100%;
 }
 
 .bidcosrf_tableheader {
@@ -3454,7 +3600,7 @@ html, body {
 }
 
 .bidcosrf_imagecell {
-  background-color: $_(white);
+  background-color: $_(inactiveBackground);
   border: 1px solid $_(black);
   empty-cells: show;
   text-align: center;
@@ -3465,17 +3611,25 @@ html, body {
   border: 1px solid $_(black);
   empty-cells: show;
   text-align: center;
+  width: 200px;
 }
 
 .bidcosrf_imagesize {
-  width: 50px;
-  height:80px;
+  width: 55px;
 }
+
 html, body {
   border: 0 none;
   margin: 0;
   padding: 0;
-  font:10pt Verdana;
+  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+input, textarea, select, button, h1 {
+  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+  font-size: 12px;
 }
 
 application {
@@ -3579,6 +3733,7 @@ application {
 .UIButton {
   position: absolute;
   border: 1px solid $_(black); /* black */
+  border-radius: 5px;
   background-color:$_(clickable);
   margin: 0;
   padding: 0;
@@ -3673,11 +3828,6 @@ application {
 	cursor: pointer;
 }
 
-* {
-  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
-  font-size: 12px;
-}
-
 /* rega\pages\msg\editScript.htm */
 
 .CLASS00001 {
@@ -3700,7 +3850,6 @@ application {
 
 .CLASS00004 {
 	width:75%;
-	height:120px;
 	background-color: $_(activeBackground); /* #dcdcdc */
 	text-align:left;
 }
@@ -3739,7 +3888,6 @@ application {
 
 .CLASS00011 {
 	width:25%;
-	height:120px;
 	background-color: $_(white); /* white */
 }
 
@@ -3852,7 +4000,6 @@ application {
 }
 
 .CLASS00203 {
-	border: solid 1px $_(black); /* black */
 }
 
 .CLASS00204 {
@@ -3905,10 +4052,10 @@ application {
 /* rega\pages\msg\sysVarsSelection.htm */
 
 .CLASS00300 {
-	overflow: scroll;
-	width: 100%;
+	overflow: auto;
 	height:520px;
 	background-color:$_(white); /* white */
+	border:solid 1px $_(black); /* black */
 }
 
 .CLASS00301 {
@@ -3919,6 +4066,7 @@ application {
 	text-align:center;
 	background-color:$_(clickable);
 	height: 40px;
+	font-weight: normal;
 }
 
 .CLASS00303 {
@@ -3971,7 +4119,6 @@ application {
 
 .CLASS00314 {
 	line-height:15px;
-	font-size:smaller;
 	text-align:center
 }
 
@@ -4161,7 +4308,6 @@ application {
 	text-align:left;
 	color: $_(textColorA) ! important; /* white */
 	font-weight:bold;
-	font-size:10pt;
 }
 
 .CLASS00716 {
@@ -4172,7 +4318,7 @@ application {
 
 .CLASS00717 {
 	height:200px;
-	overflow:scroll;
+	overflow: auto;
 	background-color:$_(white); /* white */
 }
 
@@ -4567,7 +4713,6 @@ application {
 	font-weight:bold;
 	color: $_(textColorB); /* black */
 	cursor:pointer;
-	font-size:12px;
 }
 
 .CLASS01217 {
@@ -4586,7 +4731,7 @@ application {
 /* rega\pages\msg\programChooser.htm */
 
 .CLASS01300 {
-	overflow: scroll;
+	overflow: auto;
 	width: 100%;
 	height: 400px;
 	background-color:$_(white); /* white */
@@ -4806,7 +4951,7 @@ application {
 }
 
 .CLASS01803 {
-	background-color:$_(white); /* #ffffff */
+	/*background-color:$_(white);*/ /* #ffffff */
 	text-align:center;
 	margin-left:4px;
 	margin-right:4px;
@@ -4824,13 +4969,13 @@ application {
 }
 
 .CLASS01805 {
-	margin-top:20px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS01806 {
-	margin-left: 10px;
-    margin-right: 10px;
 	border:solid 1px $_(black); /* black */
+	width: 100%;
 }
 
 .CLASS01807 {
@@ -4849,9 +4994,7 @@ application {
 }
 
 .CLASS01809 {
-	float:left;
 	top:0px;
-	width:49%;
 	height:100%;
 	overflow:hidden;
 }
@@ -4972,7 +5115,6 @@ application {
 /* rega\esp\rule.inc */
 
 .CLASS02300 {
-	font-size: 14px;
 	font-weight: bold;
 }
 
@@ -5006,7 +5148,6 @@ application {
 
 .CLASS02501 {
 	background-color:$_(clickable);
-	font-size:12px;
 	padding:4px;
 	border:solid 1px $_(black); /* black */
 	text-align:center;
@@ -5045,7 +5186,6 @@ application {
 
 .CLASS02507 {
 	background-color:$_(activeBackground);
-	font-size:12px;
 	padding:4px;
 	color: $_(textColorB); /* black */
 	height:30px;
@@ -5073,6 +5213,7 @@ application {
 	color: $_(textColorB); /* black */
 	width:100%;
 	border:none;
+	background-color:inherit;
 }
 
 .CLASS02511 {
@@ -5085,7 +5226,7 @@ application {
 }
 
 .CLASS02513 {
-	width:96;
+	width:96px;
 	background-color:$_(white); /* white */
 	border:1px solid $_(black); /* black */
 }
@@ -5094,6 +5235,7 @@ application {
 	border:1px Solid $_(black); /* black */
 	height:96px;
 	width:96px;
+	cursor:initial;
 }
 
 .CLASS02515 {
@@ -5136,7 +5278,6 @@ application {
 
 .CLASS02520 {
 	color: $_(textColorB); /* black */
-	width:100%;
 	border:none;
 	background-color:$_(activeBackground);
 }
@@ -5174,6 +5315,13 @@ application {
 	height:96px;
 	width:96px;
 	background-color:$_(clickable);
+	border:1px solid $_(black); /* black */
+}
+
+.CLASS02525a {
+	height:100px;
+	width:100px;
+	background-color:$_(okSignal);
 	border:1px solid $_(black); /* black */
 }
 
@@ -5219,6 +5367,28 @@ application {
 }
 
 .CLASS02532 {
+	width:220px;
+	/*height:25px;*/
+	height:auto;
+	min-height: 50px;
+	clear: both;
+	display: inline-block;
+  /* line-height:25px; problem with controls with a long parameter name */
+}
+
+.CLASS02532a {
+	width:220px;
+	height:25px;
+  color: $_(white) ! important;
+}
+
+.CLASS02532b {
+	width:220px;
+	height:30px;
+  color: $_(white) ! important;
+}
+
+.CLASS02532c {
 	font-size: 10px;
 	width:220px;
 	/*height:25px;*/
@@ -5226,21 +5396,13 @@ application {
 	min-height: 32px;
 	clear: both;
 	display: inline-block;
-  /* line-height:25px; problem with controls with a long parameter name */
+  line-height:25px;
 }
 
-.CLASS02532a {
+.CLASS02532d {
 	font-size: 10px;
 	width:220px;
-	height:25px;
-  color: $_(white) ! important;
-}
-
-.CLASS02532b {
-	font-size: 10px;
-	width:220px;
-	height:30px;
-  color: $_(white) ! important;
+	color: $_(white) ! important;
 }
 
 .CLASS02533 {
@@ -5253,12 +5415,11 @@ application {
 }
 
 .CLASS02535 {
-	float: right;
 	text-align: right;
-	width: 98%;
-	word-wrap: break-word;
-	max-width: 480px;
+	width: 100%;
+	word-wrap: anywhere;
 	display: inline-block;
+	padding: 2px;
 }
 
 .CLASS02535A {
@@ -5269,26 +5430,27 @@ application {
 	display: inline-block;
 }
 
+.CLASS02535B {
+	text-align: center;
+	word-wrap: break-word;
+	max-width: 480px;
+	display: inline-block;
+  padding-right: 5px;
+}
+
 .CLASS02536 {
 	border:none;
 }
 
 .CLASS02537 {
 	text-align: center;
-	padding: 5px;
 	width: 100%;
-	background-color: $_(activeBackground) ! important;
 }
 
 .CLASS02538 {
-	/*width:220px;
-	height:25px;*/
-	width:98%;
 	height:100%;
 	min-height:1em;
-	max-width: 480px;
 	clear: both;
-	display: inline-block;
 }
 
 .CLASS02539 {
@@ -5313,18 +5475,17 @@ application {
 
 .CLASS02542 {
 	border:solid 1px $_(black); /* black */
-	font-size:20px;
 	text-align:right;
 }
 
 .CLASS02542b {
 	border:solid 1px $_(black); /* black */
-	font-size:18px;
 	text-align:right;
 }
 
 .CLASS02543 {
 	border:1px solid $_(black); /* black */
+	cursor:pointer;
 }
 
 .CLASS02544 {
@@ -5382,6 +5543,20 @@ application {
 	width:100%;
 }
 
+.CLASS02550d {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:100px;
+}
+
+.CLASS02550e {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:120px;
+}
+
 .CLASS02551 {
 	cursor:pointer;
 	height:35px;
@@ -5400,8 +5575,16 @@ application {
 	width:98%;
 }
 
+.CLASS02551c {
+	cursor:pointer;
+	height:35px;
+	width:100px;
+	margin-left: 11%;
+}
+
 .CLASS02552 {
 	border:solid 1px $_(black); /* black */
+	mix-blend-mode:multiply;
 }
 
 .CLASS02553 {
@@ -5435,6 +5618,13 @@ application {
 	border:1px solid $_(black); /* black */
 }
 
+.CLASS02557A {
+	height:100px;
+	width:100px;
+	background-color:$_(clickable);
+	border:1px solid $_(black); /* black */
+}
+
 .CLASS02558 {
 	height:96px;
 	width:96px;
@@ -5456,12 +5646,10 @@ application {
 
 .CLASS02601 {
 	text-align:center;
-	margin-left:20px;
-	width:97%;
 }
 
 .CLASS02602 {
-	height:44px;
+	height: auto;
 }
 
 .CLASS02603 {
@@ -5473,6 +5661,7 @@ color: $_(textColorA) ! important; /* white */
 
 .CLASS02604 {
 	height: 58px;
+	background-color: $_(activeBackground);
 }
 
 .CLASS02605 {
@@ -5480,76 +5669,52 @@ color: $_(textColorA) ! important; /* white */
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 	text-align: left;
 }
 
 .CLASS02606 {
-	width: 240px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
-}
-
-.CLASS02607 {
-	width:55px;
-	background-color: $_(activeBackground);
-	border: solid 1px $_(black); /* black */
-	color: $_(textColorB); /* black */
-	padding: 4px;
-}
-
-.CLASS02608 {
-	position:relative;
-	text-align:left;
-	width:50px;
-	height:50px;
+	padding: 2px;
 }
 
 .CLASS02609 {
-	width: 140px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02610 {
-	width: 100px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02611 {
-	width: 200px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02612 {
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02613 {
-	background-color: $_(clickable);
-color: $_(textColorA); /* white */
-	font-weight: bold;
-	border: solid 1px $_(black); /* black */
+	width: 90px;
 }
 
 .CLASS02614 {
-	background-color: $_(inactiveButton); /* #dddddd */
-color: $_(textColorA); /* white */
-	font-weight: bold;
-	border: solid 1px $_(gray); /* silver */
+	color: $_(gray);
+	width: 90px;
 }
 
 .CLASS02615 {
@@ -5643,10 +5808,12 @@ color: $_(textColorA); /* white */
 	vertical-align:middle;
 	border:solid 1px $_(black); /* #000000 */
 	font-weight:bold;
+  height: auto;
 }
 
 .CLASS02803 {
-	font-weight:bold;
+	font-weight:normal;
+  height: auto;
 }
 
 .CLASS02804 {
@@ -5712,7 +5879,6 @@ color: $_(textColorA) ! important; /* white */
 }
 
 .CLASS02815 {
-	height:100%;
 }
 
 /* rega\pages\tabs\statusviews\svroomchannels.htm */
@@ -5897,18 +6063,13 @@ color: $_(textColorA) ! important; /* white */
 }
 
 .CLASS03301 {
-	width:75%;
-	margin-left:20px;
-	margin-top:20px;
 	empty-cells:show;
 }
 
 .CLASS03302 {
-	font-weight:bold;
-	height:40px;
 	text-align:center;
-	line-height:40px;
 	border:solid 1px $_(black); /* black */
+	padding:0px;
 }
 
 .CLASS03303 {
@@ -5931,7 +6092,6 @@ color: $_(textColorA); /* white */
 
 .CLASS03306 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS03307 {
@@ -5987,8 +6147,7 @@ color: $_(textColorA); /* white */
 
 .CLASS03500 {
 	border:solid 1px $_(black); /* black */
-	margin-left:10px;
-	margin-top:27px;
+	width:100%;
 }
 
 .CLASS03501 {
@@ -6021,8 +6180,7 @@ color: $_(textColorA); /* white */
 
 .CLASS03600 {
 	border:solid 1px $_(black); /* black */
-	margin-left:50px;
-	margin-top:27px;
+	width:100%;
 }
 
 .CLASS03601 {
@@ -6069,7 +6227,6 @@ color: $_(textColorA); /* white */
 
 .CLASS03703 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS03704 {
@@ -6111,8 +6268,7 @@ color: $_(textColorA); /* white */
 
 .CLASS03800 {
 	border:solid 1px $_(black); /* black */
-	margin-left:50px;
-	margin-top:27px;
+	width:100%;
 }
 
 .CLASS03801 {
@@ -6155,17 +6311,15 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS03902 {
-	width:100%;
 	overflow:auto;
-	margin:0;
-	padding:0;
+	margin-left:10px;
+	margin-right:2px;
 }
 
 .CLASS03903 {
 	border:solid 1px $_(black); /* black */
-	margin-top:0px;
-	width:235px;
-	margin-top:27px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS03904 {
@@ -6180,7 +6334,6 @@ color: $_(textColorA); /* white */
 .CLASS03906 {
 	vertical-align:middle;
 	text-align:left;
-	background-color:$_(white); /* white */
 }
 
 .CLASS03907 {
@@ -6190,13 +6343,15 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS03908 {
-	width:100%;
 	overflow:auto;
+	margin-right:10px;
+	margin-left:2px;
 }
 
 .CLASS03909 {
-	width: 80%;
-	height: 96%;
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .CLASS03910 {
@@ -6206,7 +6361,6 @@ color: $_(textColorA); /* white */
 
 .CLASS03911 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 /* rega\pages\tabs\handling\rooms.htm */
@@ -6222,13 +6376,15 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS04002 {
-	width:100%;
 	overflow:auto;
+	margin-right:10px;
+	margin-left:2px;
 }
 
 .CLASS04003 {
-	width: 80%;
-	height: 96%;
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .CLASS04004 {
@@ -6238,12 +6394,12 @@ color: $_(textColorA); /* white */
 
 .CLASS04005 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04006 {
 	border:solid 1px $_(black); /* black */
-	margin-top:27px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS04007 {
@@ -6254,7 +6410,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04100 {
 	text-align:center;
-	width:95%;
 	empty-cells:show;
 }
 
@@ -6265,17 +6420,18 @@ color: $_(textColorA); /* white */
 .CLASS04102 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
-	font-size:10pt ! important;
 	height:44px ! important;
 }
 
 .CLASS04103 {
 	height:auto;
+	background-color: $_(background); /* #183473 */
 }
 
 .CLASS04104 {
 	background-color:$_(clickable);
   height:20px;
+  border: solid 1px $_(black); /* black */
 }
 
 .CLASS04105 {
@@ -6288,7 +6444,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04107 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04108 {
@@ -6298,6 +6453,7 @@ color: $_(textColorA); /* white */
 .CLASS04109 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
   height:20px;
 }
 
@@ -6321,8 +6477,13 @@ color: $_(textColorA); /* white */
 
 .CLASS04200 {
 	text-align:center;
-	width:95%;
 	empty-cells:show;
+}
+
+.CLASS04201 {
+	overflow:auto;
+	margin-left:10px;
+	margin-right:2px;
 }
 
 .CLASS04202 {
@@ -6330,20 +6491,20 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS04203 {
-	font-size:10pt;
 	height:100%;
 }
 
 .CLASS04204 {
-	font-size:10pt;
 }
 
 .CLASS04205 {
 	height:auto;
+	background-color: $_(background); /* #183473 */
 }
 
 .CLASS04206 {
 	background-color:$_(clickable);
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS04207 {
@@ -6356,7 +6517,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04209 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04210 {
@@ -6366,6 +6526,7 @@ color: $_(textColorA); /* white */
 .CLASS04211 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS04212 {
@@ -6396,7 +6557,8 @@ color: $_(textColorA); /* white */
 .CLASS04301 {
 	width:100%;
 	height:100%;
-	overflow-y:scroll;
+	overflow-y:auto;
+	display:contents;
 }
 
 .CLASS04302 {
@@ -6408,7 +6570,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS04304 {
-	font-size:10pt;
 	height:40px;
 }
 
@@ -6449,7 +6610,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04312 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04313 {
@@ -6550,7 +6710,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04800 {
 	line-height:14px;
-	font-size:smaller;
 	width:200px;
 }
 
@@ -6573,7 +6732,7 @@ color: $_(textColorA); /* white */
 
 .CLASS04900 {
 	color: $_(textColorA); /* white */
-	font-weight:bold;
+	font-weight:normal;
 }
 
 .CLASS04901 {
@@ -6591,13 +6750,11 @@ color: $_(textColorA); /* white */
 
 .CLASS04904 {
 	color: $_(textColorB); /* black */
-	font-size:12px;
 }
 
 .CLASS04905 {
 	line-height:15px;
-	font-size:smaller;
-	width:220px;
+	width:180px;
 }
 
 .CLASS04906 {
@@ -6650,12 +6807,13 @@ color: $_(textColorA); /* white */
 
 .CLASS05007 {
 	color: $_(textColorB); /* black */
-	font-size:9pt;
 }
 
 .CLASS05008 {
     background-color:$_(clickable);
-    background-image:url(/ise/img/gradientButton50px.png);
+    /*background-image:url(/ise/img/gradientButton50px.png);*/
+		/*background-image: linear-gradient(to bottom, white 40%, gray );*/
+		background-image: var(--btnGradient);
 
 	color: $_(textColorB); /* black */
 	border:solid 1px $_(black); /* black */
@@ -6671,7 +6829,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05010 {
 	color: $_(textColorB); /* black */
-	font-size:9pt;
 	width:100%;
 }
 
@@ -6681,7 +6838,7 @@ color: $_(textColorA); /* white */
 
 .CLASS05012 {
 	color: $_(textColorB); /* black */
-	font-size:9pt;
+	width:100%;
 }
 
 /* rega\pages\tabs\admin\msg\timemodule.htm */
@@ -6718,6 +6875,10 @@ color: $_(textColorA); /* white */
 	text-align: left;
 	background-color: $_(white); /* white */
 	color: $_(textColorB); /* black */
+}
+
+.CLASS05104 tbody {
+	border-width: 0;
 }
 
 .CLASS05105 {
@@ -6758,7 +6919,6 @@ color: $_(textColorA); /* white */
 .CLASS05200 {
 	text-align:center;
 	vertical-align:middle;
-	font-weight:bold;
 	height: auto;
 }
 
@@ -6791,7 +6951,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05207 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS05208 {
@@ -6824,10 +6983,10 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS05301 {
-	height:38px;
 	border: solid 1px $_(black); /* black */
 	background-color:$_(clickable);
 	text-align:center;
+	padding:0px;
 }
 
 .CLASS05302 {
@@ -6844,7 +7003,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05305 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 /* rega\pages\tabs\admin\linkprog.htm */
@@ -6982,7 +7140,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05705 {
 	width:572px;
-	font-size:9pt;
 }
 
 .CLASS05706 {
@@ -6995,10 +7152,13 @@ color: $_(textColorA); /* white */
 
 .CLASS05707 {
 	width:570px;
-	font-size:9pt;
 }
 
 /* rega\pages\tabs\favViewer.htm  */
+
+#tblfavViewer {
+  width: 100%;
+}
 
 .CLASS05800 {
 	width:100%;
@@ -7059,7 +7219,8 @@ color: $_(textColorA); /* white */
 	background-color:$_(inactiveBackground);
 	border:solid 1px $_(black); /* black */
 	width:170px;
-	padding: 6px	color: $_(textColorB); /* black */
+	padding: 6px;
+	color: $_(textColorB); /* black */
 }
 
 .CLASS05907 {
@@ -7127,11 +7288,13 @@ color: $_(textColorA); /* white */
 /* rega\pages\tabs\user\newFav.htm */
 
 .CLASS06300 {
-	margin:20px;
+	margin:10px;
+  width:100%;
 }
 
 .CLASS06301 {
-	color: $_(textColorA); /* white */
+	color: $_(textColorB); /* black */
+	font-weight: bold;
 }
 
 .CLASS06302 {
@@ -7419,7 +7582,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS06409 {
-  margin:5px;
 }
 
 .CLASS06410 {
@@ -7439,7 +7601,6 @@ color: $_(textColorA); /* white */
 
 .CLASS06413 {
   line-height:15px;
-  font-size:smaller;
 }
 
 .CLASS06414 {
@@ -7582,7 +7743,7 @@ color: $_(textColorA); /* white */
 
 .CLASS10902 {
   border:1px solid $_(gray); /* #999999 */
-  color: $_(activeBackground); /* rgb(224,224,224); */
+  color:$_(gray);
   background-color:$_(inactiveButton); /* rgb(192,192,192) */
   cursor:default;
 }
@@ -7697,7 +7858,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS11105 {
-  padding-right: 8px;
   padding-top: 7px;
 }
 
@@ -7724,7 +7884,6 @@ color: $_(textColorA); /* white */
 /* config/ic_setprofiles */
 
 .CLASS20001 {
-	padding:4px;
 }
 
 .CLASS20002 {
@@ -7746,7 +7905,7 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20006 {
-	width:85% !	important;
+	width:100%;
 }
 
 .CLASS20007 {
@@ -7782,7 +7941,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20010 {
-	width:150px;
 }
 
 /* config\easymodes\DIMMER\MOTION_DETECTOR.tcl */
@@ -7841,7 +7999,7 @@ color: $_(textColorA); /* white */
 /* config\ic_ifacecmd.cgi */
 
 .CLASS20700 {
-  padding:10;
+  padding: 10px;
   text-align:center
 }
 
@@ -7854,7 +8012,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20801 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
 }
 
@@ -7875,7 +8032,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20805 {
-  font-size: 8pt;
 }
 
 .CLASS20806 {
@@ -7886,7 +8042,6 @@ color: $_(textColorA); /* white */
   background-color:$_(clickable);
  color: $_(textColorA); /* white */
   vertical-align: middle;
-  font-size: 10pt;
 }
 
 .CLASS20808 {
@@ -7902,7 +8057,6 @@ color: $_(textColorA); /* white */
 .CLASS20810 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS20811 {
@@ -7937,7 +8091,6 @@ color: $_(textColorA); /* white */
 .CLASS20817 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS20818 {
@@ -7963,7 +8116,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20901 {
-  font-size: 8pt;
 }
 
 .CLASS20902 {
@@ -8005,7 +8157,6 @@ color: $_(textColorA); /* white */
   color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
   width: 100%;
-  font-size: 8pt;
 }
 
 .CLASS20910 {
@@ -8025,7 +8176,6 @@ color: $_(textColorA); /* white */
 .CLASS20913 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
   width: 100%;
 }
 
@@ -8038,7 +8188,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20916 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
 }
@@ -8077,10 +8226,13 @@ color: $_(textColorA); /* white */
 .CLASS21000 {
 
   background-color: $_(gray); /* rgb(153, 153, 153) */
-  background-image:url(/ise/img/gradientButton50px.png);
+  /*background-image:url(/ise/img/gradientButton50px.png);*/
+	/*background-image: linear-gradient(to bottom, white 40%, gray );*/
+	background-image: var(--btnGradient);
 
   padding: 3px;
   text-align:center;
+  font-weight: bold;
   vertical-align:middle;
   margin:2px;
   cursor: pointer;
@@ -8098,7 +8250,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21101 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
 }
@@ -8120,13 +8271,11 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21105 {
-  font-size: 8pt;
 }
 
 .CLASS21106 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
   width: 100%;
 }
 
@@ -8137,6 +8286,12 @@ color: $_(textColorA); /* white */
 .CLASS21108 {
   width:100px;
   margin: 5px;
+}
+
+.CLASS21108A {
+	width: 100px;
+	margin: 5px;
+	line-height: 100%
 }
 
 .CLASS21109 {
@@ -8152,7 +8307,6 @@ color: $_(textColorA); /* white */
 .CLASS21111 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS21112 {
@@ -8207,7 +8361,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21201 {
-  font-size: 8pt;
 }
 
 .CLASS21202 {
@@ -8221,7 +8374,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21204 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
 }
 
@@ -8303,7 +8455,9 @@ color: $_(textColorA); /* white */
 /* config\help.cgi */
 
 .CLASS21300 {
-  height:56%;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
 }
 
 .CLASS21301 {
@@ -8318,7 +8472,6 @@ color: $_(textColorA); /* white */
 
 .CLASS21302 {
  	color: $_(textColorB); /* black */
-  font-size: 20px;
   text-align:center;
   margin: 5px;
 }
@@ -8358,7 +8511,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21401 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
 }
@@ -8380,7 +8532,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21405 {
-  font-size: 8pt;
 }
 
 .CLASS21406 {
@@ -8409,7 +8560,6 @@ color: $_(textColorA); /* white */
 .CLASS21410 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS21411 {
@@ -8436,7 +8586,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21501 {
-  font-size: 8pt;
 }
 
 .CLASS21502 {
@@ -8458,7 +8607,6 @@ color: $_(textColorA); /* white */
 .CLASS21505 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS21506 {
@@ -8494,7 +8642,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21601 {
-  font-size: 8pt;
 }
 
 .CLASS21602 {
@@ -8508,7 +8655,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21604 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
 }
 
@@ -8529,8 +8675,11 @@ color: $_(textColorA); /* white */
 
 /* config\control_panel.cgi */
 
+#mainTable {
+  margin: 10px;
+}
+
 .CLASS21700 {
-  height:50%;
 }
 
 .CLASS21701 {
@@ -8558,7 +8707,6 @@ color: $_(textColorA); /* white */
 .CLASS21800 {
   width: 100%;
   font-weight: bold;
-  font-size: 12px;
   cursor: pointer;
 }
 
@@ -8601,12 +8749,12 @@ color: $_(textColorA); /* white */
 /* config\ic_selchannel.cgi */
 
 .CLASS21900 {
-  padding: 4px;
+  padding: 0px;
+  display: inherit;
 }
 
 .CLASS21901 {
   line-height:15px;
-  font-size:smaller;
 }
 
 .CLASS21902 {
@@ -8621,12 +8769,16 @@ color: $_(textColorA); /* white */
 
   background-color: $_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+	/*background-image: linear-gradient(to bottom, white 40%, gray );*/
+	background-image: var(--btnGradient);
 
   color: $_(textColorB); /* black */
   border: 1px solid $_(black); /* black */
-  border-radius: 2px;
+  border-radius: 5px;
 
   cursor: pointer;
+  font-weight: bold;
+  padding: 2px;
 }
 
 .CLASS21905 {
@@ -8635,7 +8787,7 @@ color: $_(textColorA); /* white */
 
 .CLASS21906 {
   color: $_(red);
-  font-size: large;
+  font-size: larger;
   font-weight: bold;
 }
 
@@ -8649,7 +8801,6 @@ color: $_(textColorA); /* white */
 
 .CLASS21908 {
   overflow: auto;
-  background-color: $_(background); /* #183473 */
   width:100%;
 }
 
@@ -8692,6 +8843,8 @@ color: $_(textColorA); /* white */
 
   background-color: $_(clickable);
   background-image:url(/ise/img/gradientButton25px.png);
+	/*background-image: linear-gradient(to bottom, white 40%, gray );*/
+	background-image: var(--btnGradient);
 
   text-align:center;
   width:30px;
@@ -8704,13 +8857,17 @@ color: $_(textColorA); /* white */
 /* config\ic_deviceparameters.cgi */
 
 .CLASS22000 {
-  margin: 4px;
-  width: 99%;
+  margin: 10px;
+  width: 100%;
 }
 
 .CLASS22001 {
   text-align: center;
   background-color: $_(activeBackground);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .CLASS22002 {
@@ -8720,11 +8877,17 @@ color: $_(textColorA); /* white */
 
 .CLASS22003 {
   background-color: $_(white);
+  height: 50px;
 }
 
 .CLASS22004 {
   background-color: $_(activeBackground);
   text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .CLASS22005 {
@@ -8778,11 +8941,11 @@ color: $_(textColorA); /* white */
 
 .CLASS22100 {
   line-height:14px;
-  font-size:smaller;
 }
 
 .CLASS22101 {
-  padding:4px;
+  padding:0px;
+  display:inherit;
 }
 
 .CLASS22102 {
@@ -8804,9 +8967,8 @@ color: $_(textColorA); /* white */
 .CLASS22104 {
   left:0px;
   top:0px;
-  margin: 0;
+  margin:auto;
   padding: 0;
-  background-color: $_(white); /* white */
   position:relative;
   width:50px;
   height:50px;
@@ -8816,10 +8978,12 @@ color: $_(textColorA); /* white */
   position:relative;
   width:50px;
   height:50px;
+  margin:auto;
 }
 
 .CLASS22106 {
   text-align: center;
+  padding: 2px;
 }
 
 .CLASS22107 {
@@ -8970,3 +9134,14 @@ color: $_(textColorA); /* white */
   border:solid 1px $_(black);
 }
 
+.CodeMirror {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  text-align: left;
+  font-family: monospace;
+  resize: vertical;
+}
+
+.CodeMirror-gutter-wrapper {
+  font-family: monospace;
+}

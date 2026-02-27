@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Envelope vmw:buildId="build-14320388" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vbox="http://www.virtualbox.org/ovf/machine">
   <References>
-    <File ovf:href="RaspberryMatic.vmdk" ovf:id="file1" ovf:size="0"/>
+    <File ovf:href="OpenCCU.vmdk" ovf:id="file1" ovf:size="0"/>
   </References>
   <DiskSection>
     <Info>Virtual disk information</Info>
@@ -13,9 +13,9 @@
       <Description>Logical network used by this appliance.</Description>
     </Network>
   </NetworkSection>
-  <VirtualSystem ovf:id="RaspberryMatic">
+  <VirtualSystem ovf:id="OpenCCU">
     <Info>A virtual machine</Info>
-    <Name>RaspberryMatic</Name>
+    <Name>OpenCCU</Name>
     <OperatingSystemSection ovf:id="100" vmw:osType="other4xLinux64Guest" ovf:required="false">
       <Info>The kind of installed guest operating system</Info>
       <Description>Linux</Description>
@@ -25,7 +25,7 @@
       <System>
         <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
         <vssd:InstanceID>0</vssd:InstanceID>
-        <vssd:VirtualSystemIdentifier>RaspberryMatic</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemIdentifier>OpenCCU</vssd:VirtualSystemIdentifier>
         <vssd:VirtualSystemType>vmx-10</vssd:VirtualSystemType>
       </System>
       <Item>
@@ -121,7 +121,7 @@
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.port" vmw:value="0"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.parent" vmw:value="-1"/>
     </VirtualHardwareSection>
-    <vbox:Machine ovf:required="false" name="RaspberryMatic" uuid="{d7163d15-ef82-445f-9451-437c9067928a}">
+    <vbox:Machine ovf:required="false" name="OpenCCU" uuid="{d7163d15-ef82-445f-9451-437c9067928a}">
       <ovf:Info>Extra Virtual Machine Configuration in VirtualBoxFormat</ovf:Info>
       <Hardware>
         <CPU count="2"></CPU>

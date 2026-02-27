@@ -1,24 +1,24 @@
 <div class="popupTitle">
-  &nbsp;&nbsp;
+  &nbsp;
   <% 
     Write(system.GetVar("title"));
   %>
 </div>
-<div class="CLASS00001">
-  <table class="popupTableScript CLASS00002" border="1">
+<div>
+  <table class="popupTableScript CLASS00002" border="0" cellspacing="0" cellpadding="0" style="width: 100%; table-layout: fixed">
     <tr class="popupTableRow">
 
-    <td class="CLASS00018" colspan="2">
-      <textarea id="scrinp" class="CLASS00003"><% object oTmp = dom.GetObject( system.GetVar("sdid") ); if( oTmp ) { if( oTmp.DestinationValueType() == ivtString ) { Write( oTmp.DestinationValue().ToString() ); } } %></textarea>
+    <td colspan="2">
+      <textarea name="scrinp" id="scrinp"><% object oTmp = dom.GetObject( system.GetVar("sdid") ); if( oTmp ) { if( oTmp.DestinationValueType() == ivtString ) { Write( oTmp.DestinationValue().ToString() ); } } %></textarea>
     </td>
     </tr>
    
     <tr >
-    <td class="CLASS00004">
+    <td class="CLASS00004" style="padding: 5px">
       
-      <a class="CLASS00005">$val$ = </a>
+      <div class="CLASS00005">$val$ =
       <input id="Text1" type="text" class="CLASS00006"/>
-      <a class="CLASS00007">$this$ = </a>
+      $this$ =
       <%
         integer iThis = 0;
         if(oTmp)
@@ -28,38 +28,141 @@
         }
       %>
       <input id="Text2" type="text" class="CLASS00008" value="<% Write(iThis); %>" />
-      <a class="CLASS00009">$src$ = </a>
-      <input id="Text3" type="text" class="CLASS00010"/>
+      $src$ =
+      <input id="Text3" type="text" class="CLASS00010"/></div>
       
     </td>
     
     <td class="CLASS00011">
-    <div class="FooterButton CLASS00012" onclick="CheckSyntax();">${lblErrorCheck}</div>
+    <div class="StdButton CLASS00012" onclick="CheckSyntax();">${lblErrorCheck}</div>
+    <div class="StdButton CLASS00012" onclick="RunScript();">${dialogScriptExecuterBtnExecute}</div>
     </td>
     </tr>
     
     <tr>
-    <td class="CLASS00013" colspan="2">
-      <textarea id="scrout" class="CLASS00014"></textarea>
+    <td colspan="2">
+      <textarea id="scrout"></textarea>
     </td>
     </tr>
     
-    <tr class="popupTableRow">
-    <td class="CLASS00015" colspan="2">
-    <a class="FooterButton CLASS00016" onclick="PopupClose();" >${btnCancel}</a>
-    <a class="FooterButton CLASS00017" onclick="SaveScript();PopupClose();" >${btnOk}</a>
-    </td>
+  </table>
+</div>
+<div class="popupControls">
+  <table>
+    <tr>
+      <td><div onclick="PopupClose();" class="StdButton CLASS05109">${btnCancel}</div></td>
+      <td><div onclick="SaveScript();PopupClose();" class="StdButton CLASS05109">  ${btnOk}  </div></td>
     </tr>
   </table>
 </div>
 <script type="text/javascript">
+
+  var frameHeight = <% Write(system.GetVar("frameHeight")) %>;
+  var editor_code = CodeMirror.fromTextArea(document.getElementById('scrinp'), {
+    mode: "text/x-rega",
+    autofocus: true,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    lineWrapping: true,
+    lineNumbers: true,
+    foldGutter: true,
+    indentUnit: 2,
+    tabSize: 2,
+    indentWithTabs: false,
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    extraKeys: {"Ctrl-Space": "autocomplete",
+                "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); },
+                "F11": function(cm) { cm.setOption("fullScreen", !cm.getOption("fullScreen")); },
+                "Esc": function(cm) { if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false); },
+                "Alt-F": "findPersistent",
+                "Tab": function(cm) {
+                  if (cm.somethingSelected()) {
+                    var sel = cm.getSelection("\n");
+                    // Indent only if there are multiple lines selected, or if the selection spans a full line
+                    if (sel.length > 0 && (sel.indexOf("\n") > -1 || sel.length === cm.getLine(cm.getCursor().line).length)) {
+                      cm.execCommand("indentMore");
+                      return;
+                    }
+                  }
+                  if (cm.options.indentWithTabs)
+                    cm.execCommand("insertTab");
+                  else
+                    cm.execCommand("insertSoftTab");
+                },
+                "Shift-Tab": function(cm) {
+                  if (cm.somethingSelected()) {
+                    var sel = cm.getSelection("\n");
+                    // Outdent only if there are multiple lines selected, or if the selection spans a full line
+                    if (sel.length > 0 && (sel.indexOf("\n") > -1 || sel.length === cm.getLine(cm.getCursor().line).length)) {
+                      cm.execCommand("indentLess");
+                      return;
+                    }
+                  }
+                  var charSize = cm.options.tabSize;
+                  if (cm.options.indentWithTabs)
+                    charSize = 1;
+                  var c = cm.getCursor();
+                  var lineText = cm.getRange({line: c.line, ch: c.ch - charSize}, {line: c.line, ch: c.ch});
+                  var m = /^(\s+)/.exec(lineText.reverse());
+                  if(m && m.length == 2)
+                    cm.replaceRange('', {line: c.line, ch: c.ch - m[1].length}, {line: c.line, ch: c.ch});
+                }}
+  });
+  var codeHeight = parseInt((frameHeight - 120) * 0.6);
+  editor_code.setSize("100%", codeHeight);
+
+  var editor_output = CodeMirror.fromTextArea(document.getElementById('scrout'), {
+    mode: "default",
+    readOnly: true,
+    lineWrapping: true,
+    lineNumbers: false
+  });                                          
+  editor_output.setSize("100%", parseInt((frameHeight - 120) - codeHeight));
+
+  RunScript = function()
+  {
+    var code = editor_code.getValue();
+    var val = $F('Text1');
+    var ths = $F('Text2');
+    var src = $F('Text3');
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "SyntaxCheck";';
+    pb += 'string code = ^'+code.replace(/\^/g, '^#\'^\'#^')+'^;';
+    pb += 'string val = "'+val+'";';
+    pb += 'string ths = "'+ths+'";';
+    pb += 'string src = "'+src+'";';
+    var opt = 
+    {
+      postBody: pb,
+      onComplete: function(t)
+      {
+        conInfo( "EditScript: CheckSyntax returned: ["+iseStripAll(t.responseText)+"]" );
+        if( iseStripAll(t.responseText).length == 0 )
+        {
+          homematic("ReGa.runScript", {"script": editor_code.getValue()}, function(response, error)
+              {
+                if (error === null)
+                {
+                  editor_output.setValue(response);
+                }
+              });
+        }
+        else
+        {
+          editor_output.setValue(t.responseText);
+      }
+    }
+  }
+    new Ajax.Request(url,opt);
+}
   SaveScript = function()
   {
-    dlgResult = $('scrinp').value;
+    dlgResult = editor_code.getValue();
   }
   CheckSyntax = function()
   {
-    var code = $F('scrinp');
+    var code = editor_code.getValue();
     var val = $F('Text1');
     var ths = $F('Text2');
     var src = $F('Text3');
@@ -78,11 +181,11 @@
         conInfo( "EditScript: CheckSyntax returned: ["+iseStripAll(t.responseText)+"]" );
         if( iseStripAll(t.responseText).length == 0 )
         {
-          $('scrout').value = translateKey("lblNoError");
+          editor_output.setValue(translateKey("lblNoError"));
         }
         else
         {
-          $('scrout').value = t.responseText;
+          editor_output.setValue(t.responseText);
         }
       }
     }

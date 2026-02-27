@@ -12,24 +12,23 @@
 mkdir -p /run/irqbalance
 
 EXEC="/usr/sbin/irqbalance"
-ARGS=""
+ARGS="--foreground"
 PID="/var/run/irqbalance.pid"
 
 case "$1" in
     start)
 	printf "Starting irqbalance: "
 	# shellcheck disable=SC2086
-	if ! start-stop-daemon -S -q -x $EXEC -- $ARGS; then
+	if ! start-stop-daemon -S -q -b -m -p ${PID} --exec $EXEC -- $ARGS; then
 	    echo "FAILED"
 	    exit 1
 	else
 	    echo "OK"
 	fi
-	pidof irqbalance > $PID
 	;;
     stop)
 	printf "Stopping irqbalance: "
-	start-stop-daemon -K -q -p $PID
+	start-stop-daemon -K -q -p ${PID}
 	echo "OK"
 	;;
     restart|reload)

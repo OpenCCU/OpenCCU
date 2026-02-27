@@ -177,82 +177,82 @@ arSortRObj[arSortRObj.length] = tmpRoom;
 <table id="tblRoomList" class="tblList CLASS04100" style="display:none" cellpadding="0" cellspacing="0" >
 
 <colgroup>
-  <col style="width:4%;"/>
-  <col style="width:8%;"/>
-  <col style="width:12%;"/>
-  <col style="width:12%;"/>
-  <col style="width:4%;"/>
-  <col style="width:16%;"/>
-  <col style="width:8%;"/>
-  <col style="width:8%;"/>
-  <col style="width:4%;"/>
-  <col style="width:8%;"/>
-  <col style="width:8%;"/>
-  <col style="width:8%;"/>
+  <col style="width:25px;" />
+  <col />
+  <col />
+  <col />
+  <col style="width:55px;">
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;">
+  <col style="width:100px;">
 </colgroup>
 
 <thead>
 <tr id="rowhead" class="CLASS04101">
-  <td id="tblListFold"></td>
+  <th id="tblListFold"></td>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
-  <td class="CLASS04102 DeviceListCell"><div id="roomQQQ" class="pt11 <%Write(sCssName); %>" onclick="SortRooms();"><b>${thRoom}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="roomQQQ" class="pt11 <%Write(sCssName); %>" onclick="SortRooms();">${thRoom}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>  
-  <td class="CLASS04102 DeviceListCell"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="SortMe('name');"><b>${thName}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="SortMe('name');">${thName}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
-  <td class="CLASS04102 DeviceListCell"><div id="desc" class="pt11 <%Write(sCssName); %>" onclick="SortMe('desc');"><b>${thTypeDescriptor}</b></div></td>
-  <td class="CLASS04102 DeviceListCell"><div class="pt11 Sort"><b>${thPicture}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="desc" class="pt11 <%Write(sCssName); %>" onclick="SortMe('desc');">${thTypeDescriptor}</div></th>
+  <th class="CLASS04102 DeviceListHead"><div class="pt11 Sort">${thPicture}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="type"){sCssName="SortSelected";} %>
-  <td class="CLASS04102 DeviceListCell"><div id="type" class="pt11 <%Write(sCssName); %>" onclick="SortMe('type');"><b>${thDescriptor}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="type" class="pt11 <%Write(sCssName); %>" onclick="SortMe('type');">${thDescriptor}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="sn"){sCssName="SortSelected";} %>
-  <td class="CLASS04102 DeviceListCell"><div id="sn" class="pt11 <%Write(sCssName); %>" onclick="SortMe('sn');"><b>${thSerialNumber}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="sn" class="pt11 <%Write(sCssName); %>" onclick="SortMe('sn');">${thSerialNumber}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="iface"){sCssName="SortSelected";} %>  
-  <td class="CLASS04102 DeviceListCell"><div id="iface" class="pt11 <%Write(sCssName); %>" onclick="SortMe('iface');"><b>${thInterfaceCategory}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="iface" class="pt11 <%Write(sCssName); %>" onclick="SortMe('iface');">${thInterfaceCategory}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="trans"){sCssName="SortSelected";} %>  
-  <td class="CLASS04102 DeviceListCell"><div id="trans" class="pt11 <%Write(sCssName); %>" onclick="SortMe('trans');"><b>${thTransmitMode}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="trans" class="pt11 <%Write(sCssName); %>" onclick="SortMe('trans');">${thTransmitMode}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>  
-  <td class="CLASS04102 DeviceListCell"><div id="func" class="pt11 <%Write(sCssName); %>" onclick="SortMe('func');"><b>${thFunc}</b></div></td>
-  <td class="CLASS04102 DeviceListCell"><div class="pt11 Sort"><b>${thAction}</b></div></td>
-  <td class="CLASS04102 DeviceListCell"><div class="pt11 Sort"><b>${thLinks}</b></div></td>
+  <th class="CLASS04102 DeviceListHead"><div id="func" class="pt11 <%Write(sCssName); %>" onclick="SortMe('func');">${thFunc}</div></td>
+  <th class="CLASS04102 DeviceListHead"><div class="pt11 Sort">${thAction}</div></th>
+  <th class="CLASS04102 DeviceListHead"><div class="pt11 Sort">${thLinks}</div></th>
 </tr>
 <tr id="rowflt" class="CLASS04103">
-  <td style="height:20px"></td>
-  <td class="CLASS04104" style="height:20px"></td>
-  <td class="CLASS04109" style="height:20px">
+  <th></td>
+  <th class="CLASS04104"></th>
+  <th class="CLASS04109">
     <div id="btnFilterName" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
         <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class='CLASS04112' />
         <div id="ftSetNameBtn" class='FilterSetButton CLASS04113' onclick="setSFilter(fltSR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
         <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
     </div>
-  </td>
-  <td class="CLASS04109" style="height:20px">
+  </th>
+  <th class="CLASS04109">
     <div id="btnFilterType" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterTypeSub" style="display:none">
         <input id="ftType" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetTypeBtn', 'ftCancelTypeBtn')" type="text" size="15" class='CLASS04112' />
         <div id="ftSetTypeBtn" class="FilterSetButton CLASS04113" onclick="setSFilter(fltSR, 'ftType', FIL_TYPE);updateTable();$('btnFilterTypeSub').hide();" >${filterSet}</div>
         <div id="ftCancelTypeBtn" class='FilterSetButton' onclick="$('btnFilterTypeSub').hide();">${filterClose}</div>
     </div>
-  </td>
-  <td class="CLASS04104" style="height:20px"></td>
-  <td class="CLASS04109" style="height:20px">
+  </th>
+  <th class="CLASS04104"></th>
+  <th class="CLASS04109">
     <div id="btnFilterDesc" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterDescSub" style="display:none">
         <input id="ftDesc" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDescBtn', 'ftCancelDescBtn')" type="text" size="15" class='CLASS04112' />
         <div id="ftSetDescBtn" class="FilterSetButton CLASS04113" onclick="setSFilter(fltSR, 'ftDesc', FIL_DESC);updateTable();$('btnFilterDescSub').hide();" >${filterSet}</div>
         <div id="ftCancelDescBtn" class='FilterSetButton' onclick="$('btnFilterDescSub').hide();">${filterClose}</div>
     </div>
-  </td>
+  </th>
   
   
-  <td class="CLASS04109" style="height:20px">
+  <th class="CLASS04109">
     <div id="btnFilterSN" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterSNSub" style="display:none">
         <input id="ftSN" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetSNBtn', 'ftCancelSNBtn')" type="text" size="15" class='CLASS04112' />
         <div id="ftSetSNBtn" class="FilterSetButton CLASS04113" onclick="setSFilter(fltSR, 'ftSN', FIL_SN);updateTable();$('btnFilterSNSub').hide();" >${filterSet}</div>
         <div id="ftCancelSNBtn" class='FilterSetButton' onclick="$('btnFilterSNSub').hide();">${filterClose}</div>
     </div>
-  </td>
-  <td class="CLASS04109" style="height:20px">
+  </th>
+  <th class="CLASS04109">
     <div id="btnFilterIface" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterIfaceSub" style="display:none">
         <table class='CLASS04110'>
@@ -268,8 +268,8 @@ arSortRObj[arSortRObj.length] = tmpRoom;
         <div class='FilterSetButton' onclick='setIFilter(fltSR, "iface");updateTable();$("btnFilterIfaceSub").hide();'>${filterSet}</div>
         <div class='FilterSetButton' onclick="$('btnFilterIfaceSub').hide();">${filterClose}</div>
     </div> 
-  </td>
-  <td class="CLASS04109" style="height:20px">
+  </th>
+  <th class="CLASS04109">
     <div id="btnFilterMode" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterModeSub" style="display:none">
         <table class='CLASS04110'>
@@ -285,8 +285,8 @@ arSortRObj[arSortRObj.length] = tmpRoom;
         <div class='FilterSetButton' onclick='setIFilter(fltSR, "mode");updateTable();$("btnFilterModeSub").hide();'>${filterSet}</div>
         <div class='FilterSetButton' onclick="$('btnFilterModeSub').hide();">${filterClose}</div>
     </div>
-  </td>
-  <td class="CLASS04109" style="height:20px">
+  </th>
+  <th class="CLASS04109">
     <div id="btnFilterFunc" class="FilterBtn CLASS00203">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterFuncSub" style="display:none">
       <% 
@@ -310,9 +310,9 @@ arSortRObj[arSortRObj.length] = tmpRoom;
         Write("<div class='FilterSetButton' onclick='$(\"btnFilterFuncSub\").hide();'>${filterClose}</div>");
       %>
     </div>
-  </td>
-  <td class="CLASS04104" style="height:20px"></td>
-  <td class="CLASS04104" style="height:20px"></td>
+  </th>
+  <th class="CLASS04104"></th>
+  <th class="CLASS04104"></th>
 </tr>
 
 </thead>
@@ -331,7 +331,7 @@ if ( oUser )
     object elem = dom.GetObject(tmp);
     if (elem)
     {
-      WriteLine("<tr id='r"#tmp#"'>");
+      WriteLine("<tr id='r"#tmp#"' class='CLASS04103'>");
       
       Write("<td>"); !+ / -
       string sStyle = "";
@@ -373,19 +373,12 @@ if ( oUser )
       Write("</td>");
       
       string sEnumPrgFilter = "";
-      integer iLinkCount = 0;
-      integer iProgCount = 0;
       string tmp = "";
       foreach( tmp, elem.EnumEnabledIDs() )
       {
         object chnTmp = dom.GetObject(tmp);
         if( chnTmp )
         {
-          iLinkCount = iLinkCount + chnTmp.ChnLinkCount();
-          if( chnTmp.ChnDPUsageCount() != ID_ERROR )
-          {
-            iProgCount = iProgCount + chnTmp.ChnDPUsageCount();
-          }
           if( !sEnumPrgFilter.Length() )
           {
             sEnumPrgFilter = chnTmp.ChnEnumDPUsagePrograms();

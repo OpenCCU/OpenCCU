@@ -58,11 +58,7 @@ namespace XmlRpc {
     //! Watch current set of sources and process events for the specified
     //! duration (in ms, -1 implies wait forever, or until exit is called)
     //! return true if an event was received and false in case of timeout
-    #if __BITS_TO_LONG == 32
-    bool work(long msTime);
-    #else
     bool work(int32_t msTime);
-    #endif
 
     //! Exit from work routine
     void exit();
@@ -73,11 +69,7 @@ namespace XmlRpc {
   protected:
 
     // helper
-    #if __BITS_TO_LONG == 32
-    unsigned long getTime();
-    #else
-    uint32_t getTime();
-    #endif
+    uint64_t getTime();
 
     // A source to monitor and what to monitor it for
     struct MonitoredSource {

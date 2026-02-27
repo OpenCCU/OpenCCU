@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -534,7 +534,7 @@
+@@ -544,7 +544,7 @@
    foreach( s, dom.TestRunningIDs().EnumIDs() )
    {
      object oTestChannel = dom.GetObject( s );

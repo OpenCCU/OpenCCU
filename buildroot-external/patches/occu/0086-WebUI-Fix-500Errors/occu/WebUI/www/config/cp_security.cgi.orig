@@ -3,6 +3,7 @@ source once.tcl
 sourceOnce common.tcl
 sourceOnce session.tcl
 sourceOnce file_io.tcl
+sourceOnce backup.tcl
 load tclrpc.so
 load tclrega.so
 
@@ -29,7 +30,7 @@ proc get_current_key_index {} {
   set CURRENT_INDEX "Current user key"
   set PREVIOUS_INDEX "Previous user key"
 
-  # Schlüssel-Index ermitteln
+  # Schlï¿½ssel-Index ermitteln
   set fd [open "|crypttool -g" r]
   set content [read $fd]
   close $fd
@@ -77,8 +78,8 @@ proc getSGTIN_CCU {} {
 proc getSGTIN_Backup {migrationMode} {
 
   switch $migrationMode {
-    "CCU2_CCU2" {set path_crRFD "/tmp/backup/usr/local/etc/config/crRFD/data"}
-    "CCU2_CCU3" {set path_crRFD "/tmp/backup/usr/local/etc/config/crRFD/data"}
+    "CCU2_CCU2" {set path_crRFD "/usr/local/tmp/backup/usr/local/etc/config/crRFD/data"}
+    "CCU2_CCU3" {set path_crRFD "/usr/local/tmp/backup/usr/local/etc/config/crRFD/data"}
     "CCU3_CCU3" {set path_crRFD "/usr/local/eQ-3-Backup/restore/etc/config/crRFD/data"}
   }
 
@@ -93,14 +94,14 @@ proc getBackupErrorMessage {errorCode migration_mode} {
   # ERROR CODES:
   #  9 = Check the script /bin/checkUsrBackup.sh - the java call is wrong
   # 10 = OK
-  # 11 = Backup fehlerhaft / unvollständig (z.B. *.apkx Datei fehlt)
+  # 11 = Backup fehlerhaft / unvollstï¿½ndig (z.B. *.apkx Datei fehlt)
   # 12 = Internet fehlt / KeyServer Timeout
   # 13 = KeyServer NAK (eine oder beide sind nicht im KeyServer)
-  # 14 = Fehler bei Gerätepersistenz (einlesen fehlgeschlagen oder Versionen / Typen nicht kompatibel)
-  # 15 = Migration Fehlgeschlagen (nicht für die Backup Validierungs Main)
-  # 16 = Adapter (Coprozessor) nicht verfügbar (basierend auf den Konfigurationen aus dem Backup + Default aus /etc)
-  # 17 = Adapter konnte nicht initialisiert werden (beschädigte Application / Fehlerrückmeldungen)
-  # 18 = Adapter Version nicht unterstützt
+  # 14 = Fehler bei Gerï¿½tepersistenz (einlesen fehlgeschlagen oder Versionen / Typen nicht kompatibel)
+  # 15 = Migration Fehlgeschlagen (nicht fï¿½r die Backup Validierungs Main)
+  # 16 = Adapter (Coprozessor) nicht verfï¿½gbar (basierend auf den Konfigurationen aus dem Backup + Default aus /etc)
+  # 17 = Adapter konnte nicht initialisiert werden (beschï¿½digte Application / Fehlerrï¿½ckmeldungen)
+  # 18 = Adapter Version nicht unterstï¿½tzt
   # 99 = Unknown error
 
   if {$errorCode == 13} {
@@ -135,8 +136,8 @@ proc readBackupStatus {} {
 proc checkUserBackupValidility {migrationMode} {
 
   switch $migrationMode {
-    "CCU2_CCU2" {set pathBackup "/tmp/backup/usr/local/"}
-    "CCU2_CCU3" {set pathBackup "/tmp/backup/usr/local/"}
+    "CCU2_CCU2" {set pathBackup "/usr/local/tmp/backup/usr/local/"}
+    "CCU2_CCU3" {set pathBackup "/usr/local/tmp/backup/usr/local/"}
     "CCU3_CCU3" {set pathBackup "/usr/local/eQ-3-Backup/restore/"}
   }
 
@@ -172,15 +173,15 @@ proc action_change_key {} {
   # check the entered key against our current system key
   if { ![catch {exec crypttool -v -t 3 -k "$key1"}]} {
 
-    # "Der eingegebene Schlüssel entspricht dem aktuellen Schlüssel der Zentrale. "
-    # "Der Schlüssel wird nicht geändert."
+    # "Der eingegebene Schlï¿½ssel entspricht dem aktuellen Schlï¿½ssel der Zentrale. "
+    # "Der Schlï¿½ssel wird nicht geï¿½ndert."
     put_message "\${dialogSettingsSecurityMessageHintSecKeyTitle}" \${dialogSettingsSecurityMessageErrorSecKeyContentKeysIsIdentical} {\${dialogBack} "showSecurityCP();"}
     return
   }
   
   if { [catch {set_key $key1}] } {
-    # "Der Schlüssel konnte nicht gesetzt werden. Das liegt vermutlich daran, daß "
-    # "der aktuelle Schlü;ssel noch nicht an alle Komponenten übertragen wurde. "
+    # "Der Schlï¿½ssel konnte nicht gesetzt werden. Das liegt vermutlich daran, daï¿½ "
+    # "der aktuelle Schlï¿½;ssel noch nicht an alle Komponenten ï¿½bertragen wurde. "
     # "Hinweise darauf finden Sie in den Servicemeldungen."
     put_message "\${dialogSettingsSecurityMessageErrorSecKeyTitle}" \${dialogSettingsSecurityMessageErrorSecKeyContentKeyNotAllDevices} {\${dialogBack} "showSecurityCP();"}
     return
@@ -296,7 +297,7 @@ proc action_factory_reset_go {} {
     } else {
       exec touch /usr/local/.doFactoryReset
     }
-    exec kill -SIGQUIT 1
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
   }]} {
 
     # TWIST-22
@@ -324,7 +325,7 @@ proc action_factory_reset_go {} {
     ${dialogPerformRebootContent}
   } {"\${btnNewLogin}" "window.location.href='/';"}
 
-  # Nicht mehr nötig, siehe TWIST-22
+  # Nicht mehr nï¿½tig, siehe TWIST-22
   set comment {
     else {
       division {class="popupTitle"} {
@@ -371,14 +372,20 @@ proc action_factory_reset_go {} {
 
 proc action_backup_restore_check {} {
   global env
-  cd /tmp/
+  cd /usr/local/tmp/
   
   http_head
   set i 0
   if { [catch {
-    exec tar xf new_config.tar
-    file delete -force /tmp/new_config.tar
-  
+    exec find /usr/local/tmp -maxdepth 1 -type f -not ( -name new_config.tar -or -name .nobackup ) -delete
+    exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/new_config.tar 2>/dev/null
+    file delete -force /usr/local/tmp/new_config.tar
+
+  # check archive consistency if there is a signature.sha256
+  if { [file exists /usr/local/tmp/signature.sha256] } {
+    exec sha256sum -s -c signature.sha256
+  }
+
   set config_version [read_version "firmware_version"]
   set ccu1_backup false
   if { [version_compare $config_version 2.0.0] < 0 } {
@@ -391,12 +398,12 @@ proc action_backup_restore_check {} {
 
   if { "false" == $ccu1_backup } {
     set config_has_user_key [expr {"$stored_signature" != "$calculated_signature"} ]
-  } else {  #CCU1 used an other default key. So we can´t check with crypttool.
+  } else {  #CCU1 used an other default key. So we canï¿½t check with crypttool.
     set config_has_user_key [exec cat key_index]
   }  
   } errorMessage] } {
-    # "Die ausgewählte Datei enthält kein HomeMatic Systembackup. "
-    # "Bitte wählen Sie eine gültige Backup-Datei aus."
+    # "Die ausgewï¿½hlte Datei enthï¿½lt kein HomeMatic Systembackup. "
+    # "Bitte wï¿½hlen Sie eine gï¿½ltige Backup-Datei aus."
     put_message "\${dialogSettingsSecurityMessageSysBackupInvalidFileTitle}" \${dialogSettingsSecurityMessageSysBackupInvalidFileContent} {\${dialogBack} "showSecurityCP();"}
     return
   }
@@ -509,10 +516,10 @@ proc action_backup_restore_check {} {
 
 proc action_backup_restore_go {} {
   global env
-  cd /tmp/
+  cd /usr/local/tmp/
   http_head
     
-  set system_version [read_version "/boot/VERSION"]
+  set system_version [read_version "/VERSION"]
   set config_version [read_version "firmware_version"]
   set ccu1_backup false
   if { [version_compare $config_version 2.0.0] < 0 } {
@@ -529,7 +536,7 @@ proc action_backup_restore_go {} {
 
   if { "false" == $ccu1_backup } {
     set config_has_user_key [expr {"$stored_signature" != "[exec crypttool -s -t 0 <usr_local.tar.gz]"} ]
-  } else {  #CCU1 used an other default key. So we can´t check with crypttool.
+  } else {  #CCU1 used an other default key. So we canï¿½t check with crypttool.
     set config_has_user_key [exec cat key_index]
   }
     catch { import key }
@@ -595,20 +602,20 @@ proc action_backup_restore_go {} {
     if { "CCU2_CCU2" == $migration_mode } {
       # CCU2 ==> CCU2
       set backuperror false
-      set source_version [read_version "/tmp/firmware_version"]
+      set source_version [read_version "/usr/local/tmp/firmware_version"]
       set source_version [split $source_version .]
       set source_major [lindex $source_version 0]
       set source_minor [lindex $source_version 1]
       set source_patch [lindex $source_version 2]
       if { (($source_major == 2)  && ($source_minor > 17)) || (($source_major == 2) && ($source_minor == 17) && ($source_patch >= 14))} {
-        # extract backup to /tmp to enable checkUsrBackup.sh to validate backup
-        file delete -force /tmp/backup
-        file mkdir /tmp/backup
-        cd /tmp/backup
-        if { [catch {exec tar xzf /tmp/usr_local.tar.gz} errorMessage] } {
+        # extract backup to /usr/local/tmp to enable checkUsrBackup.sh to validate backup
+        file delete -force /usr/local/tmp/backup
+        file mkdir /usr/local/tmp/backup
+        cd /usr/local/tmp/backup
+        if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz} errorMessage] } {
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
-          file delete -force /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
+          file delete -force /usr/local/tmp/firmware_version /usr/local/tmp/signature /usr/local/tmp/usr_local.tar.gz /usr/local/tmp/backup
           return
           #set backuperror true
         } else {
@@ -621,7 +628,7 @@ proc action_backup_restore_go {} {
             # Start /etc/init.d/S62HMServer start
             cgi_javascript {puts "MessageBox.close();"}
             put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} [getBackupErrorMessage $checkBackupState $migration_mode]"
-            file delete -force /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
+            file delete -force /usr/local/tmp/firmware_version /usr/local/tmp/signature /usr/local/tmp/usr_local.tar.gz /usr/local/tmp/backup
             cgi_javascript {puts "homematic('User.restartHmIPServer');"}
             return
           } 
@@ -645,7 +652,7 @@ proc action_backup_restore_go {} {
           # append msg $errorMessage
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
-          file delete -force /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
+          file delete -force /usr/local/tmp/firmware_version /usr/local/tmp/signature /usr/local/tmp/usr_local.tar.gz /usr/local/tmp/backup
           return
         } else {
           set backuperror false
@@ -657,24 +664,25 @@ proc action_backup_restore_go {} {
     file delete -force /usr/local/eQ-3-Backup/restore
     file mkdir /usr/local/eQ-3-Backup/restore
     cd /usr/local/eQ-3-Backup/restore
-      if { [catch {exec tar xzf /tmp/usr_local.tar.gz --strip 2} errorMessage] } {
+      if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz --strip 2} errorMessage] } {
           # show message "Beim Einspielen des Systembackups ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut. "
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
           set backuperror true
         } else {
           set backuperror false
+          exec touch /usr/local/.doBackupRestore
         }
     } elseif { "CCU2_CCU3" == $migration_mode } {
           # CCU2 ==> CCU3
-        # be sure /tmp/backup is empty
-        file delete -force /tmp/backup
+        # be sure /usr/local/tmp/backup is empty
+        file delete -force /usr/local/tmp/backup
         # be sure restore directory is empty
         file delete -force /usr/local/eQ-3-Backup/restore
-        file mkdir /tmp/backup
+        file mkdir /usr/local/tmp/backup
 
-        cd /tmp/backup
-        if { [catch {exec tar xzf /tmp/usr_local.tar.gz} errorMessage] } {
+        cd /usr/local/tmp/backup
+        if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz} errorMessage] } {
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
           set backuperror true
@@ -682,8 +690,8 @@ proc action_backup_restore_go {} {
           # only do this when the compatibility check says ok:
           #copy old files
           file mkdir /usr/local/eQ-3-Backup/restore/etc/config
-          if { [file exists /tmp/backup/usr/local/etc/config] } {
-            cd /tmp/backup/usr/local/etc/config
+          if { [file exists /usr/local/tmp/backup/usr/local/etc/config] } {
+            cd /usr/local/tmp/backup/usr/local/etc/config
           }
 
           if { [file exists InterfacesList.xml] } { file copy InterfacesList.xml /usr/local/eQ-3-Backup/restore/etc/config/InterfacesList.xml }
@@ -716,26 +724,31 @@ proc action_backup_restore_go {} {
 
           set backuperror false
           cd /
+          exec touch /usr/local/.doBackupRestore
         }
       }
     } else {  # backup for version < 2
+      catch {
+        exec pkill ReGaHss
+        exec sleep 5
+      }
       #delete existing files
-      file delete -force /tmp/backup
+      file delete -force /usr/local/tmp/backup
       file delete -force /etc/config/hs485d /etc/config/hs485types /etc/config/rfd /etc/config/userprofiles
       file delete -force /etc/config/homematic.regadom /etc/config/homematic.regadom.bak
       file delete -force /etc/config/ids /etc/config/ntpclient /etc/config/rega.conf /etc/config/syslog
       file delete -force /etc/config/tweaks /etc/config/TZ /etc/config/server.pem /etc/config/keys
       file delete -force /etc/config/time.conf
 
-      file mkdir /tmp/backup
-      cd /tmp/backup
-      if { [catch {exec tar xzf /tmp/usr_local.tar.gz} errorMessage] } {
+      file mkdir /usr/local/tmp/backup
+      cd /usr/local/tmp/backup
+      if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz} errorMessage] } {
         put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
         set backuperror true
       } else {
         #copy old files
-        if { [file exists /tmp/backup/usr/local/etc/config] } {
-          cd /tmp/backup/usr/local/etc/config
+        if { [file exists /usr/local/tmp/backup/usr/local/etc/config] } {
+          cd /usr/local/tmp/backup/usr/local/etc/config
         }
 
         if { [file exists hs485d] } { file copy hs485d /etc/config/hs485d }
@@ -789,11 +802,13 @@ proc action_backup_restore_go {} {
         catch {exec eq3configcmd rfd-interface-copy rfd.conf /etc/config/rfd.conf}
 
         set backuperror false
+        exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+        return
       }
     cd /
   }
 
-  set source_version [read_version "/tmp/firmware_version"]
+  set source_version [read_version "/usr/local/tmp/firmware_version"]
 
   set source_version [split $source_version .]
   set source_major [lindex $source_version 0]
@@ -817,8 +832,7 @@ proc action_backup_restore_go {} {
   cgi_javascript {puts "MessageBox.close();"}
 
   if { "false" == $backuperror } {
-    exec mount -o remount,ro /usr/local
-    exec mount -o remount,rw /usr/local
+    exec sync
     division {class="popupTitle"} {
       puts "\${dialogSettingsSecurityMessageSysBackupRestartSystemTitle}"
     }
@@ -859,8 +873,6 @@ proc action_backup_restore_go {} {
   cgi_javascript {
     puts "translatePage('#messagebox');"
   }
-
-  file delete -force /tmp/new_config.tar /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
 }
 
 proc put_message {title msg args} {
@@ -928,15 +940,14 @@ proc action_set_session_timeout {} {
 proc action_put_page {} {
   global env sid
 
-  cgi_debug -on
-
   http_head
   division {class="popupTitle j_translate"} {
     puts "\${dialogSettingsSecurityTitle}"
   }
 
   division {class="CLASS20815"} {
-    table {class="popupTable j_translate"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable j_translate"} {border="1"} {height="100%"} {
       table_row {class="CLASS20806"} {
         table_data {class="CLASS20807"} {
           puts "\${dialogSettingsSecurityTDKey}"
@@ -964,6 +975,15 @@ proc action_put_page {} {
               }
               table_data {align="right"} {
                 cgi_text key2= {size="16"} {id="text_key2"} {type="password"}
+              }
+            }
+            table_row {
+              td {width="20"} {}
+              table_data {align="left"} {
+                puts "\${dialogSettingsSecurityLblSecKeyChanges}"
+              }
+              table_data {align="right"} {
+                cgi_text keychanges=[get_current_key_index] {size="3"} {id="key_changes"} {type="text"} {disabled=""}
               }
             }
             table_row {
@@ -1022,8 +1042,7 @@ proc action_put_page {} {
             table_row {
               td {width="20"} {}
               table_data {align="left"} {colspan="2"} {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=backup_form {target=config_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=backup_upload
+                form "/config/fileupload.ccc?sid=$sid&action=backup_upload&url=$env(SCRIPT_NAME)" name=backup_form {target=config_upload_iframe} enctype=multipart/form-data method=post {
                   file_button backup_file size=20 maxlength=1000000
                 }
                 puts {<iframe name="config_upload_iframe" class="CLASS20820" style="display: none;"></iframe>}
@@ -1213,6 +1232,33 @@ proc action_put_page {} {
           }
         }
       }
+      # automatic redirect to https
+      if { [getProduct]  >= 3 } {
+        table_row {class="CLASS20806"} {
+          table_data {class="CLASS20807"} {
+            puts "\${cpSecurityHttpsRedirectTitle}"
+          }
+          table_data {class="CLASS20808"} {
+            division {} {
+              table {
+                table_row {
+                  table_data {align="left"}  {
+                    puts "\${cpSecurityHttpsRedirectLabel}"
+                  }
+                  set checked ""
+                  #set checked "checked=true"
+                  table_data {class="CLASS21112"} {align="left"}  {
+                    cgi_checkbox httpsRedirectState=unknown {id="httpsRedirectActive"} {onClick=setHttpsRedirect();} $checked
+                  }
+                }
+              }
+            }
+          }
+          table_data {class="CLASS20808"} {
+            puts "\${cpSecurityHttpsRedirectDescription}"
+          }
+        }
+      }
       # SNMP <-- may if getProduct check if needed for ccu2 too
       if { [getProduct]  >= 3 } { 
         table_row {class="CLASS20806"} {
@@ -1276,6 +1322,7 @@ proc action_put_page {} {
         }
       }
     }
+    }
   }
   division {class="popupControls"} {
     table {
@@ -1304,7 +1351,7 @@ proc action_put_page {} {
         dlgPopup.LoadFromFile(url, "action=change_key&key1="+document.getElementById("text_key1").value+"&key2="+document.getElementById("text_key2").value);
       }
       OnBackupSubmit = function() {
-        //ProgressBar = new ProgressBarMsgBox("Systembackup wird übertragen...", 1);
+        //ProgressBar = new ProgressBarMsgBox("Systembackup wird ï¿½bertragen...", 1);
         //ProgressBar.show();
         //ProgressBar.StartKnightRiderLight();
 
@@ -1445,13 +1492,25 @@ proc action_put_page {} {
         hasAuthStatusChanged = (initialAuthStatus != newAuthState) ? true : false;
       };
 
+      // Set the checkbox for the https redirect according to its state
+      var hasHttpsRedirectStatusChanged = false;
+      var initialHttpsRedirectStatus = homematic("CCU.getHttpsRedirectEnabled", {});
+      jQuery("#httpsRedirectActive").prop("checked", initialHttpsRedirectStatus);
+
+      setHttpsRedirect = function(elm) {
+        var newHttpsRedirectState = jQuery("#httpsRedirectActive").prop("checked");
+        homematic("CCU.setHttpsRedirectEnabled", {"enabled": newHttpsRedirectState});
+        hasHttpsRedirectStatusChanged = (initialHttpsRedirectStatus != newHttpsRedirectState) ? true : false;
+      };
+
+
       //Set the checkbox for SNMP according to its state
       var hasSNMPStatusChanged = false;
       var initialSNMPStatus = homematic("CCU.getSNMPEnabled", {});
       jQuery("#snmpEnabled").prop("checked", initialSNMPStatus);
 
       restartLighttpd = function() {
-        if (hasAuthStatusChanged) {
+        if (hasAuthStatusChanged || hasHttpsRedirectStatusChanged) {
         homematic("User.restartLighttpd", {}, function () {
           conInfo("Lighttpd restarted");
         });
@@ -1464,47 +1523,25 @@ proc action_put_page {} {
 }
 
 proc action_create_backup {} {
-  set HOSTNAME [exec hostname]
-  set iso8601_date [exec date -Iseconds]
-  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-]\d+)$} $iso8601_date dummy year month day hour minute second zone
-  #save DOM
-  rega system.Save()
-  cd /
-  exec tar czf /tmp/usr_local.tar.gz usr/local
-  cd /tmp/
-  #sign the configuration with the current key
-  exec crypttool -s -t 1 <usr_local.tar.gz >signature
-  #store the current key index
-  exec crypttool -g -t 1 >key_index
-  file copy -force /boot/VERSION firmware_version
-  set fd [open "|tar c usr_local.tar.gz signature firmware_version key_index"]
-  catch {fconfigure $fd -translation binary}
-  catch {fconfigure $fd -encoding binary}
-  puts "Content-Type:application/x-download"
-  puts "Content-Disposition:attachment;filename=[set HOSTNAME]-$year-$month-$day.sbk\n"
-  catch {fconfigure stdout -translation binary}
-  catch {fconfigure stdout -encoding binary}
-  while { ! [eof $fd]} {
-    puts -nonewline [read $fd 65536]
-  }
-  close $fd
-  file delete -force /tmp/usr_local.tar.gz /tmp/firmware_version /tmp/signature
+  create_backup
 }
 
 proc action_backup_upload {} {
-  global env sid
-  cd /tmp/
+  global env sid filename
+  cd /usr/local/tmp/
 
+  file rename -force -- $filename "/usr/local/tmp/new_config.tar"
   http_head
-  import_file -client backup_file
-  file rename -force -- [lindex $backup_file 0] "/tmp/new_config.tar"
   cgi_javascript {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
     puts {
-      //parent.top.ProgressBar.IncCounter("Backup wurde übertragen.");
-      parent.top.dlgPopup.hide();
-      parent.top.dlgPopup.setWidth(400);
-      parent.top.dlgPopup.LoadFromFile(url, "action=backup_restore_check");
+      var dlgPopup = parent.top.dlgPopup;
+      if (dlgPopup === undefined) {
+        dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+      }
+      dlgPopup.hide();
+      dlgPopup.setWidth(400);
+      dlgPopup.LoadFromFile(url, "action=backup_restore_check");
     }
   }
 }
@@ -1573,14 +1610,16 @@ proc version_compare {v1 v2} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
 
   set action "put_page"
+  set filename ""
 
   catch { import action }
+  catch { import filename }
 
   if {[session_requestisvalid 8] > 0} then action_$action
 }

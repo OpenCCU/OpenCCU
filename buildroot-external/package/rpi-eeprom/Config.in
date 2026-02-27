@@ -1,6 +1,26 @@
 config BR2_PACKAGE_RPI_EEPROM
 	bool "rpi-eeprom"
 	help
-	  EEPROM bootloader firmware for Raspberry Pi 4
+	  EEPROM bootloader firmware for Raspberry Pi 4 and Pi 5
 
 	  https://github.com/raspberrypi/rpi-eeprom
+
+if BR2_PACKAGE_RPI_EEPROM
+
+choice
+	prompt "For Target"
+	default BR2_PACKAGE_RPI_EEPROM_RPI4
+
+config BR2_PACKAGE_RPI_EEPROM_RPI4
+	bool "Raspberry Pi 4"
+	help
+	  For the Raspberry Pi 4
+
+config BR2_PACKAGE_RPI_EEPROM_RPI5
+	bool "Raspberry Pi 5"
+	help
+	  For the Raspberry Pi 5
+
+endchoice
+
+endif

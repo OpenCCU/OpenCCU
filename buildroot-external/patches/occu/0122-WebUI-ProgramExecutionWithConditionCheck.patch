@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -1274,7 +1274,13 @@
+@@ -1282,7 +1282,13 @@
    Write("<td>");
    string sClass = "ControlBtnOff";
    if( objProg.Active() ) { sClass = "ControlBtnOn"; }
@@ -15,7 +15,7 @@
      Write("<tr>");
      Write("<td  class='CLASS02103'>");
          Write("<div align='center'>");
-@@ -1283,7 +1289,11 @@
+@@ -1291,7 +1297,11 @@
        Write("</td>");
      Write("</tr>");
      !Write("<tr><td>Aktiv</td></tr>");
@@ -28,7 +28,7 @@
      Write("</table>");
    Write("</td>");
    if (system.GetVar("iStatusOnly") == 0)
-@@ -1292,15 +1302,17 @@
+@@ -1300,15 +1310,17 @@
      !Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>Start</div>");
      Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStart}</div>");
      Write("<script type='text/javascript'>");
@@ -51,7 +51,7 @@
    Write("</table>");
 --- occu/WebUI/www/rega/pages/tabs/control/programs.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/programs.htm
-@@ -51,7 +51,7 @@
+@@ -58,7 +58,7 @@
          <th class="tHeaderCell CLASS03303" >${thDescription}</th>
          <th class="tHeaderCell CLASS03303" >${thActivity}</th>
          <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
@@ -62,7 +62,7 @@
        <tbody>
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -764,8 +764,11 @@
+@@ -778,8 +778,11 @@
      "dialogBackspacePrevent" : "Bitte verwenden Sie zum Navigieren die Bedienelemente der Weboberfl%E4che.",
      "commentDialogNewHelpEnd" : "***********************************************",
      "commentActionStatusControl" : "***********************************************",
@@ -78,7 +78,7 @@
      "actionStatusControlLblShortKeyPress" : "Kurzer<br/>Tastendruck",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -791,8 +791,11 @@
+@@ -805,8 +805,11 @@
  
      "commentActionStatusControl" : "***********************************************",
  
@@ -94,7 +94,7 @@
      "actionStatusControlLblShortKeyPress" : "Short<br/>button press",
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -5015,9 +5015,11 @@
+@@ -5110,9 +5110,11 @@
  
  .CLASS02104 {
  	cursor:pointer;
@@ -109,7 +109,7 @@
  .CLASS02105 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -29559,14 +29559,14 @@
+@@ -34625,14 +34625,14 @@
    return arTmp[0]+':'+arTmp[1];
  };
  
@@ -126,7 +126,7 @@
    pb += "}";
    var opts = {postBody: ReGa.encode(pb)};
    if(dbg)alert(pb);
-@@ -32497,13 +32497,15 @@
+@@ -38007,13 +38007,15 @@
   **/
  iseButtonProg = Class.create();
  iseButtonProg.prototype = {
@@ -144,7 +144,7 @@
      if ( progActive ) { ControlBtn.on(this.actBtn); }
      
      // Add event handlers
-@@ -32514,7 +32516,7 @@
+@@ -38024,7 +38026,7 @@
    onClickStart: function() 
    {
      ControlBtn.pushed(this.startBtn);

@@ -1,163 +1,188 @@
 <img height="60px" src="release/logo.png" align="left">
-
 <br/>
 
-**– Das alternative/freie Betriebssystem für Ihre HomeMatic CCU**
+### Die flexible, cloudfreie Homematic IP® CCU-Smart-Home-Lösung
 
-[![Current Release](https://img.shields.io/github/release/jens-maus/RaspberryMatic.svg)](https://github.com/jens-maus/RaspberryMatic/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/jens-maus/RaspberryMatic/latest/total.svg)](https://github.com/jens-maus/RaspberryMatic/releases/latest)
-[![CI Build](https://github.com/jens-maus/RaspberryMatic/workflows/CI%20Build/badge.svg)](https://github.com/jens-maus/RaspberryMatic/actions)
-[![Snaphot Build](https://github.com/jens-maus/RaspberryMatic/workflows/Snaphot%20Build/badge.svg)](https://github.com/jens-maus/RaspberryMatic/releases/tag/snapshots)
-[![Contributors](https://img.shields.io/github/contributors/jens-maus/RaspberryMatic.svg)](https://github.com/jens-maus/RaspberryMatic/graphs/contributors)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/jens-maus/RaspberryMatic.svg)](https://github.com/jens-maus/RaspberryMatic/issues)
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/jens-maus/RaspberryMatic.svg)](https://github.com/jens-maus/RaspberryMatic/issues)
-[![Commits since last release](https://img.shields.io/github/commits-since/jens-maus/RaspberryMatic/latest.svg)](https://github.com/jens-maus/RaspberryMatic/releases/latest)
-[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/raspberrymatic)](https://artifacthub.io/packages/search?repo=raspberrymatic)
-[![License](https://img.shields.io/github/license/jens-maus/RaspberryMatic.svg)](https://github.com/jens-maus/RaspberryMatic/blob/master/LICENSE)
+[![Current Release](https://img.shields.io/github/release/OpenCCU/OpenCCU.svg)](https://github.com/OpenCCU/OpenCCU/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/OpenCCU/OpenCCU/latest/total.svg)](https://github.com/OpenCCU/OpenCCU/releases/latest)
+[![DownloadsSnapshots](https://img.shields.io/github/downloads/OpenCCU/OpenCCU/snapshots/total.svg)](https://github.com/OpenCCU/OpenCCU/releases/snapshots)
+[![CI Build](https://github.com/OpenCCU/OpenCCU/workflows/CI%20Build/badge.svg)](https://github.com/OpenCCU/OpenCCU/actions)
+[![Snapshot Build](https://github.com/OpenCCU/OpenCCU/workflows/Snapshot%20Build/badge.svg)](https://github.com/OpenCCU/OpenCCU/releases/tag/snapshots)
+[![Contributors](https://img.shields.io/github/contributors/OpenCCU/OpenCCU.svg)](https://github.com/OpenCCU/OpenCCU/graphs/contributors)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/OpenCCU/OpenCCU.svg)](https://github.com/OpenCCU/OpenCCU/issues)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/OpenCCU/OpenCCU.svg)](https://github.com/OpenCCU/OpenCCU/issues)
+[![Commits since last release](https://img.shields.io/github/commits-since/OpenCCU/OpenCCU/latest.svg)](https://github.com/OpenCCU/OpenCCU/releases/latest)
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/openccu)](https://artifacthub.io/packages/search?repo=openccu)
+[![License](https://img.shields.io/github/license/OpenCCU/OpenCCU.svg)](https://github.com/OpenCCU/OpenCCU/blob/master/LICENSE)
 [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL)
 [![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/jens-maus)](https://github.com/sponsors/jens-maus)
-[![Twitter](https://img.shields.io/twitter/follow/RaspberryMatic.svg?style=social&label=Follow)](https://twitter.com/RaspberryMatic)
-[![GitHub stars](https://img.shields.io/github/stars/jens-maus/RaspberryMatic.svg?style=social&label=Star)](https://github.com/jens-maus/RaspberryMatic/stargazers/)
+[![GitHub stars](https://img.shields.io/github/stars/OpenCCU/OpenCCU.svg?style=social&label=Star)](https://github.com/OpenCCU/OpenCCU/stargazers/)
 
 <sub>[Click here for 🇬🇧🇺🇸 english readme](README.md)</sub>
 ___
-Bei _RaspberryMatic_ handelt es sich um ein alternatives, freies und nicht-kommerziell vertriebenes OpenSource Betriebssystem für die kommerziell erhältlichen _[CCU3](https://www.homematic-ip.com/en/products/detail/smart-home-central-control-unit-ccu3.html)_ bzw. _[ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html)_ SmartHome-Zentralen zur Nutzung von [HomeMatic](http://homematic.com/)/BidCos-RF bzw. [homematicIP](https://www.homematic-ip.com/) Hardware der Firmengruppe [eQ-3](https://eq-3.de)/[ELV](https://elv.de/). RaspberryMatic hat sich zum Ziel gesetzt nicht nur den kompletten Funktionsumfang einer sogn. _HomeMatic CCU SmartHome-Zentrale_ für eine Cloudfreie Nutzung von HomeMatic Geräten für frei erhältliche Single-Board-Computern (SBC) wie z.B. den [RaspberryPi](https://www.raspberrypi.org/), [ASUS Tinkerboard](https://www.asus.com/Single-Board-Computer/Tinker-Board-S/) oder aber auch als virtualisierte Variante für moderne Virtualisierungsumgebungen (z.B. vmWare ESXi, Proxmox, VirtualBox, Docker/OCI, Kubernetes/K8s, etc.) nutzbar zu machen. Es hat sich auch zum Ziel gesetzt auf verschiedenen Ebenen (WebUI, Linux-Betriebsystem, etc.) Verbesserungen bzw. Bugfixes mitzubringen die in der originalen CCU Firmware von eQ3/ELV (noch) nicht vorhanden sind.
 
-[mehr...](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung)
+OpenCCU ist ein freies, nicht-kommerzielles Open-Source-Betriebssystem für einen **cloudfreien Smart-Home-Hub**, der mit eQ-3s [Homematic IP](https://www.homematic-ip.com/) / [HomeMatic](http://homematic.com/)-Geräten kompatibel ist. Ziel ist die **100%ige Kompatibilität** zur herstellerseitigen _CCU3_. OpenCCU kann direkt auf [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit)- und [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html)-Hardware installiert werden. Zudem läuft es auf gängigen SBCs (z. B. [Raspberry Pi](https://www.raspberrypi.org/), [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/), [ASUS Tinker Board](https://www.asus.com/Single-Board-Computer/Tinker-Board-S/)) sowie auf generischer x86-Hardware wie [Intel NUC](https://www.intel.com/content/www/us/en/products/details/nuc.html). Darüber hinaus ist OpenCCU als virtuelle Appliance für verbreitete Hypervisor- und Container-Plattformen verfügbar (z. B. Proxmox VE, VMware ESXi, VirtualBox, Synology VMM, Docker/OCI, Kubernetes) und als natives [Home Assistant](https://www.home-assistant.io/)-Add-on. Über die CCU3-Parität hinaus bietet OpenCCU **moderne WebUI-, OS- und Konnektivitäts-Erweiterungen** für ein fortschrittlicheres Nutzererlebnis.
 
-## :cookie: Features
+[mehr...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung)
 
-RaspberryMatic ist systembedingt zu der Betriebssystemsoftware einer CCU-Zentrale der Firma eQ3/ELV (CCU2/CCU3) (die den gleichen Versionsstand hat) 100% kompatibel. Dies bedeutet, das nicht nur die selben HomeMatic/homematicIP Geräte angelernt/genutzt werden können, auch verhält sich RaspberryMatic in Punkto Funktionalität und WebUI vollkommen kompatibel. Des Weiteren kann die komplette Konfiguration zwischen der Standard Betriebssystemsoftware von eQ3/ELV und RaspberryMatic ausgetauscht werden und ein Wechsel zwischen den beiden Betriebssystemen ist jederzeit möglich.
+## :cookie: Funktionen
 
-Darüber hinaus bringt RaspberryMatic jedoch eine ganze Reihe von Verbesserungen/Erweiterungen, neuen Features und teilweise bereits integrierten Bugfixes mit sich die entweder _noch_ nicht in der originalen CCU Firmware von der Firma eQ3/ELV übernommen wurde oder aus kommerzieller Sicht nicht übernommen werden soll.
+- **Drop-in-Kompatibilität.** Unterstützt dieselbe Homematic-/Homematic-IP-Hardware, WebUI-Funktionen und Add-on-Ökosystem wie die Hersteller-Firmware der CCU.
+- **Austauschbare Backups.** Sicherungen sind zwischen Hersteller-Firmware und OpenCCU **kompatibel**, was die Migration erheblich vereinfacht.
+- **Verbesserungen gegenüber der Hersteller-Firmware.** Umfasst WebUI-Verbesserungen, Linux-OS-Updates, Stabilitäts-/Performance-Fixes und neue Funktionen, die upstream noch nicht oder ggf. nie vorhanden sind.
 
-[mehr...](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#features)
+[mehr...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#features)
 
-## :computer: Voraussetzungen
+## :computer: Systemvoraussetzungen
 
-RaspberryMatic lässt sich auf folgender, kommerziell erhältlicher Kompletthardware (Rechner + HomeMatic-Kommunikationsmodul) installieren:
+OpenCCU kann auf Hersteller-CCU-Hardware, gängigen SBCs und x86-Systemen installiert oder virtuell betrieben werden:
 
-* [CCU3](https://www.homematic-ip.com/en/products/detail/smart-home-central-control-unit-ccu3.html), [ELV-Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html)
+**Hardware**
+- [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit), [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html)
+- [Raspberry Pi](https://www.raspberrypi.org/)
+- [ASUS Tinker Board](https://www.asus.com/Single-Board-Computer/Tinker-Board-S/)
+- [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/)
+- [Intel NUC](https://www.intel.de/content/www/de/de/products/boards-kits/nuc.html)
 
-...oder auf folgender selbst zusammengestellter Hardware:
+**Virtualisierung & Container**
+- [Proxmox VE](https://www.proxmox.com/en/proxmox-ve), [QEMU/KVM](https://www.qemu.org/), [XCP-ng/XenServer](https://xcp-ng.org/), [VMware ESXi](https://www.vmware.com/de/products/esxi-and-esx.html) / [Workstation Player](https://www.vmware.com/de/products/workstation-player/workstation-player-evaluation.html), [Hyper-V](https://learn.microsoft.com/de-de/virtualization/hyper-v-on-windows/), [VirtualBox](https://www.virtualbox.org/)
+- [Synology Virtual Machine Manager](https://www.synology.com/de-de/dsm/feature/virtual_machine_manager), [QNAP Virtualization Station](https://www.qnap.com/event/station/de-de/virtualization.php), [Unraid](https://unraid.net/)
+- [Docker/OCI](https://www.docker.com/), [LXC](https://linuxcontainers.org/), [Kubernetes (K8s)](https://kubernetes.io/)
+- [Home Assistant](https://home-assistant.io/) (Add-on)
 
-* _Hardware_:
-  * [RaspberryPi](https://www.raspberrypi.org/)
-  * [ASUS Tinkerboard](https://www.asus.com/Single-Board-Computer/Tinker-Board-S/)
-  * [ODROID](https://www.hardkernel.com/shop/odroid-n2-with-4gbyte-ram-2/)
-  * [Intel NUC](https://www.intel.de/content/www/de/de/products/boards-kits/nuc.html)
-
-bzw. unter folgenden Virtualisierungsumgebungen installieren:
-
-* _Virtualisierungsumgebung_:
-  * [vmWare ESXi](https://www.vmware.com/de/products/esxi-and-esx.html)
-  * [Proxmox Virtual Environment](https://www.proxmox.com/de/)
-  * [Oracle VirtualBox](https://www.virtualbox.org/)
-  * [Synology Virtual Machine Manager](https://www.synology.com/de-de/dsm/feature/virtual_machine_manager)
-  * [QNAP VirtualizationStation](https://www.qnap.com/event/station/de-de/virtualization.php)
-  * [vmWare Workstation Player](https://www.vmware.com/de/products/workstation-player/workstation-player-evaluation.html)
-  * [QEmu/KVM](https://www.qemu.org/)
-  * [UNRAID](https://unraid.net/)
-  * [HyperV](https://docs.microsoft.com/de-de/virtualization/hyper-v-on-windows/)
-  * [Docker/OCI](https://www.docker.com/)
-  * [Kubernetes/K8s](https://kubernetes.io/)
-  * [Home Assistant](https://homeassistant.io/)
-
-[mehr...](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#vorraussetzungen)
+[mehr...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#vorraussetzungen)
 
 ## :cloud: Schnellstart
 
-Unter [Releases](https://github.com/jens-maus/RaspberryMatic/releases) steht für die jeweilige Target-Hardware Dateien im Format `RaspberryMatic-X.XX.XX.YYYYMMDD-XXX.zip` als Download zur Verfügung. Nach Entpacken dieser Datei erhält man eine `*.img` Imagedatei die man auf ein geeignetes Medium (SD-Karte, USB-Stick, SSD oder als virtuelle Disk) mit z.B. dem Imaging-Tool [Etcher](https://etcher.io) "flashen" lassen kann. Danach legt man z.B. die SD Karte in den jeweiligen RaspberryPi ein und startet diesen. Danach sollte dann RaspberryMatic starten und versuchen im Laufe des Startes das passende HomeMatic/homematicIP Funkmodul zu initialisieren (das man vorher installiert hat). Ist dies erfolgt kann man mittels Webbrowser in seinem lokalen Netzwerk unter Nutzung der Adresse `http://homematic-raspi/` auf die Weboberfläche (WebUI) von RaspberryMatic normal zugreifen und HomeMatic/homematicIP Geräte anlernen, konfigurieren oder bedienen.
+1) **Download**
+   - Lade das passende Image unter **[Releases](https://github.com/OpenCCU/OpenCCU/releases)**.
+   - Dateinamensmuster: `OpenCCU-X.XX.XX.YYYYMMDD-<TARGET>.zip`.
 
-[mehr...](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#schnellstart)
+2) **Installation (eine Option wählen)**
+   - **Eigene Hardware (z. B. Raspberry Pi):** Zip entpacken und die `*.img` auf eine microSD-Karte flashen (z. B. mit [Etcher](https://etcher.io) oder `dd`).
+   - **Migration von CCU2/CCU3:** Das OpenCCU-Paket wie ein reguläres Firmware-Update hochladen.
+   - **Virtualisierte Umgebung:** Der Installationsanleitung für die jeweilige Hypervisor-/Container-Plattform folgen.
 
-## :memo: Dokumentation
+3) **Boot**
+   - Gerät/VM starten. Beim ersten Start erkennt OpenCCU verfügbare **Homematic / Homematic IP**-RF-Module (z. B. `RPI-RF-MOD`, `HmIP-RFUSB`) an GPIO oder USB.
 
-1. [Einleitung](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung)
-   * [Vorraussetzungen](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#vorraussetzungen)
-   * [Features](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#features)
-   * [Limitationen/Einschränkungen](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#limitationeneinschränkungen)
-   * [Lizenzbedingungen & Haftung](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#lizenz--haftung)
-   * [Kommerzieller Vertrieb](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#kommerzieller-vertrieb)
-2. [Installation](https://github.com/jens-maus/RaspberryMatic/wiki/Installation)
-   * [Schnellstart](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#schnellstart)
-   * [Grundinstallation (Hardware)](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#grundinstallation-hardware)
-     * [CCU3](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-CCU3)
-     * [ELV-Charly](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-ELV-Charly)
-     * [RaspberryPi](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-RaspberryPi)
-     * [ASUS Tinkerboard](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-Tinkerboard)
-     * [ODROID](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-ODROID)
-     * [Intel NUC](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-IntelNUC)
-   * [Grundinstallation (Virtuell)](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#grundinstallation-virtuell)
-     * [vmWare ESXi](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-vmWare-ESXi)
-     * [Proxmox Virtual Environment](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-Proxmox-VE)
-     * [Oracle VirtualBox](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-VirtualBox)
-     * [Synology Virtual Machine Manager](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-Synology-VMM)
-     * [QNAP VirtualizationStation](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-QNAP-VirtualizationStation)
-     * [vmWare Workstation Player](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-vmWare-Workstation-Player)
-     * [QEmu/KVM](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-QEmu)
-     * [UNRAID](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-UNRAID)
-     * [HyperV](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-HyperV)
-     * [Docker/OCI](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-Docker-OCI)
-     * [Kubernetes/K8s](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-Kubernetes)
-     * [Home Assistant Add-on](https://github.com/jens-maus/RaspberryMatic/wiki/Installation-HomeAssistant)
-   * [Konfigurationsübernahme](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#konfigurationsübernahme)
-     * [Umstieg von CCU3](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#umstieg-von-ccu3)
-     * [Umstieg von CCU2](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#umstieg-von-ccu2)
-     * [Umstieg von CCU1](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#umstieg-von-ccu1)
-     * [Umstieg zu virtuellem RaspberryMatic](https://github.com/jens-maus/RaspberryMatic/wiki/Installation#umstieg-zu-virtuellem-raspberrymatic)
-   * [Deinstallation](https://github.com/jens-maus/RaspberryMatic/wiki/Deinstallation)
-3. [Administration](https://github.com/jens-maus/RaspberryMatic/wiki/Administration)
-   * [Firmware Update/Upgrade](https://github.com/jens-maus/RaspberryMatic/wiki/Administration#firmware-updateupgrade)
-   * [Backup/Restore](https://github.com/jens-maus/RaspberryMatic/wiki/Administration#backup--restore)
-   * [Sicherheitshinweise](https://github.com/jens-maus/RaspberryMatic/wiki/Administration#sicherheitshinweise)
-   * [CCU-Addons / Zusatzsoftware](https://github.com/jens-maus/RaspberryMatic/wiki/Administration#ccu-addons--zusatzsoftware)
+4) **WebUI aufrufen**
+   - `http://openccu/` im Browser öffnen (oder die per DHCP vergebene IP verwenden, falls keine Namensauflösung verfügbar ist).
+   - Es erscheint die gewohnte CCU-WebUI; nun können Homematic-/Homematic-IP-Geräte konfiguriert werden.
+   - *Optional:* Bestehendes CCU-Backup einspielen, um die Konfiguration zu übernehmen.
+
+[mehr...](https://github.com/OpenCCU/OpenCCU/wiki/Installation#schnellstart)
+
+## :memo: Dokumentation ([🇩🇪](https://github.com/OpenCCU/OpenCCU/wiki/Home)/[🇺🇸](https://github.com/OpenCCU/OpenCCU/wiki/en.Home))
+
+1. [Einleitung](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung)
+   * [Voraussetzungen](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#vorraussetzungen)
+   * [Funktionen](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#features)
+   * [Einschränkungen](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#limitationeneinschränkungen)
+   * [Lizenz & Haftung](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#lizenz--haftung)
+   * [Kommerzieller Vertrieb](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#kommerzieller-vertrieb)
+2. [Installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation)
+   * [Schnellstart](https://github.com/OpenCCU/OpenCCU/wiki/Installation#schnellstart)
+   * [Grundinstallation (Hardware)](https://github.com/OpenCCU/OpenCCU/wiki/Installation#grundinstallation-hardware)
+     * [CCU3](https://github.com/OpenCCU/OpenCCU/wiki/Installation-CCU3)
+     * [ELV-Charly](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ELV-Charly)
+     * [RaspberryPi](https://github.com/OpenCCU/OpenCCU/wiki/Installation-RaspberryPi)
+     * [ASUS Tinkerboard](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard)
+     * [Hardkernel ODROID](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ODROID)
+     * [Intel NUC](https://github.com/OpenCCU/OpenCCU/wiki/Installation-IntelNUC)
+   * [Grundinstallation (Virtuell)](https://github.com/OpenCCU/OpenCCU/wiki/Installation#grundinstallation-virtuell)
+     * [Proxmox Virtual Environment](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Proxmox-VE)
+     * [Home-Assistant-Add-on](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HomeAssistant)
+     * [Docker-Container (OCI)](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Docker-OCI)
+     * [Linux-Container (LXC)](https://github.com/OpenCCU/OpenCCU/wiki/Installation-LXC)
+     * [QEmu/KVM](https://github.com/OpenCCU/OpenCCU/wiki/Installation-QEmu)
+     * [Kubernetes/K8s](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Kubernetes)
+     * [Synology Virtual Machine Manager](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Synology-VMM)
+     * [QNAP VirtualizationStation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-QNAP-VirtualizationStation)
+     * [UNRAID](https://github.com/OpenCCU/OpenCCU/wiki/Installation-UNRAID)
+     * [XCP-ng/XenServer](https://github.com/OpenCCU/OpenCCU/wiki/Installation-XCPng)
+     * [Oracle VirtualBox](https://github.com/OpenCCU/OpenCCU/wiki/Installation-VirtualBox)
+     * [vmWare Workstation Player](https://github.com/OpenCCU/OpenCCU/wiki/Installation-vmWare-Workstation-Player)
+     * [vmWare ESXi](https://github.com/OpenCCU/OpenCCU/wiki/Installation-vmWare-ESXi)
+     * [HyperV](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HyperV)
+   * [Konfigurationsübernahme](https://github.com/OpenCCU/OpenCCU/wiki/Installation#konfigurationsübernahme)
+     * [Umstieg von CCU3](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-von-ccu3)
+     * [Umstieg von CCU2](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-von-ccu2)
+     * [Umstieg von CCU1](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-von-ccu1)
+     * [Umstieg auf virtuelle OpenCCU](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-zu-virtuellem-raspberrymatic)
+   * [Deinstallation](https://github.com/OpenCCU/OpenCCU/wiki/Deinstallation)
+3. [Administration](https://github.com/OpenCCU/OpenCCU/wiki/Administration)
+   * [Firmware-Update/-Upgrade](https://github.com/OpenCCU/OpenCCU/wiki/Administration#firmware-updateupgrade)
+    * [Backup/Restore](https://github.com/OpenCCU/OpenCCU/wiki/Administration#backup--restore)
+   * [Sicherheitshinweise](https://github.com/OpenCCU/OpenCCU/wiki/Administration#sicherheitshinweise)
+   * [CCU-Add-ons / Zusatzsoftware](https://github.com/OpenCCU/OpenCCU/wiki/Administration#ccu-addons--zusatzsoftware)
 4. Nutzung
-   * [WebUI Benutzung](https://github.com/jens-maus/RaspberryMatic/wiki/WebUI-Benutzung)
-     * [Log-Level erhöhen für Fehleranalyse](https://github.com/jens-maus/RaspberryMatic/wiki/WebUI-Benutzung#log-daten-und-log-level)
-   * [Tipps&Tricks](https://github.com/jens-maus/RaspberryMatic/wiki/Tipps)
-   * [Experten-Features](https://github.com/jens-maus/RaspberryMatic/wiki/Experten-Features)
-     * [WLAN/WiFi Unterstützung](https://github.com/jens-maus/RaspberryMatic/wiki/Experten-Features#wlanwifi-nutzung)
-     * [Bluetooth Unterstützung](https://github.com/jens-maus/RaspberryMatic/wiki/Experten-Features#bluetooth-nutzung)
-     * [LAN-Gateway Betrieb](https://github.com/jens-maus/RaspberryMatic/wiki/Experten-Features#lan-gateway-betrieb)
-     * [USV Client/Server Betrieb](https://github.com/jens-maus/RaspberryMatic/wiki/Experten-Features#usv-clientserver-nut)
-     * [USB-Boot](https://github.com/jens-maus/RaspberryMatic/wiki/Experten-Features#usb-boot)
-5. [Support, Mitarbeit](https://github.com/jens-maus/RaspberryMatic/wiki/Support)
-   * [Bekannte Probleme](https://github.com/jens-maus/RaspberryMatic/wiki/Support#bekannte-probleme)
-   * [Hilfe suchen](https://github.com/jens-maus/RaspberryMatic/wiki/Support#hilfe-suchen)
-   * [FAQ - Häufig gestellte Fragen](https://github.com/jens-maus/RaspberryMatic/wiki/Support#faq)
-   * [Fehler melden](https://github.com/jens-maus/RaspberryMatic/wiki/Support#bugreports)
-   * [Features wünschen](https://github.com/jens-maus/RaspberryMatic/wiki/Support#featurerequests)
-   * [Mitarbeit / Weiterentwicklung](https://github.com/jens-maus/RaspberryMatic/wiki/Support#mitarbeit--weiterentwicklung)
+   * [WebUI-Benutzung](https://github.com/OpenCCU/OpenCCU/wiki/WebUI-Benutzung)
+     * [Log-Daten und Log-Level](https://github.com/OpenCCU/OpenCCU/wiki/WebUI-Benutzung#log-daten-und-log-level)
+   * [Tipps & Tricks](https://github.com/OpenCCU/OpenCCU/wiki/Tipps)
+   * [Experten-Features](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features)
+     * [WLAN/WiFi-Nutzung](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#wlanwifi-nutzung)
+     * [Bluetooth-Nutzung](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#bluetooth-nutzung)
+     * [LAN-Gateway-Betrieb](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#lan-gateway-betrieb)
+     * [USV-Client/Server-Nutzung](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#usv-clientserver-nut)
+     * [USB-Boot](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#usb-boot)
+     * [Monit-Watchdog-Weboberfläche](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#monit-watchdog-weboberfl%C3%A4che)
+     * [HB-RF-ETH-Anbindung](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#hb-rf-eth-anbindung)
+     * [Individueller Diagramm-/Backup-Speicherpfad](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#individueller-diagrammbackup-speicherpfad)
+     * [Eigene Aktionen während des Bootvorgangs](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#eigene-aktionen-während-des-bootvorgangs)
+5. [Support, Beiträge](https://github.com/OpenCCU/OpenCCU/wiki/Support)
+   * [Bekannte Probleme](https://github.com/OpenCCU/OpenCCU/wiki/Support#bekannte-probleme)
+   * [Hilfe suchen](https://github.com/OpenCCU/OpenCCU/wiki/Support#hilfe-suchen)
+   * [FAQ – Häufige Fragen](https://github.com/OpenCCU/OpenCCU/wiki/Support#faq)
+   * [Fehler melden](https://github.com/OpenCCU/OpenCCU/wiki/Support#bugreports)
+   * [Funktionen anfragen](https://github.com/OpenCCU/OpenCCU/wiki/Support#featurerequests)
+   * [Mitarbeit & Weiterentwicklung](https://github.com/OpenCCU/OpenCCU/wiki/Support#mitarbeit--weiterentwicklung)
 
-## :yum: Support, Mitarbeit
+## :yum: Support & Beiträge
 
-Für Feedback jeglicher Art, Fragen, Vorschläge, Wünsche und Fehlerberichte wird darum gebeten bitte zuerst im jeweiligen RaspberryMatic Teil des HomeMatic-Forum (<https://homematic-forum.de/forum/viewforum.php?f=65>) einen entsprechenden Beitrag zu erstellen oder an bereits existierenden Beiträgen dort sich zu beteiligen. Sollte aus den Diskussionen dort sich dann ein spezieller Feature-Wunsch oder von anderen Personen bestätigter Bug in RaspberryMatic herauskristallieren wird darum gebeten diesen Bug bzw. diesen Feature-Request im [Issue Tracker](https://github.com/jens-maus/RaspberryMatic/issues) von RaspberryMatic entsprechend einzutragen bzw. zu melden.
+**Wo diskutieren / fragen**
+- Für allgemeine Fragen und Feedback **[GitHub Discussions](https://github.com/OpenCCU/OpenCCU/discussions)** nutzen.
+- Deutschsprachige Nutzer: der OpenCCU-Bereich im **[HomeMatic-Forum](https://homematic-forum.de/forum/viewforum.php?f=65)**.
 
-Beteiligung in jeder Form ist willkommen und ausdrücklich gewünscht, insbesondere sind alle Nutzer aufgefordert etwaige Probleme so früh wie möglich zu melden damit diese in zukünftigen Versionen entsprechend repariert werden können. Auch wäre es schön wenn noch offene Issues im  [Issue Tracker](https://github.com/jens-maus/RaspberryMatic/issues) von vielen Nutzern reproduziert werden könnte und man sich dort an etwaigen Diskussionen zur Lösungsfindung beteiligen würde. Ausdrücklich erwünscht ist auch an der permanenten Verbesserung und Erweiterung der [Dokumentation](https://github.com/jens-maus/RaspberryMatic/wiki) mitzuarbeiten. Deshalb sind die Schreibrechte für die Dokumentation auch so gesetzt das dort Korrekturen/Änderungen von jedem GitHub Nutzer sofort durchgeführt werden können.
+**Wann ein Issue eröffnen**
+- Wenn eine Diskussion einen **klaren Feature-Wunsch** oder einen **reproduzierbaren Fehler** bestätigt, ein Issue unter **[Issues](https://github.com/OpenCCU/OpenCCU/issues)** anlegen.
+- Bitte vorher nach bestehenden Issues suchen und angeben: OpenCCU-Version, Zielhardware/Hypervisor, Schritte zur Reproduktion, erwartetes vs. tatsächliches Verhalten, relevante Logs.
 
-Erwünscht sind natürlich auch direkte Entwicklungsbeteiligungen in Form von PullRequests und Source Code submissions (Bugs, Features). Falls hier jemand also gerne ein Feature umsetzen oder einen Bug selbst ausmerzen will, so wird darum gebeten hierfür die unter Git/GitHub zur Verfügung stehenden Mechanismen zu verwenden. Hierbei gilt jedoch die Lizenzierung von RaspberryMatic und dessen genutzter Drittpakete (z.B. OCCU von eQ3) zu beachten und entsprechend zu akzeptieren. Mehr Informationen dazu kann man unter [CONTRIBUTING.md](CONTRIBUTING.md) nachlesen. Zusätzlich dazu wird darum gebeten für jegliche Beteiligung an diesem Projekt zuerst unseren [CODE OF CONDUCT](CODE_OF_CONDUCT.md) zu studieren und erst dann Beteiligungen in Betracht zu ziehen wenn dieser vollumfänglich akzeptiert werden kann.
+**Möglichkeiten zur Mitarbeit**
+- Releases testen und bei der **Reproduktion/Triage** von [offenen Issues](https://github.com/OpenCCU/OpenCCU/issues) helfen.
+- Die wiki-basierte **[Dokumentation](https://github.com/OpenCCU/OpenCCU/wiki)** verbessern.
+- **[Pull Requests prüfen](https://github.com/OpenCCU/OpenCCU/pulls)** und Feedback geben.
+- **Code-Beiträge** (Bugfixes, Features) per Pull Request einreichen.
 
-[mehr...](https://github.com/jens-maus/RaspberryMatic/wiki/Support)
+**Pull Requests**
+- PRs fokussiert halten (ein Thema pro PR), das zugehörige Issue/die Diskussion verlinken und die Vorgaben in **[CONTRIBUTING](CONTRIBUTING.md)** beachten.
+- Mit dem Beitrag stimmst du der Lizenzierung unter **Apache-2.0** zu.
+
+**Community-Standards**
+- Bitte **[CODE OF CONDUCT](CODE_OF_CONDUCT.md)** lesen und befolgen.
+
+[mehr...](https://github.com/OpenCCU/OpenCCU/wiki/Support)
 
 ## :scroll: Lizenzen
 
-Die RaspberryMatic Buildumgebung selbst – die Dateien die hier in diesem Git Repository zu finden sind – sowie die frei herunterladbaren RaspberryMatic Images sind unter der OpenSource [Apache License 2.0](https://opensource.org/licenses/Apache-2.0) lizenziert. RaspberryMatic wird selbst komplett kostenfrei und ohne jeglichen kommerziellen Intensionen entwickelt und zur komplett kostenfreien Nutzung bereit gestellt. Hierbei gilt zu beachten, dass die Komponenten der genutzten Buildroot/Linux Umgebung jeweils anderen Lizenzen stehen können wobei Buildroot/Linux hier selbst unter der [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html) lizenziert ist. Des Weiteren stehen die mit RaspberryMatic mitgelieferten [eQ-3 OCCU](https://github.com/eq-3/occu) Komponenten (Binär+Textdateien), die zur Nutzung der HomeMatic/homematicIP Interoperabilität notwendig sind, unter der sogenannten [HMSL](https://github.com/eq-3/occu/blob/master/LicenseDE.txt) Lizenz.
+- **Projekt & Release-Images.** Das OpenCCU-Projekt (dieses Repository) und die unter **[Releases](https://github.com/OpenCCU/OpenCCU/releases)** bereitgestellten Images stehen – sofern nicht anders angegeben – unter der **[Apache License 2.0](https://opensource.org/licenses/Apache-2.0)**. OpenCCU wird kostenlos und ohne kommerzielle Absichten bereitgestellt.
+
+- **Drittkomponenten.** Einige enthaltene Komponenten haben andere Lizenzen und verbleiben unter deren Bedingungen. Beispiel: **Buildroot/Linux** steht unter **[GPLv2](http://www.gnu.org/licenses/gpl-2.0.html)**, was beim Ändern von Quelltexten oder beim Weiterverteilen abgeleiteter Images relevant sein kann. Die für die Konnektivität genutzten **[eQ-3 OCCU](https://github.com/eq-3/occu)**-Komponenten werden unter den Bedingungen der **[HMSL](https://github.com/eq-3/occu/blob/master/LicenseEN.txt)** weitergegeben.
+
+- **Branding & Artwork.** Das OpenCCU-Logo und weitere Grafiken in diesem Repository und in den Images unterliegen dem Urheberrecht der jeweiligen Autoren. Jede kommerzielle oder nicht-kommerzielle Wiederverwendung – insbesondere in weiterverteilten Binaries oder Forks – ist **ohne vorherige schriftliche Genehmigung untersagt**.
 
 ### Haftungsausschluss
 
-RASPBERRMATIC WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIEẞLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.
+Sofern nicht gesetzlich vorgeschrieben oder schriftlich vereinbart, wird OpenCCU von den Beitragenden (und jeder Beitragende stellt seine Beiträge) **„WIE BESEHEN“** bereitgestellt, **OHNE JEGLICHE GEWÄHRLEISTUNGEN ODER BEDINGUNGEN**, weder ausdrücklich noch stillschweigend, einschließlich unter anderem **Eigentum, Nichtverletzung von Rechten Dritter, Marktgängigkeit** oder **Eignung für einen bestimmten Zweck**. Du bist allein dafür verantwortlich zu beurteilen, ob die Nutzung oder Weitergabe von OpenCCU für dich geeignet ist, und trägst alle Risiken, die sich aus der Ausübung der unter dieser Lizenz gewährten Rechte ergeben.
 
-[mehr...](https://github.com/jens-maus/RaspberryMatic/wiki/Einleitung#lizenz--haftung)
+[mehr...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#lizenz--haftung)
 
 ## :book: Literatur
 
-Wenn der Eine oder Andere bzgl. Einsatz von RaspberryMatic noch unentschlossen ist oder die Vor-/Nachteile abwägen will so soll die folgende Literaturliste eine Hilfestellung geben:
+Wenn nach der Lektüre dieser Dokumentation noch Unklarheit über Vor- und Nachteile von OpenCCU gegenüber der herstellerseitigen CCU-Firmware besteht – oder wenn du die zusätzlichen Funktionen von OpenCCU vertieft kennenlernen möchtest – verweisen wir auf folgende (überwiegend deutschsprachige) Ressourcen:
 
-<a href="https://www.youtube.com/watch?v=regDw7rcIb0"><img alt="Usertreffen Kassel 2019 – RaspberryMatic" src="https://img.youtube.com/vi/regDw7rcIb0/hqdefault.jpg" width=320></a>
-<a href="https://www.youtube.com/watch?v=hSmDcrkHb7M"><img alt="Usertreffen Kassel 2018 – RaspberryMatic" src="https://img.youtube.com/vi/hSmDcrkHb7M/hqdefault.jpg" width=320></a>
-<a href="https://www.youtube.com/watch?v=LQrzittdEGg"><img alt="Usertreffen Kassel 2017 – RaspberryMatic (Teil 1)" src="https://img.youtube.com/vi/LQrzittdEGg/hqdefault.jpg" width=320></a>
-<a href="https://www.youtube.com/watch?v=duSTLdVKSeM"><img alt="Usertreffen Kassel 2017 - RaspberryMatic (Teil 2)" src="https://img.youtube.com/vi/duSTLdVKSeM/hqdefault.jpg" width=320></a>
+<a href="https://www.youtube.com/watch?v=regDw7rcIb0"><img alt="Usertreffen Kassel 2019 – OpenCCU" src="https://img.youtube.com/vi/regDw7rcIb0/hqdefault.jpg" width="320"></a>
+<a href="https://www.youtube.com/watch?v=hSmDcrkHb7M"><img alt="Usertreffen Kassel 2018 – OpenCCU" src="https://img.youtube.com/vi/hSmDcrkHb7M/hqdefault.jpg" width="320"></a>
 
 * [Vortragsfolien HomeMatic-Usertreffen 2019](https://homematic-forum.de/forum/download/file.php?id=59500)
 * [Vortragsfolien HomeMatic-Usertreffen 2018](https://homematic-forum.de/forum/download/file.php?id=48428)
@@ -166,14 +191,20 @@ Wenn der Eine oder Andere bzgl. Einsatz von RaspberryMatic noch unentschlossen i
 
 ## :clap: Danksagungen
 
-Zusätzlich zu den Personen die sich als [Contributors](https://github.com/jens-maus/RaspberryMatic/graphs/contributors) im Rahmen des RaspberryMatic OpenSource Projekte indirekt oder direkt beteiligt haben, soll hier natürlich folgenden Personen ausdrücklich gedankt werden:
+Zusätzlich zu allen **[Contributors](https://github.com/OpenCCU/OpenCCU/graphs/contributors)**, die OpenCCU möglich gemacht haben, danken wir besonders:
 
-* _Alexander Reinert (@alexreinert)_ – für sein Low-Latency [generic_raw_uart](https://github.com/alexreinert/piVCCU/tree/master/kernel) Kernelmodul, welches es erlaubt die von eQ3 angebotenen Funkmodule (RPI-RF-MOD, HM-MOD-RPI-PCB) zu nutzen sowie für seine [HB-RF-USB](https://github.com/alexreinert/PCB/tree/master/HB-RF-USB), [HB-RF-USB-2](https://github.com/alexreinert/PCB/tree/master/HB-RF-USB-2) und [HB-RF-ETH](https://github.com/alexreinert/PCB/tree/master/HB-RF-ETH) OpenHardware Projekte für eine USB- bzw. Ethernet-basierte Nutzung dieser Funkmodule.
-
+- **Alexander Reinert (@alexreinert)** — für das latenzarme
+  **[generic_raw_uart-Kernelmodul](https://github.com/alexreinert/piVCCU/tree/master/kernel)** zur Anbindung von eQ-3-RF-Modulen
+  (RPI-RF-MOD, HM-MOD-RPI-PCB, HmIP-RFUSB) sowie für die Open-Hardware-Adapterplatinen
+  **[HB-RF-USB](https://github.com/alexreinert/PCB/tree/master/HB-RF-USB)**,
+  **[HB-RF-USB-2](https://github.com/alexreinert/PCB/tree/master/HB-RF-USB-2)** und
+  **[HB-RF-ETH](https://github.com/alexreinert/PCB/tree/master/HB-RF-ETH)**, die USB-/Ethernet-Schnittstellen für diese Module bereitstellen.
+  
 ## :family: Autoren
 
-Da eine Vielzahl von Personen bereits sich an RaspberryMatic beteiligt haben sei hier auf die [Contributors](https://github.com/jens-maus/RaspberryMatic/graphs/contributors) Liste verwiesen.
+OpenCCU wird von einer breiten Community entwickelt. Die vollständige und aktuelle Liste der Autoren und Mitwirkenden findet sich unter **[Contributors](https://github.com/OpenCCU/OpenCCU/graphs/contributors)**.
 
-## :construction: Änderungshistorie / ChangeLog
+## :construction: Changelog
 
-Eine detaillierte Liste aller bisherigen Änderungen zwischen den individuellen RaspberryMatic-Versionen erhält man über die [Release-Seite](https://github.com/jens-maus/RaspberryMatic/releases/) bei GitHub.
+Eine detaillierte, versionsbezogene Liste der Änderungen findet sich unter **[Releases](https://github.com/OpenCCU/OpenCCU/releases/)** in diesem Repository. Jeder Release enthält Hinweise zu neuen Funktionen, Fehlerbehebungen und weiteren Anpassungen.
+

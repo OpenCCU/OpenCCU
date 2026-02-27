@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169,SC3010,SC3014
 
 # we exit if if-down.d is called for "lo"
 if [[ "${IFACE}" == "lo" ]]; then

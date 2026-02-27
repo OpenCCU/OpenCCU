@@ -13,7 +13,7 @@
      "diagramHelpCustomModeContent" :
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -413,6 +413,7 @@
+@@ -436,6 +436,7 @@
      "dialogEditScript" : "Skript bearbeiten",
      "dialogEnterValue" : "Wert eingeben",
      "dialogEnterText" : "Text eingeben",
@@ -36,7 +36,7 @@
      "diagramHelpCustomModeContent" :
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -412,6 +412,7 @@
+@@ -435,6 +435,7 @@
      "dialogEditScript" : "Edit script",
      "dialogEnterValue" : "Enter value",
      "dialogEnterText" : "Enter text",
@@ -46,7 +46,7 @@
      "dialogCreateFavChooseProg" : "Creating favourite - program selection",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -169,6 +169,20 @@
+@@ -195,6 +195,20 @@
        <\/div>\n
      <\/div>\n
      {\/if}\n
@@ -67,7 +67,7 @@
    <\/div>\n
  \n
    <div id=\"ChannelConfigDialogContentMain\">\n
-@@ -13627,7 +13641,43 @@
+@@ -15471,7 +15485,43 @@
        _this_.pollTest();
      });
    },

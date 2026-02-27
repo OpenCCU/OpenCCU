@@ -27,7 +27,7 @@
   	<tr>
   		<td class="tBodyCell">${"$"}{groupGroupType}</td>
         <td class="tBodyCell" colspan="2">
-	        <select size="1" data-bind="options: possibleGroupTypes, value: groupType, optionsText: 'label',  enable: isNew">
+	        <select id="grpSelector" size="1" data-bind="options: possibleGroupTypes, value: groupType, optionsText: 'label',  enable: isNew">
 	        </select>
         </td>
     </tr>
@@ -162,6 +162,16 @@
  </table>
 
 <script type="text/javascript">
+       
+      // Belongs to SPHM-1040 
+      window.setTimeout(function() {
+        var grpSelectorElm = jQuery("#grpSelector");
+        // Execute this only when creating a new group
+        if (! grpSelectorElm.prop("disabled")) {
+          grpSelectorElm.prop("selectedIndex",1).change();
+        }
+      },100);
+
 
      this.groupNameHasChanged = false;
     // TWIST-589
@@ -225,6 +235,8 @@
 
         self.possibleGroupTypes = [];
         <#list possibleGroupTypes as deviceType>self.possibleGroupTypes.push(new GroupType("${deviceType.getId()}", translateKey('${deviceType.getLabel()}')));</#list>
+
+
 
         ko.utils.arrayForEach(self.possibleGroupTypes, function(item) {
             if(item.id == "${groupType.getId()}") {
@@ -355,6 +367,7 @@
         self.activeLeftoverDeviceListHeader = self.leftoverDeviceHeaders[0];
 
         self.sortDeviceList = function(deviceList, lastHeader, header, event){
+
             if(lastHeader === header) {
                 header.asc = !header.asc;
             } else {

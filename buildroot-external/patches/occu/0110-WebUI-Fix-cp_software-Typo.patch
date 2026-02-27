@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_software.cgi.orig
 +++ occu/WebUI/www/config/cp_software.cgi
-@@ -297,7 +297,7 @@
+@@ -330,7 +330,7 @@
                      }
                    }
                  }

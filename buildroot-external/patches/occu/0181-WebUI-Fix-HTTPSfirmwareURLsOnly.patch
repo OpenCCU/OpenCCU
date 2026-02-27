@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/pages/index.htm.orig
 +++ occu/WebUI/www/rega/pages/index.htm
-@@ -106,7 +106,6 @@
+@@ -116,7 +116,6 @@
        /*# Globale Variablen                                                    #*/
        /*########################################################################*/
  
@@ -10,24 +10,24 @@
        urlParamInterfaces = jQuery.url().param('showInterfaces');
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -22651,8 +22651,8 @@
+@@ -25475,8 +25475,8 @@
  
  StartPage = Singleton.create(Page, {
    MAINMENU_ID: "MAINMENU_STARTPAGE",
 -  downloadURLServer: (isHTTPS) ? "https://"+preURL+"update.homematic.com:8443/firmware/download?cmd=download" : "http://"+preURL+"update.homematic.com/firmware/download?cmd=download",
 -  fieldTestURLServer: (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download" : "http://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
-+  downloadURLServer: "https://"+preURL+"update.homematic.com:8443/firmware/download?cmd=download",
++  downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
 +  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
    fieldTestActive: "/etc/config/fieldTestActive",
    downloadURL : "",
    prevDownloadURL : "",
-@@ -26893,8 +26893,8 @@
+@@ -29653,8 +29653,8 @@
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
      this.m_product = "HM-RASPBERRYMATIC";
 -    this.m_URLServer = (isHTTPS) ? "https://"+this.preURL+"update.homematic.com:8443" : "http://"+this.preURL+"update.homematic.com";
 -    this.m_fieldTestURLServer = (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com" : "http://fieldtest-ccu3-update.homematic.com";
-+    this.m_URLServer = "https://"+this.preURL+"update.homematic.com:8443";
++    this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
 +    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
  
      this.serial = homematic("CCU.getSerial");

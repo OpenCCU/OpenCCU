@@ -30,11 +30,11 @@
 -      <col style="width:20%;"/>
 -      <col style="width:10%;"/>
 -      <col style="width:15%;"/>
-+      <col />
-+      <col />
-+      <col />
-+      <col />
-+      <col />
++      <col style="width: 10%;"/>
++      <col style="width: 50%;"/>
++      <col style="width: 5%;"/>
++      <col style="width: 30%;"/>
++      <col style="width: 5%;"/>
      </colgroup>
      <thead id="svsBody">
      <tr id="rowhead">
@@ -79,7 +79,7 @@
          <div class='FilterSetButton' onclick="$('btnFilterVarTypeSub').hide();">${filterClose}</div>
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -1123,10 +1123,18 @@
+@@ -1141,10 +1141,20 @@
    text-align:center;
  }
  .SysVarsTblPopup{
@@ -88,6 +88,7 @@
 +  height:60px;
 +  text-align:center;
 +  cursor:pointer;
++  word-break: break-word;
 +}
 +.SysVarsTblPopup_Highlight{
    background-color:$_(inactiveBackground);
@@ -95,12 +96,13 @@
    height:60px;
    text-align:center;
 +  cursor:pointer;
++  word-break: break-word;
  }
  .WhiteBkgChannelPopup {
    background-color: $_(white); /* white */
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -24812,6 +24812,7 @@
+@@ -35801,6 +35801,7 @@
      this.bTypeValueList = false;
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
@@ -108,7 +110,7 @@
      this.bColLeft = false;
      this.bColCenter = false;
      this.bNameLeft = false;
-@@ -25058,6 +25059,12 @@
+@@ -36047,6 +36048,12 @@
              if (!bRet) { bRet = true; }
            }
          }
@@ -121,7 +123,7 @@
          return bRet;
        }
      }
-@@ -25111,6 +25118,7 @@
+@@ -36100,6 +36107,7 @@
      if (this.bTypeValueList) return true;
      if (this.bTypeNumber) return true;
      if (this.bTypeAlarm) return true;
@@ -129,7 +131,7 @@
      return false; 
    },
      
-@@ -25187,6 +25195,7 @@
+@@ -36176,6 +36184,7 @@
      this.bTypeValueList = false;
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
@@ -137,7 +139,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -25219,6 +25228,7 @@
+@@ -36208,6 +36217,7 @@
        $("cbValueList").checked = fltObj.bTypeValueList;
        $("cbNumber").checked = fltObj.bTypeNumber;
        $("cbAlarm").checked = fltObj.bTypeAlarm;
@@ -145,7 +147,7 @@
        break;
      case "btnFilterIfaceSub":
        $("cbSend").checked = fltObj.isFilterType(FIL_IFACE_S); 
-@@ -25345,7 +25355,8 @@
+@@ -36334,7 +36344,8 @@
        fltObj.bTypeLogic = $("cbLogic").checked;
        fltObj.bTypeValueList = $("cbValueList").checked;
        fltObj.bTypeNumber = $("cbNumber").checked;
@@ -155,7 +157,7 @@
        break;
      case "colPos":
        fltObj.bColLeft = $("cbColLeft").checked; 
-@@ -28491,25 +28502,25 @@
+@@ -39888,25 +39899,25 @@
        IseSort(arSysVars,this.colName,false,true);
        for (var i = 0; i < arSysVars.length; i++) 
        {

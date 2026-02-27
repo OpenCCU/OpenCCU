@@ -1,36 +1,18 @@
---- buildroot/package/psplash/Config.in.orig
-+++ buildroot/package/psplash/Config.in
-@@ -29,3 +29,12 @@
- 
- comment "psplash needs a toolchain w/ wchar"
- 	depends on !BR2_USE_WCHAR
-+
-+config BR2_PACKAGE_PSPLASH_PATCH
-+	string "Custom psplash patches"
-+	depends on BR2_PACKAGE_PSPLASH
-+	help
-+	  A space-separated list of patches to apply to psplash.
-+	  Each patch can be described as an URL, a local file path,
-+	  or a directory. In the case of a directory, all files
-+	  matching *.patch in the directory will be applied.
 --- buildroot/package/psplash/psplash.mk.orig
 +++ buildroot/package/psplash/psplash.mk
-@@ -9,6 +9,18 @@
- PSPLASH_LICENSE = GPL-2.0+
- PSPLASH_AUTORECONF = YES
+@@ -20,13 +20,13 @@
+ endif
  
-+PSPLASH_PATCHES = $(call qstrip,$(BR2_PACKAGE_PSPLASH_PATCH))
-+define PSPLASH_APPLY_LOCAL_PATCHES
-+	for p in $(filter-out ftp://% http://% https://%,$(PSPLASH_PATCHES)) ; do \
-+		if test -d $$p ; then \
-+			$(APPLY_PATCHES) $(@D) $$p \*.patch || exit 1 ; \
-+		else \
-+			$(APPLY_PATCHES) $(@D) `dirname $$p` `basename $$p` || exit 1; \
-+		fi \
-+	done
-+endef
-+PSPLASH_POST_PATCH_HOOKS += PSPLASH_APPLY_LOCAL_PATCHES
-+
- define PSPLASH_INSTALL_INIT_SYSTEMD
- 	$(INSTALL) -D -m 644 package/psplash/psplash-start.service \
- 		$(TARGET_DIR)/usr/lib/systemd/system/psplash-start.service
+ ifeq ($(BR2_PACKAGE_PSPLASH_PROGRESS_BAR),y)
+-PSPLASH_CONF_OPTS += --enable-progress-bar
++PSPLASH_CONF_OPTS +=
+ else
+ PSPLASH_CONF_OPTS += --disable-progress-bar
+ endif
+ 
+ ifeq ($(BR2_PACKAGE_PSPLASH_STARTUP_MSG),y)
+-PSPLASH_CONF_OPTS += --enable-startup-msg
++PSPLASH_CONF_OPTS +=
+ else
+ PSPLASH_CONF_OPTS += --disable-startup-msg
+ endif

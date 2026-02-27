@@ -91,7 +91,7 @@
                 string trId = "sysvar"#o.ID();
                 WriteLine( '<tr id="'#trId#'" class="CLASS03305">' );
                 WriteLine( '<td class="tBodyCell">' # o.Name() # '</td>' );
-                WriteLine( '<td class="tBodyCell">' # o.DPInfo() # '</td>' );
+                WriteLine( '<td class="tBodyCell">' # o.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>') # '</td>' );
                 string sTimestamp = o.Timestamp();
                 Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
                 WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );

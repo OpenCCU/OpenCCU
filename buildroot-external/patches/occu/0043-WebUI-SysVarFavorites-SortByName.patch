@@ -27,7 +27,7 @@
      dlgResult = "";
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -352,6 +352,7 @@
+@@ -360,6 +360,7 @@
      "btnAddChannel" : "Kanal<br/>hinzuf%FCgen",
      "btnAddChannelWOLineBreak" : "Kanal hinzuf%FCgen",
      "btnAddSysVariable" : "Systemvariable hinzuf%FCgen",
@@ -37,7 +37,7 @@
      "btnChooseChannel" : "Kanalauswahl",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -351,6 +351,7 @@
+@@ -359,6 +359,7 @@
      "btnAddChannel" : "Add<br/>channel",
      "btnAddChannelWOLineBreak" : "Add channel",
      "btnAddSysVariable" : "Add system variable",
@@ -47,7 +47,7 @@
      "btnChooseChannel" : "Channel selection",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -22166,7 +22166,23 @@
+@@ -31456,7 +31456,23 @@
      };
      new Ajax.Updater("userSysVarTbl", url, opts);
    },

@@ -1,0 +1,24 @@
+---
+name: OpenCCU (Proxy)
+version: 0.4.3
+slug: openccu_proxy
+image: ghcr.io/openccu/openccu-proxy
+arch:
+  - armv7
+  - aarch64
+  - amd64
+description: Proxy to externally running OpenCCU
+url: https://github.com/OpenCCU/OpenCCU
+ingress: true
+ingress_stream: true
+panel_title: OpenCCU
+panel_icon: mdi:router-wireless
+boot: auto
+init: true
+timeout: 30
+options:
+  webui-url: http://openccu
+schema:
+  webui-url: str?
+environment:
+  HM_HAPROXY_SRC: 172.30.32.2/32

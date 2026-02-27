@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/login.htm.orig
 +++ occu/WebUI/www/rega/login.htm
-@@ -80,7 +80,7 @@
+@@ -84,7 +84,7 @@
        </tr>
        <tr>
          <td>
@@ -11,7 +11,7 @@
                  <!-- Liste der Benutzer -->
 --- occu/WebUI/www/rega/logout.htm.orig
 +++ occu/WebUI/www/rega/logout.htm
-@@ -47,7 +47,7 @@
+@@ -51,7 +51,7 @@
        </tr>
        <tr>
          <td>

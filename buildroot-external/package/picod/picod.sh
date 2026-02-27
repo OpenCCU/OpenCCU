@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3014 source=/dev/null
 
 # source all data from /var/hm_mode
 [[ -r /var/hm_mode ]] && . /var/hm_mode
@@ -9,13 +9,8 @@
 : "${POWER_LOSS_CMD:=/bin/triggerAlarm.tcl 'Power Loss' 'WatchDog: picoups-powerloss' true}"
 
 # File descriptors
-if [[ ${HM_HOST} != "tinkerboard" ]]; then
-  : "${GPIO_PULSE:=22}"
-  : "${GPIO_CLOCK:=27}"
-else
-  : "${GPIO_PULSE:=167}"
-  : "${GPIO_CLOCK:=166}"
-fi
+: "${GPIO_PULSE:=22}"
+: "${GPIO_CLOCK:=27}"
 
 # Debounce time in while loop
 : "${DEBOUNCE_TIME:=0.3s}"

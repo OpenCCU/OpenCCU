@@ -1,0 +1,512 @@
+<script type="text/javascript">
+ResetGAC();
+<%
+  boolean firstSort = false;
+  system.SetSessionVar("sessionTAB", "favOverview");
+  object oPC = dom.GetObject( 202 );
+  object oPDA = dom.GetObject( 203 );
+  object oCentral = dom.GetObject( 204 );
+  
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser && (system.GetSessionVar("sessionCTV")=="true") )
+  {
+    firstSort = true;
+    oUser.UserTempViewIDs().RemoveAll();
+    Write('iseClearLastSort();');
+    Write('lastSort = "name";');
+    Write('lastDir = 1;');
+    
+    object oTmpArray = dom.GetObject( ID_FAVORITES );
+    if( oTmpArray )
+    {
+      oTmpArray.SortByName(soAsc,stNatural);
+      system.SetSessionVar("sessionLS", "name");
+      string sTmp;
+      foreach( sTmp, oTmpArray.EnumIDs() )
+      {
+        object oTmp = dom.GetObject( sTmp );
+        if( oTmp )
+        {
+          boolean bIsUserList;
+          if( oUser.UserLevel() == iulAdmin )
+          {
+            bIsUserList = ( oTmp.Name().Substr(0,5) == "_USER" );
+          }
+          else
+          {
+            bIsUserList = ( oTmp.Name() == "_USER" # system.GetSessionVar("sessionUserID") );
+          }
+          boolean bIsCopy = ( oTmp.EnCopyID() != ID_ERROR );
+          if( bIsUserList && (!bIsCopy) )
+          {
+            oUser.UserTempViewIDs().Add( oTmp.ID() );
+          }
+        }
+      }
+    }
+  }
+%>
+  setPath("<span onclick='WebUI.enter(SystemConfigPage);'>" + translateKey("menuSettingsPage") + "</span> &gt;" + translateKey("submenuFavorites") );
+  fltFO = new iseFilter('fltFO');
+  arFavs = new Array();
+</script>
+
+<table id="tblNoFavs" cellpadding="0" cellspacing="0" class="CLASS06400" style="display:none;">
+<tr>
+<td class="CLASS06401"></td>
+<td class="CLASS06402"></td>
+</tr>
+<!--<tr>
+<td colspan="2" class="CLASS06403">Es wurden noch keine Favoriten angelegt.<br />
+Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
+</tr>-->
+
+<tr>
+<td colspan="2" class="CLASS06403 j_translate">${noFavoritesAvailable}</td>
+</tr>
+
+<tr>
+<td class="CLASS06401"></td>
+<td class="CLASS06402"></td>
+</tr>
+</table>
+<table id="tblFavs" class="tMain" cellpadding="0" cellspacing="0" style="display:none">
+  <colgroup>
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;" />
+  </colgroup>
+  <tr>
+    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="pos"){sCssName="SortSelected";} %>
+    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'pos',true);" >${thPosition}</div></th>
+    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'name',true);" >${thName}</div></th>
+    <th class="thCell CLASS02803"><div class="pt11">${thDescription}</div></th>
+    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="unit"){sCssName="SortSelected";} %>
+    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>"  onclick="IseSort(arFavs,'unit',true);" >${thNumberOfColumns}</div></th>
+    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="colpos"){sCssName="SortSelected";} %>
+    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'colpos',true);">${thAlignmentOfColumns}</div></th>
+    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="namepos"){sCssName="SortSelected";} %>
+    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'namepos',true);">${thPosOfNameField}</div></th>
+    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="users"){sCssName="SortSelected";} %>
+    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'users',true);">${thUser}</div></th>
+    <th class="thCell CLASS02803"><div class="pt11">${thAction}</div></th>
+  </tr>
+  <tr>
+    <td class="CLASS06408">&nbsp;</td>
+    <td class="CLASS06405">
+      <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+      <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+          <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS06409" />
+          <div id="ftSetNameBtn" class='FilterSetButton CLASS06410' onclick="setSFilter(fltFO, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+          <div id="ftCancelNameBtn" class='FilterSetButton' onclick='$("btnFilterNameSub").hide();'>${filterClose}</div>
+      </div>
+    </td>
+    <td class="CLASS06408">&nbsp;</td>
+    <td class="CLASS06405">
+      <div id="btnFilterUnit" class="FilterBtn">${thFilter}</div>
+      <div class="FilterSubMenu" id="btnFilterUnitSub" style="display:none">
+          <input id="ftUnit" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetUnitBtn', 'ftCancelUnitBtn')" type="text" size="15" class="CLASS06409" />
+          <div id="ftSetUnitBtn" class="FilterSetButton CLASS06410" onclick="setSFilter(fltFO, 'ftUnit', FIL_UNIT);updateTable();$('btnFilterUnitSub').hide();" >${filterSet}</div>
+          <div id="ftCancelUnitBtn" class='FilterSetButton' onclick='$("btnFilterUnitSub").hide();'>${filterClose}</div>
+      </div>
+    </td>
+    <td class="CLASS06405">
+      <div id="btnFilterColPos" class="FilterBtn">${thFilter}</div>
+      <div class="FilterSubMenu" id="btnFilterColPosSub" style="display:none">
+          <table class="CLASS06411">
+            <tr>
+              <td class="leftAlign jCheckBox">${lblLeft}</td>
+              <td><input type="checkbox" id="cbColLeft" /></td>
+            </tr>
+            <tr>
+              <td class="leftAlign jCheckBox">${lblCenter}</td>
+              <td><input type="checkbox" id="cbColCenter" /></td>
+            </tr>
+          </table>
+          <div class='FilterSetButton' onclick='setAFilter(fltFO, "colPos");updateTable();$("btnFilterColPosSub").hide();'>${filterSet}</div>
+          <div class='FilterSetButton' onclick='$("btnFilterColPosSub").hide();'>${filterClose}</div>
+      </div>
+    </td>
+    <td class="CLASS06405">
+      <div id="btnFilterNamePos" class="FilterBtn">${thFilter}</div>
+      <div class="FilterSubMenu" id="btnFilterNamePosSub" style="display:none">
+          <table class="CLASS06411">
+            <tr>
+              <td class="leftAlign jCheckBox">${lblLeft}</td>
+              <td><input type="checkbox" id="cbNameLeft" /></td>
+            </tr>
+            <tr>
+              <td class="leftAlign jCheckBox">${lblTop}</td>
+              <td><input type="checkbox" id="cbNameTop" /></td>
+            </tr>
+          </table>
+          <div class='FilterSetButton' onclick='setAFilter(fltFO, "namePos");updateTable();$("btnFilterNamePosSub").hide();'>${filterSet}</div>
+          <div class='FilterSetButton' onclick='$("btnFilterNamePosSub").hide();'>${filterClose}</div>
+      </div>
+    </td>
+    <td class="CLASS06405">
+      <div id="btnFilterUsers" class="FilterBtn">${thFilter}</div>
+      <div class="FilterSubMenu" id="btnFilterUsersSub" style="display:none">
+        <% 
+          Write("<table class='CLASS06406'>");
+          object obj = dom.GetObject(ID_USERS);
+          if ( obj ) {
+            string tmp = "";
+            foreach( tmp, obj.EnumEnabledIDs() ) {
+              object elem = dom.GetObject(tmp);
+              if (elem && elem.Visible()) {
+                string divId = "udiv"#tmp;
+                  Write("<tr>");
+                    Write("<td  class='CLASS06407 leftAlign jCheckBox'>"#elem.Name()#"</td>");
+                    Write("<td  class='CLASS06407'><input type='checkbox' id='uf"#elem.ID()#"'/></td>");
+                  Write("</tr>");
+              }
+            }
+          }
+          Write("</table>");
+          Write("<div class='FilterSetButton' onclick='setAFilter(fltFO, \"users\");updateTable();$(\"btnFilterUsersSub\").hide();'>${filterSet}</div>");
+          Write("<div class='FilterSetButton' onclick='$(\"btnFilterUsersSub\").hide();'>${filterClose}</div>");
+        %>
+    </div>
+    </td>
+    <td class="CLASS06408">&nbsp;</td>
+  </tr>
+  <%
+    integer iCount =  0;
+    string usID;
+    if (oUser.UserTempViewIDs().Count() == 0)
+    {
+      WriteLine("<script type='text/javascript'>");
+      WriteLine("Cursor.set(Cursor.NORMAL);");
+      WriteLine("</script>");
+    } 
+    foreach( usID, oUser.UserTempViewIDs().EnumIDs() )
+    {
+      object oUserFav = dom.GetObject( usID );
+      if( oUserFav && (oUserFav.Name().Substr(0,5) == "_USER") )
+      {
+        integer localCount = 0;
+        string sID;
+        foreach( sID, oUserFav.EnumIDs() )
+        {
+          object oFav = dom.GetObject( sID );
+          if( oFav )
+          {
+            iCount = iCount + 1;
+            localCount = localCount + 1;
+
+            if( (localCount == 1) && (iCount > 1) )
+            {
+              Write('<tr><td colspan="8">&nbsp;</td></tr>');
+            }
+
+            object oOrigFav = oFav;
+            
+            string sName = oFav.Name();
+            if( !sName.Length() ) { sName = "${lblWithoutName}"; }
+            
+            string sInfo = oFav.EnumInfo();
+            if( !sInfo.Length() ) { sInfo = "${lblWithoutDescription}"; }
+            
+            string sColumnCount = oFav.FavColumnCount().ToString();
+            if( sColumnCount == "0" ) { sColumnCount = "${lblAuto}"; }
+            
+            string sColumnAlign = oFav.FavColumnAlign().ToString();
+            if( sColumnAlign == "0" ) { sColumnAlign = "${lblLeft}"; }
+            if( sColumnAlign == "1" ) { sColumnAlign = "${lblCenter}"; }
+            
+            string sNamePosition = oFav.FavNamePosition().ToString();
+            if( sNamePosition == "0" ) { sNamePosition = "${lblLeft}"; }
+            if( sNamePosition == "1" ) { sNamePosition = "${lblTop}"; }
+            string trid = "tf" # oFav.ID();
+            Write('<tr id="'#trid#'">');
+              Write('<td class="bcWhite CLASS06311">');
+                Write('<table class="CLASS06312">');
+                  Write('<tr>');
+                    Write('<td rowspan="2" id="favPosCount" class="CLASS06313">');
+                      string iIpP = localCount;
+                      Write( iIpP );
+                      if( oFav.MetaData("pos") )
+                      {
+                        oFav.MetaData("pos", iIpP);
+                      }
+                      else
+                      {
+                        oFav.AddMetaData("pos");
+                        oFav.MetaData("pos", iIpP);
+                      }
+                    Write('</td>');
+                    Write('<td class="tMoveUp CLASS06315" onclick="MoveUp('#oUserFav.ID()#','#oFav.ID()#');"></td>');
+                  Write('</tr>');
+                  Write('<tr>');
+                    Write('<td class="tMoveDown CLASS06316" onclick="MoveDown('#oUserFav.ID()#','#oFav.ID()#');"></td>');
+                  Write('</tr>');
+                Write('</table>');
+              Write('</td>');
+              Write('<td class="tCell">'#sName#'</td>');
+              Write('<td class="tCell">'#sInfo#'</td>');
+              Write('<td class="tCell">'#sColumnCount#'</td>');
+              Write('<td class="tCell">'#sColumnAlign#'</td>');
+              Write('<td class="tCell">'#sNamePosition#'</td>');
+
+! Endgerät          
+!              Write('<td class="tCell">' );
+                string endDevices = "";
+!                Call( '/esp/favorites.fn::WriteEndDevices()' );
+!              Write('</td>');
+
+              Write('<td class="tCell">');
+                string favUserIds = "";
+                Call( '/esp/favorites.fn::WriteUsers()' );
+              Write('</td>');
+              Write('<td class="tCell"  style="text-align:center; vertical-align: middle;" class="TblUserAdministration bcWhite">');
+                
+                ! User darf Favoriten nur dann löschen wenn er "ihm alleine" gehört, und Favoriten anderer User nicht bearbeiten
+                boolean bEditAllowed = false;
+                boolean bDelAllowed = false;
+                
+                ! Der Admin darf sämtliche Favoriten löschen und bearbeiten
+                if (oUser.UserLevel() == iulAdmin)
+                {
+                  bEditAllowed = true;
+                  bDelAllowed = true;
+                }
+                else
+                {
+                  boolean bHasOtherOwners = false;
+                  string oUserTmp = "";
+                  foreach (oUserTmp, favUserIds)
+                  {
+                    if (oUserTmp != oUser.ID())
+                    {
+                      bHasOtherOwners = true;
+                    } 
+                    else {
+                      bEditAllowed = true;
+                      bDelAllowed = true;
+                    }
+                  }
+                  if (bHasOtherOwners) {
+                    bEditAllowed = false;
+                    bDelAllowed = false;
+                  }
+                }
+                if (bEditAllowed) {
+                  Write('<div class="CLASS06409 StdButton" onclick="EditFavoriteList('#sID#');">${btnEdit}</div>');
+                }
+                else {
+                  Write('<div class="CLASS06412">Bearbeiten...</div>');
+                }
+                if ((bDelAllowed) && (!oFav.Unerasable())) {
+                    Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#',\''#oFav.Name()#'\');">${btnRemove}</div>');
+                }
+                else {
+                  Write('<div class="CLASS06412">${btnRemove}</div>');
+                }
+                
+              Write('</td>');
+            Write('</tr>');
+            Write('<script type="text/javascript">');
+              Write("var tmp = new Object();");
+              Write("tmp['trid'] = '"#trid#"';");
+              Write("tmp['id'] = '"#oUserFav.ID()#"';");
+              if( oFav.MetaData("pos") )
+              {
+                string sIPos = oFav.MetaData("pos");
+                Write("tmp['pos'] = '"#sIPos#"';");
+              }
+              integer iFavColumnCount = oFav.FavColumnCount();
+              if( iFavColumnCount == 0 )
+              {
+                Write("tmp['unit'] = 'Auto.';");
+              }
+              else
+              {
+                Write("tmp['unit'] = '"#iFavColumnCount#"';");
+              }
+              Write("tmp['users'] = '"#favUserIds#"';");
+              Write("tmp['name'] = '"#oFav.Name()#"';");
+              Write("tmp['colpos'] = '"#oFav.FavColumnAlign().ToString()#"';");
+              Write("tmp['enddevices'] = '"#endDevices#"';");
+              
+              boolean bEndDevPC = false;
+              if( oPC )
+              {
+                string s;
+                foreach(s,oPC.EnumIDs())
+                {
+                  if( s == oFav.ID() ) { bEndDevPC = true; }
+                }
+              }  
+              Write("tmp['devPC'] = "#bEndDevPC#";");
+              boolean bEndDevPDA = false;
+              if( oPDA )
+              {
+                string s;
+                foreach(s,oPDA.EnumIDs())
+                {
+                  if( s == oFav.ID() ) { bEndDevPDA = true; }
+                }
+              }
+              Write("tmp['devPDA'] = "#bEndDevPDA#";");
+              boolean bEndDevCentral = false;
+              if( oCentral )
+              {
+                string s;
+                foreach(s,oCentral.EnumIDs())
+                {
+                  if( s == oFav.ID() ) { bEndDevCentral = true; }
+                }
+              }
+              Write("tmp['devCentral'] = "#bEndDevCentral#";");
+              
+              Write("tmp['namepos'] = '"#oFav.FavNamePosition().ToString()#"';");
+              Write("arFavs[arFavs.length] = tmp;");
+              Write("Cursor.set(Cursor.NORMAL);");
+            Write('</script>');
+          }
+        }
+      }
+    }
+  %>
+</table>
+
+<script type="text/javascript">
+
+  // Build filter object
+  var mouseOpts = {
+    onTopOver: function(divToShow) {
+      selectFilters(fltFO, divToShow);
+    }
+  };
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "tblFavs",  {d:22, r:15}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterUnit", "btnFilterUnitSub", "tblFavs",  {d:22, r:15}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterColPos", "btnFilterColPosSub", "tblFavs",  {d:22, r:15}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterNamePos", "btnFilterNamePosSub", "tblFavs",  {d:22, r:15}, mouseOpts, false, true);
+//  new iseSubMenuControl("btnFilterEndDev", "btnFilterEndDevSub", "tblFavs",  {d:22, r:15}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterUsers", "btnFilterUsersSub", "tblFavs",  {d:22, r:15}, mouseOpts, false, true);
+
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
+  jQuery("#btnFilterUnit").click(function(){
+    jQuery("#ftUnit").focus();
+  });
+
+  var s = "";
+
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS06413' onclick='fltFO.clearFilters();updateTable();'>${footerBtnResetFilter}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='NewFavoriteList();'>${footerBtnNew}</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  
+  setFooter(s);
+
+  var iFavCount = <% Write(iCount);%>;
+  if (iFavCount > 0) 
+    $("tblFavs").show();
+  else
+    $("tblNoFavs").show();
+
+  updateTable = function() {
+    
+    if (fltFO.filName !== "") { $("btnFilterName").addClassName("FilterBtnActive"); }
+    else { $("btnFilterName").removeClassName("FilterBtnActive"); }
+
+    if (fltFO.filUnit !== "") { $("btnFilterUnit").addClassName("FilterBtnActive"); }
+    else { $("btnFilterUnit").removeClassName("FilterBtnActive"); }
+
+    if ((fltFO.bColLeft) || (fltFO.bColCenter)) { $("btnFilterColPos").addClassName("FilterBtnActive"); }
+    else { $("btnFilterColPos").removeClassName("FilterBtnActive"); }
+
+    if ((fltFO.bNameLeft) || (fltFO.bNameTop)) { $("btnFilterNamePos").addClassName("FilterBtnActive"); }
+    else { $("btnFilterNamePos").removeClassName("FilterBtnActive"); }
+
+    if (fltFO.filUsers !== "") { $("btnFilterUsers").addClassName("FilterBtnActive"); }
+    else { $("btnFilterUsers").removeClassName("FilterBtnActive"); }
+    
+    for (var i = 0; i < arFavs.length; i++) {
+      if (fltFO.objPassFilter(arFavs[i])) {
+        show(arFavs[i]['trid']);
+      }
+      else {
+        hide(arFavs[i]['trid']);
+      }
+    }
+  }
+  
+  MoveUp = function(flid,id)
+  {
+    iseFavorites.MovePosition(flid,id,"-");
+  }
+  
+  MoveDown = function(flid,id)
+  {
+    iseFavorites.MovePosition(flid,id,"+");
+  }
+  
+  EditFavoriteList = function(id)
+  {
+    var url = '/esp/favorites.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "SetFavoriteList";';
+    pb += 'string id = "'+id+'";';
+    var opt = {postBody: pb, onComplete: function(t){loadEditFav();if(dbg){alert(t.responseText);} }}
+    new Ajax.Request(url,opt);
+  }
+  
+  NewFavoriteList = function()
+  {
+    var url = '/esp/favorites.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "NewFavoriteList";';
+    var opt = {postBody: pb, onComplete: function(t){loadEditFav();if(dbg){alert(t.responseText);} }}
+    new Ajax.Request(url,opt);
+  }  
+
+  loadEditFav = function()
+  {
+    doClearTempView = true;
+    updateContent("/pages/tabs/user/newFav.htm");
+  }
+  
+  DeleteFavorite = function(id,name)
+  {
+    var _id_ = id;
+	var _name_ = name;
+    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveFavorite").replace(/%s/, _name_), function(result) {
+      if (result == YesNoDialog.RESULT_YES) { iseFavorites.RemoveList(_id_); }
+    });     
+  };
+  
+  <%
+  if( firstSort )
+  {
+    Write("IseSort(arFavs,'name',true);");
+  }
+  %>
+
+  translatePage("#tblFavs, #tblNoFavs");
+
+  // Set the minimum length of the filter text to 10 chars
+  // Otherwise the filter buttons are not centered
+  jQuery(".jCheckBox").each(function(){
+    var elem = jQuery(this);
+    var text = elem.text();
+    for (var loop = text.length; loop <= 11; loop++) {
+        text += "&nbsp;";
+    }
+    elem.html(text);
+  });
+
+</script>

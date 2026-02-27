@@ -1,6 +1,6 @@
 --- occu/WebUI/www/api/methods.conf.orig
 +++ occu/WebUI/www/api/methods.conf
-@@ -561,6 +561,13 @@
+@@ -599,6 +599,13 @@
    ARGUMENTS {_session_id_ id isVisible}
  }
  
@@ -59,7 +59,7 @@
      Write(" CHANNELS {");
  
      var first = true;
-@@ -197,6 +206,7 @@
+@@ -220,6 +229,7 @@
    append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
    append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
    append result ",\"isReady\":[json_toString $device(READY_CONFIG)]"
@@ -146,7 +146,7 @@
 +}
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -337,7 +337,7 @@
+@@ -353,7 +353,7 @@
      {
        if( oAlarm.IsTypeOf(OT_ALARMDP) )
        {
@@ -157,7 +157,7 @@
            string sTimestamp = oAlarm.AlOccurrenceTime();
 --- occu/WebUI/www/rega/pages/tabs/statusviews/serviceMessages.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/statusviews/serviceMessages.htm
-@@ -178,7 +178,7 @@
+@@ -190,7 +190,7 @@
      {
        if( oAlarm.IsTypeOf(OT_ALARMDP) )
        {
@@ -168,7 +168,7 @@
            string sTimestamp = oAlarm.AlOccurrenceTime();
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -80,6 +80,7 @@
+@@ -58,6 +58,7 @@
      "generalDeviceChannelConfigLblUsable" : "Bedienbar:",
      "generalDeviceChannelConfigLblVisible" : "Sichtbar:",
      "generalDeviceChannelConfigLblLogged" : "Protokolliert:",
@@ -178,7 +178,7 @@
      "generalChannelConfigLblFunctions" : "Gewerke",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -80,6 +80,7 @@
+@@ -58,6 +58,7 @@
      "generalDeviceChannelConfigLblUsable": "Operable:",
      "generalDeviceChannelConfigLblVisible": "Visible:",
      "generalDeviceChannelConfigLblLogged": "Logged:",
@@ -188,7 +188,7 @@
      "generalChannelConfigLblFunctions": "Functions",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -246,6 +246,7 @@
+@@ -272,6 +272,7 @@
          <tr id=\"btnEnableDeviceLogging\"><td name=\"generalDeviceChannelConfigLblLogged\">Protokolliert:<\/td><td><input id=\"DeviceConfigDialog_isLogged\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isLoggingChanged=true;\" {if device.isLogged} checked=\"checked\" {\/if} {if !device.isLogable} disabled=\"disabled\" readonly=\"readonly\" {\/if}\/><\/td><\/tr>\n
  \n
          <tr id=\"trAllChnVisible\" class=\"hidden\"><td name=\"lblAllChannelsVisible\">Alle Kan%E4le sichtbar:<\/td><td><input id=\"DeviceConfigDialog_isVisible\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isVisibilityChanged=true;\"\/><\/td><\/tr>\n
@@ -196,15 +196,15 @@
        <\/table>\n
      <\/div>\n
      \n
-@@ -10428,6 +10429,7 @@
+@@ -12127,6 +12128,7 @@
  
        this.interfaceName = data["interface"];
        this.isReadyConfig = data["isReady"];
 +      this.enabledServiceMsg = (data["enabledServiceMsg"] == "true") ? true : false;
-       this.thumbnailHTML = deviceType.getThumbnailHTML();
-       this.imageHTML = deviceType.getImageHTML();
        this.deviceType = deviceType;
-@@ -10514,6 +10516,23 @@
+       this.typeName = deviceType.name;
+       this.typeDescription = deviceType.description;
+@@ -12402,6 +12404,23 @@
    {
    },  
  
@@ -228,7 +228,7 @@
    setDeviceInputCheck: function() {
      this.deviceInputCheck = true;
    },
-@@ -12799,6 +12818,7 @@
+@@ -15319,6 +15338,7 @@
    USABLE_ID: "DeviceConfigDialog_isUsable",
    VISIBLE_ID: "DeviceConfigDialog_isVisible",
    LOGGED_ID: "DeviceConfigDialog_isLogged",
@@ -236,7 +236,7 @@
    TEST_RESULT_ID: "DeviceConfigDialogTestResult",
    RESULT_OK: 1,
    RESULT_ABORT: 0,
-@@ -12824,6 +12844,7 @@
+@@ -15344,6 +15364,7 @@
      this.isVisibilityChanged = false;
      this.isUsabilityChanged = false;
      this.isLoggingChanged = false;   
@@ -244,7 +244,7 @@
      this.callback = callback;
      this.layer = document.createElement("div");
      this.layer.id = this.LAYER_ID;
-@@ -12890,6 +12911,8 @@
+@@ -15410,6 +15431,8 @@
          if (this.isUsabilityChanged) { channel.setUsability(isUsable); }
          if (this.isLoggingChanged) { channel.setLogging(isLogged); }
        }, this);

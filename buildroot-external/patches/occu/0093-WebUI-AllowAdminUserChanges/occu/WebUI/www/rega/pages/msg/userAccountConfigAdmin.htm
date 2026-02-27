@@ -181,6 +181,9 @@
             <td class="CLASS00709">
               <div class="FooterButton CLASS00716" onclick="addSysVar()">${btnAddSysVariable}</div>
             </td>
+            <td class="CLASS00709">
+              <div class="FooterButton CLASS00716" onclick="sortSysVar()">${btnSortSysVariable}</div>
+            </td>
           </tr>
         </table>
     </td>
@@ -289,6 +292,14 @@
     return arTmp;
   };
   
+  
+  sortSysVar = function()
+  {
+    if (iUserId != 0) {
+     iseUser.sortSysVarTable(iUserId);
+    }
+  };
+
   addSysVar = function()
   {
     dlgResult = "";

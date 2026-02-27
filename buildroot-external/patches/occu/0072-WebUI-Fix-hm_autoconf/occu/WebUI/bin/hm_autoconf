@@ -113,6 +113,21 @@ if { [catch {
         rega "dom.GetObject($dev_id).ReadyConfig(true);"
         puts "ReadyConfig($dev_id)"
     }
+
+    proc conf_device_HmIP-CCU3 { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
+
+    proc conf_device_HmIP-RCV-50 { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
+
+    proc conf_device_RPI-RF-MOD { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
 	
 	proc conf_device_HmIP-CCU3 { url dev_id desc_var } {
         rega "dom.GetObject($dev_id).ReadyConfig(true);"
@@ -501,6 +516,11 @@ if { [catch {
                       }
                   }
               }
+	          if { [string equal $ch_descr(PARENT_TYPE) "HmIP-RCV-50"] == 1 } {
+		          catch {
+		              rega "dom.GetObject($FUNCTIONMAP(CENTRAL)).Add($ise_ch_id)"
+		          }
+	          }
               set procname "conf_channel_$ch_descr(TYPE)"
               if {[llength [info procs $procname]]} {
                   if [catch { $procname $url $ise_ch_id ch_descr } errMsg] {

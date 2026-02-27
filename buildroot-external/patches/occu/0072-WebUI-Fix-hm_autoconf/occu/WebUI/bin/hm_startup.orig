@@ -2,10 +2,10 @@
 
 #*******************************************************************************
 #* hm_startup
-#* Wird beim Starten von ise ReGa ausgeführt. 
+#* Wird beim Starten von ise ReGa ausgeführt.
 #*
 #* Aufgaben:
-#*   - sucht fertig konfigurierte Geräte und setzt deren Kanäle ebenfalls auf 
+#*   - sucht fertig konfigurierte Geräte und setzt deren Kanäle ebenfalls auf
 #*     "fertig konfiguriert"
 #*
 #* Autor      : Falk Werner
@@ -17,13 +17,14 @@
 ################################################################################
 
 load tclrega.so
+load tclrpc.so
 
 ################################################################################
 # Prozeduren                                                                   #
 ################################################################################
 
 #*******************************************************************************
-#* Sucht fertig konfigurierte Geräte und setzt deren Kanäle auf "fertig 
+#* Sucht fertig konfigurierte Geräte und setzt deren Kanäle auf "fertig
 #* konfiguriert".
 #*******************************************************************************
 proc checkDevices { } {
@@ -37,8 +38,44 @@ proc checkDevices { } {
   }
 }
 
+proc checkFalmotActive {} {
+  rega_script {
+    string sId;
+    string channelId;
+
+    foreach(sId, root.Devices().EnumUsedIDs()) {
+      var oDevice = dom.GetObject(sId);
+      foreach(channelId, oDevice.Channels())
+      {
+        var channel = dom.GetObject(channelId);
+        if (((channel.Label() == "HmIP-FALMOT-C8") || (channel.Label() == "HmIP-FALMOT-C12")) && (channel.HssType() == "CLIMATECONTROL_FLOOR_TRANSCEIVER")) {
+          if (channel.MetaData("chnActive") != "true") {
+          WriteLine(channel.Address());
+          }
+        }
+      }
+    }
+  }
+}
+
+
 ################################################################################
 # Einsprungpunkt                                                               #
 ################################################################################
 
 checkDevices
+
+array set _result [checkFalmotActive]
+set result $_result(STDOUT)
+set addressList [split $result "\n"]
+
+set url "xmlrpc://127.0.0.1:32010"
+
+foreach chnAddress $addressList {
+  if {$chnAddress != ""} {
+  #  exec echo "chn:  - $chnAddress" >> /tmp/1_hm_startup.log
+    catch {xmlrpc $url suppressServiceMessages [list string $chnAddress] [list string ""] [list boolean 1] } e
+  #  exec echo "xmlrpc error code: $e" >> /tmp/2_xmlerror.log
+  }
+}
+

@@ -1,0 +1,831 @@
+<script type="text/javascript">
+ResetGAC();
+arCObj = new Array();
+arDelChns = new Array();
+bNecc = false; // to reload page in neccecary
+
+<%
+  Write("bSortChOnly = "#(system.GetSessionVar("sessionLS") != "func")#";");
+  system.SetSessionVar("sessionTAB", "functions");
+  
+  if( system.GetSessionVar("sessionLS") == "" )
+  {
+    system.SetSessionVar("sessionLS","func");
+  }
+  
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser && (system.GetSessionVar("sessionCTV")=="true") )
+  {
+    system.SetSessionVar("sessionLS","func");
+    oUser.UserTempViewIDs().RemoveAll();
+    oUser.UserTempViewIDs2().RemoveAll();
+    
+    Write('iseClearLastSort();');
+    Write('lastDir = 0;');
+    
+    object oTmpArray = dom.GetObject( ID_FUNCTIONS );
+    if( oTmpArray )
+    {
+      oTmpArray.SortByName(soAsc,stNatural);
+      string sTmp;
+      foreach(sTmp,oTmpArray.EnumIDs())
+      {
+        object oTmp = dom.GetObject( sTmp );
+        if( oTmp )
+        { 
+          oUser.UserTempViewIDs().Add( oTmp.ID() );
+        }
+      }
+    }
+  }
+  
+  if(oUser && (system.GetSessionVar("sessionCTV2")=="true"))
+  {
+    oUser.UserTempViewIDs2().RemoveAll();
+  }
+  
+  object oTmpArray = dom.GetObject( ID_FUNCTIONS );
+  if( oTmpArray )
+  {
+    ! clear all entrys before filling the array
+    Write("arCObj = new Array();");
+    string sTmp;
+    foreach(sTmp,oTmpArray.EnumIDs())
+    {
+      object oTmp = dom.GetObject( sTmp );
+      if( oTmp )
+      { 
+        string s3;
+        foreach(s3,oTmp.EnumIDs())
+        {
+          object o3 = dom.GetObject( s3 );
+          if( o3 )
+          {
+            if(o3.IsTypeOf(OT_CHANNEL))
+            {              
+              string cat = "";
+              if (o3.ChnDirection() == 1) {cat = 'Sender';}
+              if (o3.ChnDirection() == 2) {cat = 'Empfänger';}
+              
+              Write("tmp = new Object();");
+              Write("tmp['id'] = "#o3.ID()#";");
+              Write("tmp['name'] = '"#o3.Name()#"';");
+              
+              integer devId = o3.Device();
+              if (devId != ID_ERROR)
+              {
+                object dev = dom.GetObject(devId);
+                Write("tmp['desc'] = DEV_getDescription('"#dev.Label()#"');");
+              }
+              
+              Write("tmp['type'] = '"#o3.Label()#"';");
+              Write("tmp['iface'] = '"#cat#"';");
+              Write("tmp['sn'] = '"#o3.Address()#"';");
+              
+              if(o3.ChnAESActive())
+              {
+                Write("tmp['trans'] = '${lblSecured}';"); !transaction mode
+              }
+              else
+              {
+                Write("tmp['trans'] = '${lblStandard}';"); !transaction mode
+              }
+              
+              string rooms = "";
+              string roomTmp = "";
+               
+              foreach(roomTmp, o3.ChnRoom())
+              {
+                object objTmp = dom.GetObject(roomTmp);
+                rooms = rooms # objTmp.Name() # " ";
+              }
+              Write("tmp['room'] = '"#rooms#"';"); !rooms
+              Write("arCObj[arCObj.length] = tmp;");
+            }
+          }
+        }
+      }
+    }
+  }
+
+  
+  object oGhostFunc = dom.CreateObject( OT_ENUM );
+  integer iGhostFuncID = oGhostFunc.ID();
+%>
+
+  setPath("<span onclick='WebUI.enter(SystemConfigPage);'>"+ translateKey("menuSettingsPage") +"</span> &gt; "+ translateKey("submenuFunction"));
+  arF = new Array();
+  arFObj = new Array();
+  arSortFObj = new Array();
+  fltSF = new iseFilter('fltSF');
+  arTblPos = new Array();
+<% 
+  object obj = dom.GetObject(ID_FUNCTIONS);
+  string tmp;
+  foreach(tmp, obj.EnumEnabledIDs())
+  {
+    Write("arF[arF.length] = "#tmp#";");
+    Write("arFObj['"#tmp#"'] = new Object();");
+    Write("arFObj['"#tmp#"']['func'] = '"#obj.Name()#"';");
+    Write("arFObj['"#tmp#"']['id'] = '"#tmp#"';");
+    Write("arFObj['"#tmp#"']['flt'] = true;");
+    Write("arFObj['"#tmp#"']['exp'] = false;");
+    Write("arFObj['"#tmp#"']['chncount'] = 0;");
+     
+    object o = dom.GetObject(tmp);    
+    Write("tmpRoom = new Object();");
+    Write("tmpRoom['func'] = '"#o.Name()#"';");
+    Write("tmpRoom['id'] = '"#tmp#"';");
+    Write("tmpRoom['flt'] = true;");
+    Write("tmpRoom['exp'] = false;");
+    Write("arSortFObj[arSortFObj.length] = tmpRoom;");
+  }
+  
+  if(system.GetSessionVar("sessionCTV")=="true")
+  {
+    ! Deactivated for testing - this will load the page 2 times
+    ! Write("IseSort(arSortFObj,'func',true);");
+  }
+%> 
+
+// add the ghost room for channel sorting with other columns
+arF[arF.length] = <% Write(iGhostFuncID); %>;
+
+arFObj['<% Write(iGhostFuncID); %>'] = new Object();
+arFObj['<% Write(iGhostFuncID); %>']['room'] = 'GhostFunction';
+arFObj['<% Write(iGhostFuncID); %>']['id'] = '<% Write(iGhostFuncID); %>';
+arFObj['<% Write(iGhostFuncID); %>']['flt'] = true;
+arFObj['<% Write(iGhostFuncID); %>']['exp'] = false;
+
+tmpFunction = new Object();
+tmpFunction['room'] = 'GhostFunction';
+tmpFunction['id'] = '<% Write(iGhostFuncID); %>';
+tmpFunction['flt'] = true;
+tmpFunction['exp'] = false;
+
+arSortFObj[arSortFObj.length] = tmpFunction;
+
+</script>
+
+<div id="dummy" style="display:none"></div>
+
+<table id="tblFunctionList" class="tblList CLASS04200" style="display:none" cellspacing="0" cellpadding="0" >
+<colgroup>
+  <col style="width:25px;" />
+  <col />
+  <col />
+  <col />
+  <col style="width:55px;">
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;">
+  <col style="width:100px;">
+</colgroup>
+<thead>
+<tr class='CLASS04101'>
+  <th id="tblListFold"></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="func" class="pt11 <%Write(sCssName); %>" onclick="SortFuncs();">${thFunc}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="name" class="pt11 <%Write(sCssName); %>" onclick="SortMe('name');">${thName}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="desc" class="pt11 <%Write(sCssName); %>" onclick="SortMe('desc');">${thTypeDescriptor}</div></th>
+  <th class='CLASS04102 DeviceListHead'><div class="pt11 Sort">${thPicture}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="type"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="type" class="pt11 <%Write(sCssName); %>" onclick="SortMe('type');">${thDescriptor}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="sn"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="sn" class="pt11 <%Write(sCssName); %>" onclick="SortMe('sn');">${thSerialNumber}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="iface"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="iface" class="pt11 <%Write(sCssName); %>" onclick="SortMe('iface');">${thInterfaceCategory}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="trans"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="trans" class="pt11 <%Write(sCssName); %>" onclick="SortMe('trans');">${thTransmitMode}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
+  <th class='CLASS04102 DeviceListHead'><div id="room" class="pt11 <%Write(sCssName); %>" onclick="SortMe('room');">${thRoom}</div></th>
+  <th class='CLASS04102 DeviceListHead'><div class="pt11 Sort">${thAction}</div></th>
+  <th class='CLASS04102 DeviceListHead'><div class="pt11 Sort">${thLinks}</div></th>
+</tr>
+<tr class='CLASS04205'>
+  <th></td>
+  <th class='CLASS04206'></th>
+  <th class='CLASS04211'>
+    <div id="btnFilterName" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+        <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class='CLASS04213' />
+        <div id="ftSetNameBtn" class='FilterSetButton CLASS04214' onclick="setSFilter(fltSF, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+        <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
+    </div>
+  </th>
+  <th class='CLASS04211'>
+    <div id="btnFilterType" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterTypeSub" style="display:none">
+        <input id="ftType" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetTypeBtn', 'ftCancelTypeBtn')" type="text" size="15" class='CLASS04213' />
+        <div id="ftSetTypeBtn" class="FilterSetButton CLASS04214" onclick="setSFilter(fltSF, 'ftType', FIL_TYPE);updateTable();$('btnFilterTypeSub').hide();" >${filterSet}</div>
+        <div id="ftCancelTypeBtn" class='FilterSetButton' onclick="$('btnFilterTypeSub').hide();">${filterClose}</div>
+    </div>
+  </th>
+  <th class='CLASS04206'></th>
+  <th class='CLASS04211'>
+    <div id="btnFilterDesc" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterDescSub" style="display:none">
+        <input id="ftDesc" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDescBtn', 'ftCancelDescBtn')" type="text" size="15" class='CLASS04213' />
+        <div id="ftSetDescBtn" class="FilterSetButton CLASS04214" onclick="setSFilter(fltSF, 'ftDesc', FIL_DESC);updateTable();$('btnFilterDescSub').hide();" >${filterSet}</div>
+        <div id="ftCancelDescBtn" class='FilterSetButton' onclick="$('btnFilterDescSub').hide();">${filterClose}</div>
+    </div>
+  </th>
+  <th class='CLASS04211'>
+    <div id="btnFilterSN" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterSNSub" style="display:none">
+        <input id="ftSN" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetSNBtn', 'ftCancelSNBtn')" type="text" size="15" class='CLASS04213' />
+        <div id="ftSetSNBtn" class="FilterSetButton CLASS04214" onclick="setSFilter(fltSF, 'ftSN', FIL_SN);updateTable();$('btnFilterSNSub').hide();" >${filterSet}</div>
+        <div id="ftCancelSNBtn" class='FilterSetButton' onclick="$('btnFilterSNSub').hide();">${filterClose}</div>
+    </div>
+  </th>
+  <th class='CLASS04211'>
+    <div id="btnFilterIface" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterIfaceSub" style="display:none">
+        <table class='CLASS04212'>
+        <tr>
+          <td  class='CLASS04214'>${lblSender}</td>
+          <td  class='CLASS04214'><input type='checkbox' id='cbSend'/></td>
+        </tr>
+        <tr>
+          <td  class='CLASS04214'>${lblReceiver}</td>
+          <td  class='CLASS04214'><input type='checkbox' id='cbRec'/></td>
+        </tr>
+        </table>
+        <div class='FilterSetButton' onclick='setIFilter(fltSF, "iface");updateTable();$("btnFilterIfaceSub").hide();'>${filterSet}</div>
+        <div class='FilterSetButton' onclick="$('btnFilterIfaceSub').hide();">${filterClose}</div>
+    </div> 
+  </th>
+  <th class='CLASS04211'>
+    <div id="btnFilterMode" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterModeSub" style="display:none">
+        <table class='CLASS04212'>
+        <tr>
+          <td  class='CLASS04214'>${lblStandard}</td>
+          <td  class='CLASS04214'><input type='checkbox' id='cbStd'/></td>
+        </tr>
+        <tr>
+          <td  class='CLASS04214'>${lblSecured}</td>
+          <td  class='CLASS04214'><input type='checkbox' id='cbSafe'/></td>
+        </tr>
+        </table>
+        <div class='FilterSetButton' onclick='setIFilter(fltSF, "mode");updateTable();$("btnFilterModeSub").hide();'>${filterSet}</div>
+        <div class='FilterSetButton' onclick="$('btnFilterModeSub').hide();">${filterClose}</div>
+    </div>
+  </th>
+  <th class='CLASS04211'>
+    <div id="btnFilterRoom" class="FilterBtn CLASS00203">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
+      <% 
+        Write("<table class='CLASS04212'>");
+        object obj = dom.GetObject(ID_ROOMS);
+        if ( obj ) {
+          string tmp = "";
+          foreach( tmp, obj.EnumIDs() ) {
+            object elem = dom.GetObject(tmp);
+            if (elem) {
+              string divId = "rdiv"#tmp;
+                Write("<tr>");
+                  Write("<td  class='CLASS04214'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS04214'><input type='checkbox' id='sr"#elem.ID()#"'/></td>");
+                Write("</tr>");
+            }
+          }
+        }
+        Write("</table>");
+        Write("<div class='FilterSetButton' onclick='setAFilter(fltSF, \"rooms\");updateTable();$(\"btnFilterRoomSub\").hide();'>${filterSet}</div>");
+        Write("<div class='FilterSetButton' onclick='$(\"btnFilterRoomSub\").hide();'>${filterClose}</div>");
+      %>
+    </div>
+  </th>
+  <th class='CLASS04206'></th>
+  <th class='CLASS04206'></th>
+</tr>
+
+</thead>
+<tbody id="tblsvr">
+
+<!--unterhalb vom tabellen header!!-->
+<%
+if ( oUser )
+{
+  oUser.UserTempViewIDs().Add( iGhostFuncID );
+  
+  string tmp = "";
+  integer iFuncIdx = 0;
+  foreach( tmp, oUser.UserTempViewIDs().EnumEnabledIDs() )
+  {
+    object elem = dom.GetObject(tmp);
+    if (elem)
+    {
+      WriteLine("<tr id='r"#tmp#"' class='CLASS04205'>");
+      
+      Write("<td>"); !+ / -
+      string sStyle = "";
+      integer iEnumCount = 0;
+      string tmp = "";
+      foreach(tmp, elem.EnumIDs())
+      {
+        object objTmp = dom.GetObject(tmp);
+        if (objTmp && objTmp.IsTypeOf(OT_CHANNEL) && objTmp.ReadyConfig())
+        {
+          iEnumCount = iEnumCount + 1;
+        }
+      }
+      if (iEnumCount == 0)
+      {
+        sStyle="display:none";
+      }
+      Write("<img id='img"#elem.ID()#"' src='/ise/img/plus.png' alt='plus' class='CLASS04207' style='"#sStyle#"' onclick='expand("#elem.ID()#", "#iFuncIdx#")' />");
+      Write("<script type='text/javascript'>");
+        Write("arFObj['"#elem.ID()#"']['rowIdx'] = "#iFuncIdx#";");
+        Write("arTblPos["#iFuncIdx#"] = "#iFuncIdx#" + 2;");  
+        iFuncIdx = iFuncIdx + 1;
+      Write("</script>");
+      Write("</td>"); 
+      
+      Write("<td id='fn"#elem.ID()#"' class='WhiteBkg DeviceListCell' onclick='textEdit(id, "#elem.ID()#", false, textEditCallback);'>"#elem.Name()#"</td>"); !Gewerk
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Name
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Typenbezeichnung
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Bild
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Bezeichnung
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Seriennummer
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Interface Kategorie
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Übertragungsmodus
+      Write("<td class='GrayBkg DeviceListCell'></td>"); !Raum
+      
+      Write("<td class='WhiteBkg DeviceListCell'>"); !Aktion
+! - - - wernerf - - -      
+        Write( '<div class="StdButtonBig heightAuto" onclick="addChannels2('#elem.ID()#',\''#elem.EnumIDs()#'\')">${btnAddChannel}</div>');
+!       Write( '<div class="StdButtonBig heightAuto" onclick="addChannels('#elem.ID()#',\''#elem.EnumIDs()#'\')">${btnAddChannel}</div>');
+! - - - wernerf - - -
+      Write("</td>");
+      
+      string sEnumPrgFilter = "";
+      string tmp = "";
+      foreach( tmp, elem.EnumIDs() )
+      {
+        object chnTmp = dom.GetObject(tmp);
+        if( chnTmp && chnTmp.IsTypeOf(OT_CHANNEL) )        
+        {
+          if( !sEnumPrgFilter.Length() )
+          {
+            sEnumPrgFilter = chnTmp.ChnEnumDPUsagePrograms();
+          }
+          else
+          {
+            sEnumPrgFilter = sEnumPrgFilter#"\t"#chnTmp.ChnEnumDPUsagePrograms();
+          }
+        }
+      }
+      
+      string sLoadProgamList = "WebUI.enter(ProgramListPage, '"#sEnumPrgFilter#"');";
+      Write('<td  class="WhiteBkg DeviceListCell">');
+        Write("<table class='CLASS04208'>");
+          Write("<tr><td>");
+          Write("<div class='StdButton' onclick='WebUI.enter(LinkListPage);'>${btnDirectLinks}</div>");
+          Write("</td></tr>");
+          Write("<tr><td>");
+          Write( '<div class="StdButton" onclick="'#sLoadProgamList#'">${btnPrograms}</div>' );
+          Write("</td></tr>");
+        Write("</table>");
+      Write("</td>"); !Verknüpfungen
+      
+      string chnTmp = "";
+      integer iCount = 0;
+      
+      integer iSubObjects = 0; ! Anzahl Unterobjekte je Raum... als "Platzhalter" für Tabellen-Reihen
+      string tmp = "";
+      foreach(tmp, elem.EnumEnabledIDs())
+      {
+        iSubObjects = iSubObjects + 1;
+      }
+      
+      ! get all channels for rooms to sort them
+      if( elem.ID() == iGhostFuncID )
+      {
+        object objFuncs = dom.GetObject( ID_FUNCTIONS );
+        if(objFuncs )
+        {
+          string s1;
+          foreach( s1, objFuncs.EnumEnabledIDs() )
+          {
+            object objFunc = dom.GetObject( s1 );
+            if( objFunc )
+            {
+              string s2;
+              foreach( s2, objFunc.EnumEnabledIDs() )
+              {
+                iSubObjects = iSubObjects + 1;
+              }
+            }!if objFunc
+          }!foreach
+        }!if objFuncs
+      }!if elem.ID()
+      !}
+    } ! if (elem)
+  } ! foreach
+  dom.DeleteObject( oGhostFunc.ID() ); 
+  oUser.UserTempViewIDs().Remove( iGhostFuncID ); 
+} !if(oUser)
+
+%>
+ <!--  <script type="text/javascript">
+   Cursor.set(Cursor.NORMAL);
+  </script> -->
+</tbody>
+</table>
+
+
+<script type="text/javascript">
+  textEditCallback = function(id, newVal) {
+    if ($("funcF" + id)) {
+      $("funcF" + id).innerHTML = newVal;
+      changeRoomOrSubsection.delay(1, id);
+    }
+  };
+  bEIP = false;
+  hideGhostFunc();
+  colorFilterBtns(fltSF);
+  
+  var iExpFuncs = 0;
+  var mouseOpts = {
+    onTopOver: function(divToShow) {
+      selectFilters(fltSF, divToShow);
+    }
+  };
+  new iseSubMenuControl("btnFilterRoom", "btnFilterRoomSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+//  new iseSubMenuControl("btnFilterFunc", "btnFilterFuncSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterIface", "btnFilterIfaceSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterMode", "btnFilterModeSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterType", "btnFilterTypeSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterDesc", "btnFilterDescSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterSN", "btnFilterSNSub", "tblFunctionList", {d: 22}, mouseOpts, false, true);
+
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
+  jQuery("#btnFilterType").click(function(){
+    jQuery("#ftType").focus();
+  });
+
+  jQuery("#btnFilterDesc").click(function(){
+    jQuery("#ftDesc").focus();
+  });
+
+  jQuery("#btnFilterSN").click(function(){
+    jQuery("#ftSN").focus();
+  });
+
+  updateList = function() {
+    WebUI.enter(FunctionListPage);
+  };
+  
+  expand = function(id, fTblPos) {
+    // Ausklappen
+    Cursor.set(Cursor.WAIT); 
+    if (!isSorting)
+    {
+      if( $("img" + id) )
+      {
+        if ($("img" + id).alt == "plus")
+        {
+          expandFunc(id, fTblPos);
+        }
+        // Einklappen
+        else
+        {
+          collapseFunc(id);
+        }
+      }
+    }
+    Cursor.set(Cursor.NORMAL);
+  };
+  
+  expandFunc = function(id, fTblPos) {
+    if( $("img" + id) )
+    {
+    if ($("img" + id).alt == "plus") {
+      if (!bEIP) {
+        $("img" + id).src = "/ise/img/minus.png";
+        $("img" + id).alt = "minus";
+        arFObj[id]['exp'] = true;
+        if (arFObj[id]['loaded']) {
+          if (arFObj[id]['chns']) {
+            for ( var i = 0; i < arFObj[id]['chns'].length; i++)
+            {
+              if (fltSF.objPassFilter(arFObj[id]['chns'][i]))
+              {
+                if (!arFObj[id]['chns'][i]['deleted'])
+                {
+                  show(arFObj[id]['chns'][i]['trid']);
+                  show('picDiv' +id +arFObj[id]['chns'][i]['id']);
+                }
+              }
+            }
+          }
+        }
+        else     
+        {
+          bEIP = true;
+          var opts = {
+            evalScripts: true,
+            asynchronous: false,
+            onSuccess: function(t)
+            {
+              bEIP = false;
+            }
+          };
+          var url = "/pages/tabs/admin/views/functionchannels.htm?sid="+SessionId+"&id="+id+"&fTblPos="+fTblPos+"&clearSel=true";
+          new Ajax.Updater("dummy",url,opts);
+        }
+        iExpFuncs++;
+      }
+      else {
+        window.setTimeout("expandFunc(" + id +"," + fTblPos+ ")", 500);
+      }
+    }
+    refreshFooterButton();
+    }
+  };
+  
+  collapseFunc = function(id) {
+    if ($("img" + id)) {
+      if ($("img" + id).alt == "minus") {
+        $("img" + id).src = "/ise/img/plus.png";
+        $("img" + id).alt = "plus";
+        
+        var i = 0;
+        
+        while(true) {
+          var tmpElem = id + "tr" + i;
+          if ($(tmpElem))
+          {
+            $(tmpElem).hide();
+            if(arFObj[id]['chns'] && arFObj[id]['chns'][i])
+            {
+              hide('picDiv'+arFObj[id]['chns'][i]['id']+arFObj[id]['chns'][i]['trid']);
+            }
+            i++;
+          }
+          else 
+            break;
+        }
+        arFObj[id]['exp'] = false;
+        if (arFObj[id]['picdivs']) {
+          for (var i = 0; i < arFObj[id]['picdivs'].length; i++) {
+            hide(arFObj[id]['picdivs'][i]);
+          }
+        }
+        iExpFuncs--;
+      }
+      refreshFooterButton();
+    }
+  };
+  
+  refreshFooterButton = function() {
+    if (iExpFuncs == 0)
+      $("btnExp").innerHTML = translateKey("footerBtnOpenTree"); //"Baumstruktur &ouml;ffnen";
+    else
+      $("btnExp").innerHTML = translateKey("footerBtnCloseTree"); //"Baumstruktur schließen";
+  };
+  
+  expandAll = function() {
+    Cursor.set(Cursor.WAIT);
+    var bExpand = (iExpFuncs == 0);
+    if (bFilterUsed) bExpand = true;
+    for (var i = 0; i < arF.length; i++) {
+      if(arF[i]!=<%Write(iGhostFuncID); %>)
+      {
+        if (bExpand)
+          expandFunc(arF[i], arFObj[arF[i]]['rowIdx']);
+        else
+          collapseFunc(arF[i]);
+      }
+    }
+    Cursor.set(Cursor.NORMAL);
+  };
+  
+  collapseAll = function()
+  { 
+    for (var i = 0; i < arF.length; i++)
+    {
+      collapseFunc(arF[i]);
+    }
+  };
+  
+  addChannels2 = function(id,ids)
+  {
+    var _id_ = id;
+    var callback = function(result)
+    {
+      if (result)
+      {
+        ids = "";
+        for (var i = 0, len = result.length; i < len; i++)
+        {
+          if ("" != ids) { ids += "\t"; }
+          ids += result[i];
+        }
+        iseChannels.addChnsToID(ids, id, true, function() {
+          SubsectionList.beginUpdate(_id_);
+        });
+      }
+    };
+    var ops = { all: true };
+    //MultiChannelChooser.show("Gewerke", ids.split("\t"), callback, MultiChannelChooser.SHOW_ALL);
+    MultiChannelChooser.show(translateKey("submenuFunction"), ids.split("\t"), callback, MultiChannelChooser.SHOW_ALL);
+  };
+  
+  restoreFuncs = function() {    
+    filterFunc();
+  };
+  
+  filterFunc= function() {
+    var sTmp = "";
+    var bNo = true;
+    fltSF.filFuncs = sTmp;
+    if (bNo) {
+      for (var i = 0; i < arF.length; i++) {
+        arFObj[arF[i]]['flt'] = true;
+      }
+    }
+    for (var i = 0; i < arF.length; i++) {
+      if (arFObj[arF[i]]['flt']) {
+         //show("r" + arF[i]); //##
+        if (arFObj[arF[i]]['chns'] && arFObj[arF[i]]['exp']) {
+          for (var x = 0; x < arFObj[arF[i]]['chns'].length; x++) {
+            if (fltSF.objPassFilter(arFObj[arF[i]]['chns'][x])) {
+              show(arFObj[arF[i]]['chns'][x]['trid']);
+              show("picDiv" + arF[i] + arFObj[arF[i]]['chns'][x]['id']);
+            }
+            else {
+              hide(arFObj[arF[i]]['chns'][x]['trid']);
+              hide("picDiv" + arF[i] + arFObj[arF[i]]['chns'][x]['id']);
+            }
+          }
+        }
+      }
+      else {
+        if (arFObj[arF[i]]['chns']) {
+          for (var x = 0; x < arFObj[arF[i]]['chns'].length; x++) {
+            hide(arFObj[arF[i]]['chns'][x]['trid']);
+            hide("picDiv" + arF[i] + arFObj[arF[i]]['chns'][x]['id']);
+          }   
+        }
+        //hide("r" + arF[i]); //###
+      }
+    }
+    hideGhostFunc();
+  };
+
+  var s = "";
+  s += "<table cellspacing='8'>";
+  s += "<colgroup> <col style='width:4%;'/><col style='width:8%;'/><col style='width:12%;'/><col style='width:12%;'/><col style='width:4%;' width='4%' /><col style='width:16%;'/>" +
+        "<col style='width:8%;'/><col style='width:8%;'/><col style='width:4%;'/><col style='width:8%;'/><col style='width:8%;'/><col style='width:8%;'/></colgroup>";
+  s += "<tr>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04209' onclick='fltSF.clearFilters();restoreFuncs();updateTable();' >${footerBtnResetFilter}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div id='btnExp' onclick='bFilterUsed=false;expandAll();' class='FooterButton CLASS04209' >${footerBtnOpenTree}</div></td>";
+    s += "<td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+    s += "<td style='text-align:center;' class='CLASS04210'>${lblFunctionList}</td>";
+    s += "<td style='text-align:center;'><div class='FooterButton' onclick='editFuncs();'>${footerBtnEdit}</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  setFooter(s);
+  
+  editFuncs = function() {
+    dlgPopup = new iseMessageBox(ID_FUNCTIONS);
+    PopupClose = function() {
+      dlgPopup.hide();
+      reloadPage();
+    };
+    dlgPopup.ShowPopup();
+  };
+  
+  specialReloadPage = function() 
+  {
+    if(bNecc)
+    {
+      reloadPage();
+    } 
+  };
+  
+  updateTable = function()
+  {
+    var bDoOpenStructure = false;
+    colorFilterBtns(fltSF);
+    var exceptGhostFunc = 0;
+    for (var i = 0; i < arF.length; i++)
+    {
+      if( arFObj[arF[i]] )
+      {
+        var iElemsPassed = 0;
+        if (arFObj[arF[i]]['id'] == <%Write(iGhostFuncID);%> && arFObj[arF[i]]['chns'] ||arFObj[arF[i]]['chns'])
+        {
+          for (var x = 0; x < arFObj[arF[i]]['chns'].length; x++)
+          {
+            exceptGhostFunc = arFObj[arF[i]]['id'];
+            if (!fltSF.objPassFilter(arFObj[arF[i]]['chns'][x])) 
+            {
+              conInfo( "Filter: Hide id "+arFObj[arF[i]]['id'] );
+              hide(arFObj[arF[i]]['chns'][x]['trid']);
+              hide("picDiv" + arFObj[arF[i]]['id'] + arFObj[arF[i]]['chns'][x]['id']);
+            }
+            else
+            {
+              if( arFObj[arF[i]]['flt'] )
+              {
+                conInfo( "Filter: Show id "+arFObj[arF[i]]['id'] );
+                //show("r" + arF[i]); //###
+                if( arFObj[arF[i]]['exp'] )
+                {
+                  show(arFObj[arF[i]]['chns'][x]['trid']);
+                  show("picDiv" + arFObj[arF[i]]['id'] + arFObj[arF[i]]['chns'][x]['id']);
+                }
+                iElemsPassed++;
+              }
+            }
+          }
+          if (arFObj[arF[i]]['loaded'] && (iElemsPassed == 0))
+          {
+            hide("img" + arF[i]);
+          }
+          else
+          {
+            if( arFObj[arF[i]]['chns'].length > 0 ) show("img" + arF[i]); 
+          }
+        }
+         else
+          bDoOpenStructure = true;
+        if (arFObj[arF[i]]['id'] == <%Write(iGhostFuncID);%> && arFObj[arF[i]]['chns'])
+        {
+          new Ajax.Updater("dummy", "/pages/tabs/admin/views/functionchannels.htm?sid=" + SessionId + "&id=<% Write(iGhostFuncID); %>&clearSel=false",{evalScripts:true});
+        }
+      }
+    }
+   Cursor.set(Cursor.NORMAL);
+   if( bDoOpenStructure ) 
+   { 
+     if (!(exceptGhostFunc == <%Write(iGhostFuncID);%>)) expandAll();
+   }
+  };
+  
+  SortMe = function(colName)
+  {
+    //delete whole tree; get all channels and sort
+    HideFunctions();
+    hide("btnExp");
+    IseSort2(arCObj,colName,false,true);
+  };
+  
+  SortFuncs = function()
+  {
+    show("btnExp");
+    IseSort(arSortFObj,'func', true);
+  };
+
+  HideFunctions = function()
+  {
+    var arrayCount = arF.length;
+    collapseAll();
+    for(var i = 0; i < arrayCount; i++)
+    {
+      hide("r" + arF[i]);
+    }  
+  };
+
+  GetAllChannels = function()
+  {
+    new Ajax.Updater("dummy", "/pages/tabs/admin/views/functionchannels.htm?sid=" + SessionId + "&id=<% Write(iGhostFuncID); %>&clearSel=false",{evalScripts:true});
+  };
+
+  function hideGhostFunc()
+  {
+    hide("r<%Write(iGhostFuncID);%>");
+  };
+  
+  decChnCount = function(funcId) {
+    arFObj[funcId]['chncount']--;
+    if (arFObj[funcId]['chncount'] == 0) {
+      hide("img" + funcId);
+    }
+  };
+  
+  isDeleted = function(funcId, id) {
+    for (var i = 0; i < arDelChns.length; i++) {
+      if (arDelChns[i] == ("" + funcId + id)) {
+        return true;
+      }
+    }  
+    return false;
+  };
+  translatePage("#tblFunctionList");
+  jQuery("#tblFunctionList").css("display", "table");
+</script>

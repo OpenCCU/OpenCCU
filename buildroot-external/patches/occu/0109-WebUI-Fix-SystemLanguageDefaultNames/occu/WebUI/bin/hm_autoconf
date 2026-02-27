@@ -41,9 +41,9 @@ if { [catch {
 
     load tclrega.so
     load tclrpc.so
-    
+
     # List of default functions (german "Gewerke") that will be automatically generated
-     set FUNCTIONLIST {
+    array set FUNCTIONLIST {
         LIGHT           funcLight
         HEATING         funcHeating
         CLIMATECONTROL  funcClimateControl
@@ -55,22 +55,7 @@ if { [catch {
         CENTRAL         funcCentral
         ENERGY          funcEnergy
     }
-   
-    # List of default rooms that will be automatically generated
-    set ROOMLIST {
-        "roomLivingRoom"
-        "roomKitchen"
-        "roomBedroom"
-        "roomChildrensRoom1"
-        "roomChildrensRoom2"
-        "roomOffice"
-        "roomBathroom"
-        "roomGarage"
-        "roomHWR"
-        "roomGarden"
-        "roomTerrace"
-    }
-    
+
     # Mapping of channel type to default function for the channel
     array set CHANNEL_FUNCTIONS {
         BLIND                   LIGHT
@@ -123,6 +108,31 @@ if { [catch {
         rega "dom.GetObject($dev_id).ReadyConfig(true);"
         puts "ReadyConfig($dev_id)"
     }
+
+    proc conf_device_RPI-RF-MOD { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
+
+    proc conf_device_HmIP-CCU3 { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
+
+    proc conf_device_HmIP-RCV-50 { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
+
+    proc conf_device_RPI-RF-MOD { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
+	
+	proc conf_device_HmIP-CCU3 { url dev_id desc_var } {
+        rega "dom.GetObject($dev_id).ReadyConfig(true);"
+        puts "ReadyConfig($dev_id)"
+    }
     
     proc conf_device_HM-CCU-1 { url dev_id desc_var } {
         rega "dom.GetObject($dev_id).ReadyConfig(true);"
@@ -141,100 +151,15 @@ if { [catch {
     
     proc conf_value_WEATHER.RAIN_COUNTER { url ch_id ch_desc_var value_desc_var} {
         create_rain_calculation $ch_id
-        
     }
     
     proc conf_value_DISPLAY.SERVICE_COUNT { url ch_id ch_desc_var value_desc_var} {
-        create_sysvar_to_value_prg $ch_id SERVICE_COUNT 41 "Servicemeldungen anzeigen"
+        create_sysvar_to_value_prg $ch_id SERVICE_COUNT ID_GW_SYSSERVICE "Servicemeldungen anzeigen"
     }
     
     proc conf_value_DISPLAY.ALARM_COUNT { url ch_id ch_desc_var value_desc_var} {
-        create_sysvar_to_value_prg $ch_id ALARM_COUNT 40 "Alarmmeldungen anzeigen"
+        create_sysvar_to_value_prg $ch_id ALARM_COUNT ID_GW_SYSALARM "Alarmmeldungen anzeigen"
     }
-    
-    proc create_objects {collection enum_type names} {
-        set ids [rega "dom.GetObject($collection).EnumIDs()"]
-        set i 0
-        foreach name $names {
-            set id [lindex $ids $i]
-            if { "$id" == "" } {
-                #create object first
-                set script "\
-                    var new_id = -1;\n\
-                    object o = dom.CreateObject( OT_ENUM, \"new object\" );\n\
-                    if( o ) \{\n\
-                        o.EnumType( $enum_type );\n\
-                        boolean res = dom.GetObject( $collection ).Add( o );\n\
-                        if( res ) \{\n\
-                            new_id = o.ID();\n\
-                        \} else \{\n\
-                            dom.DeleteObject( o.ID() );\n\
-                        \}\n\
-                    \}\
-                "
-                #puts "Executing $script"
-                array set r [rega_script $script]
-                set id $r(new_id)
-                if { $id < 0 } {
-                    puts "Error creating object"
-                }
-            }
-            rega "dom.GetObject($id).Name(\"[lindex $names $i]\")"
-            rega "dom.GetObject($id).Enabled(true)"
-            incr i
-        }
-        return [lsort [rega "dom.GetObject($collection).EnumUsedIDs()"]]
-    }
-    
-    proc create_functions {} {
-        global FUNCTIONLIST
-        for { set i 1 } { $i < [llength $FUNCTIONLIST] } { incr i 2 } {
-            lappend names [lindex $FUNCTIONLIST $i]
-        }
-        return [create_objects ID_FUNCTIONS etFunction $names]
-    }
-    
-    proc create_rooms {} {
-        global ROOMLIST
-        return [create_objects ID_ROOMS etRoom $ROOMLIST]
-    }
-    
-    proc create_sysvars {} {
-        rega_script {
-            object sv=dom.CreateObject(OT_ALARMDP, "${sysVarAlarmZone1}");
-            dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-            sv.DPInfo("${sysVarAlarmZone1Msg}");
-            sv.ValueUnit("");
-            sv.ValueType( ivtBinary );
-            sv.ValueSubType( istAlarm );
-            sv.ValueName1("${sysVarAlarmZone1Triggered}");
-            sv.ValueName0("${sysVarAlarmZone1NotTriggered}");
-            sv.AlType(atSystem);
-            sv.AlArm(true);            
-            
-            sv=dom.GetObject(ID_PRESENT);
-            dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-            sv.Name("${sysVarPresence}");
-            sv.DPInfo("${sysVarPresenceMsg}");
-            sv.ValueUnit("");
-            sv.ValueName1("${sysVarPresencePresent}");
-            sv.ValueName0("${sysVarPresenceNotPresent}");
-            
-            sv=dom.GetObject(40);
-            dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-            sv.Name("${sysVarAlarmMessages}");
-            sv.DPInfo("${sysVarAlarmMessagesCount}");
-            sv.Internal(0);
-            
-            sv=dom.GetObject(41);
-            dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-            sv.Name("${sysVarServiceMessages}");
-            sv.DPInfo("${sysVarServiceMessagesCount}");
-            sv.Internal(0);
-            
-        }
-    }
-    
     
     proc create_sysvar_to_value_prg {ch_id value sv_id prg_name} {
         set script "string ch_id=\"$ch_id\";\nstring value_name=\"$value\";\nstring sv_id=$sv_id;\nstring prg_name=\"$prg_name\";\n"
@@ -284,7 +209,7 @@ if { [catch {
     proc create_rain_calculation {ch_id} {
     
       ##
-      # FÃ¼hrt ein HomeMatic Script (ise Script, ReGa Script) aus und liefert dessen Ausgabe zurÃ¼ck
+      # Führt ein HomeMatic Script (ise Script, ReGa Script) aus und liefert dessen Ausgabe zurück
       ##
       proc _rega_exec_ { script } {
         set result {}
@@ -313,7 +238,7 @@ if { [catch {
       }
     
       ##
-      # Erzeugt eine Systemvariable, bindet diese an einen Kanal und liefert ihre Id zurÃ¼ck
+      # Erzeugt eine Systemvariable, bindet diese an einen Kanal und liefert ihre Id zurück
       ##
       proc _create_sv_ {name info channelId} {
         # get selected systemLanguage from /etc/config/systemLanguage
@@ -384,7 +309,7 @@ if { [catch {
       }
     
       ##
-      # Erstellt das Programm "Regentagesmenge zurÃ¼cksetzen"
+      # Erstellt das Programm "Regentagesmenge zurücksetzen"
       ##
       proc _create_reset_program_ { rainTodayId rainYesterdayId } {
   
@@ -406,7 +331,7 @@ if { [catch {
 
           var programs = dom.GetObject(ID_PROGRAMS);
           var program  = dom.CreateObject(OT_PROGRAM);
-          program.Name("Regentagesmenge zurÃ¼cksetzen");
+          program.Name("Regentagesmenge zurücksetzen");
           program.Internal(true);
           programs.Add(program.ID());
 
@@ -547,7 +472,9 @@ if { [catch {
         string ifaces;
         foreach(if_id, dom.GetObject(ID_INTERFACES).EnumUsedIDs()){
             object o=dom.GetObject(if_id);
-            ifaces = ifaces # if_id # " {" # o.InterfaceUrl() # " " # o.Name() # "} ";
+            if(o.InterfaceUrl() != "") {
+              ifaces = ifaces # if_id # " {" # o.InterfaceUrl() # " " # o.Name() # "} ";
+            }
         }
         string dev_id;
         string devs;
@@ -564,35 +491,22 @@ if { [catch {
                 }
             }
         }
-        string functions=dom.GetObject(ID_FUNCTIONS).EnumUsedIDs();
-        string rooms=dom.GetObject(ID_ROOMS).EnumUsedIDs();
-        string sysvars=dom.GetObject(ID_SYSTEM_VARIABLES).EnumUsedIDs();
+        string func_id;
+        string functions;
+        foreach (func_id, dom.GetObject(ID_FUNCTIONS).EnumUsedIDs()){
+            functions = functions # " {" # dom.GetObject(func_id).Name() # "} " # func_id;
+        }
     }]
     
     array set ifmap $result(ifaces)
     array set devmap $result(devs)
-    
-    set ise_functions [lsort $result(functions)]
-    if { [llength $ise_functions] == 0 } {
-        puts "No functions defined, creating default functions"
-        set ise_functions [create_functions]
-    }
-    
-    if { [llength $result(rooms)] == 0 } { 
-        puts "No rooms defined, creating default rooms"
-        create_rooms
-    }
-    
-    if { [llength $result(sysvars)] == 0 } {
-        puts "No system variables defined, creating default system variables"
-        create_sysvars
-    }
-    
-    set i 0
-    foreach function_id $ise_functions {
-        if { $i >= [llength $FUNCTIONLIST] } break;
-        set FUNCTIONMAP([lindex $FUNCTIONLIST $i]) $function_id
-        incr i 2
+
+    array set ise_functions $result(functions)
+
+    foreach func [array names FUNCTIONLIST] {
+        if {[info exists ise_functions($FUNCTIONLIST($func))]} {
+            set FUNCTIONMAP($func) $ise_functions($FUNCTIONLIST($func))
+        }
     }
 
     # We need a catch because OSRAM Lightify causes an error (/tmp/hm_autoconf_xxx.log) because a list must have an even number of elements.
@@ -625,13 +539,24 @@ if { [catch {
               array_clear ch_descr
               array set ch_descr [xmlrpc $url getDeviceDescription $ch_address]
               if [info exist DEVICE_FUNCTIONS($dev_descr(TYPE))] {
-                  catch {
-                      rega "dom.GetObject($FUNCTIONMAP($DEVICE_FUNCTIONS($dev_descr(TYPE)))).Add($ise_ch_id)"
+                  if [info exist FUNCTIONMAP($DEVICE_FUNCTIONS($dev_descr(TYPE)))] {
+                      catch {
+                          rega "dom.GetObject($FUNCTIONMAP($DEVICE_FUNCTIONS($dev_descr(TYPE)))).Add($ise_ch_id)"
+                      }
                   }
               }
               if [info exist CHANNEL_FUNCTIONS($ch_descr(TYPE))] {
-                  catch {
-                      rega "dom.GetObject($FUNCTIONMAP($CHANNEL_FUNCTIONS($ch_descr(TYPE)))).Add($ise_ch_id)"
+                  if [info exist FUNCTIONMAP($CHANNEL_FUNCTIONS($ch_descr(TYPE)))] {
+                      catch {
+                          rega "dom.GetObject($FUNCTIONMAP($CHANNEL_FUNCTIONS($ch_descr(TYPE)))).Add($ise_ch_id)"
+                      }
+                  }
+              }
+              if { [string equal $ch_descr(PARENT_TYPE) "HmIP-RCV-50"] == 1 } {
+                  if [info exist FUNCTIONMAP(CENTRAL)] {
+                      catch {
+                          rega "dom.GetObject($FUNCTIONMAP(CENTRAL)).Add($ise_ch_id)"
+                      }
                   }
               }
 	          if { [string equal $ch_descr(PARENT_TYPE) "HmIP-RCV-50"] == 1 } {

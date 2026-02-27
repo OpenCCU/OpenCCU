@@ -1,0 +1,201 @@
+<%
+  if( system.GetSessionVar("sessionTAB") != "control/functions" )
+  {
+    system.SetSessionVar("sessionTAB", "control/functions");
+    system.SetSessionVar("sessionTAB1", "");
+  }
+%>
+<script type="text/javascript">
+  //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; Gewerke");
+  setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; "+translateKey('submenuFunction'));
+  fltFN = new iseFilter("fltFN");
+  fltHF = new iseFilter("fltHF");
+  arItems = new Array();
+</script>
+
+<div id="functionpage" class="CLASS04000">
+    <!-- Linke Spalte -->
+    <div id="contentLeft" class="hidden">
+      <table class="filterTable CLASS04001 j_translate" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="vertical-align: top; border: 0px;">
+            <div id="divFL" class="CLASS04201">
+              <table id="tblFunctionNames" class="StatViewTbl CLASS04006 j_translate" cellpadding="0" cellspacing="0" style="width: 100%;">
+                <tr>
+                  <th>${thFunc}</th>
+                </tr>
+                <tbody>
+                <tr>
+                  <td class="CLASS03501">
+                    <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
+                    <div class="FilterSubMenu" id="btnFilterFuncSub" style="display:none">
+                      <input id="ftFunc" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetFuncBtn', 'ftCancelFuncBtn')" type="text" size="15" class="CLASS03307" />
+                      <div id="ftSetFuncBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltFN, 'ftFunc', FIL_NAME);updateFuncTable();$('btnFilterFuncSub').hide();" >${filterSet}</div>
+                      <div id="ftCancelFuncBtn" class='FilterSetButton' onclick="$('btnFilterFuncSub').hide();">${filterClose}</div>
+                    </div>
+                  </td>
+                </tr>
+                <%
+                  object obj = dom.GetObject(ID_FUNCTIONS);
+                  if ( obj )
+                  {
+                    obj.SortByName();
+                    string tmp = "";
+                    string sFirstId = "";
+                    foreach( tmp, obj.EnumEnabledIDs() ) {
+                      object func = dom.GetObject(tmp);
+                      if (func.Visible()) {
+                        if (sFirstId == "") {
+                          sFirstId = tmp;
+                        }
+                        string trId = "funcs"#func.ID();
+                        Write("<tr id='"#trId#"'>");
+                          Write("<td id='"#func.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHF.clearFilters();updateTable();loadChannels("#func.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                            Write(func.Name());
+                          Write("</td>");
+                          Write("<script type='text/javascript'>");
+                          Write("var tmp = new Object();");
+                          Write("tmp['name'] = '"#func.Name()#"';");
+                          Write("tmp['trid'] = '"#trId#"';");
+                          Write("arItems[arItems.length] = tmp;");
+                          Write("Cursor.set(Cursor.NORMAL);");
+                          Write("</script>");
+                        Write("</tr>");
+                      }
+                    }
+                  }
+                  string sLoadId = sFirstId;
+                  if (system.GetVar("funcId") != null) {
+                    sLoadId = system.GetVar("funcId");
+                  }
+                %>
+              </table>
+            </div>
+          </td>
+       </tr> 
+     </table>
+   </div>
+   
+   <!-- Rechte Spalte -->
+   <div id="contentRight">
+     <div id="divHTF" class="CLASS04002">
+       <table id="tblRightContent" class="CLASS04003" cellpadding="0" cellspacing="0">
+         <tr class="CLASS04004">
+           <td style="vertical-align: top;" id="chnList">
+           
+           </td>
+         </tr>
+       </table>
+     </div>
+   </div>
+</div>
+
+<script type="text/javascript">
+       
+  loadChannels = function(id)
+  {
+    iseInitUpdateArrays();
+    if(id)
+    {
+      // aktuellen Markierung aufheben
+      var tdlist = $("tblFunctionNames").getElementsByTagName('td');
+      for (var i = 0; i < tdlist.length; i++) {
+        if (tdlist[i].className == "ButtonStatusRoomsSelected") {
+          tdlist[i].className = "ButtonStatusRooms"
+        }
+      }
+      // Markierung setzen
+      if(dbg)alert("ID:"+id);
+      $(id + "name").className = "ButtonStatusRoomsSelected";
+      
+      // Inhalt nachladen
+      var pb = "";
+      pb += "integer id = " + id + ";";
+      var opts = {
+        postBody: pb,
+        evalScripts: true
+      };
+      new Ajax.Updater("chnList", "/pages/tabs/control/hfuncchannels.htm?sid=" + SessionId, opts);
+    }
+    else
+    {
+      if(dbg)alert(translateKey("alertIDnotSet") + " (control/functions.htm)");
+    }
+  }
+  
+  <%
+    if( system.GetSessionVar("sessionTAB1") == "" )
+    {
+      system.SetSessionVar("sessionTAB1",sLoadId);
+    }
+  %>
+  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  
+  // filterOptions = new iseFilter();
+  translatePage("#tblFunctionNames");
+</script>
+
+<script type="text/javascript">
+  var s = "";
+  var mouseOpts =
+  {
+    onTopOver: function(divToShow)
+    {
+      selectFilters(fltFN, divToShow);
+    }
+  };
+
+  new iseSubMenuControl("btnFilterFunc", "btnFilterFuncSub", "contentLeft", {d:28, r:18}, mouseOpts, false, true);
+
+  jQuery("#btnFilterFunc").click(function() {
+    jQuery("#ftFunc").focus();
+  });
+
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04005' onclick='fltFN.clearFilters();updateFuncTable();fltHF.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  
+  setFooter(s);
+  
+  updateTable = function() {
+    colorFilterBtns(fltHF);
+    for (var i = 0; i < arChns.length; i++) {
+      if (!fltHF.objPassFilter(arChns[i])) {
+        hide(arChns[i]['trid']);
+        if (arChns[i]['ctrlId'])
+          hide(arChns[i]['ctrlId']);
+      }
+      else {
+        show(arChns[i]['trid']);
+        if (arChns[i]['ctrlId'])
+          show(arChns[i]['ctrlId']);
+      }
+    }
+  };
+
+  updateFuncTable = function()
+  {
+    colorFilterBtns(fltFN);
+    for (var i = 0; i < arItems.length; i++)
+    {
+      if (!fltFN.objPassFilter(arItems[i]))
+      {
+        hide(arItems[i]['trid']);
+      }
+      else
+      {
+        show(arItems[i]['trid']);
+      }
+    }
+  };
+
+  clearInputLeft = function()
+  {
+    document.getElementById("ftFunc").value = "";
+  };
+  translatePage("#contentLeft");
+  jQuery("#contentLeft").removeClass("hidden");
+</script>

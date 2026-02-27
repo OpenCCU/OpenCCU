@@ -1,0 +1,19 @@
+www/update-check.cgi: fix missing content-type and html head statements
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/www/update-check.cgi	2024-02-19 15:05:39.000000000 +0100
++++ b/www/update-check.cgi	2024-02-26 18:14:41.269169424 +0100
+@@ -17,8 +17,9 @@
+ 
+ if { [info exists cmd ] && $cmd == "download"} {
+   puts -nonewline "Content-Type: text/html; charset=utf-8\r\n\r\n"
+-  puts -nonewline "<html><meta http-equiv='refresh' content='0; url=$downloadURL' /><body></body></html>"
++  puts -nonewline "<html><head><meta http-equiv='refresh' content='0; url=$downloadURL' /></head><body></body></html>"
+ } else {
++  puts -nonewline "Content-Type: text/plain; charset=utf-8\r\n\r\n"
+   catch {
+     set newversion [ exec /usr/bin/wget -qO- --no-check-certificate $checkURL ]
+   }

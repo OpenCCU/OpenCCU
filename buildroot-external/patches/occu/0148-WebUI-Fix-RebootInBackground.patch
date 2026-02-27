@@ -11,7 +11,7 @@
 +jsonrpc_response true
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -1263,8 +1263,7 @@
+@@ -1270,8 +1270,7 @@
      exec /bin/kill -SIGQUIT 1
    } else {
      exec touch /usr/local/.recoveryMode
@@ -21,7 +21,7 @@
    }
  
  }
-@@ -1275,8 +1274,7 @@
+@@ -1282,8 +1281,7 @@
    catch { exec lcdtool {Saving   Data...  } }
    rega system.Save()
    catch { exec lcdtool {Reboot...       } }
@@ -31,7 +31,7 @@
  }
  proc action_shutdown {} {
    puts ""
-@@ -1284,9 +1282,8 @@
+@@ -1291,9 +1289,8 @@
    catch { exec lcdtool {Saving   Data...  } }
    rega system.Save()
    catch { exec lcdtool {Shutdown...       } }
@@ -44,7 +44,7 @@
  proc get_logserver {} {
 --- occu/WebUI/www/config/cp_security.cgi.orig
 +++ occu/WebUI/www/config/cp_security.cgi
-@@ -1558,7 +1558,7 @@
+@@ -1564,7 +1564,7 @@
  
  proc action_reboot {} {
    puts ""

@@ -176,6 +176,7 @@ for (var i = 0; i < chnsTmp.length; i++)
     iInsIdx++;
     iElemsAdded++;
     tr.id = chnsTmp[i]['trid'];
+    tr.className = 'CLASS04205';
     if (!fltSF.objPassFilter(chnsTmp[i]))
       tr.style.display = "none";
     else
@@ -204,7 +205,8 @@ for (var i = 0; i < chnsTmp.length; i++)
     Element.addClassName(td, "CLASS04701");
     tr.appendChild(td);
 
-    td = Builder.node('td', {className: "GrayBkg DeviceListCell"}, semCut(chnsTmp[i]['desc'] + ";" + chnsTmp[i]['parentName'])); tr.appendChild(td);
+    //td = Builder.node('td', {className: "GrayBkg DeviceListCell"}, semCut(chnsTmp[i]['desc'] + ";" + chnsTmp[i]['parentName'])); tr.appendChild(td);
+    td = Builder.node('td', {className: "GrayBkg DeviceListCell"}, semCut(chnsTmp[i]['desc'])); tr.appendChild(td);
     td = Builder.node('td', {className: "GrayBkg DeviceListCell"}, chnsTmp[i]['sn']); tr.appendChild(td);
     td = Builder.node('td', {className: "GrayBkg DeviceListCell"}, chnsTmp[i]['iface']); tr.appendChild(td);
     td = Builder.node('td', {className: "GrayBkg DeviceListCell"}, chnsTmp[i]['trans']); tr.appendChild(td);

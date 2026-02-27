@@ -38,16 +38,23 @@ ResetGAC();
 %>
   //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; Programme");
 setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; "+translateKey('submenuPrograms'));
-  fltHR = new iseFilter("fltHR");
+  fltPR = new iseFilter("fltPR");
   arProgs = new Array();
 </script>
 
 <div id="prgcontent" class="j_translate">
-  <table id="ProgramListTable" class="tblList tTable CLASS03701" border="0" cellpadding="0" cellspacing="0" frame="void" rules="none" >
+  <table id="ProgramListTable" class="tblList tTable CLASS03701" border="0" cellpadding="0" cellspacing="0" >
+    <colgroup>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col style="width:250px;">
+    </colgroup>
     <thead>
       <tr class="CLASS03702">
         <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-        <th class="CLASS03302"><div id="name" class="tHeaderCell<%Write(sCssName); %>" onclick="IseSort(arProgs,'name',true);" >${thName}</div></th>
+        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arProgs,'name',true);" >${thName}</div></th>
         <th class="tHeaderCell CLASS03303" >${thDescription}</th>
         <th class="tHeaderCell CLASS03303" >${thActivity}</th>
         <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
@@ -60,7 +67,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
             <div id="btnFilterName" class="FilterBtn CLASS03707" >${thFilter}</div>
             <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
                 <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03708" NAME="ftName"/>
-                <div id="ftSetNameBtn" class='FilterSetButton CLASS03709' onclick="setSFilter(fltHR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+                <div id="ftSetNameBtn" class='FilterSetButton CLASS03709' onclick="setSFilter(fltPR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
                 <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide()">${filterClose}</div>
             </div>
           </td>
@@ -141,13 +148,14 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
 <script type="text/javascript">
 
   translatePage("#prgcontent");
+  $("prgcontent").style.display = 'contents';
 
   var s = "";
   
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='fltHR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='fltPR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   setFooter(s);
@@ -156,7 +164,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
   {
     onTopOver: function(divToShow)
     {
-      selectFilters(fltHR, divToShow);
+      selectFilters(fltPR, divToShow);
     }
   };
   new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "ProgramListTable", {d: 16, r: 8}, mouseOpts, false, true);
@@ -167,10 +175,10 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
 
   updateTable = function()
   {
-    colorFilterBtns(fltHR);
+    colorFilterBtns(fltPR);
     for( var i=0; i<arProgs.length; i++ )
     {
-      if( !fltHR.objPassFilter(arProgs[i]) )
+      if( !fltPR.objPassFilter(arProgs[i]) )
       {
         hide( arProgs[i]['trid'] );
       }

@@ -149,7 +149,7 @@ iseInitUpdateArrays();
         sAlarmName = "no name";
       }
       
-      string sAlarmDescription = oSV.DPInfo();
+      string sAlarmDescription = oSV.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>');
       if( !sAlarmDescription.Length() )
       {
         sAlarmDescription = "no description";

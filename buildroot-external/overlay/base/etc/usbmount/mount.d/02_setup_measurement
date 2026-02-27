@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# set umask correctly.
+umask 0002
+
 if /bin/mountpoint -q "${UM_MOUNTPOINT}"; then
   if [ ! -L /media/usb0 ]; then
     RET=0
@@ -30,9 +34,18 @@ if /bin/mountpoint -q "${UM_MOUNTPOINT}"; then
     cp -a "${UM_MOUNTPOINT}/measurement" /tmp/
 
     if [ ${RET} -eq 1 ]; then
-      touch "/var/status/USBinitialised"
+
+      # make sure /var/status exists with correct permissions
+      if [ ! -d /var/status ]; then
+        mkdir -p /var/status
+        chown root:status /var/status
+        chmod 2775 /var/status
+      fi
+
+      touch /var/status/USBinitialised
       # CCU2 compatibility
-      touch "/var/status/SDinitialised"
+      touch /var/status/SDinitialised
+
       # link /media/usb0 to the active usb mountpoint
       ln -sfn "${UM_MOUNTPOINT}" /media/usb0
     fi

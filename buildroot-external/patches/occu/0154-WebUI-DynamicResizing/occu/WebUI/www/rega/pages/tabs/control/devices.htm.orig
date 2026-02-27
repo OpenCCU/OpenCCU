@@ -8,7 +8,7 @@
   %>
   //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; Ger�te");
   setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; " +translateKey('submenuDevices'));
-  fltVR = new iseFilter('fltVR');
+  fltDL = new iseFilter('fltDL');
   fltHD = new iseFilter('fltHD');
   arItems = new Array();
 </script>
@@ -40,7 +40,7 @@
                     <div id="btnFilterDevName" class="FilterBtn">${thFilter}</div>
                     <div class="FilterSubMenu" id="btnFilterDevNameSub" style="display:none">
                       <input id="ftDevName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDevNameBtn', 'ftCancelDevNameBtn')" type="text" size="15" class="CLASS03307" />
-                      <div id="ftSetDevNameBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltVR, 'ftDevName', FIL_NAME);updateDevTable();$('btnFilterDevNameSub').hide();" >${filterSet}</div>
+                      <div id="ftSetDevNameBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltDL, 'ftDevName', FIL_NAME);updateDevTable();$('btnFilterDevNameSub').hide();" >${filterSet}</div>
                       <div id="ftCancelDevNameBtn" class='FilterSetButton' onclick="$('btnFilterDevNameSub').hide();">${filterClose}</div>
                     </div>
                   </td>
@@ -90,7 +90,7 @@
                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                           Write(devs.Name());
                           Write("</td>");
-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' >");
+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                           
                           string sPicDivId = "picDiv"#devs.ID();
                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
@@ -188,13 +188,45 @@
 </script>
 
 <script type="text/javascript">
+  ShowInternalDeviceChannels = function()
+  {
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "ShowInternalDeviceChannels";';
+    var opt =
+    {
+      postBody: pb,
+      onComplete: function(t)
+      {
+        if(dbg){alert(t.responseText);}
+        reloadPage();
+      }
+    };
+    new Ajax.Request(url,opt);
+  };
+
+  <%
+    string sInternalBtnText = "";
+    if( system.GetSessionVar("sessionSIDC") == "1" )
+    {
+        !sInternalBtnText = "aus";
+        sInternalBtnText = "footerBtnHideInternalDeviceChannels";
+    }
+    else
+    {
+        !sInternalBtnText = "ein";
+        sInternalBtnText = "footerBtnShowInternalDeviceChannels";
+    }
+    Write("var internalBtnText = '"#sInternalBtnText#"';");
+  %>
+
   var s = "";
 
   var mouseOpts =
   {
     onTopOver: function(divToShow)
     {
-      selectFilters(fltVR, divToShow);
+      selectFilters(fltDL, divToShow);
     }
   };
 
@@ -207,7 +239,8 @@
   s += "<table cellspacing='8'>";
   s += "<tr>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey("footerBtnPageBack")+"</div></td>";
-  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltVR.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalDeviceChannels()'>"+translateKey(internalBtnText)+"</div></td>";
   s += "</tr>";
   s += "</table>";
   
@@ -233,10 +266,10 @@
 
   updateDevTable = function()
   {
-    colorFilterBtns(fltVR);
+    colorFilterBtns(fltDL);
     for (var i = 0; i < arItems.length; i++)
     {
-      if (!fltVR.objPassFilter(arItems[i]))
+      if (!fltDL.objPassFilter(arItems[i]))
       {
         hide(arItems[i]['trid']);
       }

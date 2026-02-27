@@ -6,7 +6,7 @@ IFACE=${1}
 while true; do
   sleep 10
   killall -q udhcpc
-  udhcpc -R -b -t 20 -T 3 -S -x "hostname:${HOSTNAME}" -i "${IFACE}" -C -F "${HOSTNAME}" -V eQ3-CCU3 -s /bin/dhcp.script -p "/var/run/udhcpc_${IFACE}.pid"
+  /sbin/udhcpc -b -t 20 -T 3 -S -x "hostname:${HOSTNAME}" -i "${IFACE}" -F "${HOSTNAME}" -V eQ3-CCU3 -s /bin/dhcp.script -p "/var/run/udhcpc_${IFACE}.pid"
   if [[ -f "/var/run/udhcpc_${IFACE}.pid" ]]; then
     exit 0
   fi

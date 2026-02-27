@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_software.cgi.orig
 +++ occu/WebUI/www/config/cp_software.cgi
-@@ -247,7 +247,15 @@
+@@ -272,7 +272,15 @@
        set scripts ""
        set loop -1
        catch { set scripts [glob /etc/config/rc.d/*] }

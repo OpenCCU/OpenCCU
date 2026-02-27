@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3015 source=/dev/null
 #
 # Starts HMServer.
 #
@@ -51,7 +51,8 @@ init() {
   # we can safely use the old /usr/local/sdcard directory path as
   # the general storagePath for diagrams and daily backups
   storagePath=""
-  if [[ "${HM_HOST}" == "oci" ]] || grep " /usr/local " /proc/mounts | grep -qv "^/dev/mmc"; then
+  if [[ "${HM_HOST}" =~ oci\|lxc ]] ||
+     grep " /usr/local " /proc/mounts | grep -qv "^/dev/mmc"; then
     storagePath="/usr/local/sdcard"
     mkdir -p ${storagePath}
   fi
@@ -92,7 +93,7 @@ init() {
 
   # sanitize the /etc/config/firmware path to make sure no directory without
   # an 'info' file or info file without any "Name=" entry is located within
-  # (cf. https://github.com/jens-maus/RaspberryMatic/issues/1302)
+  # (cf. https://github.com/openccu/openccu/issues/1302)
   for dir in /etc/config/firmware/*; do
     if [[ -d "${dir}" ]]; then
       if [[ ! -f "${dir}/info" ]] || ! grep -q -e "Name=." "${dir}/info"; then
@@ -165,7 +166,11 @@ start() {
 
   # calculate the maximum used heap size (-Xmx) depending on the
   # total amount of RAM we have (use max. 25%) - use multiple of 128MB
-  MAXHEAP=$(free -m | grep Mem: | awk '{print int($2*0.25/128)*128}')
+  if [[ -e /sys/fs/cgroup/memory.max ]] && [[ "$(cat /sys/fs/cgroup/memory.max)" != "max" ]]; then
+    MAXHEAP=$(awk '{print int(($1/1024/1024)*0.25/128)*128}' /sys/fs/cgroup/memory.max)
+  else
+    MAXHEAP=$(grep MemTotal: /proc/meminfo | awk '{print int($2/1024*0.25/128)*128}')
+  fi
   if [[ -n "${MAXHEAP}" ]] && [[ "${MAXHEAP}" -gt 128 ]]; then
     JAVAOPT="-Xmx${MAXHEAP}m ${JAVAOPT}"
   else

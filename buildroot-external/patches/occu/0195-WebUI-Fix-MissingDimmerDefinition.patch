@@ -1,0 +1,183 @@
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER.tcl
+@@ -211,6 +211,8 @@
+   upvar PROFILE_PNAME PROFILE_PNAME
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
++
++  set ch $dev_descr_sender(INDEX)
+   
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_BRIGHTNESS.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_BRIGHTNESS.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
+   
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_HUMIDITY.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_HUMIDITY.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_PARTICULATE_MATTER.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_PARTICULATE_MATTER.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_DROP.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_DROP.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_QUANTITY.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_QUANTITY.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_TEMPERATURE.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_TEMPERATURE.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_DIRECTION.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_DIRECTION.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_SPEED.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_SPEED.tcl
+@@ -206,7 +206,7 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
+-
++  set ch $dev_descr_sender(INDEX)
+ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_3.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_3.tcl
+@@ -201,6 +201,8 @@
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
+   
++  set ch $dev_descr_sender(INDEX)
++
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+   }
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_5.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_5.tcl
+@@ -211,7 +211,9 @@
+   upvar PROFILE_PNAME PROFILE_PNAME
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
+-  
++ 
++  set ch $dev_descr_sender(INDEX)
++ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+   }
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_COUNTER_TRANSMITTER.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_COUNTER_TRANSMITTER.tcl
+@@ -270,6 +270,8 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
++  set ch $dev_descr_sender(INDEX)
++
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+   }
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_DIRECTION_TRANSMITTER.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_DIRECTION_TRANSMITTER.tcl
+@@ -137,6 +137,8 @@
+   upvar $pps          ps
+   upvar $pps_descr    ps_descr
+ 
++  set ch $dev_descr_sender(INDEX)
++
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+   }
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/RAIN_DETECTION_TRANSMITTER.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/RAIN_DETECTION_TRANSMITTER.tcl
+@@ -262,7 +262,9 @@
+   upvar PROFILE_PNAME PROFILE_PNAME
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
+-  
++ 
++  set ch $dev_descr_sender(INDEX)
++ 
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+   }
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/SHUTTER_CONTACT.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/SHUTTER_CONTACT.tcl
+@@ -204,7 +204,9 @@
+   upvar PROFILE_PNAME PROFILE_PNAME
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
+-  
++
++  set ch $dev_descr_sender(INDEX)
++
+   foreach pro [array names PROFILES_MAP] {
+     upvar PROFILE_$pro PROFILE_$pro
+   }
+--- occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/WATER_DETECTION_TRANSMITTER.tcl.orig
++++ occu/WebUI/www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/WATER_DETECTION_TRANSMITTER.tcl
+@@ -254,7 +254,8 @@
+   upvar $pps          ps      
+   upvar $pps_descr    ps_descr
+   
+-  
++  set ch $dev_descr_sender(INDEX)
++ 
+   # set sender_addr $sender_address
+   # puts "<input type=\"hidden\" id=\"dev_descr_sender_tmp\" value=\"$dev_descr_sender(TYPE)-$sender_addr\">"
+ 

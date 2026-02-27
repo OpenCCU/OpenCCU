@@ -160,6 +160,10 @@ jQuery.extend(true, langJSON, {
       "These functions can only performed when 'Mains operation' is selected as the power supply. 'Battery operation' is currently set.<br/></br>" +
       "If you require this functionality, then switch the 'Power supply' parameter under Device settings (channel 0) to 'Mains operation'.",
 
+    "helpColorBehaviour" : "The selected behaviour is only taken into account for the target channels 8 and 12!",
+    "helpColorBehaviour_8" : "The selected behaviour is only taken into account for channel 8!",
+    "helpColorBehaviour_12" : "The selected behaviour is only taken into account for channel 12!",
+
     "END" : ""
   }
 });

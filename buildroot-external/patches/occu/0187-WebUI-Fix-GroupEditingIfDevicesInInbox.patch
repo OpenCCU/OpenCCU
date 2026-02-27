@@ -1,0 +1,33 @@
+--- occu/HMserver/opt/HMServer/pages/GroupEditPage.ftl.orig
++++ occu/HMserver/opt/HMServer/pages/GroupEditPage.ftl
+@@ -329,7 +329,8 @@
+         {
+             ShowWaitAnim();
+ 
+-            DeviceListPage.showConfiguration(false, 'DEVICE', selfGroup.device.id);
++            var virtualDevice = new GroupDevice(self.virtualDeviceSerialNumber(),self.virtualDeviceSerialNumber(), "VirtualDevice");                            
++            DeviceListPage.showConfiguration(false, 'DEVICE', virtualDevice.device.id);
+             HideWaitAnim();
+ 
+             /*
+@@ -568,7 +569,9 @@
+         });
+ 
+         ko.utils.arrayForEach(viewModel.assignableDevices(), function(item) {
+-            homematic("Interface.setMetadata", {"objectId":item.device.id, "dataId": "inHeatingGroup", "value" : "false"});
++            if(item.device != undefined) {
++              homematic("Interface.setMetadata", {"objectId":item.device.id, "dataId": "inHeatingGroup", "value" : "false"});
++            }
+         });
+ 
+         pb = JSON.stringify(data);
+--- occu/WebUI/www/webui/js/common/viewmodels.js.orig
++++ occu/WebUI/www/webui/js/common/viewmodels.js
+@@ -64,6 +64,7 @@
+       if (typeof self.device != "undefined") {
+         return DEV_getImagePath(self.device.deviceType.id, 50);
+       }
++      else return DEV_getImagePath(this.type, 50);
+     }
+         
+     }, this);

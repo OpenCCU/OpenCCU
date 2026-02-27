@@ -2,8 +2,8 @@
   system.SetSessionVar("sessionTAB", "startpage");
 %>
 
-<script type="text/javascript"> 
-  
+<script type="text/javascript">
+
   <%
     var id                  = "";
     var userId              = system.GetSessionVar("sessionUserID");
@@ -283,6 +283,7 @@
 </div>
 
 <script type="text/javascript">
+  var product = 0;
   WebUI.resize();
   StartPage.showUpdate();
   if (forceUpdate) {
@@ -296,8 +297,25 @@
       StartPage.showAllDeviceFirmware();
       jQuery("#forceUpdate").remove();
   }
-  jQuery("#iFaceShowAll").text(translateKey("lblDutyCycleA") + getProduct()+ ":");
-  jQuery("#lblCarrierSense").text(translateKey("lblCarrierSenseA") + getProduct()+ ":");
+
+  if (isNaN(parseInt(WEBUI_VERSION)) || WEBUI_VERSION == "0.0.0") {
+    conInfo("Determine WEBUI_VERSION");
+    homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function (result) {
+      if (result != null) {
+        WEBUI_VERSION = result.firmware;
+      } else {
+        WEBUI_VERSION = "0.0.0";
+      }
+      product = getProduct();
+      jQuery("#iFaceShowAll").text(translateKey("lblDutyCycleA") + product + ":");
+      jQuery("#lblCarrierSense").text(translateKey("lblCarrierSenseA") + product + ":");
+    });
+  } else {
+    product = getProduct();
+    jQuery("#iFaceShowAll").text(translateKey("lblDutyCycleA") + product + ":");
+    jQuery("#lblCarrierSense").text(translateKey("lblCarrierSenseA") + product + ":");
+  }
+
   translatePage();
   jQuery("#loadingGif").hide();
   jQuery("#tblStartpageInfo").show();

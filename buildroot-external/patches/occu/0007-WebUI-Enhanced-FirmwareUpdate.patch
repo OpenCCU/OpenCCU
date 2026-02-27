@@ -128,7 +128,7 @@
    }
  
    cgi_javascript {
-@@ -991,14 +990,7 @@
+@@ -980,14 +979,7 @@
            const cb = document.getElementById('accept');
            const action = "acceptEula";
            if(cb.checked) {
@@ -144,7 +144,7 @@
            } 
            dlgPopup.hide();
            dlgPopup.setWidth(800);
-@@ -1014,8 +1006,7 @@
+@@ -1003,8 +995,7 @@
  }
  
  proc action_createBackup {} {
@@ -154,7 +154,7 @@
  }
  
  proc action_firmware_upload {} {
-@@ -1059,35 +1050,80 @@
+@@ -1048,35 +1039,80 @@
    } else {
  
      cd /usr/local/tmp/
@@ -244,7 +244,7 @@
        set action "firmware_update_invalid"
      }
  
-@@ -1282,10 +1318,6 @@
+@@ -1271,10 +1307,6 @@
  }
  
  proc action_update_start {} {
@@ -498,7 +498,7 @@
  proc action_backup_upload {} {
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -253,7 +253,7 @@
+@@ -229,7 +229,7 @@
      "lanGatewayLblStandard" : "(Standard)",
      "commentSettingsDialogMaintenancePerformSoftwareUpdate" : "***********************************************",
      "dialogSettingsCMDialogPerformSoftwareUpdateTitle" : "Software-Update",
@@ -509,7 +509,7 @@
      "dialogSettingsCMDialogPerformSoftwareUpdateLi2" : "L%F6schen Sie den Cache Ihres Webbrowsers.<br />Hinweise dazu erhalten Sie in dem Tutorial <a href='http://www.eq-3.de/service/faq.html?id=38' target='_blank'>WebUI Firmware Update: Browser-Cache leeren</a> auf http://www.eq-3.de",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -541,7 +541,7 @@
+@@ -544,7 +544,7 @@
      "dialogSettingsSecurityMessageCreateSysBackupTitle" : "System-Backup erstellen",
      "dialogSettingsSecurityMessageCreateSysBackupContent" : "Das System-Backup wird jetzt erstellt. Dieser Vorgang kann einige Minuten dauern.",
      "dialogSettingsSecurityMessageSysBackupInvalidFileTitle" : "System-Backup einspielen: Ung%FCltiges Dateiformat",
@@ -520,7 +520,7 @@
      "dialogSettingsSecurityMessageSysBackupBtnPerformRestore" : "System-Backup einspielen",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -253,7 +253,7 @@
+@@ -229,7 +229,7 @@
      "lanGatewayLblStandard" : "(Default)",
      "commentSettingsDialogMaintenancePerformSoftwareUpdate" : "***********************************************",
      "dialogSettingsCMDialogPerformSoftwareUpdateTitle" : "Software update",
@@ -531,7 +531,7 @@
      "dialogSettingsCMDialogPerformSoftwareUpdateLi2" : "Please delete the cache of your browser.<br />You will find further information in the tutorial <a href='http://www.eq-3.de/service/faq.html?id=38' target='_blank'>Web-UI Firmware Update: Browser-Cache leeren</a> on http://www.eq-3.de",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -540,7 +540,7 @@
+@@ -543,7 +543,7 @@
      "dialogSettingsSecurityMessageCreateSysBackupTitle" : "Create system backup",
      "dialogSettingsSecurityMessageCreateSysBackupContent" : "The system backup will be created. This process may take a few minutes.",
      "dialogSettingsSecurityMessageSysBackupInvalidFileTitle" : "Import system backup: Invalid file format",

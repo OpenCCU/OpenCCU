@@ -2,14 +2,27 @@
  * Place all our bootstrap related style fixes into this file
  */
 
-#header *,
-#header ::after,
-#header ::before,
-#menubar,
-#content *,
-#content ::after,
-#content ::before {
-  box-sizing: content-box;
+*,
+*::before,
+*::after {
+  box-sizing: revert;
+}
+
+input,
+button,
+select,
+optgroup,
+textarea {
+  margin: revert;
+}
+
+h6, .h6,
+h5, .h5,
+h4, .h4,
+h3, .h3,
+h2, .h2,
+h1, .h1 {
+  margin-top: revert;
 }
 
 #header,
@@ -25,4 +38,18 @@
 #content table,
 #messagebox table {
   border-collapse: separate;
+}
+
+#footer table {
+  border-collapse: inherit;
+}
+
+.popupTable thead,
+.popupTable tbody,
+.popupTable tfoot,
+.popupTable tr,
+.popupTable td,
+.popupTable th {
+  border-style: inherit;
+  border-width: inherit;
 }

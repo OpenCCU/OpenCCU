@@ -1,0 +1,17 @@
+bin/watchdog: use pgrep to identify pid of automation.js
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/bin/watchdog	2024-02-19 15:05:39.000000000 +0100
++++ b/bin/watchdog	2024-02-26 18:16:17.774702986 +0100
+@@ -11,7 +11,7 @@
+ 
+ 
+ 
+-PIDOFD=`ps ax |grep node |grep automation.js |awk '{print $1}'` 
++PIDOFD=$(pgrep -f "neo_server.*automation.js")
+ 
+ if [ -z "$PIDOFD" ]; then
+ 		/usr/local/etc/config/rc.d/97NeoServer start		

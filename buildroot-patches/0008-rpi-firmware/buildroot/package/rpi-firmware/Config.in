@@ -13,7 +13,7 @@ if BR2_PACKAGE_RPI_FIRMWARE
 
 config BR2_PACKAGE_RPI_FIRMWARE_VERSION
 	string "Custom firmware version"
-	default "01ecfd2ba2b7cf3a2f4aa75ada895ee4a3e729f5"
+	default "83dafbc92c0e63f76ca2ecdd42462d56489d1c77"
 
 config BR2_PACKAGE_RPI_FIRMWARE_BOOTCODE_BIN
 	bool "rpi 0/1/2/3 bootcode.bin"
@@ -73,6 +73,13 @@ config BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE
 	  Path to a file stored as config.txt in the boot partiton
 	  of the generated SD card image.
 
+config BR2_PACKAGE_RPI_FIRMWARE_CMDLINE_FILE
+	string "Path to a file stored as boot/cmdline.txt"
+	default "board/raspberrypi/cmdline.txt"  # legacy
+	help
+	  Path to a file stored as cmdline.txt in the boot partiton
+	  of the generated SD card image.
+
 config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS
 	bool "Install Device Tree Blobs (DTBs)"
 	default y
@@ -102,7 +109,6 @@ config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_VCDBG
 	depends on BR2_arm # prebuilt arm binary, rpi-userland
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_INSTALL_LIBSTDCPP # rpi-userland
-	select BR2_PACKAGE_RPI_USERLAND
 	help
 	  Install vcdbg, to help debug communication with the GPU.
 

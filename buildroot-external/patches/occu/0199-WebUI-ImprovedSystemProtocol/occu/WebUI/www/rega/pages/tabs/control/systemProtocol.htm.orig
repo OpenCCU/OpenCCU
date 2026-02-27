@@ -1,0 +1,155 @@
+<script type="text/javascript">
+ResetGAC();
+<%
+  system.SetSessionVar("sessionTAB", "control/systemProtocol");
+  boolean firstSort = false;
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser && (system.GetSessionVar("sessionCTV")=="true") )
+  {
+    firstSort = true;
+    system.SetSessionVar("sessionLS","sqldate");
+    Write('iseClearLastSort();');
+    Write('lastSort = "sqldate";');
+    Write('lastDir = 1;');
+  }
+%>
+
+  setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; "+translateKey('submenuSysProtocol'));
+  fltPROT = new iseFilter("fltPROT");
+  DivSort = function(colName)
+  {
+    IseSort2(arHistoryData,colName,false,true);
+    SetSelectedStyle(colName);
+    //IseSort(arHistoryData,colName,true);
+  };
+  SetSelectedStyle = function(colName)
+  {
+    // reset all SortSelected columns
+    var ths = $("histlistheader").getElementsByTagName("th");
+    for(th in ths)
+    { 
+      if(ths[th].innerHTML)
+      {
+        ths[th].innerHTML = ths[th].innerHTML.replace(/pt11 SortSelected/g,"pt11 Sort");
+      }
+    }
+    var selTbHeader = $(colName);
+    if(selTbHeader)
+    {
+      selTbHeader.className = selTbHeader.className.replace(/pt11 Sort/, "pt11 SortSelected");
+    }
+  };
+</script>
+
+<table class="tTable filterTable" id="SysProtoList" cellspacing="0" cellpadding="0" style="display:none">
+  <colgroup>
+    <col />
+    <col />
+    <col />
+    <col />
+  </colgroup>
+  <thead id="histlistheader">
+      <tr>
+      <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="time"){sCssName="SortSelected";} %>
+      <th class="CLASS03000"><div id="time" class="pt11 <%Write(sCssName); %>" onclick="DivSort('time');">${thTime}</div></th>
+      <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="sqldate"){sCssName="SortSelected";} %>
+      <th class="CLASS03000"><div id="sqldate" class="pt11 <%Write(sCssName); %>" onclick="DivSort('sqldate');">${thDate}</div></th>
+      <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+      <th class="CLASS03000"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thChannelSysVar}</div></th>
+      <th class="CLASS03000">${thActivity}</th>
+    </tr>
+    <tr>
+      <td class="tdCellFilter CLASS03001" >
+        <div id="btnFilterTime" class="FilterBtn">${thFilter}</div>
+        <div class="FilterSubMenu" id="btnFilterTimeSub" style="display:none">
+          <input id="ftTime" type="text" size="15" class="CLASS03002"/>
+          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftTime', FIL_TIME);updateTable();$('btnFilterTimeSub').hide();" >${filterSet}</div>
+          <div class='FilterSetButton' onclick="$('btnFilterTimeSub').hide();">${filterClose}</div>
+        </div>
+      </td>
+      <td class="tdCellFilter CLASS03001" >
+        <div id="btnFilterDate" class="FilterBtn">${thFilter}</div>
+        <div class="FilterSubMenu" id="btnFilterDateSub" style="display:none">
+          <input id="ftDate" type="text" size="15" class="CLASS03002"/>
+          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftDate', FIL_DATE);updateTable();$('btnFilterDateSub').hide();" >${filterSet}</div>
+          <div class='FilterSetButton' onclick="$('btnFilterDateSub').hide();">${filterClose}</div>
+        </div>
+      </td>
+      <td class="tdCellFilter CLASS03001" >
+        <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+        <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+          <input id="ftName" type="text" size="15" class="CLASS03002"/>
+          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+          <div class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
+        </div>
+      </td>
+      <td class="tdCellFilter CLASS03006" >&nbsp;</td>
+    </tr>
+    </thead>
+  <tbody id="histlist">
+
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  arHistoryData = new Array();
+  arTempHistoryData = new Array();
+  
+  updateTable = function()
+  {
+    colorFilterBtns(fltPROT);
+    for( var i=0; i<arHistoryData.length; i++ )
+    {
+      if( fltPROT.objPassFilter( arHistoryData[i] ) )
+      {
+        show(arHistoryData[i]['trid']);
+      }
+      else
+      {
+        hide(arHistoryData[i]['trid']);
+      }
+    }
+  };
+
+  var mouseOpts =
+  {
+    onTopOver: function(divToShow)
+    {
+      selectFilters(fltPROT, divToShow);
+    }
+  };
+  new iseSubMenuControl("btnFilterTime", "btnFilterTimeSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterDate", "btnFilterDateSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);  
+
+  var s = "";
+  var historyBufferUrl = "/HistoryBuffer.csv?sid=@" + getSessionId() + "@";
+
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltPROT.clearFilters();reloadPage();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div id='btnRefreshTable' class='FooterButton' onclick='refreshTable(false);'>"+translateKey('footerBtnUpdate')+"</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><a class='CLASS03005' href='" + historyBufferUrl + "'><div class='FooterButton'>"+translateKey('footerBtnExport')+"</div></a></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='iseSystem.ClearHistoryData();'>"+translateKey('footerBtnDelete')+"</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  
+  setFooter(s);
+  
+  GetAllChannels = function()
+  {
+    refreshTable(true);
+  };
+  
+  refreshTable = function(bUpdateOnly)
+  {
+    RemoveAllRowsFromTable("histlist");
+    var spl = new iseSysProtoLoader("histlist",20,bUpdateOnly);
+  };
+  
+  refreshTable(false);
+  translatePage("#SysProtoList");
+  jQuery("#SysProtoList").css("display","table");
+</script> 
+  

@@ -1,0 +1,164 @@
+--- occu/WebUI/www/rega/pages/tabs/admin/systemvars.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/systemvars.htm
+@@ -18,7 +18,7 @@
+     object oSysVarArray = dom.GetObject( ID_SYSTEM_VARIABLES );
+     if( oSysVarArray )
+     {
+-      oSysVarArray.SortByName();
++      oSysVarArray.SortByName(soAsc,stNatural);
+       
+       string sEnumSVIDs = oSysVarArray.EnumEnabledIDs();
+ 
+--- occu/WebUI/www/rega/pages/tabs/admin/userAdministration.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/userAdministration.htm
+@@ -20,7 +20,7 @@
+     object oUserArray = dom.GetObject( ID_USERS );
+     if( oUserArray )
+     {
+-      oUserArray.SortByName();
++      oUserArray.SortByName(soAsc,stNatural);
+       string sTmp;
+       foreach( sTmp, oUserArray.EnumEnabledVisibleIDs() )
+       {
+--- occu/WebUI/www/rega/pages/tabs/admin/views/functions.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/views/functions.htm
+@@ -26,7 +26,7 @@
+     object oTmpArray = dom.GetObject( ID_FUNCTIONS );
+     if( oTmpArray )
+     {
+-      oTmpArray.SortByName();
++      oTmpArray.SortByName(soAsc,stNatural);
+       string sTmp;
+       foreach(sTmp,oTmpArray.EnumIDs())
+       {
+--- occu/WebUI/www/rega/pages/tabs/admin/views/newdevices.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/views/newdevices.htm
+@@ -10,7 +10,7 @@
+ 
+     object
+     oTmpArray = dom.GetObject(ID_DEVICES);
+-    oTmpArray.SortByName();
++    oTmpArray.SortByName(soAsc,stNatural);
+     if (oTmpArray) {
+       string
+       sTmp;
+--- occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm
+@@ -19,7 +19,7 @@
+       object oTmpArray = dom.GetObject(ID_PROGRAMS);
+       if( oTmpArray )
+       {
+-        oTmpArray.SortByName();
++        oTmpArray.SortByName(soAsc,stNatural);
+         string sTmp;
+         foreach(sTmp,oTmpArray.EnumEnabledIDs())
+         {
+--- occu/WebUI/www/rega/pages/tabs/admin/views/rooms.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/views/rooms.htm
+@@ -22,7 +22,7 @@
+     object oTmpArray = dom.GetObject( ID_ROOMS );
+     if( oTmpArray )
+     {
+-      oTmpArray.SortByName();
++      oTmpArray.SortByName(soAsc,stNatural);
+       string sTmp;
+       foreach(sTmp,oTmpArray.EnumIDs())
+       {
+--- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
+@@ -45,7 +45,7 @@
+                   object obj = dom.GetObject(ID_DEVICES);
+                   if ( obj )
+                   {
+-                    obj.SortByName();
++                    obj.SortByName(soAsc,stNatural);
+                     string tmp = "";
+                     string sFirstId = "";
+                     foreach( tmp, obj.EnumEnabledIDs() )
+--- occu/WebUI/www/rega/pages/tabs/control/functions.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/functions.htm
+@@ -39,7 +39,7 @@
+                   object obj = dom.GetObject(ID_FUNCTIONS);
+                   if ( obj )
+                   {
+-                    obj.SortByName();
++                    obj.SortByName(soAsc,stNatural);
+                     string tmp = "";
+                     string sFirstId = "";
+                     foreach( tmp, obj.EnumEnabledIDs() ) {
+--- occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm
+@@ -28,6 +28,7 @@
+           }
+         }
+       }
++      oUser.UserTempViewIDs().SortByName(soAsc,stNatural);
+       firstSort = true;
+     }
+     system.SetSessionVar("sessionTAB1", system.GetVar("id") );
+--- occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm
+@@ -16,7 +16,7 @@
+     object oTmpArray = dom.GetObject(system.GetVar("id"));
+     if( oTmpArray )
+     {
+-      oTmpArray.SortByName();
++      oTmpArray.SortByName(soAsc,stNatural);
+       string sTmp;
+       foreach(sTmp,oTmpArray.EnumIDs())
+       {
+--- occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm
+@@ -16,7 +16,7 @@
+     object oTmpArray = dom.GetObject(system.GetVar("id"));
+     if( oTmpArray )
+     {
+-      oTmpArray.SortByName();
++      oTmpArray.SortByName(soAsc,stNatural);
+       string sTmp;
+       foreach(sTmp,oTmpArray.EnumIDs())
+       {
+--- occu/WebUI/www/rega/pages/tabs/control/programs.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/programs.htm
+@@ -23,7 +23,7 @@
+     object oTmpArray = dom.GetObject(ID_PROGRAMS);
+     if( oTmpArray )
+     {
+-      oTmpArray.SortByName();
++      oTmpArray.SortByName(soAsc,stNatural);
+       string sTmp;
+       foreach(sTmp,oTmpArray.EnumIDs())
+       {
+--- occu/WebUI/www/rega/pages/tabs/control/rooms.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/rooms.htm
+@@ -40,7 +40,7 @@
+                 object obj = dom.GetObject(ID_ROOMS);
+                 if ( obj )
+                 {
+-                  obj.SortByName();
++                  obj.SortByName(soAsc,stNatural);
+                   string tmp = "";
+                   string sFirstId = "";
+                   foreach( tmp, obj.EnumEnabledIDs() ) {
+--- occu/WebUI/www/rega/pages/tabs/control/sysvars.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/sysvars.htm
+@@ -20,7 +20,7 @@
+       object oTmpArray = dom.GetObject(ID_SYSTEM_VARIABLES);
+       if( oTmpArray )
+       { 
+-        oTmpArray.SortByName();
++        oTmpArray.SortByName(soAsc,stNatural);
+         string sTmp;
+         foreach(sTmp,oTmpArray.EnumEnabledVisibleIDs())
+         {
+--- occu/WebUI/www/rega/pages/tabs/user/favOverview.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/user/favOverview.htm
+@@ -19,7 +19,7 @@
+     object oTmpArray = dom.GetObject( ID_FAVORITES );
+     if( oTmpArray )
+     {
+-      oTmpArray.SortByName();
++      oTmpArray.SortByName(soAsc,stNatural);
+       system.SetSessionVar("sessionLS", "name");
+       string sTmp;
+       foreach( sTmp, oTmpArray.EnumIDs() )

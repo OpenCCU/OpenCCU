@@ -1,0 +1,12 @@
+--- buildroot/package/netsnmp/netsnmp.mk.orig
++++ buildroot/package/netsnmp/netsnmp.mk
+@@ -39,7 +39,8 @@
+ 	--with-sys-location="Unknown" \
+ 	--with-mib-modules="$(call qstrip,$(BR2_PACKAGE_NETSNMP_WITH_MIB_MODULES))" \
+ 	--with-out-mib-modules="$(call qstrip,$(BR2_PACKAGE_NETSNMP_WITHOUT_MIB_MODULES))" \
+-	--disable-manuals
++	--disable-manuals \
++	--enable-blumenthal-aes
+ NETSNMP_INSTALL_STAGING_OPTS = DESTDIR=$(STAGING_DIR) LIB_LDCONFIG_CMD=true install
+ NETSNMP_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) LIB_LDCONFIG_CMD=true install
+ NETSNMP_MAKE = $(MAKE1)

@@ -7,7 +7,7 @@
 </colgroup>
 <tr>
   <!-- Logo -->
-          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/rm-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
+          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
   <!-- Username und Pfad-->
   <td class="CLASS11101">
     <table class="CLASS11102">
@@ -66,6 +66,7 @@
           <!-- Servicemeldungen -->
         <td class="CLASS11106"><img id="imgServices" src="/ise/img/dot/grey.png" alt="" /></td>
         <td class="CLASS11107"><div id="msgServices" class="CLASS11108 Messages " onclick="WebUI.enter(ServiceMessagesPage);" >&nbsp;</div></td>
+        <td class="CLASS11109"><div id="btnReGaSave" class="NavButton" onclick="LogoClick();">&nbsp;</div></td>
       </tr>
     </table>
   </td>
@@ -81,12 +82,17 @@
   if ($("UserName"))
   {
     $("UserName").appendChild(document.createTextNode(userName));
+    if (getUPL() != UPL_GUEST) {
+      $("UserName").setAttribute('onClick', userLink);
+      $("UserName").setAttribute('style','cursor: pointer;');
+    }
   }
 
   if (getUPL() != UPL_GUEST) {
       jQuery("#msgAlarms").text(translateKey("alarmMsg"));
       jQuery("#msgServices").text(translateKey("serviceMsg"));
       jQuery("#btnLogOut > div").text(translateKey("logout"));
+      jQuery("#btnReGaSave").text(translateKey("regasave"));
   } else {
       jQuery("#AlarmServiceMsg").remove();
       jQuery("#btnLogOutGuest > div").text(translateKey("logout"));

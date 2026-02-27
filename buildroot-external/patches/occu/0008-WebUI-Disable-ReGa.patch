@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -525,85 +525,6 @@
+@@ -535,85 +535,6 @@
          }
        }
  

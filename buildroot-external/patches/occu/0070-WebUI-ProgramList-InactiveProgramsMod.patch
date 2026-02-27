@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm
-@@ -122,15 +122,16 @@
+@@ -129,15 +129,16 @@
              {
                string trId = "program"#o.ID();
                WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
@@ -21,7 +21,7 @@
                string sRet = "";
                Call( "/esp/programs.fn::WriteDestinationText()" );
                Write(sRet);
-@@ -161,7 +162,7 @@
+@@ -168,7 +169,7 @@
                          WriteLine( '<tr>' );
                            WriteLine( '<td class="CLASS04903">' );
                              string sChecked = ""; if( o.Active() ) { sChecked = "checked"; }
@@ -30,7 +30,7 @@
                            WriteLine( '</td>' );
                          WriteLine( '</tr>' );
                          WriteLine( '<tr>' );
-@@ -215,16 +216,17 @@
+@@ -222,16 +223,17 @@
                if( (o.IsTypeOf( OT_PROGRAM )) && (o.ProgramCopyID()==ID_ERROR) )
                {
                  string trId = "program"#o.ID();
@@ -52,7 +52,7 @@
                  string sRet = "";
                  Call( "/esp/programs.fn::WriteDestinationText()" );
                  Write(sRet);
-@@ -255,7 +257,7 @@
+@@ -262,7 +264,7 @@
                            WriteLine( '<tr>' );
                              WriteLine( '<td class="CLASS04903">' );
                                string sChecked = ""; if( o.Active() ) { sChecked = "checked"; }
@@ -61,7 +61,7 @@
                              WriteLine( '</td>' );
                            WriteLine( '</tr>' );
                            WriteLine( '<tr>' );
-@@ -448,6 +450,14 @@
+@@ -455,6 +457,14 @@
        }
      }
    };
@@ -90,7 +90,7 @@
  mainMenuBackground      #ebf1f2
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -1201,6 +1201,16 @@
+@@ -1289,6 +1289,16 @@
    text-align: left;
  }
  

@@ -1,0 +1,11 @@
+--- occu/WebUI/www/config/ic_common.tcl.orig
++++ occu/WebUI/www/config/ic_common.tcl
+@@ -1252,7 +1252,7 @@
+                 } else  {
+                   set selected ""
+                 }
+-                append s "<option value=\"$sv_value\" $selected class=\"stringtable_value\">$v</option>"
++                append s "<option value=\"$sv_value\" $selected class=\"_stringtable_value\">$v</option>"
+                 incr i
+                 set selected selected=\"selected\"
+                 set hidden ""

@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -366,7 +366,8 @@
+@@ -347,7 +347,8 @@
      set styleMaxWidth ""
      #set styleMaxWidth "style=max-width:70px;"
  
@@ -10,7 +10,7 @@
        table_row {class="CLASS20902"} {
          table_data {class="CLASS20903"} $styleMaxWidth {
            #puts "Zentralen-<br>"
-@@ -736,6 +737,7 @@
+@@ -666,6 +667,7 @@
          }
        }
      }
@@ -20,7 +20,7 @@
    division {class="popupControls"} {
 --- occu/WebUI/www/config/cp_network.cgi.orig
 +++ occu/WebUI/www/config/cp_network.cgi
-@@ -305,7 +305,8 @@
+@@ -215,7 +215,8 @@
      puts "\${dialogSettingsNetworkTitle}"
    }
    division {class="CLASS21114 j_translate"} {
@@ -30,7 +30,7 @@
        table_row {class="CLASS21115"} {
          table_data {class="CLASS21116"} {
            #puts "IP-<br/>Einstellungen"
-@@ -576,6 +577,7 @@
+@@ -420,6 +421,7 @@
          }
        }
      }
@@ -40,7 +40,7 @@
      table {
 --- occu/WebUI/www/config/cp_security.cgi.orig
 +++ occu/WebUI/www/config/cp_security.cgi
-@@ -936,7 +936,8 @@
+@@ -946,7 +946,8 @@
    }
  
    division {class="CLASS20815"} {
@@ -50,7 +50,7 @@
        table_row {class="CLASS20806"} {
          table_data {class="CLASS20807"} {
            puts "\${dialogSettingsSecurityTDKey}"
-@@ -1276,6 +1277,7 @@
+@@ -1321,6 +1322,7 @@
          }
        }
      }
@@ -60,7 +60,7 @@
      table {
 --- occu/WebUI/www/config/cp_software.cgi.orig
 +++ occu/WebUI/www/config/cp_software.cgi
-@@ -243,7 +243,8 @@
+@@ -267,7 +267,8 @@
      puts "\${dialogSettingsExtraSoftwareTitle}"
    }
    division {class="CLASS21406"} {
@@ -70,7 +70,7 @@
        set scripts ""
        set loop -1
        catch { set scripts [glob /etc/config/rc.d/*] }
-@@ -384,6 +385,7 @@
+@@ -407,6 +408,7 @@
          }
        }
      }

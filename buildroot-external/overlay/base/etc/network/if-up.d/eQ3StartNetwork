@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010,SC3028 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3014,SC3028 source=/dev/null
 
 # make sure we have a secure umask
 umask 0002
@@ -45,6 +45,7 @@ if [[ -f /var/status/hasIP ]] &&
   # if not required
   case "${IFACE}" in
     wlan*)
+      /usr/sbin/iw dev "${IFACE}" set power_save on
       /usr/sbin/rfkill block wlan
     ;;
   esac
@@ -115,6 +116,8 @@ case "${IFACE}" in
     # if /etc/config/wpa_supplicant.conf exists, bring up
     # the WiFi connection.
     if [[ -s /etc/config/wpa_supplicant.conf ]]; then
+      # turn power save off and set link up
+      /usr/sbin/iw dev "${IFACE}" set power_save off
       /sbin/ip link set "${IFACE}" up
       sleep 5
       /usr/sbin/rfkill unblock wlan
@@ -124,6 +127,7 @@ case "${IFACE}" in
       echo -n " no config, "
       # make sure that the wifi power is disabled
       # if not required
+      /usr/sbin/iw dev "${IFACE}" set power_save on
       /usr/sbin/rfkill block wlan
       exit 1
     fi
@@ -133,10 +137,16 @@ esac
 # cleanup first
 RESOLV_CONF=/tmp/resolv.conf.tmp
 rm -f ${RESOLV_CONF}
-mkdir -p /var/status
 rm -f /var/status/hasLink
 rm -f /var/status/hasIP
 rm -f /var/status/hasInternet
+
+# make sure /var/status exists with correct permissions
+if [[ ! -d /var/status ]]; then
+  mkdir -p /var/status
+  chown root:status /var/status
+  chmod 2775 /var/status
+fi
 
 # setup the hostname
 echo "${HOSTNAME}" >/etc/hostname
@@ -163,7 +173,7 @@ if grep -q nfsroot /proc/cmdline ; then
    touch /var/status/hasIP
 
    # check internet connection; use fix ip to google because no nameserver (nfs boot)
-   /bin/checkInternet
+   /bin/checkInternet >/dev/null
 
    exit 0
 fi
@@ -255,7 +265,7 @@ if [[ "${HM_MODE}" == "NORMAL" ]]; then
 fi
 
 # check internet connection
-/bin/checkInternet
+/bin/checkInternet >/dev/null
 if [[ -f /var/status/hasInternet ]]; then
   echo -n "inet up, "
 else

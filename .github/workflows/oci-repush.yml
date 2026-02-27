@@ -1,0 +1,150 @@
+# OpenCCU workflow to manually repush docker image/release
+# yamllint disable rule:truthy
+---
+name: Release Build (OCI+Docker repush)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (X.Y.Z.YYYMMMDD) to repush'
+        required: true
+        default: ""
+
+# default read-only permission
+permissions:
+  contents: read
+
+jobs:
+  ##########################################
+  # OCI/Docker build and registry push step
+  oci-multiarch-build-push:
+    permissions:
+      contents: write  # ncipollo/release-action
+      packages: write  # docker/build-push-action
+    name: OCI/Docker Build+Push (repush)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Environment
+        run: |
+          echo "GIT_REF=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match)" >> $GITHUB_ENV
+          echo "BUILD_DATETIME=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_ENV
+
+      # download OCI platform release assets
+      - uses: robinraju/release-downloader@v1.12
+        with:
+          tag: ${{ github.event.inputs.release_tag }}
+          fileName: "OpenCCU-*-oci_*.tgz"
+
+      # extract all OCI assets
+      - name: Extract OCI artifacts
+        run: |
+          rm -rf oci_build
+          mkdir -p oci_build
+          cd oci_build || exit 1
+          for f in ../OpenCCU-${{ github.event.inputs.release_tag }}-oci_*.tgz; do
+            echo "extracting ${f}..."
+            DIR=$(basename "${f}" .tgz)
+            mkdir -p "${DIR}"
+            tar -C "${DIR}" -xf "${f}"
+            LAYER=$(jq -r '.[0].Layers[0]' "${DIR}/manifest.json")
+            mv -f "${DIR}/${LAYER}" "./${DIR}.tar"
+            rm -rf "${DIR}" "${f}"*
+          done
+
+      - name: Build OCI tags
+        shell: bash
+        run: |
+          BASE_TAG="ghcr.io/${GITHUB_REPOSITORY@L}"
+          UNIQUE_TAG="${BASE_TAG}:${{ github.event.inputs.release_tag }}"
+          BRANCH="${GITHUB_REF##*/}"
+          if [[ ${BRANCH} == 'master' ]]; then
+            BRANCH_TAG="${BASE_TAG}:latest"
+          else
+            BRANCH_TAG="${BASE_TAG}:latest-${BRANCH}"
+          fi
+          echo "base_tag=${BASE_TAG}" >> $GITHUB_OUTPUT
+          echo "unique_tag=${UNIQUE_TAG}" >> $GITHUB_OUTPUT
+          echo "branch_tag=${BRANCH_TAG}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3.12.0
+        with:
+          install: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Extract docker metadata
+        id: meta
+        uses: docker/metadata-action@v5.10.0
+        with:
+          images: ${{ steps.extract_branch.outputs.base_tag }}
+          labels: |
+            org.opencontainers.image.description=Alternative OS for your homematicIP CCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
+            org.opencontainers.image.version=${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}
+            org.opencontainers.image.url=https://openccu.de
+            org.opencontainers.image.created=${{ env.BUILD_DATETIME }}
+          annotations: |
+            org.opencontainers.image.description=Alternative OS for your homematicIP CCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
+            org.opencontainers.image.version=${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}
+            org.opencontainers.image.url=https://openccu.de
+            org.opencontainers.image.created=${{ env.BUILD_DATETIME }}
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v6.19.2
+        id: docker_build
+        with:
+          context: oci_build
+          file: buildroot-external/board/oci/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          build-args: |
+            tar_prefix=OpenCCU-${{ github.event.inputs.release_tag }}-oci_
+          labels: |
+            org.opencontainers.image.title=OpenCCU
+            org.opencontainers.image.description=Alternative OS for your homematicIP CCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
+            org.opencontainers.image.licenses=Apache-2.0
+            org.opencontainers.image.url=https://openccu.de
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/wiki
+            org.opencontainers.image.created=${{ env.BUILD_DATETIME }}
+            org.opencontainers.image.ref.name=${{ env.GIT_REF }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.event.inputs.release_tag }}
+            io.hass.name=OpenCCU
+            io.hass.description=HomeMatic/homematicIP CCU central based on OpenCCU
+            io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon
+            io.hass.version=${{ github.event.inputs.release_tag }}
+            io.hass.type=addon
+            io.hass.arch=aarch64|amd64
+          tags: |
+            ${{ steps.extract_branch.outputs.unique_tag }}
+            ${{ steps.extract_branch.outputs.branch_tag }}
+          annotations: |
+            ${{ steps.meta.outputs.annotations }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Cleanup oci_build dir
+        run: |
+          rm -rf oci_build

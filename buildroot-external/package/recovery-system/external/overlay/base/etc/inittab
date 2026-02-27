@@ -14,8 +14,8 @@
 # process   == program to run
 
 # Startup the system
-tty2::sysinit:/bin/mount -t proc proc /proc
-tty2::sysinit:/bin/mount -t sysfs sysfs /sys
+tty2::sysinit:/bin/mount /proc
+tty2::sysinit:/bin/mount /sys
 tty2::sysinit:/bin/mkdir -p /dev/pts /dev/shm
 tty2::sysinit:/sbin/fsck -A -R -p
 tty2::sysinit:/bin/mount -a

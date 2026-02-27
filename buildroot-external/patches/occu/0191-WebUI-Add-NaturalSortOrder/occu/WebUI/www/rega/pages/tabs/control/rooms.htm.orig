@@ -1,0 +1,226 @@
+<script type="text/javascript">
+<%
+  system.SetSessionVar("sessionTAB", "control/rooms");
+  if( system.GetSessionVar("sessionTAB") != "control/rooms" )
+  {
+    system.SetSessionVar("sessionTAB1", "");
+  }
+%>
+  //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; R&auml;ume");
+  setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; "+translateKey('submenuRooms'));
+  fltRM = new iseFilter("fltRM");
+  fltHR = new iseFilter("fltHR");
+  arItems = new Array();
+</script>
+
+<div id="roompage" class="CLASS04000">
+    <!-- Linke Spalte -->
+    <div id="contentLeft" class="hidden">
+      <table class="filterTable CLASS04001 j_translate" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="vertical-align: top; border: 0px">
+            <div id="divRL" class="CLASS04201">
+            <table id="tblRoomNames" class="StatViewTbl CLASS04006 j_translate"  cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <th>${thRoom}</th>
+              </tr>
+              <tbody>
+              <tr>
+                <td class="CLASS03501">
+                  <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
+                  <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
+                    <input id="ftRoom" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetRoomBtn', 'ftCancelRoomBtn')" type="text" size="15" class="CLASS03307" />
+                    <div id="ftSetRoomBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltRM, 'ftRoom', FIL_NAME);updateRoomTable();$('btnFilterRoomSub').hide();" >${filterSet}</div>
+                    <div id="ftCancelRoomBtn" class='FilterSetButton' onclick="$('btnFilterRoomSub').hide();">${filterClose}</div>
+                  </div>
+                </td>
+              </tr>
+              <%
+                string sEnumRoomIds = "";
+                object obj = dom.GetObject(ID_ROOMS);
+                if ( obj )
+                {
+                  obj.SortByName();
+                  string tmp = "";
+                  string sFirstId = "";
+                  foreach( tmp, obj.EnumEnabledIDs() ) {
+                    object room = dom.GetObject(tmp);
+                    if (room.Visible()) {
+                      if (sFirstId == "") {
+                        sFirstId = tmp;
+                      }
+                      string trId = "rooms"#room.ID();
+                      Write("<tr id='"#trId#"'>");
+                        Write("<td id='"#room.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHR.clearFilters();updateTable();loadChannels("#room.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                          Write(room.Name());     
+                        Write("</td>");
+                        Write("<script type='text/javascript'>");
+                        Write("var tmp = new Object();");
+                        Write("tmp['name'] = '"#room.Name()#"';");
+                        Write("tmp['trid'] = '"#trId#"';");
+                        Write("arItems[arItems.length] = tmp;");
+                        Write("Cursor.set(Cursor.NORMAL);");
+                        Write("</script>");
+                      Write("</tr>");
+                      sEnumRoomIds = sEnumRoomIds # room.ID() # "\t";
+                    }
+                  }
+                }
+                string sLoadId = sFirstId;
+                if (system.GetVar("roomId") != null) {
+                  sLoadId = system.GetVar("roomId");
+                  system.SetSessionVar("sessionTAB1",sLoadId);
+                }
+              %>
+            </table>
+            </div>
+          </td>
+         </tr> 
+       </table>
+     </div>
+     
+     <!-- Rechte Spalte -->
+     <div id="contentRight">
+       <div id="divHTR" class="CLASS04002">
+       <table id="tblRightContent" class="CLASS04003" cellpadding="0" cellspacing="0">
+        <tr class="CLASS04004">
+          <td style="vertical-align: top;" id="chnList">
+       
+          </td>
+        </tr>
+       </table>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  loadChannels = function(id)
+  {
+    iseInitUpdateArrays();
+    if(id)
+    {
+      // aktuellen Markierung aufheben
+      var tdlist = $("tblRoomNames").getElementsByTagName('td');
+      for (var i = 0; i < tdlist.length; i++) {
+        if (tdlist[i].className == "ButtonStatusRoomsSelected") {
+          tdlist[i].className = "ButtonStatusRooms"
+        }
+      }
+      // Markierung setzen
+      if(dbg)alert("ID:"+id);
+      $(id + "name").className = "ButtonStatusRoomsSelected";
+
+      Cursor.set(Cursor.WAIT);    
+      // Inhalt nachladen
+      var pb = "";
+      pb += "integer id = " + id + ";";
+      var opts = {
+        postBody: pb,
+        evalScripts: true,
+        onComplete: function() {
+          Cursor.set(Cursor.NORMAL);
+        }
+      };
+      new Ajax.Updater("chnList", "/pages/tabs/control/hroomchannels.htm?sid=" + SessionId, opts);
+    }
+    else
+    {
+      //if(dbg)alert("ID nicht gesetzt!(control/rooms.htm)");
+      if(dbg)alert(translateKey("alertIDnotSet") + " (control/rooms.htm)");
+    }
+  }
+  
+  // Beim laden der Seite ersten Raum anzeigen
+  
+  <%
+    if( system.GetSessionVar("sessionTAB1") == "" )
+    {
+      system.SetSessionVar("sessionTAB1",sLoadId);
+    }
+    else {
+      !Fehlerhaftes Laden umgehen
+     
+      string tmpID = system.GetSessionVar("sessionTAB1");
+      string tmp = "";
+      boolean bFound = false;
+      foreach (tmp, sEnumRoomIds) {
+        if (tmp == tmpID) {
+          bFound = true;
+        }
+      }
+      if (!bFound) {
+        system.SetSessionVar("sessionTAB1",sLoadId);
+      }
+    }
+  %>
+  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  
+  filterOptions = new iseFilter();
+  translatePage("#tblRoomNames");
+</script>
+
+<script type="text/javascript">
+  var s = "";
+  var mouseOpts =
+  {
+    onTopOver: function(divToShow)
+    {
+      selectFilters(fltRM, divToShow);
+    }
+  };
+
+  new iseSubMenuControl("btnFilterRoom", "btnFilterRoomSub", "contentLeft", {d:28, r:18}, mouseOpts, false, true);
+
+  jQuery("#btnFilterRoom").click(function() {
+    jQuery("#ftRoom").focus();
+  });
+  
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
+    s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton CLASS04005' onclick='fltRM.clearFilters();updateRoomTable();fltHR.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "</tr>";
+  s += "</table>";
+  
+  setFooter(s);
+  
+  updateTable = function() {
+    colorFilterBtns(fltHR);
+    for (var i = 0; i < arChns.length; i++) {
+      if (!fltHR.objPassFilter(arChns[i])) {
+        hide(arChns[i]['trid']);
+        if (arChns[i]['ctrlId'])
+          hide(arChns[i]['ctrlId']);
+      }
+      else {
+        show(arChns[i]['trid']);
+        if (arChns[i]['ctrlId'])
+          show(arChns[i]['ctrlId']);
+      }
+    }
+  };
+
+  updateRoomTable = function()
+  {
+    colorFilterBtns(fltRM);
+    for (var i = 0; i < arItems.length; i++)
+    {
+      if (!fltRM.objPassFilter(arItems[i]))
+      {
+        hide(arItems[i]['trid']);
+      }
+      else
+      {
+        show(arItems[i]['trid']);
+      }
+    }
+  };
+
+  clearInputLeft = function()
+  {
+    document.getElementById("ftRoom").value = "";
+  };
+  translatePage("#contentLeft");
+  jQuery("#contentLeft").removeClass("hidden");
+</script>
+

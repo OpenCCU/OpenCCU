@@ -39,6 +39,7 @@ set deviceDescrScript {
 
     var first = true;
     string channelId;
+    boolean noMoreDaliChannels = false;
     foreach(channelId, device.Channels())
     {
       var channel = dom.GetObject(channelId);
@@ -115,6 +116,7 @@ set deviceDescrScript {
         Write(" AES_AVAILABLE {" # isAesAvailable # "}");
         Write(" VIRTUAL {" # isVirtual # "}");
         Write(" CHANNEL_TYPE {" # chnType # "}");
+        Write(" CHANNEL_NAME {" # channel.Label() # "}");
 
         ! BLIND_* is necessary e. g. the HmIPW-DRBL4, which can be used as a BLIND or a SHUTTER. The metadata channelMode determines the current state.
 
@@ -134,6 +136,27 @@ set deviceDescrScript {
             } else {
               Write(" MODE_MULTI_MODE_CHANNEL {--}");
             }
+          }
+        }
+
+        if ((channel.Label() == "HmIP-DRG-DALI") && (chnType == "UNIVERSAL_LIGHT_RECEIVER")) {
+          integer maxCap = channel.MetaData('maxCap');
+          if (maxCap) {
+            Write(" DALI_MAX_CAPABILITIES {" # maxCap # "}");
+          } else {
+            channel.MetaData("maxCap","--");
+            Write(" DALI_MAX_CAPABILITIES {--}");
+          }
+        }
+
+        if (((channel.Label() == "HmIP-FALMOT-C8") || (channel.Label() == "HmIP-FALMOT-C12")) && (chnType == "CLIMATECONTROL_FLOOR_TRANSCEIVER")) {
+          integer chnActive = channel.MetaData('chnActive');
+
+          if (chnActive) {
+            Write(" FALMOT_CHN_ACTIVE {" # chnActive # "}");
+          } else {
+            channel.AddMetaData("chnActive", "false");
+            Write(" FALMOT_CHN_ACTIVE {false}");
           }
         }
 
@@ -200,7 +223,7 @@ foreach id $deviceIds {
 
 
 #
-# channesl
+# channel
 #
   set firstChannel 1
   append result ",\"channels\":\["
@@ -236,6 +259,15 @@ foreach id $deviceIds {
      append result ",\"mode_multi_mode\":[json_toString $channel(MODE_MULTI_MODE_CHANNEL)]"
     }
 
+    if {($channel(CHANNEL_NAME) == "HmIP-DRG-DALI") && ($channel(CHANNEL_TYPE) == "UNIVERSAL_LIGHT_RECEIVER")} {
+      if {[info exists channel(DALI_MAX_CAPABILITIES)] == 1} {
+       append result ",\"daliMaxCapabilities\":[json_toString $channel(DALI_MAX_CAPABILITIES)]"
+      }
+    }
+
+    if {([string first "HmIP-FALMOT" $channel(CHANNEL_NAME)] != -1) && ($channel(CHANNEL_TYPE) == "CLIMATECONTROL_FLOOR_TRANSCEIVER")} {
+      append result ",\"isChannelActive\":$channel(FALMOT_CHN_ACTIVE)"
+    }
 
     append result "\}"
 

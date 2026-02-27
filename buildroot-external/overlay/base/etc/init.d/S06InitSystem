@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3015 source=/dev/null
 #
 # Startup script to ensure we have a valid filesystem
 #
@@ -28,29 +28,10 @@ init_system() {
   mkdir -p /var/empty
   mkdir -p /var/etc
   mkdir -p /var/status
-  chmod g+s /var/status
-  chgrp status /var/status
+  chown root:status /var/status
+  chmod 2775 /var/status
   mkdir -p /var/empty
   chmod 0700 /var/empty
-
-  # setup /dev_host for OCI/Docker environments (excluding HA)
-  if [[ "${HM_HOST}" == "oci" ]] && [[ -z "${HM_RUNNING_IN_HA}" ]]; then
-    # To avoid sharing the whole host /dev with the container we
-    # mount devtmps in /dev_host and symlink the required devices
-    mount -o noatime -t devtmpfs devtmpfs /dev_host
-    if [[ -d "/dev_host" ]]; then
-      for device in raw-uart raw-uart1 eq3loop mmd_bidcos mmd_hmip usb; do
-        if [[ ! -e "/dev/${device}" ]]; then
-          ln -s "/dev_host/${device}" "/dev/${device}"
-        fi
-      done
-    fi
-  fi
-
-  # create /media/usbX directories for automounting USB devices
-  for i in $(seq 1 8); do
-    mkdir -p "/media/usb${i}"
-  done
 
   # /usr/local/etc setup
   mkdir -p /usr/local/etc
@@ -75,6 +56,7 @@ init_system() {
   # /usr/local/etc/config/firmware exists
   mkdir -p /usr/local/etc/config/firmware
   chmod 0775 /usr/local/etc/config
+  chown root:root /usr/local/etc/config
 
   # make sure the timezone setup is fine
   if [[ ! -e /etc/config/TZ ]]; then
@@ -84,12 +66,11 @@ init_system() {
   # update /etc/config/localtime and /etc/config/timezone
   /bin/updateTZ.sh
 
-  if [[ "${HM_HOST}" != "oci" ]]; then
-    # if /etc/config/timezone is set to Europe/Berlin we
-    # assume a german keyboard layout
-    if [[ $(cat /etc/config/timezone) == "Europe/Berlin" ]]; then
-      /sbin/loadkmap </etc/de.kmap
-    fi
+  # if /etc/config/timezone is set to Europe/Berlin we
+  # assume a german keyboard layout
+  if [[ ! "${HM_HOST}" =~ oci\|lxc ]] &&
+     [[ $(cat /etc/config/timezone) == "Europe/Berlin" ]]; then
+    /sbin/loadkmap </etc/de.kmap
   fi
 
   # if no network config is present we make sure to put a template file
@@ -98,12 +79,15 @@ init_system() {
     cp -a ${CFG_TEMPLATE_DIR}/netconfig /etc/config/
   fi
 
-  # if no shadow file with password information is in place we have to
-  # put the template file there and ensure proper permissions
-  if [[ ! -s /etc/config/shadow ]] ; then
+  # if no shadow file with password information is in place or no
+  # root user if found in shadow file we have to put the template
+  # file there and ensure proper permissions
+  if [[ ! -s /etc/config/shadow ]] ||
+     ! grep -q "^root:" /etc/config/shadow; then
     cp -a ${CFG_TEMPLATE_DIR}/shadow /etc/config/
   fi
   chmod 0640 /etc/config/shadow
+  chown root:root /etc/config/shadow
 
   # load bcm2835 watchdog kernel module if this is
   # a raspberrypi
@@ -131,7 +115,7 @@ start() {
 
   # start hss_led if it exists and we are not in HMLGW mode
   if [[ "${HM_MODE}" != "HM-LGW" ]] && [[ -x /bin/hss_led ]]; then
-    if [[ "${HM_HOST}" != "oci" ]]; then
+    if [[ ! "${HM_HOST}" =~ oci\|lxc ]]; then
       start-stop-daemon -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
     else
       start-stop-daemon -S -q -b -m -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6

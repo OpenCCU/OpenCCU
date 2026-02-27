@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
-@@ -388,39 +388,14 @@
+@@ -396,52 +396,14 @@
    if (bShowChannel == true) {
  
      ! Interface HmIP-RF and HmIP-Wired
@@ -14,7 +14,20 @@
 -      integer devFwMajor = 0;
 -      Call("/esp/functions.fn::getFirmwareVersion()");
 -
--      if ((oDevHssType.Substr(0,6) == "HmIPW-") || (oDevHssType == "HmIP-DRSI1") || (oDevHssType == "HmIP-DRSI4") || (oDevHssType == "HmIP-DRG-DALI") || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))) {
+-      if ((oDevHssType.Substr(0,6) == "HmIPW-")
+-        || (oDevHssType == "HmIP-DRSI1")
+-        || (oDevHssType == "HmIP-DRSI4")
+-        || (oDevHssType == "HmIP-DRG-DALI")
+-        || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))
+-        || (oDevHssType == "HmIP-WGD")
+-        || (oDevHssType == "HmIP-WGD-PL")
+-        || (oDevHssType == "HmIP-UDI-PB2")
+-        || (oDevHssType == "HmIP-UDI-PB2-A")
+-        || (oDevHssType == "HmIP-UDI-SMI55")
+-        || (oDevHssType == "HmIP-UDI-SMI55-A")
+-        || (oDevHssType == "HmIP-DRBLI4")
+-        ) {
+-
 -        object chnParam;
 -        ! A HmIPW-* device with a control for the parameter IDENTIFY_TARGET_LEVEL (MAINTENANCE channel)
 -        ! should be visible. So it's possible to use the identify function of HmIPW-devices.
@@ -35,17 +48,26 @@
 -          bShowChannel = false;
 -        }
 -      } else {
--        if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD")) {
+-        if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A")  && (oDevHssType != "HmIP-HAP2") && (oDevHssType != "HmIP-HAP2-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD")) {
 -          bShowChannel = false;
 -        }
-+      if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP") && (oDevHssType != "HmIP-HAP-A") && (oDevHssType != "HmIP-HAP-B1") && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD")) {
++      if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A")  && (oDevHssType != "HmIP-HAP2") && (oDevHssType != "HmIP-HAP2-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD")) {
 +        bShowChannel = false;
        }
  
        ! Necessary to be able to learn the codes of keypads and finger print sensors
+@@ -995,7 +957,7 @@
+   !HmIP-DLP
+   ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
+   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
+-    // TODO - refactoring necessary
++    ! TODO - refactoring necessary
+     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
 --- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
-@@ -198,6 +198,38 @@
+@@ -188,6 +188,38 @@
  </script>
  
  <script type="text/javascript">
@@ -84,7 +106,7 @@
    var s = "";
  
    var mouseOpts =
-@@ -218,6 +250,7 @@
+@@ -208,6 +240,7 @@
    s += "<tr>";
    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey("footerBtnPageBack")+"</div></td>";
    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
@@ -94,7 +116,7 @@
    
 --- occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm
-@@ -132,8 +132,22 @@
+@@ -135,8 +135,22 @@
      object device = dom.GetObject(system.GetVar("id"));
      if (device) {
        if (device.Visible()) {
@@ -118,7 +140,7 @@
            object chn = dom.GetObject(tmp);
            object oDev = dom.GetObject(chn.Device());
            string oDevHssType = oDev.HssType();
-@@ -171,7 +185,7 @@
+@@ -174,7 +188,7 @@
            } else {
              Call("/esp/functions.fn::showHideHmIPChannel()");
            }
@@ -129,7 +151,7 @@
              boolean showExtDesc = false;
 --- occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm
-@@ -120,8 +120,17 @@
+@@ -116,8 +116,17 @@
      object func = dom.GetObject(system.GetVar("id"));
      if (func) {
        if (func.Visible()) {
@@ -150,7 +172,7 @@
            object chn = dom.GetObject(tmp);
 --- occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm
-@@ -124,8 +124,17 @@
+@@ -121,8 +121,17 @@
      {
        if (room.Visible())
        {

@@ -13,7 +13,7 @@
  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -51,6 +51,7 @@
+@@ -52,6 +52,7 @@
      "alarmMsg" : "Alarmmeldungen",
      "serviceMsg" : "Servicemeldungen",
      "logout" : "Abmelden",
@@ -23,7 +23,7 @@
      "menuStartPage" : "Startseite",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -50,6 +50,7 @@
+@@ -51,6 +51,7 @@
      "alarmMsg" : "Alarm messages",
      "serviceMsg" : "Service messages",
      "logout" : "Logout",
@@ -33,7 +33,7 @@
      "menuStartPage" : "Home page",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -28603,11 +28603,27 @@
+@@ -33481,11 +33481,27 @@
  
  
  logout = function() {

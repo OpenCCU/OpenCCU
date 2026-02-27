@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169,SC3010,SC3015 source=/dev/null
 #
 # Start watchdog
 #
@@ -8,8 +8,14 @@ case "$1" in
   start)
     # no /dev/watchdog device, no watchdog daemon startup
     if [[ -c /dev/watchdog ]]; then
-      echo "Starting watchdog..."
-      /sbin/watchdog -T 300 -t 5 /dev/watchdog
+      # source /VERSION to get PLATFORM
+      [[ -r /VERSION ]] && . /VERSION
+
+      # do not start watchdog daemon on docker/lxc envs
+      if [[ ! "${PLATFORM}" =~ oci\|lxc ]]; then
+        echo "Starting watchdog..."
+        /sbin/watchdog -T 300 -t 5 /dev/watchdog
+      fi
     fi
 
     # to identify unexpected crashes/shutdowns we check
@@ -17,7 +23,14 @@ case "$1" in
     # present and if so we set /var/status/uncleanShutdown
     # to signal this to others.
     if [[ -f /usr/local/tmp/.watchdog ]]; then
-      mkdir -p /var/status
+
+      # make sure /var/status exists with correct permissions
+      if [[ ! -d /var/status ]]; then
+        mkdir -p /var/status
+        chown root:status /var/status
+        chmod 2775 /var/status
+      fi
+
       touch /var/status/uncleanShutdown
     else
       mkdir -p /usr/local/tmp

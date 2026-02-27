@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/programs.fn.orig
 +++ occu/WebUI/www/rega/esp/programs.fn
-@@ -849,15 +849,17 @@
+@@ -888,15 +888,17 @@
      object oOrig = dom.GetObject( system.GetVar("orig") );
      if( oCopy && oOrig )
      {

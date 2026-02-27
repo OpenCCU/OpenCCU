@@ -23,7 +23,7 @@
 
 using namespace XmlRpc;
 
-#define TCLRPC_VERSION "1.3"
+#define TCLRPC_VERSION "1.4"
 
 static const char* USAGE = "usage: xmlrpc url methodName ?arg1 ?arg2 ...??";
 
@@ -147,7 +147,7 @@ static int StringToXmlRpcValue(Tcl_Interp * interp, XmlRpcValue& v, CONST char* 
                         retval=TCL_ERROR;
                         Tcl_AddErrorInfo(interp, "Every struct member needs two fields (key and value)\n");
                         char buffer[32];
-                        sprintf(buffer, "Field count is %d\n", entryc);
+                        snprintf(buffer, sizeof(buffer)-1, "Field count is %d\n", entryc);
                         Tcl_AddErrorInfo(interp, buffer);
                         if(entryv)Tcl_Free((char*)entryv);
                         break;
@@ -380,7 +380,7 @@ static int Tclrpc_Cmd (ClientData, Tcl_Interp * interp, int argc, CONST84 char* 
 				retval = TCL_ERROR;
             }else if(xmlRpcClient->isFault()){
                 char buffer[32];
-                sprintf(buffer, "faultCode=%d\n", (int)response["faultCode"]);
+                snprintf(buffer, sizeof(buffer)-1, "faultCode=%d\n", (int)response["faultCode"]);
         		Tcl_AppendResult(interp, "Fault received on xmlrpc call ", argv[2], "(", params.toText().c_str(), ")\n", buffer, "faultString=", const_cast<char*>(((std::string)response["faultString"]).c_str()), NULL);
 		//retval=TCL_ERROR;
 		/*

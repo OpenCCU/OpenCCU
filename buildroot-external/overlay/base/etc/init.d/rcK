@@ -6,7 +6,6 @@
 
 # start psplash
 /usr/bin/psplash -n 2>/dev/null &
-PSPLASH_PID=$!
 
 # shellcheck disable=SC2045
 for i in $(ls -r /etc/init.d/S??*) ;do
@@ -40,5 +39,5 @@ done
 /usr/bin/psplash-write "MSG Rebooting..."
 /usr/bin/psplash-write "PROGRESS 0"
 
-# kill psplash
-kill $PSPLASH_PID
+# quit psplash
+/usr/bin/psplash-write "QUIT"

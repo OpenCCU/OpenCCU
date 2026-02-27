@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -963,7 +963,9 @@
+@@ -966,7 +966,9 @@
      sCI=sCI#"Try to set SunOffsetType to ["#system.GetVar("tmSot")#"] ";
      tmObj.SunOffsetType( system.GetVar("tmSot") );
      if( tmObj.SunOffsetType() == system.GetVar("tmSot") ) { sCI=sCI#"OK, "; } else { sCI=sCI#"FAILED, "; }
@@ -11,7 +11,7 @@
      Write( 'dlgResult = '#tmObj.ID()#';' );
      Write( 'PopupClose();' );
    }
-@@ -1019,17 +1021,21 @@
+@@ -1022,17 +1024,21 @@
          sTm = sTm # s.Format("%H:%M") # " ${ruleConditionLblTimeClock} ";
        }
      }
@@ -38,7 +38,7 @@
        sTm = sTm # " ${ruleConditionLblTimeClock} ";
 --- occu/WebUI/www/rega/pages/tabs/admin/msg/timemodule.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/msg/timemodule.htm
-@@ -90,12 +90,11 @@
+@@ -88,12 +88,11 @@
      </tr>
      <tr>
      <td></td>
@@ -54,7 +54,7 @@
      </tr>
      
      <tr class="CLASS05107">
-@@ -538,8 +537,8 @@
+@@ -536,8 +535,8 @@
      tm.begin    = "";
      tm.calcount = 0;
      tm.end      = "0";
@@ -65,7 +65,7 @@
      if( $("tmRange").checked )
      {
        if( $("tsRange").checked )
-@@ -624,12 +623,42 @@
+@@ -622,12 +621,42 @@
            tm.caldur = secEnd - secStart;
          }
        }
@@ -114,7 +114,7 @@
        }
      }
      if( $("tmPoint").checked )
-@@ -959,7 +988,11 @@
+@@ -957,7 +986,11 @@
      $("btnRangeEnd").disabled = bDisabled;
      $("tsDay").disabled = bDisabled;
      $("tsDaytime").disabled = bDisabled;
@@ -126,7 +126,7 @@
      $("timebegin").disabled = !bDisabled;
      $("btntimebegin").disabled = !bDisabled;
    };
-@@ -986,13 +1019,30 @@
+@@ -984,13 +1017,30 @@
            }
          }
        }
@@ -166,7 +166,7 @@
        string sCalRep = tmObj.CalRepeatTime();  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -845,8 +845,10 @@
+@@ -853,8 +853,10 @@
      "timeModuleLblStart" : "Beginn:",
      "timeModuleLblEnd" : "Ende:",
      "timeModuleLblAllDay" : "Ganzt%E4gig",
@@ -181,7 +181,7 @@
      "timeModuleLblSerialPatternOnce" : "Einmalig",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -891,8 +891,10 @@
+@@ -899,8 +899,10 @@
      "timeModuleLblStart" : "Beginning:",
      "timeModuleLblEnd" : "End:",
      "timeModuleLblAllDay" : "All-day",

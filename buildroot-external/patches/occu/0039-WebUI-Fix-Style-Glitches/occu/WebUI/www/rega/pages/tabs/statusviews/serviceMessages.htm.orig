@@ -209,6 +209,7 @@ iseInitUpdateArrays();
           string sLastTriggerMessage = "";
           string sLastTriggerKey = "";
           integer iTmpTriggerID = oAlarm.LastTriggerID();
+          string sChnHssType = "";
           if( iTmpTriggerID == ID_ERROR )
           {
             iTmpTriggerID = oAlarm.AlTriggerDP();
@@ -257,7 +258,9 @@ iseInitUpdateArrays();
               if( oLastTrigger.IsTypeOf( OT_HSSDP ) )
               {
                 sSerialNumber = oLastTriggerChannel.Address();
-                
+                object trueChn = dom.GetObject(oLastTriggerChannel.ID());
+                string sChnHssType = oLastTriggerChannel.HssType();
+
                 string sLongKey = oLastTriggerChannel.ChnLabel()#"|"#oLastTrigger.HSSID();
                 string sShortKey = oLastTrigger.HSSID();
                 if( (oLastTrigger.ValueType() == ivtInteger) && (oLastTrigger.ValueSubType() == istEnum) )
@@ -337,7 +340,7 @@ iseInitUpdateArrays();
             }
           Write( '</tr>' );
           Write( '<script type="text/javascript">');
-           Write( 'if(screen.availWidth < 1200) {' );
+             Write( 'if(screen.availWidth < 1200) {' );
             ! Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut("'#sAlarmName#'", false, true);');
             ! Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut("'#sServiceMessage#'", false, true);');
 
@@ -345,28 +348,36 @@ iseInitUpdateArrays();
             Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sServiceMessage#'"), false, true);');
             
           Write( '}');
-          Write( 'var tmp = new Object();');
-          Write( 'tmp["id"] = '#oAlarm.ID()#'; ');
-          if( bWrite )
-          {
-            Write( 'tmp["write"] = true;' );
+          if ( (sChnHssType != "CLIMATECONTROL_FLOOR_TRANSCEIVER") || ((sChnHssType == "CLIMATECONTROL_FLOOR_TRANSCEIVER") && (trueChn.MetaData("chnActive") == true)) ) {
+
+            Write( 'var tmp = new Object();');
+            Write( 'tmp["id"] = '#oAlarm.ID()#'; ');
+            if( bWrite )
+            {
+              Write( 'tmp["write"] = true;' );
+            }
+            else
+            {
+              Write( 'tmp["write"] = false;' );
+            }
+            Write( 'tmp["first"] = "'#sFirstTimestamp#'"; ');
+            Write( 'tmp["name"] = "'#sAlarmName#'";');
+            Write( 'tmp["sn"] = "'#sSerialNumber#'";');
+            Write( 'tmp["func"] = "'#sFunction#'"; ');
+            Write( 'tmp["room"] = "'#sRoom#'"; ');
+            Write( 'tmp["desc"] = "'#sServiceMessage#'"; ');
+            Write( 'tmp["trid"] = "'#sTrId#'"; ');
+
+            Write( 'tmp["hssType"] = "'#sChnHssType#'"; ');
+
+            Write( 'tmp["fltOpts"] = new Object();');
+            Write( 'tmp["fltOpts"]["rooms"]="'#roomIDs#'";');
+            Write( 'tmp["fltOpts"]["funcs"]="'#funcIDs#'";');
+            Write('arServices[arServices.length] = tmp;');
+            Write( 'Cursor.set(Cursor.NORMAL);' );
+          } else {
+            Write("invisibleServiceMessages ++;");
           }
-          else
-          {
-            Write( 'tmp["write"] = false;' );
-          }
-          Write( 'tmp["first"] = "'#sFirstTimestamp#'"; ');
-          Write( 'tmp["name"] = "'#sAlarmName#'";');
-          Write( 'tmp["sn"] = "'#sSerialNumber#'";');
-          Write( 'tmp["func"] = "'#sFunction#'"; ');
-          Write( 'tmp["room"] = "'#sRoom#'"; ');
-          Write( 'tmp["desc"] = "'#sServiceMessage#'"; ');
-          Write( 'tmp["trid"] = "'#sTrId#'"; ');
-          Write( 'tmp["fltOpts"] = new Object();');
-          Write( 'tmp["fltOpts"]["rooms"]="'#roomIDs#'";');
-          Write( 'tmp["fltOpts"]["funcs"]="'#funcIDs#'";');
-          Write( 'arServices[arServices.length] = tmp;');
-          Write( 'Cursor.set(Cursor.NORMAL);' );
           Write( '</script>');
         }
       }
@@ -452,11 +463,16 @@ iseInitUpdateArrays();
 
   // Funktion wird von system.fn::UpdateUI() aufgerufen
   // Um Meldungen auszublenden die automatisch entfernt wurden
+  // invisibleServiceMessages wird zur Zeit für die FALMOT verwendet, da inaktivbe Kanäle eine Servicemeldung erzeugen, die nicht notwendig ist (die Kanäle sind ja inaktiv).
+  // Ob ein Kanal der FALMOT inaktiv ist, wird in den Konfigurationsparametern eingestellt.
   updateMessageView = function(iSvcMsgCount)
   {
-    if (iSvcMsgCount != arServices.length)
+    if (iSvcMsgCount != arServices.length + invisibleServiceMessages)
     {
-      if( $('svView') ) reloadPage();
+      if( $('svView') ) {
+        invisibleServiceMessages = 0;
+        reloadPage();
+      }
     }
   };
   translatePage("#tblServices, #NoServices");

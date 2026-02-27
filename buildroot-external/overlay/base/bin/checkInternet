@@ -1,22 +1,45 @@
 #!/bin/sh
-if [ ! -e /etc/config/internetCheckDisabled ]; then
-  if ! ping -q -W 3 -c 1 google.com >/dev/null 2>/dev/null; then
-    if ! nc -z -w 3 google.com 80 >/dev/null 2>/dev/null; then
-      if grep -q nfsroot /proc/cmdline ; then
-        if ! ping -q -W 3 -c 1 8.8.8.8 >/dev/null 2>/dev/null; then
-          if ! nc -z -w 3 108.177.126.100 80 >/dev/null 2>/dev/null; then
-            [ -f /var/status/hasInternet ] && rm -f /var/status/hasInternet
-            exit 1
-          fi
+# shellcheck shell=dash disable=SC3010
+
+if [[ ! -e /etc/config/internetCheckDisabled ]]; then
+  if ! /usr/bin/timeout 3 /usr/bin/nc -z -w 3 google.com 443 >/dev/null 2>&1; then
+    if ! /usr/bin/timeout 3 /bin/ping -q -W 3 -c 1 google.com >/dev/null 2>&1; then
+      if ! /usr/bin/timeout 3 /usr/bin/wget -q --spider http://google.com/ >/dev/null 2>&1; then
+        echo "Assuming broken internet connectivity: Could not reach google.com."
+        rm -f /var/status/hasInternet
+        if [[ -e /var/status/hasInternet ]]; then
+          echo "ERROR: could not remove /var/status/hasInternet"
         fi
-      else
-        [ -f /var/status/hasInternet ] && rm -f /var/status/hasInternet
         exit 1
+      else
+        echo "Assuming internet connectivity: Could reach http://google.com via wget."
       fi
+    else
+      echo "Assuming internet connectivity: Could ping google.com."
     fi
+  else
+    echo "Assuming internet connectivity: Could reach port 443 on google.com."
   fi
+else
+  echo "InternetCheck disabled"
 fi
 
-[ ! -f /var/status/hasInternet ] && touch /var/status/hasInternet
+# if we reach here we ensure that hasInternet is present
+if [[ ! -e /var/status/hasInternet ]]; then
+
+  # make sure /var/status exists with correct permissions
+  if [[ ! -d /var/status ]]; then
+    mkdir -p /var/status
+    chown root:status /var/status
+    chmod 2775 /var/status
+  fi
+
+  echo "Creating /var/status/hasInternet"
+  touch /var/status/hasInternet
+  if [[ ! -e /var/status/hasInternet ]]; then
+    echo "ERROR: could not create /var/status/hasInternet"
+    exit 1
+  fi
+fi
 
 exit 0

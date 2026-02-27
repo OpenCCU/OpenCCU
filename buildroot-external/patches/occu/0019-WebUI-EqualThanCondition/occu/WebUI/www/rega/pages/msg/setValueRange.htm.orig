@@ -72,7 +72,19 @@
         <input id="Text1" type="text" value="<% Write(iRV1); %>" class="CLASS00805"/>
         <span class="CLASS00804"> <% Write(sValueUnit); %></span></td>
       <td>
-        <span class="CLASS00807">${ruleConditionLblRangeLessThan}</span>
+        <!--<span class="CLASS00807">${ruleConditionLblRangeLessThan}</span>-->
+      <!--  <span class="CLASS00807">bis&nbsp;</span> -->
+        <select id="lessGreater">"
+          <option value="lessThan">${ruleConditionLblRangeLessThan}</option>
+          <option value="greaterThan">${ruleConditionLblRangeGreaterThan}</option>
+        </select>
+        <script type="javascript">
+          var lgElm = jQuery("#lessGreater"),
+            val1 = <%Write(iRV1);%>,
+            val2 = <%Write(iRV2);%>;
+          if (val1 < val2) {lgElm.val("lessThan");} else {lgElm.val("greaterThan");}
+        </script>
+
       </td>
       <td>
         <input id="Text2" type="text" value="<% Write(iRV2); %>" class="CLASS00806"/>
@@ -226,8 +238,15 @@
             go = 0;
           }
         }
+
         if(go == 0) {
-          if ((rv1/1) > (rv2/1)) go = 7;
+          var valLessGreater = jQuery("#lessGreater").val();
+          if (valLessGreater == "lessThan") {
+            if ((rv1/1) > (rv2/1)) go = 7;
+          } else if (valLessGreater == "greaterThan") {
+            if ((rv1/1) < (rv2/1)) go = 8;
+          }
+
         }
         break;
 
@@ -308,6 +327,9 @@
         break;
       case 7:
         alert("Der linke Wert ist grosser als der rechte.");
+        break;
+      case 8:
+        alert("Der linke Wert ist kleiner als der rechte.");
         break;
       default:
         break;

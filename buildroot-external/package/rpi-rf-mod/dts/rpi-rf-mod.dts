@@ -84,4 +84,14 @@
             pivccu,rtc = <&rpi_rf_mod_rtc>;       // RPI-RF-MOD
         };
     };
+
+    // fragment to make sure that stdout-path under chosen
+    // is empty so that the above uart0 fragment does not
+    // interfere with u-boot trying to access serial drivers.
+    fragment@4 {
+        target = <&chosen>;
+        __overlay__ {
+            stdout-path = "";
+        };
+    };
 };

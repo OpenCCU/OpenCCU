@@ -4,13 +4,12 @@
 #
 ################################################################################
 
+# Please keep in sync with configs/raspberrypi*_deconfig
 RPI_FIRMWARE_VERSION = $(call qstrip,$(BR2_PACKAGE_RPI_FIRMWARE_VERSION))
 RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
 RPI_FIRMWARE_LICENSE = BSD-3-Clause
 RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
 RPI_FIRMWARE_INSTALL_IMAGES = YES
-
-BR_NO_CHECK_HASH_FOR += $(RPI_FIRMWARE_SOURCE)
 
 RPI_FIRMWARE_FILES = \
 	$(if $(BR2_PACKAGE_RPI_FIRMWARE_BOOTCODE_BIN), bootcode.bin) \
@@ -37,6 +36,14 @@ define RPI_FIRMWARE_INSTALL_CONFIG
 endef
 endif
 
+RPI_FIRMWARE_CMDLINE_FILE = $(call qstrip,$(BR2_PACKAGE_RPI_FIRMWARE_CMDLINE_FILE))
+ifneq ($(RPI_FIRMWARE_CMDLINE_FILE),)
+define RPI_FIRMWARE_INSTALL_CMDLINE
+	$(INSTALL) -D -m 0644 $(RPI_FIRMWARE_CMDLINE_FILE) \
+		$(BINARIES_DIR)/rpi-firmware/cmdline.txt
+endef
+endif
+
 ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS),y)
 define RPI_FIRMWARE_INSTALL_DTB
 	$(foreach dtb,$(wildcard $(@D)/boot/*.dtb), \
@@ -50,12 +57,8 @@ define RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
 	$(foreach ovldtb,$(wildcard $(@D)/boot/overlays/*.dtbo), \
 		$(INSTALL) -D -m 0644 $(ovldtb) $(BINARIES_DIR)/rpi-firmware/overlays/$(notdir $(ovldtb))
 	)
-endef
-else
-# Still create the directory, so a genimage.cfg can include it independently of
-# whether _INSTALL_DTB_OVERLAYS is selected or not.
-define RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
-	$(INSTALL) -d $(BINARIES_DIR)/rpi-firmware/overlays
+	$(INSTALL) -D -m 0644 $(@D)/boot/overlays/overlay_map.dtb $(BINARIES_DIR)/rpi-firmware/overlays/
+	touch $(BINARIES_DIR)/rpi-firmware/overlays/README
 endef
 endif
 
@@ -80,9 +83,9 @@ endef
 endif # INSTALL_VCDBG
 
 define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
-	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt $(BINARIES_DIR)/rpi-firmware/cmdline.txt
 	$(RPI_FIRMWARE_INSTALL_BIN)
 	$(RPI_FIRMWARE_INSTALL_CONFIG)
+	$(RPI_FIRMWARE_INSTALL_CMDLINE)
 	$(RPI_FIRMWARE_INSTALL_DTB)
 	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
 endef

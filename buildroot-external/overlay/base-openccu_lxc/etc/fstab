@@ -1,0 +1,6 @@
+# /etc/fstab: static file system information.
+#
+# <file system> <mount pt>     <type>   <options>                                      <dump> <pass>
+tmpfs           /tmp           tmpfs    mode=1777,nosuid,nodev                         0      0
+tmpfs           /var           tmpfs    defaults,noatime,noexec,nosuid,nodev,size=50%  0      0
+tmpfs           /media         tmpfs    defaults,noatime,noexec,nosuid,nodev           0      0

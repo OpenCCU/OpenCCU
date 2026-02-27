@@ -30,7 +30,7 @@
  jsonrpc_response true
 --- occu/WebUI/www/config/cp_maintenance.cgi.orig
 +++ occu/WebUI/www/config/cp_maintenance.cgi
-@@ -1363,9 +1363,7 @@
+@@ -1352,9 +1352,7 @@
      puts "Failure"
      return
    }

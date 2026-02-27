@@ -7,87 +7,6 @@ sourceOnce common.tcl
 load tclrpc.so
 load tclrega.so
 
-set REMOTE_CERT_SCRIPT "https://www.homematic.com/sslcert/ssl.php"
-
-proc action_get_cert {} {
-  global env REMOTE_CERT_SCRIPT sid
-  
-}
-
-proc action_cert_update_confirm {} {
-  global env
-   
-  http_head
-  division {class="popupTitle"} {
-    #puts "Netzwerk-Sicherheit"
-    puts "\${dialogSettingsNetworkMessageCertificateTitle}"
-  }
-  division {class="CLASS21100"} {
-    table {class="popupTable"} {border="0"} {
-      table_row {
-        table_data { 
-          table {class="CLASS21106"} {
-            table_row {
-              table_data {colspan="2"} {
-                puts "\${dialogSettingsNetworkMessageCertificateUploadSucceed}"
-              }
-            }
-            table_row {
-              table_data {
-                #puts "Schritt 4: Zentrale neu starten"
-                puts "\${dialogSettingsNetworkCertificateLblStep4}"
-              }
-              table_data {
-                division {class="popupControls CLASS21107"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS21110"} {onClick="UpdateGo();"} {
-                          #puts "Neu starten"
-                          puts "\${btnNewStart}"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  division {class="popupControls"} {
-    table {
-      table_row {
-        table_data {class="CLASS21103"} {
-          division {class="CLASS21104"} {onClick="OnBack();"} {
-            #puts "Zur&uuml;ck"
-            puts "\${dialogBack}"
-          }
-        }
-      }
-    }
-  }
-  puts ""
-  cgi_javascript {
-    puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
-    puts {
-      UpdateGo = function() {
-        dlgPopup.hide();
-        dlgPopup.setWidth(400);
-        dlgPopup.LoadFromFile(url, "action=cert_update_go");
-      }
-      OnBack = function() {
-        dlgPopup.hide();
-        dlgPopup.setWidth(800);
-        dlgPopup.LoadFromFile(url);
-      }
-    }
-    puts "translatePage('#messagebox');"
-  }
-}
-
 proc action_cert_update_failed {} {
   global env
    
@@ -139,37 +58,18 @@ proc action_cert_update_failed {} {
   }
 }
 
-
-proc action_reboot {} {
-  puts ""
-  exec /sbin/reboot
-}
-
 proc action_cert_update_go {} {
   global env
   
   http_head
-
-  file rename -force -- "/usr/local/tmp/server.pem" "/etc/config/server.pem"
-
-  put_message "\${dialogSettingsNetworkMessageCertificateTitle}" "\${dialogSettingsNetworkMessageCertificateCCURestart}" {\${btnNewLogin} "window.location.href='/';"}
-  
-  #save DOM
-  rega system.Save()
-  
-  puts ""
   cgi_javascript {
-    puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
     puts {
-      var pb = "action=reboot";
-      var opts = {
-        postBody: pb,
-        sendXML: false
-      };
-      new Ajax.Request(url, opts);
+      homematic("User.restartLighttpd", {}, function(){
+        MessageBox.show(translateKey("dialogRestartWebserverTitle"),translateKey("dialogRestartWebserverContent"));
+        window.setTimeout(function() {window.location.protocol = "http";},2000);
+      }); 
     }
-    puts "translatePage('#messagebox');"
-  }    
+  } 
 }
 
 
@@ -256,35 +156,36 @@ proc action_cert_upload {} {
   gets $fp line
   close $fp
   #puts $line;
-  if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
-    file rename -force -- $filename "/usr/local/tmp/server.pem"
+  if { [string first "-----BEGIN " $line] != -1 } {
+    catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
+    file rename -force -- $filename "/etc/config/server.pem"
     
     cgi_javascript {
       puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
       puts {
         var dlgPopup = parent.top.dlgPopup;
         if (dlgPopup === undefined) {
-          dlgPopup = window.open('', 'resize').dlgPopup;
+          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
         }
         dlgPopup.hide();
         dlgPopup.setWidth(600);
-        dlgPopup.LoadFromFile(url, "action=cert_update_confirm");
+        dlgPopup.LoadFromFile(url, "action=cert_update_go");
       }
     }
   } else {
     file delete -force -- $filename
 
     cgi_javascript {
-      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-      puts {
-        var dlgPopup = parent.top.dlgPopup;
-        if (dlgPopup === undefined) {
-          dlgPopup = window.open('', 'resize').dlgPopup;
-        }
-        dlgPopup.hide();
-        dlgPopup.setWidth(600);
-        dlgPopup.LoadFromFile(url, "action=cert_update_failed");
+    puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
+    puts {
+      var dlgPopup = parent.top.dlgPopup;
+      if (dlgPopup === undefined) {
+        dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
       }
+      dlgPopup.hide();
+      dlgPopup.setWidth(600);
+      dlgPopup.LoadFromFile(url, "action=cert_update_failed");
+    }
     }
   }
 }
@@ -295,7 +196,7 @@ proc action_update_start {} {
 
 
 proc action_put_page {} {
-  global env  REMOTE_CERT_SCRIPT sid
+  global env sid
   
   set ip ""
   set mask ""
@@ -478,56 +379,7 @@ proc action_put_page {} {
         table_data {class="CLASS21113"} {width="400"} {
           table {class="CLASS21111"} {
             set email [get_user_email]
-            table_row {
-              table_data {width="20"} {}
-              table_data {colspan="2" align="left"} {
-                #puts "Schritt 1: Daten eingeben"
-                puts "\${dialogSettingsNetworkCertificateLblStep1}"
-              }
-            }
-            table_row {
-              table_data {width="20"} {}
-              table_data {align="left"} {
-                #puts "Hostname:"
-                puts "\${dialogSettingsNetworkCertificateLblHostname}"
-              }
-              table_data {align="right"} {
-                cgi_text url=$env(HTTP_HOST) {size="35"} {id="text_url"} {type="text"}
-              }
 
-              table_data {id="text_url_hint"} {class="attention hidden"} {
-                puts "\${invalidIP}"
-              }
-
-            }
-            table_row {
-              table_data {width="20"} {}
-              table_data {align="left"} {
-                #puts "E-Mail Adresse:"
-                puts "\${dialogSettingsNetworkCertificateLblEMail}"
-              }
-              table_data {align="right"} {
-                cgi_text mail=$email {size="35"} {id="text_mail"} {type="text"}
-              }
-            }
-            table_row {
-              table_data {width="20"} {}
-              table_data {colspan="2" align="left"} {
-                #puts "Land (DE, UK, etc.):"
-                puts "\${dialogSettingsNetworkCertificateLblCountry}"
-                cgi_text country=DE {size="2"} {id="text_country"} {type="text"}
-              }
-            }
-            table_row {
-              table_data {align="right"} {class="CLASS21112"} {colspan="3"} {
-                division {class="popupControls CLASS21107"} {
-                  division {class="CLASS21117"} {onClick="OnGetCert()"} {
-                    #puts "Zertifikat erstellen"
-                    puts "\${dialogSettingsNetworkCertificateBtnCreateCert}"
-                  }
-                }
-              }
-            }
             table_row {
               table_data {width="20"} {}
               table_data {colspan="2" align="left"} {
@@ -537,9 +389,9 @@ proc action_put_page {} {
             }
             table_row {
               table_data {width="20"} {}
-              table_data {colspan="2"} {
+              table_data {align="left"} {colspan="2"} {
                 form "/config/fileupload.ccc?sid=$sid&action=cert_upload&url=$env(SCRIPT_NAME)" name=cert_form {target=cert_upload_iframe} enctype=multipart/form-data method=post {
-                  file_button cert_file size=30 maxlength=1000000
+                  file_button cert_file size=30 maxlength=1000000 accept='.pem,.crt'
                 }
                 puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
               }
@@ -550,26 +402,16 @@ proc action_put_page {} {
                 #puts "Schritt 3: Zertifikat auf Zentrale laden"
                 puts "\${dialogSettingsNetworkCertificateLblStep3}"
               }
-              table_data {align="right"} {
-                division {class="popupControls CLASS21107"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS21108"} {onClick="document.cert_form.submit();"} {
-                          #puts "Hochladen"
-                          puts "\${dialogSettingsNetworkCertificateLblUpload}"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
             }
             table_row {
               table_data {width="20"} {}
-              table_data {colspan="2" align="left"} {class="CLASS21118"} {
-                #puts "Schritt 4: Zentrale neu starten"
-                puts "\${dialogSettingsNetworkCertificateLblStep4}"
+              table_data {colspan="2" align="left"} {
+                division {class="popupControls CLASS21107"} {
+                  division {class="CLASS21108" style="width: 150px; margin-left: 20px;"} {onClick="document.cert_form.submit();"} {
+                    #puts "Hochladen"
+                    puts "\${dialogSettingsNetworkCertificateLblUpload}"
+                  }
+                }
               }
             }
 
@@ -608,19 +450,8 @@ proc action_put_page {} {
         }
         table_data {class="CLASS21113"} {align="left"} {
           p {${dialogSettingsNetworkHintCertificateP1}}
-
-          p {
-          ${dialogSettingsNetworkHintCertificateP2}
-          <ol>
-            <li>${dialogSettingsNetworkHintCertificateP2a}</li>
-            <li>${dialogSettingsNetworkHintCertificateP2b}</li>
-            <li>${dialogSettingsNetworkHintCertificateP2c}</li>
-            <li>${dialogSettingsNetworkHintCertificateP2d}</li>
-          </ol>
-          }
+          p {${dialogSettingsNetworkHintCertificateP2}}
           p {${dialogSettingsNetworkHintCertificateP3}}
-
-
         }
       }
     }
@@ -777,23 +608,10 @@ proc action_put_page {} {
   }
   set serial [get_serial]
   cgi_javascript {
-    puts "var serial = \"$serial\";"
     puts {
-      OnGetCert = function() {
-        var country = document.getElementById("text_country").value;
-        var hostname = document.getElementById("text_url").value;
-        var email = document.getElementById("text_mail").value;
-        homematic("User.createCertificate", {"country": country, "hostname": hostname, "email": email, "serial": serial}, function() {
-          homematic("User.restartLighttpd", {}, function(){
-            MessageBox.show(translateKey("dialogRestartWebserverTitle"),translateKey("dialogRestartWebserverContent"));
-            window.setTimeout(function() {window.location.protocol = "http"},2000);
-          });
-        });
-      };
-
+  
       deleteCert = function() {
-        var textA = "<div>" + translateKey('confirmCertificationPurgeA') + "<br/><br/></div>" +
-         "<div style=\"text-align:center\">" + translateKey('confirmCertificationPurgeB') + "</div>"
+        var textA = "<div style=\"text-align:center\">" + translateKey('confirmCertificationPurgeB') + "</div>"
 
         var textB = "<div>" + translateKey('certificationFileDeletedA')  + "<br/><br/></div>" +
         "<div style=\"text-align:center\">" + translateKey('certificationFileDeletedB') + "</div>"
@@ -973,7 +791,6 @@ cgi_eval {
 
   catch { import action }
   catch { import filename }
-
   if {[session_requestisvalid 8] > 0} then action_$action
 }
 

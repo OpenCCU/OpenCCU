@@ -1,0 +1,66 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC3010,SC3028,SC2169 source=/dev/null
+#
+# Starts tailscaled
+#
+
+DAEMON="tailscaled"
+
+# only continue if tailscale is enabled
+[[ ! -e /etc/config/tailscaleEnabled ]] && exit 0
+
+TAILSCALED_EXEC="/usr/sbin/${DAEMON}"
+TAILSCALED_ARGS="-statedir /etc/config/${DAEMON} -state /etc/config/${DAEMON}.state -socket /var/run/tailscale/${DAEMON}.sock"
+TAILSCALED_PID="/var/run/tailscale/${DAEMON}.pid"
+TAILSCALED_PORT=41641
+TAILSCALE_EXEC="/usr/bin/tailscale"
+TAILSCALE_WEB_ARGS="--listen 127.0.0.1:25899"
+TAILSCALE_UP_ARGS="--advertise-exit-node --advertise-routes $(/sbin/ip route | grep -oE '^\b([0-9]{1,3}\.){3}[0-9]{1,3}\/[0-9]+\b' | xargs | tr ' ' ',')"
+TAILSCALE_PID="/var/run/tailscale/tailscale.pid"
+
+# allow to override the variables
+[[ -r /etc/config/tailscaleEnabled ]] && . /etc/config/tailscaleEnabled
+
+case "${1}" in
+	start)
+		echo -n "Starting ${DAEMON}: "
+
+		# create necessary directories
+		mkdir -p /var/run/tailscale /var/lib/tailscale
+
+		# make sure ip forwarding is turned on for v4/v6
+		/sbin/sysctl -q net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1 2>/dev/null
+
+		# shellcheck disable=SC2086
+		if ! start-stop-daemon -b -S -q -m -p "${TAILSCALED_PID}" -x /usr/bin/env -- PATH=/usr/sbin ${TAILSCALED_EXEC} ${TAILSCALED_ARGS} -port ${TAILSCALED_PORT}; then
+			echo "FAILED (${TAILSCALED_EXEC})"
+			exit 1
+		fi
+
+		# shellcheck disable=SC2086
+		if ! start-stop-daemon -b -S -q -m -p "${TAILSCALE_PID}" -x ${TAILSCALE_EXEC} -- web ${TAILSCALE_WEB_ARGS}; then
+			echo "FAILED (${TAILSCALE_EXEC})"
+		else
+			echo "OK"
+		fi
+
+		# make sure to set tailscale 'up' with the right cmdline args
+		# shellcheck disable=SC2086
+		${TAILSCALE_EXEC} up ${TAILSCALE_UP_ARGS} >/dev/null 2>&1 &
+	;;
+	stop)
+		echo -n "Stopping ${DAEMON}: "
+		start-stop-daemon -K -q -p ${TAILSCALE_PID}
+		start-stop-daemon -K -q -p ${TAILSCALED_PID}
+		echo "OK"
+	;;
+	restart|reload)
+		${0} stop
+		${0} start
+	;;
+	*)
+		echo "Usage: ${0} {start|stop|restart}"
+		exit 1
+esac
+
+exit 0

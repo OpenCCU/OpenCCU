@@ -1,0 +1,69 @@
+--- occu/WebUI/www/rega/pages/tabs/control/systemProtocol.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/systemProtocol.htm
+@@ -50,24 +50,16 @@
+   </colgroup>
+   <thead id="histlistheader">
+       <tr>
+-      <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="time"){sCssName="SortSelected";} %>
+-      <th class="CLASS03000"><div id="time" class="pt11 <%Write(sCssName); %>" onclick="DivSort('time');">${thTime}</div></th>
+       <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="sqldate"){sCssName="SortSelected";} %>
+       <th class="CLASS03000"><div id="sqldate" class="pt11 <%Write(sCssName); %>" onclick="DivSort('sqldate');">${thDate}</div></th>
++      <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="time"){sCssName="SortSelected";} %>
++      <th class="CLASS03000"><div id="time" class="pt11 <%Write(sCssName); %>" onclick="DivSort('time');">${thTime}</div></th>
+       <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+       <th class="CLASS03000"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thChannelSysVar}</div></th>
+       <th class="CLASS03000">${thActivity}</th>
+     </tr>
+     <tr>
+       <td class="tdCellFilter CLASS03001" >
+-        <div id="btnFilterTime" class="FilterBtn">${thFilter}</div>
+-        <div class="FilterSubMenu" id="btnFilterTimeSub" style="display:none">
+-          <input id="ftTime" type="text" size="15" class="CLASS03002"/>
+-          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftTime', FIL_TIME);updateTable();$('btnFilterTimeSub').hide();" >${filterSet}</div>
+-          <div class='FilterSetButton' onclick="$('btnFilterTimeSub').hide();">${filterClose}</div>
+-        </div>
+-      </td>
+-      <td class="tdCellFilter CLASS03001" >
+         <div id="btnFilterDate" class="FilterBtn">${thFilter}</div>
+         <div class="FilterSubMenu" id="btnFilterDateSub" style="display:none">
+           <input id="ftDate" type="text" size="15" class="CLASS03002"/>
+@@ -76,6 +68,14 @@
+         </div>
+       </td>
+       <td class="tdCellFilter CLASS03001" >
++        <div id="btnFilterTime" class="FilterBtn">${thFilter}</div>
++        <div class="FilterSubMenu" id="btnFilterTimeSub" style="display:none">
++          <input id="ftTime" type="text" size="15" class="CLASS03002"/>
++          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftTime', FIL_TIME);updateTable();$('btnFilterTimeSub').hide();" >${filterSet}</div>
++          <div class='FilterSetButton' onclick="$('btnFilterTimeSub').hide();">${filterClose}</div>
++        </div>
++      </td>
++      <td class="tdCellFilter CLASS03001" >
+         <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+         <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+           <input id="ftName" type="text" size="15" class="CLASS03002"/>
+@@ -118,8 +118,8 @@
+       selectFilters(fltPROT, divToShow);
+     }
+   };
+-  new iseSubMenuControl("btnFilterTime", "btnFilterTimeSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
+   new iseSubMenuControl("btnFilterDate", "btnFilterDateSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
++  new iseSubMenuControl("btnFilterTime", "btnFilterTimeSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
+   new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);  
+ 
+   var s = "";
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -41003,10 +41003,10 @@
+       }
+       else
+       {
+-        td = Builder.node('td', {className: "GrayBkg"}, sTime);
++        td = Builder.node('td', {className: "GrayBkg"}, sDate);
+         tr.appendChild(td);
+   
+-        td = Builder.node('td', {className: "GrayBkg"}, sDate);
++        td = Builder.node('td', {className: "GrayBkg"}, sTime);
+         tr.appendChild(td);
+       }
+   

@@ -1,0 +1,74 @@
+--- a/cmd/Kconfig	2023-01-09 17:07:33.000000000 +0100
++++ b/cmd/Kconfig	2025-01-30 23:54:40.626097334 +0100
+@@ -1597,6 +1597,11 @@
+ 	  Also supports loading the value at a memory location into a variable.
+ 	  If CONFIG_REGEX is enabled, setexpr also supports a gsub function.
+ 
++config CMD_FILEENV
++	bool "fileenv"
++	help
++	   Read a file into memory and store it to env.
++
+ config CMD_SETEXPR_FMT
+ 	bool "setexpr_fmt"
+ 	depends on CMD_SETEXPR
+--- a/cmd/Makefile	2023-01-09 17:07:33.000000000 +0100
++++ b/cmd/Makefile	2025-01-30 23:55:07.593385559 +0100
+@@ -157,6 +157,7 @@
+ obj-$(CONFIG_CMD_SCSI) += scsi.o disk.o
+ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
+ obj-$(CONFIG_CMD_SETEXPR) += setexpr.o
++obj-$(CONFIG_CMD_FILEENV) += fileenv.o
+ obj-$(CONFIG_CMD_SETEXPR_FMT) += printf.o
+ obj-$(CONFIG_CMD_SPI) += spi.o
+ obj-$(CONFIG_CMD_STRINGS) += strings.o
+--- a/cmd/fileenv.c	1970-01-01 01:00:00.000000000 +0100
++++ b/cmd/fileenv.c	2025-01-30 23:56:16.396279241 +0100
+@@ -0,0 +1,47 @@
++#include <config.h>
++#include <common.h>
++#include <command.h>
++#include <vsprintf.h>
++#include <fs.h>
++#include <linux/ctype.h>
++
++static char *fs_argv[5];
++
++int do_fileenv(struct cmd_tbl *cmdtp, int flag, int argc, char * const argv[])
++{
++ if (argc < 6)
++   return CMD_RET_USAGE;
++
++ fs_argv[0] = "fatload";
++ fs_argv[1] = argv[1];
++ fs_argv[2] = argv[2];
++ fs_argv[3] = argv[3];
++ fs_argv[4] = argv[4];
++
++ if (do_fat_fsload(cmdtp, 0, 5, fs_argv) != 0)
++   return 1;
++
++ char *addr = (char *)simple_strtoul(argv[3], NULL, 16);
++ size_t size = env_get_hex("filesize", 0);
++
++ // Prepare string
++ addr[size] = 0x00;
++ char *s = addr;
++ while(*s != 0x00) {
++   if (isprint(*s)) {
++     s++;
++   }
++   else {
++     *s = 0x00;
++   }
++ }
++
++ return env_set(argv[5], addr);
++}
++
++U_BOOT_CMD(
++ fileenv, 6, 0, do_fileenv,
++ "Read file and store it into env.",
++ "<interface> <dev:part> <addr> <filename> <envname>\n"
++ "    - Read file from fat32 and store it as env."
++);

@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
 #
 # Starts eq3configcmd update-lgw-firmware for RF- and Wired-Gateways
 #
@@ -9,25 +9,13 @@
 # skip this startup if not in normal mode
 [[ "${HM_MODE}" != "NORMAL" ]] && exit 0
 
-start() {
-  waitForIP
-  if waitForIP; then
-    echo -n "."
-    updateCopro
-    echo -n "."
-    updateRFFirmware
-    echo -n "."
-    updateWiredFirmware
-    return 0
-  fi
-  return 1
-}
+update_performed=0
 
 waitForIP() {
   # shellcheck disable=SC2034
   for i in $(seq 1 5); do
     gw=$(ip -4 route get 1 2>/dev/null | head -1 | cut -d' ' -f3 | tr -d '\n')
-    if [[ ! ${gw} == "" ]] && [[ ! $(ping -W 5 -c 1 "${gw}" 2>/dev/null >/dev/null) ]]; then
+    if [[ -n "${gw}" ]] && /bin/ping -q -W 5 -c 1 "${gw}" 2>/dev/null >/dev/null; then
       return 0
     fi
     echo -n "."
@@ -36,25 +24,34 @@ waitForIP() {
   return 1
 }
 
-updateCopro() {
-  if grep -q "^\[Interface .\]" /etc/config/rfd.conf 2>/dev/null; then
+updateRFGateway() {
+  if grep -qm1 "^Type = \(HMLGW2\|Lan Interface\)" /etc/config/rfd.conf 2>/dev/null; then
+    echo -n "."
     echo "Updating RF Lan Gateway Coprocessor Firmware" | logger -p user.info
-    /bin/eq3configcmd update-coprocessor -lgw -u -rfdconf /etc/config/rfd.conf -l 1
-  fi
-}
-
-updateRFFirmware() {
-  if grep -q "^\[Interface .\]" /etc/config/rfd.conf 2>/dev/null; then
+    /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -lgw -u -rfdconf /etc/config/rfd.conf -l 1
+    echo -n "."
     echo "Updating RF Lan Gateway Firmware" | logger -p user.info
-    /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/rfd.conf -l 1
+    /usr/bin/timeout 120 /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/rfd.conf -l 1
+    update_performed=1
   fi
 }
 
-updateWiredFirmware() {
-  if grep -q "^\[Interface .\]" /etc/config/hs485d.conf 2>/dev/null; then
+updateWiredGateway() {
+  if grep -qm1 "^Type = HMWLGW" /etc/config/hs485d.conf 2>/dev/null; then
+    echo -n "."
     echo "Updating Wired Lan Gateway Firmware" | logger -p user.info
-    /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/hs485d.conf -l 1
+    /usr/bin/timeout 120 /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/hs485d.conf -l 1
+    update_performed=1
   fi
+}
+
+start() {
+  if waitForIP; then
+    updateRFGateway
+    updateWiredGateway
+    return 0
+  fi
+  return 1
 }
 
 restart() {
@@ -65,7 +62,11 @@ case "$1" in
   start)
     echo -n "Starting LGWFirmwareUpdate: "
     if start; then
-      echo "OK"
+      if [[ ${update_performed} -eq 1 ]]; then
+        echo "OK"
+      else
+        echo "not required"
+      fi
     else
       echo "FAIL"
     fi

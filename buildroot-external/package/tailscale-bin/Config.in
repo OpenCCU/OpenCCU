@@ -1,0 +1,6 @@
+config BR2_PACKAGE_TAILSCALE_BIN
+	bool "Tailscale (Zero config wireguard-based VPN)"
+	help
+	  Tailscale Zero config wireguard-based VPN
+
+	  https://tailscale.com/

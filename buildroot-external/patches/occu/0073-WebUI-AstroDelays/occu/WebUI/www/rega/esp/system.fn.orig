@@ -292,7 +292,10 @@ function ::saveDesc() {
 function ::UpdateUI()
 {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
-  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+
+  ! See SPHM-829
+  ! if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  if( oUser.UserLevel() != iulNone )
   {
   Write( '<script type="text/javascript">' );
 
@@ -350,7 +353,7 @@ function ::UpdateUI()
     {
       if( oAlarm.IsTypeOf(OT_ALARMDP) )
       {
-        if( oAlarm.AlState() == asOncoming )
+        if( (oAlarm.Used() == true) && (oAlarm.Enabled() == true) && (oAlarm.AlState() == asOncoming) )
         {
           iSvcCount = iSvcCount + 1;
           string sTimestamp = oAlarm.AlOccurrenceTime();
@@ -438,7 +441,7 @@ function ::UpdateUI()
 
 
   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
-  Write( 'if(showAPITools == "true") showHmAPITools();');
+  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
 
   !###################
   !# Systemvariablen #
@@ -1091,19 +1094,29 @@ function ::saveUser() {
     if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )
     {
       if (targetUID == 0) {
-    object users = dom.GetObject(ID_USERS);
-    object user = users.UsersAdd();
-    user.UserBlankPwd(system.GetVar("pw"));
-    string tmp = "";
-    foreach (tmp, system.GetVar("sSysVars")) {
-      user.UserSharedObjects().Add(tmp);
-    }
-  }
+        object users = dom.GetObject(ID_USERS);
+        object user = users.UsersAdd();
+        user.UserBlankPwd(system.GetVar("pw"));
+        string tmp = "";
+        foreach (tmp, system.GetVar("sSysVars")) {
+          user.UserSharedObjects().Add(tmp);
+        }
+      }
   else {
     object user = dom.GetObject(targetUID);
     if (system.GetVar("iPwChanged") == 1) {
       user.UserBlankPwd(system.GetVar("pw"));
-    }    
+
+      ! Deactivate the auto login for the admin when setting the admin password for the first time
+      !object users = dom.GetObject(ID_USERS);
+      !if ((system.GetVar("firstName") == "Admin") && (user.ID() == users.UsersDefaultLogin(dwcPC)) && (user.MetaData("pwdSet") != "true"))  {
+      !  user.RemoveMetaData("pwdSet");
+      !  user.AddMetaData("pwdSet", "true");
+      !  string alPC = "0";
+      !  string alPDA = "0";
+      !  Call("/esp/system.fn::setAutoLogin()");
+      !}
+    }
   }
   user.Name(system.GetVar("userName"));
   user.UserFirstName(system.GetVar("firstName"));
@@ -1242,8 +1255,8 @@ function ::writeProgCtrl()
   {
     Write("<table class='ctrlTbl CLASS02101' border='0'>");
   }
-  Write("<colgroup><col width='20%' /><col width='20%' />");
-  Write("<col width='20%' /><col width='20%' /><col width='20%' /></colgroup>");
+  Write("<colgroup><col style='width:20%;' /><col style='width:20%;' />");
+  Write("<col style='width:20%;' /><col style='width:20%;' /><col style='width:20%;' /></colgroup>");
   Write("<tr align='center'>");
   Write("<td>");
   string sClass = "ControlBtnOff";
@@ -1252,7 +1265,7 @@ function ::writeProgCtrl()
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
-          Write("<img src='/ise/img/cogs3.png' width='80px' height='75px' />");
+          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' />");
         Write("</div>");
       Write("</td>");
     Write("</tr>");
@@ -1307,7 +1320,7 @@ function ::AddSysVarAndBuildTable() {
 ! [userId], [opt: sTmpVars]
 function ::BuildUserSvTable() {
   WriteLine('<table cellpadding="3" cellspacing="1" class="CLASS02105" width="100%">');
-  WriteLine('<colgroup> <col width="15%" /> <col width="20%" /> <col width="15%" /> <col width="20%" /> <col width="15%" /> <col width="15%" />');
+  WriteLine('<colgroup> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:15%;" />');
   WriteLine('</colgroup> <tbody> <tr> <th class="CLASS02106">${thName}</th>');
   WriteLine('<th class="CLASS02107">${thDescription}</th>');
   WriteLine('<th class="CLASS02107">${thTypeOfVariable}</th>');
@@ -1335,7 +1348,7 @@ function ::BuildUserSvTable() {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
       WriteLine("<tr id='"#trid#"'>");
         WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name()#"</td>");
-        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo()#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
         
         WriteLine("<td class='GrayBkg'>");
         string s = "Unbekannt: " # sysvar.ValueSubType();
@@ -1513,7 +1526,8 @@ function ::writeWarnStateJS()
       Write( 'hide("work'#system.GetVar("cId")#'");' );
     }
     
-    if( oChnTmp.ExistServiceMsg() )
+  !  if( oChnTmp.ExistServiceMsg() )
+    if( oChnTmp.ExistServiceMsg() && ((oChnTmp.HssType() != "CLIMATECONTROL_FLOOR_TRANSCEIVER") || ((oChnTmp.HssType() == "CLIMATECONTROL_FLOOR_TRANSCEIVER") && (oChnTmp.MetaData("chnActive") == true))) )
     {
       Write( 'show("warn'#system.GetVar("cId")#'");' );
     }

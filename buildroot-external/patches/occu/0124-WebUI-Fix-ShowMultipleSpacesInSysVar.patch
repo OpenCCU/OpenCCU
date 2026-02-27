@@ -1,10 +1,10 @@
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -5344,6 +5344,7 @@
+@@ -5475,6 +5475,7 @@
  	word-wrap: break-word;
  	max-width: 480px;
  	display: inline-block;
 +	white-space: break-spaces;
  }
  
- .CLASS02535A {
+ .CLASS02535B {

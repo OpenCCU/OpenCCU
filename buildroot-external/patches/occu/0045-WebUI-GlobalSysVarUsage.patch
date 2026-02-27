@@ -10,9 +10,9 @@
            integer iVST = oSysVar.ValueSubType();
            Write("var tmp = new Object();");
            Write("tmp['id'] = '"#oSysVar.ID()#"';");
-@@ -71,7 +68,6 @@
-           }
+@@ -72,7 +69,6 @@
            Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
+           Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
            Write("arSysVars[arSysVars.length] = tmp;");
 -        }
        }
@@ -30,9 +30,9 @@
            integer iVST = oSysVar.ValueSubType();
            Write("var tmp = new Object();");
            Write("tmp['id'] = '"#oSysVar.ID()#"';");
-@@ -73,7 +70,6 @@
-           }
+@@ -74,7 +71,6 @@
            Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
+           Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
            Write("arSysVars[arSysVars.length] = tmp;");
 -        }
        }

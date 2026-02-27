@@ -33,7 +33,7 @@
  
    puts ""
    cgi_javascript {
-@@ -367,7 +391,7 @@
+@@ -366,7 +390,7 @@
                    table {
                      table_row {
                        table_data {
@@ -42,7 +42,7 @@
                            #puts "Installieren"
                            puts "\${dialogSettingsExtraSoftwareBtnInstallSoftware}"
                          }
-@@ -523,14 +547,7 @@
+@@ -525,14 +549,7 @@
  }
  
  proc action_install_start {} {

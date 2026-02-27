@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2154,SC3010 source=/dev/null
+# shellcheck shell=dash disable=SC2154,SC3010,SC3014 source=/dev/null
 
 RESOLV_CONF=/tmp/resolv.conf.tmp
 CONFIGURL=/var/configurl
@@ -38,7 +38,7 @@ handle_renew() {
     
     # make sure we can deal with DHCP servers not providing broadcast or subnet
     [[ -n "${broadcast}" ]] && BROADCAST="${broadcast}" || BROADCAST="+"
-    /sbin/ip addr add dev "${interface}" local "${ip}/${mask}" broadcast ${BROADCAST}
+    /sbin/ip addr add dev "${interface}" local "${ip}/${mask}" broadcast "${BROADCAST}"
 
     # update the info in /etc/config/netconfig
     eq3configcmd netconfigcmd -i "${ip}" -n "${subnet}" -g "${router}"
@@ -81,6 +81,13 @@ handle_renew() {
   /sbin/resolvconf -a "${interface}" < ${RESOLV_CONF}
   rm -f ${RESOLV_CONF}
 
+  # make sure /var/status exists with correct permissions
+  if [[ ! -d /var/status ]]; then
+    mkdir -p /var/status
+    chown root:status /var/status
+    chmod 2775 /var/status
+  fi
+
   # flag as having a proper ip
   touch /var/status/hasIP
 
@@ -90,11 +97,7 @@ handle_renew() {
   fi
 
   # check internet connection
-  if /usr/bin/wget -q --spider http://google.com/; then
-    touch /var/status/hasInternet
-  elif /bin/ping -q -W 5 -c 1 google.com >/dev/null 2>/dev/null; then
-    touch /var/status/hasInternet
-  fi
+  /bin/checkInternet
 }
 
 handle_bound() {

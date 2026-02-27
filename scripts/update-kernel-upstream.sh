@@ -1,11 +1,29 @@
 #!/bin/bash
 set -e
 
-if [ -z "$1" ]; then
-    echo "Need a kernel version!"
-    exit 1
+ID=${1}
+PACKAGE_NAME="linux"
+PROJECT_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x"
+#ARCHIVE_URL="${PROJECT_URL}/${PACKAGE_NAME}-${ID}.tar.xz"
+CHECKSUM_URL="${PROJECT_URL}/sha256sums.asc"
+
+if [[ -z "${ID}" ]]; then
+  echo "Need a kernel version!"
+  exit 1
 fi
 
-sed -i "s/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\".*\"/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\"$1\"/g" buildroot-external/configs/raspmatic_{intelnuc,oci_*,odroid-*,ova,tinkerboard}_defconfig
-#sed -i "s/| \(Open Virtual Appliance\|Generic x86-64\|Tinker Board\|Odroid-.*\) | .* |/| \1 | $1 |/g" Documentation/kernel.md
-#git commit -m "Linux: Update kernel $1" buildroot-external/configs/* Documentation/kernel.md
+# extract sha256 checksum
+ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${CHECKSUM_URL}" | grep "${PACKAGE_NAME}-${ID}.tar.xz" | awk '{ print $1 }')
+if [[ -z "${ARCHIVE_HASH}" ]]; then
+  echo "no hash found for ${PACKAGE_NAME}-${ID}.tar.xz"
+  exit 1
+fi
+
+# update kconfig file
+sed -i "s/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\".*\"/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\"${ID}\"/g" buildroot-external/configs/{oci_*,odroid-*,ova,generic-*}.config
+
+# update hash files
+sed -i "/${PACKAGE_NAME}-.*\.tar\.xz/d" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.xz" >>"buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+sed -i "/${PACKAGE_NAME}-.*\.tar\.xz/d" "buildroot-external/patches/${PACKAGE_NAME}-headers/${PACKAGE_NAME}-headers.hash"
+echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.xz" >>"buildroot-external/patches/${PACKAGE_NAME}-headers/${PACKAGE_NAME}-headers.hash"

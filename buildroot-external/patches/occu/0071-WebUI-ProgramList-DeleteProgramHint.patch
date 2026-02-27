@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm
-@@ -142,7 +142,7 @@
+@@ -150,7 +150,7 @@
                        WriteLine( '<table cellpadding="0" cellspacing="0" border="0">' );
                          WriteLine( '<tr>' );
                            WriteLine( '<td class="CLASS04903">' );
@@ -9,7 +9,7 @@
                            WriteLine( '</td>' );
                          WriteLine( '</tr>' );
                          WriteLine( '<tr>' );
-@@ -236,7 +236,7 @@
+@@ -245,7 +245,7 @@
                          WriteLine( '<table cellpadding="0" cellspacing="0" border="0">' );
                            WriteLine( '<tr>' );
                              WriteLine( '<td class="CLASS04903">' );
@@ -18,7 +18,7 @@
                              WriteLine( '</td>' );
                            WriteLine( '</tr>' );
                            WriteLine( '<tr>' );
-@@ -296,11 +296,12 @@
+@@ -305,11 +305,12 @@
  </div>
  
  <script type="text/javascript">
@@ -35,8 +35,8 @@
          var url = '/esp/programs.htm?sid='+SessionId;
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -390,7 +390,7 @@
-     "dialogSafetyCheck" : "Sicherheitsabfrage",
+@@ -395,7 +395,7 @@
+     "dialogRecoveryCheck" : "Sicherheitsabfrage",
      "dialogInfo" : "Info",
      "dialogHint" : "Hinweis",
 -    "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm wirklich l%F6schen?",
@@ -46,8 +46,8 @@
      "dialogQuestionRemoveSysVar" : "M%F6chten Sie die Systemvariable wirklich l%F6schen?",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -389,7 +389,7 @@
-     "dialogSafetyCheck" : "Confirmation prompt",
+@@ -394,7 +394,7 @@
+     "dialogRecoveryCheck" : "Confirmation prompt",
      "dialogInfo" : "Info",
      "dialogHint" : "Please note",
 -    "dialogQuestionRemoveProgram" : "Do you really want to delete the program?",

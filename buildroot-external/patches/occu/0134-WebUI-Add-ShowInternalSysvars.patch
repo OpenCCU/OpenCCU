@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/system.fn.orig
 +++ occu/WebUI/www/rega/esp/system.fn
-@@ -1580,3 +1580,60 @@
+@@ -1601,3 +1601,60 @@
  function ::keepAlive()
  {
  }
@@ -72,7 +72,7 @@
    if( action == "saveTimeModule"             ) { Call( "system.fn::saveTimeModule()" );             }
    if( action == "saveUser"                   ) { Call( "system.fn::saveUser()" );                   }
    if( action == "saveUserPwd"                ) { Call( "system.fn::saveUserPwd()" );                }
-@@ -33,4 +34,6 @@
+@@ -34,4 +35,6 @@
    if( action == "getLastTimeOfChn"           ) { Call( "system.fn::getLastTimeOfChn()" );           }
    if( action == "checkName"                  ) { Call( "system.fn::checkName()");                   }
    if( action == "keepAlive"                  ) { Call( "system.fn::keepAlive()");                   }
@@ -110,9 +110,9 @@
 -<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable filterTable" style="display:none">
 +<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable" style="display:none">
  <colgroup>
-   <col style="width:9%;"/>
-   <col style="width:18%;"/>
-@@ -138,15 +150,17 @@
+   <col />
+   <col />
+@@ -141,15 +153,17 @@
      string sTrId = "sv"#sysvar;
      Write("<tr id='"#sTrId#"'>");
      object sv = dom.GetObject(sysvar);
@@ -133,7 +133,7 @@
        string s = "Unbekannt: " # sv.ValueSubType();
        if( sv.ValueSubType() == istPresent )
        {
-@@ -175,7 +189,7 @@
+@@ -178,7 +192,7 @@
        Write(s);
      Write("</td>");
      
@@ -142,7 +142,7 @@
        if (sv.ValueSubType() == istPresent) {
        }
        if (sv.ValueSubType() == istChar8859) {
-@@ -199,19 +213,21 @@
+@@ -202,19 +216,21 @@
      Write("</td>");
      
      
@@ -168,7 +168,7 @@
          Write("<td class='CLASS05210'>");
            string sClassName = "StdButton";
            string sOnclick = "DeleteSysVar("#sv.ID()#");";
-@@ -222,6 +238,22 @@
+@@ -225,6 +241,22 @@
            }
            Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnRemove}</div>");
          Write("</td>");
@@ -191,7 +191,7 @@
          Write("<td class='CLASS05211'>");
            string sChecked = "";
            if (sv.Visible()) {
-@@ -229,24 +261,29 @@
+@@ -232,24 +264,29 @@
            }
            Write("<input id='svvis"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpVisibility("#sv.ID()#", this)' />${lblVisible}");
          Write("</td>");
@@ -229,7 +229,7 @@
        string sJSTmp = "WebUI.enter(ProgramListPage, '"#sv.DPEnumUsagePrograms()#"');";
        Write( '<div class="StdButton" onclick="'#sJSTmp#'">${btnPrograms}</div>' );
      Write("</td>");
-@@ -302,7 +339,39 @@
+@@ -305,7 +342,39 @@
    new iseSubMenuControl("btnFilterVarType", "btnFilterVarTypeSub", "svOffset", {}, mouseOpts, false, true);  
    new iseSubMenuControl("btnFilterUnit", "btnFilterUnitSub", "svOffset", {}, mouseOpts, false, true);
    new iseSubMenuControl("btnFilterChn", "btnFilterChnSub", "svOffset", {}, mouseOpts, false, true);
@@ -270,7 +270,7 @@
    var s = "";
    
    s += "<table cellspacing='8'>";
-@@ -310,6 +379,7 @@
+@@ -313,6 +382,7 @@
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='newSysVar()'>${footerBtnNew}</div></td>";
@@ -280,7 +280,7 @@
  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -79,8 +79,12 @@
+@@ -81,8 +81,12 @@
      "footerBtnDelete" : "L%F6schen",
      "footerBtnNew" : "Neu",
      "footerBtnNewLink" : "Neue<br/>Verkn%FCpfung",
@@ -297,7 +297,7 @@
      "footerBtnTransfer" : "%DCbernehmen",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -78,8 +78,12 @@
+@@ -80,8 +80,12 @@
      "footerBtnDelete" : "Clear",
      "footerBtnNew" : "New",
      "footerBtnNewLink" : "New<br/>connection",
@@ -314,7 +314,7 @@
      "footerBtnTransfer" : "Apply",
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -1473,6 +1473,10 @@
+@@ -1559,6 +1559,10 @@
    color: $_(textColorB); /* black */
  }
  
@@ -325,7 +325,7 @@
  
  .OUCFMprop {
    text-align:left;
-@@ -6864,6 +6868,7 @@
+@@ -6978,6 +6982,7 @@
  	height:20px ! important;
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -333,7 +333,7 @@
  }
  
  .CLASS05203 {
-@@ -6877,6 +6882,7 @@
+@@ -6991,6 +6996,7 @@
  .CLASS05205 {
  	height:20px ! important;
  	background-color:$_(clickable);
@@ -341,7 +341,7 @@
  }
  
  .CLASS05206 {
-@@ -6893,7 +6899,7 @@
+@@ -7006,7 +7012,7 @@
  }
  
  .CLASS05209 {
@@ -352,19 +352,12 @@
  -ms-word-break: break-all;
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -3932,7 +3932,7 @@
-   // The position of the channel number adapted to the housing of the CCU3
-   var product = WEBUI_VERSION.split(".")[0];
-   if (product >= 3 && (type == "HM-RCV-50" || type == "HMW-RCV-50")) {
--    if (form.length > 2) {
-+    if (form && form.length > 2) {
-       form[2] = 0.57; // y-position
-     }
-   }
-@@ -25292,6 +25292,14 @@
+@@ -30872,7 +30872,15 @@
+     pb += "integer iVisible   = '"+($(ctrlId).checked ? 1 : 0)+"';";
      new Ajax.Request(url, {postBody: ReGa.encode(pb)});  
    },
-   
+-  
++
 +  saveDpInternal: function(id, ctrlId) {                              
 +    var url = "/esp/system.htm?sid="+SessionId;                       
 +    var pb = "string action = 'saveDpInternal';";                     
@@ -372,7 +365,7 @@
 +    pb += "integer iInternal   = '"+($(ctrlId).checked ? 1 : 0)+"';";
 +    new Ajax.Request(url, {postBody: ReGa.encode(pb)});
 +  },
-+  
++
    ClearHistoryData: function()
    {
      var url = "/esp/system.htm?sid="+SessionId;

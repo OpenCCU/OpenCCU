@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -968,7 +968,7 @@
+@@ -976,7 +976,7 @@
      "thAvailableVersion": "Available version",
      "thInstalledVersion": "Installed version",
      "btnReload": "Reload",

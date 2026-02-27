@@ -1,6 +1,0 @@
-sodium/libsodium_la-version.lo: sodium/version.c include/sodium/version.h \
- include/sodium/export.h
-
-include/sodium/version.h:
-
-include/sodium/export.h:

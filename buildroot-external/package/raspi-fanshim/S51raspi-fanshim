@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3014 source=/dev/null
 #
 # raspi-fanshim daemon starting and stopping
 #

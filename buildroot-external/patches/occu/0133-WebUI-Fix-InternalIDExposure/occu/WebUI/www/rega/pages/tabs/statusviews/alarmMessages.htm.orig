@@ -39,31 +39,31 @@ iseInitUpdateArrays();
 <script type="text/javascript">
   Cursor.set(Cursor.NORMAL);
 </script>
-<table id="tblAlarms" class="tblList CLASS02801" border="0" cellpadding="0" cellspacing="0" frame="void" rules="none" style="display:none;">
+<table id="tblAlarms" class="filterTable tTable CLASS02601" border="0" cellpadding="0" cellspacing="0" style="display:none;">
 <colgroup>
-  <col style="width:10%;"/>
-  <col style="width:10%;"/>
-  <col style="width:10%;"/>
-  <col style="width:10%;"/>
-  <col style="width:10%;"/>
-  <col style="width:15%;"/>
-  <col style="width:15%;"/>
-  <col style="width:10%;"/>
-  <col style="width:10%;"/>
+  <col style="width:100px;" />
+  <col style="width:100px;" />
+  <col style="width:50px;" />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;" />
 </colgroup>
 <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="first"){sCssName="SortSelected";} %>
-  <th align="center" class="CLASS02802"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'first',true);">${thFirstTriggerDateTime}</div></th>
+  <th align="center" class="thCell CLASS02803"><div id="first" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'first',true);">${thFirstTriggerDateTime}</div></th>
   <th align="center" class="thCell CLASS02803" ><div class="pt11 CLASS02815">${thLastTriggerDateTime}</div></th>
   <th align="center" class="thCell CLASS02803" ><div class="pt11 CLASS02815">${thNumberOfTriggerEvents}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th align="center" class="CLASS02802"><div class="pt11 CLASS02815 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'name',true);">${thNameOfAlarm}</div></th>
+  <th align="center" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'name',true);">${thNameOfAlarm}</div></th>
   <th align="center" class="thCell CLASS02803" ><div class="pt11 CLASS02815">${thState}</div></th>
-  <th align="center" class="thCell CLASS02802" ><div class="pt11 CLASS02815">${thDescription}</div></th>
+  <th align="center" class="thCell CLASS02803" ><div class="pt11 CLASS02815">${thDescription}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="message"){sCssName="SortSelected";} %>
-  <th align="center" class="CLASS02802"><div class="pt11 CLASS02815 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'message',true);">${thAlarmMessage}</div></th>
+  <th align="center" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'message',true);">${thAlarmMessage}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
-  <th align="center" class="CLASS02802" ><div class="pt11 CLASS02815 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'room',true);">${thRoom}</div></th>
+  <th align="center" class="thCell CLASS02803" ><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arAlarms,'room',true);">${thRoom}</div></th>
   <th align="center" class="thCell CLASS02803" ><div class="pt11 CLASS02815">${thAction}</div></th>
 </tr>
 <tr>
@@ -149,7 +149,7 @@ iseInitUpdateArrays();
         sAlarmName = "no name";
       }
       
-      string sAlarmDescription = oSV.DPInfo();
+      string sAlarmDescription = oSV.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>');
       if( !sAlarmDescription.Length() )
       {
         sAlarmDescription = "no description";

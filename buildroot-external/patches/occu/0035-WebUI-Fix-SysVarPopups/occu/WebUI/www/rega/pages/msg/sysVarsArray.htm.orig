@@ -70,6 +70,7 @@
             Write("tmp['values'] = '';");
           }
           Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
+          Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
           Write("arSysVars[arSysVars.length] = tmp;");
         }
       }

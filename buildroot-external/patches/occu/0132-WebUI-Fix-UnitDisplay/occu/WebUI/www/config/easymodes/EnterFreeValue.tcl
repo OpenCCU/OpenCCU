@@ -334,8 +334,7 @@ proc EnterBrightnessHmIP {profile pref special_input_id ps ps_descr param condAc
       append HTML_PARAMS(separate_$profile) "\${lblBrightnessLuxA} ($minLux - $maxLux)<br/>\${lblBrightnessLuxB}"
     append HTML_PARAMS(separate_$profile) "</td>"
     append HTML_PARAMS(separate_$profile) "<td>"
-      # append HTML_PARAMS(separate_$profile) "<input id=\"usrDefBrightness_$profile\_$pref\" type=\"text\" size=\"5\" value=\"[format %.0f $brightness]\" style=\"text-align:center\" onblur=\"ProofAndSetValue(this.id,this.id,$minLux,$maxLux,1);\"/><input type=\"button\" value=\"OK\" onclick=\"setUsrDefBrightness('$id', '$profile\_$pref');\"/>&nbsp;[getHelpIcon helpBrightnessLux]"
-      append HTML_PARAMS(separate_$profile) "<input id=\"usrDefBrightness_$profile\_$pref\" type=\"text\" size=\"5\" style=\"text-align:center\" onblur=\"ProofAndSetValue(this.id,this.id,$minLux,$maxLux,1);\"/><input type=\"button\" value=\"OK\" onclick=\"setUsrDefBrightness('$id', '$profile\_$pref');\"/>&nbsp;[getHelpIcon helpBrightnessLux 450 100]"
+      append HTML_PARAMS(separate_$profile) "<input id=\"usrDefBrightness_$profile\_$pref\" type=\"text\" size=\"5\" style=\"text-align:center\" onblur=\"ProofAndSetValue(this.id,this.id,$minLux,$maxLux,1,true);\"/><input type=\"button\" value=\"OK\" onclick=\"setUsrDefBrightness('$id', '$profile\_$pref');\"/>&nbsp;[getHelpIcon helpBrightnessLux 450 100]"
     append HTML_PARAMS(separate_$profile) "</td>"
 
       append HTML_PARAMS(separate_$profile) "<script type=\"text/javascript\">"

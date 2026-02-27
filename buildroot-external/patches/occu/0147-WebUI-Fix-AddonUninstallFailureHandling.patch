@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_software.cgi.orig
 +++ occu/WebUI/www/config/cp_software.cgi
-@@ -411,11 +411,11 @@
+@@ -453,11 +453,11 @@
            sendXML: false,
            onSuccess: function(transport) {
              if (!transport.responseText.match(/^Success/g)){
@@ -14,7 +14,7 @@
            }
          };
          if ("uninstall" == op) 
-@@ -480,13 +480,17 @@
+@@ -523,13 +523,17 @@
    import script
    import op
    
@@ -37,7 +37,7 @@
  proc action_image_upload {} {
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -326,7 +326,7 @@
+@@ -339,7 +339,7 @@
      "dialogSetSecKeyLoadBackuplblB" : "Die Zentrale befindet sich im Auslieferungszustand und es wurde noch kein Sicherheitsschl&uuml;ssel gesetzt.",
      "dialogSetSecKeyLoadBackupLblC" : "Sicherheitsschl&uuml;ssel:",
      "btnSysConfAdditionalSoftRemoveSuccess" : " wurde erfolgreich ausgef%FChrt.",
@@ -48,7 +48,7 @@
      "actionStatusControlUp" : "Auf",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -326,7 +326,7 @@
+@@ -339,7 +339,7 @@
      "dialogSetSecKeyLoadBackuplblB" : "The CCU is in delivery status and a security key has not yet been set.",
      "dialogSetSecKeyLoadBackupLblC" : "Security key:",
      "btnSysConfAdditionalSoftRemoveSuccess" : " was successfully executed.",

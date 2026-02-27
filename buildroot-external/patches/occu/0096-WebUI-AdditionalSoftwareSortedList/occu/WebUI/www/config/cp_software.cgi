@@ -117,7 +117,31 @@ proc action_install_go {} {
   #  Nach der Installation wird die Zentrale automatisch neu gestartet. Sie k&ouml;nnen sich dann &uuml;ber die Schaltfl&auml;che unten neu anmelden.
   #} {"Neu anmelden" "window.location.href='/';"}
 
-  put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+  if {[getProduct] == 3} {
+    set result 0
+    if { [catch {exec /bin/install_addon 2>/dev/null} results] } {
+      if { [lindex $::errorCode 0] == "CHILDSTATUS" } {
+        set result [lindex $::errorCode 2]
+      } else {
+        # Some kind of unexpected failure
+        set result 100
+      }
+    } else {
+      set result 0
+    }
+
+    if { $result == 0 } {
+      put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContentNoReboot}" {"\${btnOk}" "window.location.href='/';"}
+    } elseif { $result == 10 } {
+      put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+      exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+    } else {
+      put_message "Error ($result)" "\${dialogSettingsExtraSoftwareHintPerformInstallationFailure}"
+    }
+  } else {
+    put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+  }
 
   puts ""
   cgi_javascript {
@@ -243,7 +267,8 @@ proc action_put_page {} {
     puts "\${dialogSettingsExtraSoftwareTitle}"
   }
   division {class="CLASS21406"} {
-    table {class="popupTable"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable"} {border="1"} {height="100%"} {
       set scripts ""
       set loop -1
       catch { set scripts [glob /etc/config/rc.d/*] }
@@ -294,7 +319,7 @@ proc action_put_page {} {
                         table {
                           table_row {
                             table_data {
-                              division {class="CLASS21404"} "onClick=\"window.location.href='$sw_info(Update)?cmd=download&version=$sw_info(Version)';\"" {
+                              division {class="CLASS21404"} "onClick=\"openUrl('$sw_info(Update)?cmd=download&version=$sw_info(Version)');\"" {
                                 #puts "Herunterladen"
                                 puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"
                               }
@@ -361,8 +386,7 @@ proc action_put_page {} {
                 puts "\${dialogSettingsExtraSoftwareLblSelectExtraSoftware}"
               }
               table_data {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=upload_form {target=image_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=image_upload
+                form "/config/fileupload.ccc?sid=$sid&action=image_upload&url=$env(SCRIPT_NAME)" name=upload_form {target=image_upload_iframe} enctype=multipart/form-data method=post {
                   file_button firmware_file size=30 maxlength=1000000
                 }
                 puts {<iframe name="image_upload_iframe" style="display: none;"></iframe>}
@@ -392,6 +416,7 @@ proc action_put_page {} {
         }
       }
     }
+    }
   }
   division {class="popupControls"} {
     table {
@@ -408,6 +433,15 @@ proc action_put_page {} {
   
   puts ""
   cgi_javascript {
+
+    puts "installAddon = function() {"
+      puts "var dlg = new YesNoDialog(translateKey('dialogHint'), translateKey('dialogSettingsExtraSoftwareHintSelectExtraSoftware'), function(result) {"
+        puts "if (result == 1) \{document.upload_form.submit();\}"
+      puts "},'html');"
+      puts "dlg.btnTextNo(translateKey('btnCancel'));"
+      puts "dlg.btnTextYes(translateKey('btnOk'));"
+    puts "}"
+
     puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
     puts {
       operation = function(op, script, op_name) {
@@ -430,9 +464,10 @@ proc action_put_page {} {
         {
           new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveExtraSoftware"), function(result) {
           if (result == YesNoDialog.RESULT_YES)
-          {
-            new Ajax.Request(url, opts);
-          }
+            {
+              addOnUninstall = true;
+              new Ajax.Request(url, opts);
+            }
           });
         }
         else
@@ -498,50 +533,48 @@ proc action_operation {} {
 }
 
 proc action_image_upload {} {
-  global env sid
-  cd /tmp/
+  global env sid filename
+  cd /usr/local/tmp/
   
   http_head
-  import_file -client firmware_file
   if {[getProduct] < 3} {
     # CCU2
-    file rename -force -- [lindex $firmware_file 0] "/var/new_firmware.tar.gz"
+    file rename -force -- $filename "/var/new_firmware.tar.gz"
   } else {
     # CCU3
-    file rename -force -- [lindex $firmware_file 0] "/usr/local/tmp/new_addon.tar.gz"
+    file rename -force -- $filename "/usr/local/tmp/new_addon.tar.gz"
   }
   cgi_javascript {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
     puts {
-      parent.top.dlgPopup.hide();
-      parent.top.dlgPopup.setWidth(600);
-      parent.top.dlgPopup.LoadFromFile(url, "action=install_confirm");
+      var dlgPopup = parent.top.dlgPopup;
+      if (dlgPopup === undefined) {
+        dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+      }
+      dlgPopup.hide();
+      dlgPopup.setWidth(600);
+      dlgPopup.LoadFromFile(url, "action=install_confirm");
     }
   }
 }
 
 proc action_install_start {} {
-  if {[getProduct] == 3} {
-     exec touch /usr/local/.doAddonInstall
-     exec /sbin/reboot
-  } else {
-    # CCU 2
-    exec /bin/kill -SIGQUIT 1
-  }
-  
+  puts ""
 }
 
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
 
   set action "put_page"
+  set filename ""
 
   catch { import action }
+  catch { import filename }
 
   if {[session_requestisvalid 8] > 0} then action_$action
 }

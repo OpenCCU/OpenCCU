@@ -10,6 +10,20 @@ function ::CreateDimmingActuator()
   integer iState = 0;
   real rLevelReal = -1.0;
   string sLevelReal;
+  boolean isBacklightingReceiver = false;
+  string chAddress = cObj.Address();
+
+  ! Determine the name of the interface
+  integer iFaceID = cObj.Interface();
+  object oIface = dom.GetObject(iFaceID);
+  string sInterface = oIface.Name();
+
+  if ((cObj.Label().Find("HmIP-WGS") != -1) || (cObj.Label().Find("HmIP-WGT") != -1)) {
+    object oOnTime = cObj.DPByControl("BACKLIGHTING_RECEIVER.ON_TIME");
+    object oLevelA = cObj.DPByControl("BACKLIGHTING_RECEIVER.LEVEL");
+    isBacklightingReceiver = true;
+
+  }
 
   ! The HmIP-MIOB has a different channel type than an ordinary dimmer (17 =ictHSS instead of 27 = ictHSSDimmingActuator)
   ! The same is true for all devices of the type VIR-LG-*
@@ -114,8 +128,16 @@ function ::CreateDimmingActuator()
 
   string sCtrlId = "slidCtrl"#chnId;
   WriteLine("<script type='text/javascript'>");
-    WriteLine("ibd"#chnId#" = new iseButtonsDimmer("#chnId#", "#iState#", "#iLvlDpId#", "#iOldLvlDpId#", "#system.GetVar("iStatusOnly")#", "#system.GetVar('bSliderFlag')#", '"#cObj.Label()#"' );");
-
+    if (! isBacklightingReceiver) {
+      WriteLine("ibd"#chnId#" = new iseButtonsDimmer("#chnId#", "#iState#", "#iLvlDpId#", "#iOldLvlDpId#", "#system.GetVar("iStatusOnly")#", "#system.GetVar('bSliderFlag')#", '"#cObj.Label()#"' );");
+    } else {
+      WriteLine("var opts = {};");
+      WriteLine("opts.iface = '"#sInterface#"';");
+      WriteLine("opts.chAddress = '"#chAddress#"';");
+      WriteLine("opts.maxOnTime = '"#oOnTime.MetaData("MAX")#"';");
+      WriteLine("opts.levelA = '"#oLevelA.Value()#"';");
+      WriteLine("ibd"#chnId#" = new iseButtonsDimmerBacklightingReceiver("#chnId#", "#iState#", "#iLvlDpId#", "#iOldLvlDpId#", "#system.GetVar("iStatusOnly")#", "#system.GetVar('bSliderFlag')#", '"#cObj.Label()#"', opts );");
+    }
     Write("jQuery('#"#chnId#"Off').html(translateKey('actionStatusControlLblOff')).show();");
     Write("jQuery('#"#chnId#"On').html(translateKey('actionStatusControlLblOn')).show();");
   WriteLine("</script>");

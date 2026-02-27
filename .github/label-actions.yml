@@ -15,10 +15,10 @@
   issues:
     comment: >
       @{issue-author}, the issue ticket you created does not seem to report
-      a general issue/problem/bug in RaspberryMatic itself, but rather seems to
+      a general issue/problem/bug in OpenCCU itself, but rather seems to
       point at a local usage issue that rather requires some support using
       a discussion or support fora. It will therefore be moved to the
-      [discussion area](https://github.com/jens-maus/RaspberryMatic/discussions)
+      [discussion area](https://github.com/OpenCCU/OpenCCU/discussions)
       where you can continue for identifying solutions to your issue.
 
 # maintainer is not able to reproduce
@@ -37,7 +37,7 @@
     comment: >
       @{issue-author}, the issue you reported cannot be solved within this
       project or should be better directly solved in a third-party project
-      RaspberryMatic just uses. So please consider creating an additional
+      OpenCCU just uses. So please consider creating an additional
       issue ticket in this third-party project. If still relevant we can
       keep this issue ticket open here for the time being so that you can
       use it as a reference in issue tickets for the third-party report.
@@ -48,7 +48,7 @@
     comment: >
       @{issue-author}, the issue you reported cannot be solved within this
       project or should be better directly solved in the upstream [OCCU](https://github.com/eq-3/occu)
-      project RaspberryMatic is just using. However, for being able to
+      project OpenCCU is just using. However, for being able to
       reference and track this upstream issue we will keep this ticket
       open for the time being so that you can also reference it accordingly.
 
@@ -72,7 +72,7 @@
       issue/idea you reported does not seem to be relevant for the projects'
       mission or that it is out of the scope or simply not explained in
       enough detail. This ticket will therefore be closed and you are advised
-      to better discuss this issue in more detail in the [discussion area](https://github.com/jens-maus/RaspberryMatic/discussions) of this project and then perhaps come back here
+      to better discuss this issue in more detail in the [discussion area](https://github.com/OpenCCU/OpenCCU/discussions) of this project and then perhaps come back here
       and open a new issue in case consensus has been achieved within this
       discussion.
     close: true

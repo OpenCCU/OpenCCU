@@ -66,8 +66,8 @@ proc put_page {} {
       puts "  var s = \"\";"
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
-      puts "  s += \"<td align='center' valign='middle'><div class='FooterButton' onclick='WebUI.goBack()'>\" + translateKey('footerBtnPageBack') + \"</div></td>\";"
-      puts "  s += \"<td align='center' valign='middle'><div class='FooterButton CLASS22100' onclick='loadNewLinkPage();' >\"+ translateKey('footerBtnNewLink') +\"</div></td>\";"
+      puts "  s += \"<td  style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='WebUI.goBack()'>\" + translateKey('footerBtnPageBack') + \"</div></td>\";"
+      puts "  s += \"<td  style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS22100' onclick='loadNewLinkPage();' >\"+ translateKey('footerBtnNewLink') +\"</div></td>\";"
       puts "  s += \"</tr>\";"
       puts "  s += \"</table>\";"
       puts "  setFooter(s);"
@@ -110,7 +110,10 @@ proc put_page {} {
 
   #ic_linkpeerlist
   puts "</div>"
-  puts "<script type=\"text/javascript\">translatePage(\"#ic_linkpeerlist\")</script>"
+  puts "<script type=\"text/javascript\">"
+  puts "translatePage(\"#ic_linkpeerlist\");"
+  puts "\$('ic_linkpeerlist').style.display = 'contents';"
+  puts "</script>"
 }
 
 proc _incr {p_arr address peer} {
@@ -237,8 +240,21 @@ proc put_tablebody {} {
       continue
     }
     foreach _link $linklist {
+
       cgi_debug -on
       array set link $_link
+
+      if {([info exists link(SENDER)] != 1) && ([info exists link(RECEIVER)] != 1)} {
+        continue
+      }
+
+      # SPHM-535
+      if {$sortby != "LINK"} {
+        if {([string index $link(SENDER) 0] == "@")  || ([string index $link(RECEIVER) 0] == "@")} {
+          continue
+        }
+      }
+
       catch {array set sender_descr   $link(SENDER_DESCRIPTION)}
       catch {array set receiver_descr $link(RECEIVER_DESCRIPTION)}
       array set SENTRY ""
@@ -422,8 +438,8 @@ proc put_tablebody {} {
   #Zweiter Schritt: Daten in HTML setzen
   if {[llength $tablestruct] == 0} then {
     puts "<TR>"
-    #puts "<TD height=\"100\" align=\"center\" COLSPAN=\"7\">Es sind keine Verkn&uuml;pfungen vorhanden.</TD>"
-    puts "<TD height=\"100\" align=\"center\" COLSPAN=\"7\">\${lblNoLinksAvailable}</TD>"
+    #puts "<TD height=\"100\"  style=\"text-align:center;\" COLSPAN=\"7\">Es sind keine Verkn&uuml;pfungen vorhanden.</TD>"
+    puts "<TD height=\"100\"  style=\"text-align:center;\" COLSPAN=\"7\">\${lblNoLinksAvailable}</TD>"
     puts "</TR>"
   } else {
     if {$sortby == "LINK"} then {
@@ -537,7 +553,7 @@ proc put_tablebody {} {
 
         puts "<td>$SENTRY(LINKNAME)</td>"
         puts "<td $internalKeyCSS>$SENTRY(LINKDESC)</td>"
-        puts "<td align=\"center\">$SENTRY(ACTION)</td>"
+        puts "<td style=\"text-align:center;\">$SENTRY(ACTION)</td>"
         puts "<td>$SENTRY(RECEIVERNAME_DISPLAY)</td>"
         puts "<td>$SENTRY(RECEIVERADDR_DISPLAY)</td>"
         puts "</tr>"
@@ -583,7 +599,7 @@ proc put_tablebody {} {
         puts "<td>$SENTRY(SENDERADDR_DISPLAY)</td>"
         puts "<td>$SENTRY(LINKNAME)</td>"
         puts "<td $internalKeyCSS>$SENTRY(LINKDESC)</td>"
-        puts "<td align=\"center\">$SENTRY(ACTION)</td>"
+        puts "<td style=\"text-align:center;\">$SENTRY(ACTION)</td>"
 
         #Zellen zusammenfassen
         if {$this_receiver != $prev_receiver} then {
@@ -632,6 +648,15 @@ proc put_tableheader {} {
 
   #cgi_debug -on
 
+  puts "<colgroup>"
+  puts "<col />"
+  puts "<col />"
+  puts "<col />"
+  puts "<col />"
+  puts "<col style='width:100px;'>"
+  puts "<col />"
+  puts "<col />"
+  puts "</colgroup>"
   puts "<THEAD>"
   puts "<TR>"
 
@@ -642,13 +667,13 @@ proc put_tableheader {} {
   puts "</TR>"
 
   puts "<TR>"
-  puts "<TD align=\"center\" [expr {$sortby=="SENDER"?"class=\"header_active\"":""} ] >\${thName}</TD>"
-  puts "<TD align=\"center\">\${thSerialNumber}</TD>"
-  puts "<TD align=\"center\" [expr {$sortby=="LINK"?"class=\"header_active\"":""} ]>\${thName}</TD>"
-  puts "<TD align=\"center\">\${thDescription}</TD>"
-  puts "<TD align=\"center\">\${thAction}</TD>"
-  puts "<TD align=\"center\" [expr {$sortby=="RECEIVER"?"class=\"header_active\"":""} ]>\${thName}</TD>"
-  puts "<TD align=\"center\">\${thSerialNumber}</TD>"
+  puts "<TD  style=\"text-align:center;\" [expr {$sortby=="SENDER"?"class=\"header_active\"":""} ] >\${thName}</TD>"
+  puts "<TD  style=\"text-align:center;\">\${thSerialNumber}</TD>"
+  puts "<TD  style=\"text-align:center;\" [expr {$sortby=="LINK"?"class=\"header_active\"":""} ]>\${thName}</TD>"
+  puts "<TD  style=\"text-align:center;\">\${thDescription}</TD>"
+  puts "<TD  style=\"text-align:center;\">\${thAction}</TD>"
+  puts "<TD  style=\"text-align:center;\" [expr {$sortby=="RECEIVER"?"class=\"header_active\"":""} ]>\${thName}</TD>"
+  puts "<TD  style=\"text-align:center;\">\${thSerialNumber}</TD>"
   puts "</TR>"
   puts "</THEAD>"
 }

@@ -39,6 +39,13 @@ system.getEnergyPrice {
   ARGUMENTS {}
 }
 
+system.getTweak {
+  LEVEL USER
+  SCRIPT_FILE system/gettweak.tcl
+  INFO  {Ließt einen Key aus der Datei /etc/config/tweaks}
+  ARGUMENTS {_session_id_ key}
+}
+
 Interface.activateLinkParamset {
   LEVEL ADMIN
   SCRIPT_FILE interface/dispatch.tcl
@@ -189,6 +196,14 @@ Interface.getServiceMessageCount {
   METHOD_FILE interface/getservicemessagecount.tcl
   INFO {Liefert die Anzahl der aktiven Servicemeldungen}
   ARGUMENTS {_session_id_ interface}
+}
+
+Interface.getSuppressedServiceMessages {
+  LEVEL USER
+  SCRIPT_FILE interface/dispatch.tcl
+  METHOD_FILE interface/getsuppressedservicemessages.tcl
+  INFO {Liefert ein Array mit Kanalparametern, deren Service Nachrichten unterdrückt werden.}
+  ARGUMENTS {_session_id_ interface channelAddress}
 }
 
 Interface.getValue {
@@ -366,6 +381,22 @@ Interface.setValue {
   ARGUMENTS {_session_id_ interface address valueKey type value}
 }
 
+Interface.searchDaliDevices {
+  LEVEL GUEST
+  SCRIPT_FILE interface/dispatch.tcl
+  METHOD_FILE interface/searchdalidevices.tcl
+  INFO {Setzt einen einzelnen Wert im Parameterset "Values"}
+  ARGUMENTS {_session_id_ interface address valueKey type value}
+}
+
+Interface.suppressServiceMessages {
+  LEVEL ADMIN
+  SCRIPT_FILE interface/dispatch.tcl
+  METHOD_FILE interface/suppressservicemessages.tcl
+  INFO {Unterdrückt Service Nachrichten für einen Kanal oder Kanalparameter. Wird für parameterId ein leerer String übergeben, gilt der Aufruf für alle Service Parameter.}
+  ARGUMENTS {_session_id_ interface channelAddress parameterId suppress}
+}
+
 Interface.updateFirmware {
   LEVEL ADMIN
   SCRIPT_FILE interface/dispatch.tcl
@@ -483,6 +514,13 @@ Device.get {
   ARGUMENTS {_session_id_ id}
 }
 
+Device.listStatus {
+  LEVEL GUEST
+  SCRIPT_FILE device/liststatus.tcl
+  INFO {Liefert Statusinformationen zu einem Gerät}
+  ARGUMENTS {_session_id_ id address interface}
+}
+
 Device.setName {
   LEVEL ADMIN
   SCRIPT_FILE device/setname.tcl
@@ -559,6 +597,13 @@ Device.setVisibility {
   SCRIPT_FILE device/setvisibility.tcl
   INFO {Legt fest, ob das Gerät für normale Anwender sichtbar ist}
   ARGUMENTS {_session_id_ id isVisible}
+}
+
+Device.setEnabledServiceMsg {
+  LEVEL ADMIN
+  SCRIPT_FILE device/setenabledservicemsg.tcl
+  INFO {Legt fest, ob das Gerät Servicemeldungen erzeugt oder nicht}
+  ARGUMENTS {_session_id_ id isEnabled}
 }
 
 Event.subscribe {
@@ -932,6 +977,13 @@ WebUI.getColors {
   ARGUMENTS { }
 }
 
+WebUI.setWebUIColors {
+  LEVEL USER
+  SCRIPT_FILE webui/setwebuicolor.tcl
+  INFO {Setzt die Systemfarben der HomeMatic WebUI}
+  ARGUMENTS {_session_id_ key color cpFile}
+}
+
 SafeMode.enter {
   LEVEL ADMIN
   SCRIPT_FILE safemode/enter.tcl
@@ -953,18 +1005,18 @@ CCU.setSecurityLevel {
   ARGUMENTS {_session_id_ level}
 }
 
+RecoveryMode.enter {
+  LEVEL ADMIN
+  SCRIPT_FILE recoverymode/enter.tcl
+  INFO {Startet die HomeMatic Zentrale im Recovery Modus}
+  ARGUMENTS {_session_id_}
+}
+
 CCU.getSerial {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getserial.tcl
   INFO {Liefert die Seriennummer der HomeMatic Zentrale}
   ARGUMENTS {_session_id_}
-}
-
-CCU.getListOfDraps {
-  LEVEL ADMIN
-  SCRIPT_FILE ccu/getlistofdraps.tcl
-  INFO {Liefert die angelernten DRAPs der HomeMatic Zentrale}
-  ARGUMENTS {_session_id_ pathOfFile}
 }
 
 CCU.getHeatingGroupList {
@@ -978,6 +1030,13 @@ CCU.getAddress {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getaddress.tcl
   INFO {Liefert die Adresse der HomeMatic Zentrale}
+  ARGUMENTS {_session_id_}
+}
+
+CCU.getHmIPAddress {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/gethmipaddress.tcl
+  INFO {Liefert die HmIP-Adresse der HomeMatic Zentrale}
   ARGUMENTS {_session_id_}
 }
 
@@ -1004,6 +1063,13 @@ CCU.setSSHPassword {
   SCRIPT_FILE ccu/setsshpassword.tcl
   INFO {Setzt das Passwort für den SSH-Zugang}
   ARGUMENTS {_session_id_ passwd}
+}
+
+CCU.downloadFirmware {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/downloadFirmware.tcl
+  INFO {Laedt aktuell verfÃ¼gbare Firmware CCU herunter}
+  ARGUMENTS {_session_id_}
 }
 
 CCU.setSecurityHint {
@@ -1033,6 +1099,14 @@ CCU.restartSSHDaemon {
   INFO {Restartet den SSH-Daemon}
   ARGUMENTS {_session_id_}
 }
+
+CCU.restartReGa {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/restartReGa.tcl
+  INFO {Restartet ReGa}
+  ARGUMENTS {_session_id_}
+}
+
 CCU.hideStickyUnreach {
   LEVEL ADMIN
   SCRIPT_FILE ccu/setstickyunreach.tcl
@@ -1060,6 +1134,13 @@ CCU.existsFile {
   ARGUMENTS {_session_id_ file}
 }
 
+CCU.removeFieldTestActive {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/removeFieldTestActive.tcl
+  INFO {Entfernt die Datei /etc/config/fieldTestActive}
+  ARGUMENTS {_session_id_}
+}
+
 CCU.getAuthEnabled {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getauthenabled.tcl
@@ -1071,6 +1152,20 @@ CCU.setAuthEnabled {
   LEVEL ADMIN
   SCRIPT_FILE ccu/setauthenabled.tcl
   INFO {Aktiviert/deaktiviert Dienst Authentifizierung. Argument enabled darf 0 (deaktiviert) oder 1 (aktiviert) annehmen.}
+  ARGUMENTS {_session_id_ enabled}
+}
+
+CCU.getHttpsRedirectEnabled {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/gethttpsredirectenabled.tcl
+  INFO {Prüft, ob die Datei automatische Weiterleitung von HTTP auf HTTPS aktiv ist.}
+  ARGUMENTS {_session_id_}
+}
+
+CCU.setHttpsRedirectEnabled {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/sethttpsredirectenabled.tcl
+  INFO {Aktiviert/deaktiviert die automatische Weiterleitung von HTTP auf HTTPS. Argument enabled darf 0 (deaktiviert) oder 1 (aktiviert) annehmen.}
   ARGUMENTS {_session_id_ enabled}
 }
 

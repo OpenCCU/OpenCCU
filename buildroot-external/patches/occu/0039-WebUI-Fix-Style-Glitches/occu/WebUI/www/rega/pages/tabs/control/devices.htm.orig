@@ -8,7 +8,7 @@
   %>
   //setPath("<span onclick='WebUI.enter(ControlPage);'>Status und Bedienung</span> &gt; Ger�te");
   setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPage') +"</span> &gt; " +translateKey('submenuDevices'));
-  fltVR = new iseFilter('fltVR');
+  fltDL = new iseFilter('fltDL');
   fltHD = new iseFilter('fltHD');
   arItems = new Array();
 </script>
@@ -32,8 +32,8 @@
               </script>
               <table id="tblFunctionNames" class="StatViewTbl CLASS03903 j_translate" cellpadding="0" cellspacing="0" style="width:100%;">
                 <colgroup>
-                  <col style="width:80%;"/>
-                  <col style="width:20%;"/>
+                  <col style="width:50%;"/>
+                  <col style="width:50%;"/>
                 </colgroup>
                 <tr>
                   <th>${thName}</th>
@@ -45,7 +45,7 @@
                     <div id="btnFilterDevName" class="FilterBtn">${thFilter}</div>
                     <div class="FilterSubMenu" id="btnFilterDevNameSub" style="display:none">
                       <input id="ftDevName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDevNameBtn', 'ftCancelDevNameBtn')" type="text" size="15" class="CLASS03307" />
-                      <div id="ftSetDevNameBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltVR, 'ftDevName', FIL_NAME);updateDevTable();$('btnFilterDevNameSub').hide();" >${filterSet}</div>
+                      <div id="ftSetDevNameBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltDL, 'ftDevName', FIL_NAME);updateDevTable();$('btnFilterDevNameSub').hide();" >${filterSet}</div>
                       <div id="ftCancelDevNameBtn" class='FilterSetButton' onclick="$('btnFilterDevNameSub').hide();">${filterClose}</div>
                     </div>
                   </td>
@@ -92,10 +92,10 @@
                         }
                         string trId = "devices"#devs.ID();
                         WriteLine('<tr id="'#trId#'" class="CLASS03904">');
-                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
+                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' style='height: 80px;' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
                           Write(devs.Name());
                           Write("</td>");
-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' >");
+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' style='height: 80px;'>");
                           
                           string sPicDivId = "picDiv"#devs.ID();
                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
@@ -204,7 +204,7 @@
   {
     onTopOver: function(divToShow)
     {
-      selectFilters(fltVR, divToShow);
+      selectFilters(fltDL, divToShow);
     }
   };
 
@@ -217,7 +217,7 @@
   s += "<table cellspacing='8'>";
   s += "<tr>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey("footerBtnPageBack")+"</div></td>";
-  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltVR.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   
@@ -243,10 +243,10 @@
 
   updateDevTable = function()
   {
-    colorFilterBtns(fltVR);
+    colorFilterBtns(fltDL);
     for (var i = 0; i < arItems.length; i++)
     {
-      if (!fltVR.objPassFilter(arItems[i]))
+      if (!fltDL.objPassFilter(arItems[i]))
       {
         hide(arItems[i]['trid']);
       }

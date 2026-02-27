@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
 #
 # Starts ReGaHss.
 #
@@ -7,36 +7,37 @@
 CREATE_DIRS='/usr/local/etc/config/rc.d /usr/local/etc/config/addons/www'
 
 LOGLEVEL_REGA=2
+REGA_BIN_VERSION=
 PIDFILE=/var/run/ReGaHss.pid
-REGA_BIN_VERSION=COMMUNITY
-REGA_BIN_FILE="ReGaHss.community"
 
 [[ -r /var/hm_mode ]] && . /var/hm_mode
 
 # skip this startup if not in normal mode
 [[ "${HM_MODE}" != "NORMAL" ]] && exit 0
 
-if [[ -e /etc/config/ReGaHssVersion ]]; then
+if [[ -s /etc/config/ReGaHssVersion ]]; then
   REGA_BIN_VERSION=$(cat /etc/config/ReGaHssVersion)
 fi
 case "${REGA_BIN_VERSION}" in
   NORMAL)    REGA_BIN_FILE="ReGaHss.normal";;
   COMMUNITY) REGA_BIN_FILE="ReGaHss.community";;
+  DEBUG)     REGA_BIN_FILE="ReGaHss.debug";;
+  *)         REGA_BIN_FILE="ReGaHss";;
 esac
-if [[ ! -e "/bin/${REGA_BIN_FILE}" ]]; then
+if [[ ! -f "/bin/${REGA_BIN_FILE}" ]]; then
   REGA_BIN_FILE="ReGaHss"
 fi
 
 init() {
   for i in ${CREATE_DIRS}; do
-    [[ ! -e ${i} ]] && mkdir -p "${i}"
+    [[ ! -d ${i} ]] && mkdir -p "${i}"
   done
        
   if [[ ! -d /etc/config/userprofiles ]]; then
     mkdir -p /etc/config/userprofiles
   fi
 
-  if [[ -e /etc/config/syslog ]]; then
+  if [[ -f /etc/config/syslog ]]; then
     . /etc/config/syslog
   fi
 
@@ -104,8 +105,13 @@ start() {
   # to ensure that others are killed first in case of low memory situations
   echo -900 >/proc/$$/oom_score_adj 2>/dev/null
 
-  # start ReGaHss
-  start-stop-daemon -S -q -b -m -p ${PIDFILE} --exec /bin/${REGA_BIN_FILE} -- -f /etc/rega.conf -l ${LOGLEVEL_REGA}
+  # start ReGaHss (normal or in debug mode)
+  if [[ "${REGA_BIN_VERSION}" == "DEBUG" ]]; then
+    start-stop-daemon -S -q -b -m -p ${PIDFILE} --exec /usr/bin/script -- -q -c "/bin/${REGA_BIN_FILE} -f /etc/rega.conf -l 0 -c 2>&1" /usr/local/tmp/${REGA_BIN_FILE}-$$.log
+    echo -n "DEBUG (/usr/local/tmp/${REGA_BIN_FILE}-$$.log), "
+  else
+    start-stop-daemon -S -q -b -m -p ${PIDFILE} --exec /bin/${REGA_BIN_FILE} -- -f /etc/rega.conf -l ${LOGLEVEL_REGA}
+  fi
 
   # wait until ReGaHss is started.
   waitStartupComplete

@@ -4,13 +4,24 @@
   <head>
     <title>HomeMatic WebUI</title>
 
-    <link rel="stylesheet" type="text/css" href="/webui/style.cgi?_version_=1.509pre1" />
+    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
+    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+    <link rel="manifest" href="/webui/site.webmanifest" />
+    
+    <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
     <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
     <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
     <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
 
     <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
     <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
+
+    <!-- Required meta tags for bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1024">
 
     <script type="text/javascript">
 
@@ -69,7 +80,7 @@
         <td id="navbar">
           <table cellpadding="0" cellspacing="0">
             <tr>
-              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
+              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
               <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
               <td style="width: 100%;"></td>
               <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
@@ -80,7 +91,7 @@
       </tr>
       <tr>
         <td>
-          <div id="content" style="background-image:url(/ise/img/hm-logo.png);background-repeat:no-repeat;background-position:480px center;">
+          <div id="content" style="background-repeat:no-repeat;background-position:480px center;">
             <table id="login_content" style="width: 200px;">
               <tr>
                 <!-- Liste der Benutzer -->

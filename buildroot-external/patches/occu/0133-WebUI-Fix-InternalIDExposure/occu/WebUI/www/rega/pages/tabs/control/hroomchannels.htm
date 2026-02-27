@@ -51,16 +51,14 @@
 
 <table id="tblHRoomChannels" class="filterTable CLASS03600 j_translate" cellpadding="0" cellspacing="0" border="1" >
   <colgroup>
-     <col />
-     <col style="width:55px;" />
-     <col />
-     <col style="width:100px;" />
-     <col />
+     <col style="width:15%;"/>
+     <col style="width:15%;"/>
+     <col style="width:15%;"/>
+     <col style="width:55%;"/>
   </colgroup>
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
-  <th>${thPicture}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
   <th><div id="func" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'func',true);">${thFunc}</div></th>
   <th>${thLastChange}</th>
@@ -75,8 +73,6 @@
         <div id="ftSetNameBtn" class='FilterSetButton CLASS03604' onclick="setSFilter(fltHR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
         <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
     </div>
-  </td>
-  <td class='CLASS03601'>
   </td>
   <td class='CLASS03601'>
     <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
@@ -118,6 +114,7 @@
   object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
   integer userID = oUser.ID();
   object user = dom.GetObject(userID);
+  integer virtChnCounter = 0;
 
     object room = dom.GetObject(system.GetVar("id"));
     if (room)
@@ -157,11 +154,7 @@
             string trId = room.ID()#tmp;
             boolean showExtDesc = false;
             Write("<tr id='"#trId#"'>");
-            if( oUser && oUser.UserLevel() == iulAdmin ) {
-              Write("<td class='GrayBkg CLASS04007' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.className=\"DeviceListRow_Highlight\";' onmouseout='this.className=\"DeviceListRow\";'>");
-            } else {
-              Write("<td class='GrayBkg'>");
-            }
+            Write("<td class='GrayBkg'>");
 
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
@@ -170,18 +163,6 @@
             }
 
 
-            Write("</td>");
-            Write("<td class='GrayBkg'>");
-              string sPicDivId = "picDiv"#chn.ID();
-              Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
-                Write("onmouseover='picDivShow(jg_250, \""#chn.Label()#"\", 250, \""#chn.ChnNumber()#"\", this);'");
-                Write("onmouseout='picDivHide(jg_250);'");
-               Write("></div>");
-              Write("<script type='text/javascript'>");
-                Write("var jg_0 = new jsGraphics('"#sPicDivId#"');");
-                Write("InitGD(jg_0, 50);");
-                Write("Draw(jg_0, '"#chn.Label()#"', 50, '"#chn.ChnNumber()#"');");
-              Write("</script>");
             Write("</td>");
             Write("<td class='GrayBkg'>");
             string functions = "";
@@ -196,7 +177,7 @@
             Write("</td>");
             Write("<td class='GrayBkg'>");
             
-            Write("<table>");
+            Write("<table style='width:100%;'>");
             Write("<tr><td class='CLASS03602'><div id='tmc"#chn.ID()#"'><br /><br />");
             
             integer cId = chn.ID();

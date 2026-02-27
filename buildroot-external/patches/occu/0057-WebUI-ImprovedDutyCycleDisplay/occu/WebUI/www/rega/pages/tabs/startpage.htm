@@ -2,8 +2,8 @@
   system.SetSessionVar("sessionTAB", "startpage");
 %>
 
-<script type="text/javascript"> 
-  
+<script type="text/javascript">
+
   <%
     var id                  = "";
     var userId              = system.GetSessionVar("sessionUserID");
@@ -393,6 +393,7 @@
 </div>
 
 <script type="text/javascript">
+  var product = 0;
   WebUI.resize();
   StartPage.showUpdate();
   if (forceUpdate) {
@@ -406,6 +407,18 @@
       StartPage.showAllDeviceFirmware();
       jQuery("#forceUpdate").remove();
   }
+
+  if (isNaN(parseInt(WEBUI_VERSION)) || WEBUI_VERSION == "0.0.0") {
+    conInfo("Determine WEBUI_VERSION");
+    homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function (result) {
+      if (result != null) {
+        WEBUI_VERSION = result.firmware;
+      } else {
+        WEBUI_VERSION = "0.0.0";
+      }
+    });
+  }
+
   translatePage();
   jQuery("#loadingGif").hide();
   jQuery("#tblStartpageInfo").show();

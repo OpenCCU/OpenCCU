@@ -25,7 +25,7 @@
       if(userToTest.Name() == "Admin") 
       {
         sDisabled = "disabled";
-        sSuperAdminDisabled = "disabled";
+        !sSuperAdminDisabled = "disabled";
         sDeviceDisabled = "disabled";
       }
     }
@@ -34,6 +34,7 @@
 </div>
 
 <div class="CLASS00700">
+  <script type="text/javascript">onPwChange = function(){};</script>
   <table class="tblUserData CLASS00701" cellpadding="0" cellspacing="0" >
     <tr>
     <td class="CLASS00702">
@@ -180,6 +181,9 @@
             <td class="CLASS00709">
               <div class="FooterButton CLASS00716" onclick="addSysVar()">${btnAddSysVariable}</div>
             </td>
+            <td class="CLASS00709">
+              <div class="FooterButton CLASS00716" onclick="sortSysVar()">${btnSortSysVariable}</div>
+            </td>
           </tr>
         </table>
     </td>
@@ -288,6 +292,14 @@
     return arTmp;
   };
   
+  
+  sortSysVar = function()
+  {
+    if (iUserId != 0) {
+     iseUser.sortSysVarTable(iUserId);
+    }
+  };
+
   addSysVar = function()
   {
     dlgResult = "";

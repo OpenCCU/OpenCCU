@@ -156,7 +156,7 @@ proc action_cert_upload {} {
   gets $fp line
   close $fp
   #puts $line;
-  if { [string last " PRIVATE KEY-----" $line] != -1 } {
+  if { [string first "-----BEGIN " $line] != -1 } {
     catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
     file rename -force -- $filename "/etc/config/server.pem"
     
@@ -232,6 +232,7 @@ proc action_put_page {} {
                 cgi_text hostname=$hostname {id="text_hostname"}
               }
             }
+            if {[get_platform] != "oci"} {
             table_row {
               set checked ""
               if {! $dhcp} { set checked "checked=true" }
@@ -321,6 +322,7 @@ proc action_put_page {} {
                 puts "\${invalidIP}"
               }
 
+            }
             }
           }
         }
@@ -446,12 +448,21 @@ proc action_put_page {} {
       OnOK = function() {
         var pb = "action=save_settings";
         pb += "&hostname="+document.getElementById("text_hostname").value;
+        if(document.getElementById("radio_manual") !== null) {
         pb += "&dhcp="+(document.getElementById("radio_manual").checked?"0":"1");
         pb += "&ip="+document.getElementById("text_ip").value;
         pb += "&mask="+document.getElementById("text_mask").value;
         pb += "&gw="+document.getElementById("text_gw").value;
         pb += "&dns1="+document.getElementById("text_dns1").value;
         pb += "&dns2="+document.getElementById("text_dns2").value;
+        } else {
+        pb += "&dhcp=1";
+        pb += "&ip=0.0.0.0";
+        pb += "&mask=0.0.0.0";
+        pb += "&gw=0.0.0.0";
+        pb += "&dns1=0.0.0.0";
+        pb += "&dns2=0.0.0.0";
+        }
         
         var opts = {
           postBody: pb,
@@ -552,7 +563,9 @@ proc action_put_page {} {
         },timeDelay);
       };
     }
+    if {[get_platform] != "oci"} {
     puts "enable_disable();"
+    }
     puts "translatePage('#messagebox');"
     puts "dlgPopup.readaptSize();"
   }

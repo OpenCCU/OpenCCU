@@ -18,10 +18,10 @@ jobs:
     permissions:
       contents: write  # ahmadnassri/action-dependabot-auto-merge
       pull-requests: write  # ahmadnassri/action-dependabot-auto-merge
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check if PR should be auto-merged
         uses: ahmadnassri/action-dependabot-auto-merge@v2

@@ -1,0 +1,17 @@
+--- buildroot/package/linux-tools/linux-tool-hv.mk.in.orig
++++ buildroot/package/linux-tools/linux-tool-hv.mk.in
+@@ -8,12 +8,12 @@
+ 
+ # The programs to build, as known by the kernel:
+ HV_PROGS_$(BR2_PACKAGE_LINUX_TOOLS_HV_KVP_DAEMON) += hv_kvp_daemon
+-HV_PROGS_$(BR2_PACKAGE_LINUX_TOOLS_HV_FCOPY_DAEMON) += hv_fcopy_daemon
++HV_PROGS_$(BR2_PACKAGE_LINUX_TOOLS_HV_FCOPY_DAEMON) += hv_fcopy_uio_daemon
+ HV_PROGS_$(BR2_PACKAGE_LINUX_TOOLS_HV_VSS_DAEMON) += hv_vss_daemon
+ 
+ # Give each tools the name most distros install them as:
+ HV_hv_kvp_daemon = hypervkvpd
+-HV_hv_fcopy_daemon = hypervfcopyd
++HV_hv_fcopy_uio_daemon = hypervfcopyd
+ HV_hv_vss_daemon = hypervvssd
+ 
+ HV_MAKE_OPTS = CC="$(TARGET_CC)" CFLAGS="$(filter-out -g%,$(TARGET_CFLAGS))"

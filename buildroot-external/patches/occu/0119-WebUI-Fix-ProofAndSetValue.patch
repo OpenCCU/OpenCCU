@@ -55,7 +55,7 @@
  }
 --- occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl.orig
 +++ occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl
-@@ -550,7 +550,7 @@
+@@ -801,7 +801,7 @@
          # append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp[getUnit $param]&nbsp;[getMinMaxValueDescr $param]</td>"
  
          append html "<td>"
@@ -64,7 +64,7 @@
            append html "<input id='separate_CHANNEL_$chn\_$prn' name='$param' type='text' class='hidden'>"
          append html "</td>"
        append html "</tr>"
-@@ -2971,7 +2971,7 @@
+@@ -3979,7 +3979,7 @@
          append html "<td>\${stringTableCondThresholdLo}</td>"
          append html "<td>"
  
@@ -73,7 +73,7 @@
            append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
  
          append html "</td>"
-@@ -2985,7 +2985,7 @@
+@@ -3993,7 +3993,7 @@
          append html "<td>\${stringTableCondThresholdHi}</td>"
          append html "<td>"
  
@@ -147,21 +147,50 @@
    return "$max"
  }
  
-@@ -33,10 +43,10 @@
-   if {([string equal $extraparam "COND_TX_THRESHOLD_LO"] == 1) || ([string equal $extraparam "COND_TX_THRESHOLD_HI"] == 1)} {
-     switch [string tolower $devType] {
-         hmip-psm -
--        hmip-fsm16 {return "3680.0"}
-+        hmip-fsm16 {return "3680.00"}
-         hmip-bsm -
--        hmip-fsm  {return "1150.0"}
--        hmip-usbsm  {return "60.0"}
-+        hmip-fsm  {return "1150.00"}
-+        hmip-usbsm  {return "60.00"}
-        default {return "<span class=\"attention\">max value not available</span>"}
+@@ -24,12 +34,12 @@
+       hmip-psm -
+       hmip-psmco -
+       elv-sh-psmci -
+-      hmip-fsm16 {return 3680.0}
++      hmip-fsm16 {return 3680.00}
+       hmip-psm-2 -
+-      "hmip-psm-2 qhj" {return 3000.0}
++      "hmip-psm-2 qhj" {return 3000.00}
+       hmip-bsm -
+-      hmip-fsm  {return 1150.0}
+-      hmip-usbsm  {return 60.0}
++      hmip-fsm  {return 1150.00}
++      hmip-usbsm  {return 60.00}
+      default {return "<span class=\"attention\">max value not available</span>"}
      }
    }
-@@ -163,7 +173,7 @@
+@@ -39,12 +49,12 @@
+       hmip-psm -
+       hmip-psmco -
+       elv-sh-psmci -
+-      hmip-fsm16 {return "3680.0"}
++      hmip-fsm16 {return "3680.00"}
+       hmip-psm-2 -
+-      "hmip-psm-2 qhj" {return "3000.0"}
++      "hmip-psm-2 qhj" {return "3000.00"}
+       hmip-bsm -
+-      hmip-fsm  {return "1150.0"}
+-      hmip-usbsm  {return "60.0"}
++      hmip-fsm  {return "1150.00"}
++      hmip-usbsm  {return "60.00"}
+      default {return "<span class=\"attention\">max value not available</span>"}
+     }
+   }
+@@ -133,7 +143,7 @@
+ 
+   # Limit float to 1 decimal places
+   if {([llength [split $min "."]] == 2) || ([llength [split $max "."]] == 2)} {
+-    if {$param != "METER_CONSTANT_VOLUME"} {
++    if {($param != "METER_CONSTANT_VOLUME") && ($param != "METER_CONSTANT_ENERGY")} {
+       set min [format {%1.1f} $min]
+       set max [format {%1.1f} $max]
+     } else {
+@@ -251,7 +261,7 @@
        hmip-usbsm
         {
          if {$param == "TX_THRESHOLD_POWER"} {return "W (0.0 - [getUserDefinedMaxValue $devType $param])"}
@@ -170,7 +199,29 @@
        }
        default {return "<span class=\"attention\">missing description</span>"}
     }
-@@ -298,7 +308,7 @@
+@@ -307,6 +317,12 @@
+       set maxValue "stringUTF8"
+       set maxLength "maxLength=16"
+       set sizeTextfield 16
++    } elseif {($param == "METER_CONSTANT_VOLUME")} {
++      set minValue [format {%1.2f} $param_descr(MIN)]
++      set maxValue [format {%1.2f} $param_descr(MAX)]
++    } elseif {($param == "METER_CONSTANT_ENERGY")} {
++      set minValue [format {%1.0f} $param_descr(MIN)]
++      set maxValue [format {%1.0f} $param_descr(MAX)]
+     }
+   }
+ 
+@@ -329,7 +345,7 @@
+ 
+   # Limit float to 2 decimal places
+   if {[llength [split $value "."]] == 2} {
+-    if {$param != "METER_CONSTANT_VOLUME"} {
++    if {($param != "METER_CONSTANT_VOLUME") && ($param != "METER_CONSTANT_ENERGY")} {
+       catch {set value [format {%1.1f} $value]}
+     } else {
+       catch {set value [format {%1.3f} $value]}
+@@ -425,7 +441,7 @@
    }
  
    set s "<input id=$elemIdTmp type=\"text\" size=\"5\" value=[format %.0f [expr $value * 100]] name=$param\_tmp onblur="
@@ -179,6 +230,35 @@
    append s "jQuery('#separate_CHANNEL\_$chn\_$prn').val(this.value / 100);\">"
  
    append s "<input id=$elemId type=\"text\" size=\"5\" class=\"hidden\" value=$value name=$param>"
+@@ -439,10 +455,18 @@
+   set select ""
+   foreach val [lsort -real [array names optionValues]] {
+ 
+-     if {$val == $value} {
+-      set select "selected=\"selected\""
++     if {[string is double -strict $value]} {
++       if {[expr abs($val - $value)] < 1e-15} {
++         set select "selected=\"selected\""
++       } else {
++         set select ""
++       }
+      } else {
+-      set select ""
++       if {$val == $value} {
++         set select "selected=\"selected\""
++       } else {
++         set select ""
++       }
+      }
+ 
+      append s "<option class=\"[extractParamFromTranslationKey $optionValues($val)]\" value=$val $select>$optionValues($val)</option>"
+@@ -1969,4 +1993,4 @@
+     append result "</script>"
+     return $result
+   }
+-}
+\ No newline at end of file
++}
 --- occu/WebUI/www/config/easymodes/hm-cc-vg-1_master.tcl.orig
 +++ occu/WebUI/www/config/easymodes/hm-cc-vg-1_master.tcl
 @@ -24,7 +24,12 @@
@@ -441,18 +521,18 @@
  
 --- occu/WebUI/www/config/ic_common.tcl.orig
 +++ occu/WebUI/www/config/ic_common.tcl
-@@ -1395,7 +1395,7 @@
+@@ -1380,7 +1380,7 @@
  
            append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
            append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
--          append s "  onblur=\" ProofAndSetValue('$input_idval', '${idval}', [expr $min + 0.001], [expr $max + 0.001], parseFloat([expr 1 / $factor]));\" /></td>"
-+          append s "  onblur=\" ProofAndSetValue('$input_idval', '${idval}', '$min', '$max', parseFloat([expr 1 / $factor]));\" /></td>"
+-          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', [expr $min + 0.001], [expr $max + 0.001], parseFloat([expr 1 / $factor]));\" /></td>"
++          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', '$min', '$max', parseFloat([expr 1 / $factor]));\" /></td>"
            append s "<td><div id=\"${input_idval}_unit\" $hidden>$unit ($min-$max)</div></td>"
        }
        "ENUM" {
 --- occu/WebUI/www/config/ic_deviceparameters.cgi.orig
 +++ occu/WebUI/www/config/ic_deviceparameters.cgi
-@@ -405,7 +405,7 @@
+@@ -406,7 +406,7 @@
        set PROFILE_PNAME(DESCRIPTION) $param
        if {$param_descr(TYPE) != "ENUM" && $showOption == 0} {
          append s1 "<tr><td><span class=\"stringtable_value\">$dev_descr_sender(TYPE)|$PROFILE_PNAME(DESCRIPTION)</span></td>"
@@ -461,7 +541,7 @@
          append s1 "<td>$unit&nbsp;($min-$max)</td>"
          append s1 "<td><input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\"></td>"
        } elseif {$showOption == 1} { 
-@@ -439,7 +439,7 @@
+@@ -440,7 +440,7 @@
              append s1 "<option>\${stringTableEnterValue}</option>"
            append s1 "</select>"
            
@@ -472,7 +552,7 @@
            append s1 "</td>"
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -41690,54 +41690,70 @@
+@@ -46942,50 +46942,65 @@
      srcElm.value = value;
    }
  
@@ -499,14 +579,17 @@
 -      value = (roundValue05(parseInt(value)));
 +      value = Math.round(parseFloat(value));
      } else {
--      min = parseFloat(min).toFixed(2);
--      max = parseFloat(max).toFixed(2);
--      value = parseFloat(value);
--      srcElm.value = parseFloat(value);
-+      min = parseFloat(min).toFixed(digits);
-+      max = parseFloat(max).toFixed(digits);
+-      min = parseFloat(parseFloat(min).toFixed(fixedDecimalPoint));
+-      max = parseFloat(parseFloat(max).toFixed(fixedDecimalPoint));
+-      value = parseFloat(parseFloat(value).toFixed(fixedDecimalPoint));
++      min = parseFloat(parseFloat(min).toFixed(digits));
++      max = parseFloat(parseFloat(max).toFixed(digits));
 +      var roundFactor = Math.pow(10, digits);
 +      value = Math.round(parseFloat(value) * roundFactor) / roundFactor;
+ 
+       if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
+-
+-      srcElm.value = parseFloat(value);
      }
 +    parsedValue = parseFloat(value);
    } catch(e) {conInfo(e);}
@@ -542,19 +625,22 @@
    {
      srcElm.style.backgroundColor = "#fffffe";
 -    dstElm.value = value * dstValueFactor;
--    srcElm.value = dstElm.value;
 +    dstElm.value = (parsedValue.toFixed(digits) * dstValueFactor);
-+    srcElm.value = parsedValue.toFixed(digits);
+     if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
+-      srcElm.value = dstElm.value;
++      srcElm.value = parsedValue.toFixed(digits);
+     }
      srcElm.setAttribute("valvalid", "true");
    }
-   else
+@@ -46993,9 +47008,9 @@
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";
 -    dstElm.value = finalVal * dstValueFactor;
--    srcElm.value = dstElm.value;
 +    dstElm.value = (finalVal.toFixed(digits) * dstValueFactor);
-+    srcElm.value = finalVal.toFixed(digits);
+     if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
+-      srcElm.value = dstElm.value;
++      srcElm.value = finalVal.toFixed(digits);
+     }
      window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
    }
- };

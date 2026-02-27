@@ -165,6 +165,9 @@ jQuery.extend(true, langJSON, {
       "Diese Funktionen k%F6nnen nur korrekt ausgef%FChrt werden, wenn als Spannungsversorgung 'Netzbetrieb' ausgew%E4hlt wird. Aktuell ist jedoch 'Batteriebetrieb' eingestellt.<br/></br>" +
       "Wenn Sie diese Funktionalit%E4t ben%F6tigen, schalten Sie den Parameter 'Spannungsverorgung' unter Ger%E4teeinstellung (Kanal 0) auf 'Netzbetrieb'.",
 
+    "helpColorBehaviour" : "Das eingestellte Verhalten wird nur f%FCr die Zielkan%E4le 8 und 12 ber%FCcksichtigt!",
+    "helpColorBehaviour_8" : "Das eingestellte Verhalten wird nur f%FCr Kanal 8 ber%FCcksichtigt!",
+    "helpColorBehaviour_12" : "Das eingestellte Verhalten wird nur f%FCr Kanal 12 ber%FCcksichtigt!",
 
     "END" : ""
   }

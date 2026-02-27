@@ -1,0 +1,23 @@
+install.tcl: fix name of neo server to "NEOServer"
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/install.tcl	2024-02-19 15:05:39.000000000 +0100
++++ b/install.tcl	2019-11-28 14:32:59.934389025 +0100
+@@ -4,11 +4,11 @@
+ 
+ set ID          mediola
+ set URL         /addons/mediola/index.html
+-set NAME        "NEO SERVER"
++set NAME        NEOServer
+ 
+ array set DESCRIPTION {
+-  de {<li>NEO SERVER</li>}
+-  en {<li>NEO SERVER</li>}
++  de {<li>NEO Server</li>} 
++  en {<li>NEO Server</li>}
+ }
+ 
+ ::HomeMatic::Addon::AddConfigPage $ID $URL $NAME [array get DESCRIPTION]

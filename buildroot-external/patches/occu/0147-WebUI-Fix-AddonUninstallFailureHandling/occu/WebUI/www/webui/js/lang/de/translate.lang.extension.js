@@ -6,7 +6,11 @@ jQuery.extend(true,langJSON, {
     "thTypeDescriptorWOLineBreak" : "Typenbezeichnung",
     "ruleConditionSelectValue" : "Wert",
     "ruleConditionSelectText" : "Text",
+    "ruleConditionLblIsEqual" : "gleich ",
+    "ruleDescrHexString" : "Parameterzeichenkette",
     "btnChoice" : "Auswahl",
+    "addonUpdate" : "Zusatzsoftware-Updates:",
+    "lblNewAddonUpdatesAvailable" : "Neue Zusatzsoftware verf%FCgbar",
     "btnAutoDetect" : "Automatisch ermitteln",
     "btnSelectRoomOrFunctionNew" : "Neu...",
     "btnSelectRoomOrFunctionClose" : "Schlie%DFen",
@@ -56,14 +60,23 @@ jQuery.extend(true,langJSON, {
     "generalDeviceChannelConfigLblUsable" : "Bedienbar:",
     "generalDeviceChannelConfigLblVisible" : "Sichtbar:",
     "generalDeviceChannelConfigLblLogged" : "Protokolliert:",
+    "generalDeviceChannelConfigLblServiceMsg": "Servicemeldungen:",
     "generalDeviceChannelConfigLblFuncTest" : "Funktionstest",
+    "generalDeviceChannelConfigLblRenameChannel" : "Zugeh%F6rige Kan%E4le umbenennen",
+    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "inklusive eigener Namen:",
+    "generalDeviceChannelConfigLblSeparator": "Trennzeichen:",
     "generalChannelConfigLblRooms" : "R%E4ume",
     "generalChannelConfigLblFunctions" : "Gewerke",
     "generalChannelConfigLblSender" : "Sender (Sensor)",
     "generalChannelConfigLblReceiver" : "Empf%E4nger (Aktor)",
     "generalChannelConfigLblNone" : "nicht verkn%FCpfbar",
     "generalDeviceChannelConfigBtnFuncTest" : "Test starten",
+    "generalDeviceChannelConfigBtnRenameChannels" : "Kan%E4le umbenennen",
+    "generalDeviceRenameChannelHint" : "Benennt alle Kan%E4le des Ger%E4ts um.<br/><br/>Die Kanalnamen lauten anschlie%DFend: <i>Ger%E4tename%26lt;Trennzeichen%26gt;Kanalnummer</i>",
+    "generalDeviceRenameChannelHintTooltip" : "Benennt alle Kan%E4le des Ger%E4ts um. Die Kanalnamen lauten anschlie%DFend: 'Ger%E4tename<Trennzeichen>Kanalnummer'",
+    "generalDeviceRenameChannelIncludingOwnHint" : "Ist diese Option aktiviert, werden bereits vorher selbst vergebene Kanalnamen mit umbenannt.",
     "generalDeviceConfigHint" : "Im Rahmen des Funktionstests wird gepr%FCft, ob die Kommunikation mit dem Ger%E4t fehlerfrei funktioniert.<br /> Dazu werden an alle mit dem Ger%E4t verkn%FCpften Aktoren Schaltbefehle gesendet, die deren Zustand %E4ndern. Sensoren, wie z.B. Fernbedienungen, melden sich im Allgemeinen erst dann, wenn sie manuell bet%E4tigt werden. Der Test gilt als bestanden, sobald die erste R%FCckmeldung von dem Ger%E4t empfangen wurde.",
+    "generalDeviceConfigHintTooltip" : "Im Rahmen des Funktionstests wird gepr%FCft, ob die Kommunikation mit dem Ger%E4t fehlerfrei funktioniert. Dazu werden an alle mit dem Ger%E4t verkn%FCpften Aktoren Schaltbefehle gesendet, die deren Zustand %E4ndern. Sensoren, wie z.B. Fernbedienungen, melden sich im Allgemeinen erst dann, wenn sie manuell bet%E4tigt werden. Der Test gilt als bestanden, sobald die erste R%FCckmeldung von dem Ger%E4t empfangen wurde.",
     "generalChannelConfigHint" : "<p>Im Rahmen des Funktionstests wird gepr%FCft, ob die Kommunikation mit dem Kanal fehlerfrei funktioniert.</p>",
     "generalChannelConfigHintSender" : "<p>Bei Sensoren wartet die Homematic Zentrale, bis diese sich melden. Eine Fernbedienung meldet sich z.B. erst dann, wenn sie manuell bet%E4tigt wird.</p>",
     "generalChannelConfigHintReceiver" : "<p>Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgel%F6st.</p>",
@@ -77,7 +90,7 @@ jQuery.extend(true,langJSON, {
     "dialogCreateLinkErrorContent3" : "das Ger%E4t innerhalb der Funkreichweite befindet und aktiv ist,",
     "dialogCreateLinkErrorContent4" : "das Ger%E4t im Anlernmodus befindet.",
     "dialogCreateLinkErrorContent5" : "\"Ignorieren\", wenn die Zentrale die %DCbertragung zum Ger%E4t bei n%E4chster Gelegenheit selbstst%E4ndig durchf%FChren soll. Bis dahin ist dieser Konfigurationsvorgang als offene Servicemeldung sichtbar.",
-    "dialogCreateLinkErrorContent6" : "<u>Achtung</u><br/> Es besteht die M%FCglichkeit, dass die maximale Anzahl der erlaubten Verkn%FCpfungen erreicht wurde.",
+    "dialogCreateLinkErrorContent6" : "<u>Achtung</u><br/> Es besteht die M%F6glichkeit, dass die maximale Anzahl der erlaubten Verkn%FCpfungen erreicht wurde.",
     "dialogCreateLinkErrorUnknownDevice" : "%DCbertragung nicht erfolgt, weil das Ger%E4t unbekannt ist.",
     "dialogCreateLinkHintLinkExists" : "Achtung! Die Verkn%FCpfung existiert bereits und wird %FCberschrieben.",
     "dialogCreateLinkMsgLinkExistsA" : "Sie sind dabei ",
@@ -227,7 +240,7 @@ jQuery.extend(true,langJSON, {
     "lanGatewayLblStandard" : "(Standard)",
     "commentSettingsDialogMaintenancePerformSoftwareUpdate" : "***********************************************",
     "dialogSettingsCMDialogPerformSoftwareUpdateTitle" : "Software-Update",
-    "dialogSettingsCMDialogPerformSoftwareUpdateP1" : "Das Software-Update wird jetzt durchgef%FChrt. Nach dem Update wird die " + HMIdentifier.de.CCUShortName + " automatisch neu gestartet.",
+    "dialogSettingsCMDialogPerformSoftwareUpdateP1" : HMIdentifier.de.CCUFullNameText + " wird nun neu gestartet und im Anschluss das Software-Update durchgef%FChrt. Dies kann je nach eingesetzter Hardware von wenigen Minuten bis zu einer halben Stunde dauern. Nach erfolgtem Software-Update wird die Zentrale ein zweites mal neu gestartet.<br/><br/>Zum %DCberwachen des Fortschrittes des Software-Updates k%F6nnen Sie nach dem ersten Neustart der Zentrale auf die Seite <a href='http://" + window.location.hostname + "/' target='_blank'>http://" + window.location.hostname + "/</a> wechseln um Ausgaben der Durchf%FChrung des Software-Updates angezeigt zu bekommen.",
     "dialogSettingsCMDialogPerformSoftwareUpdateP2" : "Es wird dringend empfohlen, nach dem Update den Cache Ihres Webbrowsers zu l%F6schen. Gehen Sie dabei folgenderma%DFen vor:",
     "dialogSettingsCMDialogPerformSoftwareUpdateLi1" : "Beenden Sie die aktuelle Browser-Sitzung.",
     "dialogSettingsCMDialogPerformSoftwareUpdateLi2" : "L%F6schen Sie den Cache Ihres Webbrowsers.<br />Hinweise dazu erhalten Sie in dem Tutorial <a href='http://www.eq-3.de/service/faq.html?id=38' target='_blank'>WebUI Firmware Update: Browser-Cache leeren</a> auf http://www.eq-3.de",
@@ -340,6 +353,15 @@ jQuery.extend(true,langJSON, {
     "actionStatusControlLocked" : "Ver-<br/>riegelt",
     "actionStatusControlLockedA" : "Verriegelt",
     "actionStatusControlLockedB" : "Geschlossen",
+    "windDirectionNoValue" : "Kein Wert",
+    "windDirectionAbbrevNorth" : "N",
+    "windDirectionAbbrevNorthEast" : "NO",
+    "windDirectionAbbrevEast" : "O",
+    "windDirectionAbbrevSouthEast" : "SO",
+    "windDirectionAbbrevSouth" : "S",
+    "windDirectionAbbrevSouthWest" : "SW",
+    "windDirectionAbbrevWest" : "W",
+    "windDirectionAbbrevNorthWest" : "NW",
     "infoStatusControlStateUnknown" : "Zustand<br/>unbestimmt",
     "infoStatusControlCalculateFillingLevel" : "F&uuml;llmenge wird berechnet...",
     "infoStatusControlFillingLevel" : "F&uuml;llmenge:",
@@ -534,12 +556,7 @@ jQuery.extend(true,langJSON, {
     "delDevFirmwareSuccessB" : " gel%F6scht.",
     "delDevFirmwareMsgTitle" :"Best%E4tigung",
     "delDevFirmwareMsgBody" : "Wollen Sie die Firmware wirklich vom System entfernen?",
-    "fwUpdatePressConfigKey" :
-      "Bringen Sie das Ger%E4t in Funkreichweite der "+HMIdentifier.de.CCUShortName+" und dr%FCcken Sie die Konfigurations-Taste. "+
-      "Anschlie%DFend startet das Firmwareupdate.",
-    "fwUpdatePressSystemKey" :
-      "Bringen Sie das Ger%E4t in Funkreichweite der "+HMIdentifier.de.CCUShortName+" und dr%FCcken Sie die Bedientaste. "+
-      "Anschlie%DFend startet das Firmwareupdate.",
+
     "partyModeDialogTitle" : "Hier k%F6nnen Sie den Party-/Urlaubsmodus einstellen.",
     "partyStart" : "Startzeit",
     "partyEnd" : "Endzeit",
@@ -561,6 +578,11 @@ jQuery.extend(true,langJSON, {
     "temperatureMeasurement" : "Temperaturmessung",
     "energyMeasurement" : "Energiemessung",
     "powerMeasurement" : "Verbrauch",
+    "powerMeasurementA" : "Durchfluss",
+    "powerMeasurementB" : "Energie Bezug HT",
+    "powerMeasurementC" : "Energie Bezug NT",
+    "powerMeasurementD" : "Energie Lieferung",
+    "powerMeasurementFeedIn" : "Einspeisung",
     "userSpecific" : "Benutzerspezifisch",
     "diagramPeriodToday" : "Heute",
     "diagramPeriodThisWeek" : "Diese Woche",
@@ -609,7 +631,6 @@ jQuery.extend(true,langJSON, {
     "iconBell" : "Benachrichtigung",
     "iconClock" : "Uhr",
     "statusDisplayDialogTitle" : "Display Konfiguration",
-    "ruleDescrHexString" : "Parameterzeichenkette",
     "dialogChangeLogTitle" : "Changelog",
     "btnChangelog" : "Changelog",
     "errorReadChangelog": "Fehler beim Lesen des Changelogs....",
@@ -711,7 +732,6 @@ jQuery.extend(true,langJSON, {
     "msgNoGatewayFound" : "Kein Gateway gefunden",
     "dialogDeleteCertificateTitle" : "Zertifikat l%F6schen",
     "dialogSettingsNetworkLblDeleteCertificate" : "Zertifikat von der CCU entfernen",
-    "confirmCertificationPurgeA" : "Wenn Sie das Zertifikat l%F6schen, k%F6nnen Sie anschlie%DFend keine gesicherte Verbindung zu Ihrer "+HMIdentifier.de.CCUShortName+" mehr aufbauen.",
     "confirmCertificationPurgeB" : "M%F6chten Sie das Zertifikat wirklich von der "+HMIdentifier.de.CCUShortName+" entfernen?",
     "dialogRestartWebserverTitle" : "Lighttpd Restart",
     "dialogRestartWebserverContent" : "Der Webserver wird jetzt neu gestartet.",
@@ -816,7 +836,7 @@ jQuery.extend(true,langJSON, {
     "btnGarageClose" : "Schlie%DFen",
     "btnGarageVent" : "L%FCften",
     "btnGarageStop" : "Stopp",
-    "dialogSettingsUSBStorageSettings" : "Externer USB-Speicher",
+    "dialogSettingsUSBStorageSettings" : "Externer Speicher",
     "dialogSettingsStorageHintUSBStorageP1" : "Die Sicherung der Daten umfasst nur die Diagramme.",
     "dialogSettingsSecurityTDAuth" : "Authentifizierung",
     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentifizierung aktiv: ",
@@ -891,6 +911,9 @@ jQuery.extend(true,langJSON, {
     "hintWiredBlindLinksAvailable" : "Achtung: Es bestehen Verkn%Fcpfungen. Der Betriebsmodus kann daher nicht ge%E4ndert werden.",
     "hintWiredBlindProgramsAvailable" : "Achtung: Es bestehen Programme. Der Betriebsmodus kann daher nicht ge%E4ndert werden.",
     "hintWiredBlindLinksAndProgramsAvailable" : "Achtung: Es bestehen Verkn%FCpfungen und Programme. Der Betriebsmodus kann daher nicht ge%E4ndert werden.",
+    "hintLayoutModeLinksAvailable" : "Achtung: Es bestehen Verkn%Fcpfungen. Das Anzeigelayout kann daher nicht ge%E4ndert werden.",
+    "hintLayoutModeProgramsAvailable" : "Achtung: Es bestehen Programme. Das Anzeigelayout kann daher nicht ge%E4ndert werden.",
+    "hintLayoutModeLinksAndProgramsAvailable" : "Achtung: Es bestehen Verkn%FCpfungen und Programme. Das Anzeigelayout kann daher nicht ge%E4ndert werden.",
     "hintCheckChannels" : "<br/>Pr%FCfen Sie bitte folgende Kan%E4le: ",
     "internalSystemSound" : "Interner Sound",
     "randomPlayback" : "Zufallswiedergabe",
@@ -958,15 +981,11 @@ jQuery.extend(true,langJSON, {
      "rotationDirLeftSlow" : "Langsames Drehen nach links",
      "rotationDirRightSlow" : "Langsames Drehen nach rechts",
      "rainDetectorSampleInterval" : "Zeitspanne zwischen den einzelnen Messungen<br/>(Regenerkennungsintervall)",
+     "genericSampleInterval" : "Zeitspanne zwischen den einzelnen Messungen",
     "cpSecurityHttpsRedirectTitle" : "Automatische Umleitung auf HTTPS",
     "cpSecurityHttpsRedirectLabel" : "Umleitung auf HTTPS aktiv:",
     "cpSecurityHttpsRedirectDescription" : "Ist die Funktion aktiviert, erfolgt bei Zugriff auf die WebUI %FCber HTTP eine automatische Umleitung auf HTTPS",
     "stringTableOperationPowerConsumptionState": "Status Stromaufnahme",
-    "headerDrapUpdateNecessary":
-      "Mit diesem Update wird durch Advanced Routing eine verbesserte Kommunikation zwischen den Homematic IP Funk- und den Homematic IP Wired-Komponenten etabliert. " +
-      "Dazu ist es erforderlich, dass ein Firmware-Update des Homematic IP Wired Access Point durchgef%FChrt wird.<br><br>Der Homematic IP Wired Access Point befindet sich " +
-      "nach diesem Update im Posteingang und muss dort konfiguriert werden.<br>Alle bereits angelernten und konfigurierten Wired-Ger%E4te in der Installation arbeiten nach dem Update wie gewohnt weiter.",
-    "drapUpdateNecessary": "Folgende Wired Access Points mit einer inkompatiblen Firmware wurden gefunden und m%FCssen aktualisiert werden:<br/><br/>",
     "thAvailableVersion": "Verf%FCgbare Version",
     "thInstalledVersion": "Installierte Version",
     "btnReload": "Neu laden",
@@ -1037,6 +1056,45 @@ jQuery.extend(true,langJSON, {
     "dialogAskCreateBakupText" : "Das Backup wird direkt vor der Installation erstellt und heruntergeladen. Dieser Vorgang kann einige Minuten dauern.",
     "unitNumericPinCode" : "(max. 8 Ziffern von 0-9)",
     "hintSetReadyNotComplete" : "Klicken Sie auf Fertig, um den Kanal vollst%E4ndig zu konfigurieren und rufen Sie das Ger%E4t anschlie%DFend in der Ger%E4teliste auf.",
+
+    "btnHCL" : "HCL",
+    "btnDim2Warm" : "Dim2Warm",
+    "fwUpdatePressConfigKey" :
+      "Stellen Sie sicher, dass das Ger%E4t in Funkreichweite der "+HMIdentifier.de.CCUShortName+" ist.  Dr%FCcken sie ggf. die Systemtaste am Ger%E4t<br/><br/>"+
+      "Bei allen Homematic IP Sensoren, wie z. B. die Wettersensoren, ist ein Dr%FCcken der Taste nicht zwingend erforderlich. " +
+      "Die Ger%E4te melden sich automatisch im Verlauf eines Tages und beginnen dann selbstst%E4ndig mit dem Update.",
+    "fwUpdatePressSystemKey" :
+      "Stellen Sie sicher, dass das Ger%E4t in Funkreichweite der "+HMIdentifier.de.CCUShortName+" ist.  Dr%FCcken sie ggf. die Systemtaste am Ger%E4t<br/><br/>"+
+      "Bei allen Homematic IP Sensoren, wie z. B. die Wettersensoren, ist ein Dr%FCcken der Taste nicht zwingend erforderlich. " +
+      "Die Ger%E4te melden sich automatisch im Verlauf eines Tages und beginnen dann selbstst%E4ndig mit dem Update.",
+    "minTemp" : "min.<br/>Temp",
+    "maxTemp" : "max.<br/>Temp",
+    "errorStateCoProcessor" : "Zustand Co-Prozessor",
+    "errorCoProcessorFalse" : "<br/>OK",
+    "errorCoProcessorTrue" : "<br/>Fehler",
+    "stateDaliBus" : "Zustand DALI-Bus",
+    "stateDaliBus_0" : "<br/>OK",
+    "stateDaliBus_1" : "<br/>Kurzschluss",
+    "stateDaliBus_2" : "<br/>%DCberlast",
+    "btnSearchDaliDevices" : "Pr%FCfen",
+    "titleSearchDaliDevices" : "Pr%FCfe Kan%E4le",
+    "showDeviceBetaFw" : "Zeige unver%F6ffentlichte Ger%E4te-Fw.",
+    "hintDeviceBetaFw" :
+      "Bei aktiviertem Parameter werden einer geschlossenen Benutzergruppe auf der Startseite unter dem Punkt 'Ger%E4te-Update' " +
+      "Vorabversionen geplanter Ger%E4te-Firmware Updates angeboten.",
+    "btnSensorDetection" : "Sensorerkennung",
+    "hintPressSysKeyTryAgain" : "Bet%E4tigen Sie die Systemtaste und versuchen Sie es noch einmal.",
+    "hintProblemSensorIdent" : "Bei der Erkennung des Sensors ist ein Fehler aufgetreten.",
+    "msgStartValueInvalid_A" : "Der vergebene Startwert f%FCr Kanal ",
+    "msgStartValueInvalid_B" : " ist ung%FCltig!\n\nEs wird 0.000 verwendet.",
+    "dialogEsiSearchButtonContent" :
+      "Starten Sie hier die Sensorerkennung.<br/><br/>" +
+      "<b>Nachdem</b> Sie die Sensorerkennung gestartet haben, bet%E4tigen Sie die Systemtaste des Ger%E4tes. " +
+      "Der Sensor wird jetzt ermittelt. Wenn Sie diese Seite nicht verlassen, wird sie anschlie%DFend neu aufgerufen und der gefundene Sensor angezeigt.<br/><br/>" +
+      "<u>Achtung:</u><br/>" +
+      "Bei einem Wechsel des Sensors werden die bisher erfassten Verbrauchswerte (heute, gestern usw.) zur%FCck auf 0 gesetzt.<br/><br/>" +
+      "Sollten Sie die Sensorsuche ohne angeschlossenen Sensor gestartet haben, schlie%DFen Sie einen Sensor an und f%FChren Sie einen Werksreset des Energiemessger%E4ts durch.<br/><br/>" ,
+
     "theEnd" : ""
   }
 });

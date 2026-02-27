@@ -66,9 +66,11 @@ fi
 
 echo "done.<br/>"
 
-echo -ne "[5/11] Cloning partition table (bootfs, rootfs)... "
+echo -ne "[5/11] Cloning partition table... "
 
-if ! /sbin/sfdisk -q -d "${SOURCE_DEV}" | head -n -1 | sfdisk --no-reread --force -q "${TARGET_DEV}" >/dev/null 2>&1; then
+# clone via sfdisk but strip last-lba to make sure a larger medium does
+# not interfere
+if ! /sbin/sfdisk -q -d "${SOURCE_DEV}" | grep -v last-lba | /sbin/sfdisk --no-reread --force -q "${TARGET_DEV}" >/dev/null 2>&1; then
   echo "ERROR: cloning partition table failed (enough space on target device?)<br/>"
   exit 1
 fi
@@ -80,15 +82,21 @@ if ! /usr/sbin/partprobe "${TARGET_DEV}"; then
 fi
 
 # check the device nodes of each new partition
-TARGET_BOOTFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-01 | cut -d: -f1)
+TARGET_BOOTFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-0 | grep bootfs | cut -d: -f1)
 if [[ -z "${TARGET_BOOTFS}" ]]; then
   echo "ERROR: target bootfs missing<br/>"
   exit 1
 fi
 
-TARGET_ROOTFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-02 | cut -d: -f1)
+TARGET_ROOTFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-0 | grep rootfs | cut -d: -f1)
 if [[ -z "${TARGET_ROOTFS}" ]]; then
   echo "ERROR: target rootfs missing<br/>"
+  exit 1
+fi
+
+TARGET_USERFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-0 | grep userfs | cut -d: -f1)
+if [[ -z "${TARGET_ROOTFS}" ]]; then
+  echo "ERROR: target userfs missing<br/>"
   exit 1
 fi
 
@@ -116,21 +124,20 @@ mount -o ro "${SOURCE_ROOTFS}" /rootfs
 
 echo "done.<br/>"
 
-echo -ne "[8/11] Creating target userfs partition... "
-PARTNUM=2
-END_S=$(parted -s "${TARGET_DEV}" unit s print | grep "^ ${PARTNUM} " | awk '{print $3}' | tr -d 's')
+echo -ne "[8/11] Resizing target userfs partition... "
 
-# use mkpart to create the /usr/local partition with the maximum available
-if ! parted -s "${TARGET_DEV}" mkpart primary ext4 "$((END_S+1))s" 100%; then
-  echo "ERROR: mkpart failed<br/>"
+# use resizepart to resize userfs to the maximum available space of the target disk
+PARTNUM=3
+if ! /usr/sbin/parted -f -s "${TARGET_DEV}" resizepart ${PARTNUM} 100%; then
+  echo "ERROR: resizepart failed<br/>"
   exit 1
 fi
 
 # force PARTUUID to 0xDEEDBEEF (because parted changes partuuid)
-echo -en '\xEF\xBE\xED\xDE' | dd of="${TARGET_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+#echo -en '\xEF\xBE\xED\xDE' | dd of="${TARGET_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
 
-# check if parted could create the partition correctly.
-TARGET_USERFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-03 | cut -d: -f1)
+# check if parted could resize the partition correctly.
+TARGET_USERFS=$(/sbin/blkid | grep "${TARGET_DEV}" | grep deedbeef-0 | grep userfs | cut -d: -f1)
 if [[ -z "${TARGET_USERFS}" ]]; then
   echo "ERROR: target userfs missing<br/>"
   exit 1

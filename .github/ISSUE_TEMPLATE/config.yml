@@ -1,18 +1,22 @@
 ---
 blank_issues_enabled: false
 contact_links:
-  - name: 🇺🇸 RaspberryMatic Documentation
-    url: https://github.com/jens-maus/RaspberryMatic/wiki/en.Home
+  - name: ✋ Support Request
+    url: https://github.com/OpenCCU/OpenCCU/discussions
+    about: You have a generic problem in using OpenCCU or this repository.
+
+  - name: 🇺🇸 OpenCCU Documentation
+    url: https://github.com/OpenCCU/OpenCCU/wiki/en.Home
     about: If you search for answers, please consult the documentation area first.
 
-  - name: 🇺🇸 RaspberryMatic Discussions
-    url: https://github.com/jens-maus/RaspberryMatic/discussions
-    about: Please ask and answer questions in the RaspberryMatic discussion fora here.
+  - name: 🇺🇸 OpenCCU Discussions
+    url: https://github.com/OpenCCU/OpenCCU/discussions
+    about: Please ask and answer questions in the OpenCCU discussion fora.
 
-  - name: 🇩🇪 RaspberryMatic Dokumentation
-    url: https://github.com/jens-maus/RaspberryMatic/wiki
+  - name: 🇩🇪 OpenCCU Dokumentation
+    url: https://github.com/OpenCCU/OpenCCU/wiki
     about: Wenn Sie nach Antworten suchen, konsultieren Sie bitte zuerst die Dokumentation.
 
-  - name: 🇩🇪 RaspberryMatic Diskussionsforum
+  - name: 🇩🇪 OpenCCU Diskussionsforum
     url: https://homematic-forum.de/forum/viewforum.php?f=65
     about: Hier können Sie bei Problemen Fragen Stellen und Antworten erhalten.

@@ -626,7 +626,7 @@
    setFooter("");
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -62,10 +62,11 @@
+@@ -63,10 +63,11 @@
      "submenuFavorites" : "Favoriten",
      "submenuCreateFavorite" : "Favoriten erstellen",
      "submenuPrograms" : "Programme",
@@ -640,7 +640,7 @@
      "submenuDeviceInbox" : "Ger%E4te - Posteingang",
      "submenuUserManagement" : "Benutzerverwaltung",
      "submenuSysControl" : "Systemsteuerung",
-@@ -109,7 +110,7 @@
+@@ -110,7 +111,7 @@
      "thValues" : "Werte",
      "thUnit" : "Ma%DFeinheit",
      "thLastUpdate" : "Letzte<br/>Aktualisierung",
@@ -649,7 +649,7 @@
      "thFilter" : "Filter",
      "thDescription" : "Beschreibung",
      "thActivity" : "Aktivit%E4t",
-@@ -319,7 +320,7 @@
+@@ -322,7 +323,7 @@
      "lblSettingsFunctions5" : "Gewerkeigenschaften bearbeiten",
      "commentSettingsBtnFunctionsEnd" : "***********************************************",
      "commentSettingsBtnSysVar" : "***********************************************",
@@ -658,7 +658,7 @@
      "lblSettingsSysVar1" : "%DCbersicht aller Systemvariablen",
      "lblSettingsSysVar2" : "Bestehende Systemvariablen bearbeiten",
      "lblSettingsSysVar3" : "Neue Systemvariablen anlegen",
-@@ -440,7 +441,7 @@
+@@ -448,7 +449,7 @@
      "lblMenuStatusControlFavorites1" : "%DCbersicht aller verf%FCgbaren Favoriten",
      "btnMenuStatusControlPrograms" : "Programme",
      "lblMenuStatusControlPrograms1" : "Direkter Zugriff auf alle Programme",
@@ -669,7 +669,7 @@
      "lblMenuStatusControlSysProtocolTime" : "Zeit",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -61,10 +61,11 @@
+@@ -62,10 +62,11 @@
      "submenuFavorites" : "Favourites",
      "submenuCreateFavorite" : "Create favourites",
      "submenuPrograms" : "Programs",
@@ -683,7 +683,7 @@
      "submenuDeviceInbox" : "Device inbox",
      "submenuUserManagement" : "User management",
      "submenuSysControl" : "Control panel",
-@@ -318,7 +319,7 @@
+@@ -321,7 +322,7 @@
      "lblSettingsFunctions5" : "Edit function properties",
      "commentSettingsBtnFunctionsEnd" : "***********************************************",
      "commentSettingsBtnSysVar" : "***********************************************",
@@ -692,7 +692,7 @@
      "lblSettingsSysVar1" : "Overview of all system variables",
      "lblSettingsSysVar2" : "Edit existing system variables",
      "lblSettingsSysVar3" : "Create new system variables",
-@@ -439,7 +440,7 @@
+@@ -447,7 +448,7 @@
      "lblMenuStatusControlFavorites1" : "Overview of all functions available",
      "btnMenuStatusControlPrograms" : "Programs",
      "lblMenuStatusControlPrograms1" : "Direct access to all programs",
@@ -781,7 +781,7 @@
    [ 
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -239,7 +239,7 @@
+@@ -276,7 +276,7 @@
  
  /* Grundlegende Tabelle auf der Statusanzeige-Seite */
  #tblStatus {
@@ -790,7 +790,7 @@
    height:100%;
    table-layout: fixed;
  }
-@@ -1365,7 +1365,7 @@
+@@ -1450,7 +1450,7 @@
  
  .sysConfigHeight
  {
@@ -799,7 +799,7 @@
  }
  
  .posPreBtn
-@@ -2516,8 +2516,8 @@
+@@ -2664,8 +2664,8 @@
  
    background-color: $_(subMenuBackground);
    font-weight: bold;
@@ -810,7 +810,7 @@
    text-align:left;
    vertical-align:middle;
    color: $_(textColorB); /* black */
-@@ -2532,6 +2532,12 @@
+@@ -2679,6 +2679,12 @@
    /* border: 2px solid $_(subMenuHighlight); */
    /* line-height: 30px; */
  }
@@ -823,7 +823,7 @@
  #webuiloader_wrapper {
    width: 100%;
    height: 100%;
-@@ -6847,11 +6853,12 @@
+@@ -7008,11 +7014,12 @@
  /* rega\pages\tabs\admin\linkprog.htm */
  
  .CLASS05400 {
@@ -837,7 +837,7 @@
  }
  
  .CLASS05402 {
-@@ -6862,16 +6869,54 @@
+@@ -7023,16 +7030,54 @@
  	text-align:center ! important;
  }
  
@@ -893,7 +893,7 @@
  /* rega\pages\tabs\favorites.htm */
  
  .CLASS05600 {
-@@ -6951,11 +6996,26 @@
+@@ -7112,11 +7157,26 @@
  /* pages\tabs\statusview.htm */
  
  .CLASS05700 {
@@ -921,7 +921,7 @@
  }
  
  .CLASS05702 {
-@@ -7089,13 +7149,32 @@
+@@ -7253,13 +7313,32 @@
  /* rega\pages\tabs\user\systemConfigUser.htm */
  
  .CLASS06100 {
@@ -957,7 +957,7 @@
  .CLASS06200 {
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -17696,19 +17696,19 @@
+@@ -25035,19 +25035,19 @@
      var _submenuItem_ = submenuItem;
      var _menuItem_ = menuItem;
      
@@ -983,7 +983,7 @@
    },
    
    /**
-@@ -17744,12 +17744,11 @@
+@@ -25083,12 +25083,11 @@
        submenuElement.className = "MainMenuSubMenu";
        Element.setStyle(submenuElement, {display: "none"});
        

@@ -1,0 +1,232 @@
+--- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
+@@ -42,6 +42,7 @@
+                   <td class="CLASS03304"></td>
+                 </tr>
+                 <%
++                  string sEnumDeviceIds = "";
+                   object obj = dom.GetObject(ID_DEVICES);
+                   if ( obj )
+                   {
+@@ -98,6 +99,7 @@
+                             Write("InitGD(jg_0, 50);");
+                             Write("Draw(jg_0, '"#devs.Label()#"', 50, '-1');");
+                           Write("var tmp = new Object();");
++                          Write("tmp['id'] = '"#devs.ID()#"';");
+                           Write("tmp['name'] = '"#devs.Name()#"';");
+                           Write("tmp['trid'] = '"#trId#"';");
+                           Write("arItems[arItems.length] = tmp;");
+@@ -106,6 +108,7 @@
+                           
+                           Write("</td>");
+                         Write("</tr>");
++                        sEnumDeviceIds = sEnumDeviceIds # devs.ID() # "\t";
+                       }
+                     }
+                   }
+@@ -175,8 +178,29 @@
+     {
+       system.SetSessionVar("sessionTAB1",sFirstId);
+     }
++    else
++    {
++      string tmpID = system.GetSessionVar("sessionTAB1");
++      string tmp = "";
++      boolean bFound = false;
++      foreach (tmp, sEnumDeviceIds)
++      {
++        if (tmp == tmpID)
++        {
++          bFound = true;
++          break;
++        }
++      }
++      if (bFound == false)
++      {
++        system.SetSessionVar("sessionTAB1", sFirstId);
++      }
++    }
+   %>
+-  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
++  // to avoid a double channelload, perform only initial load if no room-filter is set
++  if(document.getElementById("ftDevName") && document.getElementById("ftDevName").value == "") {
++    loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
++  }
+   
+   filterOptions = new iseFilter();
+ </script>
+@@ -260,6 +284,7 @@
+ 
+   updateDevTable = function()
+   {
++    var sFirstId = "";
+     colorFilterBtns(fltDL);
+     for (var i = 0; i < arItems.length; i++)
+     {
+@@ -270,8 +295,13 @@
+       else
+       {
+         show(arItems[i]['trid']);
++        if(sFirstId == "")
++        {
++          sFirstId = arItems[i]['id'];
++        }
+       }
+     }
++    loadChannels(sFirstId);
+   };
+ 
+   clearInputLeft = function()
+--- occu/WebUI/www/rega/pages/tabs/control/functions.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/functions.htm
+@@ -36,6 +36,7 @@
+                   </td>
+                 </tr>
+                 <%
++                  string sEnumFunctionIds = "";
+                   object obj = dom.GetObject(ID_FUNCTIONS);
+                   if ( obj )
+                   {
+@@ -55,12 +56,14 @@
+                           Write("</td>");
+                           Write("<script type='text/javascript'>");
+                           Write("var tmp = new Object();");
++                          Write("tmp['id'] = '"#func.ID()#"';");
+                           Write("tmp['name'] = '"#func.Name()#"';");
+                           Write("tmp['trid'] = '"#trId#"';");
+                           Write("arItems[arItems.length] = tmp;");
+                           Write("Cursor.set(Cursor.NORMAL);");
+                           Write("</script>");
+                         Write("</tr>");
++                        sEnumFunctionIds = sEnumFunctionIds # func.ID() # "\t";
+                       }
+                     }
+                   }
+@@ -128,8 +131,29 @@
+     {
+       system.SetSessionVar("sessionTAB1",sLoadId);
+     }
++    else
++    {
++      string tmpID = system.GetSessionVar("sessionTAB1");
++      string tmp = "";
++      boolean bFound = false;
++      foreach (tmp, sEnumFunctionIds)
++      {
++        if (tmp == tmpID)
++        {
++          bFound = true;
++          break;
++        }
++      }
++      if (bFound == false)
++      {
++        system.SetSessionVar("sessionTAB1", sLoadId);
++      }
++    }
+   %>
+-  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
++  // to avoid a double channelload, perform only initial load if no room-filter is set
++  if(document.getElementById("ftFunc") && document.getElementById("ftFunc").value == "") {
++    loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
++  }
+   
+   // filterOptions = new iseFilter();
+   translatePage("#tblFunctionNames");
+@@ -178,6 +202,7 @@
+ 
+   updateFuncTable = function()
+   {
++    var sFirstId = "";
+     colorFilterBtns(fltFN);
+     for (var i = 0; i < arItems.length; i++)
+     {
+@@ -188,8 +213,13 @@
+       else
+       {
+         show(arItems[i]['trid']);
++        if(sFirstId == "")
++        {
++          sFirstId = arItems[i]['id'];
++        }
+       }
+     }
++    loadChannels(sFirstId);
+   };
+ 
+   clearInputLeft = function()
+--- occu/WebUI/www/rega/pages/tabs/control/rooms.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/rooms.htm
+@@ -56,6 +56,7 @@
+                         Write("</td>");
+                         Write("<script type='text/javascript'>");
+                         Write("var tmp = new Object();");
++                        Write("tmp['id'] = '"#room.ID()#"';");
+                         Write("tmp['name'] = '"#room.Name()#"';");
+                         Write("tmp['trid'] = '"#trId#"';");
+                         Write("arItems[arItems.length] = tmp;");
+@@ -131,29 +132,34 @@
+   }
+   
+   // Beim laden der Seite ersten Raum anzeigen
+-  
+   <%
+     if( system.GetSessionVar("sessionTAB1") == "" )
+     {
+       system.SetSessionVar("sessionTAB1",sLoadId);
+     }
+-    else {
+-      !Fehlerhaftes Laden umgehen
+-     
++    else
++    {
+       string tmpID = system.GetSessionVar("sessionTAB1");
+       string tmp = "";
+       boolean bFound = false;
+-      foreach (tmp, sEnumRoomIds) {
+-        if (tmp == tmpID) {
++      foreach (tmp, sEnumRoomIds)
++      {
++        if (tmp == tmpID)
++        {
+           bFound = true;
++          break;
+         }
+       }
+-      if (!bFound) {
++      if (bFound == false)
++      {
+         system.SetSessionVar("sessionTAB1",sLoadId);
+       }
+     }
+   %>
+-  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
++  // to avoid a double channelload, perform only initial load if no room-filter is set
++  if(document.getElementById("ftRoom") && document.getElementById("ftRoom").value == "") {
++    loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
++  }
+   
+   filterOptions = new iseFilter();
+   translatePage("#tblRoomNames");
+@@ -202,6 +208,7 @@
+ 
+   updateRoomTable = function()
+   {
++    var sFirstId = "";
+     colorFilterBtns(fltRM);
+     for (var i = 0; i < arItems.length; i++)
+     {
+@@ -212,8 +219,13 @@
+       else
+       {
+         show(arItems[i]['trid']);
++        if(sFirstId == "")
++        {
++          sFirstId = arItems[i]['id'];
++        }
+       }
+     }
++    loadChannels(sFirstId);
+   };
+ 
+   clearInputLeft = function()

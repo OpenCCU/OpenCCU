@@ -1,26 +1,29 @@
 ---
-name: RaspberryMatic CCU
-version: 3.71.12.20231020
-slug: raspberrymatic
-image: ghcr.io/jens-maus/raspberrymatic
+name: OpenCCU
+version: 3.85.7.20260131
+slug: openccu
+image: ghcr.io/openccu/openccu
 arch:
-  - armv7
   - aarch64
   - amd64
-description: HomeMatic/homematicIP CCU central based on RaspberryMatic
-url: https://github.com/jens-maus/RaspberryMatic/
+description: HomeMatic/homematicIP CCU central based on OpenCCU
+url: https://github.com/OpenCCU/OpenCCU/
 ingress: true
 ingress_stream: true
-panel_title: RaspberryMatic
+panel_title: OpenCCU
 panel_icon: mdi:router-wireless
 startup: services
 map:
-  - backup:rw
+  - type: data
+    read_only: false
+    path: /usr/local
+  - type: backup
+    read_only: false
 init: false
 backup_pre: /bin/sh -c "/bin/echo 'load tclrega.so; rega system.Save()' | /bin/tclsh && /bin/sync"
 backup_exclude:
   - "*/tmp/.watchdog"
-timeout: 120
+timeout: 240
 devices:
   - /dev/raw-uart
   - /dev/raw-uart1
@@ -51,6 +54,7 @@ ports:
   41999/tcp: null
   48181/tcp: null
   9293/tcp: null
+  9294/tcp: null
   43438/udp: null
   1900/udp: null
   43439/udp: null
@@ -75,6 +79,9 @@ ports:
   1883/tcp: null
   8883/tcp: null
   2110/tcp: null
+  8911/tcp: null
+  5855/udp: null
+  2812/tcp: null
 ports_description:
   22/tcp: SSH access (Extern)
   80/tcp: CCU WebUI HTTP (Extern)
@@ -91,8 +98,9 @@ ports_description:
   49292/tcp: HomeMatic+homematicIP VirtualDevices XMLRPC-SSL (Extern)
   41999/tcp: ReGaHss XMLRPC-SSL (Extern)
   48181/tcp: ReGaHss HTTPS scripting (Extern)
-  9293/tcp: homematicIP-RF LAN-Gateway communication (Extern)
-  43438/udp: homematicIP-Wired DRAP-Gateway communication (Extern)
+  9293/tcp: HmIP-HAP/HmIPW-DRAP update server communication (Extern)
+  9294/tcp: HmIP-HAP2 update server communication (Extern)
+  43438/udp: HmIPW-DRAP Gateway communication (Extern)
   1900/udp: ssdpd auto-discovery (Extern)
   43439/udp: eq3configd NetFinder (Extern)
   161/udp: SNMP monitoring (Extern)
@@ -116,6 +124,9 @@ ports_description:
   1883/tcp: CCU-Jack MQTT (Extern)
   8883/tcp: CCU-Jack MQTT-Secure (Extern)
   2110/tcp: homeputer CL Exec-Engine (Extern)
+  8911/tcp: Haus-Bus WebUI (Extern)
+  5855/udp: Haus-Bus communication (Extern)
+  2812/tcp: Monit Monitoring WebUI (Extern)
 environment:
   HM_RUNNING_IN_HA: "1"
   HM_HAPROXY_SRC: 172.30.32.2/32

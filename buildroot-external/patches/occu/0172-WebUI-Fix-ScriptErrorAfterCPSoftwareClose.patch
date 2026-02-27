@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_software.cgi.orig
 +++ occu/WebUI/www/config/cp_software.cgi
-@@ -474,7 +474,7 @@
+@@ -507,7 +507,7 @@
      for {set i 0} {$i <= $loop} {incr i} {
        if { [info exists swUpdate($i)] } {
          puts "getVersion(\"$swUpdate($i)?cmd=check_version&version=$swVersion($i)\", function(contents) {"

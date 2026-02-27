@@ -101,6 +101,9 @@
             <td>${lblAlarm}</td>
             <td><input type="checkbox" id="cbAlarm" /></td>
           </tr>
+            <td>${lblString}</td>
+            <td><input type="checkbox" id="cbString" /></td>
+          </tr>
         </table>
         <div class='FilterSetButton' onclick='setAFilter(fltSYV, "vartypes");updateTable();$("btnFilterVarTypeSub").hide();'>${filterSet}</div>
         <div class='FilterSetButton' onclick="$('btnFilterVarTypeSub').hide();">${filterClose}</div>

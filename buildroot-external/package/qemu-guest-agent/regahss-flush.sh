@@ -4,7 +4,7 @@
 # qemu-guest-agent fsfreeze hook script to make sure ReGaHss will flush its
 # database before letting qemu freeze the filesystem for backup/migration
 #
-# Copyright (c) 2023 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2023-2025 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 applies
 #
 
@@ -12,7 +12,9 @@
 set -e
 
 # if ReGaHss is not running, exit
-[[ -e /var/run/ReGaHss.pid ]] || exit 1
+if ! /usr/bin/pgrep /bin/ReGaHss >/dev/null; then
+  exit 1
+fi
 
 # on fsfreeze make sure ReGaHss will flush its current state to the storage first
 if [[ "${1}" = "freeze" ]]; then

@@ -263,14 +263,14 @@ function ::CreateVIR-LGWhiteLevelControl() {
         WriteLine("<tr>");
           WriteLine("<td style='text-align:left'><span>${lblColorTemperatureBR}</span></td>");
           WriteLine("<td class='CLASS02546' style='text-align:right'>");
-            WriteLine("<div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b; display:inline-block;'>");
-              WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='margin-top: 6px; text-align:center' disabled/>&nbsp;${lblKelvin}");
+            WriteLine("<div class='PercBtn' style='height:19px; width:96px; background-color:#89989b; display:inline-block;'>");
+              WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center' disabled/>&nbsp;${lblKelvin}");
             WriteLine("</div>");
           WriteLine("</td>");
         WriteLine("</tr>");
         WriteLine("<tr>");
           WriteLine("<td colspan='2'>");
-            WriteLine("<div id='slider"#chnId#"' class='ControlBtnInfo' style='width:220px;min-height:unset'></div>");
+            WriteLine("<div id='slider"#chnId#"' style='width:220px;min-height:unset'></div>");
           WriteLine("</td>");
         WriteLine("</tr>");
       WriteLine("</table>");

@@ -20,10 +20,10 @@
 -        <p>${ccuNotReadyHint}</p>
 -      </div>
 -      <div align="center" style="padding-top:250px;">
--        <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
+-        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
 -      </div>
 +    <div id="content" class="Invisible" style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
-+      <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
++      <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
 +      <div style="font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size:12px;">${ccuNotReadyHint}</div>
      </div>
  
@@ -50,10 +50,10 @@
 -        <p>${ccuNotReadyHint}</p>
 -      </div>
 -      <div align="center" style="padding-top:250px;">
--        <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
+-        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
 -      </div>
 +    <div id="content" class="Invisible" style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
-+      <img id="imgLogo" src="/ise/img/rm-logo.png" alt=""/>
++      <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
 +      <div style="font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size:12px;">${ccuNotReadyHint}</div>
      </div>
  

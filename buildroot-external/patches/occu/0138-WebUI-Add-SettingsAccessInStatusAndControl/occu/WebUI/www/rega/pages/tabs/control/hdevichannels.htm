@@ -35,6 +35,9 @@
   arChns = new Array();
   chn = null;
 </script>
+
+<img id="ajaxLoad" style="margin: 30px;" alt="Loading..." src="/ise/img/loading.gif" />
+
 <table id="tblHDeviChannel" class="filterTable CLASS03500 j_translate" cellpadding="0" cellspacing="0" border="1" >
   <colgroup>
      <col style="width:12%;"/>
@@ -55,7 +58,7 @@
   </tr>
   <%
     Write("<script type='text/javascript'>");
-        Write("translatePage('#tblHDeviChannel');");
+      Write("translatePage('#tblHDeviChannel');");
     Write("</script>");
   %>
   <tr>
@@ -128,12 +131,26 @@
     integer userID = oUser.ID();
     object user = dom.GetObject(userID);
     integer virtChnCounter = 0;
-    
+
     object device = dom.GetObject(system.GetVar("id"));
     if (device) {
       if (device.Visible()) {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = "";
+        if( system.IsSessionVar("sessionSIDC") ) {
+          if( system.GetSessionVar("sessionSIDC") == "1" ) {
+           sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+          }
+        }
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
         string tmp;
-        foreach(tmp, oUser.UserTempViewIDs().EnumIDs()) {
+        foreach(tmp, sEnumUserIDs) {
           object chn = dom.GetObject(tmp);
           object oDev = dom.GetObject(chn.Device());
           string oDevHssType = oDev.HssType();
@@ -171,7 +188,7 @@
           } else {
             Call("/esp/functions.fn::showHideHmIPChannel()");
           }
-          if( bShow && chn.ReadyConfig() && oDev.ReadyConfig() && bShowChannel )
+          if( bShow && oDev.ReadyConfig() && bShowChannel )
           {
             string trId = device.ID()#tmp;
             boolean showExtDesc = false;
@@ -213,7 +230,7 @@
             Write("</td>");
             Write("<td class='GrayBkg'>");
             
-            Write("<table>");
+            Write("<table style='width:100%;'>");
             Write("<tr><td class='CLASS03502'><span id='tmc"#chn.ID()#"' name='timeStamp'>");
             
             integer cId = chn.ID();
@@ -282,7 +299,9 @@
     jQuery("#ftName").focus();
   });
 
-  jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
+ jQuery("#ajaxLoad").hide();
+
+ jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
 
   translatePage("#tblHDeviChannel", function () {
     jQuery("[name='hssType']").each(function(index, elm) {

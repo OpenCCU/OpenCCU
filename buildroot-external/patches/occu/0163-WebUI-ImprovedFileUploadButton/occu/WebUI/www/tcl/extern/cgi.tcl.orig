@@ -275,44 +275,48 @@ proc cgi_eval {cmd} {
 	    cgi_html {
 		cgi_body {
 		    if {[info exists _cgi(client_error)]} {
-			cgi_h3 "Client Error"
+			cgi_h6 "Client Error"
 			cgi_p "$errMsg  Report this to your system administrator or browser vendor."
 		    } else {
 			cgi_put [cgi_anchor_name cgierror]
-			cgi_h3 "An internal error was detected in the service\
-				software.  The diagnostics are being emailed to\
-				the service system administrator ($_cgi(admin_email))."
+			cgi_h6 "An internal error was detected in the service\
+				software:"
 
-			if {$_cgi(debug) == "-on"} {
-			    cgi_puts "Heck, since you're debugging, I'll show you the\
-				    errors right here:"
-			    # suppress formatting
-			    cgi_preformatted {
+			# suppress formatting
+			cgi_preformatted {
+				cgi_puts ""
+				cgi_puts "<u>Backtrace:</u>"
 				cgi_puts [cgi_quote_html $_cgi(errorInfo)]
-			    }
-			} else {
-			    cgi_mail_start $_cgi(admin_email)
-			    cgi_mail_add "Subject: [cgi_name] CGI problem"
-			    cgi_mail_add
-			    cgi_mail_add "CGI environment:"
-			    cgi_mail_add "REQUEST_METHOD: $env(REQUEST_METHOD)"
-			    cgi_mail_add "SCRIPT_NAME: $env(SCRIPT_NAME)"
-			    # this next few things probably don't need
-			    # a catch but I'm not positive
-			    catch {cgi_mail_add "HTTP_USER_AGENT: $env(HTTP_USER_AGENT)"}
-			    catch {cgi_mail_add "HTTP_REFERER: $env(HTTP_REFERER)"}
-			    catch {cgi_mail_add "HTTP_HOST: $env(HTTP_HOST)"}
-			    catch {cgi_mail_add "REMOTE_HOST: $env(REMOTE_HOST)"}
-			    catch {cgi_mail_add "REMOTE_ADDR: $env(REMOTE_ADDR)"}
-			    cgi_mail_add "cgi.tcl version: 1.10.0"
-			    cgi_mail_add "input:"
-			    catch {cgi_mail_add $_cgi(input)}
-			    cgi_mail_add "cookie:"
-			    catch {cgi_mail_add $env(HTTP_COOKIE)}
-			    cgi_mail_add "errorInfo:"
-			    cgi_mail_add "$_cgi(errorInfo)"
-			    cgi_mail_end
+				cgi_puts ""
+				cgi_puts "<u>CGI info:</u>"
+				cgi_puts "_cgi(input): $_cgi(input)"
+				cgi_puts "_cgi(queryencoding): $_cgi(queryencoding)"
+				cgi_puts ""
+				cgi_puts "<u>Environment info:</u>"
+				catch {cgi_parray env}
 			}
+			# output in file/mail
+			cgi_mail_start $_cgi(admin_email)
+			cgi_mail_add "Subject: [cgi_name] CGI problem"
+			cgi_mail_add
+			cgi_mail_add "CGI environment:"
+			cgi_mail_add "REQUEST_METHOD: $env(REQUEST_METHOD)"
+			cgi_mail_add "SCRIPT_NAME: $env(SCRIPT_NAME)"
+			# this next few things probably don't need
+			# a catch but I'm not positive
+			catch {cgi_mail_add "HTTP_USER_AGENT: $env(HTTP_USER_AGENT)"}
+			catch {cgi_mail_add "HTTP_REFERER: $env(HTTP_REFERER)"}
+			catch {cgi_mail_add "HTTP_HOST: $env(HTTP_HOST)"}
+			catch {cgi_mail_add "REMOTE_HOST: $env(REMOTE_HOST)"}
+			catch {cgi_mail_add "REMOTE_ADDR: $env(REMOTE_ADDR)"}
+			cgi_mail_add "cgi.tcl version: 1.10.0"
+			cgi_mail_add "input:"
+			catch {cgi_mail_add $_cgi(input)}
+			cgi_mail_add "cookie:"
+			catch {cgi_mail_add $env(HTTP_COOKIE)}
+			cgi_mail_add "errorInfo:"
+			cgi_mail_add "$_cgi(errorInfo)"
+			cgi_mail_end
 		    }
 		} ;# end cgi_body
 	    } ;# end cgi_html
@@ -1306,7 +1310,7 @@ proc cgi_input {{fakeinput {}} {fakecookie {}}} {
                     } elseif {0==[string compare -nocase $cs "utf-16"]} {
                         set _cgi(queryencoding) "unicode"
                     }
-                    if { [lsearch -exact [encoding names] _cgi(queryencoding)] == -1} {
+                    if { [lsearch -exact [encoding names] $_cgi(queryencoding)] == -1} {
                         set _cgi(queryencoding) [encoding system]
                     }
                 } else {

@@ -793,17 +793,23 @@ function ::CreateBlindTransmitter()
 
   WriteLine("<td colspan='2' id='shutter"#chnId#"' class='CLASS02549' >&nbsp;</td>");
 
-  if (oLvlStatus.Value() != 0) {
-    WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableBlindLevel}<br/>${unknown}</div></td>");
-  } else {
-    WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableBlindLevel}<br/>"#rLvl.ToInteger()#unitLevel#"</div></td>");
-  }
+  WriteLine("<td><table>");
 
-  if (oLvlSlatsStatus.Value() != 0) {
-    WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableJalousieSlatsLevel}<br/>${unknown}</div></td>");
-  } else {
-    WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableJalousieSlatsLevel}<br/>"#iLvlSlats.ToInteger()#unitLevelSlat#"</div></td>");
-  }
+    WriteLine("<tr>");
+      if (oLvlStatus.Value() != 0) {
+        WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableBlindLevel}<br/>${unknown}</div></td>");
+      } else {
+        WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableBlindLevel}<br/>"#rLvl.ToInteger()#unitLevel#"</div></td>");
+      }
+    WriteLine("</tr>");
+    WriteLine("<tr>");
+      if (oLvlSlatsStatus.Value() != 0) {
+        WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableJalousieSlatsLevel}<br/>${unknown}</div></td>");
+      } else {
+        WriteLine("<td><div class='ControlBtnInfo j_translate' style='color:white;width:220px;'>${lblInfoLevelReal} ${stringTableJalousieSlatsLevel}<br/>"#iLvlSlats.ToInteger()#unitLevelSlat#"</div></td>");
+      }
+    WriteLine("</tr>");
+  WriteLine("</table></td>");
 
     WriteLine( "<script type='text/javascript'>" );
 

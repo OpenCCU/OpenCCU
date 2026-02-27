@@ -2,4 +2,4 @@
 
 # this is a simple wrapper script that will restart the
 # NTP daemon
-/etc/init.d/S46chrony restart
+/etc/init.d/S46chronyd restart

@@ -58,10 +58,10 @@
 <div class="CLASS05103">
   <table class="popupTable CLASS05104" border="0" >
     <colgroup>
-      <col width="24%" />
-      <col width="26%" />
-      <col width="24%" />
-      <col width="26%" />
+      <col style="width:24%;" />
+      <col style="width:26%;" />
+      <col style="width:24%;" />
+      <col style="width:26%;" />
     </colgroup>
     
     <tr class="CLASS05105"><td colspan="4" >${timeModuleLblTimeTitle}</td></tr>
@@ -137,7 +137,7 @@
           </tr>
         </table>
       </td> 
-      <td valign="top" colspan="3">
+      <td style="vertical-align:top;" colspan="3">
         <div id="patternStuff"></div>
       </td>
     </tr>

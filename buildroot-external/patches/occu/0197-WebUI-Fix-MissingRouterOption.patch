@@ -1,0 +1,11 @@
+--- occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl.orig
++++ occu/WebUI/www/config/easymodes/etc/hmipChannelConfigDialogs.tcl
+@@ -192,7 +192,7 @@
+   }
+ 
+   # SPHM-590
+-  if {[string is false $deviceIsDrapOrHap]} {
++  if { $deviceIsDrapOrHap == false } {
+     set param ROUTER_MODULE_ENABLED
+     if { [info exists ps($param)] == 1  } {
+        incr prn

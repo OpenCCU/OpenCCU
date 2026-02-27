@@ -51,7 +51,7 @@
      <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jquery.powertip.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jquery.blockUI.js"></script>
-@@ -64,6 +68,10 @@
+@@ -65,6 +69,10 @@
      <!--[if IE 9]><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" /><![endif]-->
      <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/webui/js/extern/excanvas.js"></script><![endif]-->
  

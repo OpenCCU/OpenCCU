@@ -86,8 +86,8 @@ proc put_page {} {
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
       puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='RevertProfileSettings(); WebUI.enter(LinkListPage);'>\${footerBtnCancel}</div></td>\";"
-      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CollectData_SaveProfileSettings(1);'>\${footerBtnTransfer}</div></td>\";"
-      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CollectData_SaveProfileSettings(0);'>\${footerBtnOk}</div></td>\";"
+      puts "  s += \"<td id='footerButtonTake' style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CollectData_SaveProfileSettings(1);'>\${footerBtnTransfer}</div></td>\";"
+      puts "  s += \"<td id='footerButtonOK' style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CollectData_SaveProfileSettings(0);'>\${footerBtnOk}</div></td>\";"
       puts "  s += \"</tr>\";"
       puts "  s += \"</table>\";"
       puts "  setFooter(s);"
@@ -863,6 +863,13 @@ cgi_eval {
     }
     array set sender_ps   [xmlrpc $url getParamset [list string $sender_address]   [list string $receiver_address]]
     array set receiver_ps [xmlrpc $url getParamset [list string $receiver_address] [list string $sender_address]]
+
+    set comment {
+      # This creates the link params of the receiver. Useful for initializing a new easymode
+      foreach val [array names receiver_ps] {
+        exec echo "set PROFILE_1($val) $receiver_ps($val)" >> /tmp/link.log
+      }
+    }
     #---------------------------------------------------------------
 
     #Informationen über den Sender Teil 2/2-------------------------

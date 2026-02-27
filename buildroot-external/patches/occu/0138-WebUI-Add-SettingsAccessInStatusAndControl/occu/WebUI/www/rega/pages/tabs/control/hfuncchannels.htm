@@ -111,13 +111,22 @@
     object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
     integer userID = oUser.ID();
     object user = dom.GetObject(userID);
-
+    integer virtChnCounter = 0;
 
     object func = dom.GetObject(system.GetVar("id"));
     if (func) {
       if (func.Visible()) {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
         string tmp;
-        foreach(tmp, oUser.UserTempViewIDs().EnumEnabledIDs()) {
+        foreach(tmp, sEnumUserIDs) {
           string trId = func.ID()#tmp;
           Write("<tr id='"#trId#"'>");
           object chn = dom.GetObject(tmp);
@@ -166,7 +175,7 @@
             Write("</td>");
             Write("<td class='GrayBkg'>");
             
-            Write("<table>");
+            Write("<table style='width:100%;'>");
             Write("<tr><td class='CLASS03802'><span id='tmc"#chn.ID()#"'><br /><br />");
             
             integer cId = chn.ID();

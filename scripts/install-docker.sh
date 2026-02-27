@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
-# Script to install the RaspberryMatic container and its dependencies
-# https://github.com/jens-maus/RaspberryMatic/wiki/en.Installation-Docker-OCI
+# Script to install the OpenCCU container and its dependencies
+# https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Docker-OCI
 #
-# Copyright (c) 2022-2023 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2022-2024 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 # Usage:
-# wget -qO - https://raspberrymatic.de/install-docker.sh | bash -
+# wget -qO - https://openccu.de/install-docker.sh | bash -
 #
 
 #############################################################
@@ -19,7 +19,7 @@
 : "${CCU_DATA_VOLUME:="ccu_data"}"
 
 # Container repository to use
-: "${CCU_OCI_REPO:="ghcr.io/jens-maus/raspberrymatic"}"
+: "${CCU_OCI_REPO:="ghcr.io/openccu/openccu"}"
 
 # CCU version to use
 : "${CCU_OCI_TAG:="latest"}"
@@ -71,7 +71,7 @@ alias die='EXIT=$? LINE=${LINENO} error_exit'
 trap die ERR
 
 # Set default variables
-VERSION="1.9"
+VERSION="1.16"
 LINE=
 
 error_exit() {
@@ -144,15 +144,15 @@ uninstall() {
   fi
   if pkg_installed pivccu-modules-dkms; then
     msg "Purging pivccu-modules-dkms package install"
-    apt purge pivccu-modules-dkms
+    apt purge -y pivccu-modules-dkms
   fi
   if pkg_installed pivccu-devicetree-armbian; then
     msg "Purging pivccu-devicetree-armbian package install"
-    apt purge pivccu-devicetree-armbian
+    apt purge -y pivccu-devicetree-armbian
   fi
   if pkg_installed pivccu-modules-raspberrypi; then
     msg "Purging pivccu-modules-raspberrypi package install"
-    apt purge pivccu-modules-raspberrypi
+    apt purge -y pivccu-modules-raspberrypi
   fi
   if [[ -e /etc/apt/sources.list.d/pivccu.list ]]; then
     msg "Removing /etc/apt/sources.list.d/pivccu.list"
@@ -171,17 +171,58 @@ uninstall() {
   msg  "- Reboot your host system to cleanup still running processes."
 }
 
+# network calc helper functions
+tonum() {
+  if [[ ${1} =~ ([[:digit:]]+)\.([[:digit:]]+)\.([[:digit:]]+)\.([[:digit:]]+) ]]; then
+    addr=$(( (BASH_REMATCH[1] << 24) + (BASH_REMATCH[2] << 16) + (BASH_REMATCH[3] << 8) + BASH_REMATCH[4] ))
+    echo "${addr}"
+  fi
+}
+
+toaddr() {
+  b1=$(( (${1} & 0xFF000000) >> 24))
+  b2=$(( (${1} & 0xFF0000) >> 16))
+  b3=$(( (${1} & 0xFF00) >> 8))
+  b4=$(( ${1} & 0xFF ))
+  echo "${b1}.${b2}.${b3}.${b4}"
+}
+
+cidr2network() {
+  if [[ ${1} =~ ^([0-9\.]+)/([0-9]+)$ ]]; then
+    ipaddr=${BASH_REMATCH[1]}
+    netlen=${BASH_REMATCH[2]}
+    zeros=$((32-netlen))
+    netnum=0
+    for (( i=0; i < zeros; i++ )); do
+      netnum=$(( (netnum << 1) ^ 1 ))
+    done
+    netnum=$((netnum ^ 0xFFFFFFFF))
+    netmask=$(toaddr ${netnum})
+    ipaddrnum=$(tonum "${ipaddr}")
+    netmasknum=$(tonum "${netmask}")
+    networknum=$(( ipaddrnum & netmasknum ))
+    network=$(toaddr ${networknum})
+    echo "${network}/${netlen}"
+  fi
+}
+
 #############################################################
 #                    PARAMETER QUERY                        #
 #############################################################
 
-msg "RaspberryMatic Docker installation script v${VERSION}"
-msg "Copyright (c) 2022-2023 Jens Maus <mail@jens-maus.de>"
+msg "OpenCCU Docker installation script v${VERSION}"
+msg "Copyright (c) 2022-2024 Jens Maus <mail@jens-maus.de>"
 msg ""
+
+# check if this is a Proxmox system and if so
+# request to use install-proxmox.sh instead
+if [[ -d /etc/pve ]]; then
+  die "You are trying to use 'install-docker.sh' on a Proxmox VE system. Please use 'install-proxmox.sh' instead."
+fi
 
 # check if docker exists
 if ! command -v docker >/dev/null; then
-  die "No docker installation found, check documentation (raspberrymatic.de)"
+  die "No docker installation found, check documentation (openccu.de)"
 fi
 
 # make sure apt/dpkg won't interact with us
@@ -204,7 +245,8 @@ if [[ "${CCU_NETWORK_NAME}" != "none" ]]; then
 
   # try to acquire subnet definition from interface routes first
   if [[ -z "${CCU_NETWORK_SUBNET}" ]]; then
-    CCU_NETWORK_SUBNET=$(ip -o -f inet addr show dev "${CCU_NETWORK_INTERFACE}" | awk '/scope global/ {print $4}')
+    CCU_NETWORK_CIDR=$(ip -o -f inet addr show dev "${CCU_NETWORK_INTERFACE}" | awk '/scope global/ {print $4}')
+    CCU_NETWORK_SUBNET=$(cidr2network "${CCU_NETWORK_CIDR}")
     read -r -e -p 'Container Host Bridge Subnet (e.g. 192.168.178.0/24): ' -i "${CCU_NETWORK_SUBNET}"  CCU_NETWORK_SUBNET </dev/tty
   else
     msg "Used host<>container bridge subnet: ${CCU_NETWORK_SUBNET}"
@@ -222,10 +264,10 @@ if [[ "${CCU_NETWORK_NAME}" != "none" ]]; then
     CCU_CONTAINER_IP=$(echo "${CCU_NETWORK_GATEWAY}" | cut -d"." -f1-3)
     read -r -e -p 'Container IP (e.g. 192.168.178.4): ' -i "${CCU_CONTAINER_IP}." CCU_CONTAINER_IP </dev/tty
     if [[ -z "${CCU_CONTAINER_IP}" ]]; then
-      die "Must specify a free ip to assign to RaspberryMatic container"
+      die "Must specify a free ip to assign to OpenCCU container"
     fi
   else
-    msg "Used RaspberryMatic container ip: ${CCU_CONTAINER_IP}"
+    msg "Used OpenCCU container ip: ${CCU_CONTAINER_IP}"
   fi
 
   if [[ -z "${CCU_CONTAINER_IP_AUX}" ]]; then
@@ -291,19 +333,19 @@ if command -v dpkg >/dev/null; then
   fi
 
   # Install kernel headers
-  if command -v armbian-config >/dev/null; then
+  if command -v armbian-install >/dev/null; then
     msg "Detected Armbian - install kernel sources and device tree"
     check_sudo
     apt install -y "$(dpkg --get-selections | grep 'linux-image-' | grep '\sinstall' | sed -e 's/linux-image-\([a-z0-9-]\+\).*/linux-headers-\1/')"
     if ! pkg_installed pivccu-devicetree-armbian; then
       check_sudo
-      apt install -y pivccu-devicetree-armbian
+      DEBIAN_FRONTEND=noninteractive apt install -y pivccu-devicetree-armbian
     fi
   elif grep -q Raspberry /proc/cpuinfo; then
     if ! pkg_installed pivccu-modules-raspberrypi; then
       msg "Detected RaspberryPi - install kernel sources and raspberry modules"
       check_sudo
-      apt install -y pivccu-modules-raspberrypi
+      DEBIAN_FRONTEND=noninteractive apt install -y pivccu-modules-raspberrypi
       echo
       msg "NOTE: please ensure that your GPIO UART is free if you plan to connect your CCU adapter to it"
       msg "See step 5 and 6 at https://github.com/alexreinert/piVCCU/blob/master/docs/setup/raspberrypi.md"
@@ -323,7 +365,7 @@ if command -v dpkg >/dev/null; then
   if ! pkg_installed pivccu-modules-dkms; then
     msg "Installing and building kernel modules..."
     check_sudo
-    apt install -y pivccu-modules-dkms
+    DEBIAN_FRONTEND=noninteractive apt install -y pivccu-modules-dkms
     service pivccu-dkms start
   fi
 fi
@@ -333,7 +375,7 @@ if [[ ! -c /dev/eq3loop ]]; then
   msg "Loading eq3_char_loop module"
   check_sudo
   if ! modprobe eq3_char_loop; then
-    apt install -y --reinstall pivccu-modules-dkms
+    DEBIAN_FRONTEND=noninteractive apt install -y --reinstall pivccu-modules-dkms
     modprobe eq3_char_loop
   fi
 fi
@@ -436,7 +478,7 @@ if [[ -e /sys/fs/cgroup/cpu/cpu.rt_runtime_us ]]; then
 fi
 
 # Persistent volume
-DOCKER_COMMAND="${DOCKER_COMMAND} --volume ${CCU_DATA_VOLUME}:/usr/local:rw --volume /lib/modules:/lib/modules:ro --volume /run/udev/control:/run/udev/control"
+DOCKER_COMMAND="${DOCKER_COMMAND} --read-only --volume ${CCU_DATA_VOLUME}:/usr/local:rw --volume /lib/modules:/lib/modules:ro --volume /run/udev/control:/run/udev/control"
 
 # Container and host names
 DOCKER_COMMAND="${DOCKER_COMMAND} --hostname ${CCU_CONTAINER_NAME} --name ${CCU_CONTAINER_NAME}"

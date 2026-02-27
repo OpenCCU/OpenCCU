@@ -868,7 +868,7 @@
  }
  
  proc action_put_page {} {
-@@ -538,7 +1163,7 @@
+@@ -544,7 +1169,7 @@
              }else{
                if (setAllHmIPDevices) {
                counterSetPosition = 0;
@@ -879,7 +879,7 @@
                MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionSucceed"));
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -28440,51 +28440,14 @@
+@@ -36553,51 +36553,14 @@
    }
  };
  
@@ -937,7 +937,7 @@
  
      jQuery.each(DeviceList.devices, function (index, device) {
        var iFace = device.interfaceName;
-@@ -28492,7 +28455,7 @@
+@@ -36605,7 +36568,7 @@
          // Check if the device has the channel *_WEEK_PROFILE
          jQuery.each(device.channels, function (index, channel) {
            if (channel.channelType.indexOf("_WEEK_PROFILE") != -1) {
@@ -946,7 +946,7 @@
  
              homematic("Interface.putParamset", {
                'interface': iFace,
-@@ -28509,7 +28472,7 @@
+@@ -36622,7 +36585,7 @@
                conInfo(result);
              });
            } else if (channel.channelType == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
@@ -955,7 +955,7 @@
  
              homematic("Interface.putParamset", {
                'interface': iFace,
-@@ -28527,12 +28490,13 @@
+@@ -36640,12 +36603,13 @@
          });
        }
      });
@@ -970,7 +970,7 @@
        }
      }, 2500);
    }
-@@ -28542,9 +28506,8 @@
+@@ -36655,9 +36619,8 @@
    homematic("system.getPositionData", {}, function(posData) {
      var lon = posData[0].split(":")[1],
        lat = posData[1].split(":")[1],
@@ -981,4 +981,4 @@
 +      utcOffsetDST = posData[3].split(":")[1];
  
      var iFace = oDevice.iface;
-     if (iFace.toLowerCase() == "hmip-rf" && (oDevice.type.toLowerCase() != "hmip-rcv-50")) {
+     if (iFace.toLowerCase() == "hmip-rf" && (oDevice.type.toLowerCase() != "hmip-rcv-50") && (oDevice.type.toLowerCase() != "hmip-dld") && (oDevice.type.toLowerCase() != "hmip-dld-a") && (oDevice.type.toLowerCase() != "hmip-dld-s")) {

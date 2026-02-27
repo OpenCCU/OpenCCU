@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="de">
+  <head>
+    <title>HomeMatic WebUI</title>
+
+    <link rel="stylesheet" type="text/css" href="/webui/style.cgi?_version_=1.509pre1" />
+    <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
+
+    <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
+    <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
+
+    <script type="text/javascript">
+
+      UserButtonClick = function(fullName, name)
+      {
+        $("UserNameShow").value = fullName;
+        $("Password").value = "";
+        $("Password").focus();
+      }
+
+      FormSubmit = function ()
+      {
+        var tmp = $("UserNameShow").value;
+        $("UserName").value = tmp.replace(' ','');
+        document.getElementById( 'gwlogin' ).submit();
+      }
+
+      PasswordKeyUp = function(e)
+      {
+        var keycode;
+        if (window.event) keycode = window.event.keyCode;
+        else if (e) keycode = e.which;
+        else return;
+
+        if (keycode == 13)
+        { // ENTER
+          FormSubmit();
+        }
+      }
+
+      recalcDivs = function()
+      {
+        var wHeight = 0;
+        if (window.innerHeight)
+        {
+          wHeight = window.innerHeight;
+        }
+        else if (document.documentElement.offsetHeight)
+        {
+          wHeight = document.documentElement.offsetHeight;
+        }
+
+        var wHeaderHeight = 72;
+        var wFooterHeight = 32;
+        var wContentHeight = wHeight - wHeaderHeight - wFooterHeight - 27;
+
+        $("navbar").setStyle({height: wHeaderHeight + "px"});
+        $("content").setStyle({height: wContentHeight + "px"});
+        $("footer").setStyle({height: wFooterHeight + "px"});
+      }
+    </script>
+  </head>
+  <body>
+    <table style="width:100%; height:100%;" cellpadding="0" cellspacing="0" id="maintable">
+      <tr>
+        <td id="navbar">
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
+              <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
+              <td style="width: 100%;"></td>
+              <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
+              <td style="padding-right:63px;"><div class="clickable" onclick="loadHelp()"><img id="idHelp" src="/ise/img/help.png" width="48px" height="48px" alt="Hilfe" title="Hilfe"/></div></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div id="content" style="background-image:url(/ise/img/hm-logo.png);background-repeat:no-repeat;background-position:480px center;">
+            <table id="login_content" style="width: 200px;">
+              <tr>
+                <!-- Liste der Benutzer -->
+                <td style="vertical-align: top;" >
+                  <table cellspacing="8">
+                  <%
+                    object oUsers = dom.GetObject(ID_USERS);
+                    if ( oUsers )
+                    {
+                      string uId;
+                      foreach( uId , oUsers.EnumEnabledIDs() )
+                      {
+                        object uObj = dom.GetObject(uId);
+                        if (uObj.Visible() && uObj.UserShowLogin()) {
+                          string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
+                          if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
+                          Write('<tr>');
+                            Write('<td>');
+                              string sStyle = "";
+                              if (sUserFullName.Length() > 15) {
+                                sStyle = "line-height:30px;";
+                              }
+                              Write('<div id="btn-user-'#uId#'" class="Button colorGradient" style="'#sStyle#'" onclick=\'UserButtonClick("'#sUserFullName#'", "'#uObj.Name()#'");\'>');
+                              Write(sUserFullName);
+                              Write('</div>');
+                            Write('</td>');
+                          Write('</tr>');
+                        }
+                      }
+                    }
+                  %>
+                  </table>
+                </td>
+                <!-- Kennwort-Eingabefeld -->
+                <td style="vertical-align: top; padding: 12px;">
+                  <form id="gwlogin" method="post">
+                    <table id="LoginMask">
+                      <tr>
+                        <td>${lblEnterUserName}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <input id="UserNameShow" type="text" name="tbUsernameShow" style="text-align:center;" />
+                          <input id="UserName" type="hidden" name="tbUsername" style="text-align:center;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>${lblEnterPassWord}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <input id="Password" type="password" onkeypress="PasswordKeyUp(event)" name="tbPassword" style="text-align:center;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><br />
+                          <div id="btnLogin" class="Button colorGradient" onclick="FormSubmit()">${btnLogin}</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <%
+                    if( system.IsVar("error") )
+                    {
+                      if( system.GetVar("error") == "1" )
+                      {
+                        Write( '<div class="loginErrorBox">${hintLoginInvalid}</div>' );
+                      }
+                    }
+                  %>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td id="footer"></td>
+      </tr>
+    </table>
+
+
+    <script type="text/javascript">
+      Event.observe(window, "resize", function(event) { recalcDivs(); });
+      recalcDivs();
+
+      gotoLoginPage = function() {
+        location.href = "/login.htm";
+      };
+
+      loadHelp = function()
+      {
+        var opts = {
+        evalScripts: true,
+        postBody: "from=login",
+        sendXML: false
+        };
+        var url = "/config/help.cgi";
+        new Ajax.Updater("content", url, opts);
+      };
+
+      translatePage("#maintable");
+      translateAttribute("#idHelp", "title", "tooltipHelp");
+      translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
+    </script>
+  </body>
+</html>

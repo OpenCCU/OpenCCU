@@ -75,7 +75,7 @@
    };
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -981,7 +981,7 @@
+@@ -711,7 +711,7 @@
      "channelModeHumidityLimiter" :  "Feuchtigkeitsbegrenzer",
      "channelModeTactileSwitch" :  "Taster",
      "channelModeTemperatureLimiter" : "Temperaturbegrenzer",
@@ -86,7 +86,7 @@
      "descriptionTransmitterDataTransmissionCondition2" :  "<b>Modus 3</b><br/><br/>Senden auf Pegel%E4nderung am Daten%FCbertragungspin (DU30) auf jede Logikpegel%E4nderung.",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -409,10 +409,10 @@
+@@ -411,10 +411,10 @@
      "dialogInfo" : "Info",
      "dialogHint" : "Hinweis",
      "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm '%s' wirklich l%F6schen?",
@@ -103,7 +103,7 @@
      "dialogQuestionRestart" : "Best%E4tigen Sie hier, um den Neustart durchzuf%FChren.",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -984,7 +984,7 @@
+@@ -711,7 +711,7 @@
      "channelModeHumidityLimiter" :  "Humidity limiter",
      "channelModeTactileSwitch" :  "Push-button",
      "channelModeTemperatureLimiter" : "Temperature limiter",
@@ -114,7 +114,7 @@
      "descriptionTransmitterDataTransmissionCondition2" :  "<b>Mode 3</b><br/><br/>Transmit on level change of data transmission pin (DU30) on every logic level change.",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -408,10 +408,10 @@
+@@ -410,10 +410,10 @@
      "dialogInfo" : "Info",
      "dialogHint" : "Please note",
      "dialogQuestionRemoveProgram" : "Do you really want to delete the program '%s'?",
@@ -131,7 +131,7 @@
      "dialogQuestionRestart" : "Please click here to perform the restart?",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -42375,7 +42375,7 @@
+@@ -46458,7 +46458,7 @@
  {
    var questionRemoveLink = ((iface == "HmIP-RF") && (sender_type != "HmIP-SMI55") && (sender_type != "HmIP-SMI55-A") && (sender_address.split(":")[0] == receiver_address.split(":")[0])) ? translateKey('dialogQuestionRemoveInternalLink') : translateKey('dialogQuestionRemoveLink');
  

@@ -41,7 +41,7 @@
         <td id="navbar">
           <table cellpadding="0" cellspacing="0">
           <tr>
-            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
+            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
             <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
               <td style="width: 100%;"></td>
               <td style="padding-right:63px;"><div class="clickable" onclick="loadHelp();"><img id="idHelp" src="/ise/img/help.png" width="48px" height="48px" alt="Hilfe" title="Hilfe"/></div></td>
@@ -51,7 +51,7 @@
       </tr>
       <tr>
         <td>
-          <div id="content" style="background-image:url(/ise/img/hm-logo.png);background-repeat:no-repeat;background-position:480px center;">
+          <div id="content" style="background-repeat:no-repeat;background-position:480px center;">
             <table id="logout_content" cellspacing="8">
               <tr>
                 <td style="vertical-align: top;">

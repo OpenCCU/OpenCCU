@@ -15,6 +15,9 @@ gpu_mem=32
 # If the text shown on the screen disappears off the edge, comment this out
 disable_overscan=1
 
+# Added to fix #3046
+initial_turbo=0
+
 # enable i2c and spi
 dtparam=i2c_arm=on
 dtparam=i2c1=on

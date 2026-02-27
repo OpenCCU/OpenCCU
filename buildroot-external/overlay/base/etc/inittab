@@ -14,9 +14,9 @@
 # process   == program to run
 
 # Init the system
-tty2::sysinit:/bin/mount -t proc proc /proc
-tty2::sysinit:/bin/mount -t sysfs sysfs /sys
-tty2::sysinit:/bin/mount -t tmpfs tmpfs /tmp
+tty2::sysinit:/bin/mount /proc
+tty2::sysinit:/bin/mount /sys
+tty2::sysinit:/bin/mount /tmp
 tty2::sysinit:/bin/mkdir -p /dev/pts /dev/shm
 
 # run any rc scripts (start) and move boot.log

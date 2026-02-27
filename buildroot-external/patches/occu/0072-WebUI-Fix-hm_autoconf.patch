@@ -36,7 +36,7 @@
      # Mapping of channel type to default function for the channel
      array set CHANNEL_FUNCTIONS {
          BLIND                   LIGHT
-@@ -118,6 +103,21 @@
+@@ -133,6 +118,21 @@
          rega "dom.GetObject($dev_id).ReadyConfig(true);"
          puts "ReadyConfig($dev_id)"
      }
@@ -58,7 +58,7 @@
      
      proc conf_device_HM-CCU-1 { url dev_id desc_var } {
          rega "dom.GetObject($dev_id).ReadyConfig(true);"
-@@ -136,101 +136,16 @@
+@@ -151,101 +151,16 @@
      
      proc conf_value_WEATHER.RAIN_COUNTER { url ch_id ch_desc_var value_desc_var} {
          create_rain_calculation $ch_id
@@ -162,7 +162,7 @@
      proc create_sysvar_to_value_prg {ch_id value sv_id prg_name} {
          set script "string ch_id=\"$ch_id\";\nstring value_name=\"$value\";\nstring sv_id=$sv_id;\nstring prg_name=\"$prg_name\";\n"
          append script {
-@@ -279,7 +194,7 @@
+@@ -294,7 +209,7 @@
      proc create_rain_calculation {ch_id} {
      
        ##
@@ -171,7 +171,7 @@
        ##
        proc _rega_exec_ { script } {
          set result {}
-@@ -308,7 +223,7 @@
+@@ -323,7 +238,7 @@
        }
      
        ##
@@ -180,7 +180,7 @@
        ##
        proc _create_sv_ {name info channelId} {
          set    script "var name = \"$name\";\n"
-@@ -336,7 +251,7 @@
+@@ -351,7 +266,7 @@
        }
      
        ##
@@ -189,7 +189,7 @@
        ##
        proc _create_reset_program_ { rainTodayId rainYesterdayId } {
    
-@@ -358,7 +273,7 @@
+@@ -373,7 +288,7 @@
  
            var programs = dom.GetObject(ID_PROGRAMS);
            var program  = dom.CreateObject(OT_PROGRAM);
@@ -198,7 +198,7 @@
            program.Internal(true);
            programs.Add(program.ID());
  
-@@ -499,7 +414,9 @@
+@@ -514,7 +429,9 @@
          string ifaces;
          foreach(if_id, dom.GetObject(ID_INTERFACES).EnumUsedIDs()){
              object o=dom.GetObject(if_id);
@@ -209,7 +209,7 @@
          }
          string dev_id;
          string devs;
-@@ -516,35 +433,22 @@
+@@ -531,35 +448,22 @@
                  }
              }
          }
@@ -257,7 +257,7 @@
      }
  
      # We need a catch because OSRAM Lightify causes an error (/tmp/hm_autoconf_xxx.log) because a list must have an even number of elements.
-@@ -577,13 +481,24 @@
+@@ -592,13 +496,24 @@
                array_clear ch_descr
                array set ch_descr [xmlrpc $url getDeviceDescription $ch_address]
                if [info exist DEVICE_FUNCTIONS($dev_descr(TYPE))] {
@@ -285,18 +285,18 @@
 +                      }
                    }
                }
-               set procname "conf_channel_$ch_descr(TYPE)"
+ 	          if { [string equal $ch_descr(PARENT_TYPE) "HmIP-RCV-50"] == 1 } {
 --- occu/WebUI/bin/hm_startup.orig
 +++ occu/WebUI/bin/hm_startup
-@@ -1,27 +1,7 @@
+@@ -1,28 +1,8 @@
  #!/bin/tclsh
  
 -#*******************************************************************************
 -#* hm_startup
--#* Wird beim Starten von ise ReGa ausgeführt. 
+-#* Wird beim Starten von ise ReGa ausgeführt.
 -#*
 -#* Aufgaben:
--#*   - sucht fertig konfigurierte Geräte und setzt deren Kanäle ebenfalls auf 
+-#*   - sucht fertig konfigurierte Geräte und setzt deren Kanäle ebenfalls auf
 -#*     "fertig konfiguriert"
 -#*
 -#* Autor      : Falk Werner
@@ -308,18 +308,38 @@
 -################################################################################
 -
  load tclrega.so
+ load tclrpc.so
  
 -################################################################################
 -# Prozeduren                                                                   #
 -################################################################################
 -
  #*******************************************************************************
- #* Sucht fertig konfigurierte Geräte und setzt deren Kanäle auf "fertig 
+ #* Sucht fertig konfigurierte Geräte und setzt deren Kanäle auf "fertig
  #* konfiguriert".
-@@ -37,8 +17,158 @@
+@@ -58,24 +38,224 @@
    }
  }
  
++proc fixFalmotActive {} {
++  array set _result [checkFalmotActive]
++  set result $_result(STDOUT)
++  set addressList [split $result "\n"]
++
++  set url "xmlrpc://127.0.0.1:32010"
++
++  foreach chnAddress $addressList {
++    if {$chnAddress != ""} {
++    #  exec echo "chn:  - $chnAddress" >> /tmp/1_hm_startup.log
++      catch {xmlrpc $url suppressServiceMessages [list string $chnAddress] [list string ""] [list boolean 1] } e
++    #  exec echo "xmlrpc error code: $e" >> /tmp/2_xmlerror.log
++    }
++  }
++}
+ 
+-################################################################################
+-# Einsprungpunkt                                                               #
+-################################################################################
 +# List of default functions (german "Gewerke") that will be automatically generated
 +set FUNCTIONLIST {
 +  "funcLight"
@@ -333,7 +353,8 @@
 +  "funcCentral"
 +  "funcEnergy"
 +}
-+
+ 
+-checkDevices
 +# List of default rooms that will be automatically generated
 +set ROOMLIST {
 +  "roomLivingRoom"
@@ -348,7 +369,18 @@
 +  "roomGarden"
 +  "roomTerrace"
 +}
-+
+ 
+-array set _result [checkFalmotActive]
+-set result $_result(STDOUT)
+-set addressList [split $result "\n"]
+-
+-set url "xmlrpc://127.0.0.1:32010"
+-
+-foreach chnAddress $addressList {
+-  if {$chnAddress != ""} {
+-  #  exec echo "chn:  - $chnAddress" >> /tmp/1_hm_startup.log
+-    catch {xmlrpc $url suppressServiceMessages [list string $chnAddress] [list string ""] [list boolean 1] } e
+-  #  exec echo "xmlrpc error code: $e" >> /tmp/2_xmlerror.log
 +proc create_objects {collection enum_type names} {
 +  set ids [rega "dom.GetObject($collection).EnumIDs()"]
 +  set i 0
@@ -381,11 +413,11 @@
 +    rega "dom.GetObject($id).Name(\"[lindex $names $i]\")"
 +    rega "dom.GetObject($id).Enabled(true)"
 +    incr i
-+  }
+   }
 +
 +  return [lsort [rega "dom.GetObject($collection).EnumUsedIDs()"]]
-+}
-+
+ }
+ 
 +proc create_default_functions {} {
 +  global FUNCTIONLIST
 +  return [create_objects ID_FUNCTIONS etFunction $FUNCTIONLIST]
@@ -398,36 +430,51 @@
 +
 +proc create_default_sysvars {} {
 +  rega_script {
-+    object sv=dom.CreateObject(OT_ALARMDP, "${sysVarAlarmZone1}");
-+    dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-+    sv.DPInfo("${sysVarAlarmZone1Msg}");
-+    sv.ValueUnit("");
-+    sv.ValueType( ivtBinary );
-+    sv.ValueSubType( istAlarm );
-+    sv.ValueName1("${sysVarAlarmZone1Triggered}");
-+    sv.ValueName0("${sysVarAlarmZone1NotTriggered}");
-+    sv.AlType(atSystem);
-+    sv.AlArm(true);
++    object sv=dom.CreateObject(OT_ALARMDP);
++    if(sv != null) {
++      sv.Name("${sysVarAlarmZone1}");
++      sv.ValueType(ivtBinary);
++      sv.ValueSubType(istAlarm);
++      sv.ValueName0("${sysVarAlarmZone1NotTriggered}");
++      sv.AddMetaData("trIDValue0", "sysVarAlarmZone1NotTriggered");
++      sv.ValueName1("${sysVarAlarmZone1Triggered}");
++      sv.AddMetaData("trIDValue1", "sysVarAlarmZone1Triggered");
++      sv.ValueUnit("");
++      sv.AlType(atSystem);
++      sv.AlArm(true);
++      sv.AlSetBinaryCondition();
++      sv.Internal(false);
++      sv.State(false);
++      sv.DPInfo("${sysVarAlarmZone1Msg}");
++      dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
++      dom.RTUpdate(1);
++    }
 +
 +    sv=dom.GetObject(ID_PRESENT);
-+    dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-+    sv.Name("${sysVarPresence}");
-+    sv.DPInfo("${sysVarPresenceMsg}");
-+    sv.ValueUnit("");
-+    sv.ValueName1("${sysVarPresencePresent}");
-+    sv.ValueName0("${sysVarPresenceNotPresent}");
++    if(sv != null) {
++      sv.Name("${sysVarPresence}");
++      sv.DPInfo("${sysVarPresenceMsg}");
++      sv.ValueUnit("");
++      sv.ValueName0("${sysVarPresenceNotPresent}");
++      sv.ValueName1("${sysVarPresencePresent}");
++      dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
++    }
 +
 +    sv=dom.GetObject(ID_GW_SYSALARM);
-+    dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-+    sv.Name("${sysVarAlarmMessages}");
-+    sv.DPInfo("${sysVarAlarmMessagesCount}");
-+    sv.Internal(0);
++    if(sv != null) {
++      sv.Name("${sysVarAlarmMessages}");
++      sv.DPInfo("${sysVarAlarmMessagesCount}");
++      sv.Internal(true);
++      dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
++    }
 +
 +    sv=dom.GetObject(ID_GW_SYSSERVICE);
-+    dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
-+    sv.Name("${sysVarServiceMessages}");
-+    sv.DPInfo("${sysVarServiceMessagesCount}");
-+    sv.Internal(0);
++    if(sv != null) {
++      sv.Name("${sysVarServiceMessages}");
++      sv.DPInfo("${sysVarServiceMessagesCount}");
++      sv.Internal(true);
++      dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
++    }
 +  }
 +}
 +
@@ -468,10 +515,45 @@
 +  }
 +}
 +
- ################################################################################
- # Einsprungpunkt                                                               #
- ################################################################################
- 
- checkDevices
++proc fix_alarmDPs {} {
++  rega_script {
++    string sDP;
++    foreach(sDP, dom.GetObject(ID_SYSTEM_VARIABLES).EnumIDs()) {
++      object obj = dom.GetObject(sDP.ToInteger());
++      if((obj) && (obj.Type() == OT_ALARMDP)) {
++        object condition = obj.AlCondition();
++        if(condition) {
++          integer count = condition.CndSingleCount();
++          if(count == 0) {
++            ! the binary condition does not yet exist, so create it now
++            obj.AlSetBinaryCondition();
++          }
++        }
++      }
++    }
++  }
++}
++
++proc clear_sysvars {} {
++  rega_script {
++    object sv=dom.GetObject(ID_GW_SYSALARM);
++    if(sv != null) {
++      sv.Variable(0);
++    }
++    sv=dom.GetObject(ID_GW_SYSSERVICE);
++    if(sv != null) {
++      sv.Variable(0);
++    }
++  }
++}
++
++################################################################################
++# Einsprungpunkt                                                               #
++################################################################################
++
++checkDevices
 +create_default_objects
 +convert_byte2int_HSSDPs
++fix_alarmDPs
++clear_sysvars
++fixFalmotActive

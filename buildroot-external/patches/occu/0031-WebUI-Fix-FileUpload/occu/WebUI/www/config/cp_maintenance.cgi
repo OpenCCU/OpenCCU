@@ -54,7 +54,8 @@ proc action_acceptEula {} {
 
     puts "var req = jQuery.ajax({"
       puts " url : \"/EULA.\"+lang,"
-      puts " dataType: \"html\""
+      puts " dataType: \"html\","
+      puts " cache: false"
     puts "});"
 
     puts "req.done(function(data) {"
@@ -241,16 +242,6 @@ proc action_firmware_update_go {} {
     <p class="CLASS20914">
     ${dialogSettingsCMDialogPerformSoftwareUpdateP1}
     </p>
-    <p class="CLASS20914">
-      ${dialogSettingsCMDialogPerformSoftwareUpdateP2}
-      <ol class="CLASS20915">
-        <li>${dialogSettingsCMDialogPerformSoftwareUpdateLi1}</li>
-        <li>
-        ${dialogSettingsCMDialogPerformSoftwareUpdateLi2}
-        </li>
-        <li>${dialogSettingsCMDialogPerformSoftwareUpdateLi3}</li>
-      </ol>
-    </p>
   } "_empty_"  
   puts ""
   cgi_javascript {
@@ -261,13 +252,12 @@ proc action_firmware_update_go {} {
         regaMonitor.stop();
         InterfaceMonitor.stop();
       }
-      //var pb = "action=update_start";
-      //var opts = {
-      //  postBody: pb,
-      //  sendXML: false
-      //};
-      //new Ajax.Request(url, opts);
-      window.location.href=url+"&action=update_start"
+      var pb = "action=update_start";
+      var opts = {
+        postBody: pb,
+        sendXML: false
+      };
+      new Ajax.Request(url, opts);
     }
   }
 }
@@ -285,8 +275,8 @@ proc action_firmware_update_cancel {} {
     }
   } else {
    catch { exec /bin/sh -c "rm -rf `readlink -f /usr/local/.firmwareUpdate` /usr/local/.firmwareUpdate" }
-   catch { exec /bin/sh -c "rm -f /usr/local/tmp/EULA.*"}
-   catch { exec /bin/sh -c "rm -f /usr/local/tmp/update_script"}
+   catch { exec /bin/sh -c "rm -f /tmp/EULA.*"}
+   catch { exec /bin/sh -c "rm -f /usr/local/tmp/firmwareUpdateFile"}
   }
 
   cgi_javascript {
@@ -372,20 +362,21 @@ proc action_put_page {} {
               table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                 puts "\${dialogSettingsCMLblActualSoftwareVersion}"
               }
-              table_data {
-                puts "$cur_version"
+              table_data {align="left"} {
+                puts "$cur_version&nbsp;([get_platform])"
               }
             }
             table_row {
               table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblAvailableSoftwareVersion}"
               }
-              table_data {id="availableSWVersion"} {
+              table_data {align="left"} {id="availableSWVersion"} {
                 # This doesn�t work properly
                 # puts [iframe "$REMOTE_FIRMWARE_SCRIPT?cmd=check_version&version=$cur_version&serial=$serial&lang=de&product=HM-CCU2" marginheight=0 marginwidth=0 frameborder=0 width=100 height=20 {scrolling="no"} ]
                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
               }
             }
+            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "Software-Update durchf�hren"]"
@@ -399,7 +390,7 @@ proc action_put_page {} {
                     table_row {
                       table_data {
                         division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
-                        division {class="CLASS20905"}  "onClick=\"showCCULicense(true);\"" {puts "\${btnDirectFwUpload}"}
+                        division {class="CLASS20905"}  "onClick=\"performDirectDownload();\"" {puts "\${btnDirectFwUpload}"}
                       }
                     }
                   }
@@ -423,7 +414,7 @@ proc action_put_page {} {
                     table_row {
                       table_data {
                         division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                       }
                     }
                   }
@@ -470,30 +461,18 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
               }
             }
+            } else {
+              table_row {
+                table_data {align="left"} {colspan="3"} {
+                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
+                }
+              }
+            }
           }
         }
-        table_data {align="left"} {class="CLASS20921"} {
-          puts "\${dialogSettingsCMHintSoftwareUpdate1}"
-          number_list {class="j_noForcedUpdate"} {
-            li {
-              ${dialogSettingsCMHintSoftwareUpdate2}            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3}
-            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3a}
-            }
-            set bat_level [get_bat_level]
-            if {$bat_level < 50} {
-              set msg " \${dialogSettingsCMHintSoftwareUpdate4a} $bat_level%. "
-              append msg  \${dialogSettingsCMHintSoftwareUpdate4b}
-              li $msg
-            }
-          }
-
-          division {class="j_forcedUpdate" style="padding:10px;"} {
-            puts "<br/>\${dialogSettingsCMHintSoftwareUpdate2}"
-          }
+        table_data {align="center"} {class="CLASS20921"} {
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
@@ -552,82 +531,24 @@ proc action_put_page {} {
         }
       }
 
-      # Version Logikschicht
-      table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
-
-        table_data {class="CLASS20903"} $styleMaxWidth {
-        puts "\${lblTDRegaVersion}"
-        }
-
-        table_data {class="CLASS20904"} {
-
-        table {class="CLASS20909"} {
-          table_row {
-          table_data {
-            puts "\${dialogHelpInfoLblVersion}"
-          }
-          table_data {align="left"} {
-            puts "<select id='selectedReGaVersion'>"
-            puts "<option value='NORMAL'>\${optionReGaNORMAL}</option>"
-            # puts "<option value='LEGACY'>\${optionReGaLEGACY}</option>"
-            puts "<option value='COMMUNITY'>\${optionReGaCOMMUNITY}</option>"
-            puts "</select>"
-          }
-          }
-
-          table_row {
-          table_data {}
-          table_data {align="left"} {
-            division {class="popupControls CLASS20905"} {
-            division {class="CLASS20919"} {style="margin-top:10px; margin-left:0px;"} {onClick="saveRegaVersion(this);"} {
-              puts "\${btnSave}"
+      # Recovery Modus
+      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
+            table_data {class="CLASS20903"} $styleMaxWidth {
+                #puts "Recovery<br>"
+                #puts "Modus"
+                puts "\${dialogSettingsCMTDCCURecoveryMode}"
             }
+            table_data {class="CLASS20904"} {
+                division {class="popupControls CLASS20905"} {
+                    division {class="CLASS20910 colorGradient50px"} {onClick="OnEnterRecoveryMode();"} {
+                        puts "\${dialogSettingsCMBtnCCURestartRecovery}"
+                    }
+                }
             }
-          }
-          }
-        }
-        }
-
-        table_data {align="left"} {class="CLASS20904"} {
-        # division {Class="StdTableBtnHelp"} {puts "<img id='showReGaVersionHelp' src='/ise/img/help.png'>"}
-        division {Class="StdTableBtnHelp"} {puts "\${lblTDReGaVersionHelp}"}
-        }
-      }
-
-      cgi_javascript {
-        puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
-        puts {
-
-         jQuery("#showReGaVersionHelp").click(function() {
-        MessageBox.show(translateKey("tooltipHelp"), translateKey("lblTDReGaVersionHelp"), "", 600, 250);
-         });
-
-        homematic("User.getReGaVersion",{}, function(result) {
-          if (result) {
-          jQuery("#selectedReGaVersion").val(result);
-          } else {
-          jQuery("#selectedReGaVersion").val("NORMAL");
-          }
-        });
-
-        saveRegaVersion = function(elm) {
-          jQuery(elm).css({"border-width" : "2px"});
-          var selectedReGa = jQuery("#selectedReGaVersion").val();
-          homematic("User.setReGaVersion", {"ReGaVersion": selectedReGa}, function() {
-          jQuery(elm).css({"border-width" : "1px"});
-
-          var dlgYesNo = new YesNoDialog(translateKey("dialogPerformRebootTitle"), translateKey("dialogRestart2ChanceReGaVersion"), function(result) {
-            if (result == YesNoDialog.RESULT_YES)
-            {
-            dlgPopup.hide();
-            dlgPopup.setWidth(400);
-            dlgPopup.LoadFromFile(url, "action=reboot_confirm");
+            table_data {align="left"} {class="CLASS20904"} {
+                puts "\${dialogSettingsCMHintRestartRecoveryMode}"
             }
-          });
-          dlgYesNo.btnTextYes(translateKey("dialogBtnPerformRestart"));
-          dlgYesNo.btnTextNo(translateKey("dialogBtnPerformLaterRestart"));
-          });
-        }
         }
       }
 
@@ -806,6 +727,18 @@ proc action_put_page {} {
           });
           homematic("SafeMode.enter");
         }
+        });
+      }
+
+      OnEnterRecoveryMode = function() {
+        new YesNoDialog(translateKey("dialogRecoveryCheck"), translateKey("dialogQuestionRestartRecoveryMode"), function(result) {
+          if (result == YesNoDialog.RESULT_YES)
+          {
+            MessageBox.show(translateKey("dialogRestartRecoveryModeTitle"), translateKey("dialogRestartRecoveryModeContent"), function() {
+              window.location.href = "/";
+            });
+            homematic("RecoveryMode.enter");
+          }
         });
       }
     }
@@ -996,14 +929,7 @@ proc action_askCreateBackup {} {
           const cb = document.getElementById('accept');
           const action = "acceptEula";
           if(cb.checked) {
-            //window.location.href=url+"&action=createBackup";
-            var pb = "action=createBackup";
-            var opts = {
-              postBody: pb,
-              sendXML: false,
-              asynchronous: false
-            };
-            new Ajax.Request(url, opts);
+            window.open(url+"&action=createBackup", "_blank");
           } 
           dlgPopup.hide();
           dlgPopup.setWidth(800);
@@ -1019,8 +945,7 @@ proc action_askCreateBackup {} {
 }
 
 proc action_createBackup {} {
-  http_head
-  catch { exec touch /tmp/createBackup }
+  [create_backup]
 }
 
 proc action_firmware_upload {} {
@@ -1061,35 +986,80 @@ proc action_firmware_upload {} {
   } else {
 
     cd /usr/local/tmp/
-    set TMPDIR "[file tail $filename-dir]"
-    exec mkdir -p $TMPDIR
 
     #
     # check if the uploaded file is a valid firmware update file
     #
 
-    set file_invalid [catch {exec tar zxvf $filename update_script EULA.en EULA.de -C /usr/local/}]
+    catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
+    set file_invalid 1
 
     # check for .tar.gz or .tar
-    if {$file_invalid == 0} {
+    if {$file_invalid != 0} {
       set file_invalid [catch {exec file -b $filename | egrep -q "(gzip compressed|tar archive)"} result]
       if {$file_invalid == 0} {
         # the file seems to be a tar archive (perhaps with gzip compression)
-        set file_invalid [catch {exec /bin/tar -C $TMPDIR --no-same-owner -xmf $filename} result]
-        file delete -force -- $filename
+        set file_invalid [catch {exec /bin/tar -C /tmp --warning=no-timestamp --no-same-owner --wildcards -xmf $filename "EULA.*"} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for .zip
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | grep -q "Zip archive data"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be a zip archive containing data
+        set file_invalid [catch {exec /usr/bin/unzip -q -o -d /tmp $filename EULA.en EULA.de 2>/dev/null} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for .img
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "DOS/MBR boot sector.*"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be a full-fledged SD card image with MBR boot sector, etc. so lets
+        # check if we have exactly 3 partitions
+        set file_invalid [catch {exec /usr/sbin/parted -sm $filename print 2>/dev/null | tail -1 | egrep -q "3:.*:ext4:"} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for ext4 rootfs filesystem
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "ext4 filesystem.*rootfs"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be an ext4 fs of the rootfs lets check if the ext4 is valid
+        set file_invalid [catch {exec /sbin/e2fsck -nf $filename 2>/dev/null} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for vfat bootfs filesystem
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "DOS/MBR boot sector.*bootfs.*FAT"} result]
+      if {$file_invalid == 0} {
+        catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
       }
     }
 
     #
     # test if the above checks were successfull or not
     #
-    if {$file_invalid == 0} {
-      catch { exec ln -sf tmp/$TMPDIR /usr/local/.firmwareUpdate }
+    if { $file_invalid == 0 && [file exists /usr/local/.firmwareUpdate] } {
       #set action "acceptEula"
       set action "askCreateBackup"
     } else {
       file delete -force -- $filename
-      file delete -force -- $filename-dir
+      catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
       set action "firmware_update_invalid"
     }
 
@@ -1288,10 +1258,6 @@ proc action_shutdown_go {} {
 }
 
 proc action_update_start {} {
-  if { [file exists "/tmp/createBackup"] } {
-    catch { [create_backup] }
-  }
-
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1369,9 +1335,7 @@ proc action_apply_logging {} {
     puts "Failure"
     return
   }
-  catch {exec killall syslogd}
-  catch {exec killall klogd}
-  exec /etc/init.d/S07logging start
+  exec /usr/bin/monit restart syslogd
   puts "Success -confirm"
 }
 

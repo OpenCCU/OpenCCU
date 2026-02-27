@@ -11,5 +11,5 @@ exec -- logger -t firewall -p user.info configuration set
 
 } errMsg] } then {
 	
-  exec -- logger -t firewall -p user.info '$errMsg'
+  exec -- logger -t firewall -p user.err '$errMsg'
 }

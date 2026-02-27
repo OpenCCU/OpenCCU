@@ -35,6 +35,9 @@
   arChns = new Array();
   chn = null;
 </script>
+
+<img id="ajaxLoad" style="margin: 30px;" alt="Loading..." src="/ise/img/loading.gif" />
+
 <table id="tblHDeviChannel" class="filterTable CLASS03500 j_translate" cellpadding="0" cellspacing="0" border="1" >
   <colgroup>
      <col style="width:12%;"/>
@@ -45,7 +48,7 @@
   </colgroup>
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
+  <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thChannel}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
   <th><div id="room" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'room',true);">${thRoom}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
@@ -55,7 +58,7 @@
   </tr>
   <%
     Write("<script type='text/javascript'>");
-        Write("translatePage('#tblHDeviChannel');");
+      Write("translatePage('#tblHDeviChannel');");
     Write("</script>");
   %>
   <tr>
@@ -128,7 +131,7 @@
     integer userID = oUser.ID();
     object user = dom.GetObject(userID);
     integer virtChnCounter = 0;
-    
+
     object device = dom.GetObject(system.GetVar("id"));
     if (device) {
       if (device.Visible()) {
@@ -223,7 +226,7 @@
             Write("</td>");
             Write("<td class='GrayBkg'>");
             
-            Write("<table>");
+            Write("<table style='width:100%;'>");
             Write("<tr><td class='CLASS03502'><span id='tmc"#chn.ID()#"' name='timeStamp'>");
             
             integer cId = chn.ID();
@@ -292,7 +295,9 @@
     jQuery("#ftName").focus();
   });
 
-  jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
+ jQuery("#ajaxLoad").hide();
+
+ jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
 
   translatePage("#tblHDeviChannel", function () {
     jQuery("[name='hssType']").each(function(index, elm) {

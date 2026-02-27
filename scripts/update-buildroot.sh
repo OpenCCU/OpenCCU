@@ -2,9 +2,9 @@
 set -e
 
 ID=${1}
-PACKAGE_NAME="buildroot"
+#PACKAGE_NAME="buildroot"
 PROJECT_URL="https://github.com/buildroot/buildroot"
-ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
+ARCHIVE_URL="${PROJECT_URL}/archive/refs/tags/${ID}.tar.gz"
 
 if [[ -z "${ID}" ]]; then
   echo "tag name or commit sha required (see ${URL})"

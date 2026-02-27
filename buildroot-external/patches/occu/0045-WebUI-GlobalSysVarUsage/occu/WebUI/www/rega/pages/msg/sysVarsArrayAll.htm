@@ -17,7 +17,7 @@
           Write("tmp['trid'] = 'svd"#oSysVar.ID()#"';");
           Write("tmp['name'] = '"#oSysVar.Name()#"';");
 
-          Write("tmp['desc'] = '"#oSysVar.DPInfo()#"';");
+          Write("tmp['desc'] = '"#oSysVar.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
 
           ! "Set once when the system is starting for the first time by hm_autoconf - see create_sysvars
           ! The text of the description is then fix either german or english. Therefore we have to translate the value here
@@ -54,7 +54,7 @@
           { 
             Write("tmp['type'] = 'enum';");
             Write("tmp['typenames'] = translateKey('lblValueList');");
-            Write("tmp['values'] = '"#oSysVar.ValueList()#"';");
+            Write("tmp['values'] = '"#oSysVar.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
           }
           if (iVST == istBool)
           { 
@@ -69,6 +69,7 @@
             Write("tmp['values'] = '';");
           }
           Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
+          Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
           Write("arSysVars[arSysVars.length] = tmp;");
       }
     }

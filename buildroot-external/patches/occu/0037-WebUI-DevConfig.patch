@@ -1,6 +1,23 @@
 --- occu/WebUI/www/tools/devconfig.cgi.orig
 +++ occu/WebUI/www/tools/devconfig.cgi
-@@ -198,13 +198,13 @@
+@@ -27,6 +27,8 @@
+ 
+ proc read_interfaces {} {
+     global interfaces interface_descriptions INTERFACES_FILE env
++    array_clear interfaces
++    array_clear interface_descriptions
+     set retval 1
+     if { [ info exist env(BIDCOS_SERVICE) ] } {
+         set interfaces(default) "$env(BIDCOS_SERVICE)"
+@@ -147,6 +149,7 @@
+     upvar $arr_var arr
+     array_clear arr
+     catch {
++        array_clear result
+         array set result [rega_script {
+             string dev_id;
+             string devs;
+@@ -198,13 +201,13 @@
                              puts ""
                              table_row { 
                                  table_data {
@@ -17,7 +34,7 @@
                                  }
                              }
                          }
-@@ -303,17 +303,55 @@
+@@ -303,17 +306,55 @@
                              puts ""
                              table_row { 
                                  table_data colspan=2 {
@@ -78,7 +95,7 @@
                                      }
                                  }
                              }
-@@ -322,7 +360,10 @@
+@@ -322,7 +363,10 @@
                              table_row { 
                                  table_data width=10 { }
                                  table_data {
@@ -90,7 +107,15 @@
                                  }
                                  table_data colspan=3 { }
                              }
-@@ -357,7 +398,28 @@
+@@ -338,6 +382,7 @@
+ proc cmd_show_rssi {} {
+     global env interfaces urlsid
+     
++    array_clear devnames
+     array set devnames ""
+     
+     set dot "digraph G \{\n    splines = true;\n    mindist=\"0.8\";\n"
+@@ -357,7 +402,29 @@
                            xmlrpc $url system.methodHelp rssiInfo
                        } ] } { continue }
                        array_clear rssi_map
@@ -117,10 +142,47 @@
 +                        } else { continue }
 +                      }
 +                      table_data colspan=100 { puts "<hr/><h3><u>$iface:</u></h3>" }
++                      array_clear rssi_map
                        array set rssi_map $rssi_list
                        foreach dev [lsort [array names rssi_map]] {
                            puts ""
-@@ -522,7 +584,7 @@
+@@ -402,6 +469,7 @@
+ 
+ proc cmd_dot_rssi {} {
+     global env interfaces urlsid RSSI_BAD RSSI_MEDIUM RSSI_GOOD
++        array_clear devnames
+         array set devnames ""
+         get_devicenames devnames
+ 
+@@ -419,8 +487,8 @@
+ 					#failure of this call will throw us out of here
+ 					xmlrpc $url system.methodHelp rssiInfo
+ 				} ] } { continue }
+-				array_clear rssi_map
+ 				set rssi_list [xmlrpc $url rssiInfo ]
++				array_clear rssi_map
+ 				array set rssi_map $rssi_list
+ 				
+ 				foreach dev [lsort [array names rssi_map]] {
+@@ -455,6 +523,7 @@
+ 
+ proc cmd_rssi_graph {} {
+     global env interfaces urlsid RSSI_BAD RSSI_MEDIUM RSSI_GOOD GRAPHSERVICE
++        array_clear devnames
+         array set devnames ""
+         get_devicenames devnames
+ 
+@@ -468,8 +537,8 @@
+             #failure of this call will throw us out of here
+             xmlrpc $url system.methodHelp rssiInfo
+           } ] } { continue }
+-          array_clear rssi_map
+           set rssi_list [xmlrpc $url rssiInfo ]
++          array_clear rssi_map
+           array set rssi_map $rssi_list
+ 
+           foreach dev [lsort [array names rssi_map]] {
+@@ -522,7 +591,7 @@
      set green [rssi_color $RSSI_BAD $RSSI_MEDIUM $rssi]
      set color [format "#%02X%02X00" $red $green]
      table_data "bgcolor=\"$color\"" {
@@ -129,7 +191,129 @@
      }
  }
  
-@@ -1045,8 +1107,16 @@
+@@ -542,6 +611,7 @@
+                 if { [ catch {
+                     set links [xmlrpc $url getLinks]
+                     foreach _link $links {
++                        array_clear link
+                         array set link $_link
+                         set sender $link(SENDER)
+                         set receiver $link(RECEIVER)
+@@ -588,6 +658,7 @@
+                 #catch {
+                     set url $interfaces($iface)
+                     set devlist [xmlrpc $url listDevices [list bool 0]]
++                    set mode [expr {$iface == "HmIP-RF" || $iface == "BidCos-RF"}]
+                     foreach dev $devlist {
+                         array_clear dev_descr
+                         array set dev_descr $dev
+@@ -597,18 +668,42 @@
+                                 table_data {
+                                     h3 "$dev_descr(PARENT)"
+                                 }
+-                                array set valueset [xmlrpc $url getParamset [list string $dev_descr(ADDRESS)] [list string VALUES]]
++
++				array_clear valueset
++				if { $mode } {
++				    array set valueset [xmlrpc $url getParamset [list string $dev_descr(ADDRESS)] [list string VALUES] [list int $mode]]
++				} else {
++				    array set valueset [xmlrpc $url getParamset [list string $dev_descr(ADDRESS)] [list string VALUES]]
++				}
++
++				#parray valueset
++
+                                 foreach name [array names MAINTENANCE_VALUES] {
+                                     set type $MAINTENANCE_VALUES($name)
+                                     table_data {
+                                         if { [info exist valueset($name)] } {
++					    set status ""
++					    set val ""
++					    if { [string first "UNDEFINED" $valueset($name)] != -1 } {
++						array_clear value
++						array set value $valueset($name)
++						if { $value(UNDEFINED) } {
++							set status "(?)"
++						}
++						set val $value(VALUE)
++					    } else {
++						set val $valueset($name)
++					    }
+                                             if { "$type" == "flag" } {
+-                                                if { $valueset($name) } {
+-                                                    h3 $name
+-                                                }
++						if { $val } {
++							set val "true"
++						} else {
++							set val "false"
++						}
+                                             } elseif { "$type" == "value" } {
+-                                                puts "$valueset($name)"
++                                                set val "$val"
+                                             }
++					    h4 "$val $status"
+                                         }
+                                     }
+                                 }
+@@ -709,6 +804,7 @@
+     import ps_type
+     import device
+     import redir_url
++    array_clear ps_descr
+     array set ps_descr [xmlrpc $url getParamsetDescription [list string $device] [list string $ps_type]]
+     set struct ""
+     foreach param_id [lsort [array names ps_descr]] {
+@@ -726,6 +822,7 @@
+     xmlrpc $url putParamset [list string $device] [list string $ps_id] [list struct $struct]
+ 
+ 	#Rudiment???
++    array_clear ps
+     array set ps [xmlrpc $url getParamset [list string $device] [list string $ps_id]]
+ 
+     redirect $redir_url
+@@ -800,6 +897,7 @@
+                                     cgi_select _$param_id size=1 "onchange=\"document.getElementById('$ps_id.$param_id').value=this.options\[this.selectedIndex\].value;document.getElementById('$ps_id.$param_id').style.visibility=(this.selectedIndex < [llength $param_descr(SPECIAL)])?'hidden':'visible';\"" {
+                                         set i 0
+                                         foreach _sv $param_descr(SPECIAL) {
++                                            array_clear sv
+                                             array set sv $_sv
+                                             if { $sv(VALUE) == $value } {
+                                                 set selected selected
+@@ -834,6 +932,7 @@
+                                     cgi_select _$param_id size=1 "onchange=\"document.getElementById('$ps_id.$param_id').value=this.options\[this.selectedIndex\].value;document.getElementById('$ps_id.$param_id').style.visibility=(this.selectedIndex < [llength $param_descr(SPECIAL)])?'hidden':'visible';\"" {
+                                         set i 0
+                                         foreach _sv $param_descr(SPECIAL) {
++                                            array_clear sv
+                                             array set sv $_sv
+                                             if { $sv(VALUE) == $value } {
+                                                 set selected selected
+@@ -929,7 +1028,9 @@
+     put_javascript
+     body {
+         catch {
++            array_clear ps_descr
+             array set ps_descr [xmlrpc $url getParamsetDescription [list string $sender] [list string "LINK"]]
++            array_clear ps
+             array set ps [xmlrpc $url getParamset [list string $sender] [list string $receiver]]
+     	    h2 "Link Configuration for sender [url $sender $env(SCRIPT_NAME)?cmd=config&iface=$iface&device=$sender&$urlsid] with receiver [url $receiver $env(SCRIPT_NAME)?cmd=config&iface=$iface&device=$receiver&$urlsid]"
+             show_paramset $sender "LINK" $receiver ps ps_descr $env(SCRIPT_NAME)?cmd=link_paramset&iface=$iface&sender=$sender&receiver=$receiver&show_reverse=$show_reverse&$urlsid $sid
+@@ -986,6 +1087,7 @@
+ proc cmd_add_link_list {} {
+     global iface url env urlsid
+     import device
++    array_clear dev_descr
+     array set dev_descr [xmlrpc $url getDeviceDescription [list string $device]]
+     set parent $dev_descr(PARENT)
+     set peers [xmlrpc $url getLinkPeers [list string $device]]
+@@ -1029,6 +1131,7 @@
+     global iface url env urlsid
+     import device
+     import peer
++    array_clear device_description
+     array set device_description [xmlrpc $url getDeviceDescription [list string $device]]
+     if { $device_description(DIRECTION) == 1 } {
+         set sender $device
+@@ -1045,8 +1148,16 @@
      global url iface env urlsid
      import device
      set reset 0
@@ -147,3 +331,60 @@
      redirect $env(SCRIPT_NAME)?cmd=list_devices&iface=$iface&$urlsid
  }
  
+@@ -1094,10 +1205,12 @@
+     title "$device Configuration"
+     put_javascript
+     body {
++        array_clear dev_descr
+         array set dev_descr [xmlrpc $url getDeviceDescription [list string $device]]
+     	h2 "Channel configuration for $dev_descr(TYPE) $device"
+         set parent $dev_descr(PARENT)
+         if { $parent != "" } {
++            array_clear parent_descr
+             array set parent_descr [xmlrpc $url getDeviceDescription [list string $parent]]
+             puts "Device firmware version $parent_descr(FIRMWARE)\n"
+             if { [info exist parent_descr(AVAILABLE_FIRMWARE)] } {
+@@ -1107,7 +1220,9 @@
+             if { [lsearch $parent_descr(PARAMSETS) "MASTER"] >= 0 } {
+                 h3 "Device Parameters"
+                 puts ""
++                array_clear parent_ps_descr
+                 array set parent_ps_descr [xmlrpc $url getParamsetDescription [list string $parent] [list string "MASTER"]]
++                array_clear parent_ps
+                 array set parent_ps [xmlrpc $url getParamset [list string $parent] [list string "MASTER"]]
+                 show_paramset $parent "MASTER" "MASTER" parent_ps parent_ps_descr $env(SCRIPT_NAME)?cmd=config&iface=$iface&device=$device&$urlsid $sid
+             }
+@@ -1202,6 +1317,7 @@
+             table {
+                 set links [xmlrpc $url getLinks [list string $device]]
+                 foreach _link $links {
++                    array_clear link
+                     array set link $_link
+                     set sender $link(SENDER)
+                     set receiver $link(RECEIVER)
+@@ -1243,10 +1359,10 @@
+     for {set i 0} {$i<2} {incr i} {
+     
+         array_clear ps_descr
+-        array_clear ps
+-        
+         array set ps_descr [xmlrpc $url getParamsetDescription [list string $device] [list string "LINK"]]
++        array_clear ps
+         array set ps [xmlrpc $url getParamset [list string $device] [list string $peer]]
++        array_clear peer_description
+         array set peer_description [xmlrpc $url getDeviceDescription [list string $peer]]
+         puts {<default_values function="">}
+         foreach param_id [lsort [array names ps_descr]] {
+@@ -1298,10 +1414,10 @@
+     for {set i 0} {$i<2} {incr i} {
+ 
+         array_clear ps_descr
+-        array_clear ps
+-        
+         array set ps_descr [xmlrpc $url getParamsetDescription [list string $device] [list string "LINK"]]
++        array_clear ps
+         array set ps [xmlrpc $url getParamset [list string $device] [list string $peer]]
++        array_clear peer_description
+         array set peer_description [xmlrpc $url getDeviceDescription [list string $peer]]
+         foreach param_id [lsort [array names ps_descr]] {
+             array_clear param_descr

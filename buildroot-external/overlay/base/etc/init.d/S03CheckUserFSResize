@@ -1,0 +1,106 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169,SC3010,SC3036,SC3015 source=/dev/null
+#
+# Startup script to check if /usr/local partition (deedbeef-03) might not
+# occupy all space on the disk and if so we resize it accordingly.
+#
+
+check_userfs_resize() {
+
+  # source all data from /var/hm_mode
+  [[ -r /var/hm_mode ]] && . /var/hm_mode
+
+  # remove obsolete /usr/local/.doResizeLocalFS
+  [[ -f "/usr/local/.doResizeLocalFS" ]] && rm -f /usr/local/.doResizeLocalFS
+
+  # skip execution on OCI or LXC-based systems
+  if [[ ! "${HM_HOST}" =~ oci\|lxc ]]; then
+
+    # extract partition number and device name
+    DEVNODE=$(mountpoint -d /usr/local)
+    DEVNAME=$(mountpoint -n /usr/local | cut -d' ' -f1)
+    PARTNUM=$(echo -n "${DEVNAME}" | tail -c 1)
+    DEV="/dev/$(readlink "/sys/dev/block/${DEVNODE}" | awk -F/ '{print $(NF-1)}')"
+
+    # find out maximum size (in sectors)
+    PART_END_SECTOR=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "^ ${PARTNUM} " | awk '{print $3}' | tr -d 's')
+    DISK_SECTORS=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "Disk ${DEV}" | awk '{print $3}' | tr -d 's')
+
+    # allow up to 2048 sectors (~1 MiB for 512B sectors) gap to account for GPT
+    # backup header reserved space (typically 33-34 sectors) plus safety margin
+    RESIZE_THRESHOLD=2048
+
+    # only resize the partition if remaining space exceeds the threshold
+    if [[ -n "${PART_END_SECTOR}" && -n "${DISK_SECTORS}" && $((DISK_SECTORS - PART_END_SECTOR)) -gt ${RESIZE_THRESHOLD} ]]; then
+      echo -n "resizepart, "
+
+      # check if we should do resizefs afterwards before we umount
+      # the userfs
+      if [[ ! -r /usr/local/.doFactoryReset ]]; then
+        RESIZEFS=1
+      else
+        RESIZEFS=0
+      fi
+
+      # umount /usr/local to resize it
+      umount -f /usr/local
+
+      # use resizepart to resize the /usr/local partition to the maximum size of
+      # the disk
+      /usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100%
+
+      # force PARTUUID to 0xDEEDBEEF because parted changes partuuid
+      echo -en '\xEF\xBE\xED\xDE' | dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+
+      # check if we need to resize the filesystem as well or if we skip it
+      # since a factory reset is anyway done in the next step
+      if [[ ${RESIZEFS} -eq 1 ]]; then
+        echo -n "resizefs, "
+
+        # check the filesystem first
+        /sbin/e2fsck -pDf "${DEVNAME}" >/dev/null 2>&1
+
+        # resize userfs
+        /sbin/resize2fs "${DEVNAME}" >/dev/null 2>&1
+      fi
+
+      # mount /usr/local again
+      mount /usr/local
+
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+start() {
+  echo -n "Checking for UserFS Resize: "
+
+  if check_userfs_resize; then
+    echo "OK"
+  else
+    echo "not required"
+  fi
+}
+
+restart() {
+  start
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    # nothing
+  ;;
+  restart|reload)
+    restart
+  ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit 0

@@ -112,7 +112,11 @@ function ::SyntaxCheck()
 
 function ::ClearHistoryData()
 {
-  Write( dom.ClearHistoryData() );
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  {
+    Write( dom.ClearHistoryData() );
+  }  
   return;
 }
 
@@ -168,7 +172,8 @@ function ::CreateDPSelectBox()
 ![id]
 function ::DeleteObject()
 {
-  if( system.IsVar( "id" ) )
+  object oUser = dom.GetObject( system.GetSessionVar( "sessionUserID" ) );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar( "id" )) )
   {
     object o = dom.GetObject( system.GetVar( "id" ) );
     if( o )
@@ -227,7 +232,8 @@ function ::buildJsFilterObj() {
 ! [id], [name]
 function ::saveName()
 {
-  if( system.IsVar("id") && system.IsVar("name") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) && (system.IsVar("id")) && (system.IsVar("name")))
   {
     object o = dom.GetObject( system.GetVar("id") );
     if( o )
@@ -269,18 +275,28 @@ function ::checkName() {
 
 ! [objId], [desc]
 function ::saveDesc() {
-  object obj = dom.GetObject(system.GetVar("objId"));
-  if (obj)
-  {
-    if( obj.IsTypeOf( OT_ENUM ) ) { Write( "ENUM|"#obj.EnumInfo(system.GetVar("desc")) ); }
-    if( obj.IsTypeOf( OT_DP ) ) { Write( "DP|"#obj.DPInfo(system.GetVar("desc")) ); }
-    if( obj.IsTypeOf( OT_PROGRAM ) ) { Write( "PRG|"#obj.PrgInfo(system.GetVar("desc")) ); }
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  {  
+    object obj = dom.GetObject(system.GetVar("objId"));
+    if (obj)
+    {
+      if( obj.IsTypeOf( OT_ENUM ) ) { Write( "ENUM|"#obj.EnumInfo(system.GetVar("desc")) ); }
+      if( obj.IsTypeOf( OT_DP ) ) { Write( "DP|"#obj.DPInfo(system.GetVar("desc")) ); }
+      if( obj.IsTypeOf( OT_PROGRAM ) ) { Write( "PRG|"#obj.PrgInfo(system.GetVar("desc")) ); }
+    }
   }
   return;
 }
 
 function ::UpdateUI()
 {
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+
+  ! See SPHM-829
+  ! if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  if( oUser.UserLevel() != iulNone )
+  {
   Write( '<script type="text/javascript">' );
 
   string sTime = system.Date( "%H:%M" );
@@ -316,7 +332,7 @@ function ::UpdateUI()
           string sTimestamp = oSV.AlOccurrenceTime();
           Call( "/esp/TimeStamp.fn::TimeStampToString2()" );
           string sDateTimeTmp = sTimestamp;
-          !string sMessageTmp = oSV.Name()#" ausgelöst";
+          !string sMessageTmp = oSV.Name()#" ausgelÃ¶st";
           string sMessageTmp = oSV.Name()#" ${lblTriggered}";
           WriteLine( 'if( typeof(alarmLogSystem) == "object" ) alarmLogSystem.add("'#sDateTimeTmp#'","","'#sMessageTmp#'");' );
         }
@@ -425,7 +441,7 @@ function ::UpdateUI()
 
 
   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
-  Write( 'if(showAPITools == "true") showHmAPITools();');
+  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
 
   !###################
   !# Systemvariablen #
@@ -588,6 +604,7 @@ function ::UpdateUI()
   }
   Write( 'SwitchOffFlashLight();' );
   Write( '</script>' );
+  }
   return;
 }
 
@@ -740,6 +757,9 @@ function ::checkFilter() {
   ! [sTrue], [sFalse]
 function ::saveSysVar()
 {
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )
+  {
   integer ist = system.GetVar("iSubType"); 
   object oChn = dom.GetObject( system.GetVar("iChnId") );
 
@@ -772,13 +792,14 @@ function ::saveSysVar()
     {
       ch.DPs().Remove( sv.ID() );
     }
+
     if( (ist == istAlarm) && (sv.ValueSubType() != istAlarm) )
     {
       dom.DeleteObject( sv.ID() );
       sv = dom.CreateObject( OT_ALARMDP, system.GetVar("sName") );
       oSysVars.Add( sv.ID() );
     }
-    if( (ist != istAlarm ) && (sv.ValueSubType() == istAlarm) )
+    elseif( (ist != istAlarm ) && (sv.ValueSubType() == istAlarm) )
     {
       dom.DeleteObject( sv.ID() );
       sv = dom.CreateObject( OT_VARDP, system.GetVar("sName") );
@@ -798,7 +819,7 @@ function ::saveSysVar()
     sv.AlType(atSystem);
     sv.AlArm(true);
   }
-  if (ist == istBool)
+  elseif (ist == istBool)
   {
     sv.ValueType( ivtBinary );
     sv.ValueSubType( istBool );
@@ -806,7 +827,7 @@ function ::saveSysVar()
     sv.ValueName0(system.GetVar("sFalse"));
     sv.State(false);
   }
-  if (ist == istGeneric)
+  elseif (ist == istGeneric)
   {
     sv.ValueType( ivtFloat );
     sv.ValueSubType( istGeneric );
@@ -814,19 +835,20 @@ function ::saveSysVar()
     sv.ValueMax(system.GetVar("iMaxVal"));
     sv.State(system.GetVar("iMinVal"));
   }
-  if (ist == istEnum)
+  elseif (ist == istEnum)
   {
     sv.ValueType( ivtInteger );
     sv.ValueSubType( istEnum );
     sv.ValueList(system.GetVar("sValList"));
     sv.State(0);
   }
-  if (ist == istChar8859)
+  elseif (ist == istChar8859)
   {
     sv.ValueType(ivtString);
     sv.ValueSubType(istChar8859);
     sv.State("???");
   }
+
   if (oChn) 
   {
     oChn.DPs().Add( sv.ID() );
@@ -842,37 +864,49 @@ function ::saveSysVar()
     sv.Channel( ID_ERROR );
   }
   dom.RTUpdate(0);
+  }
   return;
 }
 
 ! [id], [iProto]
 function ::saveDpProto() {
-  object obj = dom.GetObject(system.GetVar("dpId"));
-  if (obj) {
-    boolean b = false;
-    if (system.GetVar("iProto") == 1) {
-      b = true;
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )
+  {
+    object obj = dom.GetObject(system.GetVar("dpId"));
+    if (obj) {
+      boolean b = false;
+      if (system.GetVar("iProto") == 1) {
+        b = true;
+      }
+      obj.DPArchive(b);
     }
-    obj.DPArchive(b);
   }
   return;
 }
 
 ! [id], [iVisible]
 function ::saveDpVisibility() {
-  object obj = dom.GetObject(system.GetVar("dpId"));
-  if (obj) {
-    boolean b = false;
-    if (system.GetVar("iVisible") == 1) {
-      b = true;
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )
+  {
+    object obj = dom.GetObject(system.GetVar("dpId"));
+    if (obj) {
+      boolean b = false;
+      if (system.GetVar("iVisible") == 1) {
+        b = true;
+      }
+      obj.Visible(b);
     }
-    obj.Visible(b);
   }
   return;
 }
 
 function ::saveTimeModule()
 {
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )
+  {
   Write( '<script type="text/javascript">' );
   string sCI = "saveTimeModule: ";
   object tmObj;
@@ -943,6 +977,7 @@ function ::saveTimeModule()
   sCI = sCI#".";
   Write( 'conInfo("'#sCI#'");' );
   Write( '</script>' );
+  }
   return;
 }
 
@@ -954,20 +989,20 @@ function ::TmToString() {
     if (tm.TimerType() == ttCalOnce)    {sTm = sTm # "${ruleConditionLblTimeOnce} ";}
     !if (tm.TimerType() == ttPeriodic)   {sTm = sTm # "Periodisch ";}
     if (tm.TimerType() == ttPeriodic)   {sTm = sTm # "${ruleConditionLblTimePeriodically} ";}
-    !if (tm.TimerType() == ttCalDaily)   {sTm = sTm # "Täglich ";}
+    !if (tm.TimerType() == ttCalDaily)   {sTm = sTm # "TÃ¤glich ";}
     if (tm.TimerType() == ttCalDaily)   {sTm = sTm # "${ruleConditionLblTimeDaily} ";}
-    !if (tm.TimerType() == ttCalWeekly)  {sTm = sTm # "Wöchentlich ";}
+    !if (tm.TimerType() == ttCalWeekly)  {sTm = sTm # "WÃ¶chentlich ";}
     if (tm.TimerType() == ttCalWeekly)  {sTm = sTm # "${ruleConditionLblTimeWeekly} ";}
     !if (tm.TimerType() == ttCalMonthly) {sTm = sTm # "Monatlich ";}
     if (tm.TimerType() == ttCalMonthly) {sTm = sTm # "${ruleConditionLblTimeMonthly} ";}
-    !if (tm.TimerType() == ttCalYearly)  {sTm = sTm # "Jährlich ";}
+    !if (tm.TimerType() == ttCalYearly)  {sTm = sTm # "JÃ¤hrlich ";}
     if (tm.TimerType() == ttCalYearly)  {sTm = sTm # "${ruleConditionLblTimeYearly} ";}
 
     if (tm.SunOffsetType() == sotNone) 
     {
       if ((tm.TimeSeconds() == 0) && (tm.CalDuration() == 0)) 
       {
-        !sTm = sTm # "ganztägig ";
+        !sTm = sTm # "ganztÃ¤gig ";
         sTm = sTm # "${ruleConditionLblTimeAllDay} ";
       }
       else 
@@ -989,7 +1024,7 @@ function ::TmToString() {
     }
     if (tm.SunOffsetType() == sotAfterSunrise)
     {
-      !sTm = sTm # "tagsüber ";
+      !sTm = sTm # "tagsÃ¼ber ";
       sTm = sTm # "${ruleConditionLblTimeDuringDay} ";
     }
     if (tm.SunOffsetType() == sotAfterSunset)
@@ -998,8 +1033,9 @@ function ::TmToString() {
       sTm = sTm # "${ruleConditionLblTimeDuringNight} ";
     }
     if (tm.CalDuration() != 0) {
-      !sTm = sTm # "bis ";
-      !sTm = sTm # " Uhr";
+      sTm = sTm # "${lblTo} ";
+      sTm = sTm # (tm.TimeSeconds() + tm.CalDuration()).ToTime().Format("%H:%M");
+      sTm = sTm # " ${ruleConditionLblTimeClock} ";
     }
     
     integer iCalRepCount = tm.CalRepetitionCount();
@@ -1026,37 +1062,61 @@ function ::TmToString() {
 }
 
 function ::saveUserPwd() {
-  integer uid = system.GetVar("userId");
-  string pwd = system.GetVar("pw");
-  object user = dom.GetObject(uid);
-  if (user) {
-    user.UserBlankPwd(pwd);
-    if (pwd != "") {
-      Write("Password for user "#user.Name()#" set!");
-    } else {
-      Write("Password for user "#user.Name()#" cleared!");
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject( uid );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  {
+    integer targetUID = system.GetVar("userId");
+    if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )
+    {
+      string pwd = system.GetVar("pw");
+      object user = dom.GetObject(targetUID);
+      if (user) {
+        user.UserBlankPwd(pwd);
+        if (pwd != "") {
+          Write("Password for user "#user.Name()#" set!");
+        } else {
+          Write("Password for user "#user.Name()#" cleared!");
+        }
+      } else {
+        Write("User unknown");
+      }
     }
-  } else {
-    Write("User unknown");
   }
 }
 
 function ::saveUser() {
-  integer uid = system.GetVar("iUserid");
-  if (uid == 0) {
-    object users = dom.GetObject(ID_USERS);
-    object user = users.UsersAdd();
-    user.UserBlankPwd(system.GetVar("pw"));
-    string tmp = "";
-    foreach (tmp, system.GetVar("sSysVars")) {
-      user.UserSharedObjects().Add(tmp);
-    }
-  }
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject( uid );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  {
+    integer targetUID = system.GetVar("iUserid");
+    if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )
+    {
+      if (targetUID == 0) {
+        object users = dom.GetObject(ID_USERS);
+        object user = users.UsersAdd();
+        user.UserBlankPwd(system.GetVar("pw"));
+        string tmp = "";
+        foreach (tmp, system.GetVar("sSysVars")) {
+          user.UserSharedObjects().Add(tmp);
+        }
+      }
   else {
-    object user = dom.GetObject(uid);
+    object user = dom.GetObject(targetUID);
     if (system.GetVar("iPwChanged") == 1) {
       user.UserBlankPwd(system.GetVar("pw"));
-    }    
+
+      ! Deactivate the auto login for the admin when setting the admin password for the first time
+      !object users = dom.GetObject(ID_USERS);
+      !if ((system.GetVar("firstName") == "Admin") && (user.ID() == users.UsersDefaultLogin(dwcPC)) && (user.MetaData("pwdSet") != "true"))  {
+      !  user.RemoveMetaData("pwdSet");
+      !  user.AddMetaData("pwdSet", "true");
+      !  string alPC = "0";
+      !  string alPDA = "0";
+      !  Call("/esp/system.fn::setAutoLogin()");
+      !}
+    }
   }
   user.Name(system.GetVar("userName"));
   user.UserFirstName(system.GetVar("firstName"));
@@ -1096,27 +1156,33 @@ function ::saveUser() {
   }
   Write( "]" );
 }
+  }
+}
 
 function ::deleteUser()
 {
-  object oUser = dom.GetObject( system.GetVar("userid") );
-  if( oUser )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )
   {
-    if( !oUser.Unerasable() )
+    oUser = dom.GetObject( system.GetVar("userid") );
+    if( oUser )
     {
-      object oFavorites = dom.GetObject( ID_FAVORITES );
-      if( oFavorites )
-      { 
-        oFavorites.Remove( oUser.UserFavorite() );
-      }
-      dom.DeleteObject( oUser.UserFavorite() );
-    
-      object oUsers = dom.GetObject( ID_USERS );
-      if( oUsers )
+      if( !oUser.Unerasable() )
       {
-        oUsers.Remove( oUser.ID() );
+        object oFavorites = dom.GetObject( ID_FAVORITES );
+        if( oFavorites )
+        { 
+          oFavorites.Remove( oUser.UserFavorite() );
+        }
+        dom.DeleteObject( oUser.UserFavorite() );
+      
+        object oUsers = dom.GetObject( ID_USERS );
+        if( oUsers )
+        {
+          oUsers.Remove( oUser.ID() );
+        }
+        dom.DeleteObject( oUser.ID() );
       }
-      dom.DeleteObject( oUser.ID() );
     }
   }
 }
@@ -1189,8 +1255,8 @@ function ::writeProgCtrl()
   {
     Write("<table class='ctrlTbl CLASS02101' border='0'>");
   }
-  Write("<colgroup><col width='20%' /><col width='20%' />");
-  Write("<col width='20%' /><col width='20%' /><col width='20%' /></colgroup>");
+  Write("<colgroup><col style='width:20%;' /><col style='width:20%;' />");
+  Write("<col style='width:20%;' /><col style='width:20%;' /><col style='width:20%;' /></colgroup>");
   Write("<tr align='center'>");
   Write("<td>");
   string sClass = "ControlBtnOff";
@@ -1199,7 +1265,7 @@ function ::writeProgCtrl()
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
-          Write("<img src='/ise/img/cogs3.png' width='80px' height='75px' />");
+          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' />");
         Write("</div>");
       Write("</td>");
     Write("</tr>");
@@ -1233,18 +1299,28 @@ function ::writeProgCtrl()
 
 ! [newSvId], [opt: userId]
 function ::AddSysVarAndBuildTable() {
-  if (system.GetVar("userid") != 0) {
-    object user = dom.GetObject(system.GetVar("userId"));
-    user.UserSharedObjects().Add(system.GetVar("newSvId"));
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject( uid );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  {
+    integer targetUID = system.GetVar("userId");
+    if( targetUID != 0 )
+    {
+      if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )
+      {
+        object user = dom.GetObject(targetUID);
+        user.UserSharedObjects().Add(system.GetVar("newSvId"));
+      }
+    }
+    Call("system.fn::BuildUserSvTable()");
   }
-  Call("system.fn::BuildUserSvTable()");
   return;
 }
 
 ! [userId], [opt: sTmpVars]
 function ::BuildUserSvTable() {
   WriteLine('<table cellpadding="3" cellspacing="1" class="CLASS02105" width="100%">');
-  WriteLine('<colgroup> <col width="15%" /> <col width="20%" /> <col width="15%" /> <col width="20%" /> <col width="15%" /> <col width="15%" />');
+  WriteLine('<colgroup> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:15%;" />');
   WriteLine('</colgroup> <tbody> <tr> <th class="CLASS02106">${thName}</th>');
   WriteLine('<th class="CLASS02107">${thDescription}</th>');
   WriteLine('<th class="CLASS02107">${thTypeOfVariable}</th>');
@@ -1272,7 +1348,7 @@ function ::BuildUserSvTable() {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
       WriteLine("<tr id='"#trid#"'>");
         WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name()#"</td>");
-        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo()#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
         
         WriteLine("<td class='GrayBkg'>");
         string s = "Unbekannt: " # sysvar.ValueSubType();
@@ -1286,7 +1362,7 @@ function ::BuildUserSvTable() {
         Write("</td>");
         
         WriteLine("<td class='GrayBkg CLASS02110'>");
-        !if (sysvar.ValueSubType() == istPresent) {} !#### Auskommentierung z.Z. nicht erwünscht. Später KW.
+        !if (sysvar.ValueSubType() == istPresent) {} !#### Auskommentierung z.Z. nicht erwÃ¼nscht. SpÃ¤ter KW.
         
         if (sysvar.ValueSubType() == istAlarm) {
           WriteLine("${lblTrue} = " # sysvar.ValueName1()#"<br/>");
@@ -1325,20 +1401,33 @@ function ::BuildUserSvTable() {
 
 ! [userId], [svId]
 function ::UserDeleteSysVarBuildTable() {
-  object user = dom.GetObject(system.GetVar("userId"));
-  if (user) {
-    user.UserSharedObjects().Remove(system.GetVar("svId"));
-    Call("system.fn::BuildUserSvTable()");
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject( uid );
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  {
+    integer targetUID = system.GetVar("userId");
+    if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )
+    {
+      object user = dom.GetObject(targetUID);
+      if (user) 
+      {
+        user.UserSharedObjects().Remove(system.GetVar("svId"));
+        Call("system.fn::BuildUserSvTable()");
+      }
+    }
   }
   return;
 }
 
 ! [alPC], [alPDA]
 function ::setAutoLogin() {
-  object users = dom.GetObject(ID_USERS);
-  if (users) {
-    users.UsersDefaultLogin(dwcPC, system.GetVar("alPC"));
-    users.UsersDefaultLogin(dwcPDA, system.GetVar("alPDA"));
+ object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+  if (oUser.UserLevel() == iulAdmin) {
+    object users = dom.GetObject(ID_USERS);
+    if (users) {
+      users.UsersDefaultLogin(dwcPC, system.GetVar("alPC"));
+      users.UsersDefaultLogin(dwcPDA, system.GetVar("alPDA"));
+    }
   }
   return;
 }
@@ -1437,7 +1526,8 @@ function ::writeWarnStateJS()
       Write( 'hide("work'#system.GetVar("cId")#'");' );
     }
     
-    if( oChnTmp.ExistServiceMsg() )
+  !  if( oChnTmp.ExistServiceMsg() )
+    if( oChnTmp.ExistServiceMsg() && ((oChnTmp.HssType() != "CLIMATECONTROL_FLOOR_TRANSCEIVER") || ((oChnTmp.HssType() == "CLIMATECONTROL_FLOOR_TRANSCEIVER") && (oChnTmp.MetaData("chnActive") == true))) )
     {
       Write( 'show("warn'#system.GetVar("cId")#'");' );
     }

@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC2034,SC3010 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC2034,SC3010,SC3015 source=/dev/null
 #
 # startup script to identify the host hardware
 #
@@ -59,18 +59,15 @@ identify_host() {
     rpi*)
       # identify the RaspberryPi model based on HWMODEL (device tree)
       case "${HWMODEL}" in
-        *'Pi 4 Model B'*)        HM_HOST="rpi4" ;; # Raspberry Pi 4 Model B
-        *'Pi Compute Module 4'*) HM_HOST="rpi4" ;; # Raspberry Pi Compute Module 4
-        *'Pi 400')               HM_HOST="rpi4" ;; # Raspberry Pi 400
-        *'Pi 3 Model B'*)        HM_HOST="rpi3" ;; # Raspberry Pi 3 Model B(+)
-        *'Pi 3 Model A'*)        HM_HOST="rpi3" ;; # Raspberry Pi 3 Model A(+)
-        *'Pi Zero 2 W')          HM_HOST="rpi3" ;; # Raspberry Pi Zero 2 W
-        *'Pi Compute Module 3'*) HM_HOST="rpi3" ;; # Raspberry Pi Compute Module 3
-        *'Pi 2 Model B'*)        HM_HOST="rpi2" ;; # Raspberry Pi 2 Model B
-        *'Pi Compute Module 2'*) HM_HOST="rpi2" ;; # Raspberry Pi Compute Module 2
-        *'Pi Compute Module')    HM_HOST="rpi1" ;; # Raspberry Pi Compute Module 1
-        *'Pi Model B'*)          HM_HOST="rpi1" ;; # Raspberry Pi Model B/B+
-        *'Pi Zero'|*'Pi Zero W') HM_HOST="rpi0" ;; # Raspberry Pi Zero / Zero W
+        *'Pi 5 Model B'*)         HM_HOST="rpi5" ;; # Raspberry Pi 5 Model B
+        *'Pi Compute Module 5'*)  HM_HOST="rpi5" ;; # Raspberry Pi Compute Module 5
+        *'Pi 4 Model B'*)         HM_HOST="rpi4" ;; # Raspberry Pi 4 Model B
+        *'Pi Compute Module 4'*)  HM_HOST="rpi4" ;; # Raspberry Pi Compute Module 4
+        *'Pi 400'*)               HM_HOST="rpi4" ;; # Raspberry Pi 400
+        *'Pi 3 Model B'*)         HM_HOST="rpi3" ;; # Raspberry Pi 3 Model B(+)
+        *'Pi 3 Model A'*)         HM_HOST="rpi3" ;; # Raspberry Pi 3 Model A(+)
+        *'Pi Zero 2 W'*)          HM_HOST="rpi3" ;; # Raspberry Pi Zero 2 W
+        *'Pi Compute Module 3'*)  HM_HOST="rpi3" ;; # Raspberry Pi Compute Module 3
 
         # No know RaspberryPi identified, fallback to rpi3
         *)
@@ -105,16 +102,6 @@ identify_host() {
       # increase vm.min_free_kbytes to 16384 to increase stability
       # in memory critical situations
       sysctl -q vm.min_free_kbytes=16384
-    ;;
-
-    # ASUS Tinkerboard/TinkerboardS platform
-    tinkerboard)
-      HM_HOST="tinkerboard"
-
-      # setup Tinkerboard specific settings
-      HM_LED_GREEN="/sys/class/leds/led-0"
-      HM_LED_RED="/sys/class/leds/led-2"
-      HM_LED_YELLOW="/sys/class/leds/led-1"
     ;;
 
     # ODROID platform
@@ -170,9 +157,19 @@ identify_host() {
       fi
     ;;
 
-    # intelnuc platform
-    intelnuc)
-      HM_HOST="nuc"
+    # generic-x86_64
+    generic-x86_64)
+      HM_HOST="generic-x86_64"
+    ;;
+
+    # generic-aarch64
+    generic-aarch64)
+      HM_HOST="generic-aarch64"
+    ;;
+
+    # lxc platform
+    lxc)
+      HM_HOST="lxc"
     ;;
 
     # default fallback
@@ -195,6 +192,30 @@ identify_host() {
   fi
 }
 
+init_host() {
+  # setup /dev_host for OCI/Docker and LXC environments
+  if [[ "${HM_HOST}" =~ oci\|lxc ]]; then
+    # when running in HA we just remount /dev to rw
+    if [[ -n "${HM_RUNNING_IN_HA}" ]]; then
+      # remount /dev as rw to allow multimacd to create
+      # mmd_bidcos/mmd_hmip later on
+      mount -o rw,remount /dev
+    else
+      # To avoid sharing the whole host /dev with the container we
+      # mount devtmps in /dev_host and symlink the required devices
+      # but not when running in HA
+      mount -o noatime -t devtmpfs devtmpfs /dev_host
+      if [[ -d "/dev_host" ]]; then
+        for device in raw-uart raw-uart1 eq3loop mmd_bidcos mmd_hmip usb rtc rtc0 rtc1; do
+          if [[ ! -e "/dev/${device}" ]]; then
+            ln -s "/dev_host/${device}" "/dev/${device}"
+          fi
+        done
+      fi
+    fi
+  fi
+}
+
 start() {
   echo -n "Identifying host system: "
 
@@ -207,6 +228,9 @@ start() {
 
   # run identify routine
   identify_host
+
+  # run init host routine
+  init_host
 
   # save all HM_ env variables
   set | grep '^HM_' >/var/hm_mode

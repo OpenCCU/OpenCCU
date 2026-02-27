@@ -1,53 +1,164 @@
---- occu/WebUI/www/config/easymodes/MASTER_LANG/HmIP-ParamHelp.js.orig
-+++ occu/WebUI/www/config/easymodes/MASTER_LANG/HmIP-ParamHelp.js
-@@ -263,7 +263,7 @@
-       "<br/><br/>Die Kalibrierung ben%F6tig mindestens drei Kalibrierintervalle, um den Endwert sicher zu bestimmen." +
-       "<br/><br/>F%FCr R%E4ume mit Dauerbelegung 24/7 muss diese Funktion deaktiviert werden. Eine Kalibrierung sollte in dem Fall alle 1-2 Jahre manuell durchgef%FChrt werden.",
+--- occu/WebUI/www/rega/esp/controls/weather_sensor.fn.orig
++++ occu/WebUI/www/rega/esp/controls/weather_sensor.fn
+@@ -98,7 +98,7 @@
+                    if (bErrorWindNorth) {
+                     WriteLine("<br/><span "#errorWindNorth#">${stringTableWeatherWindDir}: </span><img src='/ise/img/help.png' alt='help' style='cursor: pointer; width:18px; height:18px; vertical-align:middle;' onclick=alert(translateKey('stringTableErrorWindNorthTrue'));> ");
+                    } else {
+-                    WriteLine("<br/><span "#errorWindNorth#">${stringTableWeatherWindDir}: </span><span class='CLASS02535A' style='color:white'>"#sValueh#"  "#oActualWindDirection.Value().ToString(0)#oActualWindDirection.ValueUnit()#"</span>");
++                    WriteLine("<br/><span "#errorWindNorth#">${stringTableWeatherWindDir}: </span><span class='CLASS02535A j_translate' style='color:white'>${"#sValueh#"}  "#oActualWindDirection.Value().ToString(0)#oActualWindDirection.ValueUnit()#"</span>");
+                    }
+                 }
  
--    "MOUNTING_ORIENTATION" : "Dieser Parameter erm%FCglicht es, den Displayinhalt um 180 Grad zu drehen.",
-+    "MOUNTING_ORIENTATION" : "Dieser Parameter erm%F6glicht es, den Displayinhalt um 180 Grad zu drehen.",
-     "MOUNTING_ORIENTATION_A" : "Dieser Parameter erm%F6glicht es, die Tastereinheit des Aktors im gew%FCnschten Winkel einzusetzen. ",
+--- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
++++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
+@@ -1688,16 +1688,20 @@
+                     tbWrite = false;
+                   }
  
-     "POWERUP_ONTIME_UNIT" :
---- occu/WebUI/www/config/ic_deviceFirmwareOverview.cgi.orig
-+++ occu/WebUI/www/config/ic_deviceFirmwareOverview.cgi
-@@ -67,8 +67,8 @@
-   append html "<div class=\"FilterBodyWrapper\" id=\"filter_$param\" style=\"display:none;\">"
-     append html "<div class=\"FilterBody\">"
-       append html "<input class=\"FilterText\" id=\"searchText_$param\"  name=\"DeviceListPage.NameFilterText\" value=\"\" type=\"text\" onkeypress=\"checkEnterEsc(this.id, event.keyCode);\">"
--      append html "<div class=\"FilterButton\" name=\"filterSet\" onclick=\"setFilter('filter_$param');\">Setzen</div>"
--      append html "<div class=\"FilterButton\" name=\"filterClose\" onclick=\"closeFilter('filter_$param');\">Schliessen</div>"
-+      append html "<div class=\"FilterButton\" name=\"filterSet\" onclick=\"setFilter('filter_$param');\">\${filterSet}</div>"
-+      append html "<div class=\"FilterButton\" name=\"filterClose\" onclick=\"closeFilter('filter_$param');\">\${filterClose}</div>"
-     append html "</div>"
-   append html "</div>"
-   return $html
---- occu/WebUI/www/config/stringtable_de.txt.orig
-+++ occu/WebUI/www/config/stringtable_de.txt
-@@ -1396,7 +1396,9 @@
- PRESS_LONG	${stringTableKeyPressLong}
- PRESS_LONG=TRUE	${stringTableKeyPressLongTrue}
- PRESS_LONG_RELEASE	${stringTableKeyPressLongRelease}
-+PRESS_LONG_RELEASE=TRUE	${stringTableKeyPressLongRelease}
- PRESS_LONG_START	${stringTableKeyPressLongStart}
-+PRESS_LONG_START=TRUE	${stringTableKeyPressLongStart}
- PRESS_SHORT	${stringTableKeyPressShort}
- PRESS_SHORT=TRUE	${stringTableKeyPressShortTrue}
- PROCESS=NOT_STABLE	${stringTableProcessNotStableGeneric}
+-                  WriteLine( '<span class="CLASS02535" style="color:white">' );
++                  WriteLine( '<span class="CLASS02535 j_translate" style="color:white">' );
+ 
+                   if( !tbWrite )
+                   {
+-                    string sValueh = "";
+                     if (oDP.HssType() == "WIND_DIRECTION")
+                     {
++                      string sValueh = "";
+                       Call("/esp/datapointconfigurator.fn::ConvWindDir()");
++                      WriteLine("${"#sValueh#"} "#sValue#sSpace#sValueUnit );
++                    }
++                    else
++                    {
++                      WriteLine(sValue#sSpace#sValueUnit );
+                     }
+-                    WriteLine(sValueh#" "#sValue#sSpace#sValueUnit );
+                   }
+                   else
+                   {
+@@ -1776,47 +1780,41 @@
+ 
+  integer iValue = sValue.ToInteger() ; 
+  
+- sValueh = "no value";
+- 
+  if ( (iValue >= 346) || (iValue <= 15) ) 
+  { 
+-  sValueh = "N";
+-  return;
++  sValueh = "windDirectionAbbrevNorth";
+  }
+- if ( (iValue >= 16) && (iValue <= 75) )
++ elseif ( (iValue >= 16) && (iValue <= 75) )
+  {
+-  sValueh = "NO";
+-  return;
++  sValueh = "windDirectionAbbrevNorthEast";
+  }
+- if ( (iValue >= 76) && (iValue <= 105) )
++ elseif ( (iValue >= 76) && (iValue <= 105) )
+  {
+-  sValueh = "O";
+-  return;
++  sValueh = "windDirectionAbbrevEast";
+  }
+- if ( (iValue >= 106) && (iValue <= 165) )
++ elseif ( (iValue >= 106) && (iValue <= 165) )
+  {
+-  sValueh = "SO";
+-  return;
++  sValueh = "windDirectionAbbrevSouthEast";
+  }
+- if ( (iValue >= 166) && (iValue <= 195) )
++ elseif ( (iValue >= 166) && (iValue <= 195) )
+  {
+-  sValueh = "S";
+-  return;
++  sValueh = "windDirectionAbbrevSouth";
+  }
+- if ( (iValue >= 196) && (iValue <= 255) )
++ elseif ( (iValue >= 196) && (iValue <= 255) )
+  {
+-  sValueh = "SW";
+-  return;
++  sValueh = "windDirectionAbbrevSouthWest";
+  }
+- if ( (iValue >= 256) && (iValue <= 285) )
++ elseif ( (iValue >= 256) && (iValue <= 285) )
+  {
+-  sValueh = "W";
+-  return;
++  sValueh = "windDirectionAbbrevWest";
+  }
+- if ( (iValue >= 286) && (iValue <= 345) )
++ elseif ( (iValue >= 286) && (iValue <= 345) )
+  {
+-  sValueh = "NW";
+-  return;
++  sValueh = "windDirectionAbbrevNorthWest";
++ }
++ else
++ {
++  sValueh = "windDirectionNoValue";
+  }
+ 
+  return;
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -77,7 +77,7 @@
-     "dialogCreateLinkErrorContent3" : "das Ger%E4t innerhalb der Funkreichweite befindet und aktiv ist,",
-     "dialogCreateLinkErrorContent4" : "das Ger%E4t im Anlernmodus befindet.",
-     "dialogCreateLinkErrorContent5" : "\"Ignorieren\", wenn die Zentrale die %DCbertragung zum Ger%E4t bei n%E4chster Gelegenheit selbstst%E4ndig durchf%FChren soll. Bis dahin ist dieser Konfigurationsvorgang als offene Servicemeldung sichtbar.",
--    "dialogCreateLinkErrorContent6" : "<u>Achtung</u><br/> Es besteht die M%FCglichkeit, dass die maximale Anzahl der erlaubten Verkn%FCpfungen erreicht wurde.",
-+    "dialogCreateLinkErrorContent6" : "<u>Achtung</u><br/> Es besteht die M%F6glichkeit, dass die maximale Anzahl der erlaubten Verkn%FCpfungen erreicht wurde.",
-     "dialogCreateLinkErrorUnknownDevice" : "%DCbertragung nicht erfolgt, weil das Ger%E4t unbekannt ist.",
-     "dialogCreateLinkHintLinkExists" : "Achtung! Die Verkn%FCpfung existiert bereits und wird %FCberschrieben.",
-     "dialogCreateLinkMsgLinkExistsA" : "Sie sind dabei ",
+@@ -260,7 +260,7 @@
+     "replaceDeviceDlgConfirmContentRow1b" : ":",
+     "replaceDeviceDlgConfirmContentRow1c" : "<br/><br/>",
+     "replaceDeviceDlgConfirmContentRow2a" : "Die Ger%E4tetypen sind identisch und k%F6nnen problemlos getauscht werden.",
+-    "replaceDeviceDlgConfirmContentRow2b" : "Die Ger%E4tetypen sind <b>nicht<b/> identisch, k%F6nnen aber problemlos getauscht werden.<br/><br/>",
++    "replaceDeviceDlgConfirmContentRow2b" : "Die Ger%E4tetypen sind <b>nicht</b> identisch, k%F6nnen aber problemlos getauscht werden.<br/><br/>",
+     "replaceDeviceDlgConfirmContentRow3a" : "Das Ger%E4t mit der Adresse:",
+     "replaceDeviceDlgConfirmContentRow3b" : " wird aus dem System gel%F6scht.",
+     "replaceDeviceDlgConfirmFooter" : "<br/><br/>M%F6chten Sie die Ger%E4te tauschen?",
+@@ -353,6 +353,15 @@
+     "actionStatusControlLocked" : "Ver-<br/>riegelt",
+     "actionStatusControlLockedA" : "Verriegelt",
+     "actionStatusControlLockedB" : "Geschlossen",
++    "windDirectionNoValue" : "Kein Wert",
++    "windDirectionAbbrevNorth" : "N",
++    "windDirectionAbbrevNorthEast" : "NO",
++    "windDirectionAbbrevEast" : "O",
++    "windDirectionAbbrevSouthEast" : "SO",
++    "windDirectionAbbrevSouth" : "S",
++    "windDirectionAbbrevSouthWest" : "SW",
++    "windDirectionAbbrevWest" : "W",
++    "windDirectionAbbrevNorthWest" : "NW",
+     "infoStatusControlStateUnknown" : "Zustand<br/>unbestimmt",
+     "infoStatusControlCalculateFillingLevel" : "F&uuml;llmenge wird berechnet...",
+     "infoStatusControlFillingLevel" : "F&uuml;llmenge:",
+@@ -883,7 +892,7 @@
+       "<li>Vollzugriff: Remote und lokaler Zugriff erlaubt</li>" +
+       "<li>Eingeschr%E4nkt: Nur lokaler Zugriff erlaubt</li>" +
+       "<li>Kein Zugriff: Zugriff nicht gestattet</li>" +
+-    "<ul>",
++    "</ul>",
+     "dialogSettingsFirewallLblHintIPAddresses" : "Sie k%F6nnen den Zugriff f%FCr einzelne IP-Adressen oder ganze Adressbereiche sowohl f%FCr IPv4 als auch f%FCr IPv6 freigeben. Geben Sie die Adressen durch ein ';' getrennt ein.",
+     "dialogSettingsFirewallLblHintIPAddressesWithoutIPv6" : "Sie k%F6nnen den Zugriff f%FCr einzelne IP-Adressen (z. B. 192.168.0.1) oder ganze Adressbereiche (z. B. 192.168.0.0/16) f%FCr IPv4 freigeben. Geben Sie die Adressen durch ein ';' getrennt ein.",
+     "dglUserNewFwSettingsTitle" : "Bitte beachten!",
+@@ -993,7 +1002,7 @@
+     "apMigrationErrorOrTimeout" : "Bei dem Firmware-Update ist ein Fehler aufgetreten. Bitte aktualisieren Sie die Ansicht und versuchen Sie es erneut.",
+     "apMigrationUpdateSuccessfulAddition" : "Sie k%F6nnen den Access Point jetzt %FCber &ldquo;Ger%E4te anlernen&rdquo; anlernen.",
+     "apMigrationUpdateSuccessfulAdditionMigrationMode" : "Der Access Point befindet sich jetzt im Posteingang.",
+-    "hintDeviceDoesNotSupportAction" : "Die aktuell installierte GerÃ¤te-Firmware unterstÃ¼tzt diese Funktion nicht.",
++    "hintDeviceDoesNotSupportAction" : "Die aktuell installierte Ger%E4te-Firmware unterst%FCtzt diese Funktion nicht.",
+     "noUpdateNeeded" : "Kein Update erforderlich.",
+     "notCompatible" : "Nicht kompatibel",
+     "aqiGood" : "Gut",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.label.js
-@@ -117,8 +117,8 @@
+@@ -116,7 +116,7 @@
+     "lblGeneralSettingsConditionNumber" : "Zustandszahl",
+     "lblGeneralSettingsCurrent" : "Strom",
+     "lblGeneralSettingsGas" : "Gas",
+-    "lblGeneralSettingsHeatingValue" : "Brennwert kWh/m<sup>3",
++    "lblGeneralSettingsHeatingValue" : "Brennwert kWh/m<sup>3</sup>",
+     "lblGenericLinkPartner" : "Verkn%FCpfungspartner",
+     "lblGenericUnit" : "Einheit",
+     "lblGetEnergyCounterToday" : "Bezug heute:",
+@@ -149,8 +149,8 @@
      "lblInfoLevelReal" : "Realer Wert",
      "lblInfoLevelRealBrightness" : "Reale Helligkeit",
      "lblInfoStatusControlCurrent" : "Strom",
@@ -57,10 +168,62 @@
 +    "lblInfoStatusControlEnergyCounter" : "Energie-Z%E4hler - Zentrale",
      "lblInfoStatusControlFrequency" : "Netzfrequenz",
      "lblInfoStatusControlGas" : "Verbrauch",
-     "lblInfoStatusControlPower" : "Leistung",
+     "lblInfoStatusControlGasFlow" : "Gasdurchfluss",
+@@ -352,4 +352,4 @@
+ 
+     "noMOreKeys" : ""
+   }
+-});
+\ No newline at end of file
++});
+--- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
++++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
+@@ -353,6 +353,15 @@
+     "actionStatusControlLocked" : "Locked",
+     "actionStatusControlLockedA" : "Locked",
+     "actionStatusControlLockedB" : "Closed",
++    "windDirectionNoValue" : "No Value",
++    "windDirectionAbbrevNorth" : "N",
++    "windDirectionAbbrevNorthEast" : "NE",
++    "windDirectionAbbrevEast" : "E",
++    "windDirectionAbbrevSouthEast" : "SE",
++    "windDirectionAbbrevSouth" : "S",
++    "windDirectionAbbrevSouthWest" : "SW",
++    "windDirectionAbbrevWest" : "W",
++    "windDirectionAbbrevNorthWest" : "NW",
+     "infoStatusControlStateUnknown" : "Status unknown",
+     "infoStatusControlCalculateFillingLevel" : "Filling level is being calculated",
+     "infoStatusControlFillingLevel" : "Filling level:",
+@@ -398,7 +407,7 @@
+     "dialogSettingsSecurityMessageSysBackupFWUpdateNecessaryContentB" : "<br>\nThis is a later version than the current version installed on the CCU. ",
+     "dialogSettingsSecurityMessageSysBackupFWUpdateNecessaryContentC" : ".<br>\nPlease perform an update of your CCU firmware first. Then, please start to import the system backup.",
+     "errorOpenFavorite" : "Favourites can not be opened!",
+-    "errorWrongPassword" : "Password incorret",
++    "errorWrongPassword" : "Password incorrect",
+     "dialogSettingsCreateProfileTemplateTitle" : "Profile template will be created...",
+     "dialogSettingsDeleteProfileTemplateTitle" : "Profile template will be deleted...",
+     "actionStatusControlHandleLock" : "e-handle lock operation",
+@@ -714,7 +723,7 @@
+     "btnSysConfCoupling" :  "Connections",
+     "couplingDialogTitle" : "Dialogue connections",
+     "enterIPAddress" :  "Manual IP input",
+-    "invalidIP" : "Invalid IP adress",
++    "invalidIP" : "Invalid IP address",
+     "invalidNetMask" : "Invalid Subnet mask",
+     "btnScanGateway" :  "Search gateway",
+     "btnScanDevices" :  "Search devices",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.label.js
-@@ -117,8 +117,8 @@
+@@ -62,7 +62,7 @@
+     "lblCurrentFirmwareVersionNotKnown": "unknown",
+     "lblCurrentOperatingVoltage": "Actual operating voltage",
+     "lblCurrentPowerConsumption": "Actual current consumption",
+-    "lblCyanLong" : "Cyan short",
++    "lblCyanLong" : "Cyan long",
+     "lblCyanShort" : "Cyan short",
+     "lblDataInputPropertie" : "Data input settings",
+     "lblDelayExternalArming" : "External alarm activated with delay",
+@@ -149,8 +149,8 @@
      "lblInfoLevelReal" : "Actual value",
      "lblInfoLevelRealBrightness" : "Actual brightness",
      "lblInfoStatusControlCurrent" : "Current",
@@ -70,24 +233,11 @@
 +    "lblInfoStatusControlEnergyCounter" : "Energy counter - Central",
      "lblInfoStatusControlFrequency" : "Frequency",
      "lblInfoStatusControlGas" : "Consumption",
-     "lblInfoStatusControlPower" : "Power",
---- occu/WebUI/www/webui/js/lang/en/translate.lang.stringtable.js.orig
-+++ occu/WebUI/www/webui/js/lang/en/translate.lang.stringtable.js
-@@ -86,7 +86,7 @@
-     "stringTableCapacitiveFillingSensorCaseDesign" : "Case design",
-     "stringTableCapacitiveFillingSensorCaseDesignHor" : "horizontal cylinder",
-     "stringTableCapacitiveFillingSensorCaseDesignVer" : "vertical cylinder",
--    "stringTableCapacitiveFillingSensorCaseHeight" : "Case hight",
-+    "stringTableCapacitiveFillingSensorCaseHeight" : "Case height",
-     "stringTableCapacitiveFillingSensorCaseLength" : "Case length",
-     "stringTableCapacitiveFillingSensorCaseWidth" : "Case width",
-     "stringTableCapacitiveFillingSensorCustomCal" : "Custom calibration",
-@@ -871,7 +871,7 @@
-     "stringTableValveStateErrorPosition" : "Valve in error position",
-     "stringTableValveStateFalse" : "Heating valve closed",
-     "stringTableValveStateNotAvailable" : "Valve status unknown",
--    "stringTableValveStateRunToStart" : "Valve reverses to the initial position (vale is opened entirely)",
-+    "stringTableValveStateRunToStart" : "Valve reverses to the initial position (valve is opened entirely)",
-     "stringTableValveStateToTight" : "Valve sluggish/blocked",
-     "stringTableValveStateTrue" : "Heating valve open",
-     "stringTableValveStateWaitForAdaption" : "Waiting for adaption run",
+     "lblInfoStatusControlGasFlow" : "Gas flow",
+@@ -352,4 +352,4 @@
+ 
+     "noMOreKeys" : ""
+   }
+-});
+\ No newline at end of file
++});

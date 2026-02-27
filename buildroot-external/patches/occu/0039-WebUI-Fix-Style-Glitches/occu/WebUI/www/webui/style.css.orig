@@ -854,6 +854,24 @@ a img {
   min-height: 30px;
 }
 
+.ControlBtnInfoActive {
+  background-color: $_(active);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoNotActive {
+  background-color: #89989b;
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
 .ControlBtnPushed {
   background-color: $_(clickable);
   color: $_(textColorB); /* black */
@@ -1123,10 +1141,20 @@ a img {
   text-align:center;
 }
 .SysVarsTblPopup{
+  background-color:$_(activeBackground);
+  color: $_(textColorB); /* black */
+  height:60px;
+  text-align:center;
+  cursor:pointer;
+  word-break: break-word;
+}
+.SysVarsTblPopup_Highlight{
   background-color:$_(inactiveBackground);
   color: $_(textColorB); /* black */
   height:60px;
   text-align:center;
+  cursor:pointer;
+  word-break: break-word;
 }
 .WhiteBkgChannelPopup {
   background-color: $_(white); /* white */
@@ -2199,6 +2227,12 @@ table.center {
 .firmwareAvailable {
     cursor: pointer;
     color: $_(clickable);
+}
+
+.infoBckGnd {
+  background-color: $_(clickable) !important;
+  color: $_(textColorA); /* white */
+  font-weight: bold;
 }
 
 .virtualChannelBckGnd {
@@ -3342,6 +3376,11 @@ html, body {
 .YesNoDialogContent, .YesNoDialogContentA {
   padding:5px;
   font-weight: bold;
+  color: $_(textColorB); /* black */
+}
+
+.YesNoDialogContentNoBold {
+  padding:5px;
   color: $_(textColorB); /* black */
 }
 
@@ -5344,6 +5383,12 @@ application {
   line-height:25px;
 }
 
+.CLASS02532d {
+	font-size: 10px;
+	width:220px;
+	color: $_(white) ! important;
+}
+
 .CLASS02533 {
 	white-space:nowrap;
 }
@@ -5488,6 +5533,20 @@ application {
 	line-height:35px;
 	height:35px;
 	width:100%;
+}
+
+.CLASS02550d {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:100px;
+}
+
+.CLASS02550e {
+	cursor:pointer;
+	line-height:35px;
+	height:35px;
+	width:120px;
 }
 
 .CLASS02551 {

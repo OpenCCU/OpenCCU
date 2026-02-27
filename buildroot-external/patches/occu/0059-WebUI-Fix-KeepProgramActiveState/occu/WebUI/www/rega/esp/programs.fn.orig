@@ -73,8 +73,25 @@ function ::WriteConditionText()
                   if( !bSysVarGeneric )
                   {
                     !sRet = sRet#" bei";
-                    sRet = sRet#" ${ruleConditionLblWhen}";
+                    !sRet = sRet#" ${ruleConditionLblWhen}";
                   }
+
+                  !SPHM-934
+                  if( (iLVT == ivtSystemId) || (iLVT == 19) )
+                  {
+                    if( bBinary )
+                    {
+                      if( iRV1 == 0 )
+                      {
+                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName0()#', ';
+                      }
+                      if( iRV1 == 1 )
+                      {
+                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName1()#', ';
+                      }
+                    }
+                  }
+                  !END SPHM-934
 
                   if( iLVT == ivtObjectId )
                   {
@@ -246,7 +263,11 @@ function ::WriteConditionText()
                   if( (!bOptionList) && (!bBinary) && (!bSpecial) )
                   {
                     !sRet = sRet#' <i>im Wertebereich</i> ';
-                    sRet = sRet#' <i>${ruleConditionLblWithinValueRange}</i> ';
+
+                    if (iCT1 != 5) {
+                      Write( ' <i>${ruleConditionLblWithinValueRange}</i> ' );
+                    }
+
                     string sCT = "";
                     string sValueUnit = oLV.ValueUnit();
                     if( sValueUnit == "100%")
@@ -270,14 +291,20 @@ function ::WriteConditionText()
                       sValueUnit = "";
                     }
                     
-                    if( (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 10) & (iCT1 != 11) & (iCT1 != 9) )
+                    if( (iCT1 != 1) && (iCT1 != 5) && (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 9) && (iCT1 != 10) && (iCT1 != 11) && (iCT1 != 12) )
                     {
                       oSC.ConditionType(6);
                       iCT1 = 6;
                     }
-                    
-                    !if( iCT1 == 6 ) { sCT = "von "#iRV1.ToString(2)#sValueUnit#" bis kleiner "#iRV2.ToString(2)#sValueUnit; }
-                    if( iCT1 == 6 ) { sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeLessThan} "#iRV2.ToString(2)#sValueUnit; }
+
+                    if( iCT1 == 5 ) { sCT = "${ruleConditionLblIsEqual} "#iRV1.ToString(2)#sValueUnit; }
+                    if( iCT1 == 6 ) {
+                      if (iRV1 < iRV2) {
+                        sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeLessThan} "#iRV2.ToString(2)#sValueUnit;
+                      } else {
+                        sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeGreaterThan} "#iRV2.ToString(2)#sValueUnit;
+                      }
+                    }
                     !if( iCT1 == 8 ) { sCT = "größer als "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 8 ) { sCT = "${ruleConditionLblGreaterThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 10 ) { sCT = "kleiner als "#iRV1.ToString(2)#sValueUnit; }
@@ -286,6 +313,11 @@ function ::WriteConditionText()
                     if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 5 ) { sCT = "ist gleich "#iRV1.ToString(2)#sValueUnit; }
+                    if( iCT1 == 5 ) { sCT = "${ruleConditionLblEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 12 ) { sCT = "ist ungleich "#iRV1.ToString(2)#sValueUnit; }
+                    if( iCT1 == 12 ) { sCT = "${ruleConditionLblNotEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+
                     sRet = sRet#' '#sCT;
                   }
                   boolean bAction = ( oLV.ValueSubType() == istAction );
@@ -307,8 +339,9 @@ function ::WriteConditionText()
               }
               
               !--------------------------SysVar---------------------
+
               if( (iLVT == ivtSystemId) || (iLVT == 19) )
-              {        
+              {
                 if( bOptionList )
                 {
                   !Write( "<script>conInfo('- bOptionList ');</script>" );
@@ -322,18 +355,20 @@ function ::WriteConditionText()
                     sRet = sRet#' '#sVLValue;
                   }
                 }
-                if( bBinary )
-                {
-                  if( iRV1 == 0 ) 
-                  {
-                    sRet = sRet#' '#oLV.ValueName0();
-                  }
-                  if( iRV1 == 1 ) 
-                  {
-                    sRet = sRet#' '#oLV.ValueName1();
-                  }
-                }
+                ! SPHM-934
+                ! if( bBinary )
+                !{
+                !  if( iRV1 == 0 )
+                !  {
+                !    sRet = sRet#' '#oLV.ValueName0();
+                !  }
+                !  if( iRV1 == 1 )
+                !  {
+                !    sRet = sRet#' '#oLV.ValueName1();
+                !  }
+                !}
               }
+
               if( iLVT == ivtCurrentDate )
               {
                 !Write( "<script>conInfo('- aktuelles Datum')</script>" );
@@ -717,7 +752,8 @@ function ::SetBreakOnRestart()
 
 function ::SetActive()
 {
-  if( system.IsVar("id") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("id")) )
   {
     object oTmp = dom.GetObject( system.GetVar("id") );
     if( oTmp )
@@ -737,7 +773,8 @@ function ::SetActive()
 
 function ::SetVisible()
 {
-  if( system.IsVar("id") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("id")) )
   {
     object oTmp = dom.GetObject( system.GetVar("id") );
     if( oTmp )
@@ -757,7 +794,8 @@ function ::SetVisible()
 
 function ::SetOperate()
 {
-  if( system.IsVar("id") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("id")) )
   {
     object oTmp = dom.GetObject( system.GetVar("id") );
     if( oTmp )
@@ -827,7 +865,8 @@ function ::SetVisibility()
 
 function ::DeleteProgram()
 {
-  if( system.IsVar("id") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("id")) )
   {
     object oTmp = dom.GetObject( system.GetVar("id") );
     if( oTmp )
@@ -865,7 +904,8 @@ function ::RestoreProgram()
 
 function ::CopyToNewProgram()
 {
-  if( system.IsVar("id") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("id")) )
   {
     object oCopy = dom.GetObject( system.GetVar("id") );
     if( oCopy )
@@ -906,19 +946,23 @@ function ::SetProgram()
 
 function ::NewProgram()
 {
-  object oPTmp = dom.GetObject( ID_PROGRAMS );
-  object oTmp = dom.CreateObject( OT_PROGRAM );
-  boolean bRet = false;
-  if( oTmp )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )
   {
-    !oTmp.Name( "Neues Programm" );
-    oTmp.Name( "${ruleTmpProgramName}" );
-    boolean bF1 = oPTmp.Add( oTmp.ID() );
-    boolean bF2 = system.SetSessionVar("sessionPRGID", oTmp.ID());
-    boolean bF3 = system.SetSessionVar("sessionORIGPRGID", oTmp.ID());
-    if( bF1 && bF2 && bF3 ) { bRet = true; }
+    object oPTmp = dom.GetObject( ID_PROGRAMS );
+    object oTmp = dom.CreateObject( OT_PROGRAM );
+    boolean bRet = false;
+    if( oTmp )
+    {
+      !oTmp.Name( "Neues Programm" );
+      oTmp.Name( "${ruleTmpProgramName}" );
+      boolean bF1 = oPTmp.Add( oTmp.ID() );
+      boolean bF2 = system.SetSessionVar("sessionPRGID", oTmp.ID());
+      boolean bF3 = system.SetSessionVar("sessionORIGPRGID", oTmp.ID());
+      if( bF1 && bF2 && bF3 ) { bRet = true; }
+    }
+    Write( bRet );
   }
-  Write( bRet );
   return;
 }
 
@@ -976,7 +1020,8 @@ function ::ReloadRule()
 
 function ::AddCondition()
 {
-  if( system.IsVar("rid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1011,7 +1056,8 @@ function ::AddCondition()
 
 function ::DeleteCondition()
 {
-  if( system.IsVar("rid") && system.IsVar("cid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) && (system.IsVar("cid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1023,7 +1069,8 @@ function ::DeleteCondition()
 
 function ::AddSingleCondition()
 {
-  if( system.IsVar("cid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("cid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("cid") );
     if( oTmp )
@@ -1053,7 +1100,8 @@ function ::AddSingleCondition()
 
 function ::DeleteSingleCondition()
 {
-  if( system.IsVar("cid") && system.IsVar("sid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("cid")) && (system.IsVar("sid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("cid") );
     if( oTmp )
@@ -1076,7 +1124,8 @@ function ::DeleteSingleCondition()
 
 function ::AddSingleDestination()
 {
-  if( system.IsVar("did") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("did")) )
   {
     object oTmp = dom.GetObject( system.GetVar("did") );
     if( oTmp )
@@ -1088,7 +1137,8 @@ function ::AddSingleDestination()
 
 function ::DeleteSingleDestination()
 {
-  if( system.IsVar("did") && system.IsVar("sid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("did")) && (system.IsVar("sid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("did") );
     if( oTmp )
@@ -1100,7 +1150,8 @@ function ::DeleteSingleDestination()
 
 function ::AddSubRule()
 {
-  if( system.IsVar("rid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1112,7 +1163,8 @@ function ::AddSubRule()
 
 function ::AddSubRuleDest()
 {
-  if( system.IsVar("rid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1132,7 +1184,8 @@ function ::AddSubRuleDest()
 
 function ::AddSubRuleBOR()
 {
-  if( system.IsVar("rid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1150,7 +1203,8 @@ function ::AddSubRuleBOR()
 
 function ::AddNewElseRule()
 {
-  if( system.IsVar("rid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1175,7 +1229,8 @@ function ::AddNewElseRule()
 
 function ::DeleteSubRule()
 {
-  if( system.IsVar("rid") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
   {
     object oTmp = dom.GetObject( system.GetVar("rid") );
     if( oTmp )
@@ -1187,7 +1242,8 @@ function ::DeleteSubRule()
 
 function ::SetOperatorType()
 {
-  if( system.IsVar("id") && system.IsVar("value") )
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("id")) && (system.IsVar("value")) )
   {
     object oTmp = dom.GetObject( system.GetVar("id") );
     if( oTmp )

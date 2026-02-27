@@ -1,7 +1,7 @@
 --- occu/WebUI/bin/hm_autoconf.orig
 +++ occu/WebUI/bin/hm_autoconf
-@@ -316,14 +316,57 @@
-       # Erzeugt eine Systemvariable, bindet diese an einen Kanal und liefert ihre Id zurÃ¼ck
+@@ -241,14 +241,57 @@
+       # Erzeugt eine Systemvariable, bindet diese an einen Kanal und liefert ihre Id zurück
        ##
        proc _create_sv_ {name info channelId} {
 +        # get selected systemLanguage from /etc/config/systemLanguage
@@ -60,7 +60,7 @@
            sv.ValueSubType( istGeneric );
 --- occu/WebUI/www/api/methods.conf.orig
 +++ occu/WebUI/www/api/methods.conf
-@@ -1062,6 +1062,20 @@
+@@ -1100,6 +1100,20 @@
    ARGUMENTS {_session_id_}
  }
  
@@ -455,15 +455,15 @@
  
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -90,6 +90,7 @@
-     "footerBtnCloseTree" : "Baumstruktur schlie%DFen",
+@@ -92,6 +92,7 @@
+     "footerBtnCloseTree" : "Baumstruktur<br/>schlie%DFen",
      "footerBtnEdit" : "Bearbeiten",
      "footerBtnAutoLogin" : "Automatisches<br/>Anmelden",
 +    "footerBtnSystemLanguage" : "Systemsprache<br />festlegen",
      "footerBtnVirtualChannelsShow" : "Virtuelle Kan%E4le anzeigen",
      "footerBtnVirtualChannelsHide" : "Virtuelle Kan%E4le ausblenden",
      "footerBtnSaveNewFav" : "Auswahl als neue<br />Favoritenseite speichern",
-@@ -159,6 +160,8 @@
+@@ -162,6 +163,8 @@
      "thPhoneNumber" : "Telefonnummer",
      "thAutomaticLogin" : "Automatisches<br/>Anmelden",
      "thChooseUser" : "Benutzerauswahl",
@@ -472,7 +472,7 @@
      "thSafetyNote" : "Sicherheitshinweis",
      "thGateway" : "Gateway",
      "thAccessCode" : "Zugriffscode",
-@@ -244,6 +247,8 @@
+@@ -248,6 +251,8 @@
      "hintUsrAutoLoginRow2" : "Eine automatische Anmeldung erm%F6glicht die Systemanmeldung ohne Eingabe von Benutzernamen und Passwort.<br/>",
      "hintUsrAutoLoginRow3" : "Der ausgew%E4hlte Benutzer wird automatisch ohne weitere Pr%FCfung angemeldet. Das System ist somit nicht mehr gegen externen Zugriff gesch%FCtzt.<br />",
      "hintUsrAutoLoginRow4" : "Der Zugriff auf andere Benutzerkonten erfolgt %FCber 'Abmelden' und entsprechender Neuanmeldung.<br />",
@@ -481,7 +481,7 @@
      "profileSettings" : "Profileinstellung",
      "profileSettingsSender" : "Profileinstellung - Sender",
      "profileSettingsReceiver" : "Profileinstellung - Empf%E4nger",
-@@ -420,6 +425,7 @@
+@@ -428,6 +433,7 @@
      "dialogStateInfoDataTransferToDeviceSuccess" : "Statusinfo: Daten%FCbertragung erfolgreich",
      "dialogWarningDataTransferToDeviceNotPossible" : "Achtung! Daten%FCbertragung nicht m%F6glich",
      "dialogConfigAutomaticLogin" : "Konfiguration - Automatisches Anmelden",
@@ -491,7 +491,7 @@
      "dialogRestartSafeModeTitle" : "Neustart",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -89,6 +89,7 @@
+@@ -91,6 +91,7 @@
      "footerBtnCloseTree" : "Close tree structure",
      "footerBtnEdit" : "Edit",
      "footerBtnAutoLogin" : "Log in<br/>automatically",
@@ -499,7 +499,7 @@
      "footerBtnVirtualChannelsShow" : "Show virtual channels",
      "footerBtnVirtualChannelsHide" : "Hide virtual channels",
      "footerBtnSaveNewFav" : "Save selection as new<br/>favourites page",
-@@ -158,6 +159,8 @@
+@@ -161,6 +162,8 @@
      "thPhoneNumber" : "Phone number",
      "thAutomaticLogin" : "Log in<br/>automatically",
      "thChooseUser" : "User selection",
@@ -508,7 +508,7 @@
      "thSafetyNote" : "Security alert",
      "thGateway" : "Gateway",
      "thAccessCode" : "Access code",
-@@ -243,6 +246,8 @@
+@@ -247,6 +250,8 @@
      "hintUsrAutoLoginRow2" : "If automatic login is activated you will be logged-in to the system without entering your user name or password.<br/>",
      "hintUsrAutoLoginRow3" : "The selected user will be logged-in automatically without further validation. The system is no longer protected against external influences.<br />",
      "hintUsrAutoLoginRow4" : "You can access other user accounts with click on \"Login\". Afterwards, please login with the user name and password again.",
@@ -517,7 +517,7 @@
      "profileSettings" : "Profile setting",
      "profileSettingsSender" : "Profile settings - transmitter",
      "profileSettingsReceiver" : "Profile settings - receiver",
-@@ -419,6 +424,7 @@
+@@ -427,6 +432,7 @@
      "dialogStateInfoDataTransferToDeviceSuccess" : "Status info: Data transfer successful",
      "dialogWarningDataTransferToDeviceNotPossible" : "Attention! Unable to transfer data",
      "dialogConfigAutomaticLogin" : "Configuration - automatic login",
@@ -527,7 +527,7 @@
      "dialogRestartSafeModeTitle" : "Restart",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -7011,6 +7011,11 @@
+@@ -9230,6 +9230,11 @@
              new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
              homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
            }
@@ -539,7 +539,7 @@
          }
        }
      } else {
-@@ -20669,6 +20674,10 @@
+@@ -25685,6 +25690,10 @@
    
    this.leave = function()
    {
@@ -550,7 +550,7 @@
    };
  
    this.resize = function()
-@@ -26732,7 +26741,12 @@
+@@ -32085,7 +32094,12 @@
          this.setWidth(800);
          this.setFile( "/pages/msg/autoLoginConfig.htm" );
          break;
@@ -564,7 +564,7 @@
          this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
          this.addToPostBody( 'string type = "'+this.type+'";' );
          this.setWidth(800);
-@@ -27551,6 +27565,7 @@
+@@ -32909,6 +32923,7 @@
  ID_SET_OUCFM_MODE        = 1023;
  ID_SET_STATUS_DISPLAY    = 1024;
  ID_BIDCOS_INTERFACE = 1025;

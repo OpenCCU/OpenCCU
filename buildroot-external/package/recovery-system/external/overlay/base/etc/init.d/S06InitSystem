@@ -33,11 +33,6 @@ init_system() {
   mkdir -p /var/empty
   chmod 700 /var/empty
 
-  # create /media/usbX directories for automounting USB devices
-  for i in $(seq 1 8); do
-    mkdir -p "/media/usb${i}"
-  done
-
   # if /etc/timezone is set to Europe/Berlin we
   # assume a german keyboard layout
   if [[ $(cat /etc/timezone) == "Europe/Berlin" ]]; then

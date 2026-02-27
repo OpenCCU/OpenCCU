@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/cp_security.cgi.orig
 +++ occu/WebUI/www/config/cp_security.cgi
-@@ -930,6 +930,15 @@
+@@ -979,6 +979,15 @@
                }
              }
              table_row {
@@ -18,7 +18,7 @@
                    division {class="CLASS20813"} {onClick="OnChangeKey()"} {
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.js
-@@ -488,6 +488,7 @@
+@@ -514,6 +514,7 @@
      "dialogSettingsSecurityLblEnterSecKey" : "System-Sicherheitsschl%FCssel Eingabe",
      "dialogSettingsSecurityLblSecKey" : "Sicherheitsschl%FCssel",
      "dialogSettingsSecurityLblSecKeyRepeat" : "Sicherheitsschl%FCssel<br/>Wiederholung",
@@ -28,7 +28,7 @@
      "dialogSettingsSecurityBtnBackupUpload" : "Backup einspielen",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.js
-@@ -488,6 +488,7 @@
+@@ -513,6 +513,7 @@
      "dialogSettingsSecurityLblEnterSecKey" : "Enter security key",
      "dialogSettingsSecurityLblSecKey" : "Security key",
      "dialogSettingsSecurityLblSecKeyRepeat" : "Repeat<br/>security key",

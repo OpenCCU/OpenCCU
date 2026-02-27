@@ -1,0 +1,29 @@
+From 820e6f6e3745e988246a1acca4aaacdd759b778f Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 18 Apr 2024 18:01:54 +0200
+Subject: [PATCH] HACK: mmc: meson-gx: limit to 40MHz
+
+This is the limit used by downstream U-Boot for ODROID-N2(+) (odroidg12
+branch).
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/mmc/meson_gx_mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
+index fcf4f03d1e..c578ac0f74 100644
+--- a/drivers/mmc/meson_gx_mmc.c
++++ b/drivers/mmc/meson_gx_mmc.c
+@@ -279,7 +279,7 @@ static int meson_mmc_probe(struct udevice *dev)
+ 	cfg->host_caps = MMC_MODE_8BIT | MMC_MODE_4BIT |
+ 			MMC_MODE_HS_52MHz | MMC_MODE_HS;
+ 	cfg->f_min = DIV_ROUND_UP(SD_EMMC_CLKSRC_24M, CLK_MAX_DIV);
+-	cfg->f_max = 100000000; /* 100 MHz */
++	cfg->f_max = 40000000; /* 40 MHz */
+ 	cfg->b_max = 511; /* max 512 - 1 blocks */
+ 	cfg->name = dev->name;
+ 
+-- 
+2.44.0
+

@@ -6,7 +6,11 @@ jQuery.extend(true, langJSON, {
     "thTypeDescriptorWOLineBreak": "Type description",
     "ruleConditionSelectValue": "Value",
     "ruleConditionSelectText": "Text",
+    "ruleConditionLblIsEqual" : "equal to ",
+    "ruleDescrHexString" : "parameter string",
     "btnChoice": "Selection",
+    "addonUpdate" : "Addon-Updates:",
+    "lblNewAddonUpdatesAvailable" : "New addons available",
     "btnAutoDetect": "Auto discover",
     "btnSelectRoomOrFunctionNew": "New...",
     "btnSelectRoomOrFunctionClose": "Close",
@@ -56,14 +60,23 @@ jQuery.extend(true, langJSON, {
     "generalDeviceChannelConfigLblUsable": "Operable:",
     "generalDeviceChannelConfigLblVisible": "Visible:",
     "generalDeviceChannelConfigLblLogged": "Logged:",
+    "generalDeviceChannelConfigLblServiceMsg": "Service messages:",
     "generalDeviceChannelConfigLblFuncTest": "Functional test",
+    "generalDeviceChannelConfigLblRenameChannel" : "Rename associated channels",
+    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "including own names:",
+    "generalDeviceChannelConfigLblSeparator": "Separator:",
     "generalChannelConfigLblRooms": "Rooms",
     "generalChannelConfigLblFunctions": "Functions",
     "generalChannelConfigLblSender": "Transmitter (sensor)",
     "generalChannelConfigLblReceiver": "Receiver (actuator)",
     "generalChannelConfigLblNone": "no connection possible",
     "generalDeviceChannelConfigBtnFuncTest": "Start test",
+    "generalDeviceChannelConfigBtnRenameChannels" : "Rename channels",
+    "generalDeviceRenameChannelHint" : "Renames all channels of the device according to a given pattern.<br/><br/>The new channel names will afterwards look like: <i>device_name%26lt;separator%26gt;channel_number</i>",
+    "generalDeviceRenameChannelHintTooltip" : "Renames all channels of the device according to a given pattern. The new channel names will afterwards look like: 'device_name%26lt;separator%26gt;channel_number'",
+    "generalDeviceRenameChannelIncludingOwnHint" : "If this option is selected, all channels will be renamed including manually renamed ones.",
     "generalDeviceConfigHint": "During the functional test the error-free communication to the device is checked.<br /> Therefore, switching commands will be send to all actuators connected to the device. Sensors (e.g. remote controls) are usually sending signals only if they are operated manually. The test is passed as soon as the first feedback will be received by the device.",
+    "generalDeviceConfigHintTooltip": "During the functional test the error-free communication to the device is checked. Therefore, switching commands will be send to all actuators connected to the device. Sensors (e.g. remote controls) are usually sending signals only if they are operated manually. The test is passed as soon as the first feedback will be received by the device.",
     "generalChannelConfigHint": "<p>During the functional test the error-free communication to the channel is checked.</p>",
     "generalChannelConfigHintSender": "<p>In connection with sensors the Homematic Central Control Unit waits until the sensors are sending. A remote control is sending only if it is operated manually.</p>",
     "generalChannelConfigHintReceiver": "<p>In connection with actuators usually switching commands will be send.</p>",
@@ -227,7 +240,7 @@ jQuery.extend(true, langJSON, {
     "lanGatewayLblStandard" : "(Default)",
     "commentSettingsDialogMaintenancePerformSoftwareUpdate" : "***********************************************",
     "dialogSettingsCMDialogPerformSoftwareUpdateTitle" : "Software update",
-    "dialogSettingsCMDialogPerformSoftwareUpdateP1" : "The software update is now in progress. After the update has been performed, the " + HMIdentifier.en.CCUShortName + " will be restarted automatically.",
+    "dialogSettingsCMDialogPerformSoftwareUpdateP1" : HMIdentifier.en.CCUFullNameText + " will be rebooted now and the software update applied accordingly. Depending on the used hardware the software update can take several minutes until half an hour. After the update has been finished the central will reboot a last time.<br/><br/>To monitor the software update process, you can switch to <a href='http://" + window.location.hostname + "/' target='_blank'>http://" + window.location.hostname + "/</a> after the first reboot so that output of the update process will be displayed.",
     "dialogSettingsCMDialogPerformSoftwareUpdateP2" : "It is highly recommended to delete the cache of your browser, after the update has been performed. Therefore, please proceed as follows:",
     "dialogSettingsCMDialogPerformSoftwareUpdateLi1" : "Close all browser windows.",
     "dialogSettingsCMDialogPerformSoftwareUpdateLi2" : "Please delete the cache of your browser.<br />You will find further information in the tutorial <a href='http://www.eq-3.de/service/faq.html?id=38' target='_blank'>Web-UI Firmware Update: Browser-Cache leeren</a> on http://www.eq-3.de",
@@ -340,6 +353,15 @@ jQuery.extend(true, langJSON, {
     "actionStatusControlLocked" : "Locked",
     "actionStatusControlLockedA" : "Locked",
     "actionStatusControlLockedB" : "Closed",
+    "windDirectionNoValue" : "No Value",
+    "windDirectionAbbrevNorth" : "N",
+    "windDirectionAbbrevNorthEast" : "NE",
+    "windDirectionAbbrevEast" : "E",
+    "windDirectionAbbrevSouthEast" : "SE",
+    "windDirectionAbbrevSouth" : "S",
+    "windDirectionAbbrevSouthWest" : "SW",
+    "windDirectionAbbrevWest" : "W",
+    "windDirectionAbbrevNorthWest" : "NW",
     "infoStatusControlStateUnknown" : "Status unknown",
     "infoStatusControlCalculateFillingLevel" : "Filling level is being calculated",
     "infoStatusControlFillingLevel" : "Filling level:",
@@ -534,12 +556,7 @@ jQuery.extend(true, langJSON, {
     "delDevFirmwareSuccessB" : " deleted",
     "delDevFirmwareMsgTitle" : "Confirmation!",
     "delDevFirmwareMsgBody" : "Do you really want to remove the firmware?",
-    "fwUpdatePressConfigKey" :
-      "Please place the device in radio range of the "+HMIdentifier.en.CCUShortName+" and press the configuration key! "+
-      "Afterwards, the firmware update will be performed.",
-    "fwUpdatePressSystemKey" :
-      "Please place the device in radio range of the "+HMIdentifier.en.CCUShortName+" and press the system key! "+
-      "Afterwards, the firmware update will be performed.",
+
     "partyModeDialogTitle" : "Please set the party/holiday mode here.",
     "partyStart" : "Start",
     "partyEnd" : "End",
@@ -561,6 +578,11 @@ jQuery.extend(true, langJSON, {
     "temperatureMeasurement" : "Temperature measurement",
     "energyMeasurement" : "Energy measurement",
     "powerMeasurement" : "Consumption",
+    "powerMeasurementA" : "Flow",
+    "powerMeasurementB" : "Peak incoming energy supply",
+    "powerMeasurementC" : "Off-peak incoming energy supply",
+    "powerMeasurementD" : "Outgoing energy supply",
+    "powerMeasurementFeedIn" : "Feed in",
     "userSpecific" : "User specific",
     "diagramPeriodToday" : "Today",
     "diagramPeriodThisWeek" : "This week",
@@ -609,7 +631,6 @@ jQuery.extend(true, langJSON, {
     "iconBell" : "Notification",
     "iconClock" : "Clock",
     "statusDisplayDialogTitle" : "Display configuration",
-    "ruleDescrHexString" : "parameter string",
     "dialogChangeLogTitle" : "Changelog",
     "btnChangelog" : "Changelog",
     "errorReadChangelog": "Error, can%60t read the changelog...",
@@ -711,7 +732,6 @@ jQuery.extend(true, langJSON, {
     "msgNoGatewayFound" : "No Gateway found",
     "dialogDeleteCertificateTitle" : "Delete certificate",
     "dialogSettingsNetworkLblDeleteCertificate" : "Remove certificate from CCU",
-    "confirmCertificationPurgeA" : "If the certificate is deleted, you can no longer establish a secured connection to your "+HMIdentifier.en.CCUShortName+".",
     "confirmCertificationPurgeB" : "Do you really want to delete the certificate from the "+HMIdentifier.en.CCUShortName +"?",
     "dialogRestartWebserverTitle" : "Lighttpd Restart",
     "dialogRestartWebserverContent" : "The web server will now be restarted.",
@@ -813,7 +833,7 @@ jQuery.extend(true, langJSON, {
     "btnGarageClose" : "Closing",
     "btnGarageVent" : "Ventilation",
     "btnGarageStop" : "Stop",
-    "dialogSettingsUSBStorageSettings" : "External USB memory",
+    "dialogSettingsUSBStorageSettings" : "External storage",
     "dialogSettingsStorageHintUSBStorageP1" : "Storage of data only includes the diagrams.",
     "dialogSettingsSecurityTDAuth" : "Authentication",
     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentication active: ",
@@ -888,6 +908,9 @@ jQuery.extend(true, langJSON, {
     "hintWiredBlindLinksAvailable" : "Please note: Connections have been found. The operation mode can therefore not be changed.",
     "hintWiredBlindProgramsAvailable" : "Please note: Programs have been found. The operation mode can therefore not be changed.",
     "hintWiredBlindLinksAndProgramsAvailable" : "Please note: Connections and programs have been found. The operation mode can therefore not be changed.",
+    "hintLayoutModeLinksAvailable" : "Please note: Connections have been found. The display layout can therefore not be changed.",
+    "hintLayoutModeProgramsAvailable" : "Please note: Programs have been found. The display layout can therefore not be changed.",
+    "hintLayoutModeLinksAndProgramsAvailable" : "Please note: Connections and programs have been found. The display layout can therefore not be changed.",
     "hintCheckChannels" : "<br/>Check the following channels:  ",
     "internalSystemSound" : "Internal sound",
     "randomPlayback" : "Shuffle",
@@ -956,19 +979,15 @@ jQuery.extend(true, langJSON, {
     "rotationDirLeftSlow" : "Slow anti-clockwise rotation",
     "rotationDirRightSlow" : "Slow clockwise rotation",
     "rainDetectorSampleInterval" : "Time between the single measurements<br/>(rain detection interval)",
+    "genericSampleInterval" : "Time between the single measurements",
     "cpSecurityHttpsRedirectTitle" : "Automatic forwarding to HTTPS",
     "cpSecurityHttpsRedirectLabel" : "Forwarding to HTTPS active:",
     "cpSecurityHttpsRedirectDescription" : "If this function is activated, automatic forwarding to HTTPS takes place when accessing the WebUI via HTTP.",
     "stringTableOperationPowerConsumptionState": "Status current consumption",
-    "headerDrapUpdateNecessary":
-    "This update uses Advanced Routing to establish improved communication between the Homematic IP wireless and wired components. " +
-      "This requires a firmware update of the Homematic IP Wired Access Point.<br><br>After the update, the Homematic IP Wired Access Point is moved into the inbox and must be configured there.<br>" +
-      "All wired devices in the installation that have already been connected and configured will continue to work as usual after the update.",
-    "drapUpdateNecessary": "The following Wired Access Points with an incompatible firmware were found and must be updated:<br/><br/>",
     "thAvailableVersion": "Available version",
     "thInstalledVersion": "Installed version",
     "btnReload": "Reload",
-    "btnAccessPoints": "Update Access Points with</br>incompatible FW",
+    "btnAccessPoints": "Update Access Points</br>with incompatible FW",
     "apSearchMigrationDescription": "The password of the Homematic IP Access Point and an active Internet connection are required for the update. The password (PW) can be found on the sticker on the device.",
     "apSearchDescription": "The password of the Homematic IP Access Point is required for the update. The password (PW) can be found on the sticker on the device.",
     "password": "Password",
@@ -1033,6 +1052,45 @@ jQuery.extend(true, langJSON, {
     "dialogAskCreateBakupText" : "The backup is created and downloaded directly before the installation. This process may take a few minutes",
     "unitNumericPinCode" : "(max. 8 digits from 0 to 9)",
     "hintSetReadyNotComplete" : "Click on 'Done' to complete the channel configuration then access the device in the device list.",
+
+    "btnHCL" : "HCL",
+    "btnDim2Warm" : "Dim2Warm",
+    "fwUpdatePressConfigKey" :
+      "Make sure that the device is within radio range of the "+HMIdentifier.de.CCUShortName+".  If necessary, press the system button on the device.<br/><br/>"+
+      "For all Homematic IP sensors, such as the weather sensors, pressing the button is not mandatory. " +
+      "The devices automatically report in the course of a day and then start the update on their own.",
+    "fwUpdatePressSystemKey" :
+      "Make sure that the device is within radio range of the "+HMIdentifier.de.CCUShortName+".  If necessary, press the system button on the device.<br/><br/>"+
+      "For all Homematic IP sensors, such as the weather sensors, pressing the button is not mandatory. " +
+      "The devices automatically report in the course of a day and then start the update on their own.",
+    "minTemp" : "min.<br/>Temp",
+    "maxTemp" : "max.<br/>Temp",
+    "errorStateCoProcessor" : "State co-processor",
+    "errorCoProcessorFalse" : "<br/>OK",
+    "errorCoProcessorTrue" : "<br/>Error",
+    "stateDaliBus" : "DALI bus status",
+    "stateDaliBus_0" : "<br/>OK",
+    "stateDaliBus_1" : "<br/>Short circuit",
+    "stateDaliBus_2" : "<br/>Overload",
+    "btnSearchDaliDevices" : "Check",
+    "titleSearchDaliDevices" : "Check channels",
+    "showDeviceBetaFw" : "Show unpublished device firmware.",
+    "hintDeviceBetaFw" :
+      "When the parameter is activated, a closed user group is offered advance versions of planned "+
+      "device firmware updates on the start page under the heading 'Device Update'.",
+    "btnSensorDetection" : "Sensor detection",
+    "hintPressSysKeyTryAgain" : "Press the system button and try again.",
+    "hintProblemSensorIdent" : "An error has occurred when detecting the sensor.",
+    "msgStartValueInvalid_A" : "The start value assigned for the channel",
+    "msgStartValueInvalid_B" : " is invalid!\n\n0.000 will be used.",
+    "dialogEsiSearchButtonContent" :
+      "Start detection of sensor here.<br/><br/>" +
+      "<b>Once</b> you have started sensor detection, press the system button of the device. " +
+      "The sensor is detected now. If you do not close this window, it will be opened again and the sensor found will be displayed.<br/><br/>" +
+      "<u>Note:</u><br/>" +
+      "If you change the sensor, the previously recorded consumption values (today, yesterday, etc.) will be reset to 0.<br/><br/>" +
+      "If you have started the sensor detection without a sensor connected, connect a sensor and carry out a factory reset of the energy meter.<br/><br/>",
+
     "theEnd" : ""
   }
 });

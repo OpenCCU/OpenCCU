@@ -44,9 +44,13 @@ proc create_backup {} {
   # cleanup last_backup.sbk file if createBackup.sh returned an error code
   if { $result != 0 } {
     catch { exec rm -f /usr/local/tmp/last_backup.sbk }
+    puts ""
+    puts "ERROR: creating backup returned unexpected error code $result"
+    puts ""
+    puts $results
+  } else {
+    puts "X-Sendfile: /usr/local/tmp/last_backup.sbk"
+    puts "Content-Type: application/octet-stream"
+    puts "Content-Disposition: attachment; filename=\"$backupfile\"\n"
   }
-
-  puts "X-Sendfile: /usr/local/tmp/last_backup.sbk"
-  puts "Content-Type: application/octet-stream"
-  puts "Content-Disposition: attachment; filename=\"$backupfile\"\n"
 }

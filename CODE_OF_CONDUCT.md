@@ -2,11 +2,11 @@
 
 ## 1. Purpose
 
-A primary goal of RaspberryMatic is to be inclusive to the largest number of contributors, with the most varied and diverse backgrounds possible. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, ability, ethnicity, socioeconomic status, and religion (or lack thereof).
+A primary goal of OpenCCU is to be inclusive to the largest number of contributors, with the most varied and diverse backgrounds possible. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, ability, ethnicity, socioeconomic status, and religion (or lack thereof).
 
 This code of conduct outlines our expectations for all those who participate in our community, as well as the consequences for unacceptable behavior.
 
-We invite all those who participate in RaspberryMatic to help us create safe and positive experiences for everyone.
+We invite all those who participate in OpenCCU to help us create safe and positive experiences for everyone.
 
 ## 2. Open Source Citizenship
 
@@ -59,7 +59,7 @@ Additionally, community organizers are available to help community members engag
 
 ## 7. Addressing Grievances
 
-If you feel you have been falsely or unfairly accused of violating this Code of Conduct, you should notify the authors of RaspberryMatic with a concise description of your grievance. Your grievance will be handled in accordance with our existing governing policies.
+If you feel you have been falsely or unfairly accused of violating this Code of Conduct, you should notify the authors of OpenCCU with a concise description of your grievance. Your grievance will be handled in accordance with our existing governing policies.
 
 ## 8. Scope
 

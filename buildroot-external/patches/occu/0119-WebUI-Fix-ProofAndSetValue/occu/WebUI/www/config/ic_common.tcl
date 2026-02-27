@@ -473,7 +473,6 @@ proc base_put_page {iface address pid peer ps_type} {
 
   html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de\" lang=\"de\" {
     head {
-      put_meta_nocache
       puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
       title "$HTMLTITLE - Geräteparameter"
 
@@ -567,7 +566,6 @@ proc activate_link_paramset {iface address ps_id long_push} {
 
   html {
     head {
-      put_meta_nocache
     }
     body {
       if { ![catch { xmlrpc $url activateLinkParamset [list string $address] [list string $ps_id] [list bool $long_push] } ] } then {
@@ -648,7 +646,7 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
   global HTMLTITLE env
 
-  set IGNORE_PARAMS {AvoidBrowserCache address cmd iface paramid peer pnr ps_id ps_type sid SUBSET_OPTION_VALUE NAME}
+  set IGNORE_PARAMS {address cmd iface paramid peer pnr ps_id ps_type sid SUBSET_OPTION_VALUE NAME}
 
   if { $profile != "" } then {
     
@@ -692,7 +690,6 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
     html {
       head {
-        put_meta_nocache
       }
       body {
         if {$ret == "1"} then {
@@ -710,7 +707,6 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
     html {
       head {
-        put_meta_nocache
       }
       body {
         if {$ret == "1"} then {
@@ -731,7 +727,6 @@ proc put_error404 {} {
 
   html {
     head {
-      put_meta_nocache
       puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">"
       title "$HTMLTITLE - Profil nicht gefunden"
     }
@@ -749,7 +744,6 @@ proc put_error_profilenotfound {} {
 
   html {
     head {
-      put_meta_nocache
       puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">"
       title "$HTMLTITLE - Profil nicht gefunden"
     }
@@ -846,7 +840,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
   set new_profile_is_set ""
   set cur_profile ""
   catch { set cur_profile $ps(UI_HINT) }
-  
   if { (![info exist env(IC_OPTIONS)]) || ([string first NO_PROFILE_MAPPING $env(IC_OPTIONS)] < 0) } {
       # Verknuepfungen dem array map_link zuweisen
       read_links
@@ -856,10 +849,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
           if {[info exists map_link($sender_address-$receiver_address)]} {
             set new_profile_is_set "true"
           }
-
-
-        #1
-
         # Wenn noch nicht geschehen, dann die Profile beim Wechsel von
         # Firmwareversionen < 1.4 auf die neue Profilstruktur in >= 1.4 mappen
         if {$cur_profile != "" && $new_profile_is_set == ""} then {
@@ -881,17 +870,17 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
     #Existiert dieses Benutzerprofil noch?
     if {[regexp {^([0-9]+)\.([0-9]+)$} $cur_profile dummy f_base_pnr f_user_pnr]} then {
       #Es ist ein vom User erstelltes Benutzerprofil
-      if {! [info exists PROFILES_MAP($cur_profile)]} then { set cur_profile $f_base_pnr }
+      if {! [info exists PROFILES_MAP($cur_profile)]} then {
+        set cur_profile $f_base_pnr
+        return $cur_profile
+      }
     }
-    return $cur_profile
   }
-  
+
   #Expertenprofil ist 0:
   set cur_profile 0
   for {set pnr 1} {$pnr < [array size PROFILES_MAP]} {incr pnr} {
-    
     upvar PROFILE_$pnr PROFILE
-    
     catch {
       if {($ps(SHORT_ACTION_TYPE) == 0) && ($ps(LONG_ACTION_TYPE) == 0) && ( [catch {set tmp $PROFILE(UI_VIRTUAL) }] == 0 ) } {
         set cur_profile $pnr
@@ -914,7 +903,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
       
     foreach param [array names PROFILE] { 
         #Wenn Geraet in der Blacklist, dann abbrechen und mit dem nächsten Profil weiter.  
-
         if {$param  == "UI_BLACKLIST" } then {
           if {[lsearch $PROFILE($param) $peer_type] != -1 } then {
             set match "false"
@@ -942,7 +930,6 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
         }
       
       # wird nur aufgerufen, wenn ein "range" im Parameter vorkommt
-        
         if {[lindex $PROFILE($param) 1] == "range"} then {
           set min [lindex $PROFILE($param) 2]
           set max [lindex $PROFILE($param) 4]
@@ -966,14 +953,12 @@ proc get_cur_profile2 {pps pPROFILES_MAP pPROFILE_TMP peer_type} {
                  ## puts "MATCH -- $param&nbsp;Profil Nr $pnr '$PROFILES_MAP($pnr)': [lindex $PROFILE($param) $loop]&nbsp;Aktor: $ps($param)<br/>"
                 break
             } 
-          }; # for 
-    
-        }; # else 
-      
+          }
+        }
 
-        if { [lindex $PROFILE($param) 0] != [ expr $ps($param) ] } then { 
+        if { [lindex $PROFILE($param) 0] != [ expr $ps($param) ] } then {
           ## puts "MISMATCH -- $param&nbsp;Profil Nr $pnr '$PROFILES_MAP($pnr)': [lindex $PROFILE($param) 0]&nbsp;Aktor: $ps($param)<br/>"
-          set match "false" 
+          set match "false"
           break 
         }
     };# foreach
@@ -1110,7 +1095,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
     set max  $param_descr(MAX)
     set flags $param_descr(FLAGS)
     set operations $param_descr(OPERATIONS)
-    set value ""
+    set value $min
 
     if {[info exists unit] == 0} {
      set unit ""
@@ -1128,9 +1113,9 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
     set idval "separate_${pnr}_$j"
 
     if { ! ($operations & 3) } then { continue }
-    if {    $operations & 1  } then { set value $ps($param_id) }
+    if {    $operations & 1  } then { catch {set value $ps($param_id)} }
     if {    $operations & 2  } then { set access "" } else { set access "disabled=\"disabled\"" }
-        
+
     append s "<tr>"
     if {$ps_type == "MASTER" && $parent_type == "" } then {
       append s "<td><span class=\"stringtable_value\">${param_id}</span></td>"
@@ -1395,7 +1380,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
 
           append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
           append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
-          append s "  onblur=\" ProofAndSetValue('$input_idval', '${idval}', '$min', '$max', parseFloat([expr 1 / $factor]));\" /></td>"
+          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', '$min', '$max', parseFloat([expr 1 / $factor]));\" /></td>"
           append s "<td><div id=\"${input_idval}_unit\" $hidden>$unit ($min-$max)</div></td>"
       }
       "ENUM" {
@@ -1603,8 +1588,7 @@ proc get_ComboBox2 {val_arr name id selectedvalue {extraparam ""}} {
   set selectedvalue [lindex $selectedvalue 0]
   
   foreach option [array names arr ] {
-  
-    if {$option == $selectedvalue} {set doppelt "true"} ; # prüfen, ob es den Menüeintrag schon gibt. 
+    if {$option == $selectedvalue} {set doppelt "true"} ; # prüfen, ob es den Menüeintrag schon gibt.
   }  
 
   foreach option [array names arr] {
@@ -1743,12 +1727,6 @@ proc get_Pulse {val_arr id ps_arr pname dev_address arr_pulse {extraparam ""}} {
     upvar $val_arr arr
   upvar arr_pulse pulse
   return [get_Pulse2 arr $id $ps($pname) $dev_address pulse $extraparam]
-}
-
-proc put_meta_nocache {} {
-  puts "<meta http-equiv=\"cache-control\" content=\"no-cache\" />"
-  puts "<meta http-equiv=\"pragma\"        content=\"no-cache\" />"
-  puts "<meta http-equiv=\"expires\"       content=\"0\" />"
 }
 
 proc get_InputElem {name id ps_arr pname {extraparam ""}} {

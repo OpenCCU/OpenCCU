@@ -101,6 +101,9 @@
             <td>${lblAlarm}</td>
             <td><input type="checkbox" id="cbAlarm" /></td>
           </tr>
+            <td>${lblString}</td>
+            <td><input type="checkbox" id="cbString" /></td>
+          </tr>
         </table>
         <div class='FilterSetButton' onclick='setAFilter(fltSYV, "vartypes");updateTable();$("btnFilterVarTypeSub").hide();'>${filterSet}</div>
         <div class='FilterSetButton' onclick="$('btnFilterVarTypeSub').hide();">${filterClose}</div>
@@ -143,7 +146,7 @@
     Write("</td>");
     
     Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
-      Write(sv.DPInfo());
+      Write(sv.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>'));
     Write("</td>");
     
     Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
@@ -258,7 +261,7 @@
       Write("tmp['id'] = '"#sv.ID()#"';");
       Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
       Write("tmp['name'] = '"#sv.Name()#"';");
-      Write("tmp['desc'] = '"#sv.DPInfo()#"';");
+      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
       Write("tmp['chn'] = '';");
       object obj = dom.GetObject( sv.Channel() );
       if( obj )

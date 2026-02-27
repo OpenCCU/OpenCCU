@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OCCU_VERSION = 3.73.9-1
-OCCU_SITE = $(call github,jens-maus,occu,$(OCCU_VERSION))
+OCCU_VERSION = 3.87.6-1
+OCCU_SITE = $(call github,OpenCCU,occu,$(OCCU_VERSION))
 OCCU_LICENSE = HMSL
 OCCU_LICENSE_FILES = LicenseDE.txt
 
@@ -27,6 +27,11 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 		chmod 0640 $(TARGET_DIR)/usr/local/etc/config/shadow
 		rm -f $(TARGET_DIR)/etc/shadow
 		ln -snf config/shadow $(TARGET_DIR)/etc/
+
+		# relink /run to /var/run
+		rm -rf $(TARGET_DIR)/run $(TARGET_DIR)/var/run
+		mkdir -p $(TARGET_DIR)/var/run
+		ln -snf var/run $(TARGET_DIR)/
 
 		# relink resolv.conf to /var/etc
 		rm -f $(TARGET_DIR)/etc/resolv.conf
@@ -56,12 +61,18 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 		# link /etc/firmware to /lib/firmware
 		ln -snf ../lib/firmware $(TARGET_DIR)/etc/
 
+		# link /bin/tclsh to /usr/bin/tclsh
+		ln -snf /usr/bin/tclsh $(TARGET_DIR)/bin/tclsh
+
+		# fix permissions
+		chmod 755 $(TARGET_DIR)/www/config/fileupload.ccc
+
 		# remove obsolete init.d jobs
 		rm -f $(TARGET_DIR)/etc/init.d/S01logging
 		rm -f $(TARGET_DIR)/etc/init.d/S20urandom
 		rm -f $(TARGET_DIR)/etc/init.d/S01syslogd
 		rm -f $(TARGET_DIR)/etc/init.d/S02klogd
-		rm -f $(TARGET_DIR)/etc/init.d/S49chrony
+		rm -f $(TARGET_DIR)/etc/init.d/S49chronyd
 
 		# remove obsolete config templates
 		rm -f $(TARGET_DIR)/etc/config_templates/hmip_networkkey.conf
@@ -94,31 +105,30 @@ ifeq ($(BR2_PACKAGE_OCCU_WEBUI_REGAHSS_BETA),y)
   OCCU_WEBUI_REGAHSS_BETA=y
 endif
 
-ifeq ($(BR2_arm),y)
-  OCCU_ARCH=arm-gnueabihf-gcc8
-  OCCU_LIBDIR=lib
-endif
-
 ifeq ($(BR2_aarch64),y)
-  OCCU_ARCH=arm-gnueabihf-gcc8
-  OCCU_LIBDIR=$(BR2_ROOTFS_LIB32_DIR)
-endif
-
-ifeq ($(BR2_i386),y)
-  OCCU_ARCH=X86_32_GCC8
-  OCCU_LIBDIR=lib
+  OCCU_COMMON=arm-gnueabihf-gcc8
+  OCCU_ARCH32=
+  OCCU_ARCH64=aarch64-linux-gnu
+  OCCU_LIB32=
+  OCCU_LIB64=$(BR2_ROOTFS_LIB_DIR)
 endif
 
 ifeq ($(BR2_x86_64),y)
-  OCCU_ARCH=X86_32_GCC8
-  OCCU_LIBDIR=$(BR2_ROOTFS_LIB32_DIR)
+  OCCU_COMMON=X86_32_GCC8
+  OCCU_ARCH32=
+  OCCU_ARCH64=x86_64-linux-gnu
+  OCCU_LIB32=
+  OCCU_LIB64=$(BR2_ROOTFS_LIB_DIR)
 endif
 
 define OCCU_INSTALL_TARGET_CMDS
-		$(MAKE) OCCU_RF_PROTOCOL=$(OCCU_RF_PROTOCOL) \
-			OCCU_ARCH=$(OCCU_ARCH) \
-			OCCU_LIBDIR=$(OCCU_LIBDIR) \
-			OCCU_WEBUI_REGAHSS_BETA=$(OCCU_WEBUI_REGAHSS_BETA) \
+		$(MAKE) PRODUCT=$(PRODUCT) \
+			OCCU_RF_PROTOCOL=$(OCCU_RF_PROTOCOL) \
+			OCCU_COMMON=$(OCCU_COMMON) \
+			OCCU_ARCH32=$(OCCU_ARCH32) \
+			OCCU_ARCH64=$(OCCU_ARCH64) \
+			OCCU_LIB32=$(OCCU_LIB32) \
+			OCCU_LIB64=$(OCCU_LIB64) \
 			OCCU_WEBUI_REGAHSS_BETA=$(OCCU_WEBUI_REGAHSS_BETA) \
 			-C $(@D) install
 endef
@@ -132,6 +142,11 @@ define OCCU_WRAP_WEBUI_JS
 		sed -i ':a;N;$$!ba;s/\\n\n/\\n/g' $(@D)/WebUI/www/webui/webui.js
 endef
 OCCU_POST_PATCH_HOOKS += OCCU_WRAP_WEBUI_JS
+
+define OCCU_POST_PATCH_FIXUP
+		find $(@D) -type f -not -name '.?*' -empty -print -delete
+endef
+OCCU_POST_PATCH_HOOKS += OCCU_POST_PATCH_FIXUP
 
 define OCCU_USERS
 	-      -1 hm     -1 * - - -      homematic access group

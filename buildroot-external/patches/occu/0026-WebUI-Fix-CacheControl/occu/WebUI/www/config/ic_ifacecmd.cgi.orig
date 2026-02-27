@@ -5,7 +5,7 @@ sourceOnce session.tcl
 sourceOnce ic_common.tcl
 loadOnce tclrpc.so
 
-#Datenbank der Gerätebeschreibungen fürs WebUI
+#Datenbank der Geraetebeschreibungen fuers WebUI
 sourceOnce devdescr/DEVDB.tcl 
   
 set cmd ""
@@ -80,7 +80,7 @@ proc cmd_setLinkInfo {} {
   set url $iface_url($iface)
 
   if { [catch { xmlrpc $url setLinkInfo [list string $sender_address] [list string $receiver_address] [list string $name] [list string $description] } ] } then {
-    #puts "<script type=\"text/javascript\">alert('Fehler beim Speichern des Verknüpfungsnamen von $sender_address mit $receiver_address.');</script>"
+    #puts "<script type=\"text/javascript\">alert('Fehler beim Speichern des Verknï¿½pfungsnamen von $sender_address mit $receiver_address.');</script>"
     puts "<script type=\"text/javascript\">alert(translateKey('dialogSetLinkNameErrorA') + ' $sender_address ' + translateKey('dialogSetLinkNameErrorB') + ' $receiver_address.');</script>"
   } else {
   }
@@ -103,6 +103,8 @@ proc cmd_addLink {} {
   set group_name         ""
   set group_description  ""
   set redirect_url       ""
+  set actorDeviceTypeId  ""
+  set specialVal ""
 
   set HmIPIdentifier "HmIP-RF"
   set HmIPWiredIdentifier "HmIP-Wired"
@@ -116,6 +118,8 @@ proc cmd_addLink {} {
   catch { import group_name }
   catch { import group_description }
   catch { import redirect_url }
+  catch { import actorDeviceTypeId }
+  catch { import specialVal }
 
   set url $iface_url($iface)
 
@@ -124,16 +128,32 @@ proc cmd_addLink {} {
   # errorCode -10 = config pending
   if { (! $errorCode) || ((($iface == $HmIPIdentifier)  || ($iface == $HmIPWiredIdentifier)) && ($errorCode == -10))  } then {
 
-    #Verknüpfung erfolgreich angelegt. Namen und Beschreibungen noch nicht gesetzt.
+    #Verknï¿½pfung erfolgreich angelegt. Namen und Beschreibungen noch nicht gesetzt.
     set ret 1
+
+    if {$actorDeviceTypeId == "HmIP-RGBW"} {
+
+      # Mode RGBW/RGB
+      if {($specialVal == 0) || ($specialVal == 1)} {
+        set param "{LONG_DIM_MIN_HUE {int 0}}"
+        xmlrpc $url putParamset [list string $receiver_address] [list string $sender_address] [list struct $param]
+      }
+
+      # Mode Tunable White
+      if {$specialVal == 2} {
+        array set masterParamset [xmlrpc $url getParamset [list string $receiver_address] [list string MASTER]]
+        set param "{LONG_DIM_STEP_COLOR_TEMPERATURE {int 500}} {SHORT_ON_COLOR_TEMPERATURE {int $masterParamset(HARDWARE_COLOR_TEMPERATURE_COLD_WHITE)}} {SHORT_OFF_COLOR_TEMPERATURE {int $masterParamset(HARDWARE_COLOR_TEMPERATURE_WARM_WHITE)}}"
+        xmlrpc $url putParamset [list string $receiver_address] [list string $sender_address] [list struct $param]
+      }
+    }
 
     if { $description != "" || $name != "" } then {
 
       if { [catch { xmlrpc $url setLinkInfo [list string $sender_address] [list string $receiver_address] [list string $name] [list string $description] } ] } then {
-        #Verknüpfung erfolgreich angelegt. Name und Beschreibung der ersten Verknüpfung konnte nicht gesetzt werden.
+        #Verknï¿½pfung erfolgreich angelegt. Name und Beschreibung der ersten Verknï¿½pfung konnte nicht gesetzt werden.
         set ret -2
       } else {
-        #Verknüpfung erfolgreich angelegt. Name und Beschreibung der ersten Verknüpfung erfolgreich gesetzt.
+        #Verknï¿½pfung erfolgreich angelegt. Name und Beschreibung der ersten Verknï¿½pfung erfolgreich gesetzt.
         set ret 2
       }
     }
@@ -141,10 +161,10 @@ proc cmd_addLink {} {
     if { $group_description != "" || $group_name != "" } then {
 
       if { [catch { xmlrpc $url setLinkInfo [list string $sender_group] [list string $receiver_address] [list string $group_name] [list string $group_description] } ] } then {
-        #Verknüpfung erfolgreich angelegt. Name und Beschreibung der zweiten Verknüpfung konnte nicht gesetzt werden.
+        #Verknï¿½pfung erfolgreich angelegt. Name und Beschreibung der zweiten Verknï¿½pfung konnte nicht gesetzt werden.
         set ret -3
       } else {
-        #Verknüpfung erfolgreich angelegt. Name und Beschreibung der zweiten Verknüpfung erfolgreich gesetzt.
+        #Verknï¿½pfung erfolgreich angelegt. Name und Beschreibung der zweiten Verknï¿½pfung erfolgreich gesetzt.
         set ret 3
       }
     }
@@ -157,9 +177,9 @@ proc cmd_addLink {} {
 
   #puts "<script type=\"text/javascript\">if (ProgressBar) ProgressBar.IncCounter(\"Verknuepfung wurde angelegt.\");</script>"
   puts "<script type=\"text/javascript\">if (ProgressBar) ProgressBar.IncCounter(translateKey(\"dialogCreateLinkSuccessProgressBar\"));</script>"
-  cmd_ShowConfigPendingMsg
+  cmd_ShowConfigPendingMsg "ADD_LINK"
 }
-proc cmd_ShowConfigPendingMsg {} {
+proc cmd_ShowConfigPendingMsg {{extraParam ""}} {
 
   global iface_url sid sidname dev_descr_sender  
   
@@ -191,18 +211,18 @@ proc cmd_ShowConfigPendingMsg {} {
     array set dev_descr_sender [xmlrpc $url getDeviceDescription [list string $sender_address]]
 
     if {$dev_descr_sender(PARENT) == ""} then {
-      #Geräteadresse übergeben
+      #Gerï¿½teadresse ï¿½bergeben
       set sender_type $dev_descr_sender(TYPE)
       set sender_parent $sender_address
     
     } else {
-      #Kanaladresse übergeben
+      #Kanaladresse ï¿½bergeben
       set sender_type $dev_descr_sender(PARENT_TYPE)
       set sender_parent $dev_descr_sender(PARENT)
     }
 
     if { [catch { set sendername $ise_CHANNELNAMES($iface;$sender_address)} ] } then {
-      #ise kennt Gerät nicht. Das hat nur Auswirkung auf den vollen Namen.
+      #ise kennt Gerï¿½t nicht. Das hat nur Auswirkung auf den vollen Namen.
       #set sendername "Unbenanntes Ger&auml;t"
       set sendername "\${lblUnknownDevice}"
     }
@@ -221,17 +241,17 @@ proc cmd_ShowConfigPendingMsg {} {
     array set dev_descr_receiver [xmlrpc $url getDeviceDescription [list string $receiver_address]]
     
     if {$dev_descr_receiver(PARENT) == ""} then {
-      #Geräteadresse übergeben
+      #Gerï¿½teadresse ï¿½bergeben
       set receiver_type $dev_descr_receiver(TYPE)
       set receiver_parent $receiver_address
     } else {
-      #Kanaladresse übergeben
+      #Kanaladresse ï¿½bergeben
       set receiver_type $dev_descr_receiver(PARENT_TYPE)
       set receiver_parent $dev_descr_receiver(PARENT)
     }
 
     if { [catch { set receivername $ise_CHANNELNAMES($iface;$receiver_address)} ] } then {
-      #ise kennt Gerät nicht. Das hat nur Auswirkung auf den vollen Namen.
+      #ise kennt Gerï¿½t nicht. Das hat nur Auswirkung auf den vollen Namen.
       #set receivername "Unbenanntes Ger&auml;t"
       set receivername "\${lblUnknownDevice}"
     }
@@ -252,7 +272,7 @@ proc cmd_ShowConfigPendingMsg {} {
     puts "try \{"
     puts "  ConfigPendingFrm.ResetTable();"
     puts "\} catch (e) \{"
-    puts "  ConfigPendingFrm = new ConfigPendingMsgBox(800, 600);"
+    puts "  ConfigPendingFrm = new ConfigPendingMsgBox(800, 600, '$extraParam');"
     puts "\}"
 
     if { $sender_has_configpending == 1 } then {
@@ -288,10 +308,10 @@ proc cmd_activateLinkParamset {} {
   set url $iface_url($iface)
   
   if { [catch { xmlrpc $url activateLinkParamset [list string $receiver_address] [list string $sender_address] [list bool 0] }  ] } then {
-    #puts "<script type=\"text/javascript\">ShowErrorMsg(\"[cgi_quote_html "Das Profil konnte nicht ausgelöst werden. Sorgen Sie dazu bitte dafür, dass sich das Gerät innerhalb der Funkreichweite befindet und aktiv ist."]\");</script>"
+    #puts "<script type=\"text/javascript\">ShowErrorMsg(\"[cgi_quote_html "Das Profil konnte nicht ausgelï¿½st werden. Sorgen Sie dazu bitte dafï¿½r, dass sich das Gerï¿½t innerhalb der Funkreichweite befindet und aktiv ist."]\");</script>"
     puts "<script type=\"text/javascript\">ShowErrorMsg(translateKey(\"dialogActivateLinkParamsetError\"));</script>"
   } else {
-    #puts "<script type=\"text/javascript\">ShowInfoMsg(\"[cgi_quote_html "Das Profil wurde erfolgreich ausgelöst."]\");</script>"
+    #puts "<script type=\"text/javascript\">ShowInfoMsg(\"[cgi_quote_html "Das Profil wurde erfolgreich ausgelï¿½st."]\");</script>"
     puts "<script type=\"text/javascript\">ShowInfoMsg(translateKey(\"dialogActivateLinkParamsetSuccess\"));</script>"
   }
 }
@@ -322,12 +342,23 @@ proc cmd_firmware_update {} {
   set HmIPIdentifier "HmIP-RF"
   set HmIPWiredIdentifier "HmIP-Wired"
 
+  set deviceIsHAP false
+  set deviceIsDRAP false
+
   catch { import iface }
   catch { import address }
 
   set url $iface_url($iface)
 
   array set devDescr [xmlrpc $url getDeviceDescription [list string $address]]
+
+  if { [string first "HmIP-HAP" $devDescr(TYPE)] != -1 } {
+    set deviceIsHAP true
+  }
+
+  if { [string first "HmIPW-DRAP" $devDescr(TYPE)] != -1 } {
+    set deviceIsDRAP true
+  }
 
   if {($iface != $HmIPIdentifier)  && ($iface != $HmIPWiredIdentifier)} {
     catch {xmlrpc $url updateFirmware [list string $address]} result
@@ -337,12 +368,78 @@ proc cmd_firmware_update {} {
   }
 
   puts "<script type=\"text/javascript\">if (ProgressBar) ProgressBar.IncCounter(translateKey(\"dialogFirmwareUpdateCheckSuccess\"));</script>"
-  
   if { $result == 1 } then {
-    puts "<script type=\"text/javascript\">"
-      puts "ShowInfoMsg(translateKey(\"dialogFirmwareUpdateSuccess\"));"
-      puts "if (InfoMsg) InfoMsg.OnOK = function () {InfoMsg.hide(); window.setTimeout(function() {WebUI.enter(DeviceFirmwareInformation);},100); }"
-    puts "</script>"
+
+    if {$deviceIsHAP || $deviceIsDRAP} {
+        #This is for HAP and DRAP updates, which must be treated differently
+        #Since the update was started successfully and the update is performed asynchronously, we need to check for the update state here
+        #States UP_TO_DATE, LIVE_UP_TO_DATE and LIVE_NEW_FIRMWARE_AVAILABLE (negative case) cause an exit of wait loop. In addion there is a timeout of 10.5 minutes (crRFD has 10 minutes).  
+
+      cgi_javascript {
+        puts "var iface = \"$iface\","
+        puts "address = \"$address\";"
+        puts "var devDescr = homematic(\"Interface.getDeviceDescription\", {\"interface\": iface, \"address\": address});"
+         puts {
+            var fwInfoPanelElm = jQuery("#id_firmware_table_" + address),
+            fwOverviewPageTDFirmware = jQuery("#deviceFirmware_" + address);
+        
+            var fw_update_rows = "<tr><td style=\"border-style:none\">"+translateKey('lblDeviceFwPerformUpdate')+"</td></tr>";  
+            fwInfoPanelElm.html(fw_update_rows);
+
+            var maxChecks = 126, // 126 Checks alle 5 Sekunden = 630 Sekunden = 10.5 Mins weil crRFD Timout liegt bei 10 Minuten
+            numberOfChecks = 0,
+            interval = 5000, // Check every 5 seconds
+            updateTimer = null,
+            messageUpdateProblem = false,
+            firmwareUpdateFailed = false;
+
+            var intervalCheckState = setInterval(function() {
+          
+              conInfo("Check state");
+              var result = homematic("Interface.getDeviceDescription", {"interface": iface, "address": address}),
+              firmwareUpdateState = result.firmwareUpdateState,
+              firmware = result.firmware,
+              availableFW = result.availableFirmware;
+
+              conInfo("firmwareUpdateState: " + firmwareUpdateState);
+              switch(firmwareUpdateState) {
+                case "LIVE_DELIVER_FIRMWARE_IMAGE":
+                //case "LIVE_NEW_FIRMWARE_AVAILABLE":
+                    fw_update_rows = "<tr><td style=\"border-style:none\">"+translateKey('lblDeviceFwPerformUpdate')+"</td></tr>";  
+                    fwInfoPanelElm.html(fw_update_rows);
+                    conInfo("case LIVE_DELIVER_FIRMWARE_IMAGE");
+                  break;
+                case "UP_TO_DATE":
+                case "LIVE_UP_TO_DATE":
+                case "LIVE_NEW_FIRMWARE_AVAILABLE":
+                    conInfo("HAP-/DRAP-Update finished");
+                    clearInterval(intervalCheckState);
+                    clearTimeout(updateTimer);
+                    updateTimer = null;
+                    conInfo("case LIVE_UP_TO_DATE,UP_TO_DATE/LIVE_NEW_FIRMWARE_AVAILABLE");
+                    WebUI.enter(DeviceFirmwareInformation);
+                  break;
+              }
+ 
+              numberOfChecks++;
+              if (numberOfChecks >= maxChecks) {
+                clearInterval(intervalCheckState);
+                clearTimeout(updateTimer);
+                updateTimer = null;
+                WebUI.enter(DeviceFirmwareInformation);
+              }
+
+            }, interval);
+
+         } 
+		  }
+
+    } else {
+      puts "<script type=\"text/javascript\">"
+        puts "ShowInfoMsg(translateKey(\"dialogFirmwareUpdateSuccess\"));"
+        puts "if (InfoMsg) InfoMsg.OnOK = function () {InfoMsg.hide(); window.setTimeout(function() {WebUI.enter(DeviceFirmwareInformation);},100); }"
+      puts "</script>"
+    }
   } else {
     # The errorCode is the error as an integer as returned from the xmlrpc call 'updateFirmware' and can be -1, -2 and so on
     # errorCode -1 = Device not reachable
@@ -367,9 +464,9 @@ proc cmd_firmware_update {} {
      cgi_javascript {
       # puts "ShowInfoMsg('$errorString' + '<br/><br/>' + translateKey('$userHint'));"
       puts "ShowInfoMsg(translateKey('$userHint'));"
-
+      
       # This is for the HmIP-SWSD
-      if {[string equal $devDescr(TYPE) "HmIP-SWSD"] == 1} {
+      if {([string equal $devDescr(TYPE) "HmIP-SWSD"] == 1) || ([string equal $devDescr(TYPE) "HmIP-SWSD-2"] == 1)} {
         puts "var iface = \"$iface\","
         puts "address = \"$address\";"
         puts "var devDescr = homematic(\"Interface.getDeviceDescription\", {\"interface\": iface, \"address\": address});"
@@ -382,9 +479,9 @@ proc cmd_firmware_update {} {
             firmware = devDescr.firmware,
             availableFW = devDescr.availableFirmware;
 
-            // Zeige "Gerät nicht erreichbar, drücke Konfig-Button" und prüfe 5 Minuten lang, ob sich der Status ändert.
-            //Ändert sich der Status nicht, zeige wieder den Update-Button,
-            //Ändert sich der Status, starte entsprechende Aktion
+            // Zeige "Gerï¿½t nicht erreichbar, drï¿½cke Konfig-Button" und prï¿½fe 5 Minuten lang, ob sich der Status ï¿½ndert.
+            //ï¿½ndert sich der Status nicht, zeige wieder den Update-Button,
+            //ï¿½ndert sich der Status, starte entsprechende Aktion
 
             // Zeige initial Config Pending
             if (firmwareUpdateState == "READY_FOR_UPDATE") {
@@ -393,7 +490,7 @@ proc cmd_firmware_update {} {
               fwInfoPanelElm.html("<tr><td></td></tr>");
             }
 
-            var maxChecks = 60, // 60 Checks alle 5 Sekunden = 300 Sekunden = 5 Min
+            var maxChecks = 60, // 60 Checks alle 5 Sekunden = 300 Sekunden = 5 Mins
             numberOfChecks = 0,
             interval = 5000, // Check every 5 seconds
             timeForReInclusion = 60000, // One minute
@@ -404,7 +501,7 @@ proc cmd_firmware_update {} {
             var intervalCheckState = setInterval(function() {
               conInfo("Check state");
 
-              // Hole devDescr des Gerätes
+              // Hole devDescr des Gerï¿½tes
               var result = homematic("Interface.getDeviceDescription", {"interface": iface, "address": address}),
               firmwareUpdateState = result.firmwareUpdateState,
               firmware = result.firmware,
@@ -449,7 +546,7 @@ proc cmd_firmware_update {} {
                     fw_update_rows = "<tr><td class=\"CLASS22006\">"+translateKey('dialogFirmwareUpdateFailed')+"</td></tr>";
                     fw_update_rows +=  "<tr id=\"swsdHintCheckDevice\"><td colspan=\"2\"><span class=\"attention\">"+translateKey("checkSmokeDetectorSelfTest")+"</span></td></tr>";
                   } else {
-                    fw_update_rows = "<tr><td class=\"CLASS22006\">"+translateKey('lblDeviceFwPerformUpdate')+"</td></tr>";
+                    fw_update_rows = "<tr><td class=\"_CLASS22006 noBorder\">"+translateKey('lblDeviceFwPerformUpdate')+"</td></tr>";
                   }
                   fwInfoPanelElm.html(fw_update_rows);
                   break;
@@ -559,7 +656,7 @@ proc cmd_set_profile {} {
   catch { import pnr }
   catch { import new_profilepath } ;# handelt es sich um die neue Profilstruktur?
 
-  # wenn interne Gerätetaste?
+  # wenn interne Gerï¿½tetaste?
   if {! [catch {import internalKey}] } then {
     ## set_internalKeys 1 $address $iface $pnr
     ## after 1500
@@ -582,7 +679,7 @@ proc cmd_set_profile {} {
 
   if {$ret == -1 && (($iface != $HmIPIdentifier)  && ($iface != $HmIPWiredIdentifier))} then {
     
-    #Kein ConfigPending anzeigen nach dem Laufbalken (sinnlos, weil keine Übertragung erfolgte):
+    #Kein ConfigPending anzeigen nach dem Laufbalken (sinnlos, weil keine ï¿½bertragung erfolgte):
     puts "ProgressBar.OnFinish = function () \{ return; \}"
     
     #puts "if (ProgressBar) ProgressBar.IncCounter(\"Fehler beim Speichern des Profils $address mit $peer.\");"
@@ -596,7 +693,7 @@ proc cmd_set_profile {} {
   }
   puts "</script>"
 
-  # wenn interne Gerätetaste?
+  # wenn interne Gerï¿½tetaste?
   if {! [catch {import internalKey}] } then {
     #after 1500
     ## set_internalKeys 0 $address $iface $pnr
@@ -667,7 +764,7 @@ proc cmd_determineParameter {} {
       puts "SetInputValue('$html_inputelem_id', '$newval');"
       catch {puts "SetInputValue('$html_inputelem_id' + '_tmp', '$newval');"}
 
-      #INTEGER- und FLOAT-Input-Elemente müssen mit onkeyup in das eigentliche Daten-Input-Element übertragen werden.
+      #INTEGER- und FLOAT-Input-Elemente mï¿½ssen mit onkeyup in das eigentliche Daten-Input-Element ï¿½bertragen werden.
       catch {puts "document.getElementById('$html_inputelem_id').onkeyup;"}
       catch {puts "document.getElementById('$html_inputelem_id' + '_tmp' ).onkeyup;"}
     } else {

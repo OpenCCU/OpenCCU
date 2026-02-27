@@ -21,15 +21,10 @@
   <tr>
     <!-- Linke Spalte -->
     <td id="contentLeft" class="hidden">
-      <table class="filterTable CLASS03901 j_translate">
+      <table class="filterTable CLASS03901 j_translate" cellpadding="0" cellspacing="0">
         <tr>
           <td style="vertical-align: top; border: 0px">
             <div id="divDL" class="CLASS03902">
-              <script type="text/javascript">
-                var contHeight = $("content").style.height;
-                contHeight = contHeight.replace(/px/, "");
-                $("divDL").style.height = Math.floor((contHeight * 0.98)) + "px";
-              </script>
               <table id="tblFunctionNames" class="StatViewTbl CLASS03903 j_translate" cellpadding="0" cellspacing="0" style="width:100%;">
                 <colgroup>
                   <col style="width:80%;"/>
@@ -92,10 +87,10 @@
                         }
                         string trId = "devices"#devs.ID();
                         WriteLine('<tr id="'#trId#'" class="CLASS03904">');
-                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
+                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                           Write(devs.Name());
                           Write("</td>");
-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' >");
+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
                           
                           string sPicDivId = "picDiv"#devs.ID();
                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
@@ -130,12 +125,7 @@
     <!-- Rechte Spalte -->
     <td id="contentRight">
       <div id="divRTD" class="CLASS03908">
-        <script type="text/javascript">
-          var contHeight = $("content").style.height;
-          contHeight = contHeight.replace(/px/, "");
-          $("divRTD").style.height = Math.floor((contHeight * 0.98)) + "px";
-        </script>
-        <table id="tblRightContent" class="CLASS03909">
+        <table id="tblRightContent" class="CLASS03909" cellpadding="0" cellspacing="0">
          <tr class="CLASS03910">
            <td style="vertical-align: top;" id="chnList"></td>
          </tr>

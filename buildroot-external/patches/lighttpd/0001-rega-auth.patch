@@ -1,13 +1,13 @@
 --- lighttpd/src/meson.build.orig
 +++ lighttpd/src/meson.build
-@@ -996,6 +996,7 @@
+@@ -777,6 +777,7 @@
  	[ 'mod_vhostdb', [ 'mod_vhostdb.c', 'mod_vhostdb_api.c' ] ],
- 	[ 'mod_webdav', [ 'mod_webdav.c' ], libsqlite3 + libuuid + libxml2 + libelftc ],
+ 	[ 'mod_webdav', [ 'mod_webdav.c' ], [ libsqlite3, libxml2, libelftc ] ],
  	[ 'mod_wstunnel', [ 'mod_wstunnel.c' ], libcrypto ],
 +	[ 'mod_authn_rega', [ 'mod_authn_rega.c' ] ],
  ]
+ endif
  
- if target_machine.system() != 'windows'
 --- lighttpd/src/mod_authn_rega.c.orig
 +++ lighttpd/src/mod_authn_rega.c
 @@ -0,0 +1,261 @@

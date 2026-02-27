@@ -41,15 +41,15 @@ iseInitUpdateArrays();
 </script>
 <table id="tblAlarms" class="tblList CLASS02801" border="0" cellpadding="0" cellspacing="0" frame="void" rules="none" style="display:none;">
 <colgroup>
-  <col width="10%" />
-  <col width="10%" />
-  <col width="10%" />
-  <col width="10%" />
-  <col width="10%" />
-  <col width="15%" />
-  <col width="15%" />
-  <col width="10%" />
-  <col width="10%" />
+  <col style="width:10%;"/>
+  <col style="width:10%;"/>
+  <col style="width:10%;"/>
+  <col style="width:10%;"/>
+  <col style="width:10%;"/>
+  <col style="width:15%;"/>
+  <col style="width:15%;"/>
+  <col style="width:10%;"/>
+  <col style="width:10%;"/>
 </colgroup>
 <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="first"){sCssName="SortSelected";} %>
@@ -67,10 +67,10 @@ iseInitUpdateArrays();
   <th align="center" class="thCell CLASS02803" ><div class="pt11 CLASS02815">${thAction}</div></th>
 </tr>
 <tr>
-  <td align="center" valign="middle" class="CLASS02804"></td>
-  <td align="center" valign="middle" class="CLASS02804"></td>
-  <td align="center" valign="middle" class="CLASS02804"></td>
-  <td align="center" valign="middle" class="CLASS02804">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804">
   <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
         <input id="ftName" type="text" size="15" class="CLASS02811" />
@@ -78,9 +78,9 @@ iseInitUpdateArrays();
         <div class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02804"></td>
-  <td align="center" valign="middle" class="CLASS02804"></td>
-  <td align="center" valign="middle" class="CLASS02804">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804">
     <div id="btnFilterDesc" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterDescSub" style="display:none">
         <input id="ftDesc" type="text" size="15" class="CLASS02811" />
@@ -88,7 +88,7 @@ iseInitUpdateArrays();
         <div class='FilterSetButton' onclick="$('btnFilterDescSub').hide();">${filterClose}</div>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02804">
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804">
     <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
       <% 
@@ -113,7 +113,7 @@ iseInitUpdateArrays();
       %>
     </div>
   </td>
-  <td align="center" valign="middle" class="CLASS02804"></td>
+  <td style="text-align:center; vertical-align: middle;" class="CLASS02804"></td>
 </tr>
 <%
   integer iAlCount = 0;
@@ -231,21 +231,21 @@ iseInitUpdateArrays();
       
       string sTrId = "al"#oSV.ID();
       Write( '<tr id="'#sTrId#'">' );
-        Write( '<td align="center" valign="middle" class="CLASS02806">'#sFirstTimestamp#'</td>' );
-        Write( '<td align="center" valign="middle" class="CLASS02806">'#sLastTimestamp#'</td>' );
-        Write( '<td align="center" valign="middle" class="CLASS02807">'#oSV.AlCounter()#'</td>' );
-        Write( '<td align="center" valign="middle" class="CLASS02807">'#sAlarmName#'</td>' );
-        Write( '<td align="center" valign="middle" class="CLASS02807">${triggered}</td>' );
-        Write( '<td align="center" valign="middle" class="CLASS02806">'#sAlarmDescription#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sFirstTimestamp#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sLastTimestamp#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">'#oSV.AlCounter()#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">'#sAlarmName#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">${triggered}</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sAlarmDescription#'</td>' );
         if (sLastTriggerName != "")
         {
           sLastTriggerName = "<p class='CLASS02808'>"#sLastTriggerName#"</p>";
         }
-        Write( '<td align="center" valign="middle" class="CLASS02806">'#sLastTriggerName#'<p>'#sAlarmMessage#'</p></td>' );
-        Write( '<td align="center" valign="middle" class="CLASS02807">'#sRooms#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;"class="CLASS02806">'#sLastTriggerName#'<p>'#sAlarmMessage#'</p></td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;"class="CLASS02807">'#sRooms#'</td>' );
 
         ! The value of this button is set by JavaScript at the end of this page >> translateButton("btnConfirm");
-        Write( '<td align="center" valign="middle" class="CLASS02807"><input type="button" name="btnConfirm" value="btnConfirm" onclick="ReceiptAlarm('#oSV.ID()#');" class="CLASS02809 colorGradient" /></td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807"><input type="button" name="btnConfirm" value="btnConfirm" onclick="ReceiptAlarm('#oSV.ID()#');" class="CLASS02809 colorGradient" /></td>' );
       Write( '</tr>' );
       
       WriteLine( '<script type="text/javascript">' );
@@ -317,9 +317,9 @@ iseInitUpdateArrays();
   
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS02810' onclick='fltAL.clearFilters();updateTable();'>"+ translateKey('footerBtnResetFilter') +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS02810' onclick='ackAll();'>"+ translateKey('footerBtnConfirmAll') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS02810' onclick='fltAL.clearFilters();updateTable();'>"+ translateKey('footerBtnResetFilter') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS02810' onclick='ackAll();'>"+ translateKey('footerBtnConfirmAll') +"</div></td>";
   s += "</tr>";
   s += "</table>";
   

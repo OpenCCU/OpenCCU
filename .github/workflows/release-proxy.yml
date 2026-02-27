@@ -1,0 +1,108 @@
+# OpenCCU HA-Proxy Addon Release build
+# yamllint disable rule:truthy
+---
+name: Release Build (HA Proxy-Addon)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    name: Build HA Proxy-Addon
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Get information
+        id: info
+        uses: home-assistant/actions/helpers/info@master
+        with:
+          path: "./home-assistant-addon-proxy"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3.12.0
+        with:
+          install: true
+
+      - name: Login to GitHub Container Registry
+        if: env.BUILD_ARGS != '--test'
+        uses: docker/login-action@v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Extract docker metadata
+        id: meta
+        uses: docker/metadata-action@v5.10.0
+        with:
+          images: ${{ steps.info.outputs.image }}
+          labels: |
+            org.opencontainers.image.title=OpenCCU HA Proxy-Addon
+            org.opencontainers.image.description=Proxy to externally running OpenCCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
+            org.opencontainers.image.version=${{ steps.info.outputs.version }}
+            org.opencontainers.image.url=https://openccu.de
+          annotations: |
+            org.opencontainers.image.title=OpenCCU HA Proxy-Addon
+            org.opencontainers.image.description=Proxy to externally running OpenCCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
+            org.opencontainers.image.version=${{ steps.info.outputs.version }}
+            org.opencontainers.image.url=https://openccu.de
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+
+      - name: Build OCI tags
+        id: extract_branch
+        shell: bash
+        run: |
+          BASE_TAG=${{ steps.info.outputs.image }}
+          UNIQUE_TAG="${BASE_TAG}:${{ steps.info.outputs.version }}"
+          BRANCH="${GITHUB_REF##*/}"
+          if [[ ${BRANCH} == 'master' ]]; then
+            BRANCH_TAG="${BASE_TAG}:latest"
+          else
+            BRANCH_TAG="${BASE_TAG}:latest-${BRANCH}"
+          fi
+          echo "unique_tag=${UNIQUE_TAG}" >> $GITHUB_OUTPUT
+          echo "branch_tag=${BRANCH_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v6.19.2
+        id: docker_build
+        with:
+          context: home-assistant-addon-proxy
+          platforms: linux/amd64,linux/arm64
+          push: true
+          labels: |
+            org.opencontainers.image.title=OpenCCU HA Proxy-Addon
+            org.opencontainers.image.description=Proxy to externally running OpenCCU
+            org.opencontainers.image.vendor=OpenCCU OpenSource Project
+            org.opencontainers.image.authors=OpenCCU OpenSource Team
+            org.opencontainers.image.licenses=Apache-2.0
+            org.opencontainers.image.url=https://openccu.de
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/wiki
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.info.outputs.version }}
+            io.hass.name=OpenCCU (Proxy)
+            io.hass.description=Proxy to externally running OpenCCU
+            io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon-proxy
+            io.hass.version=${{ steps.info.outputs.version }}
+            io.hass.type=addon
+            io.hass.arch=aarch64|amd64
+          tags: |
+            ${{ steps.extract_branch.outputs.unique_tag }}
+            ${{ steps.extract_branch.outputs.branch_tag }}
+          annotations: |
+            ${{ steps.meta.outputs.annotations }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}

@@ -1,6 +1,6 @@
-# Contributing to RaspberryMatic
+# Contributing to OpenCCU
 
-There are many ways to contribute to the RaspberryMatic project! We welcome and truly appreciate contribution in all forms - issues and pull requests or just modifications of documentation or user support in the corresponding support fora. And of course we love to hear about any successfull use of RaspberryMatic to be shared with the community!
+There are many ways to contribute to the OpenCCU project! We welcome and truly appreciate contribution in all forms - issues and pull requests or just modifications of documentation or user support in the corresponding support fora. And of course we love to hear about any successful use of OpenCCU to be shared with the community!
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method (e.g. support fora) before making a change.
 
@@ -10,7 +10,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 Our development team heavily uses (and loves!) GitHub for all of our software management. We use GitHub issues to track all bugs and features.
 
-If you find an issue, please do file it on the repository. The [RaspberryMatic issues](https://github.com/jens-maus/RaspberryMatic/issues) should be used only for issues on RaspberryMatic itself - bugs related to the general CCU firmware environment belong to the original OCCU repository of eQ3.
+If you find an issue, please do file it on the repository. The [OpenCCU issues](https://github.com/OpenCCU/OpenCCU/issues) should be used only for issues on OpenCCU itself - bugs related to the general CCU firmware environment belong to the original OCCU repository of eQ3.
 
 Please file issues using the issue template provided, filling out as many fields as possible. We love examples for addressing issues.
 
@@ -18,7 +18,7 @@ Occasionally we'll close issues if they appear stale or are too vague - please d
 
 ## Contributing Pull Requests (PR)
 
-PR's are even better than issues. We gladly accept community pull requests. In general across the whole RaspberryMatic codebase, there are a few necessary steps before we can accept a pull request:
+PRs are even better than issues. We gladly accept community pull requests. In general across the whole OpenCCU codebase, there are a few necessary steps before we can accept a pull request:
 
 - Open an issue describing the problem that you are looking to solve in your PR (if one is not already open), and your approach to solving it. This makes it easier to have a conversation around the best general approach for solving your problem, outside of the code itself.
 - Understand and accept that the code you are contributing will be licensed under the Apache 2.0 license.
@@ -30,16 +30,16 @@ PR's are even better than issues. We gladly accept community pull requests. In g
 
 If you've completed all of these steps the core team will do its best to respond to the PR as soon as possible.
 
-### Communicating with the RaspberryMatic team
+### Communicating with the OpenCCU team
 
 Beyond GitHub, we try to have a variety of different lines of communication open:
 
-- [HomeMatic/RaspberryMatic Discussion Forum](https://homematic-forum.de/forum/viewforum.php?f=65)
-- [Homepage](https://raspberrymatic.de/)
+- [HomeMatic/OpenCCU Discussion Forum](https://homematic-forum.de/forum/viewforum.php?f=65)
+- [Homepage](https://openccu.de/)
 
 ### Contributor License Agreement (Apache 2.0)
 
-You might have noticed that RaspberryMatic itself is licensed under the Apache 2.0 license. This license allows us to not only share code with the vendor of the CCU platform (eQ-3), but also allows us to distribute code as open source. As such, please understand and accept that once you contributed code to this repository it will be (re)licensed under the Apache 2.0 license exclusively. That means, any source code contributed (as long as you have the right to do so), either as part of a pull request or embedded in an issue in the issue tracker will be exclusively distributed under the Apache 2.0 license. With your contribution you are accepting this and you are signing off this agreement. So if you - for some reason - cannot accept that your source code will be (re)licensed under the Apache 2.0 license, please explictly state so or completly refrain from contributing any source code whatsoever.
+You might have noticed that OpenCCU itself is licensed under the Apache 2.0 license. This license allows us to not only share code with the vendor of the CCU platform (eQ-3), but also allows us to distribute code as open source. As such, please understand and accept that once you contributed code to this repository it will be (re)licensed under the Apache 2.0 license exclusively. That means, any source code contributed (as long as you have the right to do so), either as part of a pull request or embedded in an issue in the issue tracker will be exclusively distributed under the Apache 2.0 license. With your contribution you are accepting this and you are signing off this agreement. So if you - for some reason - cannot accept that your source code will be (re)licensed under the Apache 2.0 license, please explicitly state so or completely refrain from contributing any source code whatsoever.
 
 Therefore, please note the following license agreement when contributing to this project and refrain from contributing if you cannot agree to these terms:
 ```

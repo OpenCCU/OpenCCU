@@ -3,28 +3,37 @@
   if (system.GetVar("createNew") == 0) {
     object sv = dom.GetObject(system.GetVar("varid"));
   }
+  string hidden = "";
+  if (system.GetVar("editValueOnly") == 1) {hidden="hidden";}
+  system.SetSessionVar("editValueOnly",0);
 %></div>
 
 <div class="CLASS05000">
   <table class="popupTable hidden"  border="1">
-    <colgroup>
-      <col style="width:10%;"/>
-      <col style="width:23%;"/>
-      <col style="width:10%;"/>
-      <col style="width:23%;"/>
-      <col style="width:10%;"/>
-      <col style="width:23%;"/>
-    </colgroup>
-    <tr class="CLASS05001">
-      <th>${thName}</th>
-      <th>${thDescription}</th>
-      <th>${thTypeOfVariable}</th>
-      <th>${thValues}</th>
-      <th>${thUnit}</th>
-      <th>${thCannelMapping}</th>
-    </tr>
+  <% 
+    if (hidden == "") {
+    Write('<colgroup>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:23%;"/>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:23%;"/>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:13%;"/>');
+    Write('</colgroup>');
+    Write('<tr class="CLASS05001">');
+      Write('<th>${thName}</th>');
+      Write('<th>${thDescription}</th>');
+      Write('<th>${thTypeOfVariable}</th>');
+      Write('<th>${thValues}</th>');
+      Write('<th>${thUnit}</th>');
+      Write('<th>${thValue}</th>');
+      Write('<th>${thCannelMapping}</th>');
+    Write('</tr>');
+    }
+%>
     <tr class="CLASS05002">
-    <td id="tdName" class="CLASS05003" >
+    <td id="tdName" class="CLASS05003 "<%Write(hidden)%> >
     <%
       var svName = "";
       if(system.GetVar("createNew") == 0)
@@ -40,7 +49,7 @@
     %>
       <input id="inpName" type="text" value="<%Write(svName)%>" onblur="stringRemoveNonPrintableChars(this);" />
     </td>
-    <td id="tdDesc" class="CLASS05003" >
+    <td id="tdDesc" class="CLASS05003"<%Write(hidden)%> >
       <%
         var svDesc = "";
         if (system.GetVar("createNew") == 0) 
@@ -50,7 +59,7 @@
       %>
       <input id="inpDesc" type="text" value="<%Write(svDesc)%>" onblur="stringRemoveNonPrintableChars(this);"/>
     </td>
-      <td class="CLASS05004">
+      <td class="CLASS05004" <%Write(hidden)%> >
         <select id="selType" onchange="onTypeChange()">
         <% 
           if (system.GetVar("createNew") == 1) {
@@ -76,9 +85,12 @@
         %>
         </select>
       </td>
-      <td id="tdEdit" class="CLASS05004">
+      <td id="tdEdit" class="CLASS05004"<%Write(hidden)%>>
       </td>
-      <td class="CLASS05004">
+
+           
+    
+      <td class="CLASS05004"<%Write(hidden)%>>
         <% 
           string sUnit = "";
           if (system.GetVar("createNew") == 0) {
@@ -87,14 +99,20 @@
           Write("<input type='text' id='txtUnit' class='CLASS05011' value='"#sUnit#"' onblur='stringRemoveNonPrintableChars(this);'/>");
         %>
       </td>
-      <td class="CLASS05004">
+      
+            
+      <td id="tdValueEdit" class="CLASS05004">
+      </td>
+      
+      <td class="CLASS05004"<%Write(hidden)%>>
         <table width="100%" class="CLASS05005">
-          <colgroup>
-            <col style="width:50%;"/>
-            <col style="width:50%;"/>
-          </colgroup>
         <tr>
           <td class="CLASS05006">
+            <input id="ckAssignedChn" type="checkbox" name="chnMapping" onclick="channelChooser2()" />
+          </td>
+        </tr>
+        <tr id="chnNameRow" hidden>
+          <td class="CLASS05006" onclick="channelChooser2()">
             <% 
               string sChn = "";
               if (system.GetVar("createNew") == 0) 
@@ -118,17 +136,10 @@
               else {
                 Write('<input id="chnId" type="hidden" value="0" />');
               }
-              Write('<div id="chnName">' #sChn # '</div>');
+              Write('<div style="cursor: pointer;" id="chnName">' #sChn # '</div>');
             %>
           </td>
-          <td>
-            <table class="CLASS05007">
-              <tr><td><input id="radNo" type="radio" name="chnMapping" checked onclick="noChannel()" />${lblChannelMappingNo}</td></tr>
-              <tr><td><input id="radYes" type="radio" name="chnMapping" onclick="channelChooser2()" />${lblChannelMappingYes}</td></tr>
-              <tr><td><div class="CLASS05008" onclick="channelChooser2()">${btnChooseChannel}</div></td></tr>
-            </table>
-          </td>
-        </tr>
+        <tr/>  
         </table>
       </td>
     </tr>
@@ -161,6 +172,7 @@
   noChannel = function() {
     $("chnId").value = -1;
     $("chnName").innerHTML = "";
+    $("chnNameRow").hidden = true;
   };
   
   saveSysVars = function()
@@ -191,10 +203,12 @@
           iSubType = SYSVAR_BOOL;
           pb += "string sTrue = '"+$("inpLTrue").value+"';";
           pb += "string sFalse = '"+$("inpLFalse").value+"';";
+          pb += "string sValue = '"+$("selValue").value+"';";
           break;
         case 1:
           iSubType = SYSVAR_ENUM;
           pb += "string sValList = '"+$("txVals").value.replace(/(?:\r\n|\r|\n)/g,';')+"';";
+          pb += "string sValue = '"+$("selEnum").value+"';";
           break;
         case 2:
           iSubType = SYSVAR_GENERIC;
@@ -216,14 +230,26 @@
           if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
           pb += "integer iMinVal = '"+itmpMinVal+"';";
           pb += "integer iMaxVal = '"+itmpMaxVal+"';";
+          
+          if (isNaN($("inpValue").value)) 
+          {
+            alert(translateKey("alertValOutOfRange"));
+            return;
+          }
+          var value = $("inpValue").value;
+          if (value > itmpMaxVal) value = itmpMaxVal;
+          if (value < itmpMinVal) value = itmpMinVal;
+          pb += "string sValue = '"+value+"';";
           break;
         case 3: 
           iSubType = SYSVAR_ALARM;
           pb += "string sTrue = '"+$("inpLTrue").value+"';";
           pb += "string sFalse = '"+$("inpLFalse").value+"';";
+          pb += "string sValue = '"+$("selValue").value+"';";
           break;
         case 4:
           iSubType = SYSVAR_STRING;
+          pb += "string sValue = '"+$("txValue").value.replace(/'/g,"\\'")+"';";
           break;
       }
       pb += "string sUnit = '"+$("txtUnit").value+"';";
@@ -249,31 +275,35 @@
 
   channelChooser2 = function()
   {
-    ChannelChooser.show(function(result) {
-      if (result)
-      {
-        $("chnId").value = result;
-        var pb = "string action = 'getChnNameById';";
-        pb += "integer id = '" + result + "';";
-        var opts =  
+    if ($("ckAssignedChn").checked == true) {
+      ChannelChooser.show(function(result) {
+        if (result)
         {
-          postBody: pb
-        };
-        new Ajax.Updater("chnName", "/esp/system.htm?sid=" + SessionId, opts);
-        $("radNo").checked = false;
-        $("radYes").checked = true;
-      }
-      else if ($(chnName).innerHTML != "")
-      {
-        $("radNo").checked = false;
-        $("radYes").checked = true;
-      }
-      else
-      {
-        $("radYes").checked = false;
-        $("radNo").checked = true;
-      }
-    }, ChannelChooser.SHOW_ALL);
+          $("chnId").value = result;
+          var pb = "string action = 'getChnNameById';";
+          pb += "integer id = '" + result + "';";
+          var opts =  
+          {
+            postBody: pb
+          };
+          new Ajax.Updater("chnName", "/esp/system.htm?sid=" + SessionId, opts);
+          $("ckAssignedChn").checked = true;
+          $("chnNameRow").hidden = false;
+        }
+        else if ($(chnName).innerHTML != "")
+        {
+          $("ckAssignedChn").checked = true;
+          $("chnNameRow").hidden = false;
+        }
+        else
+        {
+          $("ckAssignedChn").checked = true;
+          $("chnNameRow").hidden = false;
+        }
+      }, ChannelChooser.SHOW_ALL);
+    } else {
+      noChannel();
+    }
   };
   
   onTypeChange = function() 
@@ -294,7 +324,7 @@
         loadLogicEdit(translateKey("lblTriggered"), translateKey("lblNotTriggered"));
         break;
       case 4:
-        loadNoneEdit();
+        loadChar8859Edit("");
         break;
     }
   };
@@ -304,13 +334,29 @@
     //elm.value = elmVal.replace(/\\n|\\r|\\t/g, "");
     elm.value = elmVal.replace(/\\/g, "");
   };
+  
+  checkInpValue = function() {
+   var itmpValue = parseFloat( $("inpValue").value );
 
+   var itmpMinVal = parseFloat( $("inpMin").value );
+   var itmpMaxVal = parseFloat( $("inpMax").value );
+   
+   if (isNaN(itmpValue)) {
+     // Popup erscheint beim Speichern; doppeltes alert() ist nervig
+     // alert(translateKey("alertValOutOfRange"));
+   } else {
+     if (itmpValue > itmpMaxVal) document.getElementById('inpValue').value = itmpMaxVal;
+     if (itmpValue < itmpMinVal) document.getElementById('inpValue').value = itmpMinVal;
+   }
+  }
+  
   loadNoneEdit = function()
   {
     $("tdEdit").innerHTML = "";
+    $("tdValueEdit").innerHTML = "";
   };
   
-  loadLogicEdit = function(sTrue, sFalse) 
+  loadLogicEdit = function(sTrue, sFalse, sValue) 
   {
     var s = "";
     s += "<table class='CLASS05010'>";
@@ -323,9 +369,25 @@
     s += "</tr>";
     s += "</table>";
     $("tdEdit").innerHTML = s;
+    
+    
+    s = "";
+    var isSelFalse = "selected";
+    var isSelTrue = "";
+    if (sValue === "true") {
+      isSelFalse = "";
+      isSelTrue = "selected";
+    } 
+    s += "<table class='CLASS05010'>";
+    s += "<tr>";
+      s += "<td class='CLASS05011'><select id='selValue'><option "+isSelFalse+" value='0'>"+translateString(sFalse)+"</option><option "+isSelTrue+" value='1'>"+translateString(sTrue)+"</option></select> </td>";
+    s += "</tr>";
+    s += "</table>";   
+
+    $("tdValueEdit").innerHTML = s
   };
   
-  loadValueEdit = function(vals) 
+  loadValueEdit = function(vals, sValue, optionList) 
   {
     if( vals == "" )
     {
@@ -337,9 +399,23 @@
     s += "<tr><td> <textarea id='txVals' rows='2'>"+vals+"</textarea> </td></tr>";
     s += "</table>";
     $("tdEdit").innerHTML = s;
+    
+    s = "";
+    var hidden = (sValue) ? "" : "style='display: none;'";
+    s += "<table class='CLASS05010' "+hidden+">";
+    s += "<tr>";
+    s += "<td class='CLASS05011'><select id='selEnum'>";
+    s+=optionList;
+    s+="</select> </td>";
+    s += "</tr>";
+    s += "</table>";   
+
+    $("tdValueEdit").innerHTML = s
+    
+    if (sValue) document.getElementById("selEnum").options[sValue].selected=true;
   };
   
-  loadIntEdit = function(val1, val2) 
+  loadIntEdit = function(val1, val2, sValue, sUnit='')
   {
     var s = "";
     s += "<table class='CLASS05010'>";
@@ -352,7 +428,33 @@
     s += "</tr>";
     s += "</table>";
     $("tdEdit").innerHTML = s;
+    
+    s = "";
+    var val = val1;
+    if (sValue) val = sValue;
+    s += "<table class='CLASS05012'>";
+    s += "<tr><td style='white-space:nowrap;'><input id='inpValue' type='text' size='12' value='"+translateString(val.toString())+"'  onblur='checkInpValue();'/>&nbsp;" + sUnit + "</td></tr>";
+    s += "</table>";
+    $("tdValueEdit").innerHTML = s;
+    
   }
+  
+  function decodeURIComponentSafe(s) {
+    if (!s) {
+        return s;
+    }
+    return decodeURIComponent(s.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25'));
+  }
+    
+  loadChar8859Edit = function(sValue) 
+  {
+    var s = "";
+    s += "<table class='CLASS05012'>";
+    s += "<tr><td> <textarea id='txValue' rows='5'>"+decodeURIComponentSafe(unescape(sValue))+"</textarea> </td></tr>";
+    s += "</table>";
+    $("tdValueEdit").innerHTML = s;
+    $("tdEdit").innerHTML = "";
+  };
 
   <% 
     if (system.GetVar("createNew") == 1) {
@@ -362,27 +464,43 @@
       if ( (sv.Channel() != ID_ERROR) && (sv.Channel() != 0)) {
         object oChn = dom.GetObject(sv.Channel());
         if (oChn) {
-          Write("$('radYes').checked = true;");
+          Write("$('ckAssignedChn').checked = true;");
+          Write("$('chnNameRow').hidden = false;");
         }
       }
       else {
-        Write("$('radNo').checked = true;");
+        Write("$('ckAssignedChn').checked = false;");
+        Write("$('chnNameRow').hidden = true;");
       }
       if (sv.ValueSubType() == istPresent) {
       }
       if (sv.ValueSubType() == istChar8859) {
+        string sval = sv.Value();
+        Write("loadChar8859Edit('"#sval.UriEncode()#"');");
       }
       if (sv.ValueSubType() == istAlarm) {
-        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"');");
+        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"', '"#sv.Value()#"');");
       }
       if (sv.ValueSubType() == istGeneric) {
-        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"');");
+        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
       }
       if (sv.ValueSubType() == istEnum) {
-        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"');");
+        integer iVLCount = web.webGetValueListCount( sv.ValueList() );
+        iVLCount = iVLCount - 1;
+        string sVLKey;
+        string optionList = "";
+        string oVal = "";
+        integer count = 0;
+        foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
+        {
+         oVal = count.ToString(0);
+         optionList = optionList # "<option value=\""#oVal#"\">"#web.webGetValueFromList( sv.ValueList(), sVLKey )#"</option>"; 
+         count = count+1;
+        }
+        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"', '"#sv.Value()#"', '"#optionList#"');");
       }
       if (sv.ValueSubType() == istBool) {
-        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"');");
+        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"', '"#sv.Value()#"');");
       }
     }
   %>

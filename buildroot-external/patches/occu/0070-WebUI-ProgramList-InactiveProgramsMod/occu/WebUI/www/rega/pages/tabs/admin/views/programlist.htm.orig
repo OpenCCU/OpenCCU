@@ -32,7 +32,7 @@
       }
     }
   %>
-  fltVR = new iseFilter("fltVR");
+  fltPL = new iseFilter("fltPL");
   arItems = new Array();
 </script>
 
@@ -57,9 +57,16 @@
 
 <div id="prgcontent">
 <table id="ProgramListTable" class="tTable"  border="0" cellpadding="0" cellspacing="0" style="display:none">
+  <colgroup>
+    <col />
+    <col />
+    <col />
+    <col />
+    <col style="width:250px;" />
+  </colgroup>
     <tr>
       <%string sCssName="Sort"; if(firstSort||(system.GetSessionVar("sessionLS")=="name")){sCssName="SortSelected";} %>
-      <td class="thCell CLASS03302"><div id="name" class="tHeaderCell<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></td>
+      <td class="thCell CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></td>
       <td class="thCell CLASS04900" >${thDescription}</td>
       <td class="thCell CLASS04900" >${thCondition}</td>
       <td class="thCell CLASS04900" >${thActivity}</td>
@@ -71,7 +78,7 @@
         <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
           <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03307" NAME="ftName"/>
-          <div id="ftSetNameBtn" class='FilterSetButton CLASS03308' onclick="setSFilter(fltVR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+          <div id="ftSetNameBtn" class='FilterSetButton CLASS03308' onclick="setSFilter(fltPL, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
           <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
         </div>
       </td>
@@ -79,7 +86,7 @@
         <div id="btnFilterDesc" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterDescSub" style="display:none">
           <input id="ftDesc" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDescBtn', 'ftCancelDescBtn')" type="text" size="15" class="CLASS03307" NAME="ftDesc"/>
-          <div id="ftSetDescBtn" class="FilterSetButton CLASS03308" onclick="setSFilter(fltVR, 'ftDesc', FIL_DESC);updateTable();$('btnFilterDescSub').hide();" >${filterSet}</div>
+          <div id="ftSetDescBtn" class="FilterSetButton CLASS03308" onclick="setSFilter(fltPL, 'ftDesc', FIL_DESC);updateTable();$('btnFilterDescSub').hide();" >${filterSet}</div>
           <div id="ftCancelDescBtn" class='FilterSetButton' onclick="$('btnFilterDescSub').hide();">${filterClose}</div>
         </div>
       </td>
@@ -397,15 +404,15 @@
   var s = "";
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton' onclick='NewProgram();'>"+ translateKey('footerBtnNew') +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS03306' onclick='fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
-    //s += "<td align='center' valign='middle'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >Systeminterne Programme<br /><% Write(sInternalBtnText); %>blenden</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >"+translateKey(internalBtnText) +"</div></td>";
-    s += "<td align='center' valign='middle'><div class='FooterButton CLASS04906' onclick='new HMScriptExecutor();' >"+translateKey('footerBtnTestScript')+ "</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='NewProgram();'>"+ translateKey('footerBtnNew') +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltPL.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    //s += "<td  style='text-align:center;' valign='middle'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >Systeminterne Programme<br /><% Write(sInternalBtnText); %>blenden</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >"+translateKey(internalBtnText) +"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04906' onclick='new HMScriptExecutor();' >"+translateKey('footerBtnTestScript')+ "</div></td>";
     if(dbg)
     {
-      s += "<td align='center' valign='middle'><div class='FooterButton' onclick='reloadPage();'>"+translateKey('footerBtnUpdate')+ "</div></td>";
+      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='reloadPage();'>"+translateKey('footerBtnUpdate')+ "</div></td>";
     }
   s += "</tr>";
   s += "</table>";
@@ -418,7 +425,7 @@
   {
     onTopOver: function(divToShow)
     {
-      selectFilters(fltVR, divToShow);
+      selectFilters(fltPL, divToShow);
     }
   };
 
@@ -435,10 +442,10 @@
 
   updateTable = function()
   {
-    colorFilterBtns(fltVR);
+    colorFilterBtns(fltPL);
     for (var i = 0; i < arItems.length; i++)
     {
-      if (!fltVR.objPassFilter(arItems[i]))
+      if (!fltPL.objPassFilter(arItems[i]))
       {
         hide(arItems[i]['trid']);
       }

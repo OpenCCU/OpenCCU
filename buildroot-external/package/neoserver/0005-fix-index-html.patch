@@ -1,0 +1,87 @@
+www/index.html: fix https use by using location.protocol
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/www/index.html	2024-02-19 15:05:39.000000000 +0100
++++ b/www/index.html	2024-02-26 18:12:16.554752107 +0100
+@@ -181,7 +181,7 @@
+ <footer class="pt-4 my-md-5 pt-md-5 border-top" style="height: 50px; text-align: center;">
+ 	<div class="row" style="margin: 0;">
+ 		<div class="col-10 col-md">
+-			<img class="mb-1" src="https://www.mediola.com/wp-content/uploads/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2024</small>
++			<img class="mb-1" src="images/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2022</small>
+ 		</div>
+ 	</div>
+ </footer>
+@@ -229,18 +229,18 @@
+ 		$.ajax({
+ 			type: 'GET',
+ 			dataType: "json",
+-			url: "/addons/mediola/bin/hmFunc.cgi?sid="+fType,
++			url: self.location.protocol+"//"+self.location.host+"/addons/mediola/bin/hmFunc.cgi?sid="+fType,
+ 			success: function(data){
+ 
+ 				if(typeof data==="object" && data!=null){
+ 					data=data;
+ 			    }else{
+-			    	window.location.href="http://"+self.location.host;
++					window.location.href=self.location.protocol+"//"+self.location.host;
+ 			    }
+ 
+ 			},
+ 			error: function() {
+-				window.location.href="http://"+self.location.host;
++				window.location.href=self.location.protocol+"//"+self.location.host;
+ 
+ 			}
+ 			});
+@@ -252,13 +252,13 @@
+     	function getLogFiles(){
+ 
+     		var at = crypt_MD5.md5(unescape(encodeURI($('#password').val() + '_SALT!')));
+-            window.open("http://"+self.location.host+":8088/getLogs?at=" + at,'_blank');
++            window.open(self.location.protocol+"//"+self.location.host+":8088/getLogs?at=" + at,'_blank');
+     	}
+     	function doResetNeoServer(){
+ 
+    			$.ajax({
+     			type: 'HEAD',
+-    			url: "/addons/mediola/bin/restart.cgi?sid="+fType,
++    			url: self.location.protocol+"//"+self.location.host+"/addons/mediola/bin/restart.cgi?sid="+fType,
+     			success: function(){},
+     			error: function() {}
+   			});
+@@ -268,21 +268,21 @@
+      	function serverEnable(){
+    			$.ajax({
+     			type: 'HEAD',
+-    			url: "/addons/mediola/bin/enableServer.cgi?sid="+fType,
++    			url: self.location.protocol+"//"+self.location.host+"/addons/mediola/bin/enableServer.cgi?sid="+fType,
+     			success: function(){},
+     			error: function() {}
+   			});
+   			alert("NEO SERVER wird gestartet, bitte haben Sie etwas Geduld");
+ 
+   			setTimeout(function(){
+-  				var url = "/addons/mediola/index.html?sid="+fType;
++  				var url = self.location.protocol+"//"+self.location.host+"/addons/mediola/index.html?sid="+fType;
+   				location.href = url;
+   			}, 10000);
+     	}
+ 		function urlExists(){
+   			$.ajax({
+     			type: 'GET',
+-    			url: "/addons/mediola/bin/checkServer.cgi?sid="+fType,
++    			url: self.location.protocol+"//"+self.location.host+"/addons/mediola/bin/checkServer.cgi?sid="+fType,
+     			success: function(data){
+ 					if (data && data.running) {
+ 						$("#onlinecheck").html("Status: <span style='font-weight:bold;color:#00FF00;'>online</span>");
+@@ -302,4 +302,4 @@
+ 		urlExists();
+ </script>
+ </body>
+-</html>
+\ No newline at end of file
++</html>

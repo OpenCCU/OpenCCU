@@ -6,11 +6,11 @@
   <body>
    <table id="DeviceListTable" cellpadding="0" cellspacing="0">
     <colgroup>
-      <col width="5%">
-      <col width="30%">
-      <col width="25%">
-      <col width="25%">
-      <col width="15%">
+      <col style="width:55px;" />
+      <col />
+      <col />
+      <col />
+      <col style="width:100px;" />
     </colgroup>
     <thead>
       <tr>

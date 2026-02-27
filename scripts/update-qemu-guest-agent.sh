@@ -3,7 +3,7 @@ set -e
 
 ID=${1}
 PACKAGE_NAME="qemu-guest-agent"
-PROJECT_URL="https://download.qemu.org/"
+PROJECT_URL="https://download.qemu.org"
 ARCHIVE_URL="${PROJECT_URL}/qemu-${ID}.tar.xz"
 
 if [[ -z "${ID}" ]]; then

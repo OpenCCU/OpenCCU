@@ -1,0 +1,658 @@
+function ::CreateWeatherSensor() {
+
+  boolean hasRainDetector = false;
+
+  object oDevice = dom.GetObject(cObj.Device());
+  object ch = dom.GetObject(chnId);
+  string chAddress = ch.Address();
+
+  string devAddress =  chAddress.StrValueByIndex(":",0);
+  string maintenanceChannelAddress = devAddress#":0";
+
+  object oActualTemperature = cObj.DPByControl("WEATHER_TRANSMIT.ACTUAL_TEMPERATURE");
+  object oActualHumidity = cObj.DPByControl("WEATHER_TRANSMIT.HUMIDITY");
+  object oActualIllumination = cObj.DPByControl("WEATHER_TRANSMIT.ILLUMINATION");
+  object oActualRaining = cObj.DPByControl("WEATHER_TRANSMIT.RAINING");
+  object oActualRainCounter = cObj.DPByControl("WEATHER_TRANSMIT.RAIN_COUNTER");
+  object oActualSunshineDuration = cObj.DPByControl("WEATHER_TRANSMIT.SUNSHINEDURATION");
+  object oActualSunshine = cObj.DPByControl("WEATHER_TRANSMIT.SUNSHINE_THRESHOLD_OVERRUN");
+  object oActualWindDirection = cObj.DPByControl("WEATHER_TRANSMIT.WIND_DIRECTION");
+  object oActualWindDirectionRange = cObj.DPByControl("WEATHER_TRANSMIT.WIND_DIRECTION_RANGE");
+  object oActualWindSpeed = cObj.DPByControl("WEATHER_TRANSMIT.WIND_SPEED");
+
+
+  if (oActualSunshine) {
+    object svHmIPSunshineCounter = dom.GetObject("svHmIPSunshineCounter_"#chnId#"_"#chAddress);
+    object svHmIPSunshineCounterYesterday = dom.GetObject("svHmIPSunshineCounterYesterday_"#chnId);
+    object svHmIPSunshineCounterToday = dom.GetObject("svHmIPSunshineCounterToday_"#chnId);
+  }
+  if (oActualRainCounter) {
+    object svHmIPRainCounter = dom.GetObject("svHmIPRainCounter_"#chnId#"_"#chAddress);
+    object svHmIPRainCounterYesterday = dom.GetObject("svHmIPRainCounterYesterday_"#chnId);
+    object svHmIPRainCounterToday = dom.GetObject("svHmIPRainCounterToday_"#chnId);
+  }
+
+  WriteLine("<td>");
+    WriteLine("<table>");
+      ! 1st row
+      WriteLine("<tr>");
+      if( oActualTemperature)
+      {
+        WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+          WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+            WriteLine("<tr style='height:40px;'>");
+              WriteLine("<td id='"#chnId#"ActualTemperature' class='minWidth230px' style='text-align:left'>");
+                WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableWeatherTemperature}: </span><span class='CLASS02535A' style='color:white'>"#oActualTemperature.Value().ToString(1)#" "#oActualTemperature.ValueUnit()#"</span>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+          WriteLine("</table>");
+        WriteLine("</td>");
+      }
+      if( oActualHumidity)
+      {
+        WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+          WriteLine("<table class='_ControlBtnInfo'>");
+            WriteLine("<tr style='height:40px;'>");
+              WriteLine("<td id='"#chnId#"ActualHumidity' class='minWidth230px' style='text-align:left'>");
+                WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableHeatingHumidity}: </span><span class='CLASS02535A' style='color:white'>"#oActualHumidity.Value().ToString(0)#" "#oActualHumidity.ValueUnit()#"</span>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+          WriteLine("</table>");
+        WriteLine("</td>");
+      }
+      WriteLine("</tr>");
+      ! 2nd row
+      WriteLine("<tr>");
+      if( oActualIllumination)
+      {
+        WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+          WriteLine("<table class='_ControlBtnInfo'>");
+            WriteLine("<tr style='height:40px;'>");
+              WriteLine("<td id='"#chnId#"ActualIllumination' class='minWidth230px' style='text-align:left'>");
+                WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableBrightness}: </span><span class='CLASS02535A' style='color:white'>"#oActualIllumination.Value().ToString(0)#" "#oActualIllumination.ValueUnit()#"</span>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+          WriteLine("</table>");
+        WriteLine("</td>");
+      }
+      if(oActualWindSpeed)
+      {
+        WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+          WriteLine("<table class='_ControlBtnInfo'>");
+            WriteLine("<tr style='height:40px;'>");
+              WriteLine("<td id='"#chnId#"ActualWindSpeed' class='minWidth230px' style='text-align:left'>");
+                WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableWeatherWindSpeed}: </span><span class='CLASS02535A' style='color:white'>"#oActualWindSpeed.Value().ToString(0)#" "#oActualWindSpeed.ValueUnit()#"</span>");
+
+                 boolean bErrorWindNorth = true;
+
+                 if (oActualWindDirection) {
+                   bErrorWindNorth =  dom.GetObject("HmIP-RF."#maintenanceChannelAddress#".ERROR_WIND_NORTH").Value();
+                   string errorWindNorth = "class='CLASS02534 j_translate' style='color:white; float: none; display: inline;'";
+                   if (bErrorWindNorth) {
+                       errorWindNorth = "style='color:red; float: none; display: inline;'";
+                   }
+                   string sValue = ""; ! used by ConvWindDir()
+                   string sValueh = ""; ! set by ConvWindDir() - contains the converted value
+                   sValue = oActualWindDirection.Value().ToString(0);
+                   Call("/esp/datapointconfigurator.fn::ConvWindDir()");
+                   if (bErrorWindNorth) {
+                    WriteLine("<br/><span "#errorWindNorth#">${stringTableWeatherWindDir}: </span><img src='/ise/img/help.png' alt='help' style='cursor: pointer; width:18px; height:18px; vertical-align:middle;' onclick=alert(translateKey('stringTableErrorWindNorthTrue'));> ");
+                   } else {
+                    WriteLine("<br/><span "#errorWindNorth#">${stringTableWeatherWindDir}: </span><span class='CLASS02535A' style='color:white'>"#sValueh#"  "#oActualWindDirection.Value().ToString(0)#oActualWindDirection.ValueUnit()#"</span>");
+                   }
+                }
+
+                if ((! bErrorWindNorth) && oActualWindDirectionRange) {
+                  real actualWindDirectionRange = "0";
+                  if (! oActualWindDirectionRange.Value()) {
+                    actualWindDirectionRange = 0.0;
+                  } else {
+                    actualWindDirectionRange = oActualWindDirectionRange.Value();
+                  }
+                  WriteLine("<br/><span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableWeatherWindDirRangeA}: </span><span class='CLASS02535A' style='color:white'>"#actualWindDirectionRange.ToString(0)#oActualWindDirectionRange.ValueUnit()#"</span>");
+                }
+              WriteLine("</td>");
+            WriteLine("</tr>");
+          WriteLine("</table>");
+        WriteLine("</td>");
+      }
+      WriteLine("</tr>");
+
+      WriteLine("<tr><td colspan='2'><hr></td></tr>");
+
+      ! 3th row
+      WriteLine("<tr>");
+        if (oActualSunshine)
+        {
+          WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+            WriteLine("<table class='_ControlBtnInfo'>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td id='"#chnId#"ActualSunshine' class='minWidth230px'>");
+                  if (oActualSunshine.Value()) {
+                    ! Sunshine
+                    WriteLine("${stringTableWeatherSunshineTrue}");
+                  } else {
+                    ! No sunshine
+                    WriteLine("${stringTableWeatherSunshineFalse}");
+                  }
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        } else {
+          WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+            WriteLine("<table class='_ControlBtnInfo'>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td id='"#chnId#"ActualSunshineDuration' class='minWidth230px'>");
+                  WriteLine("Something's wrong here!");
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        }
+
+        if (oActualSunshineDuration)
+        {
+          WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+            WriteLine("<table class='_ControlBtnInfo'>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td id='"#chnId#"ActualSunshineDuration' class='minWidth230px' style='text-align:left'>");
+                  WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableWeatherSunshineDuration}: </span><span id='"#chnId#"sunshineCounterDHM' class='CLASS02535A' style='color:white'></span> ");
+                  WriteLine("<script type='text/javascript'> jQuery('#"#chnId#"sunshineCounterDHM').text(convertMin2Hour("#svHmIPSunshineCounter.Value().ToString(0)#")) </script>");
+                  if (svHmIPSunshineCounterToday) {
+                    WriteLine("<br><span class='CLASS02534 j_translate' style='float: none; display: inline;'>${lblToday}: </span><span id='"#chnId#"sunshineTodayDHM' class='CLASS02535A' style='color:white'></span>");
+                    WriteLine("<script type='text/javascript'> jQuery('#"#chnId#"sunshineTodayDHM').text(convertMin2Hour("#svHmIPSunshineCounterToday.Value().ToString(0)#")) </script>");
+                  }
+                  if (svHmIPSunshineCounterYesterday) {
+                    WriteLine("<br><span class='CLASS02534 j_translate' style='float: none; display: inline;'>${lblYesterday}: </span><span id='"#chnId#"sunshineYesterdayDHM' class='CLASS02535A' style='color:white'></span>");
+                    WriteLine("<script type='text/javascript'> jQuery('#"#chnId#"sunshineYesterdayDHM').text(convertMin2Hour("#svHmIPSunshineCounterYesterday.Value().ToString(0)#")) </script>");
+                  }
+
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        }
+      WriteLine("</tr>");
+      WriteLine("<tr><td></td><td><div class='ControlBtnOff' id='resetSunshineCounter"#chnId#"'>${btnResetSunshineDuration}</div></td></tr>");
+
+      ! 4rd row
+
+     if (oActualRaining) {WriteLine("<tr><td colspan='2'><hr></td></tr>");}
+
+      WriteLine("<tr>");
+        if (oActualRaining)
+        {
+          WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+            WriteLine("<table class='_ControlBtnInfo'>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td id='"#chnId#"ActualRaining' class='minWidth230px'>");
+                  if (oActualRaining.Value()) {
+                    ! Rain
+                    WriteLine("<br/>${stringTableWeatherRainingTrue}<br/>");
+                  } else {
+                    ! No rain
+                    WriteLine("<br/>${stringTableWeatherRainingFalse}<br/>");
+                  }
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        }
+
+        if (oActualRainCounter)
+        {
+          WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+            WriteLine("<table class='_ControlBtnInfo'>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td class='minWidth230px' style='text-align:left'>");
+                  ! WriteLine("${stringTableWeatherRainCounter}: "#svHmIPRainCounter.Value().ToString(1)#" ("#oActualRainCounter.Value().ToString(1)#")"#oActualRainCounter.ValueUnit());
+                  WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableWeatherRainCounter}: </span><span id='"#chnId#"actualRainCounter' class='CLASS02535A' style='color:white'>"#svHmIPRainCounter.Value().ToString(1)#" "#oActualRainCounter.ValueUnit()#"</span>");
+
+                  if (svHmIPRainCounterToday) {
+                     WriteLine("<br><span class='CLASS02534 j_translate' style='float: none; display: inline;'>${lblToday}: </span><span class='CLASS02535A' style='color:white'>"#svHmIPRainCounterToday.Value().ToString(1)#" "#oActualRainCounter.ValueUnit()#"</span>");
+                  }
+                  if (svHmIPRainCounterYesterday) {
+                    WriteLine("<br><span class='CLASS02534 j_translate' style='float: none; display: inline;'>${lblYesterday}: </span><span class='CLASS02535A' style='color:white'>"#svHmIPRainCounterYesterday.Value().ToString(1)#" "#oActualRainCounter.ValueUnit()#"</span>");
+                  }
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        WriteLine("</tr>");
+        WriteLine("<tr><td></td><td><div class='ControlBtnOff' id='resetRainCounter"#chnId#"'>${btnResetRainCounter}</div></td></tr>");
+      }
+    WriteLine("</table>");
+  WriteLine("</td>");
+
+  WriteLine("<script type='text/javascript'>");
+
+    WriteLine(" var buttonPressed = function(elm) { ");
+      WriteLine(" elm.addClass('ControlBtnOn').removeClass('ControlBtnOff'); ");
+      WriteLine(" window.setTimeout(function() {" );
+      WriteLine(" elm.addClass('ControlBtnOff').removeClass('ControlBtnOn'); ");
+      WriteLine(" },500); ");
+    WriteLine(" }; ");
+
+    WriteLine(" window.setTimeout(function() { ");
+      if (oActualRainCounter) {
+        WriteLine(" var resetRainCounterElm = jQuery('#resetRainCounter"#chnId#"'); ");
+        WriteLine(" resetRainCounterElm.click(function() { ");
+          WriteLine(" conInfo('Reset rain counter'); ");
+          WriteLine(" buttonPressed(resetRainCounterElm); ");
+          WriteLine(" homematic('SysVar.setFloat', {'name' :"#svHmIPRainCounter.ID()#", 'value' : 0}); ");
+
+          Write(" try { ");
+            ! Status & Control
+            WriteLine(" loadChannels(" #oDevice.ID()# "); ");
+          Write (" } catch(e) { ") ;
+            ! Favourite page
+            WriteLine(" jQuery('#"#chnId#"actualRainCounter').text('0.0'); ");
+          Write (" } ");
+
+        WriteLine("});");
+      }
+
+      if (oActualSunshine) {
+        WriteLine(" var resetSunshineCounterElm = jQuery('#resetSunshineCounter"#chnId#"'); ");
+        WriteLine(" resetSunshineCounterElm.click(function() { ");
+          WriteLine(" conInfo('Reset sunshine counter'); ");
+          WriteLine(" buttonPressed(resetSunshineCounterElm); ");
+          WriteLine(" homematic('SysVar.setFloat', {'name' :"#svHmIPSunshineCounter.ID()#", 'value' : 0}); ");
+
+          Write(" try { ");
+            ! Status & Control
+            WriteLine(" loadChannels(" #oDevice.ID()# "); ");
+          Write (" } catch(e) { ") ;
+            ! Favourite page
+            WriteLine(" jQuery('#"#chnId#"sunshineCounterDHM').text('0:00'); ");
+          Write (" } ");
+
+        WriteLine("});");
+      }
+    WriteLine( "},50); ");
+  WriteLine("</script>");
+
+}
+
+function ::CreateTempHuminityParticulateMatterTransmitter() {
+
+  object oActualTemperature = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.ACTUAL_TEMPERATURE");
+  ! object oActualTemperatureStatus = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.ACTUAL_TEMPERATURE_STATUS");
+  object oActualHumidity = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.HUMIDITY");
+
+  object oMassConc10 = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.MASS_CONCENTRATION_PM_1");
+  object oMassConc10_24H = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.MASS_CONCENTRATION_PM_1_24H_AVERAGE");
+  object oNumberConc10 = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.NUMBER_CONCENTRATION_PM_1");
+
+  object oMassConc25 = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.MASS_CONCENTRATION_PM_2_5");
+  object oMassConc25_24H = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.MASS_CONCENTRATION_PM_2_5_24H_AVERAGE");
+  object oNumberConc25 = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.NUMBER_CONCENTRATION_PM_2_5");
+
+  object oMassConc100 = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.MASS_CONCENTRATION_PM_10");
+  object oMassConc100_24H = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.MASS_CONCENTRATION_PM_10_24H_AVERAGE");
+  object oNumberConc100 = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.NUMBER_CONCENTRATION_PM_10");
+
+
+  object oTypicalParticleSize = cObj.DPByControl("TEMP_HUM_PARTICLE_MATTER_TRANSMITTER.TYPICAL_PARTICLE_SIZE");
+
+  string AQI10;
+  string AQI25;
+  string AQI100;
+  string bgColor = "";
+  string fgColor = "";
+
+  string location = cObj.MetaData("modeAQI");
+  if (location == null) {location = "Europe"; cObj.MetaData("modeAQI", location);}
+
+  string lblLocaction = "${"#location#"}";
+  string infoPic = "";
+  integer maxConcentration = 6553;
+  integer maxParticleSize = 655;
+
+  WriteLine("<td>");
+    WriteLine("<table>");
+
+      if (oActualTemperature || oActualHumidity) {
+        WriteLine("<tr>");
+          if(oActualTemperature)
+          {
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"actualTemperature' class='minWidth210px' style='text-align:left'>");
+                    WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableWeatherTemperature}: </span><span class='CLASS02535A' style='color:white'>"#oActualTemperature.Value().ToString(1)#" "#oActualTemperature.ValueUnit()#"</span>");
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+
+          if(oActualHumidity)
+          {
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"actualHumidity' class='minWidth210px' style='text-align:left'>");
+                    WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableHeatingHumidity}: </span><span class='CLASS02535A' style='color:white'>"#oActualHumidity.Value().ToString(0)#" "#oActualHumidity.ValueUnit()#"</span>");
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+        WriteLine("</tr>");
+      }
+
+      if (oTypicalParticleSize) {
+        WriteLine("<tr>");
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"typicalParticelSize' class='minWidth210px' style='text-align:left'>");
+                  if (oTypicalParticleSize.Value().ToInteger() < maxParticleSize) {
+                    WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableTypicalParticelSize}: </span><span class='CLASS02535A' style='color:white'>"#oTypicalParticleSize.Value().ToString(1)#" "#oTypicalParticleSize.ValueUnit()#"</span>");
+                   } else {
+                     WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableTypicalParticelSize}: </span><span class='CLASS02535A' style='color:white'>${lblUnknown}</span>");
+
+                   }
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td class='minWidth210px' style='text-align:left'>");
+                    WriteLine("<span class='CLASS02534 j_translate' style='float: none; display: inline;'>${lblLocationA}: </span><span class='CLASS02535A' style='color:white'>"#lblLocaction#"</span>");
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+
+        WriteLine("</tr>");
+      }
+
+
+      if (oMassConc10 || oMassConc25 || oMassConc100) {
+
+        WriteLine("<tr>");
+
+          if(oMassConc10)
+          {
+            if (oMassConc10_24H) {
+              !fgColor = "white";
+              !integer massConc = oMassConc10_24H.Value().ToInteger();
+
+              ! The AQI of the PM1.0 value is not yet defined officially. So we don't need this currently.
+              !if (location == "Europe") {
+              !  if (massConc < 15) {AQI10 = "${aqiGood}"; bgColor="green";}
+              !  if ((massConc >= 15) && (massConc < 30)) {AQI10 = "${aqiModerate}"; fgColor="black"; bgColor="yellow";}
+              !  if ((massConc >= 30) && (massConc < 55)) {AQI10 = "${aqiUnhealty2}"; bgColor="orange";}
+              !  if ((massConc >= 55) && (massConc < 110)) {AQI10 = "${aqiUnhealty3}"; bgColor="red";}
+              !  if (massConc >= 110) {AQI10 = "${aqiHazardous}"; bgColor="brown";}
+              !  infoPic = "/ise/img/AQI_EU.png";
+              !}
+
+              !if (location == "USA") {
+              !  if (massConc < 12.1) {AQI10 = "${aqiGood}"; bgColor="green";}
+              !  if ((massConc >= 12.1) && (massConc <= 35.4)) {AQI10 = "${aqiModerate}"; fgColor="black"; bgColor="yellow";}
+              !  if ((massConc >= 35.5) && (massConc <= 55.4)) {AQI10 = "${aqiUnhealty1}"; bgColor="orange";}
+              !  if ((massConc >= 55.5) && (massConc <= 150.4)) {AQI10 = "${aqiUnhealty2}"; bgColor="red";}
+              !  if ((massConc >= 150.5) && (massConc <= 250.4)) {AQI10 = "Very ${aqiUnhealty3}"; bgColor="blue";}
+              !  if (massConc > 250.5) {AQI10 = "${aqiHazardous}"; bgColor="brown";}
+              !  infoPic = "/ise/img/AQI_US.png";
+              !}
+            }
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"massConc10' class='minWidth210px' style='text-align:center;'>");
+                    WriteLine("<div class='CLASS02534 j_translate' style='float: none; display: inline; text-align:center;'>${stringTableMassConc10}: </div>");
+                    if (oMassConc10.Value() < maxConcentration) {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>"#oMassConc10.Value().ToString(1)#" "#oMassConc10.ValueUnit()#"</div>");
+                      if (oMassConc10_24H) {
+                        WriteLine("<hr>");
+                        WriteLine("<div class='CLASS02535B' style='color:white'>${lbl24Average}:<br/>" #oMassConc10_24H.Value().ToString(1)#" "#oMassConc10.ValueUnit()#"</div>");
+                        ! The AQI of the PM1.0 value is not yet defined officially. So we don't show the color indicator
+                        ! WriteLine("<div style='height:15px; color:"#fgColor#"; background-color:"#bgColor#"; margin-top:5px; text-align:center; cursor:pointer;' onclick='MessageBox.show(\"Info\", \"<div><img src="#infoPic#"></div>\", \"\", 847, 493);' >"#AQI10#"</div>");
+                        WriteLine("<div style='height:15px; color:"#fgColor#"; margin-top:5px; text-align:center;' ></div>");
+                      }
+
+
+                    } else {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>${lblUnknown}</div>");
+                    }
+                  WriteLine("</td>");
+
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+
+          if(oMassConc25)
+          {
+            if (oMassConc25_24H) {
+              fgColor = "white";
+              integer massConc = oMassConc25_24H.Value().ToInteger();
+              if (location == "Europe") {
+                if (massConc < 15) {AQI25 = "${aqiGood}"; bgColor="green";}
+                if ((massConc >= 15) && (massConc < 30)) {AQI25 = "${aqiModerate}"; fgColor="black"; bgColor="yellow";}
+                if ((massConc >= 30) && (massConc < 55)) {AQI25 = "${aqiUnhealty2}"; bgColor="orange";}
+                if ((massConc >= 55) && (massConc < 110)) {AQI25 = "${aqiUnhealty3}"; bgColor="red";}
+                if (massConc >= 110) {AQI25 = "${aqiHazardous}"; bgColor="brown";}
+                infoPic = "/ise/img/AQI_EU.png";
+              }
+
+              if (location == "USA") {
+                if (massConc < 12.1) {AQI25 = "${aqiGood}"; bgColor="green";}
+                if ((massConc >= 12.1) && (massConc <= 35.4)) {AQI25 = "${aqiModerate}"; fgColor="black"; bgColor="yellow";}
+                if ((massConc >= 35.5) && (massConc <= 55.4)) {AQI25 = "${aqiUnhealty1}"; bgColor="orange";}
+                if ((massConc >= 55.5) && (massConc <= 150.4)) {AQI25 = "${aqiUnhealty2}"; bgColor="red";}
+                if ((massConc >= 150.5) && (massConc <= 250.4)) {AQI25 = "Very ${aqiUnhealty3}"; bgColor="blue";}
+                if (massConc > 250.5) {AQI25 = "${aqiHazardous}"; bgColor="brown";}
+                infoPic = "/ise/img/AQI_US.png";
+              }
+            }
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"massConc25' class='minWidth210px' style='text-align:center;'>");
+                    WriteLine("<div class='CLASS02534 j_translate' style='float: none; display: inline; text-align:center;'>${stringTableMassConc25}: </div>");
+                    if (oMassConc25.Value() < maxConcentration) {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>"#oMassConc25.Value().ToString(1)#" "#oMassConc25.ValueUnit()#"</div>");
+                      if (oMassConc25_24H) {
+                        WriteLine("<hr>");
+                        WriteLine("<div class='CLASS02535B' style='color:white'>${lbl24Average}:<br/>" #oMassConc25_24H.Value().ToString(1)#" "#oMassConc25.ValueUnit()#"</div>");
+                        WriteLine("<div style='height:15px; color:"#fgColor#"; background-color:"#bgColor#"; margin-top:5px; text-align:center; cursor:pointer;' onclick='MessageBox.show(\"Info\", \"<div><img src="#infoPic#"></div>\", \"\", 847, 493);' >"#AQI25#"</div>");
+                      }
+                    } else {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>${lblUnknown}</div>");
+                    }
+                  WriteLine("</td>");
+
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+
+          if(oMassConc100)
+          {
+            if (oMassConc100_24H) {
+              fgColor = "white";
+              integer massConc = oMassConc100_24H.Value().ToInteger();
+              if (location == "Europe") {
+                if (massConc < 21) {AQI100 = "${aqiGood}"; bgColor="green";}
+                if ((massConc >= 21) && (massConc < 36)) {AQI100 = "${aqiModerate}"; fgColor="black"; bgColor="yellow";}
+                if ((massConc >= 36) && (massConc < 51)) {AQI100 = "${aqiUnhealty1}"; bgColor="orange";}
+                if ((massConc >= 51) && (massConc < 101)) {AQI100 = "${aqiUnhealty2}"; bgColor="red";}
+                if ((massConc >= 101) && (massConc <= 151)) {AQI100 = "${aqiUnhealty3}"; bgColor="blue";}
+                if (massConc > 150) {AQI100 = "${aqiHazardous}"; bgColor="brown";}
+                infoPic = "/ise/img/AQI_EU.png";
+              }
+
+              if (location == "USA") {
+                if (massConc < 55) {AQI100 = "${aqiGood}"; bgColor="green";}
+                if ((massConc >= 55) && (massConc < 155)) {AQI100 = "${aqiModerate}"; fgColor="black"; bgColor="yellow";}
+                if ((massConc >= 155) && (massConc < 255)) {AQI100 = "${aqiUnhealty1}"; bgColor="orange";}
+                if ((massConc >= 255) && (massConc < 355)) {AQI100 = "${aqiUnhealty2}"; bgColor="red";}
+                if ((massConc >= 355) && (massConc < 425)) {AQI100 = "${aqiUnhealty3}"; bgColor="blue";}
+                if (massConc > 425) {AQI100 = "${aqiHazardous}"; bgColor="brown";}
+                infoPic = "/ise/img/AQI_US.png";
+              }
+            }
+
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"massConc100' class='minWidth210px' style='text-align:center'>");
+                  WriteLine("<div class='CLASS02534 j_translate' style='float: none; display: inline; text-align:center;'>${stringTableMassConc100}:</div>");
+                    if (oMassConc100.Value() < maxConcentration) {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>"#oMassConc100.Value().ToString(1)#" "#oMassConc100.ValueUnit()#"</div>");
+                      if (oMassConc100_24H) {
+                        WriteLine("<hr>");
+                        WriteLine("<div class='CLASS02535B' style='color:white'>${lbl24Average}:<br/>" #oMassConc100_24H.Value().ToString(1)#" "#oMassConc100.ValueUnit()#"</div>");
+                        WriteLine("<div style='height:15px; color:"#fgColor#"; background-color:"#bgColor#"; margin-top:5px; text-align:center; cursor:pointer;' onclick='MessageBox.show(\"Info\", \"<div><img src="#infoPic#"></div>\", \"\", 847, 493);' >"#AQI100#"</div>");
+                      }
+                    } else {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>${lblUnknown}</div>");
+                    }
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+        WriteLine("</tr>");
+      }
+
+      if (oNumberConc10 || oNumberConc25 || oNumberConc100) {
+        WriteLine("<tr>");
+
+          if(oNumberConc10)
+          {
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"numberConc10' class='minWidth210px' style='text-align:center'>");
+                    WriteLine("<div class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableNumberConc10}: </div>");
+                    if (oNumberConc10.Value().ToInteger() < maxConcentration) {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>"#oNumberConc10.Value().ToString(1)#" "#oNumberConc10.ValueUnit()#"</div>");
+                    } else {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>${lblUnknown}</div>");
+                    }
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+
+          if(oNumberConc25)
+          {
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo' style='border:none'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"numberConc25' class='minWidth210px' style='text-align:center'>");
+                    WriteLine("<div class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableNumberConc25}: </div>");
+                    if (oNumberConc25.Value().ToInteger() < maxConcentration) {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>"#oNumberConc25.Value().ToString(1)#" "#oNumberConc25.ValueUnit()#"</div>");
+                    } else {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>${lblUnknown}</div>");
+                    }
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+
+          if(oNumberConc100)
+          {
+            WriteLine("<td class='ControlBtnInfo' style='background-color:#89989b; border:solid 1px black'>");
+              WriteLine("<table class='_ControlBtnInfo'>");
+                WriteLine("<tr style='height:40px;'>");
+                  WriteLine("<td id='"#chnId#"numberConc100' class='minWidth210px' style='text-align:center'>");
+                    WriteLine("<div class='CLASS02534 j_translate' style='float: none; display: inline;'>${stringTableNumberConc100}: </div>");
+                    if (oNumberConc100.Value().ToInteger() < maxConcentration) {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>"#oNumberConc100.Value().ToString(1)#" "#oNumberConc100.ValueUnit()#"</div>");
+                    } else {
+                      WriteLine("<div class='CLASS02535B' style='color:white'>${lblUnknown}</div>");
+                    }
+                  WriteLine("</td>");
+                WriteLine("</tr>");
+              WriteLine("</table>");
+            WriteLine("</td>");
+          }
+        WriteLine("</tr>");
+      }
+    WriteLine("</table>");
+  WriteLine("</td>");
+}
+
+function ::CreateCarbonDioxideReceiver() {
+  object oCO2Concentration = cObj.DPByControl("CARBON_DIOXIDE_RECEIVER.CONCENTRATION");
+  object oCO2ConcentrationStatus = cObj.DPByControl("CARBON_DIOXIDE_RECEIVER.CONCENTRATION_STATUS");
+
+  string CO2_Hint;
+  string bgColor = "";
+  string fgColor = "";
+  string devStatus;
+  integer Co2_Conc;
+
+  WriteLine("<td>");
+    WriteLine("<table style='margin: 10px 10px 10px -8px;' cellspacing='5'>");
+      WriteLine("<tr>");
+        if (oCO2Concentration) {
+          WriteLine("<td>");
+            WriteLine("<table>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td>" );
+
+                  WriteLine("<div class='ControlBtnInfo CLASS02532'>");
+                    WriteLine("<span class='CLASS02534 j_translate'>${lblCO2Concentration}:</span>");
+                    WriteLine("<span class='CLASS02535'>"#oCO2Concentration.Value().ToString(0)#" "#oCO2Concentration.ValueUnit()#"</span>");
+                  WriteLine("</div>");
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        }
+
+        if (oCO2ConcentrationStatus) {
+          ! CONCENTRATION_STATUS > 0 = NORMAL, 1 = UNKNOWN, 2 = OVERFLOW
+          if (oCO2ConcentrationStatus.Value() == 0) {
+            devStatus = "${lblNormal}";
+          } else {
+            if (oCO2ConcentrationStatus.Value() == 1) {devStatus = "${lblUnknown}";}  else {devStatus = "${lblErrorSensor}";}
+          }
+
+          WriteLine("<td>");
+            WriteLine("<table>");
+              WriteLine("<tr style='height:40px;'>");
+                WriteLine("<td>" );
+                  WriteLine("<div class='ControlBtnInfo CLASS02532'>");
+                    WriteLine("<span class='CLASS02535 j_translate'>${lblSensorStatus}: "#devStatus#"</span>");
+                  WriteLine("</div>");
+                WriteLine("</td>");
+              WriteLine("</tr>");
+            WriteLine("</table>");
+          WriteLine("</td>");
+        }
+      WriteLine("</tr>");
+
+      if (oCO2Concentration && (oCO2ConcentrationStatus.Value() == 0)) {
+        fgColor = "white";
+        Co2_Conc = oCO2Concentration.Value().ToInteger();
+
+        if (Co2_Conc < 800) {CO2_Hint = "${indoorAirQualityGood}"; bgColor="green";}
+        if ((Co2_Conc >= 800) && (Co2_Conc < 1000)) {CO2_Hint = "${indoorAirQualityMediocre}"; fgColor="black"; bgColor="yellow";}
+        if ((Co2_Conc >= 1000) && (Co2_Conc < 1400)) {CO2_Hint = "${indoorAirQualityModerate}"; fgColor="black"; bgColor="orange";}
+        if (Co2_Conc >= 1400) {CO2_Hint = "${indoorAirQualityLow}"; fgColor="black"; bgColor="red";}
+
+        WriteLine("<td>");
+          WriteLine("<div style='height:auto; color:"#fgColor#"; background-color:"#bgColor#"; margin-top:5px; text-align:center;'  >"#CO2_Hint#"</div>");
+        WriteLine("</td>");
+
+      }
+
+    WriteLine("</table>");
+  WriteLine("</td>");
+}

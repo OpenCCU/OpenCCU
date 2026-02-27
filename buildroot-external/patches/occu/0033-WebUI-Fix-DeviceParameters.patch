@@ -1,6 +1,6 @@
 --- occu/WebUI/www/config/ic_deviceparameters.cgi.orig
 +++ occu/WebUI/www/config/ic_deviceparameters.cgi
-@@ -1033,7 +1033,7 @@
+@@ -1049,7 +1049,7 @@
            #end if internalKey 
          }
        } 

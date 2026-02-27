@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.extension.js
-@@ -82,13 +82,21 @@
+@@ -60,13 +60,21 @@
      "generalDeviceChannelConfigLblLogged" : "Protokolliert:",
      "generalDeviceChannelConfigLblServiceMsg": "Servicemeldungen:",
      "generalDeviceChannelConfigLblFuncTest" : "Funktionstest",
@@ -24,9 +24,9 @@
      "generalChannelConfigHintReceiver" : "<p>Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgel%F6st.</p>",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.extension.js
-@@ -81,13 +81,21 @@
-     "generalDeviceChannelConfigLblVisible": "Visible:",
+@@ -60,13 +60,21 @@
      "generalDeviceChannelConfigLblLogged": "Logged:",
+     "generalDeviceChannelConfigLblServiceMsg": "Service messages:",
      "generalDeviceChannelConfigLblFuncTest": "Functional test",
 +    "generalDeviceChannelConfigLblRenameChannel" : "Rename associated channels",
 +    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "including own names:",
@@ -48,7 +48,7 @@
      "generalChannelConfigHintReceiver": "<p>In connection with actuators usually switching commands will be send.</p>",
 --- occu/WebUI/www/webui/style.css.orig
 +++ occu/WebUI/www/webui/style.css
-@@ -3194,7 +3194,7 @@
+@@ -3285,7 +3285,7 @@
    top: 50%;
    left: 50%;
    width: 800px;
@@ -57,7 +57,7 @@
    margin-left: -400px;
    margin-top: -225px;
    background-color: $_(black); /* black */
-@@ -3220,7 +3220,7 @@
+@@ -3311,7 +3311,7 @@
    top: 24px;
    left: 2px;
    width: 796px;
@@ -65,8 +65,8 @@
 +  height: 391px;
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
- /*  overflow: scroll;   */
-@@ -3229,7 +3229,7 @@
+   overflow: auto;
+@@ -3319,7 +3319,7 @@
  
  #DeviceConfigDialogFooter {
    position: absolute;
@@ -77,7 +77,7 @@
    height: 50px;
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -257,12 +257,42 @@
+@@ -287,12 +287,42 @@
          <table border=\"0\"  class=\"DeviceConfigDialogTable\" width=\"250px\">\n
            <tr>\n
              <td width=\"50%\"><div id=\"DeviceConfigDialogTestButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnFuncTest\" onclick=\"DeviceConfigDialog.startTest();\">Test starten<\/div><\/td>\n
@@ -124,7 +124,7 @@
        <\/div>\n
      <\/div>\n
  \n
-@@ -13067,11 +13097,13 @@
+@@ -15394,11 +15424,13 @@
  DeviceConfigDialog = Singleton.create({
    LAYER_ID: "DeviceConfigDialogLayer",
    NAME_ID: "DeviceConfigDialog_DeviceName",
@@ -138,7 +138,7 @@
    RESULT_OK: 1,
    RESULT_ABORT: 0,
    POLL_INTERVAL: 3,
-@@ -13119,6 +13151,9 @@
+@@ -15446,6 +15478,9 @@
        this.__hideLogging();
      }
      translateJSTemplate("#DeviceConfigDialog");
@@ -148,7 +148,7 @@
    },
  
    __hideFunctionTest: function() {
-@@ -13179,6 +13214,34 @@
+@@ -15506,6 +15541,34 @@
    },
    
    /**

@@ -14,6 +14,14 @@ array set LOGLEVELS {
   5 "\${dialogSettingsCMLogLevel3}"
 }
 
+array set HMIP_LOGLEVELS {
+  "0TRACE" "\${dialogSettingsCMLogLevel5}"
+  "1DEBUG" "\${dialogSettingsCMLogLevel0}"
+  "2INFO" "\${dialogSettingsCMLogLevel1}"
+  "3WARN" "\${dialogSettingsCMLogLevel2}"
+  "4ERROR" "\${dialogSettingsCMLogLevel3}"
+}
+
 array set REGA_LOGLEVELS {
   0 "\${dialogSettingsCMLogLevel0}"
   1 "\${dialogSettingsCMLogLevel1}"
@@ -54,17 +62,22 @@ proc action_acceptEula {} {
 
     puts "var req = jQuery.ajax({"
       puts " url : \"/EULA.\"+lang,"
-      puts " dataType: \"html\""
+      puts " dataType: \"html\","
+      puts " cache: false"
     puts "});"
 
     puts "req.done(function(data) {"
       puts "conInfo(\"EULA found\");"
       puts "jQuery('#fwUpload').hide();"
       puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
+        puts "var dlgPopup = parent.top.dlgPopup;"
+        puts "if (dlgPopup === undefined) {"
+          puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+        puts "}"
         puts "if (result == 1) {"
-          puts "parent.top.dlgPopup.hide();"
-          puts "parent.top.dlgPopup.setWidth(450);"
-          puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+          puts "dlgPopup.hide();"
+          puts "dlgPopup.setWidth(450);"
+          puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
         puts "} else {"
           puts "jQuery('#fwUpload').hide();"
           puts "dlgPopup.hide();"
@@ -77,16 +90,19 @@ proc action_acceptEula {} {
 
     puts "req.fail(function(data) {"
       puts "conInfo(\"EULA not available\");"
-      puts "parent.top.dlgPopup.hide();"
-      puts "parent.top.dlgPopup.setWidth(450);"
-      puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+      puts "var dlgPopup = parent.top.dlgPopup;"
+      puts "if (dlgPopup === undefined) {"
+        puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+      puts "}"
+      puts "dlgPopup.hide();"
+      puts "dlgPopup.setWidth(450);"
+      puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
     puts "});"
   }
 }
 
 proc action_firmware_update_confirm {} {
   global env
-   cgi_debug -on
   http_head
   division {class="popupTitle"} {
     #puts "Softwareupdate - Best&auml;tigung"
@@ -234,16 +250,6 @@ proc action_firmware_update_go {} {
     <p class="CLASS20914">
     ${dialogSettingsCMDialogPerformSoftwareUpdateP1}
     </p>
-    <p class="CLASS20914">
-      ${dialogSettingsCMDialogPerformSoftwareUpdateP2}
-      <ol class="CLASS20915">
-        <li>${dialogSettingsCMDialogPerformSoftwareUpdateLi1}</li>
-        <li>
-        ${dialogSettingsCMDialogPerformSoftwareUpdateLi2}
-        </li>
-        <li>${dialogSettingsCMDialogPerformSoftwareUpdateLi3}</li>
-      </ol>
-    </p>
   } "_empty_"  
   puts ""
   cgi_javascript {
@@ -254,19 +260,18 @@ proc action_firmware_update_go {} {
         regaMonitor.stop();
         InterfaceMonitor.stop();
       }
-      //var pb = "action=update_start";
-      //var opts = {
-      //  postBody: pb,
-      //  sendXML: false
-      //};
-      //new Ajax.Request(url, opts);
-      window.location.href=url+"&action=update_start"
+      var pb = "action=update_start";
+      var opts = {
+        postBody: pb,
+        sendXML: false
+      };
+      new Ajax.Request(url, opts);
     }
   }
 }
 
 proc action_firmware_update_cancel {} {
-  global env
+  global env filename
 
   if {[getProduct] < 3} {
     catch {exec rm /var/new_firmware.tar.gz}
@@ -278,8 +283,8 @@ proc action_firmware_update_cancel {} {
     }
   } else {
    catch { exec /bin/sh -c "rm -rf `readlink -f /usr/local/.firmwareUpdate` /usr/local/.firmwareUpdate" }
-   catch { exec /bin/sh -c "rm -f /usr/local/tmp/EULA.*"}
-   catch { exec /bin/sh -c "rm -f /usr/local/tmp/update_script"}
+   catch { exec /bin/sh -c "rm -f /tmp/EULA.*"}
+   catch { exec /bin/sh -c "rm -f /usr/local/tmp/firmwareUpdateFile"}
   }
 
   cgi_javascript {
@@ -336,10 +341,30 @@ proc checkIfFwOnly {} {
   }
 }
 
+proc execCmd {varName cmd} {
+  upvar 1 $varName variable
+  set rc [catch {eval $cmd} resVar]
+  if {$rc == 0} {
+    set variable $resVar
+  } else {
+    set variable 0
+  }
+}
+
 proc action_put_page {} {
-  global env sid REMOTE_FIRMWARE_SCRIPT LOGLEVELS REGA_LOGLEVELS RFD_URL HS485D_URL downloadOnly
+  global env sid REMOTE_FIRMWARE_SCRIPT LOGLEVELS HMIP_LOGLEVELS REGA_LOGLEVELS RFD_URL HS485D_URL downloadOnly
   http_head
 
+  if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+    execCmd USERFSFREE_MB {exec df -m /usr/local | tail -1 | awk {{ print $(NF-2) }}}
+    if { ! [string is double -strict $USERFSFREE_MB] } {
+      set USERFSFREE_MB 0
+    }
+    set USERFSFREE_GB [format "%.2f" [expr {$USERFSFREE_MB / 1024.0}]]
+    set USERFSFREE_MB_REQ 1843.2
+    set USERFSFREE_GB_REQ [format "%.1f" [expr {$USERFSFREE_MB_REQ / 1024.0}]]
+  }
+  
   division {class="popupTitle j_translate"} {
     puts "\${dialogSettingsCMTitle}"
     #puts [isOldCCU]
@@ -350,7 +375,8 @@ proc action_put_page {} {
     set styleMaxWidth ""
     #set styleMaxWidth "style=max-width:70px;"
 
-    table {class="popupTable CLASS20901 j_translate"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable CLASS20901 j_translate"} {border="1"} {height="100%"} {
       table_row {class="CLASS20902"} {
         table_data {class="CLASS20903"} $styleMaxWidth {
           #puts "Zentralen-<br>"
@@ -365,24 +391,30 @@ proc action_put_page {} {
               table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                 puts "\${dialogSettingsCMLblActualSoftwareVersion}"
               }
-              table_data {
-                puts "$cur_version"
+              table_data {align="left"} {
+                puts "$cur_version&nbsp;([get_platform])"
               }
             }
             table_row {
               table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblAvailableSoftwareVersion}"
               }
-              table_data {id="availableSWVersion"} {
+              table_data {align="left"} {id="availableSWVersion"} {
                 # This doesn�t work properly
                 # puts [iframe "$REMOTE_FIRMWARE_SCRIPT?cmd=check_version&version=$cur_version&serial=$serial&lang=de&product=HM-CCU2" marginheight=0 marginwidth=0 frameborder=0 width=100 height=20 {scrolling="no"} ]
                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
               }
             }
+            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "Software-Update durchf�hren"]"
-                puts "<b>\${dialogSettingsCMLblPerformSoftwareUpdate}</b>"
+                puts "<br/><b>\${dialogSettingsCMLblPerformSoftwareUpdate}</b>"
+              }
+            }
+            table_row {
+              table_data {align="left"} {colspan="3"} {id="availableUserSpace"} {
+                puts "<i>\${dialogSettingsCMLblFreeUserSpace} $USERFSFREE_GB GB (&gt;&nbsp;$USERFSFREE_GB_REQ GB \${dialogSettingsCMLblFreeUserSpaceRequired})</i>"
               }
             }
             table_row {
@@ -392,7 +424,7 @@ proc action_put_page {} {
                     table_row {
                       table_data {
                         division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
-                        division {class="CLASS20905"}  "onClick=\"showCCULicense(true);\"" {puts "\${btnDirectFwUpload}"}
+                        division {class="CLASS20910"} {id="btnFwDirectDownload2"} "onClick=\"performDirectDownload();\"" {puts "\${btnDirectFwUpload}"}
                       }
                     }
                   }
@@ -407,19 +439,16 @@ proc action_put_page {} {
             }
             table_row {
               td {width="20"} {}
-              table_data {align="left"} {
+              table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep1}"
               }
-              table_data {
+            }
+            table_data {
+              td {width="20"} {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
-                      }
-                    }
-                  }
+                  division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
+                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                 }
               }
             }
@@ -431,30 +460,25 @@ proc action_put_page {} {
             }
             table_row {
               td {width="20"} {}
-              table_data {colspan="2"} {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=firmware_form {target=firmware_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=firmware_upload
-                  export downloadOnly=$downloadOnly
-                  file_button firmware_file size=30 maxlength=1000000
+              table_data {align="left"} {colspan="2"} {
+                form "/config/fileupload.ccc?sid=$sid&action=firmware_upload&downloadOnly=$downloadOnly&url=$env(SCRIPT_NAME)" {target=firmware_upload_iframe} name=firmware_form enctype=multipart/form-data method=post {
+                  file_button firmware_file size=30 maxlength=1000000 accept='.zip,.tgz,application/zip,application/gzip'
                 }
                 puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
               }
             }
             table_row {
               td {width="20"} {}
-              table_data {align="left"} {
+              table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep3}"
               }
-              table_data {
+            }
+            table_row {
+              td {width="20"} {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS20919"} {onClick="stopHmIPServer();document.firmware_form.submit();showUserHint();"} {
-                          puts "\${dialogSettingsCMBtnPerformSoftwareUpdateUpload}"
-                        }
-                      }
-                    }
+                  division {class="CLASS20919" style="width: 150px; margin-left: 20px;"} {onClick="stopHmIPServer();document.firmware_form.submit();showUserHint();"} {id="btnSoftwareUpdateUpload"} {
+                    puts "\${dialogSettingsCMBtnPerformSoftwareUpdateUpload}"
                   }
                 }
               }
@@ -465,30 +489,18 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
               }
             }
+            } else {
+              table_row {
+                table_data {align="left"} {colspan="3"} {
+                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
+                }
+              }
+            }
           }
         }
-        table_data {align="left"} {class="CLASS20921"} {
-          puts "\${dialogSettingsCMHintSoftwareUpdate1}"
-          number_list {class="j_noForcedUpdate"} {
-            li {
-              ${dialogSettingsCMHintSoftwareUpdate2}            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3}
-            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3a}
-            }
-            set bat_level [get_bat_level]
-            if {$bat_level < 50} {
-              set msg " \${dialogSettingsCMHintSoftwareUpdate4a} $bat_level%. "
-              append msg  \${dialogSettingsCMHintSoftwareUpdate4b}
-              li $msg
-            }
-          }
-
-          division {class="j_forcedUpdate" style="padding:10px;"} {
-            puts "<br/>\${dialogSettingsCMHintSoftwareUpdate2}"
-          }
+        table_data {align="center"} {class="CLASS20921"} {
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
@@ -547,82 +559,24 @@ proc action_put_page {} {
         }
       }
 
-      # Version Logikschicht
-      table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
-
-        table_data {class="CLASS20903"} $styleMaxWidth {
-        puts "\${lblTDRegaVersion}"
-        }
-
-        table_data {class="CLASS20904"} {
-
-        table {class="CLASS20909"} {
-          table_row {
-          table_data {
-            puts "\${dialogHelpInfoLblVersion}"
-          }
-          table_data {align="left"} {
-            puts "<select id='selectedReGaVersion'>"
-            puts "<option value='NORMAL'>\${optionReGaNORMAL}</option>"
-            # puts "<option value='LEGACY'>\${optionReGaLEGACY}</option>"
-            puts "<option value='COMMUNITY'>\${optionReGaCOMMUNITY}</option>"
-            puts "</select>"
-          }
-          }
-
-          table_row {
-          table_data {}
-          table_data {align="left"} {
-            division {class="popupControls CLASS20905"} {
-            division {class="CLASS20919"} {style="margin-top:10px; margin-left:0px;"} {onClick="saveRegaVersion(this);"} {
-              puts "\${btnSave}"
+      # Recovery Modus
+      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
+            table_data {class="CLASS20903"} $styleMaxWidth {
+                #puts "Recovery<br>"
+                #puts "Modus"
+                puts "\${dialogSettingsCMTDCCURecoveryMode}"
             }
+            table_data {class="CLASS20904"} {
+                division {class="popupControls CLASS20905"} {
+                    division {class="CLASS20910 colorGradient50px"} {onClick="OnEnterRecoveryMode();"} {
+                        puts "\${dialogSettingsCMBtnCCURestartRecovery}"
+                    }
+                }
             }
-          }
-          }
-        }
-        }
-
-        table_data {align="left"} {class="CLASS20904"} {
-        # division {Class="StdTableBtnHelp"} {puts "<img id='showReGaVersionHelp' src='/ise/img/help.png'>"}
-        division {Class="StdTableBtnHelp"} {puts "\${lblTDReGaVersionHelp}"}
-        }
-      }
-
-      cgi_javascript {
-        puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
-        puts {
-
-         jQuery("#showReGaVersionHelp").click(function() {
-        MessageBox.show(translateKey("tooltipHelp"), translateKey("lblTDReGaVersionHelp"), "", 600, 250);
-         });
-
-        homematic("User.getReGaVersion",{}, function(result) {
-          if (result) {
-          jQuery("#selectedReGaVersion").val(result);
-          } else {
-          jQuery("#selectedReGaVersion").val("NORMAL");
-          }
-        });
-
-        saveRegaVersion = function(elm) {
-          jQuery(elm).css({"border-width" : "2px"});
-          var selectedReGa = jQuery("#selectedReGaVersion").val();
-          homematic("User.setReGaVersion", {"ReGaVersion": selectedReGa}, function() {
-          jQuery(elm).css({"border-width" : "1px"});
-
-          var dlgYesNo = new YesNoDialog(translateKey("dialogPerformRebootTitle"), translateKey("dialogRestart2ChanceReGaVersion"), function(result) {
-            if (result == YesNoDialog.RESULT_YES)
-            {
-            dlgPopup.hide();
-            dlgPopup.setWidth(400);
-            dlgPopup.LoadFromFile(url, "action=reboot_confirm");
+            table_data {align="left"} {class="CLASS20904"} {
+                puts "\${dialogSettingsCMHintRestartRecoveryMode}"
             }
-          });
-          dlgYesNo.btnTextYes(translateKey("dialogBtnPerformRestart"));
-          dlgYesNo.btnTextNo(translateKey("dialogBtnPerformLaterRestart"));
-          });
-        }
         }
       }
 
@@ -637,6 +591,21 @@ proc action_put_page {} {
             table_row {
               table_data {
                 table {class="CLASS20909"} {
+                  table_row {
+                    table_data {align="left"} {
+                      puts "\${dialogSettingsCMLblLogHomematicIP}"
+                    }
+                    table_data {align="right"} {
+                      if [catch { set hmip_level [read_var /etc/config/syslog LOGLEVEL_HMIP]  } ] {set hmip_level "ERROR"}
+                      cgi_select log_hmip= {id="select_log_hmip"} {
+                        foreach level [lsort [array names HMIP_LOGLEVELS]] {
+                          set levelVal [string range $level 1 end]
+                          set selected [expr { $levelVal == $hmip_level ? "selected" : "" }]
+                          cgi_option $HMIP_LOGLEVELS($level) value=$levelVal $selected
+                        }
+                      }
+                    }
+                  }
                   table_row {
                     table_data {align="left"} {
                       puts "\${dialogSettingsCMLblLogBidCosRF}"
@@ -740,6 +709,7 @@ proc action_put_page {} {
         }
       }
     }
+    }
     checkIfFwOnly
   }
   division {class="popupControls"} {
@@ -760,6 +730,7 @@ proc action_put_page {} {
     puts {
       apply_logging = function() {
         var pb = "action=apply_logging";
+        pb += "&level_hmip="+document.getElementById("select_log_hmip").value;
         pb += "&level_rfd="+document.getElementById("select_log_rfd").value;
         pb += "&level_hs485d="+document.getElementById("select_log_hs485d").value;
         //pb += "&level_pfmd="+document.getElementById("select_log_pfmd").value;
@@ -801,6 +772,18 @@ proc action_put_page {} {
           });
           homematic("SafeMode.enter");
         }
+        });
+      }
+
+      OnEnterRecoveryMode = function() {
+        new YesNoDialog(translateKey("dialogRecoveryCheck"), translateKey("dialogQuestionRestartRecoveryMode"), function(result) {
+          if (result == YesNoDialog.RESULT_YES)
+          {
+            MessageBox.show(translateKey("dialogRestartRecoveryModeTitle"), translateKey("dialogRestartRecoveryModeContent"), function() {
+              window.location.href = "/";
+            });
+            homematic("RecoveryMode.enter");
+          }
         });
       }
     }
@@ -905,6 +888,22 @@ proc action_put_page {} {
       }
     }
   }
+  
+  if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+    cgi_javascript {
+       puts "var userFreeMB = $USERFSFREE_MB;"
+       puts "var userFreeMBRequired = $USERFSFREE_MB_REQ;"
+       puts {
+         if (userFreeMB < userFreeMBRequired) {
+           jQuery('#availableUserSpace').css({ 'color': 'red', 'font-weight': 'bold' });
+           jQuery('#btnSoftwareUpdateUpload').removeAttr('onclick');
+           jQuery('#btnSoftwareUpdateUpload').css({ 'color': 'gray' });
+           jQuery('#btnFwDirectDownload2').removeAttr('onclick');
+           jQuery('#btnFwDirectDownload2').css({ 'color': 'gray' });
+         }
+       }
+    }
+  }
 
   cgi_javascript {
     puts "translatePage('#messagebox');"
@@ -991,14 +990,7 @@ proc action_askCreateBackup {} {
           const cb = document.getElementById('accept');
           const action = "acceptEula";
           if(cb.checked) {
-            //window.location.href=url+"&action=createBackup";
-            var pb = "action=createBackup";
-            var opts = {
-              postBody: pb,
-              sendXML: false,
-              asynchronous: false
-            };
-            new Ajax.Request(url, opts);
+            window.open(url+"&action=createBackup", "_blank");
           } 
           dlgPopup.hide();
           dlgPopup.setWidth(800);
@@ -1014,13 +1006,12 @@ proc action_askCreateBackup {} {
 }
 
 proc action_createBackup {} {
-  http_head
-  catch { exec touch /tmp/createBackup }
+  [create_backup]
 }
 
 proc action_firmware_upload {} {
 
-  global env sid downloadOnly
+  global env sid downloadOnly filename
 
   if { [catch { import directDownload } error] } {
     set directDownload false
@@ -1029,10 +1020,7 @@ proc action_firmware_upload {} {
   http_head
   
   if { $directDownload } {
-    set filename "/tmp/fup.tgz"
-  } else {
-    import_file -client firmware_file
-    set filename [lindex $firmware_file 0]
+    set filename "/usr/local/tmp/firmwareUpdateFile"
   }
 
   if {[getProduct] < 3} {
@@ -1059,35 +1047,80 @@ proc action_firmware_upload {} {
   } else {
 
     cd /usr/local/tmp/
-    set TMPDIR "[file tail $filename-dir]"
-    exec mkdir -p $TMPDIR
 
     #
     # check if the uploaded file is a valid firmware update file
     #
 
-    set file_invalid [catch {exec tar zxvf $filename update_script EULA.en EULA.de -C /usr/local/}]
+    catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
+    set file_invalid 1
 
     # check for .tar.gz or .tar
-    if {$file_invalid == 0} {
+    if {$file_invalid != 0} {
       set file_invalid [catch {exec file -b $filename | egrep -q "(gzip compressed|tar archive)"} result]
       if {$file_invalid == 0} {
         # the file seems to be a tar archive (perhaps with gzip compression)
-        set file_invalid [catch {exec /bin/tar -C $TMPDIR --no-same-owner -xmf $filename} result]
-        file delete -force -- $filename
+        set file_invalid [catch {exec /bin/tar -C /tmp --warning=no-timestamp --no-same-owner --wildcards -xmf $filename "EULA.*"} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for .zip
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | grep -q "Zip archive data"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be a zip archive containing data
+        set file_invalid [catch {exec /usr/bin/unzip -q -o -d /tmp $filename EULA.en EULA.de 2>/dev/null} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for .img
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "DOS/MBR boot sector.*"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be a full-fledged SD card image with MBR boot sector, etc. so lets
+        # check if we have exactly 3 partitions
+        set file_invalid [catch {exec /usr/sbin/parted -sm $filename print 2>/dev/null | tail -1 | egrep -q "3:.*:ext4:"} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for ext4 rootfs filesystem
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "ext4 filesystem.*rootfs"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be an ext4 fs of the rootfs lets check if the ext4 is valid
+        set file_invalid [catch {exec /sbin/e2fsck -nf $filename 2>/dev/null} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for vfat bootfs filesystem
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "DOS/MBR boot sector.*bootfs.*FAT"} result]
+      if {$file_invalid == 0} {
+        catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
       }
     }
 
     #
     # test if the above checks were successfull or not
     #
-    if {$file_invalid == 0} {
-      catch { exec ln -sf tmp/$TMPDIR /usr/local/.firmwareUpdate }
+    if { $file_invalid == 0 && [file exists /usr/local/.firmwareUpdate] } {
       #set action "acceptEula"
       set action "askCreateBackup"
     } else {
       file delete -force -- $filename
-      file delete -force -- $filename-dir
+      catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
       set action "firmware_update_invalid"
     }
 
@@ -1102,10 +1135,14 @@ proc action_firmware_upload {} {
 
   cgi_javascript {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-    puts "parent.top.dlgPopup.hide();"
-    puts "parent.top.dlgPopup.setWidth(450);"
-    puts "parent.top.dlgPopup.downloadOnly = $downloadOnly;"
-    puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+    puts "var dlgPopup = parent.top.dlgPopup;"
+    puts "if (dlgPopup === undefined) {"
+      puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+    puts "}"
+    puts "dlgPopup.hide();"
+    puts "dlgPopup.setWidth(450);"
+    puts "dlgPopup.downloadOnly = $downloadOnly;"
+    puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
   }
 }
 
@@ -1282,10 +1319,7 @@ proc action_shutdown_go {} {
 }
 
 proc action_update_start {} {
-  if { [file exists "/tmp/createBackup"] } {
-    catch { [create_backup] }
-  }
-
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1295,38 +1329,44 @@ proc action_update_start {} {
     exec /bin/kill -SIGQUIT 1
   } else {
     exec touch /usr/local/.recoveryMode
-    exec sleep 5
-    exec /sbin/reboot
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
   }
 
 }
 
 proc action_reboot {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
   catch { exec lcdtool {Reboot...       } }
-  exec sleep 5
-  exec /sbin/reboot
+  exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
 }
 proc action_shutdown {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
   catch { exec lcdtool {Shutdown...       } }
-  exec sleep 5
   catch { exec touch /tmp/shutdown }
-  exec /sbin/poweroff
+  exec /sbin/poweroff -d 2 2>/dev/null >/dev/null &
 }
 
 proc get_logserver {} {
-  return [read_var //etc/config/syslog LOGHOST]
+  return [read_var /etc/config/syslog LOGHOST]
 }
 
 # proc set_log_config {loghost level_rfd level_hs485d level_pfmd level_rega}
-proc set_log_config {loghost level_rfd level_hs485d level_rega} {
+proc set_log_config {loghost level_rfd level_hs485d level_rega level_hmip} {
   #global RFD_URL HS485D_URL PFMD_URL
   global RFD_URL HS485D_URL
+
+  # read in old syslog values
+  set LOGHOST [read_var /etc/config/syslog LOGHOST]
+  set LOGLEVEL_RFD [read_var /etc/config/syslog LOGLEVEL_RFD]
+  set LOGLEVEL_HS485D [read_var /etc/config/syslog LOGLEVEL_HS485D]
+  set LOGLEVEL_REGA [read_var /etc/config/syslog LOGLEVEL_REGA]
+  set LOGLEVEL_HMIP [read_var /etc/config/syslog LOGLEVEL_HMIP]
 
   set fd -1
   catch {set fd [open "/etc/config/syslog" w]}
@@ -1339,13 +1379,26 @@ proc set_log_config {loghost level_rfd level_hs485d level_rega} {
   puts $fd "LOGLEVEL_HS485D=$level_hs485d"
   # puts $fd "LOGLEVEL_PFMFD=$level_pfmd"
   puts $fd "LOGLEVEL_REGA=$level_rega"
+  puts $fd "LOGLEVEL_HMIP=$level_hmip"
   close $fd
   
-  catch { xmlrpc $RFD_URL logLevel [list int $level_rfd]}
-  catch { xmlrpc $HS485D_URL logLevel [list int $level_hs485d]}
-  # catch { xmlrpc $PFMD_URL logLevel [list int $level_pfmd]}
-  rega "system.LogLevel($level_rega)"
-  
+  if { "$LOGLEVEL_RFD" != "$level_rfd" } {
+    catch { xmlrpc $RFD_URL logLevel [list int $level_rfd]}
+  }
+
+  if { "$LOGLEVEL_HS485D" != "$level_hs485d" } {
+    catch { xmlrpc $HS485D_URL logLevel [list int $level_hs485d]}
+  }
+
+  if { "$LOGLEVEL_REGA" != "$level_rega" } {
+    rega "system.LogLevel($level_rega)"
+  }
+
+  #if { "$LOGLEVEL_HMIP" != "$level_hmip" ||
+  #     "$LOGHOST" != "$loghost" } {
+  #  exec /usr/bin/monit restart HMIPServer >/dev/null &
+  #}
+
   return 1
 }
 
@@ -1355,24 +1408,23 @@ proc action_apply_logging {} {
   import level_hs485d
   # import level_pfmd
   import level_rega
+  import level_hmip
   
   http_head
   
   # if {![set_log_config $log_server $level_rfd $level_hs485d $level_pfmd $level_rega]}
-  if {![set_log_config $log_server $level_rfd $level_hs485d $level_rega]} {
+  if {![set_log_config $log_server $level_rfd $level_hs485d $level_rega $level_hmip]} {
     puts "Failure"
     return
   }
-  catch {exec killall syslogd}
-  catch {exec killall klogd}
-  exec /etc/init.d/S07logging start
+  exec /usr/bin/monit restart syslogd
   puts "Success -confirm"
 }
 
 proc action_download_logfile {} {
   set HOSTNAME [exec hostname]
   set iso8601_date [exec date -Iseconds]
-  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-]\d+)$} $iso8601_date dummy year month day hour minute second zone
+  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-].+)$} $iso8601_date dummy year month day hour minute second zone
   
   puts "Content-Type:application/x-download"
   puts "Content-Disposition:attachment;filename=[set HOSTNAME]-$year-$month-$day.log\n"
@@ -1394,10 +1446,10 @@ proc action_download_logfile {} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
 
   set action "put_page"
   set downloadOnly 0

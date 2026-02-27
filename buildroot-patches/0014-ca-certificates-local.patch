@@ -45,14 +45,16 @@
 +exit $?
 --- buildroot/package/ca-certificates/ca-certificates.mk.orig
 +++ buildroot/package/ca-certificates/ca-certificates.mk
-@@ -17,27 +17,19 @@
+@@ -17,30 +17,22 @@
  
  define CA_CERTIFICATES_INSTALL_TARGET_CMDS
  	$(INSTALL) -d -m 0755 $(TARGET_DIR)/usr/share/ca-certificates
 -	$(INSTALL) -d -m 0755 $(TARGET_DIR)/etc/ssl/certs
  	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) install DESTDIR=$(TARGET_DIR)
 -	rm -f $(TARGET_DIR)/usr/sbin/update-ca-certificates
+ endef
  
+ define CA_CERTIFICATES_GEN_BUNDLE
 -	# Remove any existing certificates under /etc/ssl/certs
 -	rm -f $(TARGET_DIR)/etc/ssl/certs/*
 +	# Remove /etc/ssl/certs and relink it to /var/etc/ssl/certs
@@ -65,20 +67,22 @@
 -	for i in `find usr/share/ca-certificates -name "*.crt" | LC_COLLATE=C sort` ; do \
 -		ln -sf ../../../$$i etc/ssl/certs/`basename $${i} .crt`.pem ;\
 -		cat $$i ;\
--	done >$(@D)/ca-certificates.crt
+-	done >$(BUILD_DIR)/ca-certificates.crt
 -
 -	# Create symlinks to the certificates by their hash values
 -	$(HOST_DIR)/bin/c_rehash $(TARGET_DIR)/etc/ssl/certs
+-
+-	# Install the certificates bundle
+-	$(INSTALL) -D -m 644 $(BUILD_DIR)/ca-certificates.crt \
+-		$(TARGET_DIR)/etc/ssl/certs/ca-certificates.crt
 +	# add empty /etc/ca-certificates.conf file
 +	touch $(TARGET_DIR)/etc/ca-certificates.conf
-+endef
+ endef
+ CA_CERTIFICATES_TARGET_FINALIZE_HOOKS += CA_CERTIFICATES_GEN_BUNDLE
  
--	# Install the certificates bundle
--	$(INSTALL) -D -m 644 $(@D)/ca-certificates.crt \
--		$(TARGET_DIR)/etc/ssl/certs/ca-certificates.crt
 +define CA_CERTIFICATES_INSTALL_INIT_SYSV
 +	$(INSTALL) -D -m 0755 $(CA_CERTIFICATES_PKGDIR)/S07ca-certificates \
 +		$(TARGET_DIR)/etc/init.d/S07ca-certificates
- endef
- 
++endef
++
  $(eval $(generic-package))

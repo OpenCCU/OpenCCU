@@ -292,7 +292,10 @@ function ::saveDesc() {
 function ::UpdateUI()
 {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
-  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+
+  ! See SPHM-829
+  ! if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )
+  if( oUser.UserLevel() != iulNone )
   {
   Write( '<script type="text/javascript">' );
 
@@ -308,6 +311,8 @@ function ::UpdateUI()
   {
     Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName()#'";' );
   }
+  
+  WriteLine("resetReGaSaveButton();");
   
   integer iAlCount = 0;
   object svCollection = dom.GetObject( ID_SYSTEM_VARIABLES );
@@ -350,7 +355,7 @@ function ::UpdateUI()
     {
       if( oAlarm.IsTypeOf(OT_ALARMDP) )
       {
-        if( oAlarm.AlState() == asOncoming )
+        if( (oAlarm.Used() == true) && (oAlarm.Enabled() == true) && (oAlarm.AlState() == asOncoming) )
         {
           iSvcCount = iSvcCount + 1;
           string sTimestamp = oAlarm.AlOccurrenceTime();
@@ -438,7 +443,7 @@ function ::UpdateUI()
 
 
   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
-  Write( 'if(showAPITools == "true") showHmAPITools();');
+  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
 
   !###################
   !# Systemvariablen #
@@ -462,7 +467,14 @@ function ::UpdateUI()
       boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
       boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
       Call( "/esp/system.fn::getSysVarValAsString()" );
-      WriteLine("updateSysVar('" # svId # "', '" # sSysVarVal # "');");
+      ! Escape unwanted chars
+      sSysVarVal = sSysVarVal.Replace(^\\^, ^\\\\^);
+      sSysVarVal = sSysVarVal.Replace("`", "\\`");
+      sSysVarVal = sSysVarVal.Replace("${", "\\${");
+      WriteLine("if ($('SYSVAR_" # svId # "')) {");
+      ! use javascript string literal char (`) to ensure proper char escaping
+      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = translateString(`" # sSysVarVal # "`);");
+      WriteLine("}");
     }    
   }
 
@@ -534,7 +546,7 @@ function ::UpdateUI()
   foreach( s, dom.TestRunningIDs().EnumIDs() )
   {
     object oTestChannel = dom.GetObject( s );
-    if( oTestChannel )
+    if( (oTestChannel) && (oTestChannel.IsTypeOf( OT_CHANNEL )) )
     {
       Write("if($('TestButtonCH"#s#"'))$('TestButtonCH"#s#"').className = 'TestButtonDisabled';" );
       Write("if($('OkButtonCH"#s#"'))$('OkButtonCH"#s#"').className = 'OkButtonRunning';" );
@@ -963,7 +975,9 @@ function ::saveTimeModule()
     sCI=sCI#"Try to set SunOffsetType to ["#system.GetVar("tmSot")#"] ";
     tmObj.SunOffsetType( system.GetVar("tmSot") );
     if( tmObj.SunOffsetType() == system.GetVar("tmSot") ) { sCI=sCI#"OK, "; } else { sCI=sCI#"FAILED, "; }
-    
+
+    if( tmObj.SunOffsetType() != sotNone ) { tmObj.TimeSeconds( system.GetVar("tmTime") ); }
+
     Write( 'dlgResult = '#tmObj.ID()#';' );
     Write( 'PopupClose();' );
   }
@@ -1019,17 +1033,21 @@ function ::TmToString() {
         sTm = sTm # s.Format("%H:%M") # " ${ruleConditionLblTimeClock} ";
       }
     }
-    if (tm.SunOffsetType() == sotAfterSunrise)
+    elseif ((tm.SunOffsetType() == sotSunrise) ||
+            (tm.SunOffsetType() == sotBeforeSunrise) ||
+            (tm.SunOffsetType() == sotAfterSunrise))
     {
       !sTm = sTm # "tagsüber ";
       sTm = sTm # "${ruleConditionLblTimeDuringDay} ";
     }
-    if (tm.SunOffsetType() == sotAfterSunset)
+    elseif ((tm.SunOffsetType() == sotSunset) ||
+            (tm.SunOffsetType() == sotBeforeSunset) ||
+            (tm.SunOffsetType() == sotAfterSunset))
     {
       !sTm = sTm # "nachts ";
       sTm = sTm # "${ruleConditionLblTimeDuringNight} ";
     }
-    if (tm.CalDuration() != 0) {
+    elseif (tm.CalDuration() != 0) {
       sTm = sTm # "${lblTo} ";
       sTm = sTm # (tm.TimeSeconds() + tm.CalDuration()).ToTime().Format("%H:%M");
       sTm = sTm # " ${ruleConditionLblTimeClock} ";
@@ -1164,7 +1182,7 @@ function ::deleteUser()
     oUser = dom.GetObject( system.GetVar("userid") );
     if( oUser )
     {
-      if( !oUser.Unerasable() )
+      if( (!oUser.Unerasable()) || (oUser.ID() == 1004) )
       {
         object oFavorites = dom.GetObject( ID_FAVORITES );
         if( oFavorites )
@@ -1262,7 +1280,7 @@ function ::writeProgCtrl()
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
-          Write("<img src='/ise/img/cogs3.png' width='80px' height='75px' />");
+          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' />");
         Write("</div>");
       Write("</td>");
     Write("</tr>");
@@ -1317,13 +1335,14 @@ function ::AddSysVarAndBuildTable() {
 ! [userId], [opt: sTmpVars]
 function ::BuildUserSvTable() {
   WriteLine('<table cellpadding="3" cellspacing="1" class="CLASS02105" width="100%">');
-  WriteLine('<colgroup> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:15%;" />');
+  WriteLine('<colgroup> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:20%;" /> <col style="width:15%;" /> <col style="width:11%;" /> <col style="width:4%;" />');
   WriteLine('</colgroup> <tbody> <tr> <th class="CLASS02106">${thName}</th>');
   WriteLine('<th class="CLASS02107">${thDescription}</th>');
   WriteLine('<th class="CLASS02107">${thTypeOfVariable}</th>');
   WriteLine('<th class="CLASS02107">${thValues}</th>');
   WriteLine('<th class="CLASS02107">${thUnit}</th>');
   WriteLine('<th class="CLASS02107">${thAction}</th>');
+  WriteLine('<th class="CLASS02107"></th>');                                                                  
   WriteLine('</tr> ');
   
   string enumTmp = "";
@@ -1345,7 +1364,7 @@ function ::BuildUserSvTable() {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
       WriteLine("<tr id='"#trid#"'>");
         WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name()#"</td>");
-        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo()#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
         
         WriteLine("<td class='GrayBkg'>");
         string s = "Unbekannt: " # sysvar.ValueSubType();
@@ -1389,6 +1408,13 @@ function ::BuildUserSvTable() {
             WriteLine("onclick='delFromTmpVars("#tmp#");'>${btnRemove}</div>");
           }
         WriteLine("</td>");
+        WriteLine("<td class='WhiteBkg CLASS02110'>");
+          !WriteLine("<table class='CLASS02108'>");                                                                                        
+          WriteLine("<table>");                                                                                        
+            WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
+            WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
+          WriteLine("</table>");
+        WriteLine("</td>");  
       WriteLine("</tr>");
     }
   }
@@ -1415,6 +1441,25 @@ function ::UserDeleteSysVarBuildTable() {
   }
   return;
 }
+
+function ::UserMoveSysVarBuildTable() {                                  
+  integer uid = system.GetSessionVar("sessionUserID");                   
+  object oUser = dom.GetObject( uid );                                   
+  if( (oUser.UserLevel() != iulGuest) && (oUser.UserLevel() != iulNone) )                                            
+  {                                                                                                                   
+    integer targetUID = system.GetVar("userId");                         
+    if( (targetUID == uid) || (oUser.UserLevel() == iulAdmin) )          
+    {                                                                    
+      object user = dom.GetObject(targetUID);                            
+      if (user)                                                          
+      {                                                                  
+        user.UserSharedObjects().MoveObject(system.GetVar("svId"),system.GetVar("svMoveDirection"));
+        Call("system.fn::BuildUserSvTable()");                                                      
+      }                                                                                             
+    }                                                                                               
+  }                                                                                                 
+  return;                                                                                                        
+} 
 
 ! [alPC], [alPDA]
 function ::setAutoLogin() {
@@ -1523,7 +1568,8 @@ function ::writeWarnStateJS()
       Write( 'hide("work'#system.GetVar("cId")#'");' );
     }
     
-    if( oChnTmp.ExistServiceMsg() )
+  !  if( oChnTmp.ExistServiceMsg() )
+    if( oChnTmp.ExistServiceMsg() && ((oChnTmp.HssType() != "CLIMATECONTROL_FLOOR_TRANSCEIVER") || ((oChnTmp.HssType() == "CLIMATECONTROL_FLOOR_TRANSCEIVER") && (oChnTmp.MetaData("chnActive") == true))) )
     {
       Write( 'show("warn'#system.GetVar("cId")#'");' );
     }

@@ -1,0 +1,114 @@
+rc.d/97NeoServer: fix rc startup script
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/rc.d/97NeoServer	2024-02-19 15:05:39.000000000 +0100
++++ b/rc.d/97NeoServer	2024-02-26 18:18:08.131806106 +0100
+@@ -1,4 +1,6 @@
+ #!/bin/sh
++# shellcheck shell=dash
++
+ export NODE_PATH=/usr/lib/node_modules
+ ADDONDIR=/usr/local/addons/mediola
+ ADDONNAME=neo_server
+@@ -8,31 +10,35 @@
+ DAEMON_ARGS=${HOMEPATH}/automation.js
+ PIDFILE=/var/run/neo_server.pid
+ 
++# check for unsupported platforms
++if grep -qim1 busmatic /www/api/methods/ccu/downloadFirmware.tcl; then
++  exit 13
++fi
+ 
+ log() {
+-  local now=$(date)
+-  echo "[$now] $CONFIGDIR/rc.d/97NeoServer $@"
+-  echo "[$now] $CONFIGDIR/rc.d/97NeoServer $@" >> /var/log/neo_server_boot.log
++  now=$(date)
++  echo "[$now] $CONFIGDIR/rc.d/97NeoServer $*"
++  echo "[$now] $CONFIGDIR/rc.d/97NeoServer $*" >> /var/log/neo_server_boot.log
+ }
+ 
+-if [ "$(cat /usr/local/crontabs/root | grep $ADDONDIR/bin/watchdog)" == "" ] ;then
++if ! grep -q "${ADDONDIR}/bin/watchdog" /usr/local/crontabs/root; then
+   echo "*/5 * * * * $ADDONDIR/bin/watchdog" >> /usr/local/crontabs/root
+ fi
+-
++  
+ # change to addon directory
+-cd ${HOMEPATH}
++cd ${HOMEPATH} || exit 1
+ 
+ do_start()
+ {
+   log "starting neo_server ..."
+-  start-stop-daemon --start --quiet --make-pidfile --background --nicelevel -10 --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
++  start-stop-daemon --start --quiet --make-pidfile --background --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
+   sleep 1
+   if [ -f "$PIDFILE" ]; then
+     PID=$(cat $PIDFILE)
+     log "neo_server started (pid=$PID)"
+   else
+     log "neo_server started failed"
+-  fi
++  fi	
+ }
+ 
+ do_stop()
+@@ -41,7 +47,7 @@
+ 	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+ 	if [ -f "$PIDFILE" ]; then
+ 		rm $PIDFILE
+-	fi
++	fi		
+   log "neo_server stopped"
+ }
+ 
+@@ -49,16 +55,16 @@
+ {
+   if [ ! -f "$PIDFILE" ]; then
+     log "no pid file $PIDFILE"
+-    return -1
++    return 1
+   fi
+-  local ps=$(cat $PIDFILE)
++  ps=$(cat $PIDFILE)
+   if [ -z "$ps" ]; then
+     log "pid file $PIDFILE empty"
+-    return -2
++    return 2
+   fi
+   if [ ! -d "/proc/$ps" ]; then
+     log "no running process with pid $ps"
+-    return -3
++    return 3
+   fi
+   log "neo_server is running (pid=$ps)"
+   return 0
+@@ -78,7 +84,7 @@
+       VER=$(cat $ADDONDIR/VERSION)
+       echo "Version: $VER"
+       echo "Info: <b>mediola NEO SERVER CCU Addon</b><br>"
+-      echo "Info: Copyright (c) 2017-2024 mediola connected living AG<br>"
++      echo "Info: Copyright (c) 2014-2024 mediola connected living AG<br>"
+       echo "Info: <a href='https://www.mediola.com'>mediola connected living AG</a>"
+       echo "Name: NEO SERVER"
+       echo "Operations: uninstall restart"
+@@ -93,13 +99,14 @@
+ 		do_stop
+     sleep 1
+ 		do_start
+-    ;;
++    ;;  
+   uninstall)
+     do_stop
+     rm -rf $ADDONDIR
+     rm -rf $CONFIGDIR/addons/mediola
+     rm -rf $CONFIGDIR/addons/www/mediola
+     rm -f $CONFIGDIR/rc.d/97NeoServer
++    #/bin/updateAddonConfig.tcl -d mediola
+     # do not install the neo server after user uninstall
+     touch /etc/config/neoDisabled
+     ;;

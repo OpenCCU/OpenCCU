@@ -1,0 +1,50 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC3010
+#
+# simple RaspberryPi EEPROM/Bootloader check tool
+#
+# Copyright (c) 2024 Jens Maus <mail@jens-maus.de>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Usage:
+# rpi-eeprom-info
+#
+
+DT_BOOTLOADER_TS=${DT_BOOTLOADER_TS:-/proc/device-tree/chosen/bootloader/build-timestamp}
+BOOTLOADER_UPDATE_IMAGE=${BOOTLOADER_UPDATE_IMAGE:-/boot/pieeprom.upd}
+
+EXIT_SUCCESS=0
+EXIT_UPDATE_REQUIRED=1
+EXIT_FAILED=2
+
+if [[ ! -f "${DT_BOOTLOADER_TS}" ]]; then
+  exit ${EXIT_FAILED}
+fi
+
+# Prefer device-tree to vcgencmd
+BOOTLOADER_CURRENT_VERSION=$(printf "%d" "0x$(od "${DT_BOOTLOADER_TS}" -v -An -t x1 | tr -d ' ' )")
+BOOTLOADER_UPDATE_VERSION=$(strings "${BOOTLOADER_UPDATE_IMAGE}" | grep BUILD_TIMESTAMP | sed 's/.*=//g')
+
+if [[ "${BOOTLOADER_CURRENT_VERSION}" != "${BOOTLOADER_UPDATE_VERSION}" ]]; then
+  echo "BOOTLOADER: update available"
+  res=${EXIT_UPDATE_REQUIRED}
+else
+  echo "BOOTLOADER: up to date"
+  res=${EXIT_SUCCESS}
+fi
+
+echo "   CURRENT: $(date -u "-d@${BOOTLOADER_CURRENT_VERSION}") (${BOOTLOADER_CURRENT_VERSION})"
+echo "    LATEST: $(date -u "-d@${BOOTLOADER_UPDATE_VERSION}") (${BOOTLOADER_UPDATE_VERSION})"
+
+exit ${res}

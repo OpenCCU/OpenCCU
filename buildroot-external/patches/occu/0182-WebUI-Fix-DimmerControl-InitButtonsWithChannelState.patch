@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/controls/dimmer.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/dimmer.fn
-@@ -65,8 +65,10 @@
+@@ -79,8 +79,10 @@
  
          WriteLine("<td class='CLASS02529'>");
            WriteLine("<table width='100%' height='100%' cellspacing='10'>");
@@ -13,7 +13,7 @@
            WriteLine("</table>");
          WriteLine("</td>");
  
-@@ -215,8 +217,10 @@
+@@ -237,8 +239,10 @@
  
          WriteLine("<td class='CLASS02529'>");
            WriteLine("<table width='100%' height='100%' cellspacing='10'>");
@@ -26,7 +26,7 @@
            WriteLine("</table>");
          WriteLine("</td>");
  
-@@ -297,8 +301,10 @@
+@@ -319,8 +323,10 @@
  
          WriteLine("<td class='CLASS02529'>");
            WriteLine("<table width='100%' height='100%' cellspacing='10'>");

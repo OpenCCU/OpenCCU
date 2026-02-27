@@ -73,8 +73,25 @@ function ::WriteConditionText()
                   if( !bSysVarGeneric )
                   {
                     !sRet = sRet#" bei";
-                    sRet = sRet#" ${ruleConditionLblWhen}";
+                    !sRet = sRet#" ${ruleConditionLblWhen}";
                   }
+
+                  !SPHM-934
+                  if( (iLVT == ivtSystemId) || (iLVT == 19) )
+                  {
+                    if( bBinary )
+                    {
+                      if( iRV1 == 0 )
+                      {
+                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName0()#', ';
+                      }
+                      if( iRV1 == 1 )
+                      {
+                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName1()#', ';
+                      }
+                    }
+                  }
+                  !END SPHM-934
 
                   if( iLVT == ivtObjectId )
                   {
@@ -281,8 +298,13 @@ function ::WriteConditionText()
                     }
 
                     if( iCT1 == 5 ) { sCT = "${ruleConditionLblIsEqual} "#iRV1.ToString(2)#sValueUnit; }
-                    !if( iCT1 == 6 ) { sCT = "von "#iRV1.ToString(2)#sValueUnit#" bis kleiner "#iRV2.ToString(2)#sValueUnit; }
-                    if( iCT1 == 6 ) { sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeLessThan} "#iRV2.ToString(2)#sValueUnit; }
+                    if( iCT1 == 6 ) {
+                      if (iRV1 < iRV2) {
+                        sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeLessThan} "#iRV2.ToString(2)#sValueUnit;
+                      } else {
+                        sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeGreaterThan} "#iRV2.ToString(2)#sValueUnit;
+                      }
+                    }
                     !if( iCT1 == 8 ) { sCT = "größer als "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 8 ) { sCT = "${ruleConditionLblGreaterThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 10 ) { sCT = "kleiner als "#iRV1.ToString(2)#sValueUnit; }
@@ -317,8 +339,9 @@ function ::WriteConditionText()
               }
               
               !--------------------------SysVar---------------------
+
               if( (iLVT == ivtSystemId) || (iLVT == 19) )
-              {        
+              {
                 if( bOptionList )
                 {
                   !Write( "<script>conInfo('- bOptionList ');</script>" );
@@ -332,18 +355,20 @@ function ::WriteConditionText()
                     sRet = sRet#' '#sVLValue;
                   }
                 }
-                if( bBinary )
-                {
-                  if( iRV1 == 0 ) 
-                  {
-                    sRet = sRet#' '#oLV.ValueName0();
-                  }
-                  if( iRV1 == 1 ) 
-                  {
-                    sRet = sRet#' '#oLV.ValueName1();
-                  }
-                }
+                ! SPHM-934
+                ! if( bBinary )
+                !{
+                !  if( iRV1 == 0 )
+                !  {
+                !    sRet = sRet#' '#oLV.ValueName0();
+                !  }
+                !  if( iRV1 == 1 )
+                !  {
+                !    sRet = sRet#' '#oLV.ValueName1();
+                !  }
+                !}
               }
+
               if( iLVT == ivtCurrentDate )
               {
                 !Write( "<script>conInfo('- aktuelles Datum')</script>" );

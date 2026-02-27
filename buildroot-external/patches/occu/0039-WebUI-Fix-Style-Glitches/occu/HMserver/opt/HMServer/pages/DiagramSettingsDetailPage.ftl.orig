@@ -18,7 +18,7 @@
 		return address;
 	}
   };
-  
+
   GetChannelName = function(address) {
 	var ch = DeviceList.getChannelByAddress(address);
 	if (ch != undefined) {
@@ -27,16 +27,16 @@
 		return address;
 	}
   };
-  
+
   ShowNotAssigned = function() {
-	jQuery('#notAssignedDataSources').show(); 
+	jQuery('#notAssignedDataSources').show();
 	jQuery('#notAssignedDataSourcesMINUS').show();
 	jQuery('#notAssignedDataSourcesPLUS').hide();
 	notAssignedVisible = 1;
   };
-  
+
   HideNotAssigned = function() {
-	jQuery('#notAssignedDataSources').hide(); 
+	jQuery('#notAssignedDataSources').hide();
 	jQuery('#notAssignedDataSourcesMINUS').hide();
 	jQuery('#notAssignedDataSourcesPLUS').show();
 	notAssignedVisible = 0;
@@ -107,14 +107,58 @@
 	  devType = DeviceList.getDeviceByAddress(devSN.split(':')[0]);
 		jQuery('#assignedGroupName${i}').text(GetDeviceName('${dataSource.getGroupId()}'));
 		jQuery('#assignedName${i}').text(GetChannelName('${dataSource.getId()?substring(0,dataSource.getId()?index_of("_"))}'));
-	<#assign i = i + 1>		
-	</#list> 
-		
+	<#assign i = i + 1>
+	</#list>
+
 	<#assign i = 0>
 	<#list notAssignedDataSources as dataSource>
 		jQuery('#notAssignedGroupName${i}').text(GetDeviceName('${dataSource.getGroupId()}'));
 		jQuery('#notAssignedName${i}').text(GetChannelName('${dataSource.getId()?substring(0,dataSource.getId()?index_of("_"))}'));
-		
+
+    var chnType = jQuery('#notAssignedName${i}').text().split(" ")[0],
+    chnAddress = '${dataSource.getId()}',
+    channel = DeviceList.getChannelByAddress(chnAddress.split("_")[0]);
+
+    if (channel.typeName == "HmIP-ESI") {
+      var adrChnOne = channel.address.split(":")[0] + ":1",
+      sensor = parseInt(homematic("Interface.getValue", {"interface": "HmIP-RF", "address": adrChnOne, "valueKey": "CHANNEL_OPERATION_MODE"}));
+
+      if (isNaN(sensor)) {sensor = 0;}
+
+      var valTypeElm = jQuery("#notAssignedValType${i}");
+
+      if ("${dataSource.getKey()}" == "POWER") {
+        if ((sensor < 3) && (channel.index > 2)) {
+         // jQuery("#notAssignedGroupName${i}").parent().hide();
+        }
+        if (sensor == 1) {
+            valTypeElm.html(translateKey("diagramValueTypeGAS_FLOW"));
+        } else if (sensor == 2) {
+          valTypeElm.html(translateKey("diagramValueTypePOWER"));
+        } else if (sensor > 2) {
+          valTypeElm.html(translateKey("diagramValueTypeIEC_POWER"));
+        } else {valTypeElm.html(translateKey("diagramValueTypePOWER"));}
+      }
+
+      if ("${dataSource.getKey()}" == "ENERGY_COUNTER") {
+        if ((sensor < 3) && (channel.index > 2)) {
+         // jQuery("#notAssignedGroupName${i}").parent().hide();
+        }
+        if (sensor == 1) {
+         valTypeElm.html(translateKey("diagramValueTypeGAS_VOLUME"));
+        } else if (sensor == 2) {
+         valTypeElm.html(translateKey("diagramValueTypeENERGY_COUNTER"));
+        } else if (sensor > 2) {
+         valTypeElm.html(translateKey("diagramValueTypeIEC_ENERGY_COUNTER"));
+        } else {valTypeElm.html(translateKey("diagramValueTypeENERGY_COUNTER"));}
+      }
+
+      if (("${dataSource.getKey()}" == "GAS_FLOW") || ("${dataSource.getKey()}" == "GAS_VOLUME")) {
+       // jQuery("#notAssignedGroupName${i}").parent().hide();
+      }
+
+    }
+
 	<#assign i = i + 1>
 	</#list>
 
@@ -176,11 +220,11 @@ background-color:#${colors[x]};
         <td class="tBodyCell">
         	<input type="text" id="diagram_type" value="${object.type}" size="100" maxlength="200"/>
         </td>
-    </tr>    
+    </tr>
   	<tr>
   		<td class="tBodyCell">${"$"}{thDiagramTemplate}</td>
         <td class="tBodyCell">
-        	<select id="diagram_templateId" size="1">	        
+        	<select id="diagram_templateId" size="1">
 		        <#list templates as template>
 	        		<!--<option value="${template.id}" <#if object.templateId = template.getId()>selected</#if> >${template.getName()} - ${template.getDescription()}</option>-->
 	        		<option value="${template.id}" <#if object.templateId = template.getId()>selected</#if> >${template.getDescription()}</option>
@@ -245,7 +289,7 @@ background-color:#${colors[x]};
 			</table>
         </td>
     </tr>
-	
+
   </tbody>
 </table>
 <table id="dataSourcesTable" class="tTable"  border="0" cellpadding="0" cellspacing="0">
@@ -267,16 +311,49 @@ background-color:#${colors[x]};
   <tbody id="assignedDataSources">
 	<#assign i = 0>
     <#list object.dataSources as dataSource>
-    <tr class="CLASS04901">		
+    <tr class="CLASS04901">
   		<td class="tBodyCell CLASS04902" id="assignedGroupName${i}"></td>
   		<td class="tBodyCell CLASS04907">${dataSource.getGroupId()}</td>
   		<td class="tBodyCell CLASS04902" id="assignedName${i}"></td>
-      <td name="valueType${dataSource.getKey()}" class="tBodyCell CLASS04907">${"$"}{diagramValueType${dataSource.getKey()}}</td>
+      <td class="tBodyCell CLASS04907" id="assignedValType${i}" name="valueType${dataSource.getKey()}">${"$"}{diagramValueType${dataSource.getKey()}}</td>
 
       <script>
         if ((devType.typeName == "HmIP-SCTH230") && ("${dataSource.getKey()}" == "CONCENTRATION") ) {
           jQuery(" [name='valueType${dataSource.getKey()}'] ").html( '${"$"}{diagramValueType${dataSource.getKey()}_CO2}' );
         }
+        var chnType = jQuery('#assignedName${i}').text().split(" ")[0],
+        chnAddress = '${dataSource.getId()}',
+        channel = DeviceList.getChannelByAddress(chnAddress.split("_")[0]);
+
+        if (channel.typeName == "HmIP-ESI") {
+          var adrChnOne = channel.address.split(":")[0] + ":1",
+          sensor = parseInt(homematic("Interface.getValue", {"interface": "HmIP-RF", "address": adrChnOne, "valueKey": "CHANNEL_OPERATION_MODE"}));
+
+          if (isNaN(sensor)) {sensor = 0;}
+
+          var valTypeElm = jQuery("#assignedValType${i}");
+
+          if ("${dataSource.getKey()}" == "POWER") {
+            if (sensor == 1) {
+                valTypeElm.html(translateKey("diagramValueTypeGAS_FLOW"));
+            } else if (sensor == 2) {
+              valTypeElm.html(translateKey("diagramValueTypePOWER"));
+            } else if (sensor > 2) {
+              valTypeElm.html(translateKey("diagramValueTypeIEC_POWER"));
+            } else {valTypeElm.html(translateKey("diagramValueTypePOWER"));}
+          }
+
+          if ("${dataSource.getKey()}" == "ENERGY_COUNTER") {
+            if (sensor == 1) {
+             valTypeElm.html(translateKey("diagramValueTypeGAS_VOLUME"));
+            } else if (sensor == 2) {
+             valTypeElm.html(translateKey("diagramValueTypeENERGY_COUNTER"));
+            } else if (sensor > 2) {
+             valTypeElm.html(translateKey("diagramValueTypeIEC_ENERGY_COUNTER"));
+            } else {valTypeElm.html(translateKey("diagramValueTypeENERGY_COUNTER"));}
+          }
+        }
+
       </script>
 
         <td class="tBodyCell CLASS04907">
@@ -285,7 +362,7 @@ background-color:#${colors[x]};
         		<option value="${x}" class="Colors${x}" data-image="/webui/css/extern/msdropdown/icons/${x}.png" <#if dataSource.getColor() = x>selected</#if> > ${"$"}{diagramColor${colors[x]}}</option>
         	</#list>
         </select></td>
-		<!-- Start action column -->        
+		<!-- Start action column -->
 		<td class="tBodyCell CLASS04907" >
 		<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteDataSource(${i});" />
 		</td>
@@ -325,16 +402,18 @@ background-color:#${colors[x]};
     </tr>
 	<#assign i = 0>
     <#list notAssignedDataSources as dataSource>
-    <tr class="CLASS04901">		
+    <tr class="CLASS04901">
   		<td class="tBodyCell CLASS04902" id="notAssignedGroupName${i}"></td>
   		<td class="tBodyCell CLASS04907">${dataSource.getGroupId()}</td>
   		<td class="tBodyCell CLASS04902" id="notAssignedName${i}"></td>
-      <td name="valueType${dataSource.getKey()}" class="tBodyCell CLASS04907">${"$"}{diagramValueType${dataSource.getKey()}}</td>
+      <td class="tBodyCell CLASS04907" id="notAssignedValType${i}" name="valueType${dataSource.getKey()}">${"$"}{diagramValueType${dataSource.getKey()}}</td>
 
       <script>
+
         if ((devType.typeName == "HmIP-SCTH230") && ("${dataSource.getKey()}" == "CONCENTRATION") ) {
           jQuery(" [name='valueType${dataSource.getKey()}'] ").html( '${"$"}{diagramValueType${dataSource.getKey()}_CO2}' );
         }
+
       </script>
 
       <td class="tBodyCell CLASS04907">
@@ -343,31 +422,31 @@ background-color:#${colors[x]};
           <option value="${x}" class="Colors${x}" data-image="/webui/css/extern/msdropdown/icons/${x}.png" <#if dataSource.getColor() = x>selected</#if> > ${"$"}{diagramColor${colors[x]}}</option>
         </#list>
       </select></td>
-		<!-- Start action column -->        
+		<!-- Start action column -->
 		<td class="tBodyCell CLASS04907" >
 		<#if object.dataSources?size &lt; 15>
 			<input type="button" name="btnAddDataSource" value="btnAddDataSource" class="StdButton CLASS04907" onclick="AddDataSource('${dataSource.getGroupId()}', '${dataSource.getId()}', '${i}');" />
 		</#if>
 		</td>
-		<!-- End Action Column --> 
+		<!-- End Action Column -->
     </tr>
 	<#assign i = i + 1>
     </#list>
   </tbody>
 </table>
 
-<script type="text/javascript">	
-  AddDataSource = function(dataSourceGroupId, dataSourceId, notAssignedIndex) {  
+<script type="text/javascript">
+  AddDataSource = function(dataSourceGroupId, dataSourceId, notAssignedIndex) {
 	if(!IsDiagramTextValid())	{
 		return;
 	}
-	
+
 	if(!IsDiagramYAxisValid())	{
 		return;
 	}
-	
+
 	var colorId = "#notAssignedColor" + notAssignedIndex;
-	
+
 	var url = '/pages/jpages/diagram/settings/addDataSource?sid='+SessionId;
     var pb = "{";
 	pb += '"notAssignedVisible" : "' + notAssignedVisible + '", ';
@@ -378,7 +457,7 @@ background-color:#${colors[x]};
     pb += GetCurrentDiagram();
     pb += '}';
     var opt = {
-        postBody: pb, 
+        postBody: pb,
         onComplete: function(t){
 			var response = JSON.parse(t.responseText);
 			if(!response.isSuccessful)
@@ -389,23 +468,23 @@ background-color:#${colors[x]};
 				} else {
 					alert(translateKey(response.content));
 				}
-			} else {			
+			} else {
 				jQuery("#content").html(response.content);
 			}
         }
     }
 	new Ajax.Request(url,opt);
   };
-  
+
   DeleteDataSource = function(dataSourceIndex) {
 	if(!IsDiagramTextValid())	{
 		return;
 	}
-	
+
 	if(!IsDiagramYAxisValid())	{
 		return;
 	}
-	
+
     var url = '/pages/jpages/diagram/settings/removeDataSource?sid='+SessionId;
     var pb = "{";
 	pb += '"notAssignedVisible" : "' + notAssignedVisible + '", ';
@@ -414,7 +493,7 @@ background-color:#${colors[x]};
     pb += GetCurrentDiagram();
     pb += '}';
     var opt = {
-        postBody: pb, 
+        postBody: pb,
         onComplete: function(t){
 	        var response = JSON.parse(t.responseText);
 			if(!response.isSuccessful)
@@ -425,31 +504,31 @@ background-color:#${colors[x]};
 				} else {
 					alert(translateKey(response.content));
 				}
-			} else {			
+			} else {
 				jQuery("#content").html(response.content);
 			}
         }
     }
 	new Ajax.Request(url,opt);
   };
-  
-  SaveDiagram = function() {  	
+
+  SaveDiagram = function() {
 	<#if object.dataSources?size = 0>
 	alert(translateKey('diagramErrorNoDataSources'));
 	return;
 	</#if>
-	
+
 	if(!IsDiagramTextValid())	{
 		return;
 	}
-	
+
 	if(!IsDiagramYAxisValid())	{
 		return;
 	}
-	
+
 	MessageBox.show(translateKey('diagramSaveMessageTitle'), '<br/><br/><img id="messageBoxDiagramGraph" src="/ise/img/anim_bargraph.gif"><br/>',
 	'','320','90', 'messageBoxDiagram', 'messageBoxDiagramGraph');
-  
+
   	var url = '/pages/jpages/diagram/settings/save?sid='+SessionId;
     var pb = "{";
 	pb += '"id" : "${object.id}", ';
@@ -475,7 +554,7 @@ background-color:#${colors[x]};
     }
 	new Ajax.Request(url,opt);
   };
-  
+
   IsDiagramTextValid = function() {
 	var name = jQuery("#diagram_name").val();
 	var description = jQuery("#diagram_description").val();
@@ -484,54 +563,54 @@ background-color:#${colors[x]};
 	var isForbiddenName = forbidden.test( name );
 	var isForbiddenDescription = forbidden.test( description );
 	var isForbiddenUnit = forbidden.test( unit );
-	
+
 	if (isForbiddenName || isForbiddenDescription || isForbiddenUnit) {
 		alert(translateKey('alertDiagramCharsNotAllowed'));
 		return false;
 	}
-	
+
 	return true;
   };
-  
+
   IsDiagramYAxisValid = function() {
 	var minValue = parseFloat(jQuery("#diagram_YAxisScalingMinValue").val().replace(",", "."));
 	var maxValue = parseFloat(jQuery("#diagram_YAxisScalingMaxValue").val().replace(",", "."));
-	
+
 	if (isNaN(minValue)) {
 		minValue = 0.0;
 	}
-	
+
 	if (isNaN(maxValue)) {
 		maxValue = 0.0;
 	}
-	
+
 	var usingYAxisMin = jQuery('input[name=selectYAxisScalingModeMin]:checked', '#parameterTable').val();
 	var usingYAxisMax = jQuery('input[name=selectYAxisScalingModeMax]:checked', '#parameterTable').val();
-	
+
 	if(usingYAxisMin == "false" || usingYAxisMax == "false") {
 		return true;
 	}
-	
+
 	if(minValue > maxValue) {
 		alert(translateKey('alertDiagramMinLowerThanMax'));
 		return false;
 	}
-	
+
 	return true;
   }
-  
+
   GetCurrentDiagram = function() {
 	var minValue = parseFloat(jQuery("#diagram_YAxisScalingMinValue").val().replace(",", "."));
 	var maxValue = parseFloat(jQuery("#diagram_YAxisScalingMaxValue").val().replace(",", "."));
-	
+
 	if (isNaN(minValue)) {
 		minValue = 0.0;
 	}
-	
+
 	if (isNaN(maxValue)) {
 		maxValue = 0.0;
 	}
-	
+
 	var name = jQuery("#diagram_name").val().replace("'", "").replace("\"", "").replace("\\", "");
 	conInfo("Diagram name: " + name);
 	var description = jQuery("#diagram_description").val().replace("'", "").replace("\"", "").replace("\\", "");
@@ -539,25 +618,25 @@ background-color:#${colors[x]};
 	name = escape(name);
 	description = escape(description);
 	unit = escape(unit);
-	
+
 	diagram = '"diagram" : {';
-	diagram += '"id" : ${object.id}, ';	
+	diagram += '"id" : ${object.id}, ';
 	diagram += '"name" : "' + name + '", ';
 	diagram += '"description" : "' + description + '", ';
 	diagram += '"type" : "' + jQuery("#diagram_type").val() + '", ';
 	diagram += '"templateId" : ' + jQuery("#diagram_templateId").val() + ', ';
 	diagram += '"defaultPeriod" : ' + jQuery("#diagram_defaultPeriod").val() + ', ';
 	diagram += '"defaultConsolidationFunction" : ' + jQuery("#diagram_defaultConsolidationFunction").val() + ', ';
-	diagram += '"displayedUnit" : "' + unit + '", ';	
+	diagram += '"displayedUnit" : "' + unit + '", ';
 	diagram += '"active" : ${object.active?string('true', 'false')}, ';
 	diagram += '"operable" : ${object.operable?string('true', 'false')}, ';
 	diagram += '"visible" : ${object.visible?string('true', 'false')}, ';
-	diagram += '"usingCustomYAxisMin" : ' + jQuery('input[name=selectYAxisScalingModeMin]:checked', '#parameterTable').val() + ', ';	
+	diagram += '"usingCustomYAxisMin" : ' + jQuery('input[name=selectYAxisScalingModeMin]:checked', '#parameterTable').val() + ', ';
 	diagram += '"usingCustomYAxisMax" : ' + jQuery('input[name=selectYAxisScalingModeMax]:checked', '#parameterTable').val() + ', ';
-	diagram += '"customYAxisMin" : ' + minValue + ', ';	
+	diagram += '"customYAxisMin" : ' + minValue + ', ';
 	diagram += '"customYAxisMax" : ' + maxValue + ', ';
 	diagram += '"dataSources" : [';
-	
+
 	<#assign i = 0>
     <#list object.dataSources as dataSource>
 	diagram += '{"id" : "${dataSource.id}", ';
@@ -566,7 +645,7 @@ background-color:#${colors[x]};
 	diagram += '"type" : ${dataSource.type}, ';
 	diagram += '"color" : ' + jQuery("#assignedColor${i}").val() + '}, ';
 	<#assign i = i + 1>
-    </#list>	
+    </#list>
 	// remove last ", "
 	<#if object.dataSources?size != 0>
 	diagram = diagram.substring(0, diagram.length - 2);
@@ -575,8 +654,8 @@ background-color:#${colors[x]};
     diagram += '}';
 	return diagram;
   };
-  
-  ReturnToListWithoutSave = function() {  
+
+  ReturnToListWithoutSave = function() {
     var url = '/pages/jpages/diagram/settings?sid='+SessionId;
     var pb = "{}";
     var opt =
