@@ -24,7 +24,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore lychee cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: wiki/.lycheecache
           key: lychee-cache-${{ github.ref }}-${{ github.sha }}
@@ -52,7 +52,7 @@ jobs:
           jobSummary: true
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: lychee-wiki-report
           path: reports/lychee-wiki.md

@@ -66,7 +66,7 @@ jobs:
 
       - name: Get previous tag
         id: previoustag
-        uses: WyriHaximus/github-action-get-previous-tag@v1.4
+        uses: WyriHaximus/github-action-get-previous-tag@v2.0
 
       - name: Generate changelog
         id: changelog
@@ -99,7 +99,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           path: /tmp/release-template.md
           name: release-template.md
@@ -290,7 +290,7 @@ jobs:
         id: upload-oci
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
@@ -299,7 +299,7 @@ jobs:
       - name: Attest build artifact provenance [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
           subject-digest: sha256:${{ steps.upload-oci.outputs.artifact-digest }}
@@ -309,13 +309,13 @@ jobs:
       # manifest file artifact upload
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
 
       - name: Attest manifest artifact provenance
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
@@ -335,7 +335,7 @@ jobs:
 
       # download all artifact files
       - name: Download all workflow artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
 
       - name: Patch release draft
         shell: bash
@@ -394,7 +394,7 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download all OCI artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           pattern: OpenCCU-${{ needs.release_draft.outputs.version }}-oci_*.tgz
           merge-multiple: true
@@ -433,13 +433,13 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3.11.1
+        uses: docker/setup-buildx-action@v3.12.0
         with:
           install: true
 
       - name: Login to GitHub Container Registry
         if: github.event.inputs.test_workflow != 'true'
-        uses: docker/login-action@v3.6.0
+        uses: docker/login-action@v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -469,7 +469,7 @@ jobs:
 
       - name: Build and push container image
         if: github.event.inputs.test_workflow != 'true'
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.2
         id: docker_build
         with:
           context: oci_build
@@ -508,7 +508,7 @@ jobs:
 
       - name: Attest container provenance
         if: github.event.inputs.test_workflow != 'true'
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         id: attest
         with:
           subject-name: ${{ steps.extract_branch.outputs.base_tag }}
@@ -542,23 +542,23 @@ jobs:
 
       # download rpi manifest files
       - name: Download rpi0 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi0.mf
       - name: Download rpi2 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi2.mf
       - name: Download rpi3 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi3.mf
       - name: Download rpi4 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi4.mf
       - name: Download rpi5 manifest
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi5.mf
 
