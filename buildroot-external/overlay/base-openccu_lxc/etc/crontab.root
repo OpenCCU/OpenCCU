@@ -1,6 +1,6 @@
 1 3,9,15,21 * * * /bin/SetInterfaceClock
 */15 * * * * /usr/sbin/logrotate /etc/logrotate.conf || logger -p error -t "logrotate" "logrotate aborted with error $?"
 */1 * * * * /bin/updateDCVars.tcl >/dev/null 2>/dev/null
-7 0 * * * /bin/nice /bin/cronBackup.sh >/dev/null 2>/dev/null
+7 0 * * * [ ! -e /etc/config/NoCronBackup ] && /bin/nice /bin/cronBackup.sh >/dev/null 2>/dev/null
 */10 * * * * [ -d /media/usb0/measurement ] && /bin/nice /usr/bin/rsync -aogX --delete-after --no-whole-file --checksum /tmp/measurement/ /media/usb0/measurement/ >/dev/null 2>/dev/null
 0 12 * * * sleep $((RANDOM % 900))s && /bin/checkAddonUpdates.sh >/dev/null 2>/dev/null

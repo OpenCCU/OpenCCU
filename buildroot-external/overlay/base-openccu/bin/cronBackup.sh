@@ -30,9 +30,6 @@
 #   a file /etc/config/CronBackupMaxBackups
 #
 
-# skip the script if /etc/config/NoCronBackup exists
-[[ -e /etc/config/NoCronBackup ]] && exit 0
-
 # read in /var/hm_mode
 [[ -r /var/hm_mode ]] && . /var/hm_mode
 
