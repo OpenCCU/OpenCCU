@@ -1,2 +1,3 @@
 # add device tree overlay for RPI-RF-MOD/HM-MOD-RPI-PCB
-overlays=rpi-rf-mod
+# (uncomment when Tinker Board 2 overlay is available)
+#overlays=rpi-rf-mod

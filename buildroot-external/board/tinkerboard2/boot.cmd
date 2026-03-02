@@ -1,6 +1,6 @@
 # fallback defaults
 setenv load_addr "0x01000000"
-setenv console "ttyS2,1500000"
+setenv console "tty2"
 setenv loglevel "0"
 setenv bootfs 1
 setenv rootfs 2
@@ -46,7 +46,7 @@ fi
 fileenv ${devtype} ${devnum}:${bootfs} ${load_addr} cmdline.txt cmdline
 
 # load devicetree
-setenv fdtfile "rockchip/rk3399-tinker-2.dtb"
+setenv fdtfile "rk3399-tinker-2.dtb"
 
 echo "Loading standard device tree ${fdtfile}"
 load ${devtype} ${devnum}:${bootfs} ${fdt_addr_r} ${fdtfile}
