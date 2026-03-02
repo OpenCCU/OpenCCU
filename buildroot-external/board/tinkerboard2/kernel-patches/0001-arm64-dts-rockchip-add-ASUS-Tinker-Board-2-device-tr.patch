@@ -28,7 +28,7 @@ Signed-off-by: OpenCCU <info@openccu.de>
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -78,6 +78,7 @@
+@@ -78,3 +78,4 @@
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tinker-2.dtb
