@@ -104,7 +104,7 @@ endef
 
 define QEMU_GUEST_AGENT_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/build/qga/qemu-ga $(TARGET_DIR)/usr/bin/qemu-ga
-	$(INSTALL) -D -m 0755 $(@D)/scripts/qemu-guest-agent/fsfreeze-hook $(TARGET_DIR)/etc/qemu/fsfreeze-hook
+	$(INSTALL) -D -m 0755 $(QEMU_GUEST_AGENT_PKGDIR)/fsfreeze-hook $(TARGET_DIR)/etc/qemu/fsfreeze-hook
 	$(INSTALL) -D -m 0755 $(QEMU_GUEST_AGENT_PKGDIR)/regahss-flush.sh $(TARGET_DIR)/etc/qemu/fsfreeze-hook.d/regahss-flush.sh
 endef
 
