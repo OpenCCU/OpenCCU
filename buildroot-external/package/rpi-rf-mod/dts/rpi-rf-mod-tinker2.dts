@@ -3,15 +3,24 @@
 
 /*
 ** Device Tree Overlay for eQ-3 RPI-RF-MOD and
-** HM-MOD-RPI-PCB for ASUS Tinkerboard
+** HM-MOD-RPI-PCB for ASUS Tinkerboard 2/2S (RK3399)
 **
-** Copyright (c) 2019-2021 Jens Maus <mail@jens-maus.de>
+** Copyright (c) 2019-2025 Jens Maus <mail@jens-maus.de>
 ** Licensed under Apache 2.0
 **
+** 40-pin header mapping (RK3399):
+** Pin 3/5:   I2C6 (GPIO2_B1/B2) - RTC
+** Pin 8/10:  UART0 (GPIO2_C1/C0) - serial
+** Pin 12:    GPIO3_D0 - HM-MOD-RPI-PCB reset
+** Pin 32:    GPIO4_C2 - button
+** Pin 35:    GPIO3_D1 - RPI-RF-MOD reset
+** Pin 36:    GPIO3_D4 - red LED
+** Pin 38:    GPIO3_D3 - green LED
+** Pin 40:    GPIO3_D7 - blue LED
 */
 
 / {
-    compatible = "asus,rk3288-tinker", "rockchip,rk3288";
+    compatible = "rockchip,rk3399-evb", "rockchip,rk3399";
 
     // fragment to ensure we have the correct gpio pin
     // setup for the RPI-RF-MOD and HM-MOD-RPI-PCB
@@ -20,16 +29,16 @@
         __overlay__ {
             rpi_rf_mod {
                 rpi_rf_mod_pins: rpi-rf-mod-pins {
-                    rockchip,pins = <6 1  0 &pcfg_pull_none>,  // GPIO6A1: reset
-                                    <7 23 0 &pcfg_pull_up>,    // GPIO7C7: button
-                                    <7 7  0 &pcfg_output_low>, // GPIO7A7: red LED
-                                    <6 3  0 &pcfg_output_low>, // GPIO6A3: green LED
-                                    <6 4  0 &pcfg_output_low>; // GPIO6A4: blue LED
+                    rockchip,pins = <3 25 0 &pcfg_pull_none>,  // GPIO3_D1 (pin 35): reset
+                                    <4 18 0 &pcfg_pull_up>,    // GPIO4_C2 (pin 32): button
+                                    <3 28 0 &pcfg_output_low>, // GPIO3_D4 (pin 36): red LED
+                                    <3 27 0 &pcfg_output_low>, // GPIO3_D3 (pin 38): green LED
+                                    <3 31 0 &pcfg_output_low>; // GPIO3_D7 (pin 40): blue LED
                 };
             };
             hm_mod_rpi_pcb {
                 hm_mod_rpi_pcb_pins: hm-mod-rpi-pcb-pins {
-                    rockchip,pins = <6 0 0 &pcfg_pull_none>; // GPIO6A0: reset
+                    rockchip,pins = <3 24 0 &pcfg_pull_none>; // GPIO3_D0 (pin 12): reset
                 };
             };
         };
@@ -44,19 +53,19 @@
             pinctrl-0 = <&rpi_rf_mod_pins>, <&hm_mod_rpi_pcb_pins>;
             rpi-rf-mod-red {
                 label = "rpi_rf_mod:red";
-                gpios = <&gpio7 7 0>;
+                gpios = <&gpio3 28 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
             rpi-rf-mod-green {
                 label = "rpi_rf_mod:green";
-                gpios = <&gpio6 3 0>;
+                gpios = <&gpio3 27 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
             rpi-rf-mod-blue {
                 label = "rpi_rf_mod:blue";
-                gpios = <&gpio6 4 0>;
+                gpios = <&gpio3 31 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
@@ -64,9 +73,10 @@
     };
 
     // fragment to define settings for the rx8130 RTC clock
-    // of the RPI-RF-MOD
+    // of the RPI-RF-MOD on the I2C bus at 40-pin header pins 3/5
+    // (I2C6 on RK3399, GPIO2_B1/B2)
     fragment@2 {
-        target = <&i2c1>;
+        target = <&i2c6>;
         __overlay__ {
             #address-cells = <1>;
             #size-cells = <0>;
@@ -82,34 +92,24 @@
     };
 
     // fragment to define uart/serial dependencies for
-    // generic_raw_uart
+    // generic_raw_uart using UART0 at 40-pin header pins 8/10
+    // (GPIO2_C1=TX, GPIO2_C0=RX)
     fragment@3 {
-        target = <&uart1>;
+        target = <&uart0>;
         __overlay__ {
             compatible = "pivccu,dw_apb";
             status = "okay";
-            pivccu,reset-gpios = <&gpio6 0 0>, <&gpio6 1 0>; // HM-MOD-RPI-PCB, RPI-RF-MOD
-            pivccu,led-gpios = <&gpio7 7 0>, <&gpio6 3 0>, <&gpio6 4 0>; // RPI-RF-MOD
+            pivccu,reset-gpios = <&gpio3 24 0>, <&gpio3 25 0>; // HM-MOD-RPI-PCB (pin 12), RPI-RF-MOD (pin 35)
+            pivccu,led-gpios = <&gpio3 28 0>, <&gpio3 27 0>, <&gpio3 31 0>; // RPI-RF-MOD (pins 36, 38, 40)
             pivccu,rtc = <&rpi_rf_mod_rtc>;     // RPI-RF-MOD
         };
     };
 
-    // we have to disable uart2,uart3,i2s on the Tinkerboard or
+    // we have to disable i2s0 on the Tinkerboard 2 or
     // otherwise the gpio-leds cannot use the pins for the RPI-RF-MOD
+    // (I2S0 8ch bus uses GPIO3_D0-D7 which conflicts with the RF-MOD GPIOs)
     fragment@4 {
-        target = <&uart2>;
-        __overlay__ {
-          status = "disabled";
-        };
-    };
-    fragment@5 {
-        target = <&uart3>;
-        __overlay__ {
-          status = "disabled";
-        };
-    };
-    fragment@6 {
-        target = <&i2s>;
+        target = <&i2s0>;
         __overlay__ {
           status = "disabled";
         };
