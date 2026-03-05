@@ -10,14 +10,14 @@ device tree fixes.
  arch/arm/mach-rockchip/rk3399/Kconfig         |   6 +
  board/rockchip/tinker-2_rk3399/Kconfig        |  15 +
  board/rockchip/tinker-2_rk3399/Makefile       |   7 +
- .../tinker-2_rk3399/tinker-2-rk3399.c         |  37 +
+ .../tinker-2_rk3399/tinker-2-rk3399.c         |  75 +
  configs/tinker-2-rk3399_defconfig             |  91 ++
  drivers/power/pmic/fan53555.c                 |   1 +
  drivers/power/regulator/fan53555.c            |   2 +
  .../src/arm64/rockchip/rk3399-tinker-2.dts    | 796 ++++++++++++++++++
  include/configs/tinker-2_rk3399.h             |  18 +
  include/power/fan53555.h                      |   1 +
- 11 files changed, 1010 insertions(+)
+ 11 files changed, 1048 insertions(+)
  create mode 100644 arch/arm/dts/rk3399-tinker-2-u-boot.dtsi
  create mode 100644 board/rockchip/tinker-2_rk3399/Kconfig
  create mode 100644 board/rockchip/tinker-2_rk3399/Makefile
@@ -131,20 +131,33 @@ new file mode 100644
 index 00000000000..f465c485f7a
 --- /dev/null
 +++ b/board/rockchip/tinker-2_rk3399/tinker-2-rk3399.c
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,75 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * (C) Copyright 2019 Vasily Khoruzhick <anarsoul@gmail.com>
 + */
 +
++#include <dm.h>
++#include <env.h>
 +#include <init.h>
++#include <misc.h>
++#include <net.h>
 +#include <syscon.h>
++#include <dm/uclass-internal.h>
 +#include <asm/arch-rockchip/clock.h>
 +#include <asm/arch-rockchip/grf_rk3399.h>
 +#include <asm/arch-rockchip/hardware.h>
 +
 +#define GRF_IO_VSEL_BT565_SHIFT 0
 +#define PMUGRF_CON0_VSEL_SHIFT 8
++
++/*
++ * The RK3399 eFuse stores the factory-programmed LAN MAC address
++ * at byte offset 0x60 (6 bytes).  This is the address printed on
++ * the board sticker.
++ */
++#define RK3399_MAC_EFUSE_OFFSET	0x60
++#define RK3399_MAC_EFUSE_LEN	6
 +
 +#ifdef CONFIG_MISC_INIT_R
 +static void setup_iodomain(void)
@@ -161,9 +174,43 @@ index 00000000000..f465c485f7a
 +	rk_setreg(&pmugrf->soc_con0, 1 << PMUGRF_CON0_VSEL_SHIFT);
 +}
 +
++/*
++ * Try to read the factory-programmed MAC address from the RK3399
++ * eFuse at offset 0x60.  If a valid unicast MAC is found there,
++ * set it as ethaddr so that the generic rockchip_setup_macaddr()
++ * (which derives a locally-administered MAC from the CPUID hash)
++ * will be skipped.
++ */
++static void setup_efuse_macaddr(void)
++{
++	struct udevice *dev;
++	u8 mac[RK3399_MAC_EFUSE_LEN];
++	int ret;
++
++	if (env_get("ethaddr"))
++		return;
++
++	ret = uclass_get_device_by_driver(UCLASS_MISC,
++					  DM_DRIVER_GET(rockchip_efuse), &dev);
++	if (ret) {
++		debug("%s: could not find efuse device\n", __func__);
++		return;
++	}
++
++	ret = misc_read(dev, RK3399_MAC_EFUSE_OFFSET, mac, sizeof(mac));
++	if (ret != sizeof(mac)) {
++		debug("%s: reading MAC from efuse failed\n", __func__);
++		return;
++	}
++
++	if (is_valid_ethaddr(mac))
++		eth_env_set_enetaddr("ethaddr", mac);
++}
++
 +int rockchip_early_misc_init_r(void)
 +{
 +	setup_iodomain();
++	setup_efuse_macaddr();
 +
 +	return 0;
 +}
