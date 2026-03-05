@@ -198,7 +198,7 @@ index 00000000000..f465c485f7a
 +	}
 +
 +	ret = misc_read(dev, RK3399_MAC_EFUSE_OFFSET, mac, sizeof(mac));
-+	if (ret < 0) {
++	if (ret != sizeof(mac)) {
 +		debug("%s: reading MAC from efuse failed\n", __func__);
 +		return;
 +	}
