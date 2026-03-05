@@ -114,6 +114,16 @@ identify_host() {
       HM_LED_YELLOW=""
     ;;
 
+    # ASUS Tinkerboard2/2S platform
+    tinkerboard2)
+      HM_HOST="tinkerboard2"
+
+      # setup Tinkerboard specific settings
+      HM_LED_GREEN="/sys/class/leds/green:"
+      HM_LED_RED="/sys/class/leds/red:"
+      HM_LED_YELLOW="/sys/class/leds/yellow:"
+    ;;
+
     # OCI platform
     oci)
       HM_HOST="oci" # generic
