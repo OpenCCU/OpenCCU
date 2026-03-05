@@ -21,8 +21,8 @@ from the Armbian project.
 Signed-off-by: OpenCCU <info@openccu.de>
 ---
  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3399-tinker-2.dts     | 792 +
- 2 files changed, 793 insertions(+)
+ .../boot/dts/rockchip/rk3399-tinker-2.dts     | 796 +
+ 2 files changed, 797 insertions(+)
  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts
 
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
@@ -40,7 +40,7 @@ diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts b/arch/arm64/boot/
 new file mode 100644
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-tinker-2.dts
-@@ -0,0 +1,792 @@
+@@ -0,0 +1,796 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2016 Fuzhou Rockchip Electronics Co., Ltd
@@ -58,6 +58,10 @@ new file mode 100644
 +/ {
 +	model = "Asus Tinker Board 2/2S";
 +	compatible = "rockchip,rk3399-evb", "rockchip,rk3399";
++
++	aliases {
++		ethernet0 = &gmac;
++	};
 +
 +	chosen {
 +		stdout-path = "serial2:1500000n8";

@@ -14,10 +14,10 @@ device tree fixes.
  configs/tinker-2-rk3399_defconfig             |  91 ++
  drivers/power/pmic/fan53555.c                 |   1 +
  drivers/power/regulator/fan53555.c            |   2 +
- .../src/arm64/rockchip/rk3399-tinker-2.dts    | 792 ++++++++++++++++++
+ .../src/arm64/rockchip/rk3399-tinker-2.dts    | 796 ++++++++++++++++++
  include/configs/tinker-2_rk3399.h             |  18 +
  include/power/fan53555.h                      |   1 +
- 11 files changed, 1006 insertions(+)
+ 11 files changed, 1010 insertions(+)
  create mode 100644 arch/arm/dts/rk3399-tinker-2-u-boot.dtsi
  create mode 100644 board/rockchip/tinker-2_rk3399/Kconfig
  create mode 100644 board/rockchip/tinker-2_rk3399/Makefile
@@ -296,7 +296,7 @@ new file mode 100644
 index 00000000000..261fa65f179
 --- /dev/null
 +++ b/dts/upstream/src/arm64/rockchip/rk3399-tinker-2.dts
-@@ -0,0 +1,792 @@
+@@ -0,0 +1,796 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2016 Fuzhou Rockchip Electronics Co., Ltd
@@ -314,6 +314,10 @@ index 00000000000..261fa65f179
 +/ {
 +	model = "Asus Tinker Board 2/2S";
 +	compatible = "rockchip,rk3399-evb", "rockchip,rk3399";
++
++	aliases {
++		ethernet0 = &gmac;
++	};
 +
 +	chosen {
 +		stdout-path = "serial2:1500000n8";
