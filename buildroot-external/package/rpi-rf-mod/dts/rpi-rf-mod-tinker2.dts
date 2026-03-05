@@ -114,4 +114,15 @@
           status = "disabled";
         };
     };
+
+    // modify /aliases path so that i2c1 points to I2C6 (the
+    // RPI-RF-MOD I2C bus at 40-pin header pins 3/5) and using
+    // the rtc of the RPI-RF-MOD as the primary (rtc0) one
+    fragment@5 {
+        target-path = "/aliases";
+        __overlay__ {
+            i2c1 = "/i2c@ff150000";                    // i2c6 (RPI-RF-MOD)
+            rtc0 = "/i2c@ff150000/rx8130@32";           // @rpi_rf_mod_rtc
+        };
+    };
 };
