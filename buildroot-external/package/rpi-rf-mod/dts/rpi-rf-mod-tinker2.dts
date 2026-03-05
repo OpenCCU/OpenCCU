@@ -11,9 +11,9 @@
 ** 40-pin header mapping (RK3399):
 ** Pin 3/5:   I2C6 (GPIO2_B1/B2) - RTC
 ** Pin 8/10:  UART0 (GPIO2_C1/C0) - serial
-** Pin 12:    GPIO3_D0 - HM-MOD-RPI-PCB reset
+** Pin 12:    GPIO3_D1 - HM-MOD-RPI-PCB reset
 ** Pin 32:    GPIO4_C2 - button
-** Pin 35:    GPIO3_D1 - RPI-RF-MOD reset
+** Pin 35:    GPIO3_D0 - RPI-RF-MOD reset
 ** Pin 36:    GPIO2_C2 - red LED
 ** Pin 38:    GPIO3_D3 - green LED
 ** Pin 40:    GPIO3_D7 - blue LED
@@ -29,7 +29,7 @@
         __overlay__ {
             rpi_rf_mod {
                 rpi_rf_mod_pins: rpi-rf-mod-pins {
-                    rockchip,pins = <3 25 0 &pcfg_pull_none>,  // GPIO3_D1 (pin 35): reset
+                    rockchip,pins = <3 24 0 &pcfg_pull_none>,  // GPIO3_D0 (pin 35): reset
                                     <4 18 0 &pcfg_pull_up>,    // GPIO4_C2 (pin 32): button
                                     <2 18 0 &pcfg_output_low>, // GPIO2_C2 (pin 36): red LED
                                     <3 27 0 &pcfg_output_low>, // GPIO3_D3 (pin 38): green LED
@@ -38,7 +38,7 @@
             };
             hm_mod_rpi_pcb {
                 hm_mod_rpi_pcb_pins: hm-mod-rpi-pcb-pins {
-                    rockchip,pins = <3 24 0 &pcfg_pull_none>; // GPIO3_D0 (pin 12): reset
+                    rockchip,pins = <3 25 0 &pcfg_pull_none>; // GPIO3_D1 (pin 12): reset
                 };
             };
         };
@@ -99,7 +99,7 @@
         __overlay__ {
             compatible = "pivccu,dw_apb";
             status = "okay";
-            pivccu,reset-gpios = <&gpio3 24 0>, <&gpio3 25 0>; // HM-MOD-RPI-PCB (pin 12), RPI-RF-MOD (pin 35)
+            pivccu,reset-gpios = <&gpio3 25 0>, <&gpio3 24 0>; // HM-MOD-RPI-PCB (pin 12), RPI-RF-MOD (pin 35)
             pivccu,led-gpios = <&gpio2 18 0>, <&gpio3 27 0>, <&gpio3 31 0>; // RPI-RF-MOD (pins 36, 38, 40)
             pivccu,rtc = <&rpi_rf_mod_rtc>;     // RPI-RF-MOD
         };
