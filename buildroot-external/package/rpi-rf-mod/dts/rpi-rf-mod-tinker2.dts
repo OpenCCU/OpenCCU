@@ -5,7 +5,7 @@
 ** Device Tree Overlay for eQ-3 RPI-RF-MOD and
 ** HM-MOD-RPI-PCB for ASUS Tinkerboard 2/2S (RK3399)
 **
-** Copyright (c) 2019-2025 Jens Maus <mail@jens-maus.de>
+** Copyright (c) 2026 Jens Maus <mail@jens-maus.de>
 ** Licensed under Apache 2.0
 **
 ** 40-pin header mapping (RK3399):
