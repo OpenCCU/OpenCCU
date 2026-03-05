@@ -33,6 +33,9 @@ else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2),y)
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW),y)
   # HomeAssistant Yellow DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-yellow
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
+  # ASUS Tinkerboard/S DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER2),y)
   # ASUS Tinkerboard2/2S DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker2
