@@ -49,6 +49,9 @@ The following installation archives can be downloaded for different hardware pla
 <sub>📦 [OpenCCU-${VERSION}-odroid-c4.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-c4.zip)<br/>SHA256: XSHAc4.zipX</sub>
 <sub>📦 [OpenCCU-${VERSION}-odroid-c2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-c2.zip)<br/>SHA256: XSHAc2.zipX</sub>
 
+- ASUS Tinkerboard 2/2S – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard2)):
+<sub>📦 [OpenCCU-${VERSION}-tinkerboard2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-tinkerboard2.zip)<br/>SHA256: XSHAtinker2.zipX</sub>
+
 - Generic-x86_64 – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-IntelNUC)):
 <sub>📦 [OpenCCU-${VERSION}-generic-x86_64.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-generic-x86_64.zip)<br/>SHA256: XSHAx86_64.zipX</sub>
 

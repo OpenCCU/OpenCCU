@@ -119,7 +119,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [rpi3, rpi4, rpi5, odroid-c2, odroid-c4, odroid-n2, ova, oci_amd64, oci_arm64, generic-x86_64, generic-aarch64, lxc_amd64, lxc_arm64]
+        platform: [rpi3, rpi4, rpi5, odroid-c2, odroid-c4, odroid-n2, tinkerboard2, ova, oci_amd64, oci_arm64, generic-x86_64, generic-aarch64, lxc_amd64, lxc_arm64]
 
     steps:
       - name: Checkout Code
