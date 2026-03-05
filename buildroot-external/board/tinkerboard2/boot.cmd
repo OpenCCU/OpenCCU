@@ -6,7 +6,7 @@ setenv bootfs 1
 setenv rootfs 2
 setenv userfs 3
 #setenv gpio_button "disabled"
-setenv gpio_button "disabled"
+setenv gpio_button "E18" # pin 32 (GPIO4_C2)
 setenv kernel_img /Image
 setenv kernel_bootcmd booti
 setenv recoveryfs_initrd "recoveryfs-initrd"
