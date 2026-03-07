@@ -34,11 +34,6 @@
   "pr_template": "- #${{NUMBER}} ${{TITLE}} (@${{AUTHOR}})",
   "empty_template": "- No changes",
   "label_extractor": [],
-  "duplicate_filter": {
-    "pattern": "",
-    "on_property": "title",
-    "method": "match"
-  },
   "max_pull_requests": 1000,
   "max_back_track_time_days": 365
 }
