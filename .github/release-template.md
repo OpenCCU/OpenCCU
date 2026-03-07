@@ -7,21 +7,7 @@ This is release ${VERSION} of OpenCCU which is a **XXXXX** release with the foll
 ## 🚧 Changes:
 <sub>For all changes, see the [full commit log](https://github.com/OpenCCU/OpenCCU/compare/${PREVIOUS_TAG}...${VERSION}).</sub>
 
-#### CCU/HomeMatic service changes:
-- XXXXX
-
-#### WebUI changes:
-- XXXXX
-
-#### Operating system changes:
-- XXXXX
-
-**RAW CHANGELOG**
 ${CHANGELOG}
-**RAW CHANGELOG**
-
-## 👪 Contributors (alphabetically):
-- @jens-maus
 
 ## 📝 Support:
 For support on installation and help please visit the following web pages:

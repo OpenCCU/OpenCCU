@@ -1,27 +1,27 @@
 {
   "categories": [
     {
-      "title": "## ✨ Features",
+      "title": "#### ✨ Features",
       "labels": ["feature", "enhancement", "new"]
     },
     {
-      "title": "## 🐛 Fixes",
+      "title": "#### 🐛 Fixes",
       "labels": ["bug", "bugfix", "fix"]
     },
     {
-      "title": "## 📖 Documentation",
+      "title": "#### 📖 Documentation",
       "labels": ["documentation", "docs"]
     },
     {
-      "title": "## 🔧 Maintenance",
+      "title": "#### 🔧 Maintenance",
       "labels": ["refactor", "chore", "maintenance", "ci", "build"]
     },
     {
-      "title": "## 📦 Dependencies",
+      "title": "#### 📦 Dependencies",
       "labels": ["dependencies", "deps"]
     },
     {
-      "title": "## 🔄 Other Changes",
+      "title": "#### 🔄 Other Changes",
       "labels": []
     }
   ],
@@ -31,7 +31,7 @@
     "on_property": "mergedAt"
   },
   "template": "${{CHANGELOG}}",
-  "pr_template": "- #${{NUMBER}} ${{TITLE}} (@${{AUTHOR}})",
+  "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
   "empty_template": "- No changes",
   "label_extractor": [],
   "max_pull_requests": 1000,
