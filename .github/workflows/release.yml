@@ -76,7 +76,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           configuration: ".github/release-changelog-config.json"
           fromTag: ${{ steps.previoustag.outputs.tag }}
-          toTag: ${{ steps.env.outputs.tag }}
+          toTag: ${{ github.sha }}
 
       - name: Generate release notes
         shell: bash
