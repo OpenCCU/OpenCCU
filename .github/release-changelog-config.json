@@ -34,6 +34,12 @@
   "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
   "empty_template": "- No changes",
   "label_extractor": [],
+  "transformers": [
+    {
+      "pattern": "@Copilot",
+      "target": "@jens-maus"
+    }
+  ],
   "max_pull_requests": 1000,
   "max_back_track_time_days": 365
 }
