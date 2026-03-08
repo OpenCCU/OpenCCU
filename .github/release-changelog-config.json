@@ -1,31 +1,34 @@
 {
   "categories": [
     {
-      "title": "#### ✨ Features",
-      "labels": ["feature", "enhancement", "new"]
+      "title": "#### 🌐 WebUI Changes",
+      "labels": [":label: WebUI"]
     },
     {
-      "title": "#### 🐛 Fixes",
-      "labels": ["bug", "bugfix", "fix"]
+      "title": "#### 🏠 CCU/HomeMatic Service Changes",
+      "labels": [":label: HmIPServer", ":bug: bug-report", ":bulb: enhancement-ideas", ":computer: hardware support"]
     },
     {
-      "title": "#### 📖 Documentation",
-      "labels": ["documentation", "docs"]
-    },
-    {
-      "title": "#### 🔧 Maintenance",
-      "labels": ["refactor", "chore", "maintenance", "ci", "build"]
-    },
-    {
-      "title": "#### 📦 Dependencies",
-      "labels": ["dependencies", "deps"]
+      "title": "#### 🖥️ Operating System Changes",
+      "labels": [":building_construction:  build-environment", "dependencies", "github_actions"]
     },
     {
       "title": "#### 🔄 Other Changes",
       "labels": []
     }
   ],
-  "ignore_labels": ["skip-changelog", "duplicate", "invalid", "wontfix"],
+  "ignore_labels": [
+    "skip-changelog",
+    ":heavy_multiplication_x: duplicate",
+    ":thumbsdown: wontfix",
+    ":information_desk_person: user problem",
+    ":no_good: worksforme",
+    ":arrow_right: third-party issue",
+    ":anchor: upstream issue",
+    ":clock10: awaiting feedback",
+    "backport:LTS",
+    "backport-risk:low"
+  ],
   "sort": {
     "order": "ASC",
     "on_property": "mergedAt"
