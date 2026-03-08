@@ -100,7 +100,7 @@ jobs:
           draft: true
           prerelease: false
           allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_USER_PAT }}
 
       - name: Upload release-template.md artifact
         uses: actions/upload-artifact@v7
@@ -365,7 +365,7 @@ jobs:
           prerelease: false
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_USER_PAT }}
 
   ##########################################
   # OCI/Docker build and registry push step
