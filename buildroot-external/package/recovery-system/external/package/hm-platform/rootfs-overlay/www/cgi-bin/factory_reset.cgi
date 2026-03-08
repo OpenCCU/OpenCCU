@@ -38,6 +38,14 @@ fi
 mount -o rw /userfs
 touch /userfs/.doFactoryReset
 
+# also remove extraconfig.txt from the boot partition if it exists
+if [ -f /bootfs/extraconfig.txt ]; then
+  if mount -o remount,rw /bootfs 2>/dev/null; then
+    rm -f /bootfs/extraconfig.txt
+    mount -o remount,ro /bootfs 2>/dev/null || true
+  fi
+fi
+
 echo "done.<br>"
 
 echo "[3/3] Rebooting...<br>"

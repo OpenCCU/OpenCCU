@@ -49,6 +49,14 @@ check_factory_reset() {
   # reset as well
   touch /usr/local/.doCoproFactoryReset
 
+  # also remove extraconfig.txt from the boot partition if it exists
+  if [[ -f /boot/extraconfig.txt ]]; then
+    if mount -o remount,rw /boot 2>/dev/null; then
+      rm -f /boot/extraconfig.txt
+      mount -o remount,ro /boot 2>/dev/null || true
+    fi
+  fi
+
   return 0
 }
 
