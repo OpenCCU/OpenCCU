@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: |
           FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
-          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}"
+          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}" | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )"
