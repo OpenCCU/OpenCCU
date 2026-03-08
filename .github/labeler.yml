@@ -3,42 +3,70 @@
 # Labels are applied to PRs based on which files are changed.
 # https://github.com/actions/labeler
 
-':label: WebUI':
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'buildroot-external/overlay/WebUI/**'
-          - 'buildroot-external/overlay/WebUI-openccu/**'
-          - 'release/homematic-addon*/**'
-
-':label: HmIPServer':
+':label: OCCU':
   - changed-files:
       - any-glob-to-any-file:
           - 'buildroot-external/package/occu/**'
           - 'buildroot-external/package/hmlangw/**'
-          - 'buildroot-external/package/multilib32/**'
           - 'buildroot-external/package/neoserver/**'
           - 'buildroot-external/package/tclrega/**'
           - 'buildroot-external/package/tclrpc/**'
           - 'buildroot-external/package/eq3configd/**'
           - 'buildroot-external/package/cloudmatic/**'
+          - 'buildroot-external/package/detect_radio_module/**'
+          - 'buildroot-external/package/eq3_char_loop/**'
+          - 'buildroot-external/package/generic_raw_uart/**'
+          - 'buildroot-external/package/libxmlparser/**'
+          - 'buildroot-external/package/libxmlrpcxx/**'
+          - 'buildroot-external/package/recovery-system/**'
+          - 'buildroot-external/package/rpi-rf-mod/**'
+          - 'buildroot-external/package/ssdpd/**'
+          - 'buildroot-external/overlay/base*/**'
+          - 'buildroot-external/patches/tcl/**'
 
-':building_construction:  build-environment':
+':label: WebUI':
   - changed-files:
       - any-glob-to-any-file:
-          - 'buildroot-external/**'
+          - 'buildroot-external/overlay/WebUI/**'
+          - 'buildroot-external/overlay/WebUI-openccu/**'
+          - 'buildroot-external/patches/occu/**'
+
+':label: OS':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/package/multilib32/**'
+          - 'buildroot-external/kernel/**'
+          - 'buildroot-external/package/daemonize/**'
+          - 'buildroot-external/package/java-azul/**'
+          - 'buildroot-external/package/tailscale-bin/**'
+          - 'buildroot-external/patches/bluez5-utils/**'
+          - 'buildroot-external/patches/grub2/**'
+          - 'buildroot-external/patches/host-uboot-tools/**'
+          - 'buildroot-external/patches/lighttpd/**'
+          - 'buildroot-external/patches/linux-headers/**'
+          - 'buildroot-external/patches/linux/**'
+          - 'buildroot-external/patches/psplash/**'
+          - 'buildroot-external/patches/uboot-tools/**'
+          - 'buildroot-external/patches/uboot/**'
+
+':label: RFD':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/overlay/RFD/**'
+
+':building_construction: build-environment':
+  - changed-files:
+      - any-glob-to-any-file:
           - 'buildroot-patches/**'
           - 'Makefile'
           - 'scripts/**'
-          - '*.config'
-
-'github_actions':
-  - changed-files:
-      - any-glob-to-any-file:
-          - '.github/workflows/**'
-          - '.github/dependabot.yml'
-          - '.github/release-changelog-config.json'
-          - '.github/release-template.md'
-          - '.github/labeler.yml'
+          - '.github/**'
+          - 'helm/**'
+          - 'buildroot-external/post-build.sh'
+          - 'buildroot-external/scripts/**'
+          - 'buildroot-external/*.config'
+          - 'Config.in'
+          - 'external.mk'
 
 'platform/ha-addon':
   - changed-files:
@@ -46,21 +74,32 @@
           - 'home-assistant-addon/**'
           - 'home-assistant-addon-dev/**'
           - 'home-assistant-addon-proxy/**'
+          - 'repository.json'
           - 'buildroot-external/board/oci/**'
 
 'platform/raspberrypi':
   - changed-files:
       - any-glob-to-any-file:
-          - 'buildroot-external/board/rpi3/**'
-          - 'buildroot-external/board/rpi4/**'
-          - 'buildroot-external/board/rpi5/**'
+          - 'buildroot-external/board/rpi*/**'
           - 'buildroot-external/configs/rpi*'
+          - 'release/rpi-imager*'
+          - 'buildroot-external/package/argononed/**'
+          - 'buildroot-external/package/picod/**'
+          - 'buildroot-external/package/pidesktopd/**'
+          - 'buildroot-external/package/piusvd/**'
+          - 'buildroot-external/package/raspi-fanshim/**'
+          - 'buildroot-external/package/rpi-eeprom/**'
+          - 'buildroot-external/package/strompi2d/**'
+          - 'buildroot-external/package/susvd/**'
+          - 'buildroot-external/package/wiringpi-rpi/**'
 
 'platform/odroid':
   - changed-files:
       - any-glob-to-any-file:
           - 'buildroot-external/board/odroid*/**'
           - 'buildroot-external/configs/odroid*'
+          - 'buildroot-external/package/hardkernel-boot/**'
+          - 'buildroot-external/package/wiringpi-odroid/**'
 
 'platform/tinker':
   - changed-files:
@@ -73,6 +112,8 @@
       - any-glob-to-any-file:
           - 'buildroot-external/board/ova/**'
           - 'buildroot-external/configs/ova*'
+          - 'buildroot-external/package/qemu-guest-agent/**'
+          - 'buildroot-external/package/xe-guest-utilities/**'
 
 'platform/lxc':
   - changed-files:
@@ -96,7 +137,3 @@
   - changed-files:
       - any-glob-to-any-file:
           - '*.md'
-          - 'docs/**'
-          - 'CONTRIBUTING.md'
-          - 'SECURITY.md'
-          - 'SUPPORT.md'
