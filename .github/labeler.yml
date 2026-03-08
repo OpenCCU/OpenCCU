@@ -1,0 +1,102 @@
+---
+# Automatic PR labeling configuration for actions/labeler
+# Labels are applied to PRs based on which files are changed.
+# https://github.com/actions/labeler
+
+':label: WebUI':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/overlay/WebUI/**'
+          - 'buildroot-external/overlay/WebUI-openccu/**'
+          - 'release/homematic-addon*/**'
+
+':label: HmIPServer':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/package/occu/**'
+          - 'buildroot-external/package/hmlangw/**'
+          - 'buildroot-external/package/multilib32/**'
+          - 'buildroot-external/package/neoserver/**'
+          - 'buildroot-external/package/tclrega/**'
+          - 'buildroot-external/package/tclrpc/**'
+          - 'buildroot-external/package/eq3configd/**'
+          - 'buildroot-external/package/cloudmatic/**'
+
+':building_construction:  build-environment':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/**'
+          - 'buildroot-patches/**'
+          - 'Makefile'
+          - 'scripts/**'
+          - '*.config'
+
+'github_actions':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**'
+          - '.github/dependabot.yml'
+          - '.github/release-changelog-config.json'
+          - '.github/release-template.md'
+          - '.github/labeler.yml'
+
+'platform/ha-addon':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'home-assistant-addon/**'
+          - 'home-assistant-addon-dev/**'
+          - 'home-assistant-addon-proxy/**'
+          - 'buildroot-external/board/oci/**'
+
+'platform/raspberrypi':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/rpi3/**'
+          - 'buildroot-external/board/rpi4/**'
+          - 'buildroot-external/board/rpi5/**'
+          - 'buildroot-external/configs/rpi*'
+
+'platform/odroid':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/odroid*/**'
+          - 'buildroot-external/configs/odroid*'
+
+'platform/tinker':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/tinkerboard*/**'
+          - 'buildroot-external/configs/tinker*'
+
+'platform/ova':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/ova/**'
+          - 'buildroot-external/configs/ova*'
+
+'platform/lxc':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/lxc/**'
+          - 'buildroot-external/configs/lxc*'
+
+'platform/generic-x86_64':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/generic-x86_64/**'
+          - 'buildroot-external/configs/generic-x86_64*'
+
+'platform/generic-aarch64':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'buildroot-external/board/generic-aarch64/**'
+          - 'buildroot-external/configs/generic-aarch64*'
+
+':book: documentation':
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.md'
+          - 'docs/**'
+          - 'CONTRIBUTING.md'
+          - 'SECURITY.md'
+          - 'SUPPORT.md'

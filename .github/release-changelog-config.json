@@ -1,0 +1,42 @@
+{
+  "categories": [
+    {
+      "title": "#### 🌐 WebUI Changes",
+      "labels": [":label: WebUI"]
+    },
+    {
+      "title": "#### 🏠 CCU/HomeMatic Service Changes",
+      "labels": [":label: HmIPServer", ":bug: bug-report", ":bulb: enhancement-ideas", ":computer: hardware support"]
+    },
+    {
+      "title": "#### 🖥️ Operating System Changes",
+      "labels": [":building_construction:  build-environment", "dependencies", "github_actions"]
+    },
+    {
+      "title": "#### 🔄 Other Changes",
+      "labels": []
+    }
+  ],
+  "ignore_labels": [
+    "skip-changelog",
+    ":heavy_multiplication_x: duplicate",
+    ":thumbsdown: wontfix",
+    ":information_desk_person: user problem",
+    ":no_good: worksforme",
+    ":arrow_right: third-party issue",
+    ":anchor: upstream issue",
+    ":clock10: awaiting feedback",
+    "backport:LTS",
+    "backport-risk:low"
+  ],
+  "sort": {
+    "order": "ASC",
+    "on_property": "mergedAt"
+  },
+  "template": "${{CHANGELOG}}",
+  "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
+  "empty_template": "- No changes",
+  "label_extractor": [],
+  "max_pull_requests": 1000,
+  "max_back_track_time_days": 365
+}

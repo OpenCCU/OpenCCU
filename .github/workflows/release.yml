@@ -30,6 +30,7 @@ jobs:
   release_draft:
     permissions:
       contents: write  # ncipollo/release-action
+      pull-requests: read  # mikepenz/release-changelog-builder-action
     name: Release draft
     runs-on: ubuntu-24.04
     outputs:
@@ -70,15 +71,18 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: metcalfc/changelog-generator@v4.6.2
+        uses: mikepenz/release-changelog-builder-action@v5
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          configuration: ".github/release-changelog-config.json"
+          fromTag: ${{ steps.previoustag.outputs.tag }}
+          toTag: ${{ github.sha }}
 
       - name: Generate release notes
         shell: bash
         run: |
           FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
-          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}"
+          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}" | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )"
