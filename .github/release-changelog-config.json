@@ -1,16 +1,16 @@
 {
   "categories": [
     {
+      "title": "#### 🏠 CCU/homematicIP Service Changes",
+      "labels": [":label: OCCU", ":label: HmIPServer", ":label: RFD", ":label: ReGaHss"]
+    },
+    {
       "title": "#### 🌐 WebUI Changes",
       "labels": [":label: WebUI"]
     },
     {
-      "title": "#### 🏠 CCU/HomeMatic Service Changes",
-      "labels": [":label: HmIPServer", ":bug: bug-report", ":bulb: enhancement-ideas", ":computer: hardware support"]
-    },
-    {
       "title": "#### 🖥️ Operating System Changes",
-      "labels": [":building_construction:  build-environment", "dependencies", "github_actions"]
+      "labels": [":label: OS", ":computer: hardware support"]
     },
     {
       "title": "#### 🔄 Other Changes",
@@ -27,7 +27,10 @@
     ":anchor: upstream issue",
     ":clock10: awaiting feedback",
     "backport:LTS",
-    "backport-risk:low"
+    "backport-risk:low",
+    "backport-risk:high",
+    "backport-risk:medium",
+    "backport:blocked"
   ],
   "sort": {
     "order": "ASC",
