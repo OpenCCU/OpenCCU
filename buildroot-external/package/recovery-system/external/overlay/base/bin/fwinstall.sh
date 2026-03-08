@@ -1035,6 +1035,20 @@ fwinstall()
         exit 1
       fi
 
+      # backup extraconfig.txt before overwriting bootfs
+      EXTRACONFIG_BACKUP=""
+      if [[ -f "/bootfs/extraconfig.txt" ]]; then
+        echo -ne "Backing up extraconfig.txt... "
+        if cp /bootfs/extraconfig.txt /tmp/extraconfig.txt.bak; then
+          echo "OK<br/>"
+          EXTRACONFIG_BACKUP=/tmp/extraconfig.txt.bak
+        else
+          echo "WARNING: backup of extraconfig.txt failed, file will not be preserved<br/>"
+        fi
+      else
+        echo "INFO: no extraconfig.txt found on bootfs, nothing to preserve<br/>"
+      fi
+
       # unmount /bootfs and flash the image using dd
       echo -ne "flashing.."
       umount -f "${BOOTFS_DEV}"
@@ -1057,6 +1071,21 @@ fwinstall()
       if ! mount -o ro "${BOOTFS_DEV}" /bootfs; then
         echo "ERROR: (mount)<br/>"
         exit 1
+      fi
+
+      # restore extraconfig.txt after bootfs overwrite
+      if [[ -n "${EXTRACONFIG_BACKUP}" ]] && [[ -f "${EXTRACONFIG_BACKUP}" ]]; then
+        echo -ne "Restoring extraconfig.txt... "
+        if mount -o remount,rw /bootfs && \
+           cp "${EXTRACONFIG_BACKUP}" /bootfs/extraconfig.txt && \
+           chmod 0644 /bootfs/extraconfig.txt && \
+           mount -o remount,ro /bootfs; then
+          echo "OK<br/>"
+          rm -f "${EXTRACONFIG_BACKUP}"
+        else
+          echo "WARNING: restore of extraconfig.txt failed, backup remains at ${EXTRACONFIG_BACKUP} for manual recovery<br/>"
+          mount -o remount,ro /bootfs 2>/dev/null || true
+        fi
       fi
 
       echo "OK<br/>"
@@ -1165,6 +1194,20 @@ fwinstall()
         exit 1
       fi
 
+      # backup extraconfig.txt before overwriting bootfs
+      EXTRACONFIG_BACKUP=""
+      if [[ -f "/bootfs/extraconfig.txt" ]]; then
+        echo -ne "Backing up extraconfig.txt... "
+        if cp /bootfs/extraconfig.txt /tmp/extraconfig.txt.bak; then
+          echo "OK<br/>"
+          EXTRACONFIG_BACKUP=/tmp/extraconfig.txt.bak
+        else
+          echo "WARNING: backup of extraconfig.txt failed, file will not be preserved<br/>"
+        fi
+      else
+        echo "INFO: no extraconfig.txt found on bootfs, nothing to preserve<br/>"
+      fi
+
       # unmount /bootfs and flash the image using dd
       echo -ne "flashing bootfs.."
       umount -f "${BOOTFS_DEV}"
@@ -1187,6 +1230,21 @@ fwinstall()
       if ! mount -o ro "${BOOTFS_DEV}" /bootfs; then
         echo "ERROR: (mount)<br/>"
         exit 1
+      fi
+
+      # restore extraconfig.txt after bootfs overwrite
+      if [[ -n "${EXTRACONFIG_BACKUP}" ]] && [[ -f "${EXTRACONFIG_BACKUP}" ]]; then
+        echo -ne "Restoring extraconfig.txt... "
+        if mount -o remount,rw /bootfs && \
+           cp "${EXTRACONFIG_BACKUP}" /bootfs/extraconfig.txt && \
+           chmod 0644 /bootfs/extraconfig.txt && \
+           mount -o remount,ro /bootfs; then
+          echo "OK<br/>"
+          rm -f "${EXTRACONFIG_BACKUP}"
+        else
+          echo "WARNING: restore of extraconfig.txt failed, backup remains at ${EXTRACONFIG_BACKUP} for manual recovery<br/>"
+          mount -o remount,ro /bootfs 2>/dev/null || true
+        fi
       fi
 
       echo -ne "OK, "
