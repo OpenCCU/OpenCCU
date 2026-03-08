@@ -49,7 +49,7 @@
           - 'buildroot-external/patches/uboot-tools/**'
           - 'buildroot-external/patches/uboot/**'
 
- ':label: RFD':
+':label: RFD':
   - changed-files:
       - any-glob-to-any-file:
           - 'buildroot-external/overlay/RFD/**'
