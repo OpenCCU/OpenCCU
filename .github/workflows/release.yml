@@ -93,8 +93,7 @@ jobs:
       - name: Generate EULA release summary
         shell: bash
         run: |
-          FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
-          CHANGE_ITEMS=$(cat <<'EOF' | egrep -v "${FILTER}" | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g' | head -n 12
+          CHANGE_ITEMS=$(cat <<'EOF' | grep -E -v "snapshot bump \\[" | grep -E -v "Merge branch '" | grep -E -v "Update .*\\.md$" | grep -E -v "Bump .* from .* to .*" | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g' | head -n 12
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )
@@ -105,7 +104,7 @@ jobs:
             echo '<p><b>Changes in this release compared to the previous version:</b></p>'
             echo '<ul>'
             if [[ -n "${CHANGE_ITEMS}" ]]; then
-              printf '%s\n' "${CHANGE_ITEMS}" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's|^|<li>|' -e 's|$|</li>|'
+              printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
             else
               echo '<li>See release page for the full changelog.</li>'
             fi
@@ -206,15 +205,23 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          fragment = Path("/tmp/eula-release-summary/eula-release-summary.html").read_text(encoding="utf-8")
+          fragment = Path("/tmp/eula-release-summary/eula-release-summary.html").read_bytes()
+          begin_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->"
+          end_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
+          marker = b"</body>"
+          section = begin_marker + b"\n" + fragment + b"\n" + end_marker
 
           for eula in Path("release/updatepkg").glob("*/EULA.*"):
-            content = eula.read_text(encoding="latin-1")
-            if fragment in content:
-              continue
-            if "</body>" not in content:
+            content = eula.read_bytes()
+            if marker not in content:
               raise RuntimeError(f"Could not find </body> marker in {eula}")
-            eula.write_text(content.replace("</body>", f"{fragment}\n</body>", 1), encoding="latin-1")
+            if begin_marker in content and end_marker in content:
+              start = content.index(begin_marker)
+              end = content.index(end_marker) + len(end_marker)
+              if len(content) > end and content[end:end + 1] == b"\n":
+                end += 1
+              content = content[:start] + content[end:]
+            eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
           PY
 
       # - name: remote debug tmate session
