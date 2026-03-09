@@ -34,6 +34,83 @@ jobs:
     outputs:
       has-commits: ${{ steps.commit-check.outputs.has-commits }}
 
+  eula_summary:
+    permissions:
+      contents: read
+      pull-requests: read  # mikepenz/release-changelog-builder-action
+    name: Generate EULA release summary
+    if: ${{ github.repository == 'OpenCCU/OpenCCU' && (github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0) }}
+    runs-on: ubuntu-24.04
+    needs: repo-check
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@f5eb9cbe95551d4e65a5df895de107c419b1c875  # v2.0
+
+      - name: Generate changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          configuration: ".github/release-changelog-config.json"
+          fromTag: ${{ steps.previoustag.outputs.tag }}
+          toTag: ${{ github.sha }}
+
+      - name: Generate EULA release summary
+        shell: bash
+        run: |
+          CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
+          ${{ steps.changelog.outputs.changelog }}
+          EOF
+          )
+
+          mkdir -p /tmp/eula-release-summary
+
+          generate_summary() {
+            local lang="$1"
+            local outfile="$2"
+            local header_link label_changes label_fallback
+            case "${lang}" in
+              de)
+                header_link='<p><b>Zum aktuellen ChangeLog und zur Release-&Uuml;bersicht besuchen Sie:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
+                label_changes='<p><b>&Auml;nderungen in dieser Version im Vergleich zur vorherigen Version:</b></p>'
+                label_fallback='Siehe Release-Seite f&uuml;r den vollst&auml;ndigen Changelog.'
+                ;;
+              *)
+                header_link='<p><b>For recent ChangeLog and Releases overview visit:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
+                label_changes='<p><b>Changes in this release compared to the previous version:</b></p>'
+                label_fallback='See release page for the full changelog.'
+                ;;
+            esac
+            {
+              echo "${header_link}"
+              echo "${label_changes}"
+              echo '<ul>'
+              if [[ -n "${CHANGE_ITEMS}" ]]; then
+                printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
+              else
+                echo "<li>${label_fallback}</li>"
+              fi
+              echo '</ul>'
+              echo '<hr/>'
+            } >"${outfile}"
+          }
+
+          generate_summary en /tmp/eula-release-summary/eula-release-summary.en.html
+          generate_summary de /tmp/eula-release-summary/eula-release-summary.de.html
+
+      - name: Upload EULA release summary artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: /tmp/eula-release-summary/
+          name: eula-release-summary
+
   build:
     permissions:
       contents: write      # actions/upload-artifact
@@ -42,7 +119,7 @@ jobs:
     name: Snapshot build [${{ matrix.platform }}]
     if: ${{ github.repository == 'OpenCCU/OpenCCU' && (github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0) }}
     runs-on: self-hosted
-    needs: repo-check
+    needs: [repo-check, eula_summary]
     timeout-minutes: 300
     outputs:
       build_datetime: ${{ steps.env.outputs.build_datetime }}
@@ -102,6 +179,53 @@ jobs:
         run: |
           mv -f release/updatepkg/${{ matrix.platform }}/EULA.de_nightly release/updatepkg/${{ matrix.platform }}/EULA.de
           mv -f release/updatepkg/${{ matrix.platform }}/EULA.en_nightly release/updatepkg/${{ matrix.platform }}/EULA.en
+
+      - name: Download EULA release summary artifact
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
+        with:
+          name: eula-release-summary
+          path: /tmp/eula-release-summary
+
+      - name: Inject release summary into EULA files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          summary_dir = Path("/tmp/eula-release-summary")
+          begin_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->"
+          end_marker   = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
+
+          def get_fragment(eula_path: Path) -> bytes:
+              """Return the locale-appropriate summary fragment, falling back to English."""
+              # EULA.de, EULA.de_nightly → locale "de"; EULA.en, EULA.en_nightly → locale "en"
+              suffix = eula_path.name.split(".", 1)[1] if "." in eula_path.name else "en"
+              locale = suffix.split("_")[0]
+              locale_file = summary_dir / f"eula-release-summary.{locale}.html"
+              if locale_file.exists():
+                  return locale_file.read_bytes()
+              # Fallback to English
+              return (summary_dir / "eula-release-summary.en.html").read_bytes()
+
+          for eula in Path("release/updatepkg").glob("*/EULA.*"):
+            content = eula.read_bytes()
+            fragment = get_fragment(eula)
+            if begin_marker in content and end_marker in content:
+              # Replace only the content between the existing markers, in-place.
+              start = content.index(begin_marker) + len(begin_marker)
+              end   = content.index(end_marker)
+              content = content[:start] + b"\n" + fragment + b"\n" + content[end:]
+              eula.write_bytes(content)
+            else:
+              # Fallback for files that don't yet carry the markers.
+              marker = b"</body>"
+              if marker not in content:
+                raise RuntimeError(
+                  f"Could not find OPENCCU_RELEASE_SUMMARY markers or </body> in {eula}"
+                )
+              section = begin_marker + b"\n" + fragment + b"\n" + end_marker
+              eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
+          PY
 
       # - name: remote debug tmate session
       #   uses: mxschmitt/action-tmate@v1
