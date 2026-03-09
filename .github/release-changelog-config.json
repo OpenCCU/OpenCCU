@@ -10,7 +10,7 @@
     },
     {
       "title": "#### 🖥️ Operating System Changes",
-      "labels": [":label: OS", ":computer: hardware support"]
+      "labels": [":label: OS"]
     },
     {
       "title": "#### 🔄 Other Changes",
@@ -19,21 +19,11 @@
   ],
   "ignore_labels": [
     "skip-changelog",
-    ":heavy_multiplication_x: duplicate",
-    ":thumbsdown: wontfix",
-    ":information_desk_person: user problem",
-    ":no_good: worksforme",
-    ":arrow_right: third-party issue",
-    ":anchor: upstream issue",
-    ":clock10: awaiting feedback",
-    "backport:LTS",
-    "backport-risk:low",
-    "backport-risk:high",
-    "backport-risk:medium",
-    "backport:blocked"
+    "dependencies",
+    "github_actions"
   ],
   "sort": {
-    "order": "ASC",
+    "order": "DESC",
     "on_property": "mergedAt"
   },
   "template": "${{CHANGELOG}}",
