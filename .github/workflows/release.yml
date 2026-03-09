@@ -205,21 +205,25 @@ jobs:
 
           fragment = Path("/tmp/eula-release-summary/eula-release-summary.html").read_bytes()
           begin_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->"
-          end_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
-          marker = b"</body>"
-          section = begin_marker + b"\n" + fragment + b"\n" + end_marker
+          end_marker   = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
 
           for eula in Path("release/updatepkg").glob("*/EULA.*"):
             content = eula.read_bytes()
-            if marker not in content:
-              raise RuntimeError(f"Could not find </body> marker in {eula}")
             if begin_marker in content and end_marker in content:
-              start = content.index(begin_marker)
-              end = content.index(end_marker) + len(end_marker)
-              if len(content) > end and content[end:end + 1] == b"\n":
-                end += 1
-              content = content[:start] + content[end:]
-            eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
+              # Replace only the content between the existing markers, in-place.
+              start = content.index(begin_marker) + len(begin_marker)
+              end   = content.index(end_marker)
+              content = content[:start] + b"\n" + fragment + b"\n" + content[end:]
+              eula.write_bytes(content)
+            else:
+              # Fallback for files that don't yet carry the markers.
+              marker = b"</body>"
+              if marker not in content:
+                raise RuntimeError(
+                  f"Could not find OPENCCU_RELEASE_SUMMARY markers or </body> in {eula}"
+                )
+              section = begin_marker + b"\n" + fragment + b"\n" + end_marker
+              eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
           PY
 
       # - name: remote debug tmate session
