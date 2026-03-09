@@ -11,36 +11,40 @@ gewisse Funktionserweiterungen mit sich, die in der Herstellerfirmware
 nicht enthalten sind.</p>
 <p>Bitte beachten Sie, das Sie jederzeit durch erneutes Installieren
 der originalen Herstellerfirmware Ihr CCU System auf den entsprechenden
-Auslieferungszustand zurücksetzen können. Des Weiteren werden durch
-dieses Firmware-Update Ihre sämtlichen Einstellungen übernommen. Wir
+Auslieferungszustand zurï¿½cksetzen kï¿½nnen. Des Weiteren werden durch
+dieses Firmware-Update Ihre sï¿½mtlichen Einstellungen ï¿½bernommen. Wir
 raten Ihnen jedoch trotzdem dazu ein separates Backup vor dem Update auf
-diese Firmware durchzuführen und an einem sicheren Ort aufzubewahren.</p>
+diese Firmware durchzufï¿½hren und an einem sicheren Ort aufzubewahren.</p>
 <hr/>
 <p>Bei der "OpenCCU" Software/Firmware handelt es sich um ein freies,
 nicht-kommerzielles Open Source Projekt (<a href=https://openccu.de/>https://openccu.de/</a>)
 das selbst unter der <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache 2.0 Lizenz</a>
-frei zur Verfügung gestellt wird und von einer ausgewählten Community
-unabhängig entwickelt wird. Es enthält selbst freie Software Dritter,
+frei zur Verfï¿½gung gestellt wird und von einer ausgewï¿½hlten Community
+unabhï¿½ngig entwickelt wird. Es enthï¿½lt selbst freie Software Dritter,
 die unter verschiedenen Lizenzbedingungen weitergegeben wird. Eine
 Auflistung der freien Software, die in dieser Software zum Einsatz kommt,
 sowie die Lizenzbedingungen unter denen diese weitergegeben wird, finden
 Sie auf der oben genannten Projekthomepage.</p>
-<p>Bei Problemen/Hinweisen/Featurewünschen nutzen Sie bitte die das
+<p>Bei Problemen/Hinweisen/Featurewï¿½nschen nutzen Sie bitte die das
 <a href=https://homematic-forum.de/forum/viewforum.php?f=65>OpenCCU-Diskussionsforum</a>
 oder im Falle von reproduzierbaren Fehlern bitte diese mittels direkter
 "Issue"-Meldung auf der Projekthomepage melden.</p>
+<p>Aktuelle OpenCCU Releases sind hier verfuegbar:
+<a href=https://github.com/OpenCCU/OpenCCU/releases/latest>https://github.com/OpenCCU/OpenCCU/releases/latest</a>.<br/>
+Fuer eine Uebersicht der aktuellen Aenderungen (ChangeLog) und Releases besuchen Sie:
+<a href=https://github.com/OpenCCU/OpenCCU/releases>https://github.com/OpenCCU/OpenCCU/releases</a>.</p>
 <p>Wenn Sie sich an der Weiterentwicklung des OpenCCU Projekt gerne
 direkt durch eigene Softwareentwicklung beteiligen wollen oder aber
 indirekt (z.B. durch das Schreiben von Dokumentation) so erhalten Sie
 auf unserer <a href=https://github.com/OpenCCU/OpenCCU>Projekt Homepage</a> weitere Informationen.
 <hr/>
-<p>Die Veröffentlichung dieser Software erfolgt, WIE BESEHEN OHNE
-GEWÄHR ODER VORBEHALTE - ganz gleich, ob ausdrücklich oder stillschweigend -
-insbesondere Gewährleistungen oder Vorbehalten des EIGENTUMS,
-NICHTVERLETZUNG VON RECHTEN DRITTER, HANDELSÜBLICHKEIT oder EIGNUNG
-FÜR EINEN BESTIMMTEN ZWECK. Sie allein sind verantwortlich für die
+<p>Die Verï¿½ffentlichung dieser Software erfolgt, WIE BESEHEN OHNE
+GEWï¿½HR ODER VORBEHALTE - ganz gleich, ob ausdrï¿½cklich oder stillschweigend -
+insbesondere Gewï¿½hrleistungen oder Vorbehalten des EIGENTUMS,
+NICHTVERLETZUNG VON RECHTEN DRITTER, HANDELSï¿½BLICHKEIT oder EIGNUNG
+Fï¿½R EINEN BESTIMMTEN ZWECK. Sie allein sind verantwortlich fï¿½r die
 Beurteilung, ob die Nutzung oder Weiterverbreitung dieser Software
-angemessen ist, und übernehmen die Risiken, die mit Ihrer Nutzung
+angemessen ist, und ï¿½bernehmen die Risiken, die mit Ihrer Nutzung
 verbunden sind.</p>
 </body>
 </html>
