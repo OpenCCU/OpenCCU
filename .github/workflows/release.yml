@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
@@ -67,11 +67,11 @@ jobs:
 
       - name: Get previous tag
         id: previoustag
-        uses: WyriHaximus/github-action-get-previous-tag@v2.0
+        uses: WyriHaximus/github-action-get-previous-tag@f5eb9cbe95551d4e65a5df895de107c419b1c875  # v2.0
 
       - name: Generate changelog
         id: changelog
-        uses: mikepenz/release-changelog-builder-action@v6
+        uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           configuration: ".github/release-changelog-config.json"
@@ -92,7 +92,7 @@ jobs:
 
       - name: Create release draft
         id: release_drafter
-        uses: ncipollo/release-action@v1.20.0
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b  # v1.20.0
         with:
           tag: ${{ steps.env.outputs.tag }}
           name: 'OpenCCU ${{ steps.env.outputs.version }}'
@@ -103,7 +103,7 @@ jobs:
           token: ${{ secrets.RELEASE_USER_PAT }}
 
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: /tmp/release-template.md
           name: release-template.md
@@ -128,7 +128,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Install Dependencies
         run: |
@@ -190,7 +190,7 @@ jobs:
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip
@@ -201,7 +201,7 @@ jobs:
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip.sha256
@@ -211,7 +211,7 @@ jobs:
       - name: Upload build release [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-ccu3.tgz
@@ -221,7 +221,7 @@ jobs:
       - name: Upload build release checksum [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-ccu3.tgz.sha256
@@ -231,7 +231,7 @@ jobs:
       - name: Upload build release [ova]
         if: |
           matrix.platform == 'ova'
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}.ova
@@ -241,7 +241,7 @@ jobs:
       - name: Upload build release checksum [ova]
         if: |
           matrix.platform == 'ova'
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}.ova.sha256
@@ -251,7 +251,7 @@ jobs:
       - name: Upload build release [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
@@ -261,7 +261,7 @@ jobs:
       - name: Upload build release checksum [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz.sha256
@@ -271,7 +271,7 @@ jobs:
       - name: Upload build release [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tar.xz
@@ -281,7 +281,7 @@ jobs:
       - name: Upload build release checksum [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tar.xz.sha256
@@ -294,7 +294,7 @@ jobs:
         id: upload-oci
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
@@ -303,7 +303,7 @@ jobs:
       - name: Attest build artifact provenance [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@b3e506e8c389afc651c5bacf2b8f2a1ea0557215  # v4
         with:
           subject-name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
           subject-digest: sha256:${{ steps.upload-oci.outputs.artifact-digest }}
@@ -313,13 +313,13 @@ jobs:
       # manifest file artifact upload
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
 
       - name: Attest manifest artifact provenance
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@b3e506e8c389afc651c5bacf2b8f2a1ea0557215  # v4
         with:
           subject-name: OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
@@ -335,11 +335,11 @@ jobs:
     needs: [release_draft, build]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       # download all artifact files
       - name: Download all workflow artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
 
       - name: Patch release draft
         shell: bash
@@ -356,7 +356,7 @@ jobs:
           done
 
       - name: Update release draft
-        uses: ncipollo/release-action@v1.20.0
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b  # v1.20.0
         with:
           tag: ${{ needs.release_draft.outputs.tag }}
           bodyFile: release-template.md/release-template.md
@@ -385,7 +385,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Install Dependencies
         run: |
@@ -398,7 +398,7 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download all OCI artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
           pattern: OpenCCU-${{ needs.release_draft.outputs.version }}-oci_*.tgz
           merge-multiple: true
@@ -437,13 +437,13 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v4.0.0
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
         with:
           use: true
 
       - name: Login to GitHub Container Registry
         if: github.event.inputs.test_workflow != 'true'
-        uses: docker/login-action@v4.0.0
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2  # v4.0.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -451,7 +451,7 @@ jobs:
 
       - name: Extract docker metadata
         id: meta
-        uses: docker/metadata-action@v6.0.0
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf  # v6.0.0
         with:
           images: ${{ steps.extract_branch.outputs.base_tag }}
           labels: |
@@ -473,7 +473,7 @@ jobs:
 
       - name: Build and push container image
         if: github.event.inputs.test_workflow != 'true'
-        uses: docker/build-push-action@v7.0.0
+        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
         id: docker_build
         with:
           context: oci_build
@@ -512,7 +512,7 @@ jobs:
 
       - name: Attest container provenance
         if: github.event.inputs.test_workflow != 'true'
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@b3e506e8c389afc651c5bacf2b8f2a1ea0557215  # v4
         id: attest
         with:
           subject-name: ${{ steps.extract_branch.outputs.base_tag }}
@@ -533,7 +533,7 @@ jobs:
     needs: [release_draft, build, oci-multiarch-build-push]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           ref: master
           persist-credentials: true
@@ -546,15 +546,15 @@ jobs:
 
       # download rpi manifest files
       - name: Download rpi3 manifest
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi3.mf
       - name: Download rpi4 manifest
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi4.mf
       - name: Download rpi5 manifest
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
           name: OpenCCU-${{ needs.release_draft.outputs.version }}-rpi5.mf
 
@@ -601,7 +601,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
