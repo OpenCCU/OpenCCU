@@ -3,6 +3,14 @@
 <title>OpenCCU Installation</title>
 </head>
 <body>
+<p><b>&#9749; Please Support OpenCCU!</b></p>
+<p>If you find OpenCCU useful, consider supporting its further development:</p>
+<p><a href="https://github.com/sponsors/jens-maus"><img src="https://img.shields.io/badge/GitHub%20Sponsors-sponsor-pink.svg" alt="GitHub Sponsors"/></a>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL"><img src="https://img.shields.io/badge/donate-PayPal-green.svg" alt="Donate via PayPal"/></a></p>
+<p>Your support helps to constantly maintain and further improve OpenCCU. Thank you!</p>
+<p>Recent OpenCCU releases are available here:<br/>
+<a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a></p>
+<hr/>
 <p>You are about to install a third-party firmware on your CCU device.
 This <a href=https://openccu.de/>OpenCCU</a> firmware
 consists of the same feature set like the original eQ-3 vendor CCU
@@ -16,6 +24,8 @@ converted to be usable with the OpenCCU firmware. We do,
 however, suggest that you create a fresh backup before actually
 installing this firmware on your CCU device.</p>
 <hr/>
+<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->
+<!-- OPENCCU_RELEASE_SUMMARY_END -->
 <p>The "OpenCCU" software/firmware is a free and non-commercial
 open source software project (<a href=https://openccu.de/>https://openccu.de/</a>)
 which is distributed under the terms and conditions of the
