@@ -73,8 +73,7 @@ jobs:
       - name: Generate release notes
         shell: bash
         run: |
-          FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
-          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}"
+          export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )"
