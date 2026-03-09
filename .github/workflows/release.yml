@@ -96,18 +96,41 @@ jobs:
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )
-          {
-            echo '<p><b>For recent ChangeLog and Releases overview visit:</b> <a href=https://github.com/OpenCCU/OpenCCU/releases>https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
-            echo '<p><b>Changes in this release compared to the previous version:</b></p>'
-            echo '<ul>'
-            if [[ -n "${CHANGE_ITEMS}" ]]; then
-              printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
-            else
-              echo '<li>See release page for the full changelog.</li>'
-            fi
-            echo '</ul>'
-            echo '<hr/>'
-          } >/tmp/eula-release-summary.html
+
+          mkdir -p /tmp/eula-release-summary
+
+          generate_summary() {
+            local lang="$1"
+            local outfile="$2"
+            local header_link label_changes label_fallback
+            case "${lang}" in
+              de)
+                header_link='<p><b>Zum aktuellen ChangeLog und zur Release-&Uuml;bersicht besuchen Sie:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
+                label_changes='<p><b>&Auml;nderungen in dieser Version im Vergleich zur vorherigen Version:</b></p>'
+                label_fallback='Siehe Release-Seite f&uuml;r den vollst&auml;ndigen Changelog.'
+                ;;
+              *)
+                header_link='<p><b>For recent ChangeLog and Releases overview visit:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
+                label_changes='<p><b>Changes in this release compared to the previous version:</b></p>'
+                label_fallback='See release page for the full changelog.'
+                ;;
+            esac
+            {
+              echo "${header_link}"
+              echo "${label_changes}"
+              echo '<ul>'
+              if [[ -n "${CHANGE_ITEMS}" ]]; then
+                printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
+              else
+                echo "<li>${label_fallback}</li>"
+              fi
+              echo '</ul>'
+              echo '<hr/>'
+            } >"${outfile}"
+          }
+
+          generate_summary en /tmp/eula-release-summary/eula-release-summary.en.html
+          generate_summary de /tmp/eula-release-summary/eula-release-summary.de.html
 
       - name: Create release draft
         id: release_drafter
@@ -130,8 +153,8 @@ jobs:
       - name: Upload EULA release summary artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
-          path: /tmp/eula-release-summary.html
-          name: eula-release-summary.html
+          path: /tmp/eula-release-summary/
+          name: eula-release-summary
 
   build:
     permissions:
@@ -194,7 +217,7 @@ jobs:
       - name: Download EULA release summary artifact
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
-          name: eula-release-summary.html
+          name: eula-release-summary
           path: /tmp/eula-release-summary
 
       - name: Inject release summary into EULA files
@@ -203,12 +226,24 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          fragment = Path("/tmp/eula-release-summary/eula-release-summary.html").read_bytes()
+          summary_dir = Path("/tmp/eula-release-summary")
           begin_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->"
           end_marker   = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
 
+          def get_fragment(eula_path: Path) -> bytes:
+              """Return the locale-appropriate summary fragment, falling back to English."""
+              # EULA.de, EULA.de_nightly → locale "de"; EULA.en, EULA.en_nightly → locale "en"
+              suffix = eula_path.name.split(".", 1)[1] if "." in eula_path.name else "en"
+              locale = suffix.split("_")[0]
+              locale_file = summary_dir / f"eula-release-summary.{locale}.html"
+              if locale_file.exists():
+                  return locale_file.read_bytes()
+              # Fallback to English
+              return (summary_dir / "eula-release-summary.en.html").read_bytes()
+
           for eula in Path("release/updatepkg").glob("*/EULA.*"):
             content = eula.read_bytes()
+            fragment = get_fragment(eula)
             if begin_marker in content and end_marker in content:
               # Replace only the content between the existing markers, in-place.
               start = content.index(begin_marker) + len(begin_marker)
