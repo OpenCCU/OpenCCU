@@ -81,8 +81,7 @@ jobs:
       - name: Generate release notes
         shell: bash
         run: |
-          FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
-          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}" | sed 's/@Copilot/@jens-maus/g'
+          export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )"
@@ -93,14 +92,12 @@ jobs:
       - name: Generate EULA release summary
         shell: bash
         run: |
-          CHANGE_ITEMS=$(cat <<'EOF' | grep -E -v "snapshot bump \\[" | grep -E -v "Merge branch '" | grep -E -v "Update .*\\.md$" | grep -E -v "Bump .* from .* to .*" | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g' | head -n 12
+          CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )
           {
-            echo '<hr/>'
-            echo '<p><b>Recent OpenCCU releases are available here:</b> <a href=https://github.com/OpenCCU/OpenCCU/releases/latest>https://github.com/OpenCCU/OpenCCU/releases/latest</a>.<br/>'
-            echo '<b>For recent changelog and releases overview visit:</b> <a href=https://github.com/OpenCCU/OpenCCU/releases>https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
+            echo '<p><b>For recent ChangeLog and Releases overview visit:</b> <a href=https://github.com/OpenCCU/OpenCCU/releases>https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
             echo '<p><b>Changes in this release compared to the previous version:</b></p>'
             echo '<ul>'
             if [[ -n "${CHANGE_ITEMS}" ]]; then
@@ -109,6 +106,7 @@ jobs:
               echo '<li>See release page for the full changelog.</li>'
             fi
             echo '</ul>'
+            echo '<hr/>'
           } >/tmp/eula-release-summary.html
 
       - name: Create release draft

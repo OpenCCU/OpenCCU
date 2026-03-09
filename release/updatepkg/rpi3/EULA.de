@@ -11,7 +11,6 @@
 <p>Aktuelle OpenCCU-Releases finden Sie hier:<br/>
 <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a></p>
 <hr/>
-
 <p>Sie sind dabei auf Ihrem CCU System eine Drittanbieterfirmware namens
 <a href=https://openccu.de/>OpenCCU</a> zu installieren.
 Vom Funktionsumfang entspricht diese Firmware dem Stand der entsprechenden
@@ -25,6 +24,8 @@ dieses Firmware-Update Ihre s�mtlichen Einstellungen �bernommen. Wir
 raten Ihnen jedoch trotzdem dazu ein separates Backup vor dem Update auf
 diese Firmware durchzuf�hren und an einem sicheren Ort aufzubewahren.</p>
 <hr/>
+<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->
+<!-- OPENCCU_RELEASE_SUMMARY_END -->
 <p>Bei der "OpenCCU" Software/Firmware handelt es sich um ein freies,
 nicht-kommerzielles Open Source Projekt (<a href=https://openccu.de/>https://openccu.de/</a>)
 das selbst unter der <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache 2.0 Lizenz</a>
@@ -38,10 +39,6 @@ Sie auf der oben genannten Projekthomepage.</p>
 <a href=https://homematic-forum.de/forum/viewforum.php?f=65>OpenCCU-Diskussionsforum</a>
 oder im Falle von reproduzierbaren Fehlern bitte diese mittels direkter
 "Issue"-Meldung auf der Projekthomepage melden.</p>
-<p>Aktuelle OpenCCU Releases sind hier verf&uuml;gbar:
-<a href=https://github.com/OpenCCU/OpenCCU/releases/latest>https://github.com/OpenCCU/OpenCCU/releases/latest</a>.<br/>
-F&uuml;r eine &Uuml;bersicht der aktuellen &Auml;nderungen (ChangeLog) und Releases besuchen Sie:
-<a href=https://github.com/OpenCCU/OpenCCU/releases>https://github.com/OpenCCU/OpenCCU/releases</a>.</p>
 <p>Wenn Sie sich an der Weiterentwicklung des OpenCCU Projekt gerne
 direkt durch eigene Softwareentwicklung beteiligen wollen oder aber
 indirekt (z.B. durch das Schreiben von Dokumentation) so erhalten Sie

@@ -36,6 +36,8 @@ converted to be usable with the OpenCCU firmware. We do,
 however, suggest that you create a fresh backup before actually
 installing this firmware on your CCU device.</p>
 <hr/>
+<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->
+<!-- OPENCCU_RELEASE_SUMMARY_END -->
 <p>The "OpenCCU" software/firmware is a free and non-commercial
 open source software project (<a href=https://openccu.de/>https://openccu.de/</a>)
 which is distributed under the terms and conditions of the
@@ -49,10 +51,6 @@ of the incorporated software products in OpenCCU.</p>
 <a href=https://homematic-forum.de/forum/viewforum.php?f=65>OpenCCU discussion platform</a>
 or in case of reproducible issues please use the issue-tracker on the
 project homepage itself.</p>
-<p>Recent OpenCCU releases are available here:
-<a href=https://github.com/OpenCCU/OpenCCU/releases/latest>https://github.com/OpenCCU/OpenCCU/releases/latest</a>.<br/>
-For recent changelog and releases overview visit:
-<a href=https://github.com/OpenCCU/OpenCCU/releases>https://github.com/OpenCCU/OpenCCU/releases</a>.</p>
 <p>If you want to support the development of OpenCCU by contributing
 your own software skills or want to contribute in other way (e.g.
 writing documentation, etc.) please visit our <a href=https://github.com/OpenCCU/OpenCCU>project homepage</a>
