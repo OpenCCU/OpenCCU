@@ -285,7 +285,7 @@ jobs:
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip
@@ -296,7 +296,7 @@ jobs:
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip.sha256
@@ -306,7 +306,7 @@ jobs:
       - name: Upload build release [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-ccu3.tgz
@@ -316,7 +316,7 @@ jobs:
       - name: Upload build release checksum [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-ccu3.tgz.sha256
@@ -326,7 +326,7 @@ jobs:
       - name: Upload build release [ova]
         if: |
           matrix.platform == 'ova'
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}.ova
@@ -336,7 +336,7 @@ jobs:
       - name: Upload build release checksum [ova]
         if: |
           matrix.platform == 'ova'
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}.ova.sha256
@@ -346,7 +346,7 @@ jobs:
       - name: Upload build release [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz
@@ -356,7 +356,7 @@ jobs:
       - name: Upload build release checksum [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tgz.sha256
@@ -366,7 +366,7 @@ jobs:
       - name: Upload build release [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tar.xz
@@ -376,7 +376,7 @@ jobs:
       - name: Upload build release checksum [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: shogo82148/actions-upload-release-asset@48c35e56fc0c4bbb72ae99369230f393ed895e48  # v1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e  # v1
         with:
           upload_url: ${{ needs.release_draft.outputs.upload_url }}
           asset_path: release/OpenCCU-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.tar.xz.sha256
