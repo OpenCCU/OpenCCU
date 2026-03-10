@@ -34,11 +34,11 @@ jobs:
     outputs:
       has-commits: ${{ steps.commit-check.outputs.has-commits }}
 
-  eula_summary:
+  changelog_summary:
     permissions:
       contents: read
       pull-requests: read  # mikepenz/release-changelog-builder-action
-    name: Generate EULA release summary
+    name: Generate ChangeLog summary
     if: ${{ github.repository == 'OpenCCU/OpenCCU' && (github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0) }}
     runs-on: ubuntu-24.04
     needs: repo-check
@@ -62,7 +62,7 @@ jobs:
           fromTag: ${{ steps.previoustag.outputs.tag }}
           toTag: ${{ github.sha }}
 
-      - name: Generate EULA release summary
+      - name: Generate ChangeLog summary
         shell: bash
         run: |
           CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
@@ -70,7 +70,7 @@ jobs:
           EOF
           )
 
-          mkdir -p /tmp/eula-release-summary
+          mkdir -p /tmp/changelog-summary
 
           generate_summary() {
             local lang="$1"
@@ -102,14 +102,14 @@ jobs:
             } >"${outfile}"
           }
 
-          generate_summary en /tmp/eula-release-summary/eula-release-summary.en.html
-          generate_summary de /tmp/eula-release-summary/eula-release-summary.de.html
+          generate_summary en /tmp/changelog-summary/changelog-summary.en.html
+          generate_summary de /tmp/changelog-summary/changelog-summary.de.html
 
-      - name: Upload EULA release summary artifact
+      - name: Upload ChangeLog summary artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
-          path: /tmp/eula-release-summary/
-          name: eula-release-summary
+          path: /tmp/changelog-summary/
+          name: changelog-summary
 
   build:
     permissions:
@@ -119,7 +119,7 @@ jobs:
     name: Snapshot build [${{ matrix.platform }}]
     if: ${{ github.repository == 'OpenCCU/OpenCCU' && (github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0) }}
     runs-on: self-hosted
-    needs: [repo-check, eula_summary]
+    needs: [repo-check, changelog_summary]
     timeout-minutes: 300
     outputs:
       build_datetime: ${{ steps.env.outputs.build_datetime }}
@@ -180,32 +180,32 @@ jobs:
           mv -f release/updatepkg/${{ matrix.platform }}/EULA.de_nightly release/updatepkg/${{ matrix.platform }}/EULA.de
           mv -f release/updatepkg/${{ matrix.platform }}/EULA.en_nightly release/updatepkg/${{ matrix.platform }}/EULA.en
 
-      - name: Download EULA release summary artifact
+      - name: Download ChangeLog summary artifact
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
-          name: eula-release-summary
-          path: /tmp/eula-release-summary
+          name: changelog-summary
+          path: /tmp/changelog-summary
 
-      - name: Inject release summary into EULA files
+      - name: Inject ChangeLog summary into EULA files
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
 
-          summary_dir = Path("/tmp/eula-release-summary")
-          begin_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->"
-          end_marker   = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
+          summary_dir = Path("/tmp/changelog-summary")
+          begin_marker = b"<!-- OPENCCU_CHANGELOG_BEGIN -->"
+          end_marker   = b"<!-- OPENCCU_CHANGELOG_END -->"
 
           def get_fragment(eula_path: Path) -> bytes:
               """Return the locale-appropriate summary fragment, falling back to English."""
               # EULA.de, EULA.de_nightly → locale "de"; EULA.en, EULA.en_nightly → locale "en"
               suffix = eula_path.name.split(".", 1)[1] if "." in eula_path.name else "en"
               locale = suffix.split("_")[0]
-              locale_file = summary_dir / f"eula-release-summary.{locale}.html"
+              locale_file = summary_dir / f"changelog-summary.{locale}.html"
               if locale_file.exists():
                   return locale_file.read_bytes()
               # Fallback to English
-              return (summary_dir / "eula-release-summary.en.html").read_bytes()
+              return (summary_dir / "changelog-summary.en.html").read_bytes()
 
           for eula in Path("release/updatepkg").glob("*/EULA.*"):
             content = eula.read_bytes()
@@ -221,7 +221,7 @@ jobs:
               marker = b"</body>"
               if marker not in content:
                 raise RuntimeError(
-                  f"Could not find OPENCCU_RELEASE_SUMMARY markers or </body> in {eula}"
+                  f"Could not find OPENCCU_CHANGELOG markers or </body> in {eula}"
                 )
               section = begin_marker + b"\n" + fragment + b"\n" + end_marker
               eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))

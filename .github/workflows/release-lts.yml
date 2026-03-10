@@ -85,7 +85,7 @@ jobs:
           export PREVIOUS_TAG=${{ steps.previoustag.outputs.tag }}
           envsubst <.github/release-template.md >/tmp/release-template.md
 
-      - name: Generate EULA release summary
+      - name: Generate ChangeLog summary
         shell: bash
         run: |
           CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
@@ -93,27 +93,21 @@ jobs:
           EOF
           )
 
-          mkdir -p /tmp/eula-release-summary
+          mkdir -p /tmp/changelog-summary
 
           generate_summary() {
             local lang="$1"
             local outfile="$2"
-            local header_link label_changes label_fallback
+            local label_fallback
             case "${lang}" in
               de)
-                header_link='<p><b>Zum aktuellen ChangeLog und zur Release-&Uuml;bersicht besuchen Sie:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
-                label_changes='<p><b>&Auml;nderungen in dieser Version im Vergleich zur vorherigen Version:</b></p>'
                 label_fallback='Siehe Release-Seite f&uuml;r den vollst&auml;ndigen Changelog.'
                 ;;
               *)
-                header_link='<p><b>For recent ChangeLog and Releases overview visit:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>'
-                label_changes='<p><b>Changes in this release compared to the previous version:</b></p>'
                 label_fallback='See release page for the full changelog.'
                 ;;
             esac
             {
-              echo "${header_link}"
-              echo "${label_changes}"
               echo '<ul>'
               if [[ -n "${CHANGE_ITEMS}" ]]; then
                 printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
@@ -125,8 +119,8 @@ jobs:
             } >"${outfile}"
           }
 
-          generate_summary en /tmp/eula-release-summary/eula-release-summary.en.html
-          generate_summary de /tmp/eula-release-summary/eula-release-summary.de.html
+          generate_summary en /tmp/changelog-summary/changelog-summary.en.html
+          generate_summary de /tmp/changelog-summary/changelog-summary.de.html
 
       - name: Upload release-template.md artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
@@ -134,11 +128,11 @@ jobs:
           path: /tmp/release-template.md
           name: release-template.md
 
-      - name: Upload EULA release summary artifact
+      - name: Upload ChangeLog summary artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
-          path: /tmp/eula-release-summary/
-          name: eula-release-summary
+          path: /tmp/changelog-summary/
+          name: changelog-summary
 
   build:
     permissions:
@@ -198,32 +192,32 @@ jobs:
           fi
           echo "build_datetime=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_OUTPUT
 
-      - name: Download EULA release summary artifact
+      - name: Download ChangeLog summary artifact
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
         with:
-          name: eula-release-summary
-          path: /tmp/eula-release-summary
+          name: changelog-summary
+          path: /tmp/changelog-summary
 
-      - name: Inject release summary into EULA files
+      - name: Inject ChangeLog into EULA files
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
 
-          summary_dir = Path("/tmp/eula-release-summary")
-          begin_marker = b"<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->"
-          end_marker   = b"<!-- OPENCCU_RELEASE_SUMMARY_END -->"
+          summary_dir = Path("/tmp/changelog-summary")
+          begin_marker = b"<!-- OPENCCU_CHANGELOG_BEGIN -->"
+          end_marker   = b"<!-- OPENCCU_CHANGELOG_END -->"
 
           def get_fragment(eula_path: Path) -> bytes:
               """Return the locale-appropriate summary fragment, falling back to English."""
               # EULA.de, EULA.de_nightly → locale "de"; EULA.en, EULA.en_nightly → locale "en"
               suffix = eula_path.name.split(".", 1)[1] if "." in eula_path.name else "en"
               locale = suffix.split("_")[0]
-              locale_file = summary_dir / f"eula-release-summary.{locale}.html"
+              locale_file = summary_dir / f"changelog-summary.{locale}.html"
               if locale_file.exists():
                   return locale_file.read_bytes()
               # Fallback to English
-              return (summary_dir / "eula-release-summary.en.html").read_bytes()
+              return (summary_dir / "changelog-summary.en.html").read_bytes()
 
           for eula in Path("release/updatepkg").glob("*/EULA.*"):
             content = eula.read_bytes()
@@ -239,7 +233,7 @@ jobs:
               marker = b"</body>"
               if marker not in content:
                 raise RuntimeError(
-                  f"Could not find OPENCCU_RELEASE_SUMMARY markers or </body> in {eula}"
+                  f"Could not find OPENCCU_CHANGELOG markers or </body> in {eula}"
                 )
               section = begin_marker + b"\n" + fragment + b"\n" + end_marker
               eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
