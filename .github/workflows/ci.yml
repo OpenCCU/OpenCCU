@@ -95,7 +95,7 @@ jobs:
         uses: frenck/action-yamllint@be475b7c04356034c5754e7273c717247302611d  # v1.5
 
       - name: Check markdown files
-        uses: avto-dev/markdown-lint@04687db2e9b72c18a4dfce687923a8daa3e4b543  # v1
+        uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb  # v1
         with:
           ignore: '**/node_modules/** **/codemirror/README.md'
 
