@@ -26,6 +26,7 @@ jobs:
     if: github.ref == 'refs/heads/LTS'
     permissions:
       contents: write  # ncipollo/release-action
+      pull-requests: read  # mikepenz/release-changelog-builder-action
     name: Release draft
     runs-on: ubuntu-24.04
     outputs:
@@ -66,9 +67,12 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: metcalfc/changelog-generator@3f82cef08fe5dcf57c591fe165e70e1d5032e15a  # v4.6.2
+        uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          configuration: ".github/release-changelog-config.json"
+          fromTag: ${{ steps.previoustag.outputs.tag }}
+          toTag: ${{ github.sha }}
 
       - name: Generate release notes
         shell: bash
