@@ -8,8 +8,6 @@
 <p><a href="https://github.com/sponsors/jens-maus"><img src="https://img.shields.io/badge/GitHub%20Sponsors-sponsor-pink.svg" alt="GitHub Sponsors"/></a>
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL"><img src="https://img.shields.io/badge/donate-PayPal-green.svg" alt="Spenden via PayPal"/></a></p>
 <p>Ihre Unterst&uuml;tzung hilft OpenCCU kontinuierlich zu pflegen und weiter zu verbessern. Vielen Dank!</p>
-<p>Aktuelle OpenCCU-Releases finden Sie hier:<br/>
-<a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a></p>
 <hr/>
 <p><font color="red">Sie sind dabei eine experimentelle Version von
 OpenCCU auf ihrer CCU zu installieren. Bei der Nutzung dieser
@@ -35,8 +33,10 @@ dieses Firmware-Update Ihre s&auml;mtlichen Einstellungen &uuml;bernommen. Wir
 raten Ihnen jedoch trotzdem dazu ein separates Backup vor dem Update auf
 diese Firmware durchzuf&uuml;hren und an einem sicheren Ort aufzubewahren.</p>
 <hr/>
-<!-- OPENCCU_RELEASE_SUMMARY_BEGIN -->
-<!-- OPENCCU_RELEASE_SUMMARY_END -->
+<p><b>Zum aktuellen ChangeLog und zur Release-&Uuml;bersicht besuchen Sie:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>
+<p><b>&Auml;nderungen in dieser Version im Vergleich zur vorherigen Version:</b></p>
+<!-- OPENCCU_CHANGELOG_BEGIN -->
+<!-- OPENCCU_CHANGELOG_END -->
 <p>Bei der "OpenCCU" Software/Firmware handelt es sich um ein freies,
 nicht-kommerzielles Open Source Projekt (<a href=https://openccu.de/>https://openccu.de/</a>)
 das selbst unter der <a href=https://www.apache.org/licenses/LICENSE-2.0>Apache 2.0 Lizenz</a>
