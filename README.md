@@ -21,7 +21,7 @@
 <sub>[Deutschsprachiges 🇩🇪🇦🇹🇨🇭 ReadMe](README.de.md)</sub>
 ___
 
-OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, open-source operating system for running a **cloud-free smart-home hub** compatible with eQ-3’s [Homematic IP](https://www.homematic-ip.com/) and [HomeMatic](http://homematic.com/) devices. It targets **100% compatibility** with the vendor’s _CCU3_ and can be installed directly on [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit) and [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html) hardware. It also runs on common 64-bit capable SBCs (e.g., [Raspberry Pi](https://www.raspberrypi.org/), [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/)) and generic x86 hardware such as [Intel NUC](https://www.intel.com/content/www/us/en/products/details/nuc.html). In addition, OpenCCU is available as a virtual appliance for popular hypervisors and container platforms (e.g., Proxmox VE, VMware ESXi, VirtualBox, Synology VMM, Docker/OCI, Kubernetes) and as a native [Home Assistant](https://www.home-assistant.io/) add-on. Beyond CCU3 parity, it provides **modern WebUI, OS-level, and connectivity enhancements** for a more advanced user experience.
+OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, open-source operating system for running a **cloud-free smart-home hub** compatible with eQ-3’s [Homematic IP](https://www.homematic-ip.com/) and [HomeMatic](http://homematic.com/) devices. It targets **100% compatibility** with the vendor’s _CCU3_ and can be installed directly on [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit) and [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html) hardware. It also runs on common 64-bit capable SBCs (e.g., [Raspberry Pi](https://www.raspberrypi.org/), [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/), [ASUS Tinkerboard 2/2S](https://tinker-board.asus.com/series/tinker-board-2.html)) and generic x86_64 or aarch64 hardware. In addition, OpenCCU is available as a pure virtual appliance for popular hypervisors and container platforms (e.g., Proxmox VE, VirtualBox, Synology VMM, Docker/OCI, Kubernetes) and as a native [Home Assistant](https://www.home-assistant.io/) App. Beyond CCU3 parity, it provides **WebUI, OS-level, and connectivity enhancements** for a more advanced user experience.
 
 [more...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung)
 
@@ -35,14 +35,15 @@ OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, op
 
 ## :computer: Requirements
 
-OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and x86 systems—or deployed virtually:
+OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and x86_64 / aarch64 systems—or deployed virtually:
 
 **Hardware**
 - [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit), [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html)
 - [Raspberry Pi](https://www.raspberrypi.org/)
 - [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/)
-- [Intel NUC](https://www.intel.de/content/www/de/de/products/boards-kits/nuc.html)
-
+- [ASUS Tinkerboard 2/2S](https://tinker-board.asus.com/series/tinker-board-2.html)
+- Generic x86_64 / aarch64
+  
 **Virtualization & Containers**
 - [Proxmox VE](https://www.proxmox.com/en/proxmox-ve), [QEMU/KVM](https://www.qemu.org/), [XCP-ng/XenServer](https://xcp-ng.org/), [VMware ESXi](https://www.vmware.com/de/products/esxi-and-esx.html) / [Workstation Player](https://www.vmware.com/de/products/workstation-player/workstation-player-evaluation.html), [Hyper-V](https://learn.microsoft.com/de-de/virtualization/hyper-v-on-windows/), [VirtualBox](https://www.virtualbox.org/)
 - [Synology Virtual Machine Manager](https://www.synology.com/de-de/dsm/feature/virtual_machine_manager), [QNAP Virtualization Station](https://www.qnap.com/event/station/de-de/virtualization.php), [Unraid](https://unraid.net/)
@@ -87,7 +88,8 @@ OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and
      * [ELV-Charly](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ELV-Charly)
      * [RaspberryPi](https://github.com/OpenCCU/OpenCCU/wiki/Installation-RaspberryPi)
      * [Hardkernel ODROID](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ODROID)
-     * [Intel NUC](https://github.com/OpenCCU/OpenCCU/wiki/Installation-IntelNUC)
+     * [ASUS Tinkerboard 2/2S](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard2)
+     * [Generic x86_64 / aarch64](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Generic-x86_64)
    * [Basic Installation (Virtual)](https://github.com/OpenCCU/OpenCCU/wiki/Installation#grundinstallation-virtuell)
      * [Proxmox Virtual Environment](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Proxmox-VE)
      * [Home Assistant Add-on](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HomeAssistant)
