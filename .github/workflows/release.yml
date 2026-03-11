@@ -67,7 +67,7 @@ jobs:
 
       - name: Get previous tag
         id: previoustag
-        uses: WyriHaximus/github-action-get-previous-tag@f5eb9cbe95551d4e65a5df895de107c419b1c875  # v2.0
+        uses: WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de  # v2.0
 
       - name: Generate changelog
         id: changelog
