@@ -181,7 +181,7 @@ jobs:
           mv -f release/updatepkg/${{ matrix.platform }}/EULA.en_nightly release/updatepkg/${{ matrix.platform }}/EULA.en
 
       - name: Download ChangeLog summary artifact
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           name: changelog-summary
           path: /tmp/changelog-summary
@@ -471,7 +471,7 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download all OCI artifacts
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           pattern: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_*.tgz
           merge-multiple: true
@@ -660,15 +660,15 @@ jobs:
 
       # download rpi manifest files
       - name: Download rpi3 manifest
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi3.mf
       - name: Download rpi4 manifest
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi4.mf
       - name: Download rpi5 manifest
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3  # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-rpi5.mf
 
