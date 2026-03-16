@@ -12,16 +12,8 @@ ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
 	$(error hm-platform requires a glibc toolchain (BR2_TOOLCHAIN_USES_GLIBC))
 endif
 
-ifeq ($(BR2_arm),y)
-	HM_PLATFORM_ARCH=arm-linux-gnueabihf
-endif
-
 ifeq ($(BR2_aarch64),y)
 	HM_PLATFORM_ARCH=aarch64-linux-gnu
-endif
-
-ifeq ($(BR2_i386),y)
-	HM_PLATFORM_ARCH=i686-linux-gnu
 endif
 
 ifeq ($(BR2_x86_64),y)
