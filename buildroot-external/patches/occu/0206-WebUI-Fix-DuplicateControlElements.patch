@@ -1,0 +1,50 @@
+--- occu/WebUI/www/rega/esp/datapointconfigurator.fn
++++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
+@@ -200,7 +200,22 @@ function ::dcCreate()
+     string oEName;
+     string style = "-";
+ 
+-    foreach( sE, cObj.DPs().EnumEnabledVisibleIDs() )
++    string sEnumDPs = cObj.DPs().EnumEnabledVisibleIDs();
++    string sUniqueEnumDPs = "";
++    string sTmpDP;
++    foreach(sTmpDP, sEnumDPs)
++    {
++      if( ("\t"#sUniqueEnumDPs#"\t").Find("\t"#sTmpDP#"\t") == -1 )
++      {
++        if( sUniqueEnumDPs != "" )
++        {
++          sUniqueEnumDPs = sUniqueEnumDPs#"\t";
++        }
++        sUniqueEnumDPs = sUniqueEnumDPs#sTmpDP;
++      }
++    }
++
++    foreach( sE, sUniqueEnumDPs )
+     {
+       object oE = dom.GetObject( sE );
+       if( oE )
+@@ -1495,8 +1510,22 @@ function ::CreateUnknown()
+     }
+     
+     string sKnownControls = "NONE.SWITCH.DIMMER.BLIND.WINDOW.LOCK.BUTTON.RC19_DISPLAY.DOOR_SENSOR.RHS.TEMP.ANALOG_OUTPUT.";
++    string sUniqueEnum = "";
++    string sTmp;
++    foreach(sTmp, sEnum)
++    {
++      if( ("\t"#sUniqueEnum#"\t").Find("\t"#sTmp#"\t") == -1 )
++      {
++        if( sUniqueEnum != "" )
++        {
++          sUniqueEnum = sUniqueEnum#"\t";
++        }
++        sUniqueEnum = sUniqueEnum#sTmp;
++      }
++    }
++
+     string s;
+-    foreach( s, sEnum )
++    foreach( s, sUniqueEnum )
+     {
+       object oDP = dom.GetObject( s );
+ 
