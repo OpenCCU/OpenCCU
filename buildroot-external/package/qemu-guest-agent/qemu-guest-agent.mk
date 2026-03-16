@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_GUEST_AGENT_VERSION = 10.1.2
+QEMU_GUEST_AGENT_VERSION = 10.2.1
 QEMU_GUEST_AGENT_SOURCE = qemu-$(QEMU_GUEST_AGENT_VERSION).tar.xz
 QEMU_GUEST_AGENT_SITE = https://download.qemu.org
 QEMU_GUEST_AGENT_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -104,7 +104,7 @@ endef
 
 define QEMU_GUEST_AGENT_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/build/qga/qemu-ga $(TARGET_DIR)/usr/bin/qemu-ga
-	$(INSTALL) -D -m 0755 $(@D)/scripts/qemu-guest-agent/fsfreeze-hook $(TARGET_DIR)/etc/qemu/fsfreeze-hook
+	$(INSTALL) -D -m 0755 $(QEMU_GUEST_AGENT_PKGDIR)/fsfreeze-hook $(TARGET_DIR)/etc/qemu/fsfreeze-hook
 	$(INSTALL) -D -m 0755 $(QEMU_GUEST_AGENT_PKGDIR)/regahss-flush.sh $(TARGET_DIR)/etc/qemu/fsfreeze-hook.d/regahss-flush.sh
 endef
 

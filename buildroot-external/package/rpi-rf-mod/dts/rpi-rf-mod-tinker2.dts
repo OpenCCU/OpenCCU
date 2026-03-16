@@ -1,0 +1,128 @@
+/dts-v1/;
+/plugin/;
+
+/*
+** Device Tree Overlay for eQ-3 RPI-RF-MOD and
+** HM-MOD-RPI-PCB for ASUS Tinkerboard 2/2S (RK3399)
+**
+** Copyright (c) 2026 Jens Maus <mail@jens-maus.de>
+** Licensed under Apache 2.0
+**
+** 40-pin header mapping (RK3399):
+** Pin 3/5:   I2C6 (GPIO2_B1/B2) - RTC
+** Pin 8/10:  UART0 (GPIO2_C1/C0) - serial
+** Pin 12:    GPIO3_D1 - HM-MOD-RPI-PCB reset
+** Pin 32:    GPIO4_C2 - button
+** Pin 35:    GPIO3_D0 - RPI-RF-MOD reset
+** Pin 36:    GPIO2_C2 - red LED
+** Pin 38:    GPIO3_D3 - green LED
+** Pin 40:    GPIO3_D7 - blue LED
+*/
+
+/ {
+    compatible = "rockchip,rk3399-evb", "rockchip,rk3399";
+
+    // fragment to ensure we have the correct gpio pin
+    // setup for the RPI-RF-MOD and HM-MOD-RPI-PCB
+    fragment@0 {
+        target = <&pinctrl>;
+        __overlay__ {
+            rpi_rf_mod {
+                rpi_rf_mod_pins: rpi-rf-mod-pins {
+                    rockchip,pins = <3 24 0 &pcfg_pull_none>,  // GPIO3_D0 (pin 35): reset
+                                    <4 18 0 &pcfg_pull_up>,    // GPIO4_C2 (pin 32): button
+                                    <2 18 0 &pcfg_output_low>, // GPIO2_C2 (pin 36): red LED
+                                    <3 27 0 &pcfg_output_low>, // GPIO3_D3 (pin 38): green LED
+                                    <3 31 0 &pcfg_output_low>; // GPIO3_D7 (pin 40): blue LED
+                };
+            };
+            hm_mod_rpi_pcb {
+                hm_mod_rpi_pcb_pins: hm-mod-rpi-pcb-pins {
+                    rockchip,pins = <3 25 0 &pcfg_pull_none>; // GPIO3_D1 (pin 12): reset
+                };
+            };
+        };
+    };
+
+    // fragment to define dedicated led nodes for
+    // each separate led supported by the RPI-RF-MOD
+    fragment@1 {
+        target-path = "/gpio-leds";
+        __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&rpi_rf_mod_pins>, <&hm_mod_rpi_pcb_pins>;
+            rpi-rf-mod-red {
+                label = "rpi_rf_mod:red";
+                gpios = <&gpio2 18 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+            rpi-rf-mod-green {
+                label = "rpi_rf_mod:green";
+                gpios = <&gpio3 27 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+            rpi-rf-mod-blue {
+                label = "rpi_rf_mod:blue";
+                gpios = <&gpio3 31 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+        };
+    };
+
+    // fragment to define settings for the rx8130 RTC clock
+    // of the RPI-RF-MOD on the I2C bus at 40-pin header pins 3/5
+    // (I2C6 on RK3399, GPIO2_B1/B2)
+    fragment@2 {
+        target = <&i2c6>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            rpi_rf_mod_rtc: rx8130@32 {
+                compatible = "epson,rx8130";
+                reg = <0x32>;
+                status = "okay";
+                aux-voltage-chargeable = <1>;
+            };
+        };
+    };
+
+    // fragment to define uart/serial dependencies for
+    // generic_raw_uart using UART0 at 40-pin header pins 8/10
+    // (GPIO2_C1=TX, GPIO2_C0=RX)
+    fragment@3 {
+        target = <&uart0>;
+        __overlay__ {
+            compatible = "pivccu,dw_apb";
+            status = "okay";
+            pivccu,reset-gpios = <&gpio3 25 0>, <&gpio3 24 0>; // HM-MOD-RPI-PCB (pin 12), RPI-RF-MOD (pin 35)
+            pivccu,led-gpios = <&gpio2 18 0>, <&gpio3 27 0>, <&gpio3 31 0>; // RPI-RF-MOD (pins 36, 38, 40)
+            pivccu,rtc = <&rpi_rf_mod_rtc>;     // RPI-RF-MOD
+        };
+    };
+
+    // we have to disable i2s0 on the Tinkerboard 2 or
+    // otherwise the gpio-leds cannot use the pins for the RPI-RF-MOD
+    // (I2S0 8ch bus uses GPIO3_D0-D7 which conflicts with the RF-MOD GPIOs)
+    fragment@4 {
+        target = <&i2s0>;
+        __overlay__ {
+          status = "disabled";
+        };
+    };
+
+    // modify /aliases path so that i2c1 points to I2C6 (the
+    // RPI-RF-MOD I2C bus at 40-pin header pins 3/5) and using
+    // the rtc of the RPI-RF-MOD as the primary (rtc0) one
+    fragment@5 {
+        target-path = "/aliases";
+        __overlay__ {
+            i2c1 = "/i2c@ff150000";                    // i2c6 (RPI-RF-MOD)
+            rtc0 = "/i2c@ff150000/rx8130@32";           // @rpi_rf_mod_rtc
+        };
+    };
+};

@@ -26,6 +26,7 @@ jobs:
     if: github.ref == 'refs/heads/LTS'
     permissions:
       contents: write  # ncipollo/release-action
+      pull-requests: read  # mikepenz/release-changelog-builder-action
     name: Release draft
     runs-on: ubuntu-24.04
     outputs:
@@ -37,7 +38,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
@@ -62,19 +63,21 @@ jobs:
 
       - name: Get previous tag
         id: previoustag
-        uses: WyriHaximus/github-action-get-previous-tag@v2.0
+        uses: WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de  # v2.0
 
       - name: Generate changelog
         id: changelog
-        uses: metcalfc/changelog-generator@v4.6.2
+        uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          configuration: ".github/release-changelog-config.json"
+          fromTag: ${{ steps.previoustag.outputs.tag }}
+          toTag: ${{ github.sha }}
 
       - name: Generate release notes
         shell: bash
         run: |
-          FILTER="(snapshot bump \[|Merge branch '|Update .*\.md$|Bump .* from .* to .*)"
-          export CHANGELOG="$(cat <<'EOF' | egrep -v  "${FILTER}"
+          export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog.outputs.changelog }}
           EOF
           )"
@@ -82,11 +85,54 @@ jobs:
           export PREVIOUS_TAG=${{ steps.previoustag.outputs.tag }}
           envsubst <.github/release-template.md >/tmp/release-template.md
 
+      - name: Generate ChangeLog summary
+        shell: bash
+        run: |
+          CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
+          ${{ steps.changelog.outputs.changelog }}
+          EOF
+          )
+
+          mkdir -p /tmp/changelog-summary
+
+          generate_summary() {
+            local lang="$1"
+            local outfile="$2"
+            local label_fallback
+            case "${lang}" in
+              de)
+                label_fallback='Siehe Release-Seite f&uuml;r den vollst&auml;ndigen Changelog.'
+                ;;
+              *)
+                label_fallback='See release page for the full changelog.'
+                ;;
+            esac
+            {
+              echo '<ul>'
+              if [[ -n "${CHANGE_ITEMS}" ]]; then
+                printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
+              else
+                echo "<li>${label_fallback}</li>"
+              fi
+              echo '</ul>'
+              echo '<hr/>'
+            } >"${outfile}"
+          }
+
+          generate_summary en /tmp/changelog-summary/changelog-summary.en.html
+          generate_summary de /tmp/changelog-summary/changelog-summary.de.html
+
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: /tmp/release-template.md
           name: release-template.md
+
+      - name: Upload ChangeLog summary artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: /tmp/changelog-summary/
+          name: changelog-summary
 
   build:
     permissions:
@@ -108,7 +154,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Install Dependencies
         run: |
@@ -146,6 +192,53 @@ jobs:
           fi
           echo "build_datetime=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_OUTPUT
 
+      - name: Download ChangeLog summary artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        with:
+          name: changelog-summary
+          path: /tmp/changelog-summary
+
+      - name: Inject ChangeLog into EULA files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          summary_dir = Path("/tmp/changelog-summary")
+          begin_marker = b"<!-- OPENCCU_CHANGELOG_BEGIN -->"
+          end_marker   = b"<!-- OPENCCU_CHANGELOG_END -->"
+
+          def get_fragment(eula_path: Path) -> bytes:
+              """Return the locale-appropriate summary fragment, falling back to English."""
+              # EULA.de, EULA.de_nightly → locale "de"; EULA.en, EULA.en_nightly → locale "en"
+              suffix = eula_path.name.split(".", 1)[1] if "." in eula_path.name else "en"
+              locale = suffix.split("_")[0]
+              locale_file = summary_dir / f"changelog-summary.{locale}.html"
+              if locale_file.exists():
+                  return locale_file.read_bytes()
+              # Fallback to English
+              return (summary_dir / "changelog-summary.en.html").read_bytes()
+
+          for eula in Path("release/updatepkg").glob("*/EULA.*"):
+            content = eula.read_bytes()
+            fragment = get_fragment(eula)
+            if begin_marker in content and end_marker in content:
+              # Replace only the content between the existing markers, in-place.
+              start = content.index(begin_marker) + len(begin_marker)
+              end   = content.index(end_marker)
+              content = content[:start] + b"\n" + fragment + b"\n" + content[end:]
+              eula.write_bytes(content)
+            else:
+              # Fallback for files that don't yet carry the markers.
+              marker = b"</body>"
+              if marker not in content:
+                raise RuntimeError(
+                  f"Could not find OPENCCU_CHANGELOG markers or </body> in {eula}"
+                )
+              section = begin_marker + b"\n" + fragment + b"\n" + end_marker
+              eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
+          PY
+
       # - name: remote debug tmate session
       #   uses: mxschmitt/action-tmate@v1
       #   if: matrix.platform == 'ova'
@@ -169,7 +262,7 @@ jobs:
       #
       - name: Upload build archive artifact [rpi3/ccu3]
         id: upload-build
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
           path: |
@@ -177,7 +270,7 @@ jobs:
             release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-ccu3.tgz
 
       - name: Attest build archive artifact provenance
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4
         with:
           subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
           subject-digest: sha256:${{ steps.upload-build.outputs.artifact-digest }}
@@ -185,13 +278,13 @@ jobs:
 
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
 
       - name: Attest manifest artifact provenance
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4
         with:
           subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}

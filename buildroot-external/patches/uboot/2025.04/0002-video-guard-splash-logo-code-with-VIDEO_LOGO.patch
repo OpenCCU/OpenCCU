@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: OpenCCU <info@openccu.de>
+Date: Mon, 3 Mar 2026 10:00:00 +0000
+Subject: [PATCH] video: guard splash logo code with VIDEO_LOGO config
+
+The functions video_get_u_boot_logo() and show_splash() reference
+the linker symbol __splash_u_boot_logo_begin which is only provided
+when CONFIG_VIDEO_LOGO is enabled. Without this guard, building with
+CONFIG_VIDEO=y but CONFIG_VIDEO_LOGO disabled causes both link errors
+(undefined reference to __splash_u_boot_logo_begin) and compile errors
+(implicit declaration of function show_splash).
+
+Wrap the splash logo declarations and functions with
+CONFIG_IS_ENABLED(VIDEO_LOGO) preprocessor guards, and also convert
+the call site from a C-level if to a preprocessor #if guard.
+Provide a stub video_get_u_boot_logo() that returns NULL when the
+logo is disabled.
+
+Signed-off-by: OpenCCU <info@openccu.de>
+---
+ drivers/video/video-uclass.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+--- a/drivers/video/video-uclass.c
++++ b/drivers/video/video-uclass.c
+@@ -514,6 +514,7 @@
+ 
+ #endif
+ 
++#if CONFIG_IS_ENABLED(VIDEO_LOGO)
+ #define SPLASH_DECL(_name) \
+ 	extern u8 __splash_ ## _name ## _begin[]; \
+ 	extern u8 __splash_ ## _name ## _end[]
+@@ -536,6 +537,9 @@
+ 
+ 	return 0;
+ }
++#else
++void *video_get_u_boot_logo(void) { return NULL; }
++#endif
+ 
+ int video_default_font_height(struct udevice *dev)
+ {
+@@ -640,14 +644,15 @@
+ 		return ret;
+ 	}
+ 
+-	if (CONFIG_IS_ENABLED(VIDEO_LOGO) &&
+-	    !CONFIG_IS_ENABLED(SPLASH_SCREEN) && !plat->hide_logo) {
++#if CONFIG_IS_ENABLED(VIDEO_LOGO)
++	if (!CONFIG_IS_ENABLED(SPLASH_SCREEN) && !plat->hide_logo) {
+ 		ret = show_splash(dev);
+ 		if (ret) {
+ 			log_debug("Cannot show splash screen\n");
+ 			return ret;
+ 		}
+ 	}
++#endif
+ 
+ 	/* register cyclic as soon as the first video device is probed */
+ 	if (CONFIG_IS_ENABLED(CYCLIC) && (gd->flags && GD_FLG_RELOC) &&
