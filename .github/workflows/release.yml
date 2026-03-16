@@ -128,7 +128,7 @@ jobs:
 
       - name: Create release draft
         id: release_drafter
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b  # v1.20.0
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd  # v1.21.0
         with:
           tag: ${{ steps.env.outputs.tag }}
           name: 'OpenCCU ${{ steps.env.outputs.version }}'
@@ -445,7 +445,7 @@ jobs:
           done
 
       - name: Update release draft
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b  # v1.20.0
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd  # v1.21.0
         with:
           tag: ${{ needs.release_draft.outputs.tag }}
           bodyFile: release-template.md/release-template.md
