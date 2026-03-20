@@ -79,13 +79,14 @@ The build system downloads `buildroot-2025.11.2.tar.gz`, applies `buildroot-patc
 ```make
 BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL_EQ3_PATH)/patches"
 ```
+
 Buildroot's global patch mechanism scans that directory for a subdirectory whose name matches the package being built (`occu`), then applies every `*.patch` file found there in **lexicographic / numeric sort order** during the `occu-patch` build step.
 
 #### Directory layout
 
 Every patch is represented by **two sibling items** sharing the same name — a directory and a `.patch` file:
 
-```
+```text
 buildroot-external/patches/occu/
   0001-OpenCCU/              ← working-copy source tree for this patch
   0001-OpenCCU.patch         ← generated unified diff (applied by Buildroot)
@@ -98,7 +99,7 @@ buildroot-external/patches/occu/
 
 Inside each numbered directory the layout mirrors the upstream OCCU source tree under an `occu/` prefix. For every file that the patch modifies, **two files are kept side by side**:
 
-```
+```text
 0001-OpenCCU/
   occu/
     WebUI/www/webui/webui.js        ← modified version (what goes into the build)
@@ -127,7 +128,7 @@ The `.orig` file is **always the verbatim upstream content** for that OCCU versi
 
 #### Workflow for editing an existing patch
 
-```
+```text
 # 1. Edit the modified file (never touch .orig)
 vim buildroot-external/patches/occu/0042-WebUI-MyFix/occu/WebUI/www/webui/webui.js
 
@@ -142,7 +143,7 @@ git commit
 
 #### Adding a new patch
 
-```
+```text
 # 1. Create the numbered directory (choose a number not already in use)
 mkdir -p buildroot-external/patches/occu/0206-WebUI-MyNewFix/occu/WebUI/www/webui/
 
@@ -226,10 +227,10 @@ The recovery system is a **Buildroot-within-Buildroot** nested build. It lives e
 **How it works:**
 - `recovery-system` is a regular Buildroot package that invokes a *second* Buildroot build inside its `_BUILD_CMDS` step.
 - The inner build uses `recovery-system/external/` as its own BR2_EXTERNAL layer (separate `Buildroot.config`, `configs/`, `overlay/`, `package/` subdirectories).
-- The inner build produces a tiny initramfs (`rootfs.cpio.lz4` or `rootfs.cpio.uboot`) plus a kernel image, which get copied into the outer build's `$(BINARIES_DIR)/` as `recoveryfs-initrd` / `recoveryfs-zImage` / `recoveryfs-Image`.
+- The inner build produces a tiny initramfs (`rootfs.cpio.lz4` or `rootfs.cpio.uboot`) plus a kernel image, which are copied into the outer build's `$(BINARIES_DIR)/` as `recoveryfs-initrd` / `recoveryfs-zImage` / `recoveryfs-Image`.
 
 **Platform config fragments** (one per board):
-```
+```text
 recovery-system/external/configs/
   recovery_rpi3.config
   recovery_rpi4.config
