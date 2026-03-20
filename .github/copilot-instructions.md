@@ -45,7 +45,7 @@ make distclean
 
 ## Architecture
 
-```
+```text
 buildroot-external/        # Buildroot BR2_EXTERNAL layer – all OpenCCU customization
   configs/                 # Per-product Buildroot defconfigs (e.g. rpi4.config)
   package/                 # Custom Buildroot packages (occu, rpi-rf-mod, generic_raw_uart, …)
@@ -75,7 +75,8 @@ The build system downloads `buildroot-2025.11.2.tar.gz`, applies `buildroot-patc
 #### How Buildroot applies the patches
 
 `buildroot-external/Buildroot.config` sets:
-```
+
+```make
 BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL_EQ3_PATH)/patches"
 ```
 Buildroot's global patch mechanism scans that directory for a subdirectory whose name matches the package being built (`occu`), then applies every `*.patch` file found there in **lexicographic / numeric sort order** during the `occu-patch` build step.
