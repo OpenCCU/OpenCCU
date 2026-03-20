@@ -1,0 +1,51 @@
+--- occu/WebUI/www/config/ic_common.tcl.orig
++++ occu/WebUI/www/config/ic_common.tcl
+@@ -242,8 +242,8 @@
+   return $ret
+ }
+ 
+-#return -1: Fehler: Im übergebenen Profil ist kein Element enthalten, welches zu dem Parametern der Instanz passt.
+-#return  1: xmlrpc Aufruf durchgeführt
++#return -1: Fehler beim xmlrpc Aufruf
++#return  1: OK (inkl. No-Op, wenn keine zu setzenden Parameter vorhanden sind)
+ proc set_profiles {iface address pprofile type peer} {
+     global USERPROFILESPATH iface_url TYPE_MAP map_link
+ 
+@@ -255,8 +255,11 @@
+   set url $iface_url($iface)
+ 
+   array set ps_descr ""
++  set ps_descr_loaded 0
+ 
+-  catch { array set ps_descr [xmlrpc $url getParamsetDescription [list string $address] [list string $type] ] }
++  if { ! [catch {array set ps_descr [xmlrpc $url getParamsetDescription [list string $address] [list string $type] ]}] } then {
++    set ps_descr_loaded 1
++  }
+ 
+     set struct ""
+ 
+@@ -332,6 +335,8 @@
+       if { ! [catch {xmlrpc $url putParamset [list string $address] [list string $peer] [list struct $struct]} ] } then {
+       set ret 1
+     }
++  } elseif {$ps_descr_loaded} {
++    set ret 1
+   }
+   return $ret
+ }
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -44538,11 +44538,10 @@
+ {
+   var i = 1,
+   elem;
+-  while (document.getElementById(prefix + pnr + '_' + i))
++  while (elem = document.getElementById(prefix + pnr + '_' + i))
+   {
+-    elem = document.getElementById(prefix + pnr + '_' + i);
+     if (IsDirty(elem)) {
+-      AddParam(document.getElementById(prefix + pnr + '_' + i));
++      AddParam(elem);
+     }
+     i++;
+   }
