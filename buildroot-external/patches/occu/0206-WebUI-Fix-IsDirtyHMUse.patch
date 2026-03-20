@@ -1,0 +1,27 @@
+--- occu/WebUI/www/webui/config/ic_common.tcl.orig
++++ occu/WebUI/www/webui/config/ic_common.tcl
+@@ -332,6 +332,8 @@
+       if { ! [catch {xmlrpc $url putParamset [list string $address] [list string $peer] [list struct $struct]} ] } then {
+       set ret 1
+     }
++  } else {
++    set ret 1
+   }
+   return $ret
+ }
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -44538,11 +44538,10 @@
+ {
+   var i = 1,
+   elem;
+-  while (document.getElementById(prefix + pnr + '_' + i))
++  while (elem = document.getElementById(prefix + pnr + '_' + i))
+   {
+-    elem = document.getElementById(prefix + pnr + '_' + i);
+     if (IsDirty(elem)) {
+-      AddParam(document.getElementById(prefix + pnr + '_' + i));
++      AddParam(elem);
+     }
+     i++;
+   }
