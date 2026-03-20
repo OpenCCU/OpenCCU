@@ -1,5 +1,5 @@
---- occu/WebUI/www/webui/config/ic_common.tcl.orig
-+++ occu/WebUI/www/webui/config/ic_common.tcl
+--- occu/WebUI/www/config/ic_common.tcl.orig
++++ occu/WebUI/www/config/ic_common.tcl
 @@ -332,6 +332,8 @@
        if { ! [catch {xmlrpc $url putParamset [list string $address] [list string $peer] [list struct $struct]} ] } then {
        set ret 1
