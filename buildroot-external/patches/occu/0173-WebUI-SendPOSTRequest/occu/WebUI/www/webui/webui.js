@@ -45965,13 +45965,16 @@ AddProfileValues = function(prefix)
   }
 };
 
-AddSeparateSettings = function(prefix, pnr)
+AddSeparateSettings = function(prefix, pnr, useDirtyCheck)
 {
-  var i = 1;
+  var i = 1,
+  elem;
   
-  while (document.getElementById(prefix + pnr + '_' + i))
+  while ((elem = document.getElementById(prefix + pnr + '_' + i)))
   {
-    AddParam(document.getElementById(prefix + pnr + '_' + i));
+    if ((!useDirtyCheck) || IsDirty(elem)) {
+      AddParam(elem);
+    }
     i++;
   }
 };
@@ -49653,13 +49656,8 @@ SetParameters = function(iface, address, special_input_id)
     }
 
     if(!tomIsSet) {
-      var postLengthBeforeParams = poststr.length;
-      AddSeparateSettings('separate_' + special_input_id, '');
-
-      if ((poststr.length == postLengthBeforeParams) && (special_input_id.startsWith("CHANNEL_"))) {
-        var channelFromAddress = address.split(":")[1];
-        AddSeparateSettings('separate_CHANNEL_' + channelFromAddress, '');
-      }
+      var useDirtyCheck = ((iface == "HmIP-RF") || (iface == "HmIP-Wired") || (iface == "VirtualDevices"));
+      AddSeparateSettings('separate_' + special_input_id, '', useDirtyCheck);
     }
  
    try 
