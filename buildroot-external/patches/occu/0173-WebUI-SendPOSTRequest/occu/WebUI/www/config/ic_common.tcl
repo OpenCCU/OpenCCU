@@ -332,6 +332,9 @@ proc set_profiles {iface address pprofile type peer} {
       if { ! [catch {xmlrpc $url putParamset [list string $address] [list string $peer] [list struct $struct]} ] } then {
       set ret 1
     }
+  } elseif {($iface != "HmIP-RF") && ($iface != "HmIP-Wired")} then {
+    # Legacy HM/BidCos profile saves should tolerate dirty/partial payloads as no-op success.
+    set ret 1
   }
   return $ret
 }

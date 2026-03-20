@@ -44,6 +44,20 @@
      if {    $operations & 2  } then { set access "" } else { set access "disabled=\"disabled\"" }
  
      append s "<tr>"
+@@ -329,8 +329,11 @@
+ 
+   if {[llength $struct] > 0} then {
+       #putParamset - values to commit to the rfd
+       #exec echo "$address $peer $struct" >> /tmp/profile.txt
+       if { ! [catch {xmlrpc $url putParamset [list string $address] [list string $peer] [list struct $struct]} ] } then {
+       set ret 1
+     }
++  } elseif {($iface != "HmIP-RF") && ($iface != "HmIP-Wired")} then {
++    # Legacy HM/BidCos profile saves should tolerate dirty/partial payloads as no-op success.
++    set ret 1
+   }
+   return $ret
+ }
 --- occu/WebUI/www/config/ic_ifacecmd.cgi.orig
 +++ occu/WebUI/www/config/ic_ifacecmd.cgi
 @@ -645,6 +645,7 @@
