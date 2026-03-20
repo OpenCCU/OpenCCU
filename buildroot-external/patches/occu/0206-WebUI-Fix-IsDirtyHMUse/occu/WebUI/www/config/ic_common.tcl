@@ -242,8 +242,8 @@ proc set_value {iface address id type value} {
   return $ret
 }
 
-#return -1: Fehler: Im übergebenen Profil ist kein Element enthalten, welches zu dem Parametern der Instanz passt.
-#return  1: xmlrpc Aufruf durchgeführt
+#return -1: Fehler beim xmlrpc Aufruf
+#return  1: OK (inkl. No-Op, wenn keine zu setzenden Parameter vorhanden sind)
 proc set_profiles {iface address pprofile type peer} {
     global USERPROFILESPATH iface_url TYPE_MAP map_link
 
@@ -255,8 +255,11 @@ proc set_profiles {iface address pprofile type peer} {
   set url $iface_url($iface)
 
   array set ps_descr ""
+  set ps_descr_loaded 0
 
-  catch { array set ps_descr [xmlrpc $url getParamsetDescription [list string $address] [list string $type] ] }
+  if { ! [catch {array set ps_descr [xmlrpc $url getParamsetDescription [list string $address] [list string $type] ]}] } then {
+    set ps_descr_loaded 1
+  }
 
     set struct ""
 
@@ -332,7 +335,7 @@ proc set_profiles {iface address pprofile type peer} {
       if { ! [catch {xmlrpc $url putParamset [list string $address] [list string $peer] [list struct $struct]} ] } then {
       set ret 1
     }
-  } else {
+  } elseif {$ps_descr_loaded} {
     set ret 1
   }
   return $ret
