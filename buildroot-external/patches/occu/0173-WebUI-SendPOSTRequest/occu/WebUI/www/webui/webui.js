@@ -49653,7 +49653,13 @@ SetParameters = function(iface, address, special_input_id)
     }
 
     if(!tomIsSet) {
+      var postLengthBeforeParams = poststr.length;
       AddSeparateSettings('separate_' + special_input_id, '');
+
+      if ((poststr.length == postLengthBeforeParams) && (special_input_id.indexOf("CHANNEL_") === 0)) {
+        var channelFromAddress = address.split(":")[1];
+        AddSeparateSettings('separate_CHANNEL_' + channelFromAddress, '');
+      }
     }
  
    try 
