@@ -35,17 +35,38 @@
  }
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -44538,11 +44538,10 @@
+@@ -44536,13 +44536,14 @@
+ 
+ AddSeparateSettings = function(prefix, pnr)
  {
-   var i = 1,
-   elem;
+-  var i = 1,
+-  elem;
 -  while (document.getElementById(prefix + pnr + '_' + i))
-+  while (elem = document.getElementById(prefix + pnr + '_' + i))
-   {
+-  {
 -    elem = document.getElementById(prefix + pnr + '_' + i);
-     if (IsDirty(elem)) {
+-    if (IsDirty(elem)) {
 -      AddParam(document.getElementById(prefix + pnr + '_' + i));
++  var i = 1;
++  var elemPrefix = prefix + pnr + '_';
++  var elem;
++  while (elem = $(elemPrefix + i))
++  {
++    if (IsDirty(elem) || IsDirty($(elemPrefix + i + '_temp')))
++    {
 +      AddParam(elem);
      }
      i++;
    }
+@@ -50381,10 +50382,11 @@
+   if (min_interval.value == min_interval.length - 1) 
+   {
+     $(id).options[0].selected = true;
+-
++    $(id).options[0].defaultSelected = true;
+   } else 
+   {
+     $(id).options[1].selected = true;
++    $(id).options[1].defaultSelected = true;
+   }
+   
+   MD_minInterval(id);
