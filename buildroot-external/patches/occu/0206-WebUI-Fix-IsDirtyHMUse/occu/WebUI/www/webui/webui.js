@@ -44536,11 +44536,13 @@ AddProfileValues = function(prefix)
 
 AddSeparateSettings = function(prefix, pnr)
 {
-  var i = 1,
-  elem;
-  while (elem = document.getElementById(prefix + pnr + '_' + i))
+  var i = 1;
+  var elemPrefix = prefix + pnr + '_';
+  var elem;
+  while (elem = $(elemPrefix + i))
   {
-    if (IsDirty(elem)) {
+    if (IsDirty(elem) || IsDirty($(elemPrefix + i + '_temp')))
+    {
       AddParam(elem);
     }
     i++;
@@ -50380,10 +50382,11 @@ MD_proofClassic = function(id)
   if (min_interval.value == min_interval.length - 1) 
   {
     $(id).options[0].selected = true;
-
+    $(id).options[0].defaultSelected = true;
   } else 
   {
     $(id).options[1].selected = true;
+    $(id).options[1].defaultSelected = true;
   }
   
   MD_minInterval(id);
