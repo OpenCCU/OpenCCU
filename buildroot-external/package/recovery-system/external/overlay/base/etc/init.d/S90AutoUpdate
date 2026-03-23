@@ -84,6 +84,7 @@ start() {
       # remove .firmwareUpdate link and reboot
       mount -o rw,remount /userfs
       rm -f /usr/local/.firmwareUpdate 2>/dev/null
+      mount -o ro,remount /userfs
       /sbin/reboot
       exit 1
     fi
