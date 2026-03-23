@@ -44541,8 +44541,8 @@ AddSeparateSettings = function(prefix, pnr)
   while (elem = document.getElementById(prefix + pnr + '_' + i))
   {
     // add ALL parameters (do NOT use IsDirty()) because
-    // AddSeparateSettings is also used while modifiying
-    // device link paramaters which requires all parameters
+    // AddSeparateSettings is also used while modifying
+    // device link parameters which requires all parameters
     // to be present.
     AddParam(elem);
     i++;
