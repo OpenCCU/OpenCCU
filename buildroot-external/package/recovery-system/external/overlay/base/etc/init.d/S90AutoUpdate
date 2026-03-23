@@ -86,9 +86,15 @@ start() {
     if ! ( set -o pipefail; /bin/fwinstall.sh "${FWINSTALL_PARAM}" 2>&1 | tee /tmp/fwinstall.log ); then
       cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
 
-      # firmware update failed, lets change to
-      # interactive mode
-      echo "ERROR!"
+      # firmware update failed, clean up pending update marker
+      # and reboot into normal mode
+      mount -o rw,remount /userfs
+      rm -f /usr/local/.firmwareUpdate
+      mount -o ro,remount /userfs
+
+      echo "ERROR!, rebooting"
+      /sbin/reboot
+      exit 1
     else
       cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
 
