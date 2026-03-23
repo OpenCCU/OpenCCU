@@ -44526,10 +44526,10 @@ ResetPostString = function()
 AddProfileValues = function(prefix)
 {
   var i = 1;
-
-  while (document.getElementById(prefix + i))
+  var elem;
+  while (elem = document.getElementById(prefix + i))
   {
-    AddParam(document.getElementById(prefix + i));
+    AddParam(elem);
     i++;
   }
 };
@@ -44537,14 +44537,14 @@ AddProfileValues = function(prefix)
 AddSeparateSettings = function(prefix, pnr)
 {
   var i = 1;
-  var elemPrefix = prefix + pnr + '_';
   var elem;
-  while (elem = $(elemPrefix + i))
+  while (elem = document.getElementById(prefix + pnr + '_' + i))
   {
-    if (IsDirty(elem) || IsDirty($(elemPrefix + i + '_temp')))
-    {
-      AddParam(elem);
-    }
+    // add ALL parameters (do NOT use IsDirty()) because
+    // AddSeparateSettings is also used while modifying
+    // device link parameters which requires all parameters
+    // to be present.
+    AddParam(elem);
     i++;
   }
 };
