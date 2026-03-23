@@ -1,0 +1,331 @@
+From 0000000000000000000000000000000000000001 Mon Sep 17 00:00:00 2001
+From: OpenCCU Project <openccu@openccu.org>
+Date: Mon, 24 Mar 2025 00:00:00 +0000
+Subject: [PATCH] pcie: brcmstb: Add BCM2712 (Raspberry Pi 5) PCIe support
+
+BCM2712 (RPi5 SoC) uses the same Broadcom STB PCIe controller family
+as BCM2711 but with several key differences that require specific handling:
+
+ - PCIE_HARD_DEBUG register is at offset 0x4304 instead of 0x4204
+ - MSI interrupt registers are at a different base offset (0x4600 vs 0x4500)
+ - Bridge SW init uses bit 0 of RGR1_SW_INIT_1 (not bit 1 as on BCM2711)
+ - PERST# is controlled via PCIE_MISC_PCIE_CTRL bit 2 (active-high PERSTB,
+   vs active-low PERST# in RGR1_SW_INIT_1 for BCM2711)
+ - SerDes requires MDIO initialization for 54 MHz xosc reference clock
+   (BCM2711 uses an optional SSC mode instead)
+ - UBUS-AXI bridge needs configuration for correct error handling
+
+Provenance: Ported from the Linux kernel pcie-brcmstb.c driver
+(drivers/pci/controller/pcie-brcmstb.c) BCM2712/BCM7712 support.
+Specifically derived from:
+  - struct pcie_cfg_data bcm2712_cfg (offsets, quirks, post_setup)
+  - static int brcm_pcie_post_setup_bcm2712() (MDIO and UBUS init)
+  - static int brcm_pcie_perst_set_7278() (PERST via PCIE_MISC_PCIE_CTRL)
+  - static const int pcie_offsets_bcm7712[] (HARD_DEBUG at 0x4304)
+
+Signed-off-by: OpenCCU Project <openccu@openccu.org>
+---
+ drivers/pci/pcie_brcmstb.c | 175 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 155 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pci/pcie_brcmstb.c b/drivers/pci/pcie_brcmstb.c
+index cd8fe8b518..3a5c7bf012 100644
+--- a/drivers/pci/pcie_brcmstb.c
++++ b/drivers/pci/pcie_brcmstb.c
+@@ -25,6 +25,43 @@
+ /* PCIe parameters */
+ #define BRCM_NUM_PCIE_OUT_WINS				4
+ 
++/* BCM2712-specific register offsets (differ from BCM2711) */
++#define PCIE_MISC_HARD_PCIE_HARD_DEBUG_BCM2712		0x4304
++#define PCIE_MSI_INTR2_CLR_BCM2712			0x4608
++#define PCIE_MSI_INTR2_MASK_SET_BCM2712			0x4610
++
++/* BCM2712: bridge SW init uses bit 0 of RGR1_SW_INIT_1 */
++#define PCIE_RGR1_SW_INIT_1_INIT_BCM2712_MASK		0x1
++
++/* BCM2712: PERST# controlled via PCIE_MISC_PCIE_CTRL (active-high PERSTB) */
++#define PCIE_MISC_PCIE_CTRL				0x4064
++#define  PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK		0x4
++
++/* BCM2712-specific UBUS/AXI bridge error suppression */
++#define PCIE_MISC_UBUS_CTRL				0x40a4
++#define  PCIE_MISC_UBUS_CTRL_UBUS_PCIE_REPLY_ERR_DIS	BIT(13)
++#define  PCIE_MISC_UBUS_CTRL_UBUS_PCIE_REPLY_DECERR_DIS BIT(19)
++#define PCIE_MISC_AXI_READ_ERROR_DATA			0x4170
++
++/* BCM2712-specific PHY control for L1SS PM clock period */
++#define PCIE_RC_PL_PHY_CTL_15				0x184c
++#define  PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK	0xff
++
++/* BCM2712 driver data flag */
++#define BRCM_PCIE_FLAG_BCM2712				BIT(0)
++
++/*
++ * BCM2712-specific MDIO values for 54 MHz xosc reference clock.
++ * These configure the SerDes for the crystal oscillator input instead of
++ * a spread-spectrum clock (ported from Linux pcie-brcmstb.c).
++ */
++static const u16 bcm2712_mdio_data[] = {
++	0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007
++};
++static const u8 bcm2712_mdio_regs[] = {
++	0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e
++};
++
+ /* MDIO registers */
+ #define MDIO_PORT0					0x0
+ #define MDIO_DATA_MASK					0x7fffffff
+@@ -61,6 +98,7 @@
+ 
+ 	int			gen;
+ 	bool			ssc;
++	bool			is_bcm2712;
+ };
+ 
+ /**
+@@ -287,6 +325,65 @@
+ }
+ 
+ /**
++ * brcm_pcie_bcm2712_mdio_init() - Initialize SerDes for BCM2712 54 MHz xosc refclk
++ * @base: Pointer to the PCIe controller IO registers
++ *
++ * BCM2712 uses a 54 MHz crystal oscillator as the PCIe reference clock source.
++ * Programs the MDIO SerDes registers with hardware-specific values to configure
++ * the xosc input, and sets the L1SS PM clock period accordingly.
++ * Ported from Linux kernel brcm_pcie_post_setup_bcm2712().
++ *
++ * Return: 0 on success, negative error value on failure.
++ */
++static int brcm_pcie_bcm2712_mdio_init(void __iomem *base)
++{
++	int i, ret;
++	u32 tmp;
++
++	/* Set MDIO address to 0x1600 to configure the 54 MHz refclk source */
++	ret = brcm_pcie_mdio_write(base, MDIO_PORT0, SET_ADDR_OFFSET, 0x1600);
++	if (ret < 0)
++		return ret;
++
++	for (i = 0; i < ARRAY_SIZE(bcm2712_mdio_regs); i++) {
++		ret = brcm_pcie_mdio_write(base, MDIO_PORT0,
++					   bcm2712_mdio_regs[i],
++					   bcm2712_mdio_data[i]);
++		if (ret < 0)
++			return ret;
++	}
++
++	udelay(200);
++
++	/*
++	 * Set L1SS sub-state timers: PM clock period = 1/54 MHz = 18.52 ns,
++	 * rounded down to 0x12 (18 clocks).
++	 */
++	tmp = readl(base + PCIE_RC_PL_PHY_CTL_15);
++	tmp &= ~PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK;
++	tmp |= 0x12;
++	writel(tmp, base + PCIE_RC_PL_PHY_CTL_15);
++
++	return 0;
++}
++
++static void brcm_pcie_bcm2712_ubus_init(void __iomem *base)
++{
++	u32 tmp;
++
++	/*
++	 * BCM2712 uses a UBUS-AXI bridge. Suppress AXI error responses and
++	 * return 0xffffffff for read failures to prevent hard lockups on
++	 * access to unpopulated PCIe address space.
++	 */
++	tmp = readl(base + PCIE_MISC_UBUS_CTRL);
++	tmp |= PCIE_MISC_UBUS_CTRL_UBUS_PCIE_REPLY_ERR_DIS |
++	       PCIE_MISC_UBUS_CTRL_UBUS_PCIE_REPLY_DECERR_DIS;
++	writel(tmp, base + PCIE_MISC_UBUS_CTRL);
++	writel(0xffffffff, base + PCIE_MISC_AXI_READ_ERROR_DATA);
++}
++
++/**
+  * brcm_pcie_set_gen() - Limits operation to a specific generation (1, 2 or 3)
+  * @pcie: pointer to the PCIe controller state
+  * @gen: PCIe generation to limit the controller's operation to
+@@ -353,6 +450,7 @@
+ 	void __iomem *base = pcie->base;
+ 	struct pci_region region;
+ 	bool ssc_good = false;
++	u32 hard_debug;
+ 	int num_out_wins = 0;
+ 	u64 rc_bar2_offset, rc_bar2_size;
+ 	unsigned int scb_size_val;
+@@ -360,13 +458,31 @@
+ 	u16 nlw, cls, lnksta;
+ 	u32 tmp;
+ 
++	/* Select the correct HARD_DEBUG register offset for this SoC */
++	hard_debug = pcie->is_bcm2712 ? PCIE_MISC_HARD_PCIE_HARD_DEBUG_BCM2712
++					      : PCIE_MISC_HARD_PCIE_HARD_DEBUG;
++
+ 	/*
+ 	 * Reset the bridge, assert the fundamental reset. Note for some SoCs,
+ 	 * e.g. BCM7278, the fundamental reset should not be asserted here.
+ 	 * This will need to be changed when support for other SoCs is added.
+ 	 */
+-	setbits_le32(base + PCIE_RGR1_SW_INIT_1,
+-		     PCIE_RGR1_SW_INIT_1_INIT_MASK | PCIE_RGR1_SW_INIT_1_PERST_MASK);
++	if (pcie->is_bcm2712) {
++		/*
++		 * BCM2712: Bridge INIT uses bit 0 of RGR1_SW_INIT_1.
++		 * PERST# is controlled via PCIE_MISC_PCIE_CTRL (active-high
++		 * PERSTB: 0 = assert PERST#, 1 = deassert PERST#).
++		 */
++		setbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_INIT_BCM2712_MASK);
++		tmp = readl(base + PCIE_MISC_PCIE_CTRL);
++		tmp &= ~PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK; /* assert PERST# */
++		writel(tmp, base + PCIE_MISC_PCIE_CTRL);
++	} else {
++		setbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_INIT_MASK |
++			     PCIE_RGR1_SW_INIT_1_PERST_MASK);
++	}
+ 	/*
+ 	 * The delay is a safety precaution to preclude the reset signal
+ 	 * from looking like a glitch.
+@@ -374,14 +490,26 @@
+ 	udelay(100);
+ 
+ 	/* Take the bridge out of reset */
+-	clrbits_le32(base + PCIE_RGR1_SW_INIT_1, PCIE_RGR1_SW_INIT_1_INIT_MASK);
++	if (pcie->is_bcm2712)
++		clrbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_INIT_BCM2712_MASK);
++	else
++		clrbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_INIT_MASK);
+ 
+-	clrbits_le32(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG,
+-		     PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
++	clrbits_le32(base + hard_debug, PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+ 
+ 	/* Wait for SerDes to be stable */
+ 	udelay(100);
+ 
++	if (pcie->is_bcm2712) {
++		/* BCM2712: initialize SerDes for 54 MHz xosc reference clock */
++		ret = brcm_pcie_bcm2712_mdio_init(base);
++		if (ret < 0)
++			printf("PCIe BRCM: BCM2712 MDIO init warning: %d\n",
++			       ret);
++	}
++
+ 	/* Set SCB_MAX_BURST_SIZE, CFG_READ_UR_MODE, SCB_ACCESS_EN */
+ 	clrsetbits_le32(base + PCIE_MISC_MISC_CTRL,
+ 			MISC_CTRL_MAX_BURST_SIZE_MASK,
+@@ -417,17 +545,28 @@
+ 		     RC_BAR3_CONFIG_LO_SIZE_MASK);
+ 
+ 	/* Mask all interrupts since we are not handling any yet */
+-	writel(0xffffffff, base + PCIE_MSI_INTR2_MASK_SET);
+-
+-	/* Clear any interrupts we find on boot */
+-	writel(0xffffffff, base + PCIE_MSI_INTR2_CLR);
++	if (pcie->is_bcm2712) {
++		/* BCM2712 has MSI interrupt registers at a different base offset */
++		writel(0xffffffff, base + PCIE_MSI_INTR2_MASK_SET_BCM2712);
++		writel(0xffffffff, base + PCIE_MSI_INTR2_CLR_BCM2712);
++	} else {
++		writel(0xffffffff, base + PCIE_MSI_INTR2_MASK_SET);
++		/* Clear any interrupts we find on boot */
++		writel(0xffffffff, base + PCIE_MSI_INTR2_CLR);
++	}
+ 
+ 	if (pcie->gen)
+ 		brcm_pcie_set_gen(pcie, pcie->gen);
+ 
+ 	/* Unassert the fundamental reset */
+-	clrbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1,
+-		     PCIE_RGR1_SW_INIT_1_PERST_MASK);
++	if (pcie->is_bcm2712) {
++		tmp = readl(base + PCIE_MISC_PCIE_CTRL);
++		tmp |= PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK; /* deassert PERST# */
++		writel(tmp, base + PCIE_MISC_PCIE_CTRL);
++	} else {
++		clrbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_PERST_MASK);
++	}
+ 
+ 	/*
+ 	 * Wait for 100ms after PERST# deassertion; see PCIe CEM specification
+@@ -473,7 +612,8 @@
+ 	clrsetbits_le32(base + PCIE_RC_CFG_PRIV1_ID_VAL3,
+ 			PCIE_RC_CFG_PRIV1_ID_VAL3_CLASS_CODE_MASK, 0x060400);
+ 
+-	if (pcie->ssc) {
++	if (pcie->ssc && !pcie->is_bcm2712) {
++		/* BCM2712 uses a 54 MHz xosc refclk and does not support SSC */
+ 		ret = brcm_pcie_set_ssc(pcie->base);
+ 		if (!ret)
+ 			ssc_good = true;
+@@ -481,6 +621,9 @@
+ 			printf("PCIe BRCM: failed attempt to enter SSC mode\n");
+ 	}
+ 
++	if (pcie->is_bcm2712)
++		brcm_pcie_bcm2712_ubus_init(base);
++
+ 	lnksta = readw(base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKSTA);
+ 	cls = lnksta & PCI_EXP_LNKSTA_CLS;
+ 	nlw = (lnksta & PCI_EXP_LNKSTA_NLW) >> PCI_EXP_LNKSTA_NLW_SHIFT;
+@@ -513,15 +656,30 @@
+ 	struct brcm_pcie *pcie = dev_get_priv(dev);
+ 	void __iomem *base = pcie->base;
+ 
++	u32 hd;
++
+ 	/* Assert fundamental reset */
+-	setbits_le32(base + PCIE_RGR1_SW_INIT_1, PCIE_RGR1_SW_INIT_1_PERST_MASK);
++	if (pcie->is_bcm2712) {
++		u32 tmp = readl(base + PCIE_MISC_PCIE_CTRL);
++		tmp &= ~PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK;
++		writel(tmp, base + PCIE_MISC_PCIE_CTRL);
++	} else {
++		setbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_PERST_MASK);
++	}
+ 
+ 	/* Turn off SerDes */
+-	setbits_le32(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG,
+-		     PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
++	hd = pcie->is_bcm2712 ? PCIE_MISC_HARD_PCIE_HARD_DEBUG_BCM2712
++			      : PCIE_MISC_HARD_PCIE_HARD_DEBUG;
++	setbits_le32(base + hd, PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+ 
+ 	/* Shutdown bridge */
+-	setbits_le32(base + PCIE_RGR1_SW_INIT_1, PCIE_RGR1_SW_INIT_1_INIT_MASK);
++	if (pcie->is_bcm2712)
++		setbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_INIT_BCM2712_MASK);
++	else
++		setbits_le32(base + PCIE_RGR1_SW_INIT_1,
++			     PCIE_RGR1_SW_INIT_1_INIT_MASK);
+ 
+ 	return 0;
+ }
+@@ -540,6 +698,8 @@
+ 
+ 	pcie->ssc = ofnode_read_bool(dn, "brcm,enable-ssc");
+ 
++	pcie->is_bcm2712 = (dev_get_driver_data(dev) & BRCM_PCIE_FLAG_BCM2712) != 0;
++
+ 	ret = ofnode_read_u32(dn, "max-link-speed", &max_link_speed);
+ 	if (ret < 0 || max_link_speed > 4)
+ 		pcie->gen = 0;
+@@ -556,6 +716,7 @@
+ 
+ static const struct udevice_id brcm_pcie_ids[] = {
+ 	{ .compatible = "brcm,bcm2711-pcie" },
++	{ .compatible = "brcm,bcm2712-pcie", .data = BRCM_PCIE_FLAG_BCM2712 },
+ 	{ }
+ };
+ 
