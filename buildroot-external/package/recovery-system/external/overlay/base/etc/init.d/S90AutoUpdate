@@ -92,7 +92,7 @@ start() {
       rm -f /usr/local/.firmwareUpdate
       mount -o ro,remount /userfs
 
-      echo "ERROR!, rebooting"
+      echo "ERROR! rebooting"
       /sbin/reboot
       exit 1
     else
