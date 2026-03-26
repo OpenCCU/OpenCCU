@@ -16,7 +16,7 @@
       "title": "#### 🔄 Other Changes",
       "rules": [
         {
-          "pattern": "^(?!Backport to LTS \\(batch )(?!backport/batch LTS ).+",
+          "pattern": "^(?!(?:Backport to LTS \\(batch|backport/batch LTS)).+",
           "on_property": "title",
           "flags": "gu"
         }
