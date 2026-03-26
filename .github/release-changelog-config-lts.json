@@ -22,9 +22,6 @@
     "dependencies",
     "github_actions"
   ],
-  "include_labels": [
-    "backport:LTS"
-  ],
   "sort": {
     "order": "DESC",
     "on_property": "mergedAt"
