@@ -73,6 +73,7 @@ jobs:
           configuration: ".github/release-changelog-config-lts.json"
           fromTag: ${{ github.event.inputs.previous_tag }}
           toTag: ${{ github.sha }}
+          fetchViaCommits: true
 
       - name: Generate release notes
         shell: bash
