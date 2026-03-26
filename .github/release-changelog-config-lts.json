@@ -26,6 +26,9 @@
     "order": "DESC",
     "on_property": "mergedAt"
   },
+  "exclude_merge_branches": [
+    "Backport to LTS (batch"
+  ],
   "template": "${{CHANGELOG}}",
   "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
   "empty_template": "- No changes",
