@@ -27,8 +27,13 @@
     "on_property": "mergedAt"
   },
   "exclude_merge_branches": [
-    "Backport to LTS (batch"
+    "Backport to LTS (batch",
+    "from OpenCCU/backport/batch-lts-"
   ],
+  "duplicate_filter": {
+    "pattern": "\\(#([0-9]+)\\)",
+    "target": "$1"
+  },
   "template": "${{CHANGELOG}}",
   "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
   "empty_template": "- No changes",
