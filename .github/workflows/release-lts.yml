@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         default: 'YYYYMMDD'
+      previous_tag:
+        description: 'Previous LTS version tag (3.X.Y.YYYYMMDD)'
+        required: true
+        type: string
       test_workflow:
         description: 'Test workflow (dry-run)?'
         required: true
@@ -61,17 +65,13 @@ jobs:
             echo "tag=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Get previous tag
-        id: previoustag
-        uses: WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de  # v2.0
-
       - name: Generate changelog
         id: changelog
         uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          configuration: ".github/release-changelog-config.json"
-          fromTag: ${{ steps.previoustag.outputs.tag }}
+          configuration: ".github/release-changelog-config-lts.json"
+          fromTag: ${{ github.event.inputs.previous_tag }}
           toTag: ${{ github.sha }}
 
       - name: Generate release notes
@@ -82,8 +82,8 @@ jobs:
           EOF
           )"
           export VERSION=${{ steps.env.outputs.version }}
-          export PREVIOUS_TAG=${{ steps.previoustag.outputs.tag }}
-          envsubst <.github/release-template.md >/tmp/release-template.md
+          export PREVIOUS_TAG=${{ github.event.inputs.previous_tag }}
+          envsubst <.github/release-template-lts.md >/tmp/release-template.md
 
       - name: Generate ChangeLog summary
         shell: bash
@@ -150,7 +150,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [rpi3] # rpi3/ccu3 only
+        platform: [rpi3]  # rpi3/ccu3 only
 
     steps:
       - name: Checkout Code
