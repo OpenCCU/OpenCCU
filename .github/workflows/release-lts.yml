@@ -15,7 +15,6 @@ on:
         description: 'Previous LTS version tag (3.X.Y.YYYYMMDD)'
         required: true
         type: string
-        default: ''
       test_workflow:
         description: 'Test workflow (dry-run)?'
         required: true
