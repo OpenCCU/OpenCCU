@@ -75,11 +75,212 @@ jobs:
           toTag: ${{ github.sha }}
           fetchViaCommits: true
 
+      - name: Add missing backported PR entries
+        id: changelog_final
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          FROM_TAG: ${{ github.event.inputs.previous_tag }}
+          TO_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.error
+          import urllib.request
+          from datetime import datetime
+          from pathlib import Path
+
+          def parse_regex_flags(flags):
+            value = 0
+            if "i" in flags:
+              value |= re.IGNORECASE
+            if "m" in flags:
+              value |= re.MULTILINE
+            if "s" in flags:
+              value |= re.DOTALL
+            return value
+
+          def get_pr_property(pr, on_property):
+            if on_property == "title":
+              return pr.get("title", "")
+            if on_property == "body":
+              return pr.get("body", "") or ""
+            if on_property == "status":
+              return pr.get("state", "")
+            return ""
+
+          def matches_category(pr, category):
+            labels = {label.get("name") for label in pr.get("labels", []) if label.get("name")}
+            include_labels = set(category.get("labels", []))
+            exclude_labels = set(category.get("exclude_labels", []))
+            if labels & exclude_labels:
+              return False
+
+            exhaustive = bool(category.get("exhaustive", False))
+            if include_labels:
+              if exhaustive and not include_labels.issubset(labels):
+                return False
+              if not exhaustive and not (labels & include_labels):
+                return False
+
+            rules = category.get("rules", [])
+            if rules:
+              exhaustive_rules = bool(category.get("exhaustive_rules", exhaustive))
+              rule_matches = []
+              for rule in rules:
+                text = get_pr_property(pr, rule.get("on_property", "body"))
+                pattern = rule.get("pattern", "")
+                flags = parse_regex_flags(rule.get("flags", "gu"))
+                rule_matches.append(bool(re.search(pattern, text, flags)))
+              if exhaustive_rules and not all(rule_matches):
+                return False
+              if not exhaustive_rules and not any(rule_matches):
+                return False
+            elif not include_labels:
+              return False
+
+            return True
+
+          def find_category_title(pr, categories):
+            for category in categories:
+              if matches_category(pr, category):
+                return category.get("title")
+            for category in categories:
+              if "Other Changes" in category.get("title", ""):
+                return category.get("title")
+            return "#### 🔄 Other Changes"
+
+          def parse_iso_datetime(value):
+            if not value:
+              return datetime.min
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+          def merge_missing_lines_into_changelog(changelog, additions_by_section):
+            if not additions_by_section:
+              return changelog
+
+            lines = changelog.splitlines()
+            section_indices = []
+            for idx, line in enumerate(lines):
+              if line.startswith("#### "):
+                section_indices.append((line, idx))
+
+            section_ranges = []
+            for pos, (title, start) in enumerate(section_indices):
+              end = section_indices[pos + 1][1] if pos + 1 < len(section_indices) else len(lines)
+              section_ranges.append((title, start, end))
+
+            out_lines = []
+            cursor = 0
+            known_sections = {title for title, _, _ in section_ranges}
+
+            for title, start, end in section_ranges:
+              out_lines.extend(lines[cursor:end])
+              additions = additions_by_section.get(title, [])
+              if additions:
+                if out_lines and out_lines[-1] != "":
+                  out_lines.append("")
+                out_lines.extend(additions)
+              cursor = end
+
+            if cursor < len(lines):
+              out_lines.extend(lines[cursor:])
+
+            for title, additions in additions_by_section.items():
+              if additions and title not in known_sections:
+                if out_lines and out_lines[-1] != "":
+                  out_lines.append("")
+                out_lines.append(title)
+                out_lines.append("")
+                out_lines.extend(additions)
+
+            return "\n".join(out_lines)
+
+          def gh_json(path):
+            req = urllib.request.Request(
+              f"https://api.github.com{path}",
+              headers={
+                "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+              },
+            )
+            with urllib.request.urlopen(req) as resp:
+              return json.load(resp)
+
+          changelog = """${{ steps.changelog.outputs.changelog }}"""
+          listed_prs = {int(n) for n in re.findall(r"\(#(\d+),\s*@[^)]+\)", changelog)}
+          config = json.loads(Path(".github/release-changelog-config-lts.json").read_text(encoding="utf-8"))
+          categories = config.get("categories", [])
+          ignore_labels = set(config.get("ignore_labels", []))
+          exclude_merge_prefixes = tuple(config.get("exclude_merge_branches", []))
+
+          repo = os.environ["REPO"]
+          from_tag = os.environ["FROM_TAG"]
+          to_sha = os.environ["TO_SHA"]
+
+          candidate_prs = set()
+          try:
+            log = subprocess.check_output(
+              ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_tag}..{to_sha}"],
+              text=True,
+            )
+          except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+              f"Unable to collect commit subjects for range {from_tag}..{to_sha}: {err}"
+            ) from err
+          for subject in log.splitlines():
+              if exclude_merge_prefixes and subject.startswith(exclude_merge_prefixes):
+                  continue
+              for match in re.findall(r"\(#(\d+)\)", subject):
+                  candidate_prs.add(int(match))
+
+          missing_prs = sorted(candidate_prs - listed_prs)
+          recovered_entries = []
+          for pr_number in missing_prs:
+              try:
+                pr = gh_json(f"/repos/{repo}/pulls/{pr_number}")
+              except urllib.error.HTTPError as err:
+                print(f"warning: unable to fetch PR #{pr_number}: {err}", flush=True)
+                continue
+              if pr.get("state") != "closed" or not pr.get("merged_at"):
+                  continue
+              labels = {label.get("name") for label in pr.get("labels", []) if label.get("name")}
+              if labels & ignore_labels:
+                continue
+              title = pr["title"].replace("\n", " ").strip()
+              author = pr.get("user", {}).get("login", "github-actions")
+              section_title = find_category_title(pr, categories)
+              recovered_entries.append({
+                "section": section_title,
+                "line": f"- {title} (#{pr_number}, @{author})",
+                "merged_at": parse_iso_datetime(pr.get("merged_at")),
+              })
+
+          final_changelog = changelog
+          if recovered_entries:
+              reverse = str(config.get("sort", {}).get("order", "DESC")).upper() != "ASC"
+              recovered_entries.sort(key=lambda item: item["merged_at"], reverse=reverse)
+              additions_by_section = {}
+              for item in recovered_entries:
+                additions_by_section.setdefault(item["section"], []).append(item["line"])
+              final_changelog = merge_missing_lines_into_changelog(final_changelog, additions_by_section)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write("changelog<<EOF\n")
+              fh.write(final_changelog)
+              fh.write("\nEOF\n")
+          PY
+
       - name: Generate release notes
         shell: bash
         run: |
           export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
-          ${{ steps.changelog.outputs.changelog }}
+          ${{ steps.changelog_final.outputs.changelog }}
           EOF
           )"
           export VERSION=${{ steps.env.outputs.version }}
@@ -90,7 +291,7 @@ jobs:
         shell: bash
         run: |
           CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
-          ${{ steps.changelog.outputs.changelog }}
+          ${{ steps.changelog_final.outputs.changelog }}
           EOF
           )
 

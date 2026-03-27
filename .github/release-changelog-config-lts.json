@@ -14,7 +14,13 @@
     },
     {
       "title": "#### 🔄 Other Changes",
-      "labels": []
+      "rules": [
+        {
+          "pattern": "^(?!(?:Backport to LTS \\(batch [^)]+\\)|backport/batch LTS )).*",
+          "on_property": "title",
+          "flags": "gu"
+        }
+      ]
     }
   ],
   "ignore_labels": [
@@ -30,10 +36,6 @@
     "Backport to LTS (batch",
     "from OpenCCU/backport/batch-lts-"
   ],
-  "duplicate_filter": {
-    "pattern": "\\(#([0-9]+)\\)",
-    "target": "$1"
-  },
   "template": "${{CHANGELOG}}",
   "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
   "empty_template": "- No changes",
