@@ -75,11 +75,83 @@ jobs:
           toTag: ${{ github.sha }}
           fetchViaCommits: true
 
+      - name: Add missing backported PR entries
+        id: changelog_final
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          FROM_TAG: ${{ github.event.inputs.previous_tag }}
+          TO_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.error
+          import urllib.request
+
+          def gh_json(path):
+            req = urllib.request.Request(
+              f"https://api.github.com{path}",
+                  headers={
+                      "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  },
+              )
+              with urllib.request.urlopen(req) as resp:
+                return json.load(resp)
+
+          changelog = """${{ steps.changelog.outputs.changelog }}"""
+          listed_prs = {int(n) for n in re.findall(r"\(#(\d+),\s*@[^)]+\)", changelog)}
+
+          repo = os.environ["REPO"]
+          from_tag = os.environ["FROM_TAG"]
+          to_sha = os.environ["TO_SHA"]
+
+          candidate_prs = set()
+          log = subprocess.check_output(
+            ["git", "--no-pager", "log", "--format=%s", f"{from_tag}..{to_sha}"],
+            text=True,
+          )
+          for subject in log.splitlines():
+              if subject.startswith("Backport to LTS (batch "):
+                  continue
+              for match in re.findall(r"\(#(\d+)\)", subject):
+                  candidate_prs.add(int(match))
+
+          missing_prs = sorted(candidate_prs - listed_prs)
+          missing_lines = []
+          for pr_number in missing_prs:
+              try:
+                pr = gh_json(f"/repos/{repo}/pulls/{pr_number}")
+              except urllib.error.HTTPError:
+                continue
+              if pr.get("state") != "closed" or not pr.get("merged_at"):
+                  continue
+              title = pr["title"].replace("\n", " ").strip()
+              author = pr.get("user", {}).get("login", "Copilot")
+              missing_lines.append(f"- {title} (#{pr_number}, @{author})")
+
+          final_changelog = changelog
+          if missing_lines:
+              if "#### 🔄 Other Changes" not in final_changelog:
+                  final_changelog = f"{final_changelog}\n\n#### 🔄 Other Changes"
+              final_changelog = f"{final_changelog}\n" + "\n".join(missing_lines)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write("changelog<<EOF\n")
+              fh.write(final_changelog)
+              fh.write("\nEOF\n")
+          PY
+
       - name: Generate release notes
         shell: bash
         run: |
           export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
-          ${{ steps.changelog.outputs.changelog }}
+          ${{ steps.changelog_final.outputs.changelog }}
           EOF
           )"
           export VERSION=${{ steps.env.outputs.version }}
@@ -90,7 +162,7 @@ jobs:
         shell: bash
         run: |
           CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
-          ${{ steps.changelog.outputs.changelog }}
+          ${{ steps.changelog_final.outputs.changelog }}
           EOF
           )
 
