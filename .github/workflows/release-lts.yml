@@ -150,7 +150,15 @@ jobs:
             return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
           def should_exclude_title(title):
-            return bool(re.match(r"^(Backport to LTS(?:\\s|$)|backport/batch LTS(?:\\s|$))", title, re.IGNORECASE))
+            return bool(re.match(r"^(Backport to LTS(?:\s|$)|backport/batch LTS(?:\s|$))", title, re.IGNORECASE))
+
+          def should_exclude_subject(subject, markers):
+            for marker in markers:
+              if subject.startswith(marker):
+                return True
+              if marker.startswith("from ") and f" {marker}" in subject:
+                return True
+            return False
 
           def gh_json(path):
             req = urllib.request.Request(
@@ -185,7 +193,7 @@ jobs:
               f"Unable to collect commit subjects for range {from_tag}..{to_sha}: {err}"
             ) from err
           for subject in log.splitlines():
-              if exclude_merge_markers and any(marker in subject for marker in exclude_merge_markers):
+              if exclude_merge_markers and should_exclude_subject(subject, exclude_merge_markers):
                   continue
               for match in re.findall(r"\(#(\d+)\)", subject):
                   candidate_prs.add(int(match))
