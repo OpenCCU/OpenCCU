@@ -482,11 +482,19 @@ jobs:
       - name: Patch release draft
         shell: bash
         run: |
+          set -euo pipefail
           for f in */*.mf; do
             while read -r line; do
-              NEEDLE=$(echo "${line}" | awk '{print $3}' | sed 's/.*-\(.*\..*\)$/\1/')
+              NEEDLE=$(echo "${line}" | awk '{print $3}' | sed 's/.*-\(.*\)$/\1/')
               CHECKSUM=$(echo "${line}" | awk '{print $2}')
+              if [[ -z "${NEEDLE}" || -z "${CHECKSUM}" ]]; then
+                continue
+              fi
               ESCAPED_NEEDLE=${NEEDLE//./\\.}
+              if ! grep -q "XSHA${NEEDLE}X" release-template.unpatched.md/release-template.md; then
+                echo "Missing checksum placeholder XSHA${NEEDLE}X in release-template artifact" >&2
+                exit 1
+              fi
               sed -i "s|XSHA${ESCAPED_NEEDLE}X|${CHECKSUM}|" release-template.unpatched.md/release-template.md
             done < "${f}"
           done
