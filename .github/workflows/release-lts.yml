@@ -500,8 +500,8 @@ jobs:
           for f in */*.mf; do
             while read -r line; do
               NEEDLE=$(echo "${line}" | awk '{print $3}' | sed 's/.*-\(.*\..*\)$/\1/')
-              SHACKS=$(echo "${line}" | awk '{print $2}')
-              sed -i "s/XSHA${NEEDLE}X/${SHACKS}/" release-template.md/release-template.md
+              CHECKSUM=$(echo "${line}" | awk '{print $2}')
+              sed -i "s/XSHA${NEEDLE}X/${CHECKSUM}/" release-template.md/release-template.md
             done < <(cat ${f})
           done
 
