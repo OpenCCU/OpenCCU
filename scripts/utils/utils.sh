@@ -9,6 +9,7 @@ function resolve_latest_github_stable_tag() {
 
   tag=$(git ls-remote --tags --refs "https://github.com/${owner}/${repo}.git" \
     | awk -F/ '{ print $NF }' \
+    | grep -E '^[vV]?[0-9]+([._-][0-9A-Za-z]+)*$' \
     | grep -Eiv '(alpha|beta|rc|pre|preview)' \
     | sort -V \
     | tail -n1)
