@@ -29,12 +29,11 @@ jobs:
   release_draft:
     if: github.ref == 'refs/heads/LTS'
     permissions:
-      contents: write  # ncipollo/release-action
+      contents: read
       pull-requests: read  # mikepenz/release-changelog-builder-action
     name: Release draft
     runs-on: ubuntu-24.04
     outputs:
-      upload_url: ${{ steps.release_drafter.outputs.upload_url }}
       occu_version: ${{ steps.env.outputs.occu_version }}
       version: ${{ steps.env.outputs.version }}
       date: ${{ steps.env.outputs.date }}
@@ -298,23 +297,11 @@ jobs:
           generate_summary en /tmp/changelog-summary/changelog-summary.en.html
           generate_summary de /tmp/changelog-summary/changelog-summary.de.html
 
-      - name: Create release draft
-        id: release_drafter
-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd  # v1.21.0
-        with:
-          tag: ${{ steps.env.outputs.tag }}
-          name: 'OpenCCU-LTS ${{ steps.env.outputs.version }}'
-          bodyFile: /tmp/release-template.md
-          draft: true
-          prerelease: false
-          allowUpdates: true
-          token: ${{ secrets.RELEASE_USER_PAT }}
-
       - name: Upload release-template.md artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: /tmp/release-template.md
-          name: release-template.md
+          name: release-template.unpatched.md
 
       - name: Upload ChangeLog summary artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
@@ -479,10 +466,8 @@ jobs:
         continue-on-error: true
 
   ##########################################
-  # Update checksums in release draft
+  # Update checksums in release-template artifact
   update-checksums:
-    permissions:
-      contents: write  # ncipollo/release-action
     name: Update checksums
     runs-on: ubuntu-24.04
     needs: [release_draft, build]
@@ -501,18 +486,12 @@ jobs:
             while read -r line; do
               NEEDLE=$(echo "${line}" | awk '{print $3}' | sed 's/.*-\(.*\..*\)$/\1/')
               CHECKSUM=$(echo "${line}" | awk '{print $2}')
-              sed -i "s/XSHA${NEEDLE}X/${CHECKSUM}/" release-template.md/release-template.md
+              sed -i "s/XSHA${NEEDLE}X/${CHECKSUM}/" release-template.unpatched.md/release-template.md
             done < <(cat ${f})
           done
 
-      - name: Update release draft
-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd  # v1.21.0
+      - name: Upload release-template.md artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
-          tag: ${{ needs.release_draft.outputs.tag }}
-          bodyFile: release-template.md/release-template.md
-          allowUpdates: true
-          draft: true
-          prerelease: false
-          omitNameDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
-          token: ${{ secrets.RELEASE_USER_PAT }}
+          path: release-template.unpatched.md/release-template.md
+          name: release-template.md
