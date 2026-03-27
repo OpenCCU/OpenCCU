@@ -169,9 +169,6 @@ jobs:
               if line.startswith("#### "):
                 section_indices.append((line, idx))
 
-            if not section_indices:
-              section_indices = []
-
             section_ranges = []
             for pos, (title, start) in enumerate(section_indices):
               end = section_indices[pos + 1][1] if pos + 1 < len(section_indices) else len(lines)
@@ -220,18 +217,24 @@ jobs:
           config = json.loads(Path(".github/release-changelog-config-lts.json").read_text(encoding="utf-8"))
           categories = config.get("categories", [])
           ignore_labels = set(config.get("ignore_labels", []))
+          exclude_merge_prefixes = tuple(config.get("exclude_merge_branches", []))
 
           repo = os.environ["REPO"]
           from_tag = os.environ["FROM_TAG"]
           to_sha = os.environ["TO_SHA"]
 
           candidate_prs = set()
-          log = subprocess.check_output(
-            ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_tag}..{to_sha}"],
-            text=True,
-          )
+          try:
+            log = subprocess.check_output(
+              ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_tag}..{to_sha}"],
+              text=True,
+            )
+          except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+              f"Unable to collect commit subjects for range {from_tag}..{to_sha}: {err}"
+            ) from err
           for subject in log.splitlines():
-              if subject.startswith("Backport to LTS (batch "):
+              if exclude_merge_prefixes and subject.startswith(exclude_merge_prefixes):
                   continue
               for match in re.findall(r"\(#(\d+)\)", subject):
                   candidate_prs.add(int(match))
@@ -241,7 +244,8 @@ jobs:
           for pr_number in missing_prs:
               try:
                 pr = gh_json(f"/repos/{repo}/pulls/{pr_number}")
-              except urllib.error.HTTPError:
+              except urllib.error.HTTPError as err:
+                print(f"warning: unable to fetch PR #{pr_number}: {err}", flush=True)
                 continue
               if pr.get("state") != "closed" or not pr.get("merged_at"):
                   continue
