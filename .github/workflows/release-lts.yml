@@ -486,8 +486,9 @@ jobs:
             while read -r line; do
               NEEDLE=$(echo "${line}" | awk '{print $3}' | sed 's/.*-\(.*\..*\)$/\1/')
               CHECKSUM=$(echo "${line}" | awk '{print $2}')
-              sed -i "s/XSHA${NEEDLE}X/${CHECKSUM}/" release-template.unpatched.md/release-template.md
-            done < <(cat ${f})
+              ESCAPED_NEEDLE=${NEEDLE//./\\.}
+              sed -i "s|XSHA${ESCAPED_NEEDLE}X|${CHECKSUM}|" release-template.unpatched.md/release-template.md
+            done < "${f}"
           done
 
       - name: Upload release-template.md artifact
