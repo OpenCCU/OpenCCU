@@ -29,12 +29,11 @@ jobs:
   release_draft:
     if: github.ref == 'refs/heads/LTS'
     permissions:
-      contents: write  # ncipollo/release-action
+      contents: read
       pull-requests: read  # mikepenz/release-changelog-builder-action
     name: Release draft
     runs-on: ubuntu-24.04
     outputs:
-      upload_url: ${{ steps.release_drafter.outputs.upload_url }}
       occu_version: ${{ steps.env.outputs.occu_version }}
       version: ${{ steps.env.outputs.version }}
       date: ${{ steps.env.outputs.date }}
@@ -302,7 +301,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
         with:
           path: /tmp/release-template.md
-          name: release-template.md
+          name: release-template.unpatched.md
 
       - name: Upload ChangeLog summary artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
@@ -465,3 +464,46 @@ jobs:
           subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
         continue-on-error: true
+
+  ##########################################
+  # Update checksums in release-template artifact
+  update-checksums:
+    name: Update checksums
+    runs-on: ubuntu-24.04
+    needs: [release_draft, build]
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+
+      # download all artifact files
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+
+      - name: Patch release draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREFIX="OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-"
+          for f in */*.mf; do
+            while read -r line; do
+              ARCHIVE=$(echo "${line}" | awk '{print $3}')
+              CHECKSUM=$(echo "${line}" | awk '{print $2}')
+              BASENAME=${ARCHIVE##*/}
+              if [[ "${BASENAME}" != ${PREFIX}* || -z "${CHECKSUM}" ]]; then
+                continue
+              fi
+              NEEDLE=${BASENAME#${PREFIX}}
+              ESCAPED_NEEDLE=$(printf '%s\n' "${NEEDLE}" | sed -e 's/[][\\/.*^$+?|(){}-]/\\&/g')
+              if ! grep -qF "XSHA${NEEDLE}X" release-template.unpatched.md/release-template.md; then
+                echo "Missing checksum placeholder XSHA${NEEDLE}X in release-template artifact" >&2
+                exit 1
+              fi
+              sed -i "s|XSHA${ESCAPED_NEEDLE}X|${CHECKSUM}|" release-template.unpatched.md/release-template.md
+            done < "${f}"
+          done
+
+      - name: Upload release-template.md artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: release-template.unpatched.md/release-template.md
+          name: release-template.md
