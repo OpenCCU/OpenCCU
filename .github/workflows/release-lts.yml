@@ -66,16 +66,6 @@ jobs:
           fi
 
       - name: Generate changelog
-        id: changelog
-        uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          configuration: ".github/release-changelog-config-lts.json"
-          fromTag: ${{ github.event.inputs.previous_tag }}
-          toTag: ${{ github.sha }}
-          fetchViaCommits: true
-
-      - name: Add missing backported PR entries
         id: changelog_final
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -159,46 +149,16 @@ jobs:
               return datetime.min
             return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
-          def merge_missing_lines_into_changelog(changelog, additions_by_section):
-            if not additions_by_section:
-              return changelog
+          def should_exclude_title(title):
+            return bool(re.match(r"^(Backport to LTS(?:\s|$)|backport/batch LTS(?:\s|$))", title, re.IGNORECASE))
 
-            lines = changelog.splitlines()
-            section_indices = []
-            for idx, line in enumerate(lines):
-              if line.startswith("#### "):
-                section_indices.append((line, idx))
-
-            section_ranges = []
-            for pos, (title, start) in enumerate(section_indices):
-              end = section_indices[pos + 1][1] if pos + 1 < len(section_indices) else len(lines)
-              section_ranges.append((title, start, end))
-
-            out_lines = []
-            cursor = 0
-            known_sections = {title for title, _, _ in section_ranges}
-
-            for title, start, end in section_ranges:
-              out_lines.extend(lines[cursor:end])
-              additions = additions_by_section.get(title, [])
-              if additions:
-                if out_lines and out_lines[-1] != "":
-                  out_lines.append("")
-                out_lines.extend(additions)
-              cursor = end
-
-            if cursor < len(lines):
-              out_lines.extend(lines[cursor:])
-
-            for title, additions in additions_by_section.items():
-              if additions and title not in known_sections:
-                if out_lines and out_lines[-1] != "":
-                  out_lines.append("")
-                out_lines.append(title)
-                out_lines.append("")
-                out_lines.extend(additions)
-
-            return "\n".join(out_lines)
+          def should_exclude_subject(subject, markers):
+            for marker in markers:
+              if subject.startswith(marker):
+                return True
+              if marker.startswith("from ") and f" {marker}" in subject:
+                return True
+            return False
 
           def gh_json(path):
             req = urllib.request.Request(
@@ -212,12 +172,11 @@ jobs:
             with urllib.request.urlopen(req) as resp:
               return json.load(resp)
 
-          changelog = """${{ steps.changelog.outputs.changelog }}"""
-          listed_prs = {int(n) for n in re.findall(r"\(#(\d+),\s*@[^)]+\)", changelog)}
           config = json.loads(Path(".github/release-changelog-config-lts.json").read_text(encoding="utf-8"))
           categories = config.get("categories", [])
           ignore_labels = set(config.get("ignore_labels", []))
-          exclude_merge_prefixes = tuple(config.get("exclude_merge_branches", []))
+          exclude_merge_markers = tuple(config.get("exclude_merge_branches", []))
+          empty_template = config.get("empty_template", "- No changes")
 
           repo = os.environ["REPO"]
           from_tag = os.environ["FROM_TAG"]
@@ -234,14 +193,13 @@ jobs:
               f"Unable to collect commit subjects for range {from_tag}..{to_sha}: {err}"
             ) from err
           for subject in log.splitlines():
-              if exclude_merge_prefixes and subject.startswith(exclude_merge_prefixes):
+              if exclude_merge_markers and should_exclude_subject(subject, exclude_merge_markers):
                   continue
               for match in re.findall(r"\(#(\d+)\)", subject):
                   candidate_prs.add(int(match))
 
-          missing_prs = sorted(candidate_prs - listed_prs)
-          recovered_entries = []
-          for pr_number in missing_prs:
+          entries = []
+          for pr_number in sorted(candidate_prs):
               try:
                 pr = gh_json(f"/repos/{repo}/pulls/{pr_number}")
               except urllib.error.HTTPError as err:
@@ -253,22 +211,38 @@ jobs:
               if labels & ignore_labels:
                 continue
               title = pr["title"].replace("\n", " ").strip()
+              if should_exclude_title(title):
+                continue
               author = pr.get("user", {}).get("login", "github-actions")
               section_title = find_category_title(pr, categories)
-              recovered_entries.append({
+              entries.append({
                 "section": section_title,
                 "line": f"- {title} (#{pr_number}, @{author})",
                 "merged_at": parse_iso_datetime(pr.get("merged_at")),
               })
 
-          final_changelog = changelog
-          if recovered_entries:
+          final_changelog = empty_template
+          if entries:
               reverse = str(config.get("sort", {}).get("order", "DESC")).upper() != "ASC"
-              recovered_entries.sort(key=lambda item: item["merged_at"], reverse=reverse)
+              entries.sort(key=lambda item: item["merged_at"], reverse=reverse)
               additions_by_section = {}
-              for item in recovered_entries:
+              for item in entries:
                 additions_by_section.setdefault(item["section"], []).append(item["line"])
-              final_changelog = merge_missing_lines_into_changelog(final_changelog, additions_by_section)
+
+              changelog_lines = []
+              for category in categories:
+                title = category.get("title")
+                section_entries = additions_by_section.get(title, [])
+                if not section_entries:
+                  continue
+                if changelog_lines:
+                  changelog_lines.append("")
+                changelog_lines.append(title)
+                changelog_lines.append("")
+                changelog_lines.extend(section_entries)
+
+              if changelog_lines:
+                final_changelog = "\n".join(changelog_lines)
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
               fh.write("changelog<<EOF\n")
