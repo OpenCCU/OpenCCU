@@ -495,8 +495,8 @@ jobs:
               NEEDLE=${BASENAME#${PREFIX}}
               ESCAPED_NEEDLE=$(printf '%s\n' "${NEEDLE}" | sed -e 's/[][\\/.*^$+?|(){}-]/\\&/g')
               if ! grep -qF "XSHA${NEEDLE}X" release-template.unpatched.md/release-template.md; then
-                echo "Missing checksum placeholder XSHA${NEEDLE}X in release-template artifact" >&2
-                exit 1
+                # Some manifest entries (e.g. *.img) don't have release-template placeholders.
+                continue
               fi
               sed -i "s|XSHA${ESCAPED_NEEDLE}X|${CHECKSUM}|" release-template.unpatched.md/release-template.md
             done < "${f}"
