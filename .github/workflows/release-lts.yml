@@ -113,7 +113,7 @@ jobs:
 
           candidate_prs = set()
           log = subprocess.check_output(
-            ["git", "--no-pager", "log", "--format=%s", f"{from_tag}..{to_sha}"],
+            ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_tag}..{to_sha}"],
             text=True,
           )
           for subject in log.splitlines():
@@ -132,7 +132,7 @@ jobs:
               if pr.get("state") != "closed" or not pr.get("merged_at"):
                   continue
               title = pr["title"].replace("\n", " ").strip()
-              author = pr.get("user", {}).get("login", "Copilot")
+              author = pr.get("user", {}).get("login", "github-actions")
               missing_lines.append(f"- {title} (#{pr_number}, @{author})")
 
           final_changelog = changelog
