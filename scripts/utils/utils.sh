@@ -15,7 +15,7 @@ function resolve_latest_github_stable_tag() {
     | tail -n1)
 
   if [[ -z "${tag}" ]]; then
-    echo "failed to resolve latest stable tag for ${owner}/${repo}"
+    echo "failed to resolve latest stable tag for ${owner}/${repo}" >&2
     exit 1
   fi
 
