@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_stable_tag "raspberrypi" "linux")}
+ID=${1:-$(resolve_latest_github_stable_tag "raspberrypi" "linux" '^stable_[0-9]+$')}
 PACKAGE_NAME="linux"
 PROJECT_URL="https://github.com/raspberrypi/linux"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${ID}.tar.gz"

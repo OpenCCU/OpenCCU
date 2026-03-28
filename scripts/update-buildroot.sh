@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_stable_tag "buildroot" "buildroot")}
+ID=${1:-$(resolve_latest_github_stable_tag "buildroot" "buildroot" '^[0-9]+(\.[0-9]+)*$')}
 #PACKAGE_NAME="buildroot"
 PROJECT_URL="https://github.com/buildroot/buildroot"
 ARCHIVE_URL="${PROJECT_URL}/archive/refs/tags/${ID}.tar.gz"

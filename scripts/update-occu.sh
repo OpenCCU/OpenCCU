@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_stable_tag "OpenCCU" "occu")}
+ID=${1:-$(resolve_latest_github_stable_tag "OpenCCU" "occu" '^[0-9]+(\.[0-9]+)*(-[0-9]+)?$')}
 PACKAGE_NAME="occu"
 PROJECT_URL="https://github.com/OpenCCU/occu"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
