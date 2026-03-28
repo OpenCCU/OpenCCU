@@ -3,7 +3,7 @@ set -e
 
 ID=${1}
 PACKAGE_NAME="cloudmatic"
-PROJECT_URL="https://github.com/jens-maus/CloudMatic-CCUAddon"
+PROJECT_URL="https://github.com/OpenCCU/CloudMatic-CCUAddon"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
 
 if [[ -z "${ID}" ]]; then

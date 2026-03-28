@@ -5,9 +5,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=scripts/utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_stable_tag "jens-maus" "occu")}
+ID=${1:-$(resolve_latest_github_stable_tag "OpenCCU" "occu")}
 PACKAGE_NAME="occu"
-PROJECT_URL="https://github.com/jens-maus/occu"
+PROJECT_URL="https://github.com/OpenCCU/occu"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
 
 # download archive for hash update
