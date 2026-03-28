@@ -5,7 +5,7 @@ set -e
 function resolve_latest_github_stable_tag() {
   local owner=${1}
   local repo=${2}
-  local tag_filter_pattern=${3:-'^[vV]?[0-9]+([._-][0-9A-Za-z]+)*$'}
+  local tag_filter_pattern=${3:-'^[vV]?[0-9]+(\.[0-9]+)*$'}
   local tag
 
   tag=$(git ls-remote --tags --refs "https://github.com/${owner}/${repo}.git" \
