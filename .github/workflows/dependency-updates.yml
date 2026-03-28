@@ -26,6 +26,12 @@ jobs:
             script: scripts/update-occu.sh
           - slug: qemu-guest-agent
             script: scripts/update-qemu-guest-agent.sh
+          - slug: tailscale
+            script: scripts/update-tailscale.sh
+          - slug: neoserver
+            script: scripts/update-neoserver.sh
+          - slug: daemonize
+            script: scripts/update-daemonize.sh
 
     steps:
       - name: Checkout Code

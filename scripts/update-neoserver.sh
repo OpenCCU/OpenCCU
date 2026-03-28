@@ -1,12 +1,16 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=utils/utils.sh
+source "${SCRIPT_DIR}/utils/utils.sh"
+
 PACKAGE_NAME="neoserver"
 DOWNLOAD_URL="https://s3-eu-west-1.amazonaws.com/mediola-download/ccu3/neo_server.tar.gz"
 VERSION_URL="https://s3-eu-west-1.amazonaws.com/mediola-download/ccu3/VERSION"
 
 # download/check current version
-VERSION=$(curl ${VERSION_URL})
+VERSION=${1:-$(curl -fsSL "${VERSION_URL}")}
 
 # download latest archive
 wget --passive-ftp -nd -t 3 -O "buildroot-external/package/${PACKAGE_NAME}/neo_server.tar.gz" ${DOWNLOAD_URL}
