@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_stable_tag "bmc" "daemonize")}
+ID=${1:-$(resolve_latest_github_stable_tag "bmc" "daemonize" '^release-[0-9]+(\.[0-9]+)*$')}
 PACKAGE_NAME="daemonize"
 PROJECT_URL="https://github.com/bmc/daemonize"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"

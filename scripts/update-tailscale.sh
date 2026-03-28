@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "tailscale" "tailscale")")}
+ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "tailscale" "tailscale" '^[vV][0-9]+(\.[0-9]+)*$')")}
 PACKAGE_NAME="tailscale-bin"
 PROJECT_URL="https://pkgs.tailscale.com/stable"
 ARCHIVE_URL="${PROJECT_URL}/tailscale_${ID}_CPU.tgz"
