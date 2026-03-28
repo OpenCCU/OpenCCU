@@ -24,10 +24,6 @@ jobs:
             script: scripts/update-buildroot.sh
           - slug: occu
             script: scripts/update-occu.sh
-          - slug: rpi-kernel
-            script: scripts/update-rpi-kernel.sh
-          - slug: rpi-firmware
-            script: scripts/update-rpi-firmware.sh
           - slug: qemu-guest-agent
             script: scripts/update-qemu-guest-agent.sh
 

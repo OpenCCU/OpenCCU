@@ -14,7 +14,7 @@ ARCHIVE_URL="${PROJECT_URL}/archive/refs/tags/${ID}.tar.gz"
 ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')
 if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update package info
-  sed -i "s/BUILDROOT_VERSION=.*/BUILDROOT_VERSION=$1/g" "Makefile"
+  sed -i "s/BUILDROOT_VERSION=.*/BUILDROOT_VERSION=${ID}/g" "Makefile"
   # update package hash
   sed -i "s/BUILDROOT_SHA256=.*/BUILDROOT_SHA256=${ARCHIVE_HASH}/g" "Makefile"
 fi
