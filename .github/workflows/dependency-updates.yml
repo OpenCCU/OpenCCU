@@ -64,6 +64,11 @@ jobs:
             package: cloudmatic
             version_file: buildroot-external/package/cloudmatic/cloudmatic.mk
             version_regex: '^CLOUDMATIC_VERSION = (.*)$'
+          - slug: java-azul
+            script: scripts/update-java-azul.sh
+            package: java-azul
+            version_file: buildroot-external/package/java-azul/java-azul.mk
+            version_regex: '^JAVA_AZUL_VERSION = (.*)$'
 
     steps:
       - name: Checkout Code

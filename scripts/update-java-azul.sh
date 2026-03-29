@@ -1,14 +1,50 @@
 #!/bin/bash
 set -e
 
-ID=${1}
 PACKAGE_NAME="java-azul"
 DOWNLOAD_URL="https://cdn.azul.com"
+API_URL="https://api.azul.com/metadata/v1/zulu/packages"
+JAVA_MAJOR_VERSION="21"
 
-if [[ -z "${ID}" ]]; then
-  echo "version id required (see ${URL})"
+function resolve_latest_java_azul_v21() {
+  local arch_query=${1}
+  local archive_arch=${2}
+
+  curl -fsSL "${API_URL}/?java_version=${JAVA_MAJOR_VERSION}&os=linux&archive_type=tar.gz&java_package_type=jre&latest=true&release_status=ga&availability_types=CA&arch=${arch_query}" \
+    | sed -nE "s/.*\"name\":\"zulu([^\"]+)-linux_${archive_arch}\\.tar\\.gz\".*/\\1/p" \
+    | head -n1
+}
+
+function resolve_latest_java_azul_version() {
+  local x64_version
+  local aarch64_version
+
+  x64_version=$(resolve_latest_java_azul_v21 "x86_64" "x64")
+  aarch64_version=$(resolve_latest_java_azul_v21 "aarch64" "aarch64")
+
+  if [[ -z "${x64_version}" || -z "${aarch64_version}" ]]; then
+    echo "Failed to resolve latest Azul Java ${JAVA_MAJOR_VERSION} version from ${API_URL}" >&2
+    exit 1
+  fi
+
+  if [[ "${x64_version}" == "${aarch64_version}" ]]; then
+    echo "${x64_version}"
+    return 0
+  fi
+
+  for candidate in "${x64_version}" "${aarch64_version}"; do
+    if wget --spider -q "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_x64.tar.gz" \
+      && wget --spider -q "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_aarch64.tar.gz"; then
+      echo "${candidate}"
+      return 0
+    fi
+  done
+
+  echo "Resolved different Azul Java ${JAVA_MAJOR_VERSION} versions for x64 (${x64_version}) and aarch64 (${aarch64_version}) with no common downloadable version" >&2
   exit 1
-fi
+}
+
+ID=${1:-$(resolve_latest_java_azul_version)}
 
 # function to download archive hash for certain CPU
 function updateHash() {
