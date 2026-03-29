@@ -9,10 +9,23 @@ JAVA_MAJOR_VERSION="21"
 function resolve_latest_java_azul_v21() {
   local arch_query=${1}
   local archive_arch=${2}
+  local response
+  local version
 
-  curl -fsSL "${API_URL}/?java_version=${JAVA_MAJOR_VERSION}&os=linux&archive_type=tar.gz&java_package_type=jre&latest=true&release_status=ga&availability_types=CA&arch=${arch_query}" \
+  if ! response=$(curl -fsSL "${API_URL}/?java_version=${JAVA_MAJOR_VERSION}&os=linux&archive_type=tar.gz&java_package_type=jre&latest=true&release_status=ga&availability_types=CA&arch=${arch_query}"); then
+    echo "Failed to query Azul metadata API for Java ${JAVA_MAJOR_VERSION} (${arch_query})" >&2
+    return 1
+  fi
+
+  version=$(printf '%s\n' "${response}" \
     | sed -nE "s/.*\"name\":\"zulu([^\"]+)-linux_${archive_arch}\\.tar\\.gz\".*/\\1/p" \
-    | head -n1
+    | head -n1)
+  if [[ -z "${version}" ]]; then
+    echo "Failed to parse Azul metadata API response for Java ${JAVA_MAJOR_VERSION} (${arch_query})" >&2
+    return 1
+  fi
+
+  echo "${version}"
 }
 
 function resolve_latest_java_azul_version() {
@@ -33,8 +46,8 @@ function resolve_latest_java_azul_version() {
   fi
 
   for candidate in "${x64_version}" "${aarch64_version}"; do
-    if wget --spider -q "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_x64.tar.gz" \
-      && wget --spider -q "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_aarch64.tar.gz"; then
+    if wget --spider -q -t 2 -T 30 "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_x64.tar.gz" \
+      && wget --spider -q -t 2 -T 30 "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_aarch64.tar.gz"; then
       echo "${candidate}"
       return 0
     fi
