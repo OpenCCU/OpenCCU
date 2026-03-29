@@ -27,3 +27,18 @@ function strip_v_prefix() {
   local version=${1}
   echo "${version#v}"
 }
+
+function resolve_latest_github_head_commit() {
+  local owner=${1}
+  local repo=${2}
+  local commit
+
+  commit=$(git ls-remote "https://github.com/${owner}/${repo}.git" HEAD | awk '{ print $1 }')
+
+  if [[ -z "${commit}" ]]; then
+    echo "Failed to resolve latest HEAD commit for ${owner}/${repo}" >&2
+    exit 1
+  fi
+
+  echo "${commit}"
+}

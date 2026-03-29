@@ -59,6 +59,11 @@ jobs:
             package: daemonize
             version_file: buildroot-external/package/daemonize/daemonize.mk
             version_regex: '^DAEMONIZE_VERSION = (.*)$'
+          - slug: cloudmatic
+            script: scripts/update-cloudmatic.sh
+            package: cloudmatic
+            version_file: buildroot-external/package/cloudmatic/cloudmatic.mk
+            version_regex: '^CLOUDMATIC_VERSION = (.*)$'
 
     steps:
       - name: Checkout Code
@@ -82,7 +87,13 @@ jobs:
         run: |
           version=$(sed -nE 's/${{ matrix.version_regex }}/\1/p' '${{ matrix.version_file }}' | head -n1)
           if [[ -z "${version}" ]]; then
-            echo "::error::Failed to determine version for package '${{ matrix.package }}' from '${{ matrix.version_file }}'"
+            version=$(git --no-pager diff -- '${{ matrix.version_file }}' \
+              | sed -nE 's/^\+[^+]*[[:space:]=]+([0-9a-f]{40})$/\1/p' \
+              | head -n1)
+          fi
+
+          if [[ -z "${version}" ]]; then
+            echo "::error::Failed to determine version for package '${{ matrix.package }}' from '${{ matrix.version_file }}' and fallback commit detection"
             exit 1
           fi
 
