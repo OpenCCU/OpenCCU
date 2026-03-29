@@ -5,7 +5,7 @@ name: Dependency Updates
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # run daily at 02:00 UTC
+    - cron: '0 2 * * *'  # run daily at 02:00 UTC (quiet window)
   workflow_dispatch:
 
 permissions:
