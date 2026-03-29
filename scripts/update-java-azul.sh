@@ -10,42 +10,47 @@ function resolve_latest_java_azul_v21() {
   local arch_query=${1}
   local archive_arch=${2}
   local response
-  local version
+  local versions
 
-  if ! response=$(curl -fsSL "${API_URL}/?java_version=${JAVA_MAJOR_VERSION}&os=linux&archive_type=tar.gz&java_package_type=jre&latest=true&release_status=ga&availability_types=CA&arch=${arch_query}"); then
+  if ! response=$(curl -fsSL "${API_URL}/?java_version=${JAVA_MAJOR_VERSION}&os=linux&archive_type=tar.gz&java_package_type=jre&release_status=ga&availability_types=CA&arch=${arch_query}"); then
     echo "Failed to query Azul metadata API for Java ${JAVA_MAJOR_VERSION} (${arch_query})" >&2
     return 1
   fi
 
-  version=$(printf '%s\n' "${response}" \
+  versions=$(printf '%s\n' "${response}" \
     | sed -nE "s/.*\"name\":\"zulu([^\"]+)-linux_${archive_arch}\\.tar\\.gz\".*/\\1/p" \
-    | head -n1)
-  if [[ -z "${version}" ]]; then
+    | sort -Vu)
+  if [[ -z "${versions}" ]]; then
     echo "Failed to parse Azul metadata API response for Java ${JAVA_MAJOR_VERSION} (${arch_query})" >&2
     return 1
   fi
 
-  echo "${version}"
+  echo "${versions}"
 }
 
 function resolve_latest_java_azul_version() {
-  local x64_version
-  local aarch64_version
+  local x64_versions
+  local aarch64_versions
+  local common_version
 
-  x64_version=$(resolve_latest_java_azul_v21 "x86_64" "x64")
-  aarch64_version=$(resolve_latest_java_azul_v21 "aarch64" "aarch64")
+  x64_versions=$(resolve_latest_java_azul_v21 "x86_64" "x64")
+  aarch64_versions=$(resolve_latest_java_azul_v21 "aarch64" "aarch64")
 
-  if [[ -z "${x64_version}" || -z "${aarch64_version}" ]]; then
+  if [[ -z "${x64_versions}" || -z "${aarch64_versions}" ]]; then
     echo "Failed to resolve latest Azul Java ${JAVA_MAJOR_VERSION} version from ${API_URL}" >&2
     exit 1
   fi
 
-  if [[ "${x64_version}" == "${aarch64_version}" ]]; then
-    echo "${x64_version}"
+  common_version=$(printf '%s\n' "${x64_versions}" \
+    | grep -Fxf <(printf '%s\n' "${aarch64_versions}") \
+    | sort -V \
+    | tail -n1)
+  if [[ -n "${common_version}" ]]; then
+    echo "${common_version}"
     return 0
   fi
 
-  for candidate in "${x64_version}" "${aarch64_version}"; do
+  for candidate in $(printf '%s\n%s\n' "${x64_versions}" "${aarch64_versions}" | sort -Vru); do
     if wget --spider -q -t 2 -T 30 "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_x64.tar.gz" \
       && wget --spider -q -t 2 -T 30 "${DOWNLOAD_URL}/zulu/bin/zulu${candidate}-linux_aarch64.tar.gz"; then
       echo "${candidate}"
@@ -53,7 +58,7 @@ function resolve_latest_java_azul_version() {
     fi
   done
 
-  echo "Resolved different Azul Java ${JAVA_MAJOR_VERSION} versions for x64 (${x64_version}) and aarch64 (${aarch64_version}) with no common downloadable version" >&2
+  echo "Resolved different Azul Java ${JAVA_MAJOR_VERSION} version sets for x64 and aarch64 with no common downloadable version" >&2
   exit 1
 }
 
