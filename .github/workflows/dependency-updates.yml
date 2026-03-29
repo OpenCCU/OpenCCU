@@ -8,6 +8,10 @@ on:
     - cron: '0 2 * * *'  # run daily at 02:00 UTC (quiet window)
   workflow_dispatch:
 
+concurrency:
+  group: dependency-updates-${{ github.repository }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
