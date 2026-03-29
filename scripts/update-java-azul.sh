@@ -17,8 +17,9 @@ function resolve_latest_java_azul_v21() {
     return 1
   fi
 
-  versions=$(printf '%s\n' "${response}" \
-    | sed -nE "s/.*\"name\":\"zulu([^\"]+)-linux_${archive_arch}\\.tar\\.gz\".*/\\1/p" \
+  versions=$(printf '%s' "${response}" \
+    | grep -oE "\"name\"[[:space:]]*:[[:space:]]*\"zulu[^\"]+-linux_${archive_arch}\\.tar\\.gz\"" \
+    | sed -E "s/.*\"zulu([^\"]+)-linux_${archive_arch}\\.tar\\.gz\"/\\1/" \
     | sort -Vu)
   if [[ -z "${versions}" ]]; then
     echo "Failed to parse Azul metadata API response for Java ${JAVA_MAJOR_VERSION} (${arch_query})" >&2
@@ -26,6 +27,14 @@ function resolve_latest_java_azul_v21() {
   fi
 
   echo "${versions}"
+}
+
+function version_lt() {
+  [[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" == "$1" && "$1" != "$2" ]]
+}
+
+function read_current_java_azul_version() {
+  sed -nE 's/^JAVA_AZUL_VERSION = (.*)$/\1/p' buildroot-external/package/java-azul/java-azul.mk | head -n1
 }
 
 function resolve_latest_java_azul_version() {
@@ -62,7 +71,16 @@ function resolve_latest_java_azul_version() {
   exit 1
 }
 
-ID=${1:-$(resolve_latest_java_azul_version)}
+if [[ -n "${1}" ]]; then
+  ID=${1}
+else
+  ID=$(resolve_latest_java_azul_version)
+  CURRENT_ID=$(read_current_java_azul_version)
+  if [[ -n "${CURRENT_ID}" ]] && version_lt "${ID}" "${CURRENT_ID}"; then
+    echo "Resolved Java ${JAVA_MAJOR_VERSION} version ${ID} is older than current ${CURRENT_ID}; keeping current to avoid downgrade" >&2
+    ID=${CURRENT_ID}
+  fi
+fi
 
 # function to download archive hash for certain CPU
 function updateHash() {
