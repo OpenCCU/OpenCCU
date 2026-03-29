@@ -88,7 +88,7 @@ check program irqbalanceEnabled with path /bin/sh -c "/usr/bin/test $(nproc) -gt
     if status != 0 for 1 cycles then unmonitor
 
 # dbus daemon monitoring
-check process dbus with pidfile /run/messagebus.pid
+check process dbus with pidfile /run/dbus-daemon.pid
     group system
     start = "/etc/init.d/S30dbus-daemon start"
     stop = "/etc/init.d/S30dbus-daemon stop"
