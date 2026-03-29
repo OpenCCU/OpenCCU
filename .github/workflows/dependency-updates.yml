@@ -30,6 +30,8 @@ jobs:
             script: scripts/update-tailscale.sh
           - slug: neoserver
             script: scripts/update-neoserver.sh
+          - slug: codemirror
+            script: scripts/update-codemirror.sh
           - slug: daemonize
             script: scripts/update-daemonize.sh
 
@@ -40,7 +42,17 @@ jobs:
       - name: Run dependency update script
         run: ./${{ matrix.script }}
 
+      - name: Check for updated files
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >>"${GITHUB_OUTPUT}"
+          else
+            echo "changed=true" >>"${GITHUB_OUTPUT}"
+          fi
+
       - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e  # v7.0.8
         with:
           branch: automation/dependency-updates-${{ matrix.slug }}
