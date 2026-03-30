@@ -18,6 +18,10 @@ if ! wget --passive-ftp -nd -t 3 --spider "${CHECKSUM_URL}"; then
 fi
 CHECKSUM_CONTENT=$(wget --passive-ftp -nd -t 3 -O - "${CHECKSUM_URL}")
 ID=${1:-$(echo "${CHECKSUM_CONTENT}" | grep -oE "${PACKAGE_NAME}-6\.12\.[0-9]+\.tar\.xz" | sed -E "s/^${PACKAGE_NAME}-//; s/\.tar\.xz$//" | sort -V | tail -n1)}
+if [[ -z "${ID}" ]]; then
+  echo "Failed to resolve latest ${PACKAGE_NAME} 6.12.x version from ${CHECKSUM_URL}" >&2
+  exit 1
+fi
 ARCHIVE_HASH=$(echo "${CHECKSUM_CONTENT}" | grep "${PACKAGE_NAME}-${ID}.tar.xz" | awk '{ print $1 }')
 if [[ -z "${ARCHIVE_HASH}" ]]; then
   echo "no hash found for ${PACKAGE_NAME}-${ID}.tar.xz"
@@ -25,7 +29,12 @@ if [[ -z "${ARCHIVE_HASH}" ]]; then
 fi
 
 EXPECTED_HASH_LINE="sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.xz"
-CURRENT_VERSION=$(grep -oE 'BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="[^"]+"' buildroot-external/configs/{oci_*,odroid-*,ova,generic-*,tinkerboard2}.config | sed -E 's/.*"([^"]+)"/\1/' | sort -u)
+CURRENT_VERSION_LIST=$(grep -oE 'BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="[^"]+"' buildroot-external/configs/{oci_*,odroid-*,ova,generic-*,tinkerboard2}.config | sed -E 's/.*"([^"]+)"/\1/' | sort -u)
+if [[ $(echo "${CURRENT_VERSION_LIST}" | wc -l) -ne 1 ]]; then
+  echo "${PACKAGE_NAME}: inconsistent kernel versions found across target configs, refusing to auto-update" >&2
+  exit 1
+fi
+CURRENT_VERSION="${CURRENT_VERSION_LIST}"
 HASH_LINE_COUNT=$(grep -Ec "^sha256[[:space:]]+[[:alnum:]]+[[:space:]]+${PACKAGE_NAME}-.*\\.tar\\.xz$" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash")
 HEADERS_HASH_LINE_COUNT=$(grep -Ec "^sha256[[:space:]]+[[:alnum:]]+[[:space:]]+${PACKAGE_NAME}-.*\\.tar\\.xz$" "buildroot-external/patches/${PACKAGE_NAME}-headers/${PACKAGE_NAME}-headers.hash")
 if [[ "${CURRENT_VERSION}" == "${ID}" ]] \
