@@ -148,6 +148,9 @@ jobs:
         id: metadata
         if: steps.changes.outputs.changed == 'true'
         run: |
+          previous_version=$(git --no-pager show "HEAD:${{ matrix.version_file }}" \
+            | sed -nE 's/${{ matrix.version_regex }}/\1/p' \
+            | head -n1)
           version=$(sed -nE 's/${{ matrix.version_regex }}/\1/p' '${{ matrix.version_file }}' | head -n1)
           if [[ -z "${version}" ]]; then
             version=$(git --no-pager diff -- '${{ matrix.version_file }}' \
@@ -160,12 +163,19 @@ jobs:
             exit 1
           fi
 
+          if [[ -n "${previous_version}" && "${previous_version}" == "${version}" ]]; then
+            echo "no_update=true" >>"${GITHUB_OUTPUT}"
+            echo "Detected file changes but package version remained unchanged (${version}). Skipping PR creation."
+            exit 0
+          fi
+
           echo "package=${{ matrix.package }}" >>"${GITHUB_OUTPUT}"
           echo "version=${version}" >>"${GITHUB_OUTPUT}"
+          echo "no_update=false" >>"${GITHUB_OUTPUT}"
 
       - name: Check for existing similar open PR
         id: duplicate
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.changes.outputs.changed == 'true' && steps.metadata.outputs.no_update != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: "chore: bump ${{ steps.metadata.outputs.package }} to ${{ steps.metadata.outputs.version }}"
@@ -185,8 +195,8 @@ jobs:
           fi
 
       - name: Create Pull Request
-        if: steps.changes.outputs.changed == 'true' && steps.duplicate.outputs.skip != 'true'
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e  # v7.0.8
+        if: steps.changes.outputs.changed == 'true' && steps.metadata.outputs.no_update != 'true' && steps.duplicate.outputs.skip != 'true'
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0  # v8.1.0
         with:
           token: ${{ github.token }}
           branch: automation/dependency-updates-${{ matrix.slug }}
