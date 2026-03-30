@@ -13,6 +13,10 @@ get these sources compiled for newer kernel versions.
  kernel/hb_rf_usb_2.c | 18 +++++++++++++++++-
  3 files changed, 51 insertions(+), 3 deletions(-)
 
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
 diff --git a/kernel/hb_rf_eth.c b/kernel/hb_rf_eth.c
 index 37657e5..6be599e 100644
 --- a/kernel/hb_rf_eth.c
