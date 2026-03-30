@@ -11,7 +11,11 @@ DOWNLOAD_URL="https://s3-eu-west-1.amazonaws.com/mediola-download/ccu3/neo_serve
 VERSION_URL="https://s3-eu-west-1.amazonaws.com/mediola-download/ccu3/VERSION"
 
 # download/check current version
-VERSION=${1:-$(curl -fsSL "${VERSION_URL}")}
+if [[ -n "${1}" ]]; then
+  VERSION=${1}
+else
+  VERSION=$(curl -fsSL "${VERSION_URL}")
+fi
 CURRENT_VERSION=$(sed -nE 's/^NEOSERVER_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
 if [[ -z "${1}" ]]; then

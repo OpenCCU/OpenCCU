@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 function resolve_latest_github_stable_tag() {
   local owner=${1}
