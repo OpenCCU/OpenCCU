@@ -21,6 +21,10 @@ function resolveHash() {
   local cpu=${1}
   local archive_hash
   # download archive for hash update
+  if ! wget --passive-ftp -nd -t 3 --spider "${ARCHIVE_URL/CPU/${cpu}}"; then
+    echo "Failed to download archive for ${PACKAGE_NAME} (${cpu})" >&2
+    return 1
+  fi
   archive_hash=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL/CPU/${cpu}}" | sha256sum | awk '{ print $1 }')
   if [[ -n "${archive_hash}" ]]; then
     echo "${archive_hash}"

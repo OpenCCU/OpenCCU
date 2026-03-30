@@ -13,6 +13,10 @@ if [[ -z "${ID}" ]]; then
 fi
 
 # download archive for hash update
+if ! wget --passive-ftp -nd -t 3 --spider "${ARCHIVE_URL}"; then
+  echo "Failed to download archive for ${PACKAGE_NAME}" >&2
+  exit 1
+fi
 ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')
 if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update package info

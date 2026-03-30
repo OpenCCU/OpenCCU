@@ -14,6 +14,10 @@ if [[ -z "${ID}" ]]; then
 fi
 
 # extract sha256 checksum
+if ! wget --passive-ftp -nd -t 3 --spider "${CHECKSUM_URL}"; then
+  echo "Failed to download checksum list for ${PACKAGE_NAME}" >&2
+  exit 1
+fi
 ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${CHECKSUM_URL}" | grep "${PACKAGE_NAME}-${ID}.tar.xz" | awk '{ print $1 }')
 if [[ -z "${ARCHIVE_HASH}" ]]; then
   echo "no hash found for ${PACKAGE_NAME}-${ID}.tar.xz"
