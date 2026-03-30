@@ -34,8 +34,13 @@ function resolve_hash() {
   fi
 }
 
-HASH_AMD64=$(resolve_hash amd64)
-HASH_ARM64=$(resolve_hash arm64)
+HASH_AMD64=$(resolve_hash amd64 || true)
+HASH_ARM64=$(resolve_hash arm64 || true)
+
+if [[ -z "${HASH_AMD64}" || -z "${HASH_ARM64}" ]]; then
+  echo "Could not download latest tailscale archives yet for all architectures. Skipping update." >&2
+  exit 0
+fi
 
 # update package hashes
 sed -i "/_amd64\.tgz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
