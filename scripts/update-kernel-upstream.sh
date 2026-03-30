@@ -6,7 +6,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "torvalds" "linux" '^[vV]6\.12\.[0-9]+$')")}
 PACKAGE_NAME="linux"
 PROJECT_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x"
 #ARCHIVE_URL="${PROJECT_URL}/${PACKAGE_NAME}-${ID}.tar.xz"
@@ -17,7 +16,9 @@ if ! wget --passive-ftp -nd -t 3 --spider "${CHECKSUM_URL}"; then
   echo "Failed to download checksum list for ${PACKAGE_NAME}" >&2
   exit 1
 fi
-ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${CHECKSUM_URL}" | grep "${PACKAGE_NAME}-${ID}.tar.xz" | awk '{ print $1 }')
+CHECKSUM_CONTENT=$(wget --passive-ftp -nd -t 3 -O - "${CHECKSUM_URL}")
+ID=${1:-$(echo "${CHECKSUM_CONTENT}" | grep -oE "${PACKAGE_NAME}-6\.12\.[0-9]+\.tar\.xz" | sed -E "s/^${PACKAGE_NAME}-//; s/\.tar\.xz$//" | sort -V | tail -n1)}
+ARCHIVE_HASH=$(echo "${CHECKSUM_CONTENT}" | grep "${PACKAGE_NAME}-${ID}.tar.xz" | awk '{ print $1 }')
 if [[ -z "${ARCHIVE_HASH}" ]]; then
   echo "no hash found for ${PACKAGE_NAME}-${ID}.tar.xz"
   exit 1
