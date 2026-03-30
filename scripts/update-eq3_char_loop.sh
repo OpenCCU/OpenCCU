@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_head_commit "eq-3" "occu")}
+ID=${1:-$(resolve_latest_github_head_commit_for_path "eq-3" "occu" "KernelDrivers")}
 PACKAGE_NAME="eq3_char_loop"
 PROJECT_URL="https://github.com/eq-3/occu"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"

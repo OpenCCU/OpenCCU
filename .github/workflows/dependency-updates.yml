@@ -39,6 +39,26 @@ jobs:
             package: qemu-guest-agent
             version_file: buildroot-external/package/qemu-guest-agent/qemu-guest-agent.mk
             version_regex: '^QEMU_GUEST_AGENT_VERSION = (.*)$'
+          - slug: detect-radio-module
+            script: scripts/update-detect_radio_module.sh
+            package: detect_radio_module
+            version_file: buildroot-external/package/detect_radio_module/detect_radio_module.mk
+            version_regex: '^DETECT_RADIO_MODULE_VERSION = (.*)$'
+          - slug: eq3-char-loop
+            script: scripts/update-eq3_char_loop.sh
+            package: eq3_char_loop
+            version_file: buildroot-external/package/eq3_char_loop/eq3_char_loop.mk
+            version_regex: '^EQ3_CHAR_LOOP_VERSION = (.*)$'
+          - slug: generic-raw-uart
+            script: scripts/update-generic_raw_uart.sh
+            package: generic_raw_uart
+            version_file: buildroot-external/package/generic_raw_uart/generic_raw_uart.mk
+            version_regex: '^GENERIC_RAW_UART_VERSION = (.*)$'
+          - slug: kernel-upstream
+            script: scripts/update-kernel-upstream.sh
+            package: linux
+            version_file: buildroot-external/configs/generic-aarch64.config
+            version_regex: '^BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="([^"]+)"$'
           - slug: tailscale
             script: scripts/update-tailscale.sh
             package: tailscale-bin
@@ -54,6 +74,41 @@ jobs:
             package: codemirror
             version_file: buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror/lib/codemirror.js
             version_regex: '^  CodeMirror\.version = "([^"]+)";$'
+          - slug: picod
+            script: scripts/update-picod.sh
+            package: picod
+            version_file: buildroot-external/package/picod/picod.mk
+            version_regex: '^PICOD_VERSION = (.*)$'
+          - slug: raspi-fanshim
+            script: scripts/update-raspi-fanshim.sh
+            package: raspi-fanshim
+            version_file: buildroot-external/package/raspi-fanshim/raspi-fanshim.mk
+            version_regex: '^RASPI_FANSHIM_VERSION = (.*)$'
+          - slug: rpi-eeprom
+            script: scripts/update-rpi-eeprom.sh
+            package: rpi-eeprom
+            version_file: buildroot-external/package/rpi-eeprom/rpi-eeprom.mk
+            version_regex: '^RPI_EEPROM_VERSION = (.*)$'
+          # - slug: rpi-kernel
+          #   script: scripts/update-rpi-kernel.sh
+          #   package: linux-rpi
+          #   version_file: buildroot-external/configs/rpi4.config
+          #   version_regex: '^BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION="https://github\.com/raspberrypi/linux/archive/([^"]+)\.tar\.gz"$'
+          # - slug: rpi-firmware
+          #   script: scripts/update-rpi-firmware.sh
+          #   package: rpi-firmware
+          #   version_file: buildroot-external/configs/rpi4.config
+          #   version_regex: '^BR2_PACKAGE_RPI_FIRMWARE_VERSION="([^"]+)"$'
+          - slug: wiringpi-odroid
+            script: scripts/update-wiringpi-odroid.sh
+            package: wiringpi-odroid
+            version_file: buildroot-external/package/wiringpi-odroid/wiringpi-odroid.mk
+            version_regex: '^WIRINGPI_ODROID_VERSION = (.*)$'
+          - slug: wiringpi-rpi
+            script: scripts/update-wiringpi-rpi.sh
+            package: wiringpi-rpi
+            version_file: buildroot-external/package/wiringpi-rpi/wiringpi-rpi.mk
+            version_regex: '^WIRINGPI_RPI_VERSION = (.*)$'
           - slug: daemonize
             script: scripts/update-daemonize.sh
             package: daemonize
