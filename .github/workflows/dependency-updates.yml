@@ -201,6 +201,8 @@ jobs:
           token: ${{ github.token }}
           branch: automation/dependency-updates-${{ matrix.slug }}
           delete-branch: true
+          author: "Jens Maus <5887769+jens-maus@users.noreply.github.com>"
+          committer: "Jens Maus <5887769+jens-maus@users.noreply.github.com>"
           commit-message: "chore: bump ${{ steps.metadata.outputs.package }} to ${{ steps.metadata.outputs.version }}"
           title: "chore: bump ${{ steps.metadata.outputs.package }} to ${{ steps.metadata.outputs.version }}"
           body: |
