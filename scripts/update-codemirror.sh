@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 # unzip featuring an enhanced version of tar's --strip-components=1
 # Usage: unzip-strip ARCHIVE [DESTDIR] [EXTRA_cp_OPTIONS]

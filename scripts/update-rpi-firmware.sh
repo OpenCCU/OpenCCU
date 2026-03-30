@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
@@ -25,4 +26,7 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update hash files
   sed -i "/rpi-firmware/d" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+else
+  echo "Failed to retrieve archive hash for ${PACKAGE_NAME}" >&2
+  exit 1
 fi

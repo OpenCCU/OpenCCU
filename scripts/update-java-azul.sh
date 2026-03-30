@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+set -o pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=utils/utils.sh
+source "${SCRIPT_DIR}/utils/utils.sh"
 
 PACKAGE_NAME="java-azul"
 DOWNLOAD_URL="https://cdn.azul.com"
@@ -76,6 +81,7 @@ if [[ -n "${1}" ]]; then
 else
   ID=$(resolve_latest_java_azul_version)
   CURRENT_ID=$(read_current_java_azul_version)
+  exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
   if [[ -n "${CURRENT_ID}" ]] && version_lt "${ID}" "${CURRENT_ID}"; then
     echo "Resolved Java ${JAVA_MAJOR_VERSION} version ${ID} is older than current ${CURRENT_ID}; skipping to avoid downgrade" >&2
     exit 0
@@ -83,27 +89,35 @@ else
 fi
 
 # function to download archive hash for certain CPU
-function updateHash() {
+function resolveHash() {
   local type=${1}
   local cpu=${2}
+  local archive_hash
 
   # define project+archive url
   PROJECT_URL="${DOWNLOAD_URL}/${type}/bin"
   ARCHIVE_URL="${PROJECT_URL}/zulu${ID}-linux_CPU.tar.gz"
 
   # download archive for hash update
-  ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL/CPU/${cpu}}" | sha256sum | awk '{ print $1 }')
-  if [[ -n "${ARCHIVE_HASH}" ]]; then
-    sed -i "/_${cpu}\.tar.gz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-    echo "sha256  ${ARCHIVE_HASH}  zulu${ID}-linux_${cpu}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+  archive_hash=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL/CPU/${cpu}}" | sha256sum | awk '{ print $1 }')
+  if [[ -n "${archive_hash}" ]]; then
+    echo "${archive_hash}"
+  else
+    echo "Failed to retrieve archive hash for ${PACKAGE_NAME} (${cpu})" >&2
+    return 1
   fi
 }
+
+HASH_X64=$(resolveHash zulu x64)
+HASH_AARCH64=$(resolveHash zulu aarch64)
+
+# update package hashes
+sed -i "/_x64\.tar.gz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+echo "sha256  ${HASH_X64}  zulu${ID}-linux_x64.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+sed -i "/_aarch64\.tar.gz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+echo "sha256  ${HASH_AARCH64}  zulu${ID}-linux_aarch64.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
 
 # update package info
 BR_PACKAGE_NAME=${PACKAGE_NAME^^}
 BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
 sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-
-# update package hashes
-updateHash zulu x64
-updateHash zulu aarch64

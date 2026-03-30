@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
@@ -22,4 +23,7 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   sed -i "s/BUILDROOT_VERSION=.*/BUILDROOT_VERSION=${ID}/g" "Makefile"
   # update package hash
   sed -i "s/BUILDROOT_SHA256=.*/BUILDROOT_SHA256=${ARCHIVE_HASH}/g" "Makefile"
+else
+  echo "Failed to retrieve archive hash for buildroot" >&2
+  exit 1
 fi

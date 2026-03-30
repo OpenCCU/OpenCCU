@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
@@ -16,22 +17,29 @@ if [[ -z "${1}" ]]; then
 fi
 
 # function to download archive hash for certain CPU
-function updateHash() {
+function resolveHash() {
   local cpu=${1}
   local archive_hash
   # download archive for hash update
   archive_hash=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL/CPU/${cpu}}" | sha256sum | awk '{ print $1 }')
   if [[ -n "${archive_hash}" ]]; then
-    sed -i "/_${cpu}\.tgz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-    echo "sha256  ${archive_hash}  tailscale_${ID}_${cpu}.tgz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+    echo "${archive_hash}"
+  else
+    echo "Failed to retrieve archive hash for ${PACKAGE_NAME} (${cpu})" >&2
+    return 1
   fi
 }
+
+HASH_AMD64=$(resolveHash amd64)
+HASH_ARM64=$(resolveHash arm64)
+
+# update package hashes
+sed -i "/_amd64\.tgz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+echo "sha256  ${HASH_AMD64}  tailscale_${ID}_amd64.tgz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+sed -i "/_arm64\.tgz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+echo "sha256  ${HASH_ARM64}  tailscale_${ID}_arm64.tgz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
 
 # update package info
 BR_PACKAGE_NAME=${PACKAGE_NAME^^}
 BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
 sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-
-# update package hashes
-updateHash amd64
-updateHash arm64

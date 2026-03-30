@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 ID=${1}
 PACKAGE_NAME="eq3_char_loop"
@@ -21,4 +22,7 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update package hash
   sed -i "$ d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+else
+  echo "Failed to retrieve archive hash for ${PACKAGE_NAME}" >&2
+  exit 1
 fi

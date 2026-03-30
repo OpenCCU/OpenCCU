@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 ID=${1}
 PACKAGE_NAME="linux"
