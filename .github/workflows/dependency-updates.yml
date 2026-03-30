@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   dependency-updates:
+    name: dependency-updates (${{ matrix.slug }})
     if: ${{ github.repository == 'OpenCCU/OpenCCU' }}
     runs-on: ubuntu-24.04
     strategy:
@@ -128,6 +129,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          persist-credentials: false
 
       - name: Run dependency update script
         run: ./${{ matrix.script }}
@@ -185,6 +188,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true' && steps.duplicate.outputs.skip != 'true'
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e  # v7.0.8
         with:
+          token: ${{ github.token }}
           branch: automation/dependency-updates-${{ matrix.slug }}
           delete-branch: true
           commit-message: "chore: bump ${{ steps.metadata.outputs.package }} to ${{ steps.metadata.outputs.version }}"
