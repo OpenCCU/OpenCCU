@@ -77,8 +77,8 @@ else
   ID=$(resolve_latest_java_azul_version)
   CURRENT_ID=$(read_current_java_azul_version)
   if [[ -n "${CURRENT_ID}" ]] && version_lt "${ID}" "${CURRENT_ID}"; then
-    echo "Resolved Java ${JAVA_MAJOR_VERSION} version ${ID} is older than current ${CURRENT_ID}; keeping current to avoid downgrade" >&2
-    ID=${CURRENT_ID}
+    echo "Resolved Java ${JAVA_MAJOR_VERSION} version ${ID} is older than current ${CURRENT_ID}; skipping to avoid downgrade" >&2
+    exit 0
   fi
 fi
 

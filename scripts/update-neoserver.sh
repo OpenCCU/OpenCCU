@@ -11,6 +11,11 @@ VERSION_URL="https://s3-eu-west-1.amazonaws.com/mediola-download/ccu3/VERSION"
 
 # download/check current version
 VERSION=${1:-$(curl -fsSL "${VERSION_URL}")}
+CURRENT_VERSION=$(sed -nE 's/^NEOSERVER_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+
+if [[ -z "${1}" ]]; then
+  exit_if_version_unchanged "${CURRENT_VERSION}" "${VERSION}" "${PACKAGE_NAME}"
+fi
 
 # download latest archive
 wget --passive-ftp -nd -t 3 -O "buildroot-external/package/${PACKAGE_NAME}/neo_server.tar.gz" ${DOWNLOAD_URL}
