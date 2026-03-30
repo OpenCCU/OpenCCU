@@ -24,6 +24,19 @@ if [[ -z "${ARCHIVE_HASH}" ]]; then
   exit 1
 fi
 
+EXPECTED_HASH_LINE="sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.xz"
+CURRENT_VERSION=$(grep -oE 'BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="[^"]+"' buildroot-external/configs/{oci_*,odroid-*,ova,generic-*,tinkerboard2}.config | sed -E 's/.*"([^"]+)"/\1/' | sort -u)
+HASH_LINE_COUNT=$(grep -Ec "^sha256[[:space:]]+[[:alnum:]]+[[:space:]]+${PACKAGE_NAME}-.*\\.tar\\.xz$" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash")
+HEADERS_HASH_LINE_COUNT=$(grep -Ec "^sha256[[:space:]]+[[:alnum:]]+[[:space:]]+${PACKAGE_NAME}-.*\\.tar\\.xz$" "buildroot-external/patches/${PACKAGE_NAME}-headers/${PACKAGE_NAME}-headers.hash")
+if [[ "${CURRENT_VERSION}" == "${ID}" ]] \
+  && grep -Fxq "${EXPECTED_HASH_LINE}" "buildroot-external/patches/${PACKAGE_NAME}/${PACKAGE_NAME}.hash" \
+  && grep -Fxq "${EXPECTED_HASH_LINE}" "buildroot-external/patches/${PACKAGE_NAME}-headers/${PACKAGE_NAME}-headers.hash" \
+  && [[ "${HASH_LINE_COUNT}" -eq 1 ]] \
+  && [[ "${HEADERS_HASH_LINE_COUNT}" -eq 1 ]]; then
+  echo "${PACKAGE_NAME}: version ${ID} is already current, no config or hash updates required"
+  exit 0
+fi
+
 # update kconfig file
 sed -i "s/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\".*\"/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\"${ID}\"/g" buildroot-external/configs/{oci_*,odroid-*,ova,generic-*,tinkerboard2}.config
 
