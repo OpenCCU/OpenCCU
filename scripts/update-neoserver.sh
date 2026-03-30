@@ -15,7 +15,7 @@ if [[ -n "${1}" ]]; then
   VERSION=${1}
 else
   VERSION=$(curl -fsSL "${VERSION_URL}") || {
-    echo "Failed to fetch version from ${VERSION_URL}" >&2
+    echo "Failed to fetch version for ${PACKAGE_NAME} from ${VERSION_URL}" >&2
     exit 1
   }
 fi
