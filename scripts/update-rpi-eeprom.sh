@@ -25,6 +25,7 @@ fi
 
 if [[ -z "${RPI_FIRMWARE_PATH}" ]]; then
   echo "Need rpi-eeprom version (pieeprom-2021-04-29.bin)"
+  echo "Usage: $0 [<rpi-eeprom-commit>] <pieeprom-YYYY-MM-DD.bin>  (or: $0 <pieeprom-YYYY-MM-DD.bin> for latest commit)"
   exit 1
 fi
 
