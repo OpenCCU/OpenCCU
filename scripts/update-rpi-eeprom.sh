@@ -2,17 +2,27 @@
 set -e
 set -o pipefail
 
-ID=${1}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=utils/utils.sh
+source "${SCRIPT_DIR}/utils/utils.sh"
+
+if [[ -n "${1}" && "${1}" =~ ^pieeprom-.*\.bin$ ]]; then
+  ID=$(resolve_latest_github_head_commit "raspberrypi" "rpi-eeprom")
+  RPI_FIRMWARE_PATH=${1}
+else
+  ID=${1:-$(resolve_latest_github_head_commit "raspberrypi" "rpi-eeprom")}
+  RPI_FIRMWARE_PATH=${2}
+fi
+
 PACKAGE_NAME="rpi-eeprom"
 PROJECT_URL="https://github.com/raspberrypi/rpi-eeprom"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
+CURRENT_ID=$(sed -nE 's/^RPI_EEPROM_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
-if [[ -z "${ID}" ]]; then
-  echo "tag name or commit sha required (see ${URL})"
-  exit 1
+if [[ -z "${1}" ]]; then
+  exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
 fi
 
-RPI_FIRMWARE_PATH=${2}
 if [[ -z "${RPI_FIRMWARE_PATH}" ]]; then
   echo "Need rpi-eeprom version (pieeprom-2021-04-29.bin)"
   exit 1
