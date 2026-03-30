@@ -89,7 +89,7 @@ else
 fi
 
 # function to download archive hash for certain CPU
-function resolveHash() {
+function resolve_hash() {
   local type=${1}
   local cpu=${2}
   local archive_hash
@@ -112,8 +112,8 @@ function resolveHash() {
   fi
 }
 
-HASH_X64=$(resolveHash zulu x64)
-HASH_AARCH64=$(resolveHash zulu aarch64)
+HASH_X64=$(resolve_hash zulu x64)
+HASH_AARCH64=$(resolve_hash zulu aarch64)
 
 # update package hashes
 sed -i "/_x64\.tar.gz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"

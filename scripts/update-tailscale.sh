@@ -17,7 +17,7 @@ if [[ -z "${1}" ]]; then
 fi
 
 # function to download archive hash for certain CPU
-function resolveHash() {
+function resolve_hash() {
   local cpu=${1}
   local archive_hash
   # download archive for hash update
@@ -34,8 +34,8 @@ function resolveHash() {
   fi
 }
 
-HASH_AMD64=$(resolveHash amd64)
-HASH_ARM64=$(resolveHash arm64)
+HASH_AMD64=$(resolve_hash amd64)
+HASH_ARM64=$(resolve_hash arm64)
 
 # update package hashes
 sed -i "/_amd64\.tgz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"

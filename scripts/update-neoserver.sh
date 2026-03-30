@@ -14,7 +14,10 @@ VERSION_URL="https://s3-eu-west-1.amazonaws.com/mediola-download/ccu3/VERSION"
 if [[ -n "${1}" ]]; then
   VERSION=${1}
 else
-  VERSION=$(curl -fsSL "${VERSION_URL}")
+  VERSION=$(curl -fsSL "${VERSION_URL}") || {
+    echo "Failed to fetch version from ${VERSION_URL}" >&2
+    exit 1
+  }
 fi
 CURRENT_VERSION=$(sed -nE 's/^NEOSERVER_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
