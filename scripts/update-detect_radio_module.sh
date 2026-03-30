@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_head_commit "alexreinert" "piVCCU")}
+ID=${1:-$(resolve_latest_github_head_commit_for_path "alexreinert" "piVCCU" "detect_radio_module")}
 PACKAGE_NAME="detect_radio_module"
 PROJECT_URL="https://github.com/alexreinert/piVCCU"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"

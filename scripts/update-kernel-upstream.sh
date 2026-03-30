@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "torvalds" "linux" '^[vV]6\.[0-9]+(\.[0-9]+)?$')")}
+ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "torvalds" "linux" '^[vV]6\.12\.[0-9]+$')")}
 PACKAGE_NAME="linux"
 PROJECT_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x"
 #ARCHIVE_URL="${PROJECT_URL}/${PACKAGE_NAME}-${ID}.tar.xz"

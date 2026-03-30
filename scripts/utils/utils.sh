@@ -44,6 +44,24 @@ function resolve_latest_github_head_commit() {
   echo "${commit}"
 }
 
+function resolve_latest_github_head_commit_for_path() {
+  local owner=${1}
+  local repo=${2}
+  local path=${3}
+  local commit
+
+  commit=$(wget --quiet -O - "https://api.github.com/repos/${owner}/${repo}/commits?path=${path}&per_page=1" \
+    | grep -m1 '"sha"' \
+    | sed -E 's/.*"sha": "([^"]+)".*/\1/')
+
+  if [[ -z "${commit}" ]]; then
+    echo "Failed to resolve latest commit for path ${path} in ${owner}/${repo}" >&2
+    exit 1
+  fi
+
+  echo "${commit}"
+}
+
 function exit_if_version_unchanged() {
   local current_version=${1}
   local resolved_version=${2}
