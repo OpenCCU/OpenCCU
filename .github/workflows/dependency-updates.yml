@@ -57,7 +57,7 @@ jobs:
           - slug: kernel-upstream
             script: scripts/update-kernel-upstream.sh
             package: linux
-            version_file: buildroot-external/configs/generic-aarch64.config
+            version_file: buildroot-external/configs/ova.config
             version_regex: '^BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="([^"]+)"$'
           - slug: tailscale
             script: scripts/update-tailscale.sh
