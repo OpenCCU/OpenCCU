@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck source=/dev/null
 set -e
 set -o pipefail
 

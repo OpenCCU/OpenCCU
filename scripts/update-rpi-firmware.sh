@@ -1,9 +1,9 @@
 #!/bin/bash
+# shellcheck source=/dev/null
 set -e
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
 ID=${1:-$(resolve_latest_github_stable_tag "raspberrypi" "firmware" '^[0-9]+(\.[0-9]+)*$')}

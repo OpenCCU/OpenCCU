@@ -1,9 +1,9 @@
 #!/bin/bash
+# shellcheck source=/dev/null
 set -e
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=utils/utils.sh
 source "${SCRIPT_DIR}/utils/utils.sh"
 
 if [[ -n "${1}" && "${1}" =~ ^pieeprom-.*\.bin$ ]]; then
