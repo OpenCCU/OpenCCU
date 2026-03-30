@@ -9,6 +9,11 @@ ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "qemu" "qemu" '^[vV
 PACKAGE_NAME="qemu-guest-agent"
 PROJECT_URL="https://download.qemu.org"
 ARCHIVE_URL="${PROJECT_URL}/qemu-${ID}.tar.xz"
+CURRENT_ID=$(sed -nE 's/^QEMU_GUEST_AGENT_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+
+if [[ -z "${1}" ]]; then
+  exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
+fi
 
 # download archive for hash update
 ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')

@@ -9,6 +9,11 @@ ID=${1:-$(resolve_latest_github_stable_tag "buildroot" "buildroot" '^[0-9]+(\.[0
 #PACKAGE_NAME="buildroot"
 PROJECT_URL="https://github.com/buildroot/buildroot"
 ARCHIVE_URL="${PROJECT_URL}/archive/refs/tags/${ID}.tar.gz"
+CURRENT_ID=$(sed -nE 's/^BUILDROOT_VERSION=(.*)$/\1/p' "Makefile" | head -n1)
+
+if [[ -z "${1}" ]]; then
+  exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "buildroot"
+fi
 
 # download archive for hash update
 ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')

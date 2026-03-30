@@ -9,6 +9,11 @@ ID=${1:-$(resolve_latest_github_stable_tag "bmc" "daemonize" '^release-[0-9]+(\.
 PACKAGE_NAME="daemonize"
 PROJECT_URL="https://github.com/bmc/daemonize"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
+CURRENT_ID=$(sed -nE 's/^DAEMONIZE_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+
+if [[ -z "${1}" ]]; then
+  exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
+fi
 
 # download archive for hash update
 ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')

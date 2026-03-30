@@ -42,3 +42,14 @@ function resolve_latest_github_head_commit() {
 
   echo "${commit}"
 }
+
+function exit_if_version_unchanged() {
+  local current_version=${1}
+  local resolved_version=${2}
+  local component_name=${3}
+
+  if [[ -n "${current_version}" && "${current_version}" == "${resolved_version}" ]]; then
+    echo "${component_name}: version ${resolved_version} is already current, skipping archive download and hash update"
+    exit 0
+  fi
+}

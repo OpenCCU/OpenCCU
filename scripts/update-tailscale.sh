@@ -9,6 +9,11 @@ ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "tailscale" "tailsc
 PACKAGE_NAME="tailscale-bin"
 PROJECT_URL="https://pkgs.tailscale.com/stable"
 ARCHIVE_URL="${PROJECT_URL}/tailscale_${ID}_CPU.tgz"
+CURRENT_ID=$(sed -nE 's/^TAILSCALE_BIN_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+
+if [[ -z "${1}" ]]; then
+  exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
+fi
 
 # function to download archive hash for certain CPU
 function updateHash() {
