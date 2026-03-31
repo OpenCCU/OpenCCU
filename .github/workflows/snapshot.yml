@@ -29,8 +29,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          fetch-depth: 0
       - id: commit-check
-        run: echo "has-commits=$(git --no-pager log --pretty='format:%an' --since='24 hours ago' | grep -v github-actions | wc -l)" >> $GITHUB_OUTPUT
+        run: |
+          REF=$(git log --no-merges --grep='snapshot bump \[' --pretty='format:%H' -1)
+          COUNT=$(git --no-pager log --no-merges --pretty='format:%s' ${REF:+$REF..}HEAD | grep -v -e '\(snapshot\|release\) bump \[' | wc -l)
+          echo "has-commits=$COUNT" >> "$GITHUB_OUTPUT"
     outputs:
       has-commits: ${{ steps.commit-check.outputs.has-commits }}
 
