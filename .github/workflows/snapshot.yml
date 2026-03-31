@@ -33,8 +33,8 @@ jobs:
           fetch-depth: 0
       - id: commit-check
         run: |
-          REF=$(git --no-pager log --no-merges --grep='snapshot bump \[' --pretty='format:%H' -1)
-          COUNT=$(git --no-pager log --no-merges --pretty='format:%s' ${REF:+$REF..}HEAD | grep -v -e '\(snapshot\|release\) bump \[' | wc -l)
+          REF=$(git --no-pager log --no-merges --grep='snapshot bump \[' --pretty='tformat:%H' -1)
+          COUNT=$(git --no-pager log --no-merges --pretty='tformat:%s' ${REF:+$REF..}HEAD | grep -v -e '\(snapshot\|release\) bump \[' | wc -l)
           echo "has-commits=$COUNT" >> "$GITHUB_OUTPUT"
     outputs:
       has-commits: ${{ steps.commit-check.outputs.has-commits }}
