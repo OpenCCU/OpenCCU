@@ -19,11 +19,6 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_RPI
 	help
 	  For the RaspberryPi
 
-config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
-	bool "ASUS Tinkerboard"
-	help
-	  For the ASUS Tinkerboard
-
 config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C4
 	bool "ODROID-C4"
 	help
@@ -43,6 +38,16 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW
 	bool "HomeAssistant Yellow"
 	help
 	  For the HomeAssistant Yellow
+
+config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
+	bool "ASUS Tinkerboard/S"
+	help
+	  For the ASUS Tinkerboard/S
+
+config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER2
+	bool "ASUS Tinkerboard2/2S"
+	help
+	  For the ASUS Tinkerboard2/2S
 
 endchoice
 

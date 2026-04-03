@@ -1,0 +1,13 @@
+--- occu/WebUI/www/rega/esp/side.inc.orig
++++ occu/WebUI/www/rega/esp/side.inc
+@@ -504,9 +504,7 @@
+                   if (showGenericElem) {
+                     Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="A SelectBox" size="6" value="'#iV#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
+                     Write( sUnit );
+-                    if (oDP.HSSID().Find("ACTIVE_PROFILE") == -1) {
+-                      Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
+-                    }
++                    Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
+                   }
+ 
+                 } else {

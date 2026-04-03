@@ -1,10 +1,9 @@
 ---
 name: OpenCCU
-version: 3.85.7.20251129
+version: 3.87.6.20260313
 slug: openccu
 image: ghcr.io/openccu/openccu
 arch:
-  - armv7
   - aarch64
   - amd64
 description: HomeMatic/homematicIP CCU central based on OpenCCU

@@ -1,0 +1,509 @@
+# OpenCCU-LTS Release build
+# yamllint disable rule:truthy
+---
+name: Release Build (LTS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_date:
+        description: 'Release date override (YYYYMMDD)'
+        required: true
+        type: string
+        default: 'YYYYMMDD'
+      previous_tag:
+        description: 'Previous LTS version tag (3.X.Y.YYYYMMDD)'
+        required: true
+        type: string
+      test_workflow:
+        description: 'Test workflow (dry-run)?'
+        required: true
+        type: 'boolean'
+        default: 'false'
+
+# default read-only permission
+permissions:
+  contents: read
+
+jobs:
+  release_draft:
+    if: github.ref == 'refs/heads/LTS'
+    permissions:
+      contents: read
+      pull-requests: read  # mikepenz/release-changelog-builder-action
+    name: Release draft
+    runs-on: ubuntu-24.04
+    outputs:
+      occu_version: ${{ steps.env.outputs.occu_version }}
+      version: ${{ steps.env.outputs.version }}
+      date: ${{ steps.env.outputs.date }}
+      tag: ${{ steps.env.outputs.tag }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        id: env
+        shell: bash
+        run: |
+          if [[ "${{ github.event.inputs.release_date }}" == "YYYYMMDD" ]]; then
+            BUILD_DATE=$(date +%Y%m%d)
+          else
+            BUILD_DATE=${{ github.event.inputs.release_date }}
+          fi
+          OCCU_VERSION=$(grep 'OCCU_VERSION =' buildroot-external/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)
+          echo "occu_version=${OCCU_VERSION}" >> $GITHUB_OUTPUT
+          echo "version=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
+          echo "date=${BUILD_DATE}" >> $GITHUB_OUTPUT
+          if [[ "${{ github.event.inputs.test_workflow }}" == "true" ]]; then
+            echo "tag=${OCCU_VERSION}.${BUILD_DATE}-draft" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate changelog
+        id: changelog_final
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          FROM_TAG: ${{ github.event.inputs.previous_tag }}
+          TO_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.error
+          import urllib.request
+          from datetime import datetime
+          from pathlib import Path
+
+          def parse_regex_flags(flags):
+            value = 0
+            if "i" in flags:
+              value |= re.IGNORECASE
+            if "m" in flags:
+              value |= re.MULTILINE
+            if "s" in flags:
+              value |= re.DOTALL
+            return value
+
+          def get_pr_property(pr, on_property):
+            if on_property == "title":
+              return pr.get("title", "")
+            if on_property == "body":
+              return pr.get("body", "") or ""
+            if on_property == "status":
+              return pr.get("state", "")
+            return ""
+
+          def matches_category(pr, category):
+            labels = {label.get("name") for label in pr.get("labels", []) if label.get("name")}
+            include_labels = set(category.get("labels", []))
+            exclude_labels = set(category.get("exclude_labels", []))
+            if labels & exclude_labels:
+              return False
+
+            exhaustive = bool(category.get("exhaustive", False))
+            if include_labels:
+              if exhaustive and not include_labels.issubset(labels):
+                return False
+              if not exhaustive and not (labels & include_labels):
+                return False
+
+            rules = category.get("rules", [])
+            if rules:
+              exhaustive_rules = bool(category.get("exhaustive_rules", exhaustive))
+              rule_matches = []
+              for rule in rules:
+                text = get_pr_property(pr, rule.get("on_property", "body"))
+                pattern = rule.get("pattern", "")
+                flags = parse_regex_flags(rule.get("flags", "gu"))
+                rule_matches.append(bool(re.search(pattern, text, flags)))
+              if exhaustive_rules and not all(rule_matches):
+                return False
+              if not exhaustive_rules and not any(rule_matches):
+                return False
+            elif not include_labels:
+              return False
+
+            return True
+
+          def find_category_title(pr, categories):
+            for category in categories:
+              if matches_category(pr, category):
+                return category.get("title")
+            for category in categories:
+              if "Other Changes" in category.get("title", ""):
+                return category.get("title")
+            return "#### 🔄 Other Changes"
+
+          def parse_iso_datetime(value):
+            if not value:
+              return datetime.min
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+          def should_exclude_title(title):
+            return bool(re.match(r"^(Backport to LTS(?:\s|$)|backport/batch LTS(?:\s|$))", title, re.IGNORECASE))
+
+          def should_exclude_subject(subject, markers):
+            for marker in markers:
+              if subject.startswith(marker):
+                return True
+              if marker.startswith("from ") and f" {marker}" in subject:
+                return True
+            return False
+
+          def gh_json(path):
+            req = urllib.request.Request(
+              f"https://api.github.com{path}",
+              headers={
+                "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+              },
+            )
+            with urllib.request.urlopen(req) as resp:
+              return json.load(resp)
+
+          config = json.loads(Path(".github/release-changelog-config-lts.json").read_text(encoding="utf-8"))
+          categories = config.get("categories", [])
+          ignore_labels = set(config.get("ignore_labels", []))
+          exclude_merge_markers = tuple(config.get("exclude_merge_branches", []))
+          empty_template = config.get("empty_template", "- No changes")
+
+          repo = os.environ["REPO"]
+          from_tag = os.environ["FROM_TAG"]
+          to_sha = os.environ["TO_SHA"]
+
+          candidate_prs = set()
+          try:
+            log = subprocess.check_output(
+              ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_tag}..{to_sha}"],
+              text=True,
+            )
+          except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+              f"Unable to collect commit subjects for range {from_tag}..{to_sha}: {err}"
+            ) from err
+          for subject in log.splitlines():
+              if exclude_merge_markers and should_exclude_subject(subject, exclude_merge_markers):
+                  continue
+              for match in re.findall(r"\(#(\d+)\)", subject):
+                  candidate_prs.add(int(match))
+
+          entries = []
+          for pr_number in sorted(candidate_prs):
+              try:
+                pr = gh_json(f"/repos/{repo}/pulls/{pr_number}")
+              except urllib.error.HTTPError as err:
+                print(f"warning: unable to fetch PR #{pr_number}: {err}", flush=True)
+                continue
+              if pr.get("state") != "closed" or not pr.get("merged_at"):
+                  continue
+              labels = {label.get("name") for label in pr.get("labels", []) if label.get("name")}
+              if labels & ignore_labels:
+                continue
+              title = pr["title"].replace("\n", " ").strip()
+              if should_exclude_title(title):
+                continue
+              author = pr.get("user", {}).get("login", "github-actions")
+              section_title = find_category_title(pr, categories)
+              entries.append({
+                "section": section_title,
+                "line": f"- {title} (#{pr_number}, @{author})",
+                "merged_at": parse_iso_datetime(pr.get("merged_at")),
+              })
+
+          final_changelog = empty_template
+          if entries:
+              reverse = str(config.get("sort", {}).get("order", "DESC")).upper() != "ASC"
+              entries.sort(key=lambda item: item["merged_at"], reverse=reverse)
+              additions_by_section = {}
+              for item in entries:
+                additions_by_section.setdefault(item["section"], []).append(item["line"])
+
+              changelog_lines = []
+              for category in categories:
+                title = category.get("title")
+                section_entries = additions_by_section.get(title, [])
+                if not section_entries:
+                  continue
+                if changelog_lines:
+                  changelog_lines.append("")
+                changelog_lines.append(title)
+                changelog_lines.append("")
+                changelog_lines.extend(section_entries)
+
+              if changelog_lines:
+                final_changelog = "\n".join(changelog_lines)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write("changelog<<EOF\n")
+              fh.write(final_changelog)
+              fh.write("\nEOF\n")
+          PY
+
+      - name: Generate release notes
+        shell: bash
+        run: |
+          export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
+          ${{ steps.changelog_final.outputs.changelog }}
+          EOF
+          )"
+          export VERSION=${{ steps.env.outputs.version }}
+          export PREVIOUS_TAG=${{ github.event.inputs.previous_tag }}
+          envsubst <.github/release-template-lts.md >/tmp/release-template.md
+
+      - name: Generate ChangeLog summary
+        shell: bash
+        run: |
+          CHANGE_ITEMS=$(cat <<'EOF' | sed -n 's/^[[:space:]]*[-*][[:space:]]\+//p' | sed 's/@Copilot/@jens-maus/g'
+          ${{ steps.changelog_final.outputs.changelog }}
+          EOF
+          )
+
+          mkdir -p /tmp/changelog-summary
+
+          generate_summary() {
+            local lang="$1"
+            local outfile="$2"
+            local label_fallback
+            case "${lang}" in
+              de)
+                label_fallback='Siehe Release-Seite f&uuml;r den vollst&auml;ndigen Changelog.'
+                ;;
+              *)
+                label_fallback='See release page for the full changelog.'
+                ;;
+            esac
+            {
+              echo '<ul>'
+              if [[ -n "${CHANGE_ITEMS}" ]]; then
+                printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
+              else
+                echo "<li>${label_fallback}</li>"
+              fi
+              echo '</ul>'
+              echo '<hr/>'
+            } >"${outfile}"
+          }
+
+          generate_summary en /tmp/changelog-summary/changelog-summary.en.html
+          generate_summary de /tmp/changelog-summary/changelog-summary.de.html
+
+      - name: Upload release-template.md artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: /tmp/release-template.md
+          name: release-template.unpatched.md
+
+      - name: Upload ChangeLog summary artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: /tmp/changelog-summary/
+          name: changelog-summary
+
+  build:
+    permissions:
+      contents: write      # actions/upload-artifact, shogo82148/actions-upload-release-asset
+      id-token: write      # actions/attest-build-provenance
+      attestations: write  # actions/attest-build-provenance
+    name: Release build [${{ matrix.platform }}]
+    if: github.repository == 'OpenCCU/OpenCCU' && github.ref == 'refs/heads/LTS'
+    runs-on: self-hosted
+    timeout-minutes: 300
+    needs: release_draft
+    outputs:
+      build_datetime: ${{ steps.env.outputs.build_datetime }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [rpi3]  # rpi3/ccu3 only
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+
+      - name: Install Dependencies
+        run: |
+          if ! dpkg-query -l wget bc cpio rsync zip python3 file >/dev/null 2>&1; then
+            apt update
+            apt install -y --no-install-recommends wget bc cpio rsync zip python3 file
+          fi
+          if ! getent group | grep -q ^builder:; then groupadd -g 48 builder; fi
+          if ! getent passwd | grep -q ^builder:; then useradd -m -u 1003 -g 48 -G sudo builder; fi
+          if ! grep -q ^builder /etc/sudoers; then echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" >>/etc/sudoers; fi
+          chown -R builder:builder /home/builder
+
+      - name: Setup Environment
+        id: env
+        run: |
+          JLEVEL=0
+          if [[ -f /sys/fs/cgroup/cpu.max ]]; then # cgroups v2
+            CPU_QUOTA=$(cut -d ' ' -f1 /sys/fs/cgroup/cpu.max)
+            if [[ "${CPU_QUOTA}" != "max" ]]; then
+              CPU_PERIOD=$(cut -d ' ' -f2 /sys/fs/cgroup/cpu.max)
+              JLEVEL=$((CPU_QUOTA / CPU_PERIOD + 1))
+            fi
+          elif [[ -f /sys/fs/cgroup/cpu/cpu.cfs_quota_us ]]; then # cgroups v1
+            CPU_QUOTA=$(cat /sys/fs/cgroup/cpu/cpu.cfs_quota_us)
+            if [[ "${CPU_QUOTA}" != "-1" ]]; then
+              CPU_PERIOD=$(cat /sys/fs/cgroup/cpu/cpu.cfs_period_us)
+              JLEVEL=$((CPU_QUOTA / CPU_PERIOD + 1))
+            fi
+          fi
+          echo "JLEVEL=${JLEVEL}" >> $GITHUB_ENV
+          if [[ "${{ github.event.inputs.test_workflow }}" == "true" ]]; then
+            echo "FAKE_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "FAKE_BUILD=" >> $GITHUB_ENV
+          fi
+          echo "build_datetime=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_OUTPUT
+
+      - name: Download ChangeLog summary artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        with:
+          name: changelog-summary
+          path: /tmp/changelog-summary
+
+      - name: Inject ChangeLog into EULA files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          summary_dir = Path("/tmp/changelog-summary")
+          begin_marker = b"<!-- OPENCCU_CHANGELOG_BEGIN -->"
+          end_marker   = b"<!-- OPENCCU_CHANGELOG_END -->"
+
+          def get_fragment(eula_path: Path) -> bytes:
+              """Return the locale-appropriate summary fragment, falling back to English."""
+              # EULA.de, EULA.de_nightly → locale "de"; EULA.en, EULA.en_nightly → locale "en"
+              suffix = eula_path.name.split(".", 1)[1] if "." in eula_path.name else "en"
+              locale = suffix.split("_")[0]
+              locale_file = summary_dir / f"changelog-summary.{locale}.html"
+              if locale_file.exists():
+                  return locale_file.read_bytes()
+              # Fallback to English
+              return (summary_dir / "changelog-summary.en.html").read_bytes()
+
+          for eula in Path("release/updatepkg").glob("*/EULA.*"):
+            content = eula.read_bytes()
+            fragment = get_fragment(eula)
+            if begin_marker in content and end_marker in content:
+              # Replace only the content between the existing markers, in-place.
+              start = content.index(begin_marker) + len(begin_marker)
+              end   = content.index(end_marker)
+              content = content[:start] + b"\n" + fragment + b"\n" + content[end:]
+              eula.write_bytes(content)
+            else:
+              # Fallback for files that don't yet carry the markers.
+              marker = b"</body>"
+              if marker not in content:
+                raise RuntimeError(
+                  f"Could not find OPENCCU_CHANGELOG markers or </body> in {eula}"
+                )
+              section = begin_marker + b"\n" + fragment + b"\n" + end_marker
+              eula.write_bytes(content.replace(marker, section + b"\n" + marker, 1))
+          PY
+
+      # - name: remote debug tmate session
+      #   uses: mxschmitt/action-tmate@v1
+      #   if: matrix.platform == 'ova'
+
+      # major build step
+      - name: Build
+        timeout-minutes: 300
+        run: |
+          rm -rf release/OpenCCU-* buildroot-????.*
+          sudo chown -R builder:builder "$GITHUB_WORKSPACE"
+          sudo -H -E -u builder nice -n 19 make DATE=${{ needs.release_draft.outputs.date }} BR2_DL_DIR=/mnt/download BR2_CCACHE_DIR=/mnt/ccache/${{ matrix.platform }} BR2_JLEVEL=${{ env.JLEVEL }} PRODUCT=${{ matrix.platform }} clean-all release
+
+      # cleanup
+      - name: Cleanup
+        run: |
+          sudo -H -E -u builder make clean-all
+          rm -rf release/*.img* buildroot-????.*
+
+      #######################
+      # artifact upload
+      #
+      - name: Upload build archive artifact [rpi3/ccu3]
+        id: upload-build
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
+          path: |
+            release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.zip
+            release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-ccu3.tgz
+
+      - name: Attest build archive artifact provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4
+        with:
+          subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
+          subject-digest: sha256:${{ steps.upload-build.outputs.artifact-digest }}
+        continue-on-error: true
+
+      - name: Upload manifest artifact
+        id: upload-manifest
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+          name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+
+      - name: Attest manifest artifact provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32  # v4
+        with:
+          subject-name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
+          subject-digest: sha256:${{ steps.upload-manifest.outputs.artifact-digest }}
+        continue-on-error: true
+
+  ##########################################
+  # Update checksums in release-template artifact
+  update-checksums:
+    name: Update checksums
+    runs-on: ubuntu-24.04
+    needs: [release_draft, build]
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+
+      # download all artifact files
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+
+      - name: Patch release draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          PREFIX="OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-"
+          for f in */*.mf; do
+            while read -r line; do
+              ARCHIVE=$(echo "${line}" | awk '{print $3}')
+              CHECKSUM=$(echo "${line}" | awk '{print $2}')
+              BASENAME=${ARCHIVE##*/}
+              if [[ "${BASENAME}" != ${PREFIX}* || -z "${CHECKSUM}" ]]; then
+                continue
+              fi
+              NEEDLE=${BASENAME#${PREFIX}}
+              ESCAPED_NEEDLE=$(printf '%s\n' "${NEEDLE}" | sed -e 's/[][\\/.*^$+?|(){}-]/\\&/g')
+              if ! grep -qF "XSHA${NEEDLE}X" release-template.unpatched.md/release-template.md; then
+                # Some manifest entries (e.g. *.img) don't have release-template placeholders.
+                continue
+              fi
+              sed -i "s|XSHA${ESCAPED_NEEDLE}X|${CHECKSUM}|" release-template.unpatched.md/release-template.md
+            done < "${f}"
+          done
+
+      - name: Upload release-template.md artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        with:
+          path: release-template.unpatched.md/release-template.md
+          name: release-template.md

@@ -1648,7 +1648,7 @@
 -
 --- buildroot/package/openvmtools/0013-Properly-check-authorization-on-incoming-guestOps-re.patch.orig
 +++ buildroot/package/openvmtools/0013-Properly-check-authorization-on-incoming-guestOps-re.patch
-@@ -1,40 +0,0 @@
+@@ -1,41 +0,0 @@
 -From bb9f9ffbb151397545f921cee5b6a4933c6eea80 Mon Sep 17 00:00:00 2001
 -Message-Id: <bb9f9ffbb151397545f921cee5b6a4933c6eea80.1666169374.git.stefan@agner.ch>
 -From: John Wolfe <jwolfe@vmware.com>
@@ -1658,6 +1658,7 @@
 -Fix public pipe request checks.  Only a SessionRequest type should
 -be accepted on the public pipe.
 -
+-CVE: CVE-2022-31676
 -Upstream: https://github.com/vmware/open-vm-tools/blob/CVE-2022-31676.patch/1205-Properly-check-authorization-on-incoming-guestOps-re.patch
 -Signed-off-by: Stefan Agner <stefan@agner.ch>
 ----
@@ -1691,7 +1692,7 @@
 -
 --- buildroot/package/openvmtools/0014-CVE-2025-22247-1100-1225-VGAuth-updates.patch.orig
 +++ buildroot/package/openvmtools/0014-CVE-2025-22247-1100-1225-VGAuth-updates.patch
-@@ -1,382 +0,0 @@
+@@ -1,383 +0,0 @@
 -From 2a2607c6bd94ae22a937fd2adde7472d9a6d506c Mon Sep 17 00:00:00 2001
 -From: John Wolfe <john.wolfe@broadcom.com>
 -Date: Mon, 5 May 2025 16:10:07 -0700
@@ -1713,6 +1714,7 @@
 -patch set to allow the patch to be easily applied to previous
 -open-vm-tools source releases.
 -
+-CVE: CVE-2025-22247
 -Upstream: https://github.com/vmware/blob/CVE-2025-22247.patch/CVE-2025-22247-1100-1225-VGAuth-updates.patch
 -Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
 ----

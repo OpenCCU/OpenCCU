@@ -1,4 +1,0 @@
-config BR2_PACKAGE_BLUETOOTH_TINKER
-	bool "bluetooth-tinker"
-	help
-	  bluetooth support files for ASUS Tinkerboard

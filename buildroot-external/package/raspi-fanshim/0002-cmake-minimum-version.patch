@@ -1,0 +1,26 @@
+CMakeLists.txt: update cmake_minimum_required to VERSION 3.5
+
+Compatibility with CMake < 3.5 has been removed from CMake 4.0.
+Update cmake_minimum_required to VERSION 3.5 in both the main
+project and the raspi-apa102 submodule CMakeLists.txt.
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+ include(GenerateExportHeader)
+ include(GNUInstallDirs)
+ 
+--- a/dependencies/raspi-apa102/CMakeLists.txt
++++ b/dependencies/raspi-apa102/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+ include(GenerateExportHeader)
+ include(GNUInstallDirs)
+ 

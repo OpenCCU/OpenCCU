@@ -68,11 +68,6 @@ identify_host() {
         *'Pi 3 Model A'*)         HM_HOST="rpi3" ;; # Raspberry Pi 3 Model A(+)
         *'Pi Zero 2 W'*)          HM_HOST="rpi3" ;; # Raspberry Pi Zero 2 W
         *'Pi Compute Module 3'*)  HM_HOST="rpi3" ;; # Raspberry Pi Compute Module 3
-        *'Pi 2 Model B'*)         HM_HOST="rpi2" ;; # Raspberry Pi 2 Model B
-        *'Pi Compute Module 2'*)  HM_HOST="rpi2" ;; # Raspberry Pi Compute Module 2
-        *'Pi Compute Module')     HM_HOST="rpi1" ;; # Raspberry Pi Compute Module 1
-        *'Pi Model B'*)           HM_HOST="rpi1" ;; # Raspberry Pi Model B/B+
-        *'Pi Zero'|*'Pi Zero W'*) HM_HOST="rpi0" ;; # Raspberry Pi Zero / Zero W
 
         # No know RaspberryPi identified, fallback to rpi3
         *)
@@ -109,16 +104,6 @@ identify_host() {
       sysctl -q vm.min_free_kbytes=16384
     ;;
 
-    # ASUS Tinkerboard/TinkerboardS platform
-    tinkerboard)
-      HM_HOST="tinkerboard"
-
-      # setup Tinkerboard specific settings
-      HM_LED_GREEN="/sys/class/leds/led-0"
-      HM_LED_RED="/sys/class/leds/led-2"
-      HM_LED_YELLOW="/sys/class/leds/led-1"
-    ;;
-
     # ODROID platform
     odroid-*)
       HM_HOST="odroid" # generic
@@ -143,6 +128,16 @@ identify_host() {
       HM_LED_GREEN="/sys/class/leds/blue:status"
       HM_LED_RED=""
       HM_LED_YELLOW=""
+    ;;
+
+    # ASUS Tinkerboard2/2S platform
+    tinkerboard2)
+      HM_HOST="tinkerboard2"
+
+      # setup Tinkerboard specific settings
+      HM_LED_GREEN="/sys/class/leds/green:"
+      HM_LED_RED="/sys/class/leds/red:"
+      HM_LED_YELLOW="/sys/class/leds/yellow:"
     ;;
 
     # OCI platform
