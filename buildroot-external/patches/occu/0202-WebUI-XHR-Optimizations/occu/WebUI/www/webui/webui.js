@@ -25239,7 +25239,6 @@ HeaderBar = new function()
       evalScripts: true,
       asynchronous: true,
       onComplete: function() { if (cb) { cb(); } },
-      onFailure:  function() { if (cb) { cb(); } },
       onException:function() { if (cb) { cb(); } }
     });
   };
@@ -25249,7 +25248,7 @@ HeaderBar = new function()
 
     var request = jQuery.ajax({
       url: "/ise/htm/header.htm",
-     dataType: "html",
+      dataType: "html",
       cache: false,
       context: document.body
     });
@@ -32826,7 +32825,7 @@ isePropEditorRow.prototype = {
         if (this.id == -1) {
           opts = {
             postBody: ReGa.encode(pb), 
-            asynchronous: false,
+            asynchronous: true,
             onComplete: function(resp) {
               newName = resp.responseText.replace(/[\r\n\t]/g, "");
               iseRooms.CreateRoomRetId(newName, t.baseId);
@@ -32844,7 +32843,7 @@ isePropEditorRow.prototype = {
         if (this.id == -1) {
           opts = {
             postBody: ReGa.encode(pb), 
-            asynchronous: false,
+            asynchronous: true,
             onComplete: function(resp) {
               newName = resp.responseText.replace(/[\r\n\t]/g, "");
               iseFunctions.CreateFunctionRetId(newName, t.baseId);
