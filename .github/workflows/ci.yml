@@ -412,7 +412,7 @@ jobs:
           export CCU_NETWORK_INTERFACE="none"
           export CCU_NETWORK_SUBNET="none"
           sudo mknod /dev/eq3loop c 239 0 # fake /dev/eq3loop
-          sudo -E bash -x timeout 300 ./scripts/install-docker.sh
+          sudo -E timeout 300 bash -x ./scripts/install-docker.sh
 
       - name: Test container startup+stop
         if: github.event.inputs.full_build == 'true'
@@ -444,8 +444,9 @@ jobs:
           name: OpenCCU-debug_output-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}.tgz
 
       - name: Remove/Cleanup container environment
+        if: always()
         run: |
-          sudo -E ./scripts/install-docker.sh uninstall
+          sudo -E timeout 300 ./scripts/install-docker.sh uninstall
           docker volume rm ccu_data
           docker image ls -a
           docker image rm ${{ env.CCU_OCI_REPO }}:${{ env.CCU_OCI_TAG }}
