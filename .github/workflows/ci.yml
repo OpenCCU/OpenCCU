@@ -446,8 +446,8 @@ jobs:
       - name: Remove/Cleanup container environment
         if: always()
         run: |
-          sudo -E timeout 300 ./scripts/install-docker.sh uninstall
-          docker volume rm ccu_data
+          #sudo -E timeout 300 ./scripts/install-docker.sh uninstall
+          #docker volume rm ccu_data
           docker image ls -a
           docker image rm ${{ env.CCU_OCI_REPO }}:${{ env.CCU_OCI_TAG }}
 
