@@ -1,0 +1,15 @@
+config BR2_PACKAGE_RPI_USERLAND
+	bool "rpi-userland"
+	depends on BR2_arm || BR2_aarch64
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  Raspberry Pi VideoCore userland utilities including vcgencmd
+	  (VideoCore general command tool) and tvservice (HDMI/display
+	  control tool).
+
+	  https://github.com/raspberrypi/userland
+
+comment "rpi-userland needs a glibc toolchain w/ C++"
+	depends on BR2_arm || BR2_aarch64
+	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_INSTALL_LIBSTDCPP
