@@ -1,10 +1,9 @@
 ---
 name: OpenCCU (Proxy)
-version: 0.4.3
+version: 0.5.0
 slug: openccu_proxy
 image: ghcr.io/openccu/openccu-proxy
 arch:
-  - armv7
   - aarch64
   - amd64
 description: Proxy to externally running OpenCCU
