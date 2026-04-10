@@ -184,13 +184,17 @@ jobs:
         run: |
           shopt -s nullglob
           package_patch_files=(buildroot-external/package/"${PACKAGE}"/*.patch)
-          if [[ ${#package_patch_files[@]} -eq 0 && ! -d "buildroot-external/patches/${PACKAGE}" ]]; then
+          global_patch_files=(buildroot-external/patches/"${PACKAGE}"/*.patch)
+          if [[ ${#package_patch_files[@]} -eq 0 && ${#global_patch_files[@]} -eq 0 ]]; then
             echo "No package/global patch directories found for '${PACKAGE}', skipping patch apply check."
             exit 0
           fi
 
           make PRODUCT=rpi3 build-rpi3/.config
-          make -C build-rpi3 "${PACKAGE}-dirclean" "${PACKAGE}-patch"
+          if ! make -C build-rpi3 "${PACKAGE}-dirclean" "${PACKAGE}-patch"; then
+            echo "::error::Patch apply check failed for package '${PACKAGE}'. The version bump likely requires patch updates."
+            exit 1
+          fi
 
       - name: Check for existing similar open PR
         id: duplicate
