@@ -177,6 +177,21 @@ jobs:
           echo "version=${version}" >>"${GITHUB_OUTPUT}"
           echo "no_update=false" >>"${GITHUB_OUTPUT}"
 
+      - name: Check package patch apply status
+        if: steps.changes.outputs.changed == 'true' && steps.metadata.outputs.no_update != 'true'
+        env:
+          PACKAGE: ${{ steps.metadata.outputs.package }}
+        run: |
+          shopt -s nullglob
+          package_patch_files=(buildroot-external/package/"${PACKAGE}"/*.patch)
+          if [[ ${#package_patch_files[@]} -eq 0 && ! -d "buildroot-external/patches/${PACKAGE}" ]]; then
+            echo "No package/global patch directories found for '${PACKAGE}', skipping patch apply check."
+            exit 0
+          fi
+
+          make PRODUCT=rpi3 build-rpi3/.config
+          make -C build-rpi3 "${PACKAGE}-dirclean" "${PACKAGE}-patch"
+
       - name: Check for existing similar open PR
         id: duplicate
         if: steps.changes.outputs.changed == 'true' && steps.metadata.outputs.no_update != 'true'
