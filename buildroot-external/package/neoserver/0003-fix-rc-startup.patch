@@ -91,8 +91,8 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
        VER=$(cat $ADDONDIR/VERSION)
        echo "Version: $VER"
        echo "Info: <b>mediola NEO SERVER CCU Addon</b><br>"
--      echo "Info: Copyright (c) 2017-2024 mediola connected living AG<br>"
-+      echo "Info: Copyright (c) 2014-2024 mediola connected living AG<br>"
+-      echo "Info: Copyright (c) 2017-2026 mediola connected living AG<br>"
++      echo "Info: Copyright (c) 2014-2026 mediola connected living AG<br>"
        echo "Info: <a href='https://www.mediola.com'>mediola connected living AG</a>"
        echo "Name: NEO SERVER"
        echo "Operations: uninstall restart"

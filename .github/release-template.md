@@ -7,21 +7,7 @@ This is release ${VERSION} of OpenCCU which is a **XXXXX** release with the foll
 ## 🚧 Changes:
 <sub>For all changes, see the [full commit log](https://github.com/OpenCCU/OpenCCU/compare/${PREVIOUS_TAG}...${VERSION}).</sub>
 
-#### CCU/HomeMatic service changes:
-- XXXXX
-
-#### WebUI changes:
-- XXXXX
-
-#### Operating system changes:
-- XXXXX
-
-**RAW CHANGELOG**
 ${CHANGELOG}
-**RAW CHANGELOG**
-
-## 👪 Contributors (alphabetically):
-- @jens-maus
 
 ## 📝 Support:
 For support on installation and help please visit the following web pages:
@@ -48,6 +34,9 @@ The following installation archives can be downloaded for different hardware pla
 <sub>📦 [OpenCCU-${VERSION}-odroid-n2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-n2.zip)<br/>SHA256: XSHAn2.zipX</sub>
 <sub>📦 [OpenCCU-${VERSION}-odroid-c4.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-c4.zip)<br/>SHA256: XSHAc4.zipX</sub>
 <sub>📦 [OpenCCU-${VERSION}-odroid-c2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-odroid-c2.zip)<br/>SHA256: XSHAc2.zipX</sub>
+
+- ASUS Tinkerboard 2/2S – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard2)):
+<sub>📦 [OpenCCU-${VERSION}-tinkerboard2.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-tinkerboard2.zip)<br/>SHA256: XSHAtinkerboard2.zipX</sub>
 
 - Generic-x86_64 – ([installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-IntelNUC)):
 <sub>📦 [OpenCCU-${VERSION}-generic-x86_64.zip](https://github.com/OpenCCU/OpenCCU/releases/download/${VERSION}/OpenCCU-${VERSION}-generic-x86_64.zip)<br/>SHA256: XSHAx86_64.zipX</sub>

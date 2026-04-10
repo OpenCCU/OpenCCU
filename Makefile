@@ -1,5 +1,5 @@
-BUILDROOT_VERSION=2025.11.2
-BUILDROOT_SHA256=9a556d70fdf2678c264c696e3fc27ccbd73810e4185e8459990327eb38678a2d
+BUILDROOT_VERSION=2026.02
+BUILDROOT_SHA256=feb169002ae7a568d04d803f2a1b777ef79d51e5e2e250441e2519a8e9c94965
 BUILDROOT_EXTERNAL=buildroot-external
 DEFCONFIG_DIR=$(BUILDROOT_EXTERNAL)/configs
 OCCU_VERSION=$(shell grep "OCCU_VERSION =" $(BUILDROOT_EXTERNAL)/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)
@@ -99,6 +99,8 @@ $(addsuffix -check, $(PRODUCTS)): %:
 check: buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
 	@echo "[checking: $(PRODUCT)]"
 	$(eval BOARD_DIR := $(BUILDROOT_EXTERNAL)/board/$(shell echo $(PRODUCT) | sed 's/_\(amd64\|arm.*\)//'))
+	@echo "[checking dependencies: flake8]"
+	python3 -c "import flake8" >/dev/null 2>&1 || (echo "Installing missing python dependency: flake8" && python3 -m pip install --user flake8)
 	@echo "[checking status: $(BUILDROOT_EXTERNAL)]"
 	buildroot-$(BUILDROOT_VERSION)/utils/check-package --exclude PackageHeader --br2-external $(BUILDROOT_EXTERNAL)/package/*/*
 	@echo "[checking apply patch status: OCCU $(OCCU_VERSION)]"

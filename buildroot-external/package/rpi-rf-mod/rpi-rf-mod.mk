@@ -11,7 +11,7 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = 1.13.3
+RPI_RF_MOD_VERSION = 1.14.0
 RPI_RF_MOD_SITE = $(BR2_EXTERNAL_EQ3_PATH)/package/rpi-rf-mod
 RPI_RF_MOD_SITE_METHOD = local
 RPI_RF_MOD_LICENSE = Apache-2.0
@@ -33,6 +33,12 @@ else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2),y)
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW),y)
   # HomeAssistant Yellow DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-yellow
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
+  # ASUS Tinkerboard/S DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER2),y)
+  # ASUS Tinkerboard2/2S DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker2
 endif
 
 define RPI_RF_MOD_BUILD_CMDS

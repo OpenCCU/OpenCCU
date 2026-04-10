@@ -16,6 +16,19 @@ RC=1
 if [[ -f "${STARTPWD}/${BOOT_FS}" ]]; then
   BOOT_DEV=$(/bin/mount | grep "/bootfs" | cut -f1 -d" ")
   if [[ -n "${BOOT_DEV}" ]]; then
+    # backup extraconfig.txt before overwriting bootfs
+    EXTRACONFIG_BACKUP=""
+    if [[ -f "/bootfs/extraconfig.txt" ]]; then
+      echo -ne "Backing up extraconfig.txt... "
+      if cp /bootfs/extraconfig.txt /tmp/extraconfig.txt.bak; then
+        echo "OK<br/>"
+        EXTRACONFIG_BACKUP=/tmp/extraconfig.txt.bak
+      else
+        echo "WARNING: backup of extraconfig.txt failed, file will not be preserved<br/>"
+      fi
+    else
+      echo "INFO: no extraconfig.txt found on bootfs, nothing to preserve<br/>"
+    fi
     echo -ne "Writing bootfs to ${BOOT_DEV}... "
     /bin/umount -f /bootfs
     if ! zcat "${STARTPWD}/${BOOT_FS}" | /bin/dd of="${BOOT_DEV}" bs=1M conv=fsync; then
@@ -26,6 +39,16 @@ if [[ -f "${STARTPWD}/${BOOT_FS}" ]]; then
       RC=0
     fi
     /bin/mount /bootfs
+    # restore extraconfig.txt after bootfs overwrite
+    if [[ -n "${EXTRACONFIG_BACKUP}" ]] && [[ -f "${EXTRACONFIG_BACKUP}" ]]; then
+      echo -ne "Restoring extraconfig.txt... "
+      if cp "${EXTRACONFIG_BACKUP}" /bootfs/extraconfig.txt && chmod 0644 /bootfs/extraconfig.txt; then
+        echo "OK<br/>"
+        rm -f "${EXTRACONFIG_BACKUP}"
+      else
+        echo "WARNING: restore of extraconfig.txt failed, backup remains at ${EXTRACONFIG_BACKUP} for manual recovery<br/>"
+      fi
+    fi
   else
     echo "ERROR: no /bootfs found<br/>"
     RC=1
