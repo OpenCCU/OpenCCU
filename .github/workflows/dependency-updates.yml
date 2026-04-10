@@ -186,7 +186,7 @@ jobs:
           package_patch_files=(buildroot-external/package/"${PACKAGE}"/*.patch)
           global_patch_files=(buildroot-external/patches/"${PACKAGE}"/*.patch)
           if [[ ${#package_patch_files[@]} -eq 0 && ${#global_patch_files[@]} -eq 0 ]]; then
-            echo "No package/global patch directories found for '${PACKAGE}', skipping patch apply check."
+            echo "No package/global patch files found for '${PACKAGE}', skipping patch apply check."
             exit 0
           fi
 
