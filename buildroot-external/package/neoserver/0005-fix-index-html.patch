@@ -6,6 +6,15 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
 
 --- a/www/index.html	2024-02-19 15:05:39.000000000 +0100
 +++ b/www/index.html	2024-02-26 18:12:16.554752107 +0100
+@@ -181,7 +181,7 @@
+ <footer class="pt-4 my-md-5 pt-md-5 border-top" style="height: 50px; text-align: center;">
+ 	<div class="row" style="margin: 0;">
+ 		<div class="col-10 col-md">
+-			<img class="mb-1" src="https://www.mediola.com/wp-content/uploads/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2026</small>
++			<img class="mb-1" src="images/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2026</small>
+ 		</div>
+ 	</div>
+ </footer>
 @@ -229,18 +229,18 @@
  		$.ajax({
  			type: 'GET',
