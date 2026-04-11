@@ -12,8 +12,12 @@ RPI_USERLAND_INSTALL_STAGING = YES
 
 # ARM64=ON disables MMAL/OpenMAX builds not supported on aarch64;
 # for 32-bit ARM the flag is omitted so those features build normally.
+# CMAKE_POLICY_VERSION_MINIMUM=3.5 is required because upstream
+# CMakeLists.txt uses cmake_minimum_required below 3.5, which newer
+# CMake versions no longer support without this override.
 RPI_USERLAND_CONF_OPTS = \
 	-DVMCS_INSTALL_PREFIX=/usr \
+	-DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 	$(if $(BR2_aarch64),-DARM64=ON)
 
 $(eval $(cmake-package))
