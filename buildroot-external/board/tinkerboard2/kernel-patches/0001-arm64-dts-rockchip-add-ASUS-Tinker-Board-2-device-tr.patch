@@ -15,7 +15,7 @@ The Tinker Board 2 is based on the Rockchip RK3399 SoC with:
 - 40-pin GPIO header
 - USB Type-C with DisplayPort
 
-This DTS is not yet in the upstream kernel as of 6.12.x and is ported
+This DTS is not yet in the upstream kernel as of 6.18.x and is ported
 from the Armbian project.
 
 Signed-off-by: OpenCCU <info@openccu.de>

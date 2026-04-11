@@ -52,7 +52,7 @@ buildroot-external/        # Buildroot BR2_EXTERNAL layer – all OpenCCU custom
   patches/occu/            # Upstream OCCU WebUI/firmware patches (see below)
   patches/<pkg>/           # Patches applied to other Buildroot packages
   board/<product>/         # Board-specific files: kernel defconfig, U-Boot config, DTS patches
-  kernel/6.12/             # Shared kernel config fragments applied to all boards
+  kernel/6.18/             # Shared kernel config fragments applied to all boards
   overlay/                 # Filesystem overlays merged into the target rootfs
   bootloader/              # U-Boot configuration
   scripts/                 # Helper scripts used during build
@@ -193,7 +193,7 @@ CI fails if:
 
 ### Kernel & Defconfig Changes
 
-- Board-specific kernel config fragments live in `buildroot-external/board/<board>/kernel.config` (delta from global config) and in `buildroot-external/kernel/6.12/global.config`.
+- Board-specific kernel config fragments live in `buildroot-external/board/<board>/kernel.config` (delta from global config) and in `buildroot-external/kernel/6.18/global.config`.
 - After modifying the kernel config via `linux-menuconfig`, always save it back with `make PRODUCT=<product> linux-update-defconfig`.
 - The full compiled defconfig lives in `buildroot-external/board/<board>/kernel_defconfig` – keep it in sync.
 
