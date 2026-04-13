@@ -14,6 +14,7 @@ ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),y)
   # Raspberry Pi 4 (2711)
   RPI_EEPROM_FIRMWARE_PATH = firmware-2711/stable/pieeprom-2026-02-23.bin
   RPI_EEPROM_RECOVERY_PATH = firmware-2711/stable/recovery.bin
+  RPI_EEPROM_VL805_GLOB = firmware-2711/stable/vl805-*.bin
 else ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI5),y)
   # Raspberry Pi 5 (2712)
   RPI_EEPROM_FIRMWARE_PATH = firmware-2712/stable/pieeprom-2026-02-23.bin
@@ -26,12 +27,26 @@ define RPI_EEPROM_BUILD_CMDS
 	$(@D)/rpi-eeprom-config $(@D)/$(RPI_EEPROM_FIRMWARE_PATH) --config $(@D)/boot.conf --out $(@D)/pieeprom.upd
 	sha256sum $(@D)/pieeprom.upd | awk '{ print $$1 }' > $(@D)/pieeprom.sig
 	echo "ts: $$(date -u +%s)" >> $(@D)/pieeprom.sig
+ifneq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),)
+	RPI_EEPROM_VL805_PATH=$$(ls -1 $(@D)/$(RPI_EEPROM_VL805_GLOB) 2>/dev/null | sort -r | head -n1); \
+	if [ -n "$$RPI_EEPROM_VL805_PATH" ]; then \
+		cp "$$RPI_EEPROM_VL805_PATH" $(@D)/vl805.bin; \
+		sha256sum $(@D)/vl805.bin | awk '{ print $$1 }' > $(@D)/vl805.sig; \
+		echo "ts: $$(date -u +%s)" >> $(@D)/vl805.sig; \
+	fi
+endif
 endef
 
 define RPI_EEPROM_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/pieeprom.sig $(BINARIES_DIR)/rpi-eeprom/pieeprom.sig
 	$(INSTALL) -D -m 0644 $(@D)/pieeprom.upd $(BINARIES_DIR)/rpi-eeprom/pieeprom.upd
 	$(INSTALL) -D -m 0644 $(@D)/$(RPI_EEPROM_RECOVERY_PATH) $(BINARIES_DIR)/rpi-eeprom/recovery.bin
+ifneq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),)
+	if [ -f $(@D)/vl805.bin ] && [ -f $(@D)/vl805.sig ]; then \
+		$(INSTALL) -D -m 0644 $(@D)/vl805.bin $(BINARIES_DIR)/rpi-eeprom/vl805.bin; \
+		$(INSTALL) -D -m 0644 $(@D)/vl805.sig $(BINARIES_DIR)/rpi-eeprom/vl805.sig; \
+	fi
+endif
 endef
 
 $(eval $(generic-package))
