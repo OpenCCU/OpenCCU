@@ -60,7 +60,7 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: mikepenz/release-changelog-builder-action@2cb9befdbc05f65b8354cc9873cd506509bd0782  # v6
+        uses: mikepenz/release-changelog-builder-action@bcae7115752d4ed746ff92feb666574428a79415  # v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           configuration: ".github/release-changelog-config.json"
