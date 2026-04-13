@@ -196,9 +196,11 @@ html, body {
   color: #fff;
   font-size: 0.95rem;
   font-weight: 600;
+  font-family: inherit;
   text-align: center;
   cursor: pointer;
   border: none;
+  appearance: none;
   transition: background 0.18s, transform 0.1s;
   user-select: none;
 }
