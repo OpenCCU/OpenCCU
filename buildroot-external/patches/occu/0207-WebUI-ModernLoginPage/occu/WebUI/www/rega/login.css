@@ -1,0 +1,322 @@
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #0f0f11;
+  color: #f0f0f0;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+#maintable {
+  display: flex;
+  flex-direction: row;
+  height: 100dvh;
+  width: 100dvw;
+  overflow: hidden;
+}
+
+/* ── Left panel (form) ──────────────────────────────────── */
+#login-panel {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+#login-inner {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Logo + Heading */
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.login-logo img {
+  height: 36px;
+  width: auto;
+}
+
+.login-heading {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.login-subtext {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: -12px;
+}
+
+/* User pills */
+#user-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: #d0d0d0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.user-pill:hover {
+  background: rgba(139,92,246,0.18);
+  border-color: rgba(139,92,246,0.5);
+  color: #fff;
+}
+
+.user-pill-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* Form labels */
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #888;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* Glass input wrapper */
+.glass-input {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+
+.glass-input:focus-within {
+  border-color: rgba(139,92,246,0.6);
+  background: rgba(139,92,246,0.07);
+}
+
+.glass-input input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: #f0f0f0;
+  border-radius: 14px;
+}
+
+.glass-input input::placeholder {
+  color: #555;
+}
+
+.glass-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.glass-input-row input {
+  flex: 1;
+  padding-right: 8px;
+}
+
+.pw-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 14px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.pw-toggle:hover { color: #bbb; }
+
+.pw-toggle svg { display: block; width: 18px; height: 18px; }
+
+/* Error box */
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+  font-size: 0.83rem;
+}
+
+/* Primary login button */
+#btnLogin {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: background 0.18s, transform 0.1s;
+  user-select: none;
+}
+
+#btnLogin:hover { background: #6d28d9; }
+#btnLogin:active { background: #5b21b6; transform: scale(0.98); }
+
+/* Help link */
+.help-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.15s;
+  text-decoration: none;
+}
+
+.help-link:hover { color: #bbb; }
+
+.help-link svg { width: 15px; height: 15px; }
+
+/* ── Right panel (hero) ─────────────────────────────────── */
+#hero-panel {
+  flex: 1 1 0;
+  position: relative;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+#hero-bg {
+  position: absolute;
+  inset: 16px;
+  border-radius: 24px;
+  background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  background-color: #1a1025;
+}
+
+#hero-overlay {
+  position: absolute;
+  inset: 16px;
+  border-radius: 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+}
+
+.hero-testimonials {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 12px;
+  padding: 0 4px 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.testimonial-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(20,10,40,0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.testimonial-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.testimonial-handle {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.45);
+}
+
+.testimonial-text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ── Responsive: hide hero on small screens ─────────────── */
+@media (max-width: 768px) {
+  #maintable { flex-direction: column; }
+  #hero-panel { display: none; }
+  #login-panel { padding: 32px 20px; justify-content: flex-start; padding-top: 60px; }
+  #login-inner { max-width: 100%; }
+  .login-heading { font-size: 1.7rem; }
+}
+
+@media (max-width: 1200px) {
+  .testimonial-card:nth-child(n+3) { display: none; }
+}

@@ -1,0 +1,295 @@
+--- occu/WebUI/www/rega/login.htm.orig
++++ occu/WebUI/www/rega/login.htm
+@@ -10,7 +10,7 @@
+     <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+     <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+     <link rel="manifest" href="/webui/site.webmanifest" />
+-    
++
+     <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
+     <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+     <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
+@@ -19,163 +19,139 @@
+     <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
+     <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
+ 
+-    <!-- Required meta tags for bootstrap -->
+     <meta charset="utf-8">
+-    <meta name="viewport" content="width=1024">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+-    <script type="text/javascript">
++    <link rel="stylesheet" type="text/css" href="/rega/login.css" />
++    <script type="text/javascript" src="/rega/login.js"></script>
++  </head>
++  <body>
++    <div id="maintable">
+ 
+-      UserButtonClick = function(fullName, name)
+-      {
+-        $("UserNameShow").value = fullName;
+-        $("Password").value = "";
+-        $("Password").focus();
+-      }
++      <!-- Anmelde-Formular -->
++      <div id="login-panel">
++        <div id="login-inner">
+ 
+-      FormSubmit = function ()
+-      {
+-        var tmp = $("UserNameShow").value;
+-        $("UserName").value = tmp.replace(' ','');
+-        document.getElementById( 'gwlogin' ).submit();
+-      }
++          <!-- Logo und Überschrift -->
++          <div class="login-logo">
++            <img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" />
++          </div>
++          <h1 class="login-heading">${lblUsrLogin}</h1>
++          <p class="login-subtext">OpenCCU WebUI</p>
+ 
+-      PasswordKeyUp = function(e)
+-      {
+-        var keycode;
+-        if (window.event) keycode = window.event.keyCode;
+-        else if (e) keycode = e.which;
+-        else return;
++          <!-- Liste der Benutzer -->
++          <div id="user-pills">
++            <%
++              object oUsers = dom.GetObject(ID_USERS);
++              if ( oUsers )
++              {
++                string uId;
++                foreach( uId , oUsers.EnumEnabledIDs() )
++                {
++                  object uObj = dom.GetObject(uId);
++                  if (uObj.Visible() && uObj.UserShowLogin()) {
++                    string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
++                    if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
++                    string sInitial = sUserFullName.Substr(0,1);
++                    Write('<button type="button" class="user-pill" onclick=\'UserButtonClick("'#sUserFullName#'", "'#uObj.Name()#'");\'>');
++                    Write('<span class="user-pill-avatar">'#sInitial#'</span>');
++                    Write(sUserFullName);
++                    Write('</button>');
++                  }
++                }
++              }
++            %>
++          </div>
+ 
+-        if (keycode == 13)
+-        { // ENTER
+-          FormSubmit();
+-        }
+-      }
+-    </script>
+-  </head>
+-  <body>
+-    <table id="maintable">
+-      <tr>
+-        <td id="navbar">
+-          <table>
+-            <tr>
+-              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
+-              <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
+-              <td style="width: 100%;"></td>
+-              <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
+-              <td style="padding-right:63px;"><div class="clickable" onclick="loadHelp()"><img id="idHelp" src="/ise/img/help.png" width="48px" height="48px" alt="Hilfe" title="Hilfe"/></div></td>
+-            </tr>
+-          </table>
+-        </td>
+-      </tr>
+-      <tr>
+-        <td>
+-          <div id="content">
+-            <table id="login_content" style="width: 200px;">
+-              <tr>
+-                <!-- Liste der Benutzer -->
+-                <td style="vertical-align: top;" >
+-                  <table cellspacing="8">
+-                  <%
+-                    object oUsers = dom.GetObject(ID_USERS);
+-                    if ( oUsers )
+-                    {
+-                      string uId;
+-                      foreach( uId , oUsers.EnumEnabledIDs() )
+-                      {
+-                        object uObj = dom.GetObject(uId);
+-                        if (uObj.Visible() && uObj.UserShowLogin()) {
+-                          string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
+-                          if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
+-                          Write('<tr>');
+-                            Write('<td>');
+-                              string sStyle = "";
+-                              if (sUserFullName.Length() > 15) {
+-                                sStyle = "line-height:30px;";
+-                              }
+-                              Write('<div id="btn-user-'#uId#'" class="Button colorGradient" style="'#sStyle#'" onclick=\'UserButtonClick("'#sUserFullName#'", "'#uObj.Name()#'");\'>');
+-                              Write(sUserFullName);
+-                              Write('</div>');
+-                            Write('</td>');
+-                          Write('</tr>');
+-                        }
+-                      }
+-                    }
+-                  %>
+-                  </table>
+-                </td>
+-                <!-- Kennwort-Eingabefeld -->
+-                <td style="vertical-align: top; padding: 12px;">
+-                  <form id="gwlogin" method="post">
+-                    <table id="LoginMask">
+-                      <tr>
+-                        <td>${lblEnterUserName}</td>
+-                      </tr>
+-                      <tr>
+-                        <td>
+-                          <input id="UserNameShow" type="text" name="tbUsernameShow" style="text-align:center;" autocomplete="username" />
+-                          <input id="UserName" type="hidden" name="tbUsername" style="text-align:center;" />
+-                        </td>
+-                      </tr>
+-                      <tr>
+-                        <td>${lblEnterPassWord}</td>
+-                      </tr>
+-                      <tr>
+-                        <td>
+-                          <input id="Password" type="password" onkeypress="PasswordKeyUp(event)" name="tbPassword" style="text-align:center;" autocomplete="current-password" />
+-                        </td>
+-                      </tr>
+-                      <tr>
+-                        <td><br />
+-                          <div id="btnLogin" class="Button colorGradient" onclick="FormSubmit()">${btnLogin}</div>
+-                        </td>
+-                      </tr>
+-                    </table>
+-                  </form>
+-                </td>
+-              </tr>
+-              <tr>
+-                <td colspan="2">
+-                  <%
+-                    if( system.IsVar("error") )
+-                    {
+-                      if( system.GetVar("error") == "1" )
+-                      {
+-                        Write( '<div class="loginErrorBox">${hintLoginInvalid}</div>' );
+-                      }
+-                    }
+-                  %>
+-                </td>
+-              </tr>
+-            </table>
++          <!-- Kennwort-Eingabefeld -->
++          <form id="gwlogin" method="post">
++
++            <div style="margin-bottom:14px;">
++              <label class="field-label" for="UserNameShow">${lblEnterUserName}</label>
++              <div class="glass-input">
++                <input id="UserNameShow" type="text" name="tbUsernameShow" placeholder="${lblEnterUserName}" autocomplete="username" />
++              </div>
++              <input id="UserName" type="hidden" name="tbUsername" />
++            </div>
++
++            <div style="margin-bottom:14px;">
++              <label class="field-label" for="Password">${lblEnterPassWord}</label>
++              <div class="glass-input">
++                <div class="glass-input-row">
++                  <input id="Password" type="password" onkeypress="PasswordKeyUp(event)" name="tbPassword" placeholder="••••••••" autocomplete="current-password" />
++                  <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="Passwort anzeigen">
++                    <span id="pw-icon">
++                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
++                    </span>
++                  </button>
++                </div>
++              </div>
++            </div>
++
++            <!-- Fehlermeldung -->
++            <%
++              if( system.IsVar("error") )
++              {
++                if( system.GetVar("error") == "1" )
++                {
++                  Write( '<div class="login-error"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${hintLoginInvalid}</div>' );
++                }
++              }
++            %>
++
++            <div id="btnLogin" onclick="FormSubmit()">${btnLogin}</div>
++
++          </form>
++
++          <!-- Hilfe-Link -->
++          <div class="help-row">
++            <span class="help-link" onclick="loadHelp()">
++              <svg id="idHelp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
++              Hilfe
++            </span>
+           </div>
+-        </td>
+-      </tr>
+-      <tr>
+-        <td id="footer"></td>
+-      </tr>
+-    </table>
+ 
++        </div>
++      </div>
+ 
+-    <script type="text/javascript">
+-      gotoLoginPage = function() {
+-        location.href = "/login.htm";
+-      };
++      <!-- Hero-Bereich -->
++      <div id="hero-panel">
++        <div id="hero-bg"></div>
++        <div id="hero-overlay"></div>
+ 
+-      loadHelp = function()
+-      {
+-        var opts = {
+-        evalScripts: true,
+-        postBody: "from=login",
+-        sendXML: false
+-        };
+-        var url = "/config/help.cgi";
+-        new Ajax.Updater("content", url, opts);
+-      };
++        <div class="hero-testimonials">
++          <div class="testimonial-card">
++            <div class="testimonial-avatar">H</div>
++            <div>
++              <div class="testimonial-name">HomeMatic</div>
++              <div class="testimonial-handle">@openccu</div>
++              <div class="testimonial-text">Zuverlässige Hausautomation – einfach, offen und lokal.</div>
++            </div>
++          </div>
++          <div class="testimonial-card">
++            <div class="testimonial-avatar">R</div>
++            <div>
++              <div class="testimonial-name">ReGaHss</div>
++              <div class="testimonial-handle">@regahss</div>
++              <div class="testimonial-text">Skripte, Programme und Systemvariablen direkt im Browser verwalten.</div>
++            </div>
++          </div>
++          <div class="testimonial-card">
++            <div class="testimonial-avatar">O</div>
++            <div>
++              <div class="testimonial-name">OpenCCU</div>
++              <div class="testimonial-handle">@community</div>
++              <div class="testimonial-text">Community-Patches für eine verbesserte WebUI-Erfahrung.</div>
++            </div>
++          </div>
++        </div>
++      </div>
+ 
++    </div>
++
++    <script type="text/javascript">
+       translatePage("#maintable");
+       translateAttribute("#idHelp", "title", "tooltipHelp");
+-      translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
+     </script>
+   </body>
+ </html>

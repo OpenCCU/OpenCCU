@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html lang="de">
+  <head>
+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
+
+    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
+    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+    <link rel="manifest" href="/webui/site.webmanifest" />
+    
+    <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
+    <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
+
+    <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
+    <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
+
+    <!-- Required meta tags for bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1024">
+
+    <script type="text/javascript">
+
+      UserButtonClick = function(fullName, name)
+      {
+        $("UserNameShow").value = fullName;
+        $("Password").value = "";
+        $("Password").focus();
+      }
+
+      FormSubmit = function ()
+      {
+        var tmp = $("UserNameShow").value;
+        $("UserName").value = tmp.replace(' ','');
+        document.getElementById( 'gwlogin' ).submit();
+      }
+
+      PasswordKeyUp = function(e)
+      {
+        var keycode;
+        if (window.event) keycode = window.event.keyCode;
+        else if (e) keycode = e.which;
+        else return;
+
+        if (keycode == 13)
+        { // ENTER
+          FormSubmit();
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <table id="maintable">
+      <tr>
+        <td id="navbar">
+          <table>
+            <tr>
+              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
+              <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
+              <td style="width: 100%;"></td>
+              <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
+              <td style="padding-right:63px;"><div class="clickable" onclick="loadHelp()"><img id="idHelp" src="/ise/img/help.png" width="48px" height="48px" alt="Hilfe" title="Hilfe"/></div></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div id="content">
+            <table id="login_content" style="width: 200px;">
+              <tr>
+                <!-- Liste der Benutzer -->
+                <td style="vertical-align: top;" >
+                  <table cellspacing="8">
+                  <%
+                    object oUsers = dom.GetObject(ID_USERS);
+                    if ( oUsers )
+                    {
+                      string uId;
+                      foreach( uId , oUsers.EnumEnabledIDs() )
+                      {
+                        object uObj = dom.GetObject(uId);
+                        if (uObj.Visible() && uObj.UserShowLogin()) {
+                          string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
+                          if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
+                          Write('<tr>');
+                            Write('<td>');
+                              string sStyle = "";
+                              if (sUserFullName.Length() > 15) {
+                                sStyle = "line-height:30px;";
+                              }
+                              Write('<div id="btn-user-'#uId#'" class="Button colorGradient" style="'#sStyle#'" onclick=\'UserButtonClick("'#sUserFullName#'", "'#uObj.Name()#'");\'>');
+                              Write(sUserFullName);
+                              Write('</div>');
+                            Write('</td>');
+                          Write('</tr>');
+                        }
+                      }
+                    }
+                  %>
+                  </table>
+                </td>
+                <!-- Kennwort-Eingabefeld -->
+                <td style="vertical-align: top; padding: 12px;">
+                  <form id="gwlogin" method="post">
+                    <table id="LoginMask">
+                      <tr>
+                        <td>${lblEnterUserName}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <input id="UserNameShow" type="text" name="tbUsernameShow" style="text-align:center;" autocomplete="username" />
+                          <input id="UserName" type="hidden" name="tbUsername" style="text-align:center;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>${lblEnterPassWord}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <input id="Password" type="password" onkeypress="PasswordKeyUp(event)" name="tbPassword" style="text-align:center;" autocomplete="current-password" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><br />
+                          <div id="btnLogin" class="Button colorGradient" onclick="FormSubmit()">${btnLogin}</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <%
+                    if( system.IsVar("error") )
+                    {
+                      if( system.GetVar("error") == "1" )
+                      {
+                        Write( '<div class="loginErrorBox">${hintLoginInvalid}</div>' );
+                      }
+                    }
+                  %>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td id="footer"></td>
+      </tr>
+    </table>
+
+
+    <script type="text/javascript">
+      gotoLoginPage = function() {
+        location.href = "/login.htm";
+      };
+
+      loadHelp = function()
+      {
+        var opts = {
+        evalScripts: true,
+        postBody: "from=login",
+        sendXML: false
+        };
+        var url = "/config/help.cgi";
+        new Ajax.Updater("content", url, opts);
+      };
+
+      translatePage("#maintable");
+      translateAttribute("#idHelp", "title", "tooltipHelp");
+      translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
+    </script>
+  </body>
+</html>
