@@ -3,6 +3,7 @@
 import argparse
 from collections import namedtuple
 import re
+import sys
 
 from kconfiglib import Kconfig, KconfigError
 
@@ -121,13 +122,15 @@ def main() -> None:
     try:
         kconfig = Kconfig(args.src_kconfig, warn_to_stderr=False)
     except KconfigError as exc:
+        message = str(exc)
         # Temporary workaround for Linux >=6.18 Kconfig files that use
         # the "transitional" attribute unsupported by the bundled kconfiglib.
-        if "transitional" in str(exc) and "couldn't parse" in str(exc):
+        if re.search(r"couldn't parse ['\"]transitional['\"]", message):
             print(
                 "WARNING: skipping dotconfig check because bundled kconfiglib "
                 "cannot parse Linux >=6.18 transitional Kconfig attributes yet. "
-                "Please update kconfiglib to remove this workaround."
+                "Please update kconfiglib to remove this workaround.",
+                file=sys.stderr,
             )
             return
         raise
