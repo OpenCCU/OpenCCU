@@ -121,10 +121,13 @@ def main() -> None:
     try:
         kconfig = Kconfig(args.src_kconfig, warn_to_stderr=False)
     except KconfigError as exc:
-        if "couldn't parse 'transitional'" in str(exc):
+        # Temporary workaround for Linux >=6.18 Kconfig files that use
+        # the "transitional" attribute unsupported by the bundled kconfiglib.
+        if "transitional" in str(exc) and "couldn't parse" in str(exc):
             print(
                 "WARNING: skipping dotconfig check because bundled kconfiglib "
-                "cannot parse Linux transitional Kconfig attributes yet."
+                "cannot parse Linux >=6.18 transitional Kconfig attributes yet. "
+                "Please update kconfiglib to remove this workaround."
             )
             return
         raise
