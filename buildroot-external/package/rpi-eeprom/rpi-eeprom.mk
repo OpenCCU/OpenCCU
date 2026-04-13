@@ -25,14 +25,12 @@ define RPI_EEPROM_BUILD_CMDS
 	$(@D)/rpi-eeprom-config $(@D)/$(RPI_EEPROM_FIRMWARE_PATH) --out $(@D)/default.conf
 	(cat $(@D)/default.conf | grep -v ^$$; echo HDMI_DELAY=0) > $(@D)/boot.conf
 	$(@D)/rpi-eeprom-config $(@D)/$(RPI_EEPROM_FIRMWARE_PATH) --config $(@D)/boot.conf --out $(@D)/pieeprom.upd
-	sha256sum $(@D)/pieeprom.upd | awk '{ print $$1 }' > $(@D)/pieeprom.sig
-	echo "ts: $$(date -u +%s)" >> $(@D)/pieeprom.sig
+	$(@D)/rpi-eeprom-digest -i $(@D)/pieeprom.upd -o $(@D)/pieeprom.sig
 ifneq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),)
 	RPI_EEPROM_VL805_PATH=$$(ls -1 $(@D)/$(RPI_EEPROM_VL805_GLOB) 2>/dev/null | sort -r | head -n1); \
 	[ -n "$$RPI_EEPROM_VL805_PATH" ] || { echo "No VL805 firmware image found matching $(RPI_EEPROM_VL805_GLOB)"; exit 1; }; \
 	cp "$$RPI_EEPROM_VL805_PATH" $(@D)/vl805.bin; \
-	sha256sum $(@D)/vl805.bin | awk '{ print $$1 }' > $(@D)/vl805.sig; \
-	echo "ts: $$(date -u +%s)" >> $(@D)/vl805.sig
+	$(@D)/rpi-eeprom-digest -i $(@D)/vl805.bin -o $(@D)/vl805.sig
 endif
 endef
 
