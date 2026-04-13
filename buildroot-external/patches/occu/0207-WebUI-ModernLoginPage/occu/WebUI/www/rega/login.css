@@ -12,6 +12,8 @@ html, body {
 #maintable {
   display: flex;
   flex-direction: row;
+  height: 100vh;
+  width: 100vw;
   height: 100dvh;
   width: 100dvw;
   overflow: hidden;
@@ -239,7 +241,7 @@ html, body {
   position: absolute;
   inset: 16px;
   border-radius: 24px;
-  background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80');
+  background-image: url('/rega/login-hero.jpg');
   background-size: cover;
   background-position: center;
   background-color: #1a1025;
@@ -309,14 +311,14 @@ html, body {
 }
 
 /* ── Responsive: hide hero on small screens ─────────────── */
+@media (max-width: 1200px) {
+  .testimonial-card:nth-child(n+3) { display: none; }
+}
+
 @media (max-width: 768px) {
   #maintable { flex-direction: column; }
   #hero-panel { display: none; }
   #login-panel { padding: 32px 20px; justify-content: flex-start; padding-top: 60px; }
   #login-inner { max-width: 100%; }
   .login-heading { font-size: 1.7rem; }
-}
-
-@media (max-width: 1200px) {
-  .testimonial-card:nth-child(n+3) { display: none; }
 }

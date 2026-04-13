@@ -53,7 +53,7 @@
                     string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
                     if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
                     string sInitial = sUserFullName.Substr(0,1);
-                    Write('<button type="button" class="user-pill" onclick=\'UserButtonClick("'#sUserFullName#'", "'#uObj.Name()#'");\'>');
+                    Write('<button type="button" class="user-pill" data-fullname="'#sUserFullName.Replace('"','&quot;')#'" data-username="'#uObj.Name().Replace('"','&quot;')#'">');  
                     Write('<span class="user-pill-avatar">'#sInitial#'</span>');
                     Write(sUserFullName);
                     Write('</button>');
@@ -79,7 +79,7 @@
               <div class="glass-input">
                 <div class="glass-input-row">
                   <input id="Password" type="password" onkeypress="PasswordKeyUp(event)" name="tbPassword" placeholder="••••••••" autocomplete="current-password" />
-                  <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="Passwort anzeigen">
+                  <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="${lblShowPassword}">
                     <span id="pw-icon">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </span>
@@ -107,7 +107,7 @@
           <div class="help-row">
             <span class="help-link" onclick="loadHelp()">
               <svg id="idHelp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              Hilfe
+              ${lblHelp}
             </span>
           </div>
 
@@ -149,7 +149,15 @@
 
     </div>
 
+    <div id="content" style="display:none;"></div>
+
     <script type="text/javascript">
+      document.querySelectorAll('.user-pill').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          UserButtonClick(this.dataset.fullname, this.dataset.username);
+        });
+      });
+
       translatePage("#maintable");
       translateAttribute("#idHelp", "title", "tooltipHelp");
     </script>
