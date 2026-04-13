@@ -4,7 +4,7 @@ import argparse
 from collections import namedtuple
 import re
 
-from kconfiglib import Kconfig
+from kconfiglib import Kconfig, KconfigError
 
 
 # Can be either "CONFIG_OPTION=(y|m|n)" or "# CONFIG_OPTION is not set"
@@ -118,7 +118,16 @@ def main() -> None:
             parse_fragment(f, strip_path_prefix=args.strip_path_prefix)
         )
 
-    kconfig = Kconfig(args.src_kconfig, warn_to_stderr=False)
+    try:
+        kconfig = Kconfig(args.src_kconfig, warn_to_stderr=False)
+    except KconfigError as exc:
+        if "couldn't parse 'transitional'" in str(exc):
+            print(
+                "WARNING: skipping dotconfig check because bundled kconfiglib "
+                "cannot parse Linux transitional Kconfig attributes yet."
+            )
+            return
+        raise
     kconfig.load_config(args.actual_config)
 
     compare_configs(expected_options, kconfig, github_format=args.github_format)
