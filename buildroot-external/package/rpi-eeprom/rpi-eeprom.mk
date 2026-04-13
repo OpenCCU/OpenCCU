@@ -13,9 +13,11 @@ RPI_EEPROM_INSTALL_IMAGES = YES
 ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),y)
   # Raspberry Pi 4 (2711)
   RPI_EEPROM_FIRMWARE_PATH = firmware-2711/stable/pieeprom-2026-02-23.bin
+  RPI_EEPROM_RECOVERY_PATH = firmware-2711/stable/recovery.bin
 else ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI5),y)
   # Raspberry Pi 5 (2712)
   RPI_EEPROM_FIRMWARE_PATH = firmware-2712/stable/pieeprom-2026-02-23.bin
+  RPI_EEPROM_RECOVERY_PATH = firmware-2712/stable/recovery.bin
 endif
 
 define RPI_EEPROM_BUILD_CMDS
@@ -29,6 +31,7 @@ endef
 define RPI_EEPROM_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/pieeprom.sig $(BINARIES_DIR)/rpi-eeprom/pieeprom.sig
 	$(INSTALL) -D -m 0644 $(@D)/pieeprom.upd $(BINARIES_DIR)/rpi-eeprom/pieeprom.upd
+	$(INSTALL) -D -m 0644 $(@D)/$(RPI_EEPROM_RECOVERY_PATH) $(BINARIES_DIR)/rpi-eeprom/recovery.bin
 endef
 
 $(eval $(generic-package))
