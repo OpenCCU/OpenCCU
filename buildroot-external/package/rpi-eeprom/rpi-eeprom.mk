@@ -29,11 +29,10 @@ define RPI_EEPROM_BUILD_CMDS
 	echo "ts: $$(date -u +%s)" >> $(@D)/pieeprom.sig
 ifneq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),)
 	RPI_EEPROM_VL805_PATH=$$(ls -1 $(@D)/$(RPI_EEPROM_VL805_GLOB) 2>/dev/null | sort -r | head -n1); \
-	if [ -n "$$RPI_EEPROM_VL805_PATH" ]; then \
-		cp "$$RPI_EEPROM_VL805_PATH" $(@D)/vl805.bin; \
-		sha256sum $(@D)/vl805.bin | awk '{ print $$1 }' > $(@D)/vl805.sig; \
-		echo "ts: $$(date -u +%s)" >> $(@D)/vl805.sig; \
-	fi
+	[ -n "$$RPI_EEPROM_VL805_PATH" ] || { echo "No VL805 firmware image found matching $(RPI_EEPROM_VL805_GLOB)"; exit 1; }; \
+	cp "$$RPI_EEPROM_VL805_PATH" $(@D)/vl805.bin; \
+	sha256sum $(@D)/vl805.bin | awk '{ print $$1 }' > $(@D)/vl805.sig; \
+	echo "ts: $$(date -u +%s)" >> $(@D)/vl805.sig
 endif
 endef
 
@@ -42,10 +41,8 @@ define RPI_EEPROM_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/pieeprom.upd $(BINARIES_DIR)/rpi-eeprom/pieeprom.upd
 	$(INSTALL) -D -m 0644 $(@D)/$(RPI_EEPROM_RECOVERY_PATH) $(BINARIES_DIR)/rpi-eeprom/recovery.bin
 ifneq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),)
-	if [ -f $(@D)/vl805.bin ] && [ -f $(@D)/vl805.sig ]; then \
-		$(INSTALL) -D -m 0644 $(@D)/vl805.bin $(BINARIES_DIR)/rpi-eeprom/vl805.bin; \
-		$(INSTALL) -D -m 0644 $(@D)/vl805.sig $(BINARIES_DIR)/rpi-eeprom/vl805.sig; \
-	fi
+	$(INSTALL) -D -m 0644 $(@D)/vl805.bin $(BINARIES_DIR)/rpi-eeprom/vl805.bin
+	$(INSTALL) -D -m 0644 $(@D)/vl805.sig $(BINARIES_DIR)/rpi-eeprom/vl805.sig
 endif
 endef
 
