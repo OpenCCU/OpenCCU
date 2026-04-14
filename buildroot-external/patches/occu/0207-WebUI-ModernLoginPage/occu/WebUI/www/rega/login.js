@@ -1,14 +1,17 @@
 UserButtonClick = function(fullName, name)
 {
   $("UserNameShow").value = fullName;
+  $("UserName").value = name;
   $("Password").value = "";
   $("Password").focus();
 }
 
 FormSubmit = function ()
 {
-  var tmp = $("UserNameShow").value;
-  $("UserName").value = tmp.replace(' ','');
+  if ($("UserName").value === "") {
+    var tmp = $("UserNameShow").value;
+    $("UserName").value = tmp.replace(' ','');
+  }
   document.getElementById( 'gwlogin' ).submit();
 }
 

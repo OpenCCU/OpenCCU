@@ -9,7 +9,7 @@
      <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
      <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
-@@ -19,163 +19,147 @@
+@@ -19,163 +19,152 @@
      <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
      <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
  
@@ -68,9 +68,12 @@
 +                    string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
 +                    if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
 +                    string sInitial = sUserFullName.Substr(0,1);
-+                    Write('<button type="button" class="user-pill" data-fullname="'#sUserFullName.Replace('"','&quot;')#'" data-username="'#uObj.Name().Replace('"','&quot;')#'">');  
-+                    Write('<span class="user-pill-avatar">'#sInitial#'</span>');
-+                    Write(sUserFullName);
++                    string sFullNameHtml = sUserFullName.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
++                    string sUsernameHtml = uObj.Name().Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
++                    string sInitialHtml = sInitial.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;');
++                    Write('<button type="button" class="user-pill" data-fullname="'#sFullNameHtml#'" data-username="'#sUsernameHtml#'">');
++                    Write('<span class="user-pill-avatar">'#sInitialHtml#'</span>');
++                    Write(sFullNameHtml);
 +                    Write('</button>');
 +                  }
 +                }
@@ -222,10 +225,10 @@
 +
 +          <!-- Hilfe-Link -->
 +          <div class="help-row">
-+            <span class="help-link" onclick="loadHelp()">
++            <button type="button" class="help-link" onclick="loadHelp()" aria-label="${lblHelp}">
 +              <svg id="idHelp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 +              ${lblHelp}
-+            </span>
++            </button>
            </div>
 -        </td>
 -      </tr>
@@ -298,6 +301,8 @@
        translatePage("#maintable");
        translateAttribute("#idHelp", "title", "tooltipHelp");
 -      translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
++      translateAttribute("#UserNameShow", "placeholder", "lblEnterUserName");
++      translateAttribute(".pw-toggle", "aria-label", "lblShowPassword");
      </script>
    </body>
  </html>
