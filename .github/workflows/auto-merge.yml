@@ -47,11 +47,12 @@ jobs:
         run: |
           should_merge=false
 
-          if [[ "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-patch" ]]; then
-            should_merge=true
-          elif [[ "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-minor" && "${ALERT_STATE}" == "OPEN" ]]; then
-            should_merge=true
-          elif [[ "${DEPENDENCY_TYPE}" == "direct:development" && ( "${UPDATE_TYPE}" == "version-update:semver-patch" || "${UPDATE_TYPE}" == "version-update:semver-minor" ) ]]; then
+          # Keep legacy behavior: production semver-minor is auto-merged only for open security alerts.
+          if [[ \
+            ( "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-patch" ) || \
+            ( "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-minor" && "${ALERT_STATE}" == "OPEN" ) || \
+            ( "${DEPENDENCY_TYPE}" == "direct:development" && ( "${UPDATE_TYPE}" == "version-update:semver-patch" || "${UPDATE_TYPE}" == "version-update:semver-minor" ) ) \
+          ]]; then
             should_merge=true
           fi
 
