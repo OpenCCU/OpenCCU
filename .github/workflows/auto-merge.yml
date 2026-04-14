@@ -35,28 +35,30 @@ jobs:
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a  # v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.AUTO_MERGE_TOKEN }}
+          alert-lookup: true
 
       - name: Evaluate auto-merge policy
         id: policy
         env:
           DEPENDENCY_TYPE: ${{ steps.dependabot-metadata.outputs.dependency-type }}
           UPDATE_TYPE: ${{ steps.dependabot-metadata.outputs.update-type }}
+          ALERT_STATE: ${{ steps.dependabot-metadata.outputs.alert-state }}
         run: |
           should_merge=false
-          case "${DEPENDENCY_TYPE}:${UPDATE_TYPE}" in
-            direct:production:version-update:semver-patch|\
-            direct:production:security-update:semver-minor|\
-            direct:development:version-update:semver-patch|\
-            direct:development:version-update:semver-minor)
-              should_merge=true
-              ;;
-          esac
+
+          if [[ "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-patch" ]]; then
+            should_merge=true
+          elif [[ "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-minor" && "${ALERT_STATE}" == "OPEN" ]]; then
+            should_merge=true
+          elif [[ "${DEPENDENCY_TYPE}" == "direct:development" && ( "${UPDATE_TYPE}" == "version-update:semver-patch" || "${UPDATE_TYPE}" == "version-update:semver-minor" ) ]]; then
+            should_merge=true
+          fi
 
           echo "should_merge=${should_merge}" >>"${GITHUB_OUTPUT}"
 
       - name: Enable squash auto-merge
         if: steps.policy.outputs.should_merge == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.AUTO_MERGE_TOKEN }}
         run: gh pr merge --auto --squash "${{ github.event.pull_request.html_url }}"
