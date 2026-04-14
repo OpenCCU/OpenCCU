@@ -44,14 +44,14 @@ jobs:
           UPDATE_TYPE: ${{ steps.dependabot-metadata.outputs.update-type }}
         run: |
           should_merge=false
-
-          if [[ "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-patch" ]]; then
-            should_merge=true
-          elif [[ "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "security-update:semver-minor" ]]; then
-            should_merge=true
-          elif [[ "${DEPENDENCY_TYPE}" == "direct:development" && ( "${UPDATE_TYPE}" == "version-update:semver-patch" || "${UPDATE_TYPE}" == "version-update:semver-minor" ) ]]; then
-            should_merge=true
-          fi
+          case "${DEPENDENCY_TYPE}:${UPDATE_TYPE}" in
+            direct:production:version-update:semver-patch|\
+            direct:production:security-update:semver-minor|\
+            direct:development:version-update:semver-patch|\
+            direct:development:version-update:semver-minor)
+              should_merge=true
+              ;;
+          esac
 
           echo "should_merge=${should_merge}" >>"${GITHUB_OUTPUT}"
 
