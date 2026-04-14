@@ -9,7 +9,7 @@
      <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
      <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
-@@ -19,163 +19,152 @@
+@@ -19,163 +19,153 @@
      <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
      <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
  
@@ -303,6 +303,7 @@
 -      translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
 +      translateAttribute("#UserNameShow", "placeholder", "lblEnterUserName");
 +      translateAttribute(".pw-toggle", "aria-label", "lblShowPassword");
++      translateAttribute(".help-link", "aria-label", "lblHelp");
      </script>
    </body>
  </html>
