@@ -9,7 +9,7 @@
      <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
      <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
      <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
-@@ -19,163 +19,153 @@
+@@ -19,163 +19,162 @@
      <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
      <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
  
@@ -65,9 +65,14 @@
 +                {
 +                  object uObj = dom.GetObject(uId);
 +                  if (uObj.Visible() && uObj.UserShowLogin()) {
-+                    string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
-+                    if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
-+                    string sInitial = sUserFullName.Substr(0,1);
++                    string sFirstName = uObj.UserFirstName();
++                    string sLastName = uObj.UserLastName();
++                    string sUserFullName;
++                    if( sFirstName != '' && sLastName != '' ) { sUserFullName = sFirstName#' '#sLastName; }
++                    else if( sFirstName != '' ) { sUserFullName = sFirstName; }
++                    else if( sLastName != '' ) { sUserFullName = sLastName; }
++                    else { sUserFullName = uObj.Name(); }
++                    string sInitial = sUserFullName.Trim().Substr(0,1);
 +                    string sFullNameHtml = sUserFullName.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
 +                    string sUsernameHtml = uObj.Name().Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
 +                    string sInitialHtml = sInitial.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;');
@@ -240,25 +245,11 @@
 +        </div>
 +      </div>
  
--    <script type="text/javascript">
--      gotoLoginPage = function() {
--        location.href = "/login.htm";
--      };
 +      <!-- Hero-Bereich -->
 +      <div id="hero-panel">
 +        <div id="hero-bg"></div>
 +        <div id="hero-overlay"></div>
- 
--      loadHelp = function()
--      {
--        var opts = {
--        evalScripts: true,
--        postBody: "from=login",
--        sendXML: false
--        };
--        var url = "/config/help.cgi";
--        new Ajax.Updater("content", url, opts);
--      };
++
 +        <div class="hero-testimonials">
 +          <div class="testimonial-card">
 +            <div class="testimonial-avatar">H</div>
@@ -286,18 +277,35 @@
 +          </div>
 +        </div>
 +      </div>
- 
++
 +    </div>
 +
 +    <div id="content" style="display:none;"></div>
 +
-+    <script type="text/javascript">
+     <script type="text/javascript">
+-      gotoLoginPage = function() {
+-        location.href = "/login.htm";
+-      };
++      document.getElementById('UserNameShow').addEventListener('input', function() {
++        document.getElementById('UserName').value = '';
++      });
+ 
+-      loadHelp = function()
+-      {
+-        var opts = {
+-        evalScripts: true,
+-        postBody: "from=login",
+-        sendXML: false
+-        };
+-        var url = "/config/help.cgi";
+-        new Ajax.Updater("content", url, opts);
+-      };
 +      document.querySelectorAll('.user-pill').forEach(function(btn) {
 +        btn.addEventListener('click', function() {
 +          UserButtonClick(this.dataset.fullname, this.dataset.username);
 +        });
 +      });
-+
+ 
        translatePage("#maintable");
        translateAttribute("#idHelp", "title", "tooltipHelp");
 -      translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");

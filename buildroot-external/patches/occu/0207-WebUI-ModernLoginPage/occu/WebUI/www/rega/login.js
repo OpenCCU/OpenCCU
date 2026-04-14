@@ -53,5 +53,6 @@ loadHelp = function()
   sendXML: false
   };
   var url = "/config/help.cgi";
+  document.getElementById("content").style.display = "";
   new Ajax.Updater("content", url, opts);
 };

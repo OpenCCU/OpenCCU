@@ -50,9 +50,14 @@
                 {
                   object uObj = dom.GetObject(uId);
                   if (uObj.Visible() && uObj.UserShowLogin()) {
-                    string sUserFullName = uObj.UserFirstName()#' '#uObj.UserLastName();
-                    if( sUserFullName == ' ' ){ sUserFullName = uObj.Name(); }
-                    string sInitial = sUserFullName.Substr(0,1);
+                    string sFirstName = uObj.UserFirstName();
+                    string sLastName = uObj.UserLastName();
+                    string sUserFullName;
+                    if( sFirstName != '' && sLastName != '' ) { sUserFullName = sFirstName#' '#sLastName; }
+                    else if( sFirstName != '' ) { sUserFullName = sFirstName; }
+                    else if( sLastName != '' ) { sUserFullName = sLastName; }
+                    else { sUserFullName = uObj.Name(); }
+                    string sInitial = sUserFullName.Trim().Substr(0,1);
                     string sFullNameHtml = sUserFullName.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
                     string sUsernameHtml = uObj.Name().Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
                     string sInitialHtml = sInitial.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;');
@@ -155,6 +160,10 @@
     <div id="content" style="display:none;"></div>
 
     <script type="text/javascript">
+      document.getElementById('UserNameShow').addEventListener('input', function() {
+        document.getElementById('UserName').value = '';
+      });
+
       document.querySelectorAll('.user-pill').forEach(function(btn) {
         btn.addEventListener('click', function() {
           UserButtonClick(this.dataset.fullname, this.dataset.username);
