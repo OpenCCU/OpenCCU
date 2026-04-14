@@ -47,14 +47,22 @@ jobs:
         run: |
           should_merge=false
 
-          # Keep legacy behavior: production semver-minor is auto-merged only for open security alerts.
-          if [[ \
-            ( "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-patch" ) || \
-            ( "${DEPENDENCY_TYPE}" == "direct:production" && "${UPDATE_TYPE}" == "version-update:semver-minor" && "${ALERT_STATE}" == "OPEN" ) || \
-            ( "${DEPENDENCY_TYPE}" == "direct:development" && ( "${UPDATE_TYPE}" == "version-update:semver-patch" || "${UPDATE_TYPE}" == "version-update:semver-minor" ) ) \
-          ]]; then
-            should_merge=true
-          fi
+          # Auto-merge policy:
+          # - direct:production + semver-patch
+          # - direct:production + semver-minor only for open security alerts
+          # - direct:development + semver-patch/semver-minor
+          case "${DEPENDENCY_TYPE}" in
+            direct:production)
+              if [[ "${UPDATE_TYPE}" == "version-update:semver-patch" || ( "${UPDATE_TYPE}" == "version-update:semver-minor" && "${ALERT_STATE}" == "OPEN" ) ]]; then
+                should_merge=true
+              fi
+              ;;
+            direct:development)
+              if [[ "${UPDATE_TYPE}" == "version-update:semver-patch" || "${UPDATE_TYPE}" == "version-update:semver-minor" ]]; then
+                should_merge=true
+              fi
+              ;;
+          esac
 
           echo "should_merge=${should_merge}" >>"${GITHUB_OUTPUT}"
 
