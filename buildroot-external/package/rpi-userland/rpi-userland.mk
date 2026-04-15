@@ -30,7 +30,7 @@ define RPI_USERLAND_INSTALL_TARGET_CMDS
 		shift; \
 		case " $$processed " in *" $$current "*) continue ;; esac; \
 		processed="$$processed $$current"; \
-		for lib in $$($(TARGET_CROSS)readelf -d "$$current" 2>/dev/null | sed -n "s/.*Shared library: \\\[\\([^]]*\\)\\].*/\\1/p"); do \
+		for lib in $$($(TARGET_CROSS)readelf -d "$$current" 2>/dev/null | awk -F'[][]' '/Shared library:/ {print $$2}'); do \
 			for libdir in /lib /usr/lib; do \
 				src="$(STAGING_DIR)$$libdir/$$lib"; \
 				dst="$(TARGET_DIR)$$libdir/$$lib"; \
