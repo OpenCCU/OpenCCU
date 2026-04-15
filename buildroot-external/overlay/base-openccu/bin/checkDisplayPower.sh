@@ -62,7 +62,16 @@ case "$1" in
     off)       display_off ;;
     on)        display_on ;;
     status)    display_status ;;
-    powerdown) display_set_powerdown "${2:-$DEFAULT_POWERDOWN_MIN}" ;;
+    powerdown)
+        mins="${2:-$DEFAULT_POWERDOWN_MIN}"
+        case "$mins" in
+            ''|*[!0-9]*)
+                echo "Invalid powerdown value: '$mins' (expected non-negative integer minutes)" >&2
+                exit 1
+                ;;
+        esac
+        display_set_powerdown "$mins"
+        ;;
     ""|auto)
         display_set_powerdown "$DEFAULT_POWERDOWN_MIN"
         display_connected || display_off
