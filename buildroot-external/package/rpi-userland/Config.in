@@ -4,9 +4,8 @@ config BR2_PACKAGE_RPI_USERLAND
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_INSTALL_LIBSTDCPP
 	help
-	  Raspberry Pi VideoCore userland utilities including vcgencmd
-	  (VideoCore general command tool) and tvservice (HDMI/display
-	  control tool).
+	  Raspberry Pi VideoCore userland utility package used by OpenCCU
+	  to provide vcgencmd (VideoCore general command tool).
 
 	  https://github.com/raspberrypi/userland
 

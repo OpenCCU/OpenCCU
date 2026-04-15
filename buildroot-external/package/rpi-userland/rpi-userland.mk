@@ -20,4 +20,40 @@ RPI_USERLAND_CONF_OPTS = \
 	-DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 	$(if $(BR2_aarch64),-DARM64=ON)
 
+define RPI_USERLAND_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/bin/vcgencmd $(TARGET_DIR)/usr/bin/vcgencmd
+	set -e; \
+	set -- "$(TARGET_DIR)/usr/bin/vcgencmd"; \
+	processed=""; \
+	while [ "$$#" -gt 0 ]; do \
+		current="$$1"; \
+		shift; \
+		case " $$processed " in *" $$current "*) continue ;; esac; \
+		processed="$$processed $$current"; \
+		for lib in $$($(TARGET_CROSS)readelf -d "$$current" 2>/dev/null | sed -n "s/.*Shared library: \\\[\\([^]]*\\)\\].*/\\1/p"); do \
+			for libdir in /lib /usr/lib; do \
+				src="$(STAGING_DIR)$$libdir/$$lib"; \
+				dst="$(TARGET_DIR)$$libdir/$$lib"; \
+				if [ -e "$$src" ]; then \
+					mkdir -p "$(TARGET_DIR)$$libdir"; \
+					cp -dpf "$$src" "$$dst"; \
+					if [ -L "$$src" ]; then \
+						link_target="$$(readlink "$$src")"; \
+						case "$$link_target" in \
+							/*) real_src="$(STAGING_DIR)$$link_target"; real_dst="$(TARGET_DIR)$$link_target" ;; \
+							*) real_src="$$(dirname "$$src")/$$link_target"; real_dst="$$(dirname "$$dst")/$$link_target" ;; \
+						esac; \
+						if [ -e "$$real_src" ] && [ ! -e "$$real_dst" ]; then \
+							mkdir -p "$$(dirname "$$real_dst")"; \
+							cp -dpf "$$real_src" "$$real_dst"; \
+						fi; \
+					fi; \
+					case " $$processed $* " in *" $$dst "*) ;; *) set -- "$$@" "$$dst" ;; esac; \
+					break; \
+				fi; \
+			done; \
+		done; \
+	done
+endef
+
 $(eval $(cmake-package))
