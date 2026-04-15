@@ -7,17 +7,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
 function resolve_latest_rpi_eeprom_firmware() {
-  local commit=${1}
+  local archive_path=${1}
   local firmware_dir=${2}
   local firmware_name
 
-  firmware_name=$(wget --quiet -O - "https://api.github.com/repos/raspberrypi/rpi-eeprom/contents/${firmware_dir}/stable?ref=${commit}" \
-    | sed -nE 's/^[[:space:]]*"name":[[:space:]]*"((pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin))",?/\1/p' \
+  firmware_name=$(tar -tzf "${archive_path}" \
+    | sed -nE "s|.*/${firmware_dir}/latest/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)$|\\1|p" \
     | sort -V \
     | tail -n1)
 
   if [[ -z "${firmware_name}" ]]; then
-    echo "Failed to resolve latest firmware for ${firmware_dir} at commit ${commit}" >&2
+    echo "Failed to resolve latest firmware for ${firmware_dir}" >&2
     exit 1
   fi
 
@@ -45,20 +45,23 @@ if [[ -z "${1}" ]]; then
   exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
 fi
 
-if [[ -z "${RPI4_FIRMWARE_PATH}" ]]; then
-  RPI4_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_firmware "${ID}" "firmware-2711")
-fi
+ARCHIVE_TMP=$(mktemp)
+trap 'rm -f "${ARCHIVE_TMP}"' EXIT
 
-if [[ -z "${RPI5_FIRMWARE_PATH}" ]]; then
-  RPI5_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_firmware "${ID}" "firmware-2712")
-fi
-
-# download archive for hash update
-if ! wget --passive-ftp -nd -t 3 --spider "${ARCHIVE_URL}"; then
+if ! wget --passive-ftp -nd -t 3 -O "${ARCHIVE_TMP}" "${ARCHIVE_URL}"; then
   echo "Failed to download archive for ${PACKAGE_NAME}" >&2
   exit 1
 fi
-ARCHIVE_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" | sha256sum | awk '{ print $1 }')
+
+if [[ -z "${RPI4_FIRMWARE_PATH}" ]]; then
+  RPI4_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2711")
+fi
+
+if [[ -z "${RPI5_FIRMWARE_PATH}" ]]; then
+  RPI5_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2712")
+fi
+
+ARCHIVE_HASH=$(sha256sum "${ARCHIVE_TMP}" | awk '{ print $1 }')
 if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update package info
   BR_PACKAGE_NAME=${PACKAGE_NAME^^}
