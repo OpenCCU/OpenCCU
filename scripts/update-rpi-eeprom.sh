@@ -48,7 +48,7 @@ fi
 ARCHIVE_TMP=$(mktemp)
 trap 'rm -f "${ARCHIVE_TMP}"' EXIT
 
-if ! wget --passive-ftp -nd -t 3 -O "${ARCHIVE_TMP}" "${ARCHIVE_URL}"; then
+if ! wget -nd -t 3 -O "${ARCHIVE_TMP}" "${ARCHIVE_URL}"; then
   echo "Failed to download archive for ${PACKAGE_NAME}" >&2
   exit 1
 fi
@@ -67,8 +67,8 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   BR_PACKAGE_NAME=${PACKAGE_NAME^^}
   BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
   sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  sed -i "s/${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711\/stable\/.*/${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711\/stable\/${RPI4_FIRMWARE_PATH}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  sed -i "s/${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712\/stable\/.*/${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712\/stable\/${RPI5_FIRMWARE_PATH}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/latest/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/latest/${RPI5_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
   # update package hash
   sed -i "$ d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
