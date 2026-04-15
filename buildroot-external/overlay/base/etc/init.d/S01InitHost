@@ -82,22 +82,11 @@ identify_host() {
       HM_LED_YELLOW=""
 
       # if we are running on a raspberrypi we
-      # disable the HDMI port in case no cable is
-      # connected. This is to save power, but also
-      # to reduce potential interferences with the
-      # GPIO-based RF modules
-      hdmi_state=$(/usr/bin/tvservice -s | cut -d' ' -f2)
-
-      # if the least significant bit is set the
-      # HDMI cable seems to be unplugged or if
-      # no HDMI display is listed using tvservice or
-      # if no EDID info can be read from the display
-      if [[ $(((hdmi_state & 0x01) == 1)) -eq 1 ]] ||
-        ! /usr/bin/tvservice -l | grep -q "type HDMI" ||
-        /usr/bin/tvservice -d /dev/null 2>&1 | grep -q "Nothing"; then
-        /usr/bin/tvservice --off >/dev/null
-        /usr/bin/vcgencmd display_power 0 >/dev/null
-      fi
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh
 
       # increase vm.min_free_kbytes to 16384 to increase stability
       # in memory critical situations

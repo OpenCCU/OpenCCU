@@ -1,0 +1,70 @@
+#!/bin/sh
+# checkDisplayPower.sh — Display power management for OpenCCU
+#
+# Usage:
+#   checkDisplayPower.sh              # auto: set powerdown timer + disable if no display
+#   checkDisplayPower.sh off          # force display PHY off (monitor loses link)
+#   checkDisplayPower.sh on           # force display PHY on
+#   checkDisplayPower.sh status       # show connection + power state
+#   checkDisplayPower.sh powerdown N  # set VESA powerdown timer to N minutes
+#
+# Supports all DRM connector types (HDMI, DisplayPort, DVI, VGA).
+# Monitor detection uses EDID file size (reliable at boot time).
+# Requires: DRM-capable kernel with display driver (e.g. vc4-kms-v3d on RPi)
+
+# Minutes after consoleblank until display PHY powerdown
+DEFAULT_POWERDOWN_MIN=1
+
+# Match all DRM connectors (HDMI-A-*, DP-*, DVI-I-*, VGA-*, etc.)
+DRM_CONNECTORS="/sys/class/drm/card*-*"
+
+display_off() {
+    echo 4 > /sys/class/graphics/fb0/blank 2>/dev/null
+}
+
+display_on() {
+    echo 0 > /sys/class/graphics/fb0/blank 2>/dev/null
+}
+
+display_connected() {
+    for c in ${DRM_CONNECTORS}; do
+        [ -f "$c/edid" ] || continue
+        [ "$(wc -c < "$c/edid" 2>/dev/null)" -gt 0 ] && return 0
+    done
+    return 1
+}
+
+display_status() {
+    for c in ${DRM_CONNECTORS}; do
+        [ -f "$c/edid" ] || continue
+        EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null)
+        if [ "$EDID_SIZE" -gt 0 ]; then
+            CONN="connected"
+        else
+            CONN="disconnected"
+        fi
+        echo "$(basename "$c"): ${CONN} edid=${EDID_SIZE}B dpms=$(cat "$c/dpms" 2>/dev/null)"
+    done
+}
+
+display_set_powerdown() {
+    for tty in /dev/tty[0-9]*; do
+        printf '\033[14;%d]' "$1" > "$tty" 2>/dev/null
+        break
+    done
+}
+
+case "$1" in
+    off)       display_off ;;
+    on)        display_on ;;
+    status)    display_status ;;
+    powerdown) display_set_powerdown "${2:-$DEFAULT_POWERDOWN_MIN}" ;;
+    ""|auto)
+        display_set_powerdown "$DEFAULT_POWERDOWN_MIN"
+        display_connected || display_off
+        ;;
+    *)
+        echo "Usage: $0 {auto|off|on|status|powerdown N}" >&2
+        exit 1
+        ;;
+esac
