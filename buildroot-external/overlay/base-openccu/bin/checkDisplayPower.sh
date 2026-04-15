@@ -56,7 +56,6 @@ display_set_powerdown() {
     done
     return 1
 }
-}
 
 case "$1" in
     off)       display_off ;;
