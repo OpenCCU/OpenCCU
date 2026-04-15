@@ -71,7 +71,9 @@ case "$1" in
         display_set_powerdown "$mins"
         ;;
     ""|auto)
-        display_set_powerdown "$DEFAULT_POWERDOWN_MIN"
+        if ! display_set_powerdown "$DEFAULT_POWERDOWN_MIN"; then
+            echo "WARNING: failed to set console powerdown timer" >&2
+        fi
         display_connected || display_off
         ;;
     *)
