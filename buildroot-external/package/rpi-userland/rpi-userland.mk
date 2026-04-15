@@ -24,12 +24,12 @@ define RPI_USERLAND_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/bin/vcgencmd $(TARGET_DIR)/usr/bin/vcgencmd
 	set -e; \
 	set -- "$(TARGET_DIR)/usr/bin/vcgencmd"; \
-	processed=""; \
+	processed_files=""; \
 	while [ "$$#" -gt 0 ]; do \
 		current="$$1"; \
 		shift; \
-		case " $$processed " in *" $$current "*) continue ;; esac; \
-		processed="$$processed $$current"; \
+		case " $$processed_files " in *" $$current "*) continue ;; esac; \
+		processed_files="$$processed_files $$current"; \
 		$(TARGET_CROSS)readelf -h "$$current" >/dev/null 2>&1 || continue; \
 		# Parse NEEDED entries from "Shared library: [libname]". \
 		for lib in $$($(TARGET_CROSS)readelf -d "$$current" 2>/dev/null | awk -F'[][]' '/Shared library:/ {print $$2}'); do \
@@ -50,7 +50,7 @@ define RPI_USERLAND_INSTALL_TARGET_CMDS
 							cp -dpf "$$real_src" "$$real_dst"; \
 						fi; \
 					fi; \
-					case " $$processed $* " in *" $$dst "*) ;; *) set -- "$$@" "$$dst" ;; esac; \
+					case " $$processed_files $* " in *" $$dst "*) ;; *) set -- "$$@" "$$dst" ;; esac; \
 					break; \
 				fi; \
 			done; \
