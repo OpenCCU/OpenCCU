@@ -28,8 +28,7 @@ display_on() {
 
 display_connected() {
     for c in ${DRM_CONNECTORS}; do
-        [ -f "$c/edid" ] || continue
-        [ "$(wc -c < "$c/edid" 2>/dev/null)" -gt 0 ] && return 0
+        [ -s "$c/edid" ] && return 0
     done
     return 1
 }
@@ -37,8 +36,8 @@ display_connected() {
 display_status() {
     for c in ${DRM_CONNECTORS}; do
         [ -f "$c/edid" ] || continue
-        EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null)
-        if [ "$EDID_SIZE" -gt 0 ]; then
+        EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null || echo 0)
+        if [ "${EDID_SIZE:-0}" -gt 0 ]; then
             CONN="connected"
         else
             CONN="disconnected"
