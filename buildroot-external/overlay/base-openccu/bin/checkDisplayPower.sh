@@ -49,9 +49,13 @@ display_status() {
 
 display_set_powerdown() {
     for tty in /dev/tty[0-9]*; do
-        printf '\033[14;%d]' "$1" > "$tty" 2>/dev/null
-        break
+        [ -c "$tty" ] || continue
+        if printf '\033[14;%d]' "$1" > "$tty" 2>/dev/null; then
+            return 0
+        fi
     done
+    return 1
+}
 }
 
 case "$1" in
