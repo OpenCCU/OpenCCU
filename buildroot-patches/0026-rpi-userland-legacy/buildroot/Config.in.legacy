@@ -1,9 +1,0 @@
-config BR2_PACKAGE_SOFTETHER
-	bool "softether has been removed"
-	select BR2_LEGACY
-	help
-	  The version packaged in Buildroot version was outdated
-	  compared to upstream and no longer maintained by anyone
-	  listed in the DEVELOPERS file.
-
-config BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_DISPMANX
