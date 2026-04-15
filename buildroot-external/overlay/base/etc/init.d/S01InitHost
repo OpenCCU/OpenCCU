@@ -82,7 +82,7 @@ identify_host() {
       HM_LED_YELLOW=""
 
       # if we are running on a raspberrypi we
-      # unconditionally disable the HDMI port if vcgencmd
+      # Unconditionally disable the HDMI port if vcgencmd
       # is available. This is to save power,
       # but also to reduce potential interferences
       # with the GPIO-based RF modules
