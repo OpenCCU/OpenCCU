@@ -23,6 +23,7 @@ RPI_USERLAND_CONF_OPTS = \
 define RPI_USERLAND_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/bin/vcgencmd $(TARGET_DIR)/usr/bin/vcgencmd
 	set -e; \
+	# Buildroot paths do not contain spaces; a simple token list is sufficient here. \
 	set -- "$(TARGET_DIR)/usr/bin/vcgencmd"; \
 	processed_files=""; \
 	while [ "$$#" -gt 0 ]; do \
@@ -30,6 +31,7 @@ define RPI_USERLAND_INSTALL_TARGET_CMDS
 		shift; \
 		case " $$processed_files " in *" $$current "*) continue ;; esac; \
 		processed_files="$$processed_files $$current"; \
+		# Skip non-ELF files before querying dynamic dependencies. \
 		$(TARGET_CROSS)readelf -h "$$current" >/dev/null 2>&1 || continue; \
 		# Parse NEEDED entries from "Shared library: [libname]". \
 		for lib in $$($(TARGET_CROSS)readelf -d "$$current" 2>/dev/null | awk -F'[][]' '/Shared library:/ {print $$2}'); do \
@@ -50,6 +52,7 @@ define RPI_USERLAND_INSTALL_TARGET_CMDS
 							cp -dpf "$$real_src" "$$real_dst"; \
 						fi; \
 					fi; \
+					# Avoid duplicates against both visited and pending entries. \
 					case " $$processed_files $* " in *" $$dst "*) ;; *) set -- "$$@" "$$dst" ;; esac; \
 					break; \
 				fi; \

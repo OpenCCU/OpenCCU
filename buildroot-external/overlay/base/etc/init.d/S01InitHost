@@ -83,7 +83,9 @@ identify_host() {
 
       # if we are running on a raspberrypi we
       # If vcgencmd is available, disable the HDMI port
-      # unconditionally. This is to save power,
+      # unconditionally. This intentionally replaces the
+      # previous tvservice-based cable-detection logic.
+      # This is to save power,
       # but also to reduce potential interferences
       # with the GPIO-based RF modules
       if [ -x /usr/bin/vcgencmd ]; then
