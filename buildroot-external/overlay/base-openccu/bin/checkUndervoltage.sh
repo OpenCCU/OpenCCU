@@ -6,10 +6,10 @@
 #   1 = no hwmon alarm files present (nothing to check)
 #   2 = at least one alarm is active
 
-# Check whether any *_alarm file exists before iterating.
+# Check whether any undervoltage-related alarm file exists before iterating.
 # Glob expands to itself if nothing matches, so a -e test is reliable.
 FOUND=0
-for f in /sys/class/hwmon/hwmon*/*_alarm; do
+for f in /sys/class/hwmon/hwmon*/in*_lcrit_alarm /sys/class/hwmon/hwmon*/in*_min_alarm; do
     [ -e "$f" ] && FOUND=1 && break
 done
 
@@ -18,8 +18,8 @@ if [ "$FOUND" -eq 0 ]; then
     exit 1
 fi
 
-# iterate over all hwmon alarm stuff
-for f in /sys/class/hwmon/hwmon*/*_alarm; do
+# iterate over undervoltage-related hwmon alarms
+for f in /sys/class/hwmon/hwmon*/in*_lcrit_alarm /sys/class/hwmon/hwmon*/in*_min_alarm; do
     [ -r "$f" ] || continue
     if [ "$(cat "$f" 2>/dev/null)" = "1" ]; then
         echo "ALARM: $f"
