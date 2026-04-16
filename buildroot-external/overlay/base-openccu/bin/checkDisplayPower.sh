@@ -50,8 +50,8 @@ display_connected() {
 
 display_status() {
     for c in ${DRM_CONNECTORS}; do
-        [ -f "$c/edid" ] || continue
         is_physical_connector "$c" || continue
+        [ -f "$c/edid" ] || continue
         EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null || echo 0)
         if [ "${EDID_SIZE:-0}" -gt 0 ]; then
             CONN="connected"
