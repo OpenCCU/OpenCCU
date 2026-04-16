@@ -462,6 +462,7 @@ jobs:
     permissions:
       contents: write      # ncipollo/release-action
       packages: write      # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
       id-token: write      # actions/attest-build-provenance
       attestations: write  # actions/attest-build-provenance
     name: OCI/Docker Build+Push

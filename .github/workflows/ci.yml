@@ -242,6 +242,7 @@ jobs:
     permissions:
       contents: write  # actions/upload-artifact
       packages: write  # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
     name: OCI/Docker Build+Push
     runs-on: ubuntu-24.04
     needs: build

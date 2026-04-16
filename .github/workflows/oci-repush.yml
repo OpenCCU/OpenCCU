@@ -22,6 +22,7 @@ jobs:
     permissions:
       contents: write  # ncipollo/release-action
       packages: write  # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
     name: OCI/Docker Build+Push (repush)
     runs-on: ubuntu-24.04
 

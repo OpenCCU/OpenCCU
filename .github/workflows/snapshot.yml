@@ -447,6 +447,7 @@ jobs:
   oci-multiarch-build-push:
     permissions:
       packages: write      # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
       id-token: write      # actions/attest-build-provenance
       attestations: write  # actions/attest-build-provenance
       contents: read       # actions/attest-build-provenance
