@@ -8,15 +8,29 @@
 #   checkDisplayPower.sh status       # show connection + power state
 #   checkDisplayPower.sh powerdown N  # set VESA powerdown timer to N minutes
 #
-# Supports all DRM connector types (HDMI, DisplayPort, DVI, VGA).
+# Considers only physical DRM connector types (HDMI, DisplayPort, DVI, VGA, LVDS).
+# Virtual connectors (Writeback, Virtual, ...) are ignored.
 # Monitor detection uses EDID file size (reliable at boot time).
 # Requires: DRM-capable kernel with display driver (e.g. vc4-kms-v3d on RPi)
 
 # Minutes after consoleblank until display PHY powerdown
 DEFAULT_POWERDOWN_MIN=1
 
-# Match all DRM connectors (HDMI-A-*, DP-*, DVI-I-*, VGA-*, etc.)
+# Match all DRM connectors — physical filter is applied per-connector
 DRM_CONNECTORS="/sys/class/drm/card*-*"
+
+# Whitelist of physical DRM connector type prefixes.
+# Covers HDMI, DisplayPort, DVI (all variants), VGA, LVDS, and eDP.
+is_physical_connector() {
+    case "$(basename "$1")" in
+        *-HDMI-A-*|*-HDMI-B-*) return 0 ;;
+        *-DP-*|*-eDP-*)        return 0 ;;
+        *-DVI-I-*|*-DVI-D-*|*-DVI-A-*) return 0 ;;
+        *-VGA-*)               return 0 ;;
+        *-LVDS-*)              return 0 ;;
+        *) return 1 ;;
+    esac
+}
 
 display_off() {
     echo 4 > /sys/class/graphics/fb0/blank 2>/dev/null
@@ -28,6 +42,7 @@ display_on() {
 
 display_connected() {
     for c in ${DRM_CONNECTORS}; do
+        is_physical_connector "$c" || continue
         [ -s "$c/edid" ] && return 0
     done
     return 1
@@ -36,6 +51,7 @@ display_connected() {
 display_status() {
     for c in ${DRM_CONNECTORS}; do
         [ -f "$c/edid" ] || continue
+        is_physical_connector "$c" || continue
         EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null || echo 0)
         if [ "${EDID_SIZE:-0}" -gt 0 ]; then
             CONN="connected"
