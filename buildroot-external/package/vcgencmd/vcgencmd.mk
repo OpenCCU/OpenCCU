@@ -22,6 +22,9 @@ VCGENCMD_CONF_OPTS = \
 
 define VCGENCMD_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/bin/vcgencmd $(TARGET_DIR)/usr/bin/vcgencmd
+	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/lib/libvchostif.so $(TARGET_DIR)/usr/lib/libvchostif.so
+	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/lib/libvchiq_arm.so $(TARGET_DIR)/usr/lib/libvchiq_arm.so
+	$(INSTALL) -D -m 0755 $(STAGING_DIR)/usr/lib/libvcos.so $(TARGET_DIR)/usr/lib/libvcos.so
 endef
 
 $(eval $(cmake-package))
