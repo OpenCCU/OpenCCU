@@ -1,6 +1,6 @@
 This is release ${VERSION} of OpenCCU which is a **XXXXX** release with the following bugfixes and feature changes:
 
-[![Downloads](https://img.shields.io/github/downloads/OpenCCU/OpenCCU/${VERSION}/total.svg?style=flat-square)](https://github.com/OpenCCU/OpenCCU/releases/${VERSION}) ![License](https://img.shields.io/github/license/OpenCCU/OpenCCU.svg?style=flat-square) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL) [![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/jens-maus)](https://github.com/sponsors/jens-maus)
+[![Downloads](https://img.shields.io/github/downloads/OpenCCU/OpenCCU/${VERSION}/total.svg?style=flat-square)](https://github.com/OpenCCU/OpenCCU/releases/${VERSION}) ![License](https://img.shields.io/github/license/OpenCCU/OpenCCU.svg?style=flat-square) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL) [![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/OpenCCU)](https://github.com/sponsors/OpenCCU)
 
 <sub>[Hier klicken für deutschsprachige 🇩🇪🇦🇹🇨🇭 Version des ChangeLogs/Diskussionsbeitrag](https://homematic-forum.de/forum/viewtopic.php?f=65&t=XXXXX)</sub>
 
