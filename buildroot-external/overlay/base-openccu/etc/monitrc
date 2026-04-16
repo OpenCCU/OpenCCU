@@ -478,19 +478,19 @@ check program coProcessorCheck with path "/bin/checkCoProcessor.sh"
 # check remaining eMMC life-time
 check program eMMCLifeTimeCheck with path "/bin/checkEMMCLifeTime.sh"
     group system
-    if status == 1 for 3 cycles then unmonitor
-    if status == 2 for 5 cycles then
+    if status = 1 for 3 cycles then unmonitor
+    if status = 2 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'eMMC life time >90% exceeded' 'WatchDog: emmc-lifetime90' true"
       repeat every 280 cycles
-    if status == 3 for 5 cycles then
+    if status = 3 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'eMMC life time 100% exceeded' 'WatchDog: emmc-lifetime100' true"
       repeat every 280 cycles
 
 # check if a pi4 with usb3+gpio rf module is used
 check program rpi4usb3Check with path "/bin/checkRpi4Usb3.sh"
     group system
-    if status == 1 for 3 cycles then unmonitor
-    if status == 2 for 5 cycles then
+    if status = 1 for 3 cycles then unmonitor
+    if status = 2 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'Critical RaspberryPi4+USB3+GPIO use detected' 'WatchDog: rpi4-usb3' true"
       repeat every 24 cycles
 
