@@ -20,14 +20,15 @@ DEFAULT_POWERDOWN_MIN=1
 DRM_CONNECTORS="/sys/class/drm/card*-*"
 
 # Whitelist of physical DRM connector type prefixes.
-# Covers HDMI, DisplayPort, DVI (all variants), VGA, LVDS, and eDP.
+# Covers HDMI, DisplayPort, DVI (all variants), VGA, LVDS, eDP, DSI, DPI, and legacy types.
 is_physical_connector() {
-    case "$(basename "$1")" in
+    case "${1##*/}" in
         *-HDMI-A-*|*-HDMI-B-*) return 0 ;;
         *-DP-*|*-eDP-*)        return 0 ;;
         *-DVI-I-*|*-DVI-D-*|*-DVI-A-*) return 0 ;;
         *-VGA-*)               return 0 ;;
         *-LVDS-*)              return 0 ;;
+        *-DSI-*|*-DPI-*|*-Composite-*|*-SVIDEO-*|*-Component-*|*-TV-*|*-DIN-*|*-SPI-*) return 0 ;;
         *) return 1 ;;
     esac
 }
