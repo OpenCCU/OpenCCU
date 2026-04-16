@@ -81,7 +81,6 @@ identify_host() {
       HM_LED_RED="/sys/class/leds/PWR"
       HM_LED_YELLOW=""
 
-      # if we are running on a raspberrypi we
       # potentially disable the HDMI ports in case
       # no display is connected. This is to save
       # power, but also potential reduce RF interferences
@@ -117,6 +116,12 @@ identify_host() {
       HM_LED_GREEN="/sys/class/leds/blue:status"
       HM_LED_RED=""
       HM_LED_YELLOW=""
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh
     ;;
 
     # ASUS Tinkerboard2/2S platform
@@ -127,6 +132,12 @@ identify_host() {
       HM_LED_GREEN="/sys/class/leds/green:"
       HM_LED_RED="/sys/class/leds/red:"
       HM_LED_YELLOW="/sys/class/leds/yellow:"
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh
     ;;
 
     # OCI platform
@@ -159,11 +170,23 @@ identify_host() {
     # generic-x86_64
     generic-x86_64)
       HM_HOST="generic-x86_64"
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh
     ;;
 
     # generic-aarch64
     generic-aarch64)
       HM_HOST="generic-aarch64"
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh
     ;;
 
     # lxc platform
