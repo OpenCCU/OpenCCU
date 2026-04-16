@@ -11,13 +11,25 @@
 # Considers only physical DRM connector types (HDMI, DisplayPort, DVI, VGA, LVDS).
 # Virtual connectors (Writeback, Virtual, ...) are ignored.
 # Monitor detection uses EDID file size (reliable at boot time).
-# Requires: DRM-capable kernel with display driver (e.g. vc4-kms-v3d on RPi)
+#
+# Display power control tries fb0/blank first (fbdev emulation), then falls
+# back to console DPMS escape sequences for KMS-only systems without fbdev.
+# Console escape sequences are sent to /dev/tty0 which is a kernel alias
+# for the currently active virtual terminal.
+#
+# Requires: DRM-capable kernel with display driver
 
 # Minutes after consoleblank until display PHY powerdown
 DEFAULT_POWERDOWN_MIN=1
 
 # Match all DRM connectors — physical filter is applied per-connector
 DRM_CONNECTORS="/sys/class/drm/card*-*"
+
+# sysfs address to fb0/blank
+FB_BLANK="/sys/class/graphics/fb0/blank"
+
+# /dev/tty0 always refers to the currently active VT
+ACTIVE_TTY="/dev/tty0"
 
 # Whitelist of physical DRM connector type prefixes.
 # Covers HDMI, DisplayPort, DVI (all variants), VGA, LVDS, eDP, DSI, DPI, and legacy types.
@@ -33,12 +45,26 @@ is_physical_connector() {
     esac
 }
 
+# Send an escape sequence to the currently active VT.
+send_to_console() {
+    [ -c "$ACTIVE_TTY" ] || return 1
+    printf '%s' "$1" > "$ACTIVE_TTY" 2>/dev/null
+}
+
+# Power off display: prefer fb0/blank (fbdev), fall back to console DPMS.
+# Console DPMS escape: ESC [ 9 ; n ]  with n=1 blank, n=4 powerdown
 display_off() {
-    echo 4 > /sys/class/graphics/fb0/blank 2>/dev/null
+    if [ -w "$FB_BLANK" ]; then
+        echo 4 > "$FB_BLANK" 2>/dev/null && return 0
+    fi
+    send_to_console "$(printf '\033[9;4]')"
 }
 
 display_on() {
-    echo 0 > /sys/class/graphics/fb0/blank 2>/dev/null
+    if [ -w "$FB_BLANK" ]; then
+        echo 0 > "$FB_BLANK" 2>/dev/null && return 0
+    fi
+    send_to_console "$(printf '\033[9;0]')"
 }
 
 display_connected() {
@@ -63,14 +89,9 @@ display_status() {
     done
 }
 
+# Set VESA powerdown timer via ESC [ 14 ; n ] — n = minutes after blank
 display_set_powerdown() {
-    for tty in /dev/tty[0-9]*; do
-        [ -c "$tty" ] || continue
-        if printf '\033[14;%d]' "$1" > "$tty" 2>/dev/null; then
-            return 0
-        fi
-    done
-    return 1
+    send_to_console "$(printf '\033[14;%d]' "$1")"
 }
 
 case "$1" in
