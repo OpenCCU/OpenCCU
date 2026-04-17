@@ -74,7 +74,7 @@ display_connected() {
         [ -f "$c/edid" ] || continue
         EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null || echo 0)
         if [ "${EDID_SIZE:-0}" -gt 0 ]; then
-          echo $c connected
+          echo "$c connected"
           return 0
         fi
     done
