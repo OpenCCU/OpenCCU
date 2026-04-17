@@ -82,24 +82,28 @@ echo "   CURRENT: $(date -u "-d@${BOOTLOADER_CURRENT_VERSION}") (${BOOTLOADER_CU
 echo "    LATEST: $(date -u "-d@${BOOTLOADER_UPDATE_VERSION}") (${BOOTLOADER_UPDATE_VERSION})"
 
 if [ "${BCM_CHIP}" = 2711 ]; then
-  echo ""
-  if [ "${HAVE_VL805_EEPROM}" = 1 ]; then
-    echo "  VL805_FW: Dedicated VL805 EEPROM (/boot/vl805.bin)"
-  else
-    echo "  VL805_FW: Using bootloader EEPROM"
-  fi
-
   # get current running VL805 firmware version
   VL805_CURRENT_VERSION=$(for d in /sys/bus/pci/devices/*/; do
     [ "$(cat "${d}vendor" 2>/dev/null)" = "0x1106" ] && \
     [ "$(cat "${d}device" 2>/dev/null)" = "0x3483" ] && \
     od -A n -t x1 -j 80 -N 4 "${d}config" | awk '{print $4$3$2$1}' && break
   done)
-  echo "   CURRENT: ${VL805_CURRENT_VERSION}"
+  if [ -n "${VL805_CURRENT_VERSION}" ]; then
+    echo ""
+    if [ "${HAVE_VL805_EEPROM}" = 1 ]; then
+      echo "  VL805_FW: Dedicated VL805 EEPROM (/boot/vl805.bin)"
+    else
+      echo "  VL805_FW: Using bootloader EEPROM"
+    fi
 
-  if [ "${HAVE_VL805_EEPROM}" = 1 ]; then
-    VL805_UPDATE_VERSION=$(cat /boot/vl805.ver 2>/dev/null || echo "unknown")
-    echo "    LATEST: ${VL805_UPDATE_VERSION}"
+    echo "   CURRENT: ${VL805_CURRENT_VERSION}"
+
+    if [ "${HAVE_VL805_EEPROM}" = 1 ]; then
+      VL805_UPDATE_VERSION=$(cat /boot/vl805.ver 2>/dev/null || echo "unknown")
+      echo "    LATEST: ${VL805_UPDATE_VERSION}"
+    fi
+  else
+    echo "VL805: not found, version check skipped"
   fi
 fi
 
