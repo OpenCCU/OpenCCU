@@ -25,7 +25,7 @@ function resolve_stable_rpi_eeprom_firmware() {
 }
 
 if [[ -n "${1}" && "${1}" =~ ^pieeprom-.*\.bin$ ]]; then
-  ID=$(resolve_stable_github_head_commit "raspberrypi" "rpi-eeprom")
+  ID=$(resolve_latest_github_head_commit "raspberrypi" "rpi-eeprom")
   RPI4_FIRMWARE_PATH=${1}
   RPI5_FIRMWARE_PATH=${1}
 elif [[ -n "${2}" && "${2}" =~ ^pieeprom-.*\.bin$ ]]; then
@@ -33,7 +33,7 @@ elif [[ -n "${2}" && "${2}" =~ ^pieeprom-.*\.bin$ ]]; then
   RPI4_FIRMWARE_PATH=${2}
   RPI5_FIRMWARE_PATH=${3:-${2}}
 else
-  ID=${1:-$(resolve_stable_github_head_commit "raspberrypi" "rpi-eeprom")}
+  ID=${1:-$(resolve_latest_github_head_commit "raspberrypi" "rpi-eeprom")}
 fi
 
 PACKAGE_NAME="rpi-eeprom"

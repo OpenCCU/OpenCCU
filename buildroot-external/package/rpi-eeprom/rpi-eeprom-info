@@ -29,34 +29,35 @@ EXIT_UPDATE_REQUIRED=1
 EXIT_FAILED=2
 
 if [ -f "/sys/firmware/devicetree/base/system/linux,revision" ]; then
-   BOARD_INFO="$(od -v -An -t x1 /sys/firmware/devicetree/base/system/linux,revision | tr -d ' \n')"
+  BOARD_INFO="$(od -v -An -t x1 /sys/firmware/devicetree/base/system/linux,revision | tr -d ' \n')"
 elif grep -q Revision /proc/cpuinfo; then
-   BOARD_INFO="$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
+  BOARD_INFO="$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
 elif command -v vcgencmd > /dev/null; then
-   BOARD_INFO="$(vcgencmd otp_dump | grep '30:' | sed 's/.*://')"
+  BOARD_INFO="$(vcgencmd otp_dump | grep '30:' | sed 's/.*://')"
 else
-   echo "No Raspberry Pi board info found"
-   exit ${EXIT_FAILED}
+  echo "No Raspberry Pi board info found"
+  exit ${EXIT_FAILED}
 fi
 
 BOARD_TYPE=$(((0x$BOARD_INFO >> 4) & 0xff))
 BOARD_REVISION=$((0x$BOARD_INFO & 0xf))
 if [ $(((0x$BOARD_INFO >> 12) & 15)) = 3 ]; then
-   BCM_CHIP=2711
+  BCM_CHIP=2711
 elif [ $(((0x$BOARD_INFO >> 12) & 15)) = 4 ]; then
-   BCM_CHIP=2712
+  BCM_CHIP=2712
 else
-   echo "Device does not a have a Raspberry Pi bootloader EEPROM (e.g. Pi 4 or Pi 5)."
-   exit ${EXIT_FAILED}
+  echo "Device does not have a Raspberry Pi bootloader EEPROM (only Pi 4 and Pi 5 do)."
+  exit ${EXIT_FAILED}
 fi
 
 if [ ${BOARD_TYPE} -eq 17 ] && [ ${BOARD_REVISION} -lt 4 ]; then
-   HAVE_VL805_EEPROM=1
+  HAVE_VL805_EEPROM=1
 else
-   HAVE_VL805_EEPROM=0
+  HAVE_VL805_EEPROM=0
 fi
 
 if [[ ! -f "${DT_BOOTLOADER_TS}" ]]; then
+  echo "Bootloader build-timestamp not available at ${DT_BOOTLOADER_TS}" >&2
   exit ${EXIT_FAILED}
 fi
 
@@ -85,9 +86,9 @@ if [ "${BCM_CHIP}" = 2711 ]; then
 
   # get current running VL805 firmware version
   VL805_CURRENT_VERSION=$(for d in /sys/bus/pci/devices/*/; do
-    [ "$(cat ${d}vendor 2>/dev/null)" = "0x1106" ] && \
-    [ "$(cat ${d}device 2>/dev/null)" = "0x3483" ] && \
-    od -A n -t x1 -j 80 -N 4 ${d}config | awk '{print $4$3$2$1}' && break
+    [ "$(cat "${d}vendor" 2>/dev/null)" = "0x1106" ] && \
+    [ "$(cat "${d}device" 2>/dev/null)" = "0x3483" ] && \
+    od -A n -t x1 -j 80 -N 4 "${d}config" | awk '{print $4$3$2$1}' && break
   done)
   echo "   CURRENT: ${VL805_CURRENT_VERSION}"
 
