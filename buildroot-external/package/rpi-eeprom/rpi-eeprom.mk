@@ -12,12 +12,12 @@ RPI_EEPROM_INSTALL_IMAGES = YES
 
 ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),y)
   # Raspberry Pi 4 (2711)
-  RPI_EEPROM_FIRMWARE_PATH = firmware-2711/latest/pieeprom-2026-04-14.bin
+  RPI_EEPROM_FIRMWARE_PATH = firmware-2711/stable/pieeprom-2026-04-14.bin
   RPI_EEPROM_RECOVERY_PATH = firmware-2711/stable/recovery.bin
   RPI_EEPROM_VL805_GLOB = firmware-2711/stable/vl805-*.bin
 else ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI5),y)
   # Raspberry Pi 5 (2712)
-  RPI_EEPROM_FIRMWARE_PATH = firmware-2712/latest/pieeprom-2026-04-14.bin
+  RPI_EEPROM_FIRMWARE_PATH = firmware-2712/stable/pieeprom-2026-04-14.bin
   RPI_EEPROM_RECOVERY_PATH = firmware-2712/stable/recovery.bin
 endif
 
@@ -34,9 +34,15 @@ define RPI_EEPROM_BUILD_VL805_CMDS
 	RPI_EEPROM_VL805_PATH=$$(ls -1 $(@D)/$(RPI_EEPROM_VL805_GLOB) 2>/dev/null | sort -r | head -n1); \
 	[ -n "$$RPI_EEPROM_VL805_PATH" ] || { echo "No VL805 firmware image found matching $(RPI_EEPROM_VL805_GLOB)"; exit 1; }; \
 	cp "$$RPI_EEPROM_VL805_PATH" $(@D)/vl805.bin; \
-	$(@D)/rpi-eeprom-digest -i $(@D)/vl805.bin -o $(@D)/vl805.sig
+	$(@D)/rpi-eeprom-digest -i $(@D)/vl805.bin -o $(@D)/vl805.sig; \
+	VL805_BASENAME=$${RPI_EEPROM_VL805_PATH##*vl805-}; \
+	echo "$${VL805_BASENAME%.bin}" >$(@D)/vl805.ver
 endef
 endif
+
+define RPI_EEPROM_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0755 $(RPI_EEPROM_PKGDIR)/rpi-eeprom-info $(TARGET_DIR)/bin
+endef
 
 define RPI_EEPROM_INSTALL_IMAGES_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/pieeprom.sig $(BINARIES_DIR)/rpi-eeprom/pieeprom.sig
@@ -47,8 +53,10 @@ endef
 
 ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),y)
 define RPI_EEPROM_INSTALL_VL805_IMAGES_CMDS
+  # VL805 firmware + version sidecar
 	$(INSTALL) -D -m 0644 $(@D)/vl805.bin $(BINARIES_DIR)/rpi-eeprom/vl805.bin
 	$(INSTALL) -D -m 0644 $(@D)/vl805.sig $(BINARIES_DIR)/rpi-eeprom/vl805.sig
+	$(INSTALL) -D -m 0644 $(@D)/vl805.ver $(BINARIES_DIR)/rpi-eeprom/vl805.ver
 endef
 endif
 

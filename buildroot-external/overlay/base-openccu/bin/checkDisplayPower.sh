@@ -18,7 +18,6 @@
 # for the currently active virtual terminal.
 #
 # Requires: DRM-capable kernel with display driver
-
 # Minutes after consoleblank until display PHY powerdown
 DEFAULT_POWERDOWN_MIN=1
 
@@ -54,6 +53,7 @@ send_to_console() {
 # Power off display: prefer fb0/blank (fbdev), fall back to console DPMS.
 # Console DPMS escape: ESC [ 9 ; n ]  with n=1 blank, n=4 powerdown
 display_off() {
+    echo "turning display off"
     if [ -w "$FB_BLANK" ]; then
         echo 4 > "$FB_BLANK" 2>/dev/null && return 0
     fi
@@ -61,6 +61,7 @@ display_off() {
 }
 
 display_on() {
+    echo "turning display on"
     if [ -w "$FB_BLANK" ]; then
         echo 0 > "$FB_BLANK" 2>/dev/null && return 0
     fi
@@ -70,8 +71,14 @@ display_on() {
 display_connected() {
     for c in ${DRM_CONNECTORS}; do
         is_physical_connector "$c" || continue
-        [ -s "$c/edid" ] && return 0
+        [ -f "$c/edid" ] || continue
+        EDID_SIZE=$(wc -c < "$c/edid" 2>/dev/null || echo 0)
+        if [ "${EDID_SIZE:-0}" -gt 0 ]; then
+          echo "$c connected"
+          return 0
+        fi
     done
+    echo "no display connected"
     return 1
 }
 

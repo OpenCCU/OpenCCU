@@ -6,18 +6,18 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-function resolve_latest_rpi_eeprom_firmware() {
+function resolve_stable_rpi_eeprom_firmware() {
   local archive_path=${1}
   local firmware_dir=${2}
   local firmware_name
 
   firmware_name=$(tar -tzf "${archive_path}" \
-    | sed -nE "s|.*/${firmware_dir}/latest/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)$|\\1|p" \
+    | sed -nE "s|.*/${firmware_dir}/stable/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)$|\\1|p" \
     | sort -V \
     | tail -n1)
 
   if [[ -z "${firmware_name}" ]]; then
-    echo "Failed to resolve latest firmware for ${firmware_dir}" >&2
+    echo "Failed to resolve latest stable firmware for ${firmware_dir}" >&2
     exit 1
   fi
 
@@ -54,11 +54,11 @@ if ! wget -nd -t 3 -O "${ARCHIVE_TMP}" "${ARCHIVE_URL}"; then
 fi
 
 if [[ -z "${RPI4_FIRMWARE_PATH}" ]]; then
-  RPI4_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2711")
+  RPI4_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2711")
 fi
 
 if [[ -z "${RPI5_FIRMWARE_PATH}" ]]; then
-  RPI5_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2712")
+  RPI5_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2712")
 fi
 
 ARCHIVE_HASH=$(sha256sum "${ARCHIVE_TMP}" | awk '{ print $1 }')
@@ -67,8 +67,8 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   BR_PACKAGE_NAME=${PACKAGE_NAME^^}
   BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
   sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/latest/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/latest/${RPI5_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/stable/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/stable/${RPI5_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
   # update package hash
   sed -i "$ d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
