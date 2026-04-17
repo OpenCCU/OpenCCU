@@ -19,6 +19,13 @@ psplash_ensure() {
   # (re)start psplash in the background
   /usr/bin/psplash --no-console-switch >/dev/null 2>&1 &
 
+  # wait (briefly) for psplash to set up its FIFO
+  local i=0
+  while [ ! -p /run/psplash_fifo ] && [ "$i" -lt 4 ]; do
+    sleep 0.5 2>/dev/null
+    i=$((i+1))
+  done
+
   return 0
 }
 
