@@ -85,7 +85,7 @@ identify_host() {
       # no display is connected. This is to save
       # power, but also potential reduce RF interferences
       # with the GPIO-based Homematic RF modules
-      /bin/checkDisplayPower.sh
+      /bin/checkDisplayPower.sh >/dev/null
 
       # increase vm.min_free_kbytes to 16384 to increase stability
       # in memory critical situations
@@ -121,7 +121,7 @@ identify_host() {
       # no display is connected. This is to save
       # power, but also potential reduce RF interferences
       # with the GPIO-based Homematic RF modules
-      /bin/checkDisplayPower.sh
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # ASUS Tinkerboard2/2S platform
@@ -137,7 +137,7 @@ identify_host() {
       # no display is connected. This is to save
       # power, but also potential reduce RF interferences
       # with the GPIO-based Homematic RF modules
-      /bin/checkDisplayPower.sh
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # OCI platform
@@ -175,7 +175,7 @@ identify_host() {
       # no display is connected. This is to save
       # power, but also potential reduce RF interferences
       # with the GPIO-based Homematic RF modules
-      /bin/checkDisplayPower.sh
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # generic-aarch64
@@ -186,7 +186,7 @@ identify_host() {
       # no display is connected. This is to save
       # power, but also potential reduce RF interferences
       # with the GPIO-based Homematic RF modules
-      /bin/checkDisplayPower.sh
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # lxc platform
