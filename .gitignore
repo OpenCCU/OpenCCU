@@ -14,3 +14,4 @@
 /release/*.gz
 helm/raspberrymatic/charts/
 helm/raspberrymatic/Chart.lock
+/scripts/legal/__pycache__

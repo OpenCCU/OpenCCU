@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LICENSEINFO
+	bool "License info html"
+	help
+	  Integrate licenses.html into image at /www/rega/licenseinfo.htm
