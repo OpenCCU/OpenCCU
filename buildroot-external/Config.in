@@ -1,5 +1,6 @@
 source "$BR2_EXTERNAL_EQ3_PATH/package/multilib32/Config.in"
 source "$BR2_EXTERNAL_EQ3_PATH/package/recovery-system/Config.in"
+source "$BR2_EXTERNAL_EQ3_PATH/package/licenseinfo/Config.in"
 
 menu "eQ-3 HomeMatic Services"
   source "$BR2_EXTERNAL_EQ3_PATH/package/occu/Config.in"
