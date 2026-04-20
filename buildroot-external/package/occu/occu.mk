@@ -8,6 +8,28 @@ OCCU_VERSION = 3.87.6-3
 OCCU_SITE = $(call github,OpenCCU,occu,$(OCCU_VERSION))
 OCCU_LICENSE = HMSL
 OCCU_LICENSE_FILES = LicenseDE.txt
+OCCU_DEPENDENCIES = host-python3 host-python-html2text
+
+# extract license infos
+define OCCU_EXTRACT_LICENSE_INFOS
+	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		--packagedir=$(OCCU_DIR)/HMserver/opt/HMServer \
+		--jarfile=HMIPServer.jar \
+		--output=$(@D)/HMIPServer-JARLICENSEINFO.txt
+	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		--packagedir=$(OCCU_DIR)/HMserver/opt/HMServer \
+		--jarfile=HMServer.jar \
+		--output=$(@D)/HMServer-JARLICENSEINFO.txt
+	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		--packagedir=$(OCCU_DIR)/HMServer-Beta/opt/HmIP \
+		--jarfile=hmip-copro-update.jar \
+		--output=$(@D)/hmip-copro-update-JARLICENSEINFO.txt
+	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		--packagedir=$(OCCU_DIR)/HMserver/opt/HMServer/coupling \
+		--jarfile=ESHBridge.jar \
+		--output=$(@D)/ESHBridge-JARLICENSEINFO.txt
+endef
+OCCU_POST_EXTRACT_HOOKS += OCCU_EXTRACT_LICENSE_INFOS
 
 ifeq ($(BR2_PACKAGE_OCCU),y)
 
@@ -85,6 +107,16 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 
 		# make sure no /etc/ntp.conf is there anymore (chrony used)
 		rm -f $(TARGET_DIR)/etc/ntp.conf
+
+		# create licenseinfo.htm
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseHtml.py \
+			--build-dir=$(BUILD_DIR)/../ \
+			--jar-license-info=$(@D)/HMIPServer-JARLICENSEINFO.txt \
+			--jar-license-info=$(@D)/HMServer-JARLICENSEINFO.txt \
+			--jar-license-info=$(@D)/hmip-copro-update-JARLICENSEINFO.txt \
+			--jar-license-info=$(@D)/ESHBridge-JARLICENSEINFO.txt \
+			--output=$(TARGET_DIR)/www/rega/licenseinfo.htm
+
   endef
   TARGET_FINALIZE_HOOKS += OCCU_FINALIZE_TARGET
 endif
