@@ -36,7 +36,7 @@ jobs:
           echo "BUILD_DATETIME=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_ENV
 
       # download OCI platform release assets
-      - uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05  # v1.12
+      - uses: robinraju/release-downloader@28fc21f50d76778e7023361aa1f863e717d3d56f  # v1.13
         with:
           tag: ${{ github.event.inputs.release_tag }}
           fileName: "OpenCCU-*-oci_*.tgz"
