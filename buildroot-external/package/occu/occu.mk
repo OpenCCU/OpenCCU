@@ -13,21 +13,21 @@ OCCU_DEPENDENCIES = host-python3 host-python-html2text
 # extract license infos
 define OCCU_EXTRACT_LICENSE_INFOS
 	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_DIR)/HMserver/opt/HMServer \
+		--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
 		--jarfile=HMIPServer.jar \
-		--output=$(@D)/HMIPServer-JARLICENSEINFO.txt
+		--output=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt
 	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_DIR)/HMserver/opt/HMServer \
+		--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
 		--jarfile=HMServer.jar \
-		--output=$(@D)/HMServer-JARLICENSEINFO.txt
+		--output=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt
 	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_DIR)/HMServer-Beta/opt/HmIP \
+		--packagedir=$(OCCU_SRCDIR)/HMServer-Beta/opt/HmIP \
 		--jarfile=hmip-copro-update.jar \
-		--output=$(@D)/hmip-copro-update-JARLICENSEINFO.txt
+		--output=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt
 	$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_DIR)/HMserver/opt/HMServer/coupling \
+		--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer/coupling \
 		--jarfile=ESHBridge.jar \
-		--output=$(@D)/ESHBridge-JARLICENSEINFO.txt
+		--output=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt
 endef
 OCCU_POST_EXTRACT_HOOKS += OCCU_EXTRACT_LICENSE_INFOS
 
@@ -111,10 +111,10 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 		# create licenseinfo.htm
 		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseHtml.py \
 			--build-dir=$(BUILD_DIR)/../ \
-			--jar-license-info=$(@D)/HMIPServer-JARLICENSEINFO.txt \
-			--jar-license-info=$(@D)/HMServer-JARLICENSEINFO.txt \
-			--jar-license-info=$(@D)/hmip-copro-update-JARLICENSEINFO.txt \
-			--jar-license-info=$(@D)/ESHBridge-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/HMIPServer-jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt \
 			--output=$(TARGET_DIR)/www/rega/licenseinfo.htm
 
   endef
