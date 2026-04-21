@@ -55,21 +55,22 @@ def getLicenseTexts(packageSubdir):
     licenseText = ''
     if os.path.exists(packageSubdir):
         # walk through directory recursively to find the license files
-        for licFile in sorted(os.scandir(packageSubdir), key=lambda entry: entry.name):
-            if licFile.is_file():
-                with open(licFile.path, 'r', encoding='utf-8', errors='replace') as f:
+        for root, _, files in os.walk(packageSubdir):
+            for fileName in sorted(files):
+                licFilePath = os.path.join(root, fileName)
+                licFileName = os.path.relpath(licFilePath, packageSubdir)
+                with open(licFilePath, 'r', encoding='utf-8', errors='replace') as f:
                     content = f.read()
-                    commonLicenseName = libCommonLicenses.checkCommonLicenses(content, commonLicensesDict)
-                    if commonLicenseName:
-                        licenseText += (
-                                f'License-Text: <a href="#{html_attr(commonLicenseName)}">'
-                                f'{html_text(commonLicenseName)}</a>\n'
-                        )
-                    else:
-                        licenseText += html_text(licFile.name) + ':\n'
-                        licenseText += html_text(content) + '\n\n'
+                commonLicenseName = libCommonLicenses.checkCommonLicenses(content, commonLicensesDict)
+                if commonLicenseName:
+                    licenseText += (
+                            f'License-Text: <a href="#{html_attr(commonLicenseName)}">'
+                            f'{html_text(commonLicenseName)}</a>\n'
+                    )
+                else:
+                    licenseText += html_text(licFileName) + ':\n'
+                    licenseText += html_text(content) + '\n\n'
     return licenseText          
-
 
 def main():
     args = parse_args()
