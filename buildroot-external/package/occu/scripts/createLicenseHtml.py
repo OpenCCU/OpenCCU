@@ -56,7 +56,7 @@ def getLicenseTexts(packageSubdir):
     licenseText = ''
     if os.path.exists(packageSubdir):
         # walk through directory recursively to find the license files
-        for licFile in os.scandir(packageSubdir):
+        for licFile in sorted(os.scandir(packageSubdir), key=lambda entry: entry.name):
             if licFile.is_file():
                 with open(licFile.path, 'r', encoding='utf-8', errors='replace') as f:
                     content = f.read()
