@@ -85,9 +85,9 @@ def main():
     legalInfoDir = os.path.join(args.build_dir, 'legal-info')
     log.debug(f'Parsing manifest.csv from {legalInfoDir}...')
     manifestEntries = parseManfifest( os.path.join(args.build_dir, 'legal-info','manifest.csv') )
-    with open(args.output, 'w', encoding='iso-8859-1', errors='replace') as f:
+    with open(args.output, 'w', encoding='utf-8') as f:
         log.debug('Writing written offer.')
-        f.write('<!doctype html><html><head><meta charset="iso-8859-1"></head><body>\n')
+        f.write('<!doctype html><html><head><meta charset="utf-8"></head><body>\n')
         #write a table of contents 
         f.write('<h1>Open Source Software License Information</h1>\n')
 
@@ -113,7 +113,7 @@ def main():
             )
         f.write('<h2>Licenses</h2>\n')
         for licName in sorted(commonLicensesDict):
-            f.write(f'<p><a href="#{licName}">{licName}</a></p>\n')
+            f.write(f'<p><a href="#{html_attr(licName)}">{html_text(licName)}</a></p>\n')
 
         for entry in manifestEntries:
             log.info(f'Writing written offer for package {entry.get("PACKAGE", "")} {entry.get("VERSION", "")}.')
