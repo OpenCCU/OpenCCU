@@ -27,11 +27,38 @@ commonLicenses = {}
 log = logging.getLogger(__name__)
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Extract license information from HMIPServer/HMServer/ESHBridge jar files.')
-    parser.add_argument('--packagedir', required=True, type=str, default='', help='Path to the package directory containing the jar file.')
-    parser.add_argument('--jarfile', required=True, type=str, default='', help='jar filename.')
-    parser.add_argument('--output', type=str, default='', help='Path to output license info file. If not specified, the output file will be created in the same directory as the jar file with name <jarfile>-JARLICENSEINFO.txt')
-    parser.add_argument('--logdir', type=str, default='', help='Path where logfile output should be written to. If not specified, the logfile will be written to the same path like the output licenseinfo file.')
+    parser = argparse.ArgumentParser(
+        description=(
+            'Extract license information from HMIPServer/HMServer/'
+            'ESHBridge jar files.'
+        )
+    )
+    parser.add_argument(
+        '--packagedir',
+        required=True,
+        type=str,
+        default='',
+        help='Path to the package directory containing the jar file.',
+    )
+    parser.add_argument(
+        '--jarfile',
+        required=True,
+        type=str,
+        default='',
+        help='jar filename.'
+    )
+    parser.add_argument(
+        '--output',
+        type=str,
+        default='',
+        help='Path to output license info file. If not specified, the output file will be created in the same directory as the jar file with name <jarfile>-JARLICENSEINFO.txt'
+    )
+    parser.add_argument(
+        '--logdir',
+        type=str,
+        default='',
+        help='Path where logfile output should be written to. If not specified, the logfile will be written to the same path like the output licenseinfo file.'
+    )
     return parser.parse_args()
 
 def getLicenseInfoFromJarFile(jarFilePath):
