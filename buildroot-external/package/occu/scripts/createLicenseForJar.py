@@ -31,6 +31,7 @@ def parse_args():
     parser.add_argument('--packagedir', required=True, type=str, default='', help='Path to the package directory containing the jar file.')
     parser.add_argument('--jarfile', required=True, type=str, default='', help='jar filename.')
     parser.add_argument('--output', type=str, default='', help='Path to output license info file. If not specified, the output file will be created in the same directory as the jar file with name <jarfile>-JARLICENSEINFO.txt')
+    parser.add_argument('--logdir', type=str, default='', help='Path where logfile output should be written to. If not specified, the logfile will be written to the same path like the output licenseinfo file.')
     return parser.parse_args()
 
 def getLicenseInfoFromJarFile(jarFilePath):
@@ -75,11 +76,13 @@ def getLicenseInfoFromJarFile(jarFilePath):
 def main():
     args = parse_args()
 
+    outputFilePath = args.output if args.output else os.path.join(args.packagedir, args.jarfile + '-JARLICENSEINFO.txt')
+
     global log
 
     log = logging.getLogger(__name__)
     # Log both to file and console
-    logFilePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), args.jarfile + '-JARLICENSEINFO.log')
+    logFilePath = os.path.join(args.logdir if args.logdir else os.path.dirname(outputFilePath), args.jarfile + '-JARLICENSEINFO.log')
     logging.basicConfig(
         level=logging.DEBUG,
         format='%(asctime)s - %(levelname)s - %(message)s',
@@ -101,7 +104,6 @@ def main():
         log.error(f'Jar file {jarFilePath} does not exist. Skipping license extraction for this jar.')
         return
     thirdPartyListing, licenseTextsSet = getLicenseInfoFromJarFile(jarFilePath)
-    outputFilePath = args.output if args.output else os.path.join(args.packagedir, args.jarfile + '-JARLICENSEINFO.txt')
     log.info(f'Writing extracted license information to {outputFilePath}...')
     with open(outputFilePath, 'w') as f:
         f.write(thirdPartyListing + '\n\n')
