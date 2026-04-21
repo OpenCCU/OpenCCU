@@ -72,8 +72,8 @@ def getLicenseInfoFromJarFile(jarFilePath):
             for member in namelist:
                 if member.endswith('THIRD-PARTY.txt'):
                     log.debug(f'Found THIRD-PARTY.txt in jar: {member}. Extracting license information from this file...')
-                    source = jarchive.open(member)
-                    thirdPartyListing = source.read().decode('utf-8', errors='ignore')
+                    with jarchive.open(member) as source:
+                        thirdPartyListing = source.read().decode('utf-8', errors='ignore')
                     break
             # now extract and read license texts from jar if any exist
             # to do so we reduce namelist for entries in licenses subdir and 
@@ -89,17 +89,17 @@ def getLicenseInfoFromJarFile(jarFilePath):
             converter.ignore_images = True
             licenseTextsSet = set()
             for member in namelist:
-                source = jarchive.open(member)
-                licenseText = ''
-                if member.lower().endswith(('.htm', '.html')):
-                    licenseText = converter.handle(
-                            source.read().decode('utf-8', errors='ignore')
-                    )
-                    log.debug(f'Converted HTML license {member} to text format.')
-                else:
-                    licenseText = source.read().decode('utf-8', errors='ignore')
-                if libCommonLicenses.checkCommonLicenses(licenseText, commonLicenses) is None:
-                    licenseTextsSet.add(licenseText)
+                with jarchive.open(member) as source:
+                    licenseText = ''
+                    if member.lower().endswith(('.htm', '.html')):
+                        licenseText = converter.handle(
+                                source.read().decode('utf-8', errors='ignore')
+                        )
+                        log.debug(f'Converted HTML license {member} to text format.')
+                    else:
+                        licenseText = source.read().decode('utf-8', errors='ignore')
+                    if libCommonLicenses.checkCommonLicenses(licenseText, commonLicenses) is None:
+                        licenseTextsSet.add(licenseText)
             return thirdPartyListing, licenseTextsSet
     return None, None
 
