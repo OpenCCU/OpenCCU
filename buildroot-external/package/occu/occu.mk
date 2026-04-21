@@ -111,7 +111,7 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 		# create licenseinfo.htm
 		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseHtml.py \
 			--build-dir=$(BUILD_DIR)/../ \
-			--jar-license-info=$(OCCU_SRCDIR)/HMIPServer-jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt \
 			--jar-license-info=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt \
 			--jar-license-info=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt \
 			--jar-license-info=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt \

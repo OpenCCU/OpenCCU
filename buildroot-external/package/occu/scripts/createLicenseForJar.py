@@ -54,17 +54,20 @@ def getLicenseInfoFromJarFile(jarFilePath):
             log.debug(f'Looking for license files in jar {jarFilePath}...')
             reg = re.compile('.*licenses/.+')
             namelist = list(filter(reg.match, namelist))
-            html2text.bypass_tables = True
-            #html2text.use_automatic_links = True
-            html2text.ignore_links = True
-            html2text.body_width = 120
-            html2text.ignore_images = True
+            converter = html2text.HTML2Text()
+            converter.bypass_tables = True
+            # converter.use_automatic_links = True
+            converter.ignore_links = True
+            converter.body_width = 120
+            converter.ignore_images = True
             licenseTextsSet = set()
             for member in namelist:
                 source = jarchive.open(member)
                 licenseText = ''
                 if member.lower().endswith(('.htm', '.html')):
-                    licenseText = html2text.html2text(source.read().decode('utf-8', errors='ignore'))
+                    licenseText = converter.handle(
+                            source.read().decode('utf-8', errors='ignore')
+                    )
                     log.debug(f'Converted HTML license {member} to text format.')
                 else:
                     licenseText = source.read().decode('utf-8', errors='ignore')
@@ -102,13 +105,13 @@ def main():
     jarFilePath = os.path.join(args.packagedir, args.jarfile)
     if not os.path.exists(jarFilePath):
         log.error(f'Jar file {jarFilePath} does not exist. Skipping license extraction for this jar.')
-        return
+        raise FileNotFoundError(jarFilePath)
     thirdPartyListing, licenseTextsSet = getLicenseInfoFromJarFile(jarFilePath)
     log.info(f'Writing extracted license information to {outputFilePath}...')
-    with open(outputFilePath, 'w') as f:
+    with open(outputFilePath, 'w', encoding='utf-8') as f:
         f.write(thirdPartyListing + '\n\n')
         f.write('License Texts:\n')
-        for licenseText in licenseTextsSet:
+        for licenseText in sorted(licenseTextsSet):
             f.write(licenseText + '\n\n')
     log.info(f'License extraction completed successfully for {args.jarfile}')
 
