@@ -20,7 +20,7 @@ endif
 PLATFORM:=$(shell echo -n $(PRODUCT) | sed 's/_\(amd64\|arm.*\)//')
 
 .NOTPARALLEL: $(PRODUCTS) $(addsuffix -release, $(PRODUCTS)) $(addsuffix -clean, $(PRODUCTS)) build-all clean-all release-all
-.PHONY: all build release clean clean-all distclean default buildroot-help help updatePkg
+.PHONY: all build release clean clean-all distclean default buildroot-help help updatePkg build-$(PRODUCT)/legal-info
 
 all: help
 
@@ -50,12 +50,16 @@ build-$(PRODUCT)/.config: | build-$(PRODUCT) $(BR2_CCACHE_DIR)
 	cd $(shell pwd)/build-$(PRODUCT) && $(MAKE) O=$(shell pwd)/build-$(PRODUCT) -C ../buildroot-$(BUILDROOT_VERSION) BR2_EXTERNAL=../$(BUILDROOT_EXTERNAL) BR2_DL_DIR=$(BR2_DL_DIR) BR2_CCACHE_DIR=$(BR2_CCACHE_DIR) BR2_JLEVEL=$(BR2_JLEVEL) PRODUCT=$(PRODUCT) PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM) alldefconfig
 	cd $(shell pwd)/build-$(PRODUCT) && BR2_EXTERNAL=../$(BUILDROOT_EXTERNAL) BR2_DL_DIR=$(BR2_DL_DIR) BR2_CCACHE_DIR=$(BR2_CCACHE_DIR) BR2_JLEVEL=$(BR2_JLEVEL) PRODUCT=$(PRODUCT) PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM) ../buildroot-$(BUILDROOT_VERSION)/support/kconfig/merge_config.sh ../$(BUILDROOT_EXTERNAL)/Buildroot.config ../$(BUILDROOT_EXTERNAL)/configs/$(PRODUCT).config
 
+build-$(PRODUCT)/legal-info: build-$(PRODUCT)/.config | build-$(PRODUCT) $(BR2_CCACHE_DIR)
+	@echo "[legal-info $@]"
+	cd $(shell pwd)/build-$(PRODUCT) && $(MAKE) O=$(shell pwd)/build-$(PRODUCT) -C ../buildroot-$(BUILDROOT_VERSION) BR2_EXTERNAL=../$(BUILDROOT_EXTERNAL) BR2_DL_DIR=$(BR2_DL_DIR) BR2_CCACHE_DIR=$(BR2_CCACHE_DIR) BR2_JLEVEL=$(BR2_JLEVEL) PRODUCT=$(PRODUCT) PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM) legal-info
+
 build-all: $(PRODUCTS)
 $(PRODUCTS): %:
 	@echo "[build1: $@]"
 	@$(MAKE) PRODUCT=$@ PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM) build
 
-build: | buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
+build: | buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config $(if $(filter true,$(FAKE_BUILD)),,build-$(PRODUCT)/legal-info)
 	@echo "[build: $(PRODUCT)]"
 ifneq ($(FAKE_BUILD),true)
 	cd $(shell pwd)/build-$(PRODUCT) && $(MAKE) O=$(shell pwd)/build-$(PRODUCT) -C ../buildroot-$(BUILDROOT_VERSION) BR2_EXTERNAL=../$(BUILDROOT_EXTERNAL) BR2_DL_DIR=$(BR2_DL_DIR) BR2_CCACHE_DIR=$(BR2_CCACHE_DIR) BR2_JLEVEL=$(BR2_JLEVEL) PRODUCT=$(PRODUCT) PRODUCT_VERSION=$(PRODUCT_VERSION) PRODUCT_PLATFORM=$(PLATFORM)
