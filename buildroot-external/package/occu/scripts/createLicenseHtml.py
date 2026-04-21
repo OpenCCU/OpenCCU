@@ -39,7 +39,6 @@ def parse_args():
     parser.add_argument('--jar-license-info', action='append', type=str, help='Path to JAR license info file (JARLICENSEINFO.txt). Can be specified multiple times.')
     return parser.parse_args()
 
-
 def parseManfifest(manifest_path):
     entries = []
     with open(manifest_path, 'r', encoding='utf-8', newline='') as f:
@@ -86,7 +85,7 @@ def main():
     log.debug(f'Parsing manifest.csv from {legalInfoDir}...')
     manifestEntries = parseManfifest( os.path.join(args.build_dir, 'legal-info','manifest.csv') )
     with open(args.output, 'w', encoding='iso-8859-1', errors='replace') as f:
-        log.debug(f'Writing written offer.')
+        log.debug('Writing written offer.')
         f.write('<!doctype html><html><head><meta charset="iso-8859-1"></head><body>\n')
         #write a table of contents 
         f.write('<h1>Open Source Software License Information</h1>\n')
@@ -112,7 +111,7 @@ def main():
                     f'{html_text(package)} {html_text(version)}</a></p>\n'
             )
         f.write('<h2>Licenses</h2>\n')
-        for licName, licHash in commonLicensesDict.items():
+        for licName in sorted(commonLicensesDict):
             f.write(f'<p><a href="#{licName}">{licName}</a></p>\n')
 
         for entry in manifestEntries:
@@ -143,7 +142,7 @@ def main():
 
         log.info('Writing common licenses...')
         f.write('<h2>Licenses</h2>\n')
-        for licName, licHash in commonLicensesDict.items():
+        for licName in sorted(commonLicensesDict):
             f.write(f'<h3 id="{html_attr(licName)}">{html_text(licName)}</h3>\n')
             with open(
                     os.path.join(os.path.dirname(__file__), 'common-licenses', licName),
@@ -154,7 +153,7 @@ def main():
                 content = fLic.read()
                 f.write('<pre>' + html_text(content) + '</pre>\n')
         f.write('</body></html>\n')
-        log.info(f'License HTML creation process completed.')
+        log.info('License HTML creation process completed.')
 
 if __name__ == '__main__':
     main()

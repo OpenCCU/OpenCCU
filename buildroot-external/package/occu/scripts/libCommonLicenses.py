@@ -1,4 +1,3 @@
-
 import os
 import hashlib
 
@@ -8,10 +7,12 @@ def buildCommonLicensesDict():
     if os.path.exists(commonLicensesDir):
         for licFile in sorted(os.scandir(commonLicensesDir), key=lambda e: e.name):
             if licFile.is_file():
-                with open(licFile.path, 'r', errors='ignore') as f:
+                with open(licFile.path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
                     contentNoWhitespace = ''.join(content.split())
-                    commonLicensesDict[licFile.name] = hashlib.sha256(contentNoWhitespace.encode('utf-8')).hexdigest()
+                    commonLicensesDict[licFile.name] = hashlib.sha256(
+                            contentNoWhitespace.encode('utf-8')
+                    ).hexdigest()
     return commonLicensesDict
 
 def checkCommonLicenses(licenseText, commonLicensesDict):
