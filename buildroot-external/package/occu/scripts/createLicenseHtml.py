@@ -25,6 +25,7 @@ import libCommonLicenses
 
 commonLicensesDict = {}
 log = logging.getLogger(__name__)
+OUTPUT_ENCODING = 'iso-8859-1'
 
 def html_text(value):
     return html.escape(str(value), quote=False)
@@ -85,9 +86,9 @@ def main():
     legalInfoDir = os.path.join(args.build_dir, 'legal-info')
     log.debug(f'Parsing manifest.csv from {legalInfoDir}...')
     manifestEntries = parseManfifest( os.path.join(args.build_dir, 'legal-info','manifest.csv') )
-    with open(args.output, 'w', encoding='utf-8') as f:
+    with open(args.output, 'w', encoding=OUTPUT_ENCODING, errors='xmlcharrefreplace') as f:
         log.debug('Writing written offer.')
-        f.write('<!doctype html><html><head><meta charset="utf-8"></head><body>\n')
+        f.write(f'<!doctype html><html><head><meta charset="{OUTPUT_ENCODING}"></head><body>\n')
         #write a table of contents 
         f.write('<h1>Open Source Software License Information</h1>\n')
 
