@@ -88,23 +88,19 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 		rm -f $(TARGET_DIR)/etc/ntp.conf
 
 		# extract license infos from JAR files
-		[[ ! -e $(BASE_DIR)/legal-info ]] || \
-			$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
 			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
 			--jarfile=HMIPServer.jar \
 			--output=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt
-		[[ ! -e $(BASE_DIR)/legal-info ]] || \
-			$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
 			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
 			--jarfile=HMServer.jar \
 			--output=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt
-		[[ ! -e $(BASE_DIR)/legal-info ]] || \
-			$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
 			--packagedir=$(OCCU_SRCDIR)/HMServer-Beta/opt/HmIP \
 			--jarfile=hmip-copro-update.jar \
 			--output=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt
-		[[ ! -e $(BASE_DIR)/legal-info ]] || \
-			$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
 			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer/coupling \
 			--jarfile=ESHBridge.jar \
 			--output=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt
