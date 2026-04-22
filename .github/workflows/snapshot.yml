@@ -60,7 +60,7 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: mikepenz/release-changelog-builder-action@2cb9befdbc05f65b8354cc9873cd506509bd0782  # v6
+        uses: mikepenz/release-changelog-builder-action@bcae7115752d4ed746ff92feb666574428a79415  # v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           configuration: ".github/release-changelog-config.json"
@@ -111,7 +111,7 @@ jobs:
           generate_summary de /tmp/changelog-summary/changelog-summary.de.html
 
       - name: Upload ChangeLog summary artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: /tmp/changelog-summary/
           name: changelog-summary
@@ -411,7 +411,7 @@ jobs:
         id: upload-oci
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tgz
@@ -430,7 +430,7 @@ jobs:
       # manifest file artifact upload
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.mf
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.mf
@@ -447,6 +447,7 @@ jobs:
   oci-multiarch-build-push:
     permissions:
       packages: write      # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
       id-token: write      # actions/attest-build-provenance
       attestations: write  # actions/attest-build-provenance
       contents: read       # actions/attest-build-provenance
@@ -577,7 +578,7 @@ jobs:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 
       - name: Build and push container image
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         id: docker_build
         with:
           context: oci_build

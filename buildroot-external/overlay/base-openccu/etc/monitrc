@@ -416,17 +416,13 @@ check program wlan0CheckEnabled with path /bin/sh -c "[[ -e /etc/config/wpa_supp
     if status != 0 for 1 cycles then unmonitor
     depends on wlan0Exists
 
-# monitor under-voltage using vcgencmd (RaspberryPi only)
-check program voltageCheck with path /bin/sh -c "[ $(( $(/usr/bin/vcgencmd get_throttled | cut -f2 -d=) & 0x1 )) -eq $(( 0x1 )) ]"
+# monitor under-voltage condition (RaspberryPi only)
+check program underVoltageCheck with path "/bin/checkUndervoltage.sh"
     group system
-    if status = 0 for 2 cycles then
+    if status = 1 for 3 cycles then unmonitor
+    if status = 2 for 2 cycles then
       exec "/bin/triggerAlarm.tcl 'under-voltage detected' 'WatchDog: low-voltage' true"
       repeat every 24 cycles
-    depends on voltageCheckEnabled
-
-check program voltageCheckEnabled with path "/usr/bin/test -e /usr/bin/vcgencmd"
-    group system
-    if status != 0 for 1 cycles then unmonitor
 
 # internet connectivity monitoring
 check program internetCheck with path "/usr/bin/test -e /var/status/hasInternet"
@@ -478,19 +474,19 @@ check program coProcessorCheck with path "/bin/checkCoProcessor.sh"
 # check remaining eMMC life-time
 check program eMMCLifeTimeCheck with path "/bin/checkEMMCLifeTime.sh"
     group system
-    if status == 1 for 3 cycles then unmonitor
-    if status == 2 for 5 cycles then
+    if status = 1 for 3 cycles then unmonitor
+    if status = 2 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'eMMC life time >90% exceeded' 'WatchDog: emmc-lifetime90' true"
       repeat every 280 cycles
-    if status == 3 for 5 cycles then
+    if status = 3 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'eMMC life time 100% exceeded' 'WatchDog: emmc-lifetime100' true"
       repeat every 280 cycles
 
 # check if a pi4 with usb3+gpio rf module is used
 check program rpi4usb3Check with path "/bin/checkRpi4Usb3.sh"
     group system
-    if status == 1 for 3 cycles then unmonitor
-    if status == 2 for 5 cycles then
+    if status = 1 for 3 cycles then unmonitor
+    if status = 2 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'Critical RaspberryPi4+USB3+GPIO use detected' 'WatchDog: rpi4-usb3' true"
       repeat every 24 cycles
 

@@ -194,7 +194,7 @@ jobs:
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.zip*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.zip
@@ -203,7 +203,7 @@ jobs:
       - name: Upload build artifact [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-ccu3.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-ccu3.tgz
@@ -212,7 +212,7 @@ jobs:
       - name: Upload build artifact [ova]
         if: |
           matrix.platform == 'ova'
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}.ova*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}.ova
@@ -221,7 +221,7 @@ jobs:
       - name: Upload build artifact [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tgz
@@ -230,7 +230,7 @@ jobs:
       - name: Upload build artifact [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tar.xz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tar.xz
@@ -242,6 +242,7 @@ jobs:
     permissions:
       contents: write  # actions/upload-artifact
       packages: write  # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
     name: OCI/Docker Build+Push
     runs-on: ubuntu-24.04
     needs: build
@@ -321,7 +322,7 @@ jobs:
 
       - name: Build and push container image
         if: github.event.inputs.full_build == 'true'
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         id: docker_build
         with:
           context: oci_build
@@ -361,7 +362,7 @@ jobs:
 
       # Testing
       - name: Build and load container image for test
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         id: docker_build_test
         with:
           context: oci_build
@@ -412,7 +413,7 @@ jobs:
           export CCU_NETWORK_INTERFACE="none"
           export CCU_NETWORK_SUBNET="none"
           sudo mknod /dev/eq3loop c 239 0 # fake /dev/eq3loop
-          sudo -E bash -x ./scripts/install-docker.sh
+          sudo -E timeout 300 bash -x ./scripts/install-docker.sh || true
 
       - name: Test container startup+stop
         if: github.event.inputs.full_build == 'true'
@@ -438,15 +439,16 @@ jobs:
 
       - name: Upload debug information
         if: github.event.inputs.full_build == 'true'
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: debug_output.tgz
           name: OpenCCU-debug_output-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}.tgz
 
       - name: Remove/Cleanup container environment
+        if: always()
         run: |
-          sudo -E ./scripts/install-docker.sh uninstall
-          docker volume rm ccu_data
+          sudo -E timeout 300 ./scripts/install-docker.sh uninstall
+          docker volume rm ccu_data || true
           docker image ls -a
           docker image rm ${{ env.CCU_OCI_REPO }}:${{ env.CCU_OCI_TAG }}
 

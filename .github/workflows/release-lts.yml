@@ -298,13 +298,13 @@ jobs:
           generate_summary de /tmp/changelog-summary/changelog-summary.de.html
 
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: /tmp/release-template.md
           name: release-template.unpatched.md
 
       - name: Upload ChangeLog summary artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: /tmp/changelog-summary/
           name: changelog-summary
@@ -437,7 +437,7 @@ jobs:
       #
       - name: Upload build archive artifact [rpi3/ccu3]
         id: upload-build
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}
           path: |
@@ -453,7 +453,7 @@ jobs:
 
       - name: Upload manifest artifact
         id: upload-manifest
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
           name: OpenCCU-LTS-${{ needs.release_draft.outputs.version }}-${{ matrix.platform }}.mf
@@ -503,7 +503,7 @@ jobs:
           done
 
       - name: Upload release-template.md artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release-template.unpatched.md/release-template.md
           name: release-template.md

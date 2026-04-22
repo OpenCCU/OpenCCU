@@ -19,6 +19,10 @@ gpu_mem=32
 # If the text shown on the screen disappears off the edge, comment this out
 disable_overscan=1
 
+# Enable DRM VC4 V3D driver
+dtoverlay=vc4-kms-v3d
+max_framebuffers=1
+
 # enable i2c and spi
 dtparam=i2c_arm=on
 dtparam=i2c1=on
