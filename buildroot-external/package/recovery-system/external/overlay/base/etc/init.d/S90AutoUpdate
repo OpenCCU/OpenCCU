@@ -28,20 +28,24 @@ start() {
         if ! ( set -o pipefail; /bin/fwinstall.sh "${filename}" 2>&1 | tee /tmp/fwinstall.log ); then
           cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
 
-          # firmware update failed, lets change to
-          # interactive mode
-          echo "ERROR!"
+          # firmware update failed, clean up pending update marker
+          # and reboot into normal mode
+          echo "ERROR!, rebooting"
         else
           cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
 
           # firmware update succeeded, lets reboot!
-          rm -f /usr/local/.firmwareUpdate
-          mount -o ro,remount /userfs
-
           echo "OK, rebooting"
-          /sbin/reboot
-          exit 1
         fi
+
+        # firmware update done, lets reboot!
+        mount -o rw,remount /userfs
+        rm -f /usr/local/.firmwareUpdate
+        mount -o ro,remount /userfs
+
+        # reboot and exit
+        /sbin/reboot
+        exit 1
       else
         echo "ERROR: copy failed"
       fi
@@ -75,7 +79,13 @@ start() {
       # to fwinstall.sh to let it extract it before using it.
       FWINSTALL_PARAM=$(readlink -f /usr/local/.firmwareUpdate)
     else
-      echo "ERROR: invalid firmware update"
+      echo "ERROR: invalid firmware update, rebooting"
+
+      # remove .firmwareUpdate link and reboot
+      mount -o rw,remount /userfs
+      rm -f /usr/local/.firmwareUpdate 2>/dev/null
+      mount -o ro,remount /userfs
+      /sbin/reboot
       exit 1
     fi
 
@@ -86,23 +96,24 @@ start() {
     if ! ( set -o pipefail; /bin/fwinstall.sh "${FWINSTALL_PARAM}" 2>&1 | tee /tmp/fwinstall.log ); then
       cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
 
-      # firmware update failed, lets change to
-      # interactive mode
-      echo "ERROR!"
+      # firmware update failed, clean up pending update marker
+      # and reboot into normal mode
+      echo "ERROR!, rebooting"
     else
       cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
 
       # firmware update succeeded, lets reboot!
-      mount -o rw,remount /userfs
-      rm -f /usr/local/.firmwareUpdate
-      mount -o ro,remount /userfs
-
       echo "OK, rebooting"
-
-      /sbin/reboot
-      exit 1
     fi
 
+    # firmware update done, lets reboot!
+    mount -o rw,remount /userfs
+    rm -f /usr/local/.firmwareUpdate
+    mount -o ro,remount /userfs
+
+    # reboot and exit
+    /sbin/reboot
+    exit 1
   else
     echo "not found, OK"
   fi

@@ -1,0 +1,52 @@
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -44526,24 +44526,25 @@
+ AddProfileValues = function(prefix)
+ {
+   var i = 1;
+-
+-  while (document.getElementById(prefix + i))
++  var elem;
++  while (elem = document.getElementById(prefix + i))
+   {
+-    AddParam(document.getElementById(prefix + i));
++    AddParam(elem);
+     i++;
+   }
+ };
+ 
+ AddSeparateSettings = function(prefix, pnr)
+ {
+-  var i = 1,
+-  elem;
+-  while (document.getElementById(prefix + pnr + '_' + i))
+-  {
+-    elem = document.getElementById(prefix + pnr + '_' + i);
+-    if (IsDirty(elem)) {
+-      AddParam(document.getElementById(prefix + pnr + '_' + i));
+-    }
++  var i = 1;
++  var elem;
++  while (elem = document.getElementById(prefix + pnr + '_' + i))
++  {
++    // add ALL parameters (do NOT use IsDirty()) because
++    // AddSeparateSettings is also used while modifying
++    // device link parameters which requires all parameters
++    // to be present.
++    AddParam(elem);
+     i++;
+   }
+ };
+@@ -50381,10 +50382,11 @@
+   if (min_interval.value == min_interval.length - 1) 
+   {
+     $(id).options[0].selected = true;
+-
++    $(id).options[0].defaultSelected = true;
+   } else 
+   {
+     $(id).options[1].selected = true;
++    $(id).options[1].defaultSelected = true;
+   }
+   
+   MD_minInterval(id);

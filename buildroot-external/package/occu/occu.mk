@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-OCCU_VERSION = 3.85.7-1
+OCCU_VERSION = 3.87.6-3
 OCCU_SITE = $(call github,OpenCCU,occu,$(OCCU_VERSION))
 OCCU_LICENSE = HMSL
 OCCU_LICENSE_FILES = LicenseDE.txt
+OCCU_DEPENDENCIES = host-python3 host-python-html2text
 
 ifeq ($(BR2_PACKAGE_OCCU),y)
 
@@ -85,6 +86,34 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 
 		# make sure no /etc/ntp.conf is there anymore (chrony used)
 		rm -f $(TARGET_DIR)/etc/ntp.conf
+
+		# extract license infos from JAR files
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
+			--jarfile=HMIPServer.jar \
+			--output=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
+			--jarfile=HMServer.jar \
+			--output=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMServer-Beta/opt/HmIP \
+			--jarfile=hmip-copro-update.jar \
+			--output=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer/coupling \
+			--jarfile=ESHBridge.jar \
+			--output=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt
+
+		# create licenseinfo.htm
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseHtml.py \
+			--build-dir=$(BUILD_DIR)/../ \
+			--jar-license-info=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt \
+			--jar-license-info=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt \
+			--output=$(TARGET_DIR)/www/rega/licenseinfo.htm
+
   endef
   TARGET_FINALIZE_HOOKS += OCCU_FINALIZE_TARGET
 endif
@@ -105,32 +134,12 @@ ifeq ($(BR2_PACKAGE_OCCU_WEBUI_REGAHSS_BETA),y)
   OCCU_WEBUI_REGAHSS_BETA=y
 endif
 
-ifeq ($(BR2_arm),y)
-  OCCU_COMMON=arm-gnueabihf-gcc8
-  ifneq (,$(findstring rpi0,$(PRODUCT)))
-    OCCU_ARCH32=
-  else
-    OCCU_ARCH32=arm-linux-gnueabihf
-  endif
-  OCCU_ARCH64=
-  OCCU_LIB32=lib
-  OCCU_LIB64=
-endif
-
 ifeq ($(BR2_aarch64),y)
   OCCU_COMMON=arm-gnueabihf-gcc8
   OCCU_ARCH32=
   OCCU_ARCH64=aarch64-linux-gnu
   OCCU_LIB32=
   OCCU_LIB64=$(BR2_ROOTFS_LIB_DIR)
-endif
-
-ifeq ($(BR2_i386),y)
-  OCCU_COMMON=X86_32_GCC8
-  OCCU_ARCH32=i686-linux-gnu
-  OCCU_ARCH64=
-  OCCU_LIB32=lib
-  OCCU_LIB64=
 endif
 
 ifeq ($(BR2_x86_64),y)

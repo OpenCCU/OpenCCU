@@ -1,0 +1,41 @@
+#!/bin/sh
+# shellcheck shell=dash
+#
+# This script is executed when a guest agent receives fsfreeze-freeze and
+# fsfreeze-thaw command, if it is specified in --fsfreeze-hook (-F)
+# option of qemu-ga or placed in default path (/etc/qemu/fsfreeze-hook).
+# When the agent receives fsfreeze-freeze request, this script is issued with
+# "freeze" argument before the filesystem is frozen. And for fsfreeze-thaw
+# request, it is issued with "thaw" argument after filesystem is thawed.
+
+FSFREEZE_D=/etc/qemu/fsfreeze-hook.d
+
+# enable pipefail to get the correct exit code
+set -o pipefail
+
+# output function to syslog using logger
+log_message() {
+  local message="${1}"
+  logger -t qemu-ga-freeze-hook "${message}"
+}
+
+# Iterate executables in directory "fsfreeze-hook.d" with the specified args
+[ ! -d "${FSFREEZE_D}" ] && exit 0
+
+for file in "${FSFREEZE_D}"/* ; do
+  # only continue for executable files
+  [ -x "${file}" ] || continue
+
+  log_message "Executing ${file} ${*}"
+  "${file}" "${@}" 2>&1 | logger -t qemu-ga-freeze-hook
+  STATUS=$?
+
+  # log the execution status
+  if [ ${STATUS} -ne 0 ]; then
+    log_message "Error: ${file} finished with status=${STATUS}"
+  else
+    log_message "${file} finished successfully"
+  fi
+done
+
+exit 0

@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
-@@ -396,51 +396,14 @@
+@@ -396,52 +396,14 @@
    if (bShowChannel == true) {
  
      ! Interface HmIP-RF and HmIP-Wired
@@ -25,6 +25,7 @@
 -        || (oDevHssType == "HmIP-UDI-PB2-A")
 -        || (oDevHssType == "HmIP-UDI-SMI55")
 -        || (oDevHssType == "HmIP-UDI-SMI55-A")
+-        || (oDevHssType == "HmIP-DRBLI4")
 -        ) {
 -
 -        object chnParam;
@@ -55,6 +56,15 @@
        }
  
        ! Necessary to be able to learn the codes of keypads and finger print sensors
+@@ -995,7 +957,7 @@
+   !HmIP-DLP
+   ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
+   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
+-    // TODO - refactoring necessary
++    ! TODO - refactoring necessary
+     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
 --- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
 @@ -188,6 +188,38 @@

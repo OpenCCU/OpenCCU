@@ -62,7 +62,7 @@ jQuery.extend(true,langJSON, {
     "lblCurrentFirmwareVersionNotKnown": "unknown",
     "lblCurrentOperatingVoltage": "Actual operating voltage",
     "lblCurrentPowerConsumption": "Actual current consumption",
-    "lblCyanLong" : "Cyan short",
+    "lblCyanLong" : "Cyan long",
     "lblCyanShort" : "Cyan short",
     "lblDataInputPropertie" : "Data input settings",
     "lblDelayExternalArming" : "External alarm activated with delay",

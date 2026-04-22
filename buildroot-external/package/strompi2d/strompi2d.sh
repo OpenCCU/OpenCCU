@@ -9,11 +9,7 @@
 : "${POWER_RETURN_CMD:=/bin/triggerAlarm.tcl 'Power Restored' 'WatchDog: strompi2-powerrestore' true}"
 
 # File descriptors
-if [[ "${HOST}" != "tinkerboard" ]]; then
-  : "${GPIO_POWER:=21}"
-else
-  : "${GPIO_POWER:=188}"
-fi
+: "${GPIO_POWER:=21}"
 
 # Debounce time in while loop
 : "${DEBOUNCE_TIME:=0.3s}"

@@ -51,7 +51,7 @@ jobs:
       should_skip: ${{ steps.check.outputs.should_skip }}
     steps:
       - id: check
-        uses: fkirc/skip-duplicate-actions@v5.3.1
+        uses: fkirc/skip-duplicate-actions@f75f66ce1886f00957d99748a42c724f4330bdcf  # v5.3.1
         with:
           skip_after_successful_duplicate: 'true'
           concurrent_skipping: 'same_content_newer'
@@ -64,15 +64,15 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Check Dockerfile
-        uses: hadolint/hadolint-action@v3.3.0
+        uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5  # v3.3.0
         with:
           dockerfile: ./buildroot-external/board/oci/Dockerfile
 
       - name: Check shell scripts
-        uses: ludeeus/action-shellcheck@2.0.0
+        uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38  # v2.0.0
         with:
           ignore_paths: >-
             buildroot-external/package/neoserver/pkg/mediola/neo_server
@@ -82,20 +82,20 @@ jobs:
           SHELLCHECK_OPTS: -e SC3010 -e SC3014 -e SC3057 -e SC3036 -e SC3028 -e SC3020
 
       - name: Check Home Assistant Add-on Lint
-        uses: frenck/action-addon-linter@v2
+        uses: frenck/action-addon-linter@f995494fd84fae6310d23617e66d0e37de4f14eb  # v2
         with:
           path: "./home-assistant-addon"
 
       - name: Check Home Assistant Add-on Lint (dev)
-        uses: frenck/action-addon-linter@v2
+        uses: frenck/action-addon-linter@f995494fd84fae6310d23617e66d0e37de4f14eb  # v2
         with:
           path: "./home-assistant-addon-dev"
 
       - name: Check yaml files
-        uses: frenck/action-yamllint@v1.5
+        uses: frenck/action-yamllint@34b4bbcaeabedcfefad6adea8c5bbc42af0e2d47  # v1.5
 
       - name: Check markdown files
-        uses: avto-dev/markdown-lint@v1
+        uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb  # v1
         with:
           ignore: '**/node_modules/** **/codemirror/README.md'
 
@@ -119,11 +119,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [rpi0, rpi2, rpi3, rpi4, rpi5, tinkerboard, odroid-c2, odroid-c4, odroid-n2, ova, oci_amd64, oci_arm64, oci_arm, generic-x86_64, generic-aarch64, lxc_amd64, lxc_arm64, lxc_arm]
+        platform: [rpi3, rpi4, rpi5, odroid-c2, odroid-c4, odroid-n2, tinkerboard2, ova, oci_amd64, oci_arm64, generic-x86_64, generic-aarch64, lxc_amd64, lxc_arm64]
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Install Dependencies
         run: |
@@ -190,11 +190,11 @@ jobs:
 
       #########################
       # upload build artifacts
-      - name: Upload build artifact [rpi*, tinkerboard, ova, generic-*]
+      - name: Upload build artifact [rpi*, ova, generic-*]
         if: |
           !startsWith(matrix.platform, 'oci_') &&
           !startsWith(matrix.platform, 'lxc_')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.zip*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.zip
@@ -203,7 +203,7 @@ jobs:
       - name: Upload build artifact [ccu3]
         if: |
           matrix.platform == 'rpi3'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-ccu3.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-ccu3.tgz
@@ -212,7 +212,7 @@ jobs:
       - name: Upload build artifact [ova]
         if: |
           matrix.platform == 'ova'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}.ova*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}.ova
@@ -221,7 +221,7 @@ jobs:
       - name: Upload build artifact [oci]
         if: |
           startsWith(matrix.platform, 'oci_')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tgz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tgz
@@ -230,7 +230,7 @@ jobs:
       - name: Upload build artifact [lxc]
         if: |
           startsWith(matrix.platform, 'lxc_')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: release/OpenCCU-${{ env.VERSION }}-${{ matrix.platform }}.tar.xz*
           name: OpenCCU-${{ env.VERSION }}-${{ env.GITHUB_SHA7 }}-${{ matrix.platform }}.tar.xz
@@ -242,12 +242,13 @@ jobs:
     permissions:
       contents: write  # actions/upload-artifact
       packages: write  # docker/build-push-action
+      artifact-metadata: write  # docker/build-push-action build record
     name: OCI/Docker Build+Push
     runs-on: ubuntu-24.04
     needs: build
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
 
       - name: Setup Environment
         run: |
@@ -260,17 +261,13 @@ jobs:
 
       # download OCI platform artifacts
       - name: Download oci_amd64 artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_amd64.tgz
       - name: Download oci_arm64 artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
         with:
           name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_arm64.tgz
-      - name: Download oci_arm artifact
-        uses: actions/download-artifact@v7
-        with:
-          name: OpenCCU-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}-oci_arm.tgz
 
       - name: Extract OCI artifacts
         run: |
@@ -289,13 +286,13 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3.12.0
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
         with:
-          install: true
+          use: true
 
       - name: Login to GitHub Container Registry
         if: env.SECRETS_ARE_AVAILABLE == 'true'
-        uses: docker/login-action@v3.6.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -303,7 +300,7 @@ jobs:
 
       - name: Extract docker metadata
         id: meta
-        uses: docker/metadata-action@v5.10.0
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf  # v6.0.0
         with:
           images: ${{ env.CCU_OCI_REPO }}
           labels: |
@@ -325,12 +322,12 @@ jobs:
 
       - name: Build and push container image
         if: github.event.inputs.full_build == 'true'
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         id: docker_build
         with:
           context: oci_build
           file: buildroot-external/board/oci/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           # load not supported -> https://github.com/docker/buildx/issues/290
           # load: true #load in docker - needed for testing later on
           push: ${{ env.SECRETS_ARE_AVAILABLE }}
@@ -354,7 +351,7 @@ jobs:
             io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon
             io.hass.version=${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}
             io.hass.type=addon
-            io.hass.arch=armv7|aarch64|amd64
+            io.hass.arch=aarch64|amd64
           tags: |
             ${{ env.CCU_OCI_REPO }}:${{ env.CCU_OCI_TAG }}
           annotations: |
@@ -365,7 +362,7 @@ jobs:
 
       # Testing
       - name: Build and load container image for test
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         id: docker_build_test
         with:
           context: oci_build
@@ -393,7 +390,7 @@ jobs:
             io.hass.url=https://github.com/${{ github.repository }}/tree/master/home-assistant-addon
             io.hass.version=${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}
             io.hass.type=addon
-            io.hass.arch=armv7|aarch64|amd64
+            io.hass.arch=aarch64|amd64
           tags: |
             ${{ env.CCU_OCI_REPO }}:${{ env.CCU_OCI_TAG }}
 
@@ -416,7 +413,7 @@ jobs:
           export CCU_NETWORK_INTERFACE="none"
           export CCU_NETWORK_SUBNET="none"
           sudo mknod /dev/eq3loop c 239 0 # fake /dev/eq3loop
-          sudo -E bash -x ./scripts/install-docker.sh
+          sudo -E timeout 300 bash -x ./scripts/install-docker.sh || true
 
       - name: Test container startup+stop
         if: github.event.inputs.full_build == 'true'
@@ -442,15 +439,16 @@ jobs:
 
       - name: Upload debug information
         if: github.event.inputs.full_build == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
           path: debug_output.tgz
           name: OpenCCU-debug_output-${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA7 }}.tgz
 
       - name: Remove/Cleanup container environment
+        if: always()
         run: |
-          sudo -E ./scripts/install-docker.sh uninstall
-          docker volume rm ccu_data
+          sudo -E timeout 300 ./scripts/install-docker.sh uninstall
+          docker volume rm ccu_data || true
           docker image ls -a
           docker image rm ${{ env.CCU_OCI_REPO }}:${{ env.CCU_OCI_TAG }}
 

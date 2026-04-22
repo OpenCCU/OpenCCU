@@ -10,8 +10,8 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
  <footer class="pt-4 my-md-5 pt-md-5 border-top" style="height: 50px; text-align: center;">
  	<div class="row" style="margin: 0;">
  		<div class="col-10 col-md">
--			<img class="mb-1" src="https://www.mediola.com/wp-content/uploads/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2024</small>
-+			<img class="mb-1" src="images/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2022</small>
+-			<img class="mb-1" src="https://www.mediola.com/wp-content/uploads/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2026</small>
++			<img class="mb-1" src="images/mediola-logo-trans.png" alt="" width="120"> <small class="d-block mb-2 text-muted">&copy; 2017-2026</small>
  		</div>
  	</div>
  </footer>
