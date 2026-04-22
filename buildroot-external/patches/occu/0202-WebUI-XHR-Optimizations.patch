@@ -154,9 +154,7 @@
    };
  
  }();/**
---- occu/WebUI/www/webui/webui.js.orig
-+++ occu/WebUI/www/webui/webui.js
-@@ -32798,7 +32798,7 @@
+@@ -32798,7 +32825,7 @@
          if (this.id == -1) {
            opts = {
              postBody: ReGa.encode(pb), 
@@ -165,7 +163,7 @@
              onComplete: function(resp) {
                newName = resp.responseText.replace(/[\r\n\t]/g, "");
                iseRooms.CreateRoomRetId(newName, t.baseId);
-@@ -32816,7 +32816,7 @@
+@@ -32816,7 +32843,7 @@
          if (this.id == -1) {
            opts = {
              postBody: ReGa.encode(pb), 
