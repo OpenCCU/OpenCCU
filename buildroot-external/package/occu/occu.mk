@@ -10,31 +10,6 @@ OCCU_LICENSE = HMSL
 OCCU_LICENSE_FILES = LicenseDE.txt
 OCCU_DEPENDENCIES = host-python3 host-python-html2text
 
-# extract license infos
-define OCCU_EXTRACT_LICENSE_INFOS
-	[[ ! -e $(BASE_DIR)/legal-info ]] || \
-		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
-		--jarfile=HMIPServer.jar \
-		--output=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt
-	[[ ! -e $(BASE_DIR)/legal-info ]] || \
-		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
-		--jarfile=HMServer.jar \
-		--output=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt
-	[[ ! -e $(BASE_DIR)/legal-info ]] || \
-		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_SRCDIR)/HMServer-Beta/opt/HmIP \
-		--jarfile=hmip-copro-update.jar \
-		--output=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt
-	[[ ! -e $(BASE_DIR)/legal-info ]] || \
-		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
-		--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer/coupling \
-		--jarfile=ESHBridge.jar \
-		--output=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt
-endef
-OCCU_POST_EXTRACT_HOOKS += OCCU_EXTRACT_LICENSE_INFOS
-
 ifeq ($(BR2_PACKAGE_OCCU),y)
 
 	define OCCU_PRE_PATCH
@@ -111,6 +86,24 @@ ifeq ($(BR2_PACKAGE_OCCU),y)
 
 		# make sure no /etc/ntp.conf is there anymore (chrony used)
 		rm -f $(TARGET_DIR)/etc/ntp.conf
+
+		# extract license infos from JAR files
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
+			--jarfile=HMIPServer.jar \
+			--output=$(OCCU_SRCDIR)/HMIPServer.jar-JARLICENSEINFO.txt
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer \
+			--jarfile=HMServer.jar \
+			--output=$(OCCU_SRCDIR)/HMServer.jar-JARLICENSEINFO.txt
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMServer-Beta/opt/HmIP \
+			--jarfile=hmip-copro-update.jar \
+			--output=$(OCCU_SRCDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt
+		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseForJar.py \
+			--packagedir=$(OCCU_SRCDIR)/HMserver/opt/HMServer/coupling \
+			--jarfile=ESHBridge.jar \
+			--output=$(OCCU_SRCDIR)/ESHBridge.jar-JARLICENSEINFO.txt
 
 		# create licenseinfo.htm
 		$(HOST_DIR)/bin/python3 $(OCCU_PKGDIR)/scripts/createLicenseHtml.py \
