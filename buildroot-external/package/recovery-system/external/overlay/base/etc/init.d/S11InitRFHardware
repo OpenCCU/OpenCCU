@@ -43,11 +43,6 @@ identify_rf_hardware() {
       rpi*)
         [[ -c /dev/ttyAMA0 ]] && RF_DEVNODES="ttyAMA0"
       ;;
-
-      # ASUS Tinkerboard
-      tinkerboard*)
-        [[ -c /dev/ttyS1 ]] && RF_DEVNODES="ttyS1"
-      ;;
     esac
 
     # also set tty device to low_latency mode (if possible)

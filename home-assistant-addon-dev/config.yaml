@@ -1,11 +1,10 @@
 ---
 name: OpenCCU (snapshot)
-version: 3.85.7.20251224-3c17a5b
+version: 3.87.6.20260420-d0e93d2
 stage: experimental
 slug: openccu-dev
 image: ghcr.io/openccu/openccu
 arch:
-  - armv7
   - aarch64
   - amd64
 description: HomeMatic/homematicIP CCU central based on OpenCCU (Snapshot)

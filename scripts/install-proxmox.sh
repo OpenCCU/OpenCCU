@@ -6,7 +6,7 @@
 #
 # Inspired by https://github.com/whiskerz007/proxmox_hassos_install
 #
-# Copyright (c) 2022-2025 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 # Usage:
@@ -24,7 +24,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.17"
+VERSION="3.20"
 LOGFILE="/tmp/install-proxmox.log"
 LINE=
 
@@ -117,7 +117,7 @@ uninstall() {
        grep -q Raspberry /proc/cpuinfo; then
     # arm based RaspberryPiOS system
     info "Identified arm64-based RaspberryPiOS Proxmox VE system..."
-    HEADER_PKGS="raspberrypi-kernel-headers"
+    HEADER_PKGS="linux-headers-rpi-v8"
   elif [[ "${PLATFORM}" == "x86_64" ]]; then
     # full amd64/x86 based Proxmox VE system
     info "Identified x86-based Proxmox VE system..."
@@ -178,6 +178,27 @@ uninstall() {
 }
 
 update() {
+  info "Updating host system dependencies..."
+
+  if pkg_installed pivccu-modules-dkms ||
+     pkg_installed pivccu-devicetree-armbian ||
+     pkg_installed pivccu-modules-raspberrypi; then
+
+    apt update
+
+    if pkg_installed pivccu-modules-dkms; then
+      apt upgrade -y pivccu-modules-dkms
+    fi
+
+    if pkg_installed pivccu-devicetree-armbian; then
+      apt upgrade -y pivccu-devicetree-armbian
+    fi
+
+    if pkg_installed pivccu-modules-raspberrypi; then
+      apt upgrade -y pivccu-modules-raspberrypi
+    fi
+  fi
+
   info "Selecting container..."
   MSG_MAX_LENGTH=0
   while read -r line; do
@@ -307,10 +328,6 @@ select_version() {
         ENDSWITH="lxc_arm64.tar.xz"
         CTARCH="arm64"
       ;;
-      arm*)
-        ENDSWITH="lxc_arm.tar.xz"
-        CTARCH="armhf"
-      ;;
     esac
   fi
 
@@ -407,7 +424,7 @@ EOF
 }
 
 msg "OpenCCU Proxmox installation script v${VERSION}"
-msg "Copyright (c) 2022-2025 Jens Maus <mail@jens-maus.de>"
+msg "Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>"
 msg ""
 
 # create temp dir
@@ -514,7 +531,7 @@ EOF
        grep -q Raspberry /proc/cpuinfo; then
     # arm based RaspberryPiOS system
     info "Identified arm64-based RaspberryPiOS Proxmox VE system..."
-    HEADER_PKGS="raspberrypi-kernel-headers"
+    HEADER_PKGS="linux-headers-rpi-v8"
   elif [[ "${PLATFORM}" == "x86_64" ]]; then
     # full amd64/x86 based Proxmox VE system
     info "Identified x86-based Proxmox VE system..."

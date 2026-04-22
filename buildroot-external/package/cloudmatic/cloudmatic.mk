@@ -7,26 +7,22 @@
 CLOUDMATIC_VERSION = 4bc76aab7e0bd6b7f1ac1802ed9713d595f536de
 CLOUDMATIC_SITE = $(call github,OpenCCU,CloudMatic-CCUAddon,$(CLOUDMATIC_VERSION))
 CLOUDMATIC_LICENSE = BSD-3-Clause
-
-ifeq ($(BR2_arm),y)
-  NGINX_BIN=nginx.armhf
-  ZABBIX_BIN=zabbix_agentd
-endif
+CLOUDMATIC_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_aarch64),y)
   NGINX_BIN=nginx.aarch64
   ZABBIX_BIN=zabbix_agentd
 endif
 
-ifeq ($(BR2_i386),y)
-  NGINX_BIN=nginx.i686
-  ZABBIX_BIN=zabbix_agentd.i686
-endif
-
 ifeq ($(BR2_x86_64),y)
   NGINX_BIN=nginx.x86_64
   ZABBIX_BIN=zabbix_agentd.i686
 endif
+
+define CLOUDMATIC_INSTALL_LICENSE_FILE
+	cp $(CLOUDMATIC_PKGDIR)/LICENSE $(@D)/LICENSE
+endef
+CLOUDMATIC_POST_EXTRACT_HOOKS += CLOUDMATIC_INSTALL_LICENSE_FILE
 
 define CLOUDMATIC_INSTALL_TARGET_CMDS
 	$(INSTALL) -d -m 0755 $(TARGET_DIR)/opt/mh

@@ -4,6 +4,40 @@
 # Stop all init scripts in /etc/init.d
 # executing them in reversed numerical order.
 
+# psplash helpers
+# ---------------------------------------------------------------------------
+psplash_ensure() {
+  # fast path: psplash is already running
+  if pidof psplash >/dev/null 2>&1; then
+    return 0
+  fi
+
+  # psplash is gone - remove a possibly stale FIFO so psplash-write does
+  # not block forever on open() when no reader is attached
+  [ -e /run/psplash_fifo ] && rm -f /run/psplash_fifo
+
+  # (re)start psplash in the background
+  /usr/bin/psplash --no-console-switch >/dev/null 2>&1 &
+
+  # wait (briefly) for psplash to set up its FIFO
+  local i=0
+  while [ ! -p /run/psplash_fifo ] && [ "$i" -lt 4 ]; do
+    sleep 0.5 2>/dev/null
+    i=$((i+1))
+  done
+
+  return 0
+}
+
+psplash_write() {
+  psplash_ensure || return 0
+  /usr/bin/psplash-write "$@" 2>/dev/null
+}
+# ---------------------------------------------------------------------------
+
+# start psplash (initial) - will be (re)started on demand via psplash_write
+psplash_ensure
+
 # shellcheck disable=SC2045
 for i in $(ls -r /etc/init.d/S??*) ;do
 
@@ -14,8 +48,8 @@ for i in $(ls -r /etc/init.d/S??*) ;do
   # corresponding level
   name=${i##*/}
   num=${name:1:2}
-  /usr/bin/psplash-write "MSG Stopping ${name:3}..."
-  /usr/bin/psplash-write "PROGRESS $((100-${num#0}))"
+  psplash_write "MSG Stopping ${name:3}..."
+  psplash_write "PROGRESS $((100-${num#0}))"
 
   case "$i" in
     *.sh)
@@ -33,5 +67,8 @@ for i in $(ls -r /etc/init.d/S??*) ;do
   esac
 done
 
-/usr/bin/psplash-write "MSG Rebooting..."
-/usr/bin/psplash-write "PROGRESS 0"
+psplash_write "MSG Rebooting..."
+psplash_write "PROGRESS 0"
+
+# quit psplash
+pidof psplash >/dev/null 2>&1 && /usr/bin/psplash-write "QUIT" 2>/dev/null

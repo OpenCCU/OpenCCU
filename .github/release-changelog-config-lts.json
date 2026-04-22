@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "title": "#### 🏠 CCU/homematicIP Service Changes",
+      "labels": [":label: OCCU", ":label: HmIPServer", ":label: RFD", ":label: ReGaHss"]
+    },
+    {
+      "title": "#### 🌐 WebUI Changes",
+      "labels": [":label: WebUI"]
+    },
+    {
+      "title": "#### 🖥️ Operating System Changes",
+      "labels": [":label: OS"]
+    },
+    {
+      "title": "#### 🔄 Other Changes",
+      "rules": [
+        {
+          "pattern": "^(?!(?:Backport to LTS \\(batch [^)]+\\)|backport/batch LTS )).*",
+          "on_property": "title",
+          "flags": "gu"
+        }
+      ]
+    }
+  ],
+  "ignore_labels": [
+    "skip-changelog",
+    "github_actions"
+  ],
+  "sort": {
+    "order": "DESC",
+    "on_property": "mergedAt"
+  },
+  "exclude_merge_branches": [
+    "Backport to LTS (batch",
+    "from OpenCCU/backport/batch-lts-"
+  ],
+  "template": "${{CHANGELOG}}",
+  "pr_template": "- ${{TITLE}} (#${{NUMBER}}, @${{AUTHOR}})",
+  "empty_template": "- No changes",
+  "label_extractor": [],
+  "max_pull_requests": 1000,
+  "max_back_track_time_days": 365
+}

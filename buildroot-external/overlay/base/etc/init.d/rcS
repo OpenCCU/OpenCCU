@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC3010,SC3057,SC3014,SC3036 source=/dev/null
 #
 # Start all init scripts in /etc/init.d
 # executing them in numerical order.
@@ -19,11 +19,41 @@ umask 0002
 # create ld.so.cache file
 /sbin/ldconfig -C /var/cache/ld.so.cache
 
-# start psplash
-/usr/bin/psplash -n 2>/dev/null &
+# psplash helpers
+# ---------------------------------------------------------------------------
+psplash_ensure() {
+  # fast path: psplash is already running
+  if pidof psplash >/dev/null 2>&1; then
+    return 0
+  fi
+
+  # psplash is gone - remove a possibly stale FIFO so psplash-write does
+  # not block forever on open() when no reader is attached
+  [ -e /run/psplash_fifo ] && rm -f /run/psplash_fifo
+
+  # (re)start psplash in the background
+  /usr/bin/psplash --no-console-switch >/dev/null 2>&1 &
+
+  # wait (briefly) for psplash to set up its FIFO
+  local i=0
+  while [ ! -p /run/psplash_fifo ] && [ "$i" -lt 4 ]; do
+    sleep 0.5 2>/dev/null
+    i=$((i+1))
+  done
+
+  return 0
+}
+
+psplash_write() {
+  psplash_ensure || return 0
+  /usr/bin/psplash-write "$@" 2>/dev/null
+}
+# ---------------------------------------------------------------------------
+
+# start psplash (initial) - will be (re)started on demand via psplash_write
+psplash_ensure
 
 for i in /etc/init.d/S??* ;do
-
   # Ignore dangling symlinks (if any).
   [[ ! -f "${i}" ]] && continue
 
@@ -31,8 +61,8 @@ for i in /etc/init.d/S??* ;do
   # corresponding level
   name=${i##*/}
   num=${name:1:2}
-  /usr/bin/psplash-write "MSG Starting ${name:3}..."
-  /usr/bin/psplash-write "PROGRESS $((${num#0}+1))"
+  psplash_write "MSG Starting ${name:3}..."
+  psplash_write "PROGRESS $((${num#0}+1))"
 
   case "${i}" in
     *.sh)
@@ -46,12 +76,12 @@ for i in /etc/init.d/S??* ;do
     *)
       # No sh extension, so fork subprocess.
       ${i} start
-    ;;
+      ;;
   esac
 done
 
 IP=$(ip -4 route get 1 | head -1 | cut -d' ' -f8 | tr -d '\n')
-/usr/bin/psplash-write "PROGRESS 0"
+psplash_write "PROGRESS 0"
 
 [[ -r /VERSION ]] && . /VERSION
 [[ -r /var/hm_mode ]] && . /var/hm_mode
@@ -73,8 +103,8 @@ else
   fi
 fi
 MSG=$(echo -en "${MSG}\n\n-- Press ALT+F2 for service console")
+psplash_write "MSG ${MSG}"
 
-/usr/bin/psplash-write "MSG ${MSG}"
-
-# quit psplash after 5 seconds
-(sleep 5; /usr/bin/psplash-write "QUIT") &
+# quit psplash after 3 seconds (only if still running - do not restart
+# just to immediately quit)
+(sleep 3; pidof psplash >/dev/null 2>&1 && /usr/bin/psplash-write "QUIT" 2>/dev/null) &

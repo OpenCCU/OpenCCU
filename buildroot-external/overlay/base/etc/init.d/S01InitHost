@@ -68,11 +68,6 @@ identify_host() {
         *'Pi 3 Model A'*)         HM_HOST="rpi3" ;; # Raspberry Pi 3 Model A(+)
         *'Pi Zero 2 W'*)          HM_HOST="rpi3" ;; # Raspberry Pi Zero 2 W
         *'Pi Compute Module 3'*)  HM_HOST="rpi3" ;; # Raspberry Pi Compute Module 3
-        *'Pi 2 Model B'*)         HM_HOST="rpi2" ;; # Raspberry Pi 2 Model B
-        *'Pi Compute Module 2'*)  HM_HOST="rpi2" ;; # Raspberry Pi Compute Module 2
-        *'Pi Compute Module')     HM_HOST="rpi1" ;; # Raspberry Pi Compute Module 1
-        *'Pi Model B'*)           HM_HOST="rpi1" ;; # Raspberry Pi Model B/B+
-        *'Pi Zero'|*'Pi Zero W'*) HM_HOST="rpi0" ;; # Raspberry Pi Zero / Zero W
 
         # No know RaspberryPi identified, fallback to rpi3
         *)
@@ -86,37 +81,15 @@ identify_host() {
       HM_LED_RED="/sys/class/leds/PWR"
       HM_LED_YELLOW=""
 
-      # if we are running on a raspberrypi we
-      # disable the HDMI port in case no cable is
-      # connected. This is to save power, but also
-      # to reduce potential interferences with the
-      # GPIO-based RF modules
-      hdmi_state=$(/usr/bin/tvservice -s | cut -d' ' -f2)
-
-      # if the least significant bit is set the
-      # HDMI cable seems to be unplugged or if
-      # no HDMI display is listed using tvservice or
-      # if no EDID info can be read from the display
-      if [[ $(((hdmi_state & 0x01) == 1)) -eq 1 ]] ||
-        ! /usr/bin/tvservice -l | grep -q "type HDMI" ||
-        /usr/bin/tvservice -d /dev/null 2>&1 | grep -q "Nothing"; then
-        /usr/bin/tvservice --off >/dev/null
-        /usr/bin/vcgencmd display_power 0 >/dev/null
-      fi
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh >/dev/null
 
       # increase vm.min_free_kbytes to 16384 to increase stability
       # in memory critical situations
       sysctl -q vm.min_free_kbytes=16384
-    ;;
-
-    # ASUS Tinkerboard/TinkerboardS platform
-    tinkerboard)
-      HM_HOST="tinkerboard"
-
-      # setup Tinkerboard specific settings
-      HM_LED_GREEN="/sys/class/leds/led-0"
-      HM_LED_RED="/sys/class/leds/led-2"
-      HM_LED_YELLOW="/sys/class/leds/led-1"
     ;;
 
     # ODROID platform
@@ -143,6 +116,28 @@ identify_host() {
       HM_LED_GREEN="/sys/class/leds/blue:status"
       HM_LED_RED=""
       HM_LED_YELLOW=""
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh >/dev/null
+    ;;
+
+    # ASUS Tinkerboard2/2S platform
+    tinkerboard2)
+      HM_HOST="tinkerboard2"
+
+      # setup Tinkerboard specific settings
+      HM_LED_GREEN="/sys/class/leds/green:"
+      HM_LED_RED="/sys/class/leds/red:"
+      HM_LED_YELLOW="/sys/class/leds/yellow:"
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # OCI platform
@@ -175,11 +170,23 @@ identify_host() {
     # generic-x86_64
     generic-x86_64)
       HM_HOST="generic-x86_64"
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # generic-aarch64
     generic-aarch64)
       HM_HOST="generic-aarch64"
+
+      # potentially disable the HDMI ports in case
+      # no display is connected. This is to save
+      # power, but also potential reduce RF interferences
+      # with the GPIO-based Homematic RF modules
+      /bin/checkDisplayPower.sh >/dev/null
     ;;
 
     # lxc platform

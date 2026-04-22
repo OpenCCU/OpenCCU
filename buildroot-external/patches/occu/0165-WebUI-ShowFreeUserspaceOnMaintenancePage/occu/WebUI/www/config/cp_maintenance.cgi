@@ -361,7 +361,7 @@ proc action_put_page {} {
       set USERFSFREE_MB 0
     }
     set USERFSFREE_GB [format "%.2f" [expr {$USERFSFREE_MB / 1024.0}]]
-    set USERFSFREE_MB_REQ 1843.2
+    set USERFSFREE_MB_REQ 2867.2
     set USERFSFREE_GB_REQ [format "%.1f" [expr {$USERFSFREE_MB_REQ / 1024.0}]]
   }
   
@@ -897,9 +897,11 @@ proc action_put_page {} {
          if (userFreeMB < userFreeMBRequired) {
            jQuery('#availableUserSpace').css({ 'color': 'red', 'font-weight': 'bold' });
            jQuery('#btnSoftwareUpdateUpload').removeAttr('onclick');
-           jQuery('#btnSoftwareUpdateUpload').css({ 'color': 'gray' });
+           jQuery('#btnSoftwareUpdateUpload').css({ 'color': 'gray', 'pointer-events': 'none', 'cursor': 'default', 'opacity': '0.5' });
+           jQuery('#btnSoftwareUpdateUpload').attr('aria-disabled', 'true');
            jQuery('#btnFwDirectDownload2').removeAttr('onclick');
-           jQuery('#btnFwDirectDownload2').css({ 'color': 'gray' });
+           jQuery('#btnFwDirectDownload2').css({ 'color': 'gray', 'pointer-events': 'none', 'cursor': 'default', 'opacity': '0.5' });
+           jQuery('#btnFwDirectDownload2').attr('aria-disabled', 'true');
          }
        }
     }
