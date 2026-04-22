@@ -25249,7 +25249,6 @@ HeaderBar = new function()
     var request = jQuery.ajax({
       url: "/ise/htm/header.htm",
       dataType: "html",
-      cache: false,
       context: document.body
     });
 

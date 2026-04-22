@@ -14,7 +14,7 @@
    var arResource = [
      "translate.lang.js",
      "translate.lang.extension.js",
-@@ -121,21 +128,47 @@
+@@ -121,21 +128,53 @@
    ];
    var url = "/webui/js/lang/" + getLang() + "/";
  
@@ -40,7 +40,13 @@
  
 -    request.done(function(result) {
 -    });
-+    window.__langTextResourcesDeferred.resolve();
++    // Resolve only after all preceding translation scripts have been parsed/executed.
++    window.__langTextResourcesResolve = function() {
++      window.__langTextResourcesDeferred.resolve();
++    };
++    document.write('<script type="text/javascript">' +
++                   'window.__langTextResourcesResolve && window.__langTextResourcesResolve();' +
++                   '<\/script>');
 +    return window.__langTextResourcesDeferred.promise();
 +  }
 +
@@ -103,7 +109,7 @@
    },
    
    /**
-@@ -25219,23 +25229,40 @@
+@@ -25219,23 +25229,39 @@
  {
  
    // This causes problems with Mac & Safari
@@ -137,7 +143,6 @@
 +    var request = jQuery.ajax({
 +      url: "/ise/htm/header.htm",
 +      dataType: "html",
-+      cache: false,
 +      context: document.body
 +    });
 +
@@ -154,7 +159,7 @@
    };
  
  }();/**
-@@ -32798,7 +32825,7 @@
+@@ -32798,7 +32824,7 @@
          if (this.id == -1) {
            opts = {
              postBody: ReGa.encode(pb), 
@@ -163,7 +168,7 @@
              onComplete: function(resp) {
                newName = resp.responseText.replace(/[\r\n\t]/g, "");
                iseRooms.CreateRoomRetId(newName, t.baseId);
-@@ -32816,7 +32843,7 @@
+@@ -32816,7 +32842,7 @@
          if (this.id == -1) {
            opts = {
              postBody: ReGa.encode(pb), 

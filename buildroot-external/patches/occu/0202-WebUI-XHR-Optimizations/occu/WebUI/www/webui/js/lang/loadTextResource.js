@@ -142,7 +142,13 @@ function loadTextResource() {
                      url + res + '"><\/script>');
     });
 
-    window.__langTextResourcesDeferred.resolve();
+    // Resolve only after all preceding translation scripts have been parsed/executed.
+    window.__langTextResourcesResolve = function() {
+      window.__langTextResourcesDeferred.resolve();
+    };
+    document.write('<script type="text/javascript">' +
+                   'window.__langTextResourcesResolve && window.__langTextResourcesResolve();' +
+                   '<\/script>');
     return window.__langTextResourcesDeferred.promise();
   }
 
