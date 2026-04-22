@@ -16,7 +16,7 @@ jobs:
 
       - name: Get information
         id: info
-        uses: home-assistant/actions/helpers/info@d56d093b9ab8d2105bc0cb6ee9bcc0ef4ec8b96d  # master
+        uses: home-assistant/actions/helpers/info@f6f29a7ee3fa0eccadf3620a7b9ee00ab54ec03b  # master
         with:
           path: "./home-assistant-addon-proxy"
 
@@ -31,7 +31,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: env.BUILD_ARGS != '--test'
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2  # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -75,7 +75,7 @@ jobs:
           echo "branch_tag=${BRANCH_TAG}" >> $GITHUB_OUTPUT
 
       - name: Build and push container image
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         id: docker_build
         with:
           context: home-assistant-addon-proxy

@@ -1,0 +1,126 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: OpenCCU Project <openccu@openccu.org>
+Date: Sun, 19 Apr 2026 12:00:00 +0200
+Subject: [PATCH] firmware: raspberrypi: wait for mailbox reply with TASK_IDLE
+
+The Raspberry Pi firmware mailbox transaction path is synchronous:
+rpi_firmware_transaction() sends a property request to the VPU and
+then blocks the caller in TASK_UNINTERRUPTIBLE until the response
+callback fires. On a slow-switching cpufreq platform like the Pi
+(the raspberrypi-cpufreq driver is not fast_switch capable), this
+path is driven predominantly by the schedutil sugov:N kthread every
+time the CPU clock is adjusted.
+
+Because TASK_UNINTERRUPTIBLE sleepers contribute to the system load
+average, and because any I/O-active workload (notably USB drivers
+like ftdi_sio that poll their bulk-IN endpoint) generates a constant
+stream of scheduler events which trigger frequency re-evaluations,
+the sugov kthread accumulates enough time in D-state to pin the
+reported loadavg near ~1.0 on an otherwise idle system. A user-
+visible stack trace from the affected kthread confirms the path:
+
+  [<0>] rpi_firmware_property_list+0x118/0x2c0
+  [<0>] rpi_firmware_property+0x90/0x110
+  [<0>] raspberrypi_fw_set_rate+0x64/0x120
+  [<0>] clk_change_rate+0xe0/0x520
+  [<0>] clk_core_set_rate_nolock+0x1c8/0x3a0
+  [<0>] clk_set_rate+0x44/0x1a0
+  [<0>] _opp_config_clk_single+0x3c/0xd0
+  [<0>] _set_opp+0x140/0x4e0
+  [<0>] dev_pm_opp_set_rate+0x1d0/0x2e0
+  [<0>] set_target+0x3c/0x70
+  [<0>] __cpufreq_driver_target+0x178/0x2e0
+  [<0>] sugov_work+0x60/0xa0
+  [<0>] kthread_worker_fn+0xf8/0x2c0
+  [<0>] kthread+0x154/0x230
+  [<0>] ret_from_fork+0x10/0x20
+
+with /proc/<pid>/wchan reporting rpi_firmware_property_list.
+
+The wait is semantically idle -- the kthread has nothing to do until
+the firmware answers -- so TASK_IDLE (TASK_UNINTERRUPTIBLE |
+TASK_NOLOAD) is the correct state to use. TASK_NOLOAD was introduced
+specifically to exclude such semantically-idle waits from loadavg
+accounting, and the same approach is already used elsewhere in the
+kernel (see e.g. swait_event_idle_timeout_exclusive() usage in
+kernel/rcu/tree.c:rcu_gp_fqs_loop()).
+
+There is no public wait_for_completion_idle_timeout() helper, so
+a small static helper is introduced locally that builds on
+swait_event_idle_timeout_exclusive() and consumes ->done in the
+same way do_wait_for_common() does, preserving the existing
+wait_for_completion_timeout() return semantics (0 on timeout,
+jiffies-remaining >= 1 on success).
+
+This has been tracked under raspberrypi/linux as a consequence of
+the long-standing loadavg-vs-D-state semantics on the Pi; see the
+historical precedent at raspberrypi/firmware#271 ("vchiq: Avoid
+high load when blocked and unkillable") which applied the same
+reasoning to a different kthread on this platform.
+
+Signed-off-by: OpenCCU Project <openccu@openccu.org>
+---
+ drivers/firmware/raspberrypi.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+--- a/drivers/firmware/raspberrypi.c
++++ b/drivers/firmware/raspberrypi.c
+@@ -16,6 +16,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+ #include <linux/slab.h>
++#include <linux/swait.h>
+ #include <soc/bcm2835/raspberrypi-firmware.h>
+ 
+ #define MBOX_MSG(chan, data28)		(((data28) & ~0xf) | ((chan) & 0xf))
+@@ -74,6 +75,37 @@ static void response_callback(struct mbox_client *cl, void *msg)
+ 	complete(&fw->c);
+ }
+ 
++/*
++ * Like wait_for_completion_timeout(), but waits in TASK_IDLE
++ * (TASK_UNINTERRUPTIBLE | TASK_NOLOAD) so the caller does not
++ * contribute to the system load average.
++ *
++ * The firmware mailbox wait is semantically an idle wait: the
++ * kthread has no useful work to do until the VPU answers.  On
++ * slow-switching cpufreq platforms (Pi), the schedutil sugov
++ * kthread drives this path and would otherwise pin loadavg near
++ * 1.0 on an idle system, because TASK_UNINTERRUPTIBLE sleepers
++ * are counted in loadavg.
++ *
++ * Returns 0 on timeout, or the number of jiffies remaining
++ * (>= 1) on successful completion -- matching the semantics of
++ * wait_for_completion_timeout().
++ */
++static long
++rpi_wait_for_completion_idle_timeout(struct completion *x, long timeout)
++{
++	long ret;
++
++	ret = swait_event_idle_timeout_exclusive(x->wait, x->done, timeout);
++	if (ret > 0) {
++		raw_spin_lock_irq(&x->wait.lock);
++		if (x->done && x->done != UINT_MAX)
++			x->done--;
++		raw_spin_unlock_irq(&x->wait.lock);
++	}
++	return ret;
++}
++
+ /*
+  * Sends a request to the firmware through the BCM2835 mailbox driver,
+  * and synchronously waits for the reply.
+@@ -93,7 +125,7 @@ rpi_firmware_transaction(struct rpi_firmware *fw, u32 chan, u32 data)
+ 	reinit_completion(&fw->c);
+ 	ret = mbox_send_message(fw->chan, &message);
+ 	if (ret >= 0) {
+-		if (wait_for_completion_timeout(&fw->c, 3*HZ)) {
++		if (rpi_wait_for_completion_idle_timeout(&fw->c, 3*HZ)) {
+ 			ret = 0;
+ 		} else {
+ 			ret = -ETIMEDOUT;
+-- 
+2.43.0
+

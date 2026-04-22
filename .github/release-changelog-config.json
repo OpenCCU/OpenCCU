@@ -19,7 +19,6 @@
   ],
   "ignore_labels": [
     "skip-changelog",
-    "dependencies",
     "github_actions"
   ],
   "sort": {

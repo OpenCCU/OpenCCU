@@ -13,18 +13,15 @@
 # action    == one of sysinit, respawn, askfirst, wait, and once
 # process   == program to run
 
-# Startup the system
+# Init the system
 tty2::sysinit:/bin/mount /proc
 tty2::sysinit:/bin/mount /sys
+tty2::sysinit:/bin/mount /tmp
 tty2::sysinit:/bin/mkdir -p /dev/pts /dev/shm
-tty2::sysinit:/sbin/fsck -A -R -p
-tty2::sysinit:/bin/mount -a
-tty2::sysinit:/bin/mkdir -p /var/run
-tty2::sysinit:/bin/mkdir -p /var/cache
-tty2::sysinit:/sbin/ldconfig -C /var/cache/ld.so.cache
-null::sysinit:/usr/bin/psplash -n &
-# now run any rc scripts
-::sysinit:/etc/init.d/rcS
+
+# run any rc scripts (start) and move boot.log
+::sysinit:/etc/init.d/rcS 2>&1 | /usr/bin/tee -a /tmp/boot.log
+::sysinit:/bin/mv /tmp/boot.log /var/log/boot.log
 
 # Put a getty on tty2
 tty2::askfirst:/sbin/getty -L tty2 0 vt100
@@ -32,7 +29,9 @@ tty2::askfirst:/sbin/getty -L tty2 0 vt100
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot
 
-# Stuff to do before rebooting
+# run any rc scripts (stop)
 ::shutdown:/etc/init.d/rcK
+
+# cleanup system
 tty2::shutdown:/bin/umount -a -r -f >/dev/null
 tty2::shutdown:/sbin/swapoff -a

@@ -25,7 +25,7 @@ LABEL \
     io.hass.name="OpenCCU (Proxy)" \
     io.hass.description="Proxy to externally running OpenCCU" \
     io.hass.url=https://github.com/OpenCCU/OpenCCU/tree/master/home-assistant-addon-proxy \
-    io.hass.arch="armv7|aarch64|amd64" \
+    io.hass.arch="aarch64|amd64" \
     io.hass.type="addon" \
     io.hass.version=${package_version}
 

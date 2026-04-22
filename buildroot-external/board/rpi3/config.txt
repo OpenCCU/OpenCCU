@@ -18,6 +18,10 @@ disable_overscan=1
 # Added to fix #3046
 initial_turbo=0
 
+# Enable DRM VC4 V3D driver
+dtoverlay=vc4-kms-v3d
+max_framebuffers=1
+
 # enable i2c and spi
 dtparam=i2c_arm=on
 dtparam=i2c1=on

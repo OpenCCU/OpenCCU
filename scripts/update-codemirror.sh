@@ -1,5 +1,7 @@
 #!/bin/bash
+# shellcheck source=/dev/null
 set -e
+set -o pipefail
 
 # unzip featuring an enhanced version of tar's --strip-components=1
 # Usage: unzip-strip ARCHIVE [DESTDIR] [EXTRA_cp_OPTIONS]
@@ -26,6 +28,17 @@ unzip-strip() (
 
 # get latest codemirror archive
 wget -O /tmp/codemirror.zip "https://codemirror.net/codemirror.zip"
+
+CURRENT_VERSION=$(sed -nE 's/^  CodeMirror\.version = "([^"]+)";$/\1/p' buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror/lib/codemirror.js | head -n1)
+ZIP_CODEMIRROR_JS_PATH=$(unzip -Z1 /tmp/codemirror.zip | grep '/lib/codemirror.js$' | head -n1)
+NEW_VERSION=""
+if [[ -n "${ZIP_CODEMIRROR_JS_PATH}" ]]; then
+  NEW_VERSION=$(unzip -p /tmp/codemirror.zip "${ZIP_CODEMIRROR_JS_PATH}" | sed -nE 's/^  CodeMirror\.version = "([^"]+)";$/\1/p' | head -n1)
+fi
+if [[ -n "${CURRENT_VERSION}" ]] && [[ -n "${NEW_VERSION}" ]] && [[ "${CURRENT_VERSION}" == "${NEW_VERSION}" ]]; then
+  echo "codemirror: version ${NEW_VERSION} is already current, no update required"
+  exit 0
+fi
 
 # remove old stuff
 rm -rf buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror/*
