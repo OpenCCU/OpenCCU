@@ -106,11 +106,11 @@ function getLang() {
 function loadTextResource() {
 
   // Ensure we only trigger language resource loading once.
-  if (window.__langTextResourcesDeferred) {
-    return window.__langTextResourcesDeferred.promise();
+  if (window.__openCCU_langTextDeferred) {
+    return window.__openCCU_langTextDeferred.promise();
   }
 
-  window.__langTextResourcesDeferred = jQuery.Deferred();
+  window.__openCCU_langTextDeferred = jQuery.Deferred();
 
   var arResource = [
     "translate.lang.js",
@@ -143,13 +143,14 @@ function loadTextResource() {
     });
 
     // Resolve only after all preceding translation scripts have been parsed/executed.
-    window.__langTextResourcesResolve = function() {
-      window.__langTextResourcesDeferred.resolve();
+    window.__openCCU_langTextResolve = function() {
+      window.__openCCU_langTextDeferred.resolve();
+      delete window.__openCCU_langTextResolve;
     };
     document.write('<script type="text/javascript">' +
-                   'window.__langTextResourcesResolve && window.__langTextResourcesResolve();' +
+                   'window.__openCCU_langTextResolve && window.__openCCU_langTextResolve();' +
                    '<\/script>');
-    return window.__langTextResourcesDeferred.promise();
+    return window.__openCCU_langTextDeferred.promise();
   }
 
   // Fallback: load sequentially via dynamic script injection (asynchronous).
@@ -158,7 +159,7 @@ function loadTextResource() {
 
   var loadNext = function() {
     if (idx >= arResource.length) {
-      window.__langTextResourcesDeferred.resolve();
+      window.__openCCU_langTextDeferred.resolve();
       return;
     }
 
@@ -174,7 +175,7 @@ function loadTextResource() {
   };
 
   loadNext();
-  return window.__langTextResourcesDeferred.promise();
+  return window.__openCCU_langTextDeferred.promise();
 };
 
 loadTextResource();
