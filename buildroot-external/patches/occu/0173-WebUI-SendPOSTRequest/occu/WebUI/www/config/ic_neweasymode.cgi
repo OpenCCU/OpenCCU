@@ -304,8 +304,7 @@ cgi_eval {
     puts "      </tr>"
     puts "    </table>"
     puts "  </textarea></div>"
-    puts "<script type=\"text/javascript\">translate_newProfile();</script>"
-    puts "<script type=\"text/javascript\">NewEasyModeDialog.ProfileOverwriteWarning();</script>"
+    puts "<script type=\"text/javascript\">translate_newProfile(function(){ NewEasyModeDialog.ProfileOverwriteWarning(); });</script>"
 
     #destructor of easymode-tcl-page:
     catch { destructor }
