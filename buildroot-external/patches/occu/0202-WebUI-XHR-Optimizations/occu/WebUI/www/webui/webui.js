@@ -53700,9 +53700,7 @@ translate_newProfile = function(callback)
 translate_map = function(div, textarea)
 {
   OpenCCU_whenLocalizedReady(function() {
-    if (OpenCCU_isLocalizedReady()) {
-      $(div).innerHTML = TrimPath.processDOMTemplate(textarea, localized[0]);
-    }
+    $(div).innerHTML = TrimPath.processDOMTemplate(textarea, localized[0]);
   });
 };
 
@@ -53710,14 +53708,12 @@ translate = function(id, group)
 {
   OpenCCU_whenLocalizedReady(function() {
     var isUser = id.split('.')[1];
-    if (OpenCCU_isLocalizedReady()) {
-      if (isNaN(isUser)) {   // wenn kein Userprofil
-        $('param_' + id).id = group + '_param_' + id;
-        $('profile_' + id).id = group + '_profile_' + id;
-        // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.
-        $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
-      } else translate_usrprofile(id, group);
-    }
+    if (isNaN(isUser)) {   // wenn kein Userprofil
+      $('param_' + id).id = group + '_param_' + id;
+      $('profile_' + id).id = group + '_profile_' + id;
+      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.
+      $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
+    } else translate_usrprofile(id, group);
   });
 };
 

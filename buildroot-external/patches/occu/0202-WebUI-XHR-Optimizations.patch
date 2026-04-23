@@ -150,11 +150,11 @@
 +    request.done(function(response) {
        jQuery("#header").html(response);
 +      if (cb) { cb(); }
-     });
++    });
 +
 +    request.fail(function() {
 +      if (cb) { cb(); }
-+    });
+     });
 +
 +    return request;
    };
@@ -388,7 +388,7 @@
          },
  
          onFailure: function (failure) {
-@@ -53593,59 +53664,61 @@
+@@ -53593,59 +53664,57 @@
  
          }
        });
@@ -405,7 +405,10 @@
  {
 -  var language = getLang();
 -  var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
--
++  OpenCCU_whenLocalizedReady(function() {
++    var language = getLang();
++    var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
+ 
 -  // die entsprechenden Optionen einlesen
 -  new Ajax.Request(path,
 -    {
@@ -414,10 +417,7 @@
 -    onSuccess: function(success) {
 -            set_newprofile = eval(success.responseText);
 -          },
-+  OpenCCU_whenLocalizedReady(function() {
-+    var language = getLang();
-+    var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
- 
+-
 -    onFailure: function(failure) {
 -            Ajax_failure(path, failure.statusText);
 -          }
@@ -453,12 +453,9 @@
  translate_map = function(div, textarea)
  {
 -  if ( isNaN(localized)) {
--    $(div).innerHTML = TrimPath.processDOMTemplate(textarea, localized[0]);
--  }
 +  OpenCCU_whenLocalizedReady(function() {
-+    if (OpenCCU_isLocalizedReady()) {
-+      $(div).innerHTML = TrimPath.processDOMTemplate(textarea, localized[0]);
-+    }
+     $(div).innerHTML = TrimPath.processDOMTemplate(textarea, localized[0]);
+-  }
 +  });
  };
  
@@ -466,23 +463,16 @@
  {
 -  var isUser = id.split('.')[1];
 -  if (isNaN(localized)) {
--    if (isNaN(isUser)) {   // wenn kein Userprofil
--      $('param_' + id).id = group + '_param_' + id;
--      $('profile_' + id).id = group + '_profile_' + id;
--      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.   
--      $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
--    } else translate_usrprofile(id, group);
--  }
 +  OpenCCU_whenLocalizedReady(function() {
 +    var isUser = id.split('.')[1];
-+    if (OpenCCU_isLocalizedReady()) {
-+      if (isNaN(isUser)) {   // wenn kein Userprofil
-+        $('param_' + id).id = group + '_param_' + id;
-+        $('profile_' + id).id = group + '_profile_' + id;
-+        // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.
-+        $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
-+      } else translate_usrprofile(id, group);
-+    }
+     if (isNaN(isUser)) {   // wenn kein Userprofil
+       $('param_' + id).id = group + '_param_' + id;
+       $('profile_' + id).id = group + '_profile_' + id;
+-      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.   
++      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.
+       $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
+     } else translate_usrprofile(id, group);
+-  }
 +  });
  };
  
