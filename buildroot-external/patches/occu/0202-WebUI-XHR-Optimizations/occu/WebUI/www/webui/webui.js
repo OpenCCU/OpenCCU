@@ -53567,7 +53567,7 @@ getLangInfo = function(sender, actor, callback)
   var onDone = function() {
     if (--pending === 0) {
       try {
-        if (l_generic != false) {generic = l_generic.concat(g_generic);} else generic = g_generic;
+        if (l_generic !== false) { generic = l_generic.concat(g_generic); } else { generic = g_generic; }
          var dummy = "\"dummy\" : \"dummy\"}]" ;
         localized = eval(set_description.concat(set_pname).concat(generic).concat(dummy));
       } finally {
