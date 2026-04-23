@@ -261,7 +261,7 @@
 +{
 +  if (typeof callback != "function") return;
 +
-+  if (OpenCCU_isLocalizedReady() || window.__openCCU_langInfoPending !== true) {
++  if (OpenCCU_isLocalizedReady()) {
 +    callback();
 +  } else {
 +    window.__openCCU_langInfoCallbacks.push(callback);
