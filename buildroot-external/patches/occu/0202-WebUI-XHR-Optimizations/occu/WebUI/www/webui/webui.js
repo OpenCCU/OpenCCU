@@ -53552,11 +53552,14 @@ getLangInfo = function(sender, actor, callback)
   var global_generic = '/config/easymodes/etc/localization/' + language + '/GENERIC.txt';
 
   l_generic = false;
-  window.__openCCU_langInfoPending = true;
 
   if (typeof callback === "function") {
     window.__openCCU_langInfoCallbacks.push(callback);
   }
+
+  if (window.__openCCU_langInfoPending === true) return;
+
+  window.__openCCU_langInfoPending = true;
 
   // die entsprechenden Uebersetzungstabellen der Easymodes einlesen
   // All four requests run in parallel; the eval() runs once all have completed.

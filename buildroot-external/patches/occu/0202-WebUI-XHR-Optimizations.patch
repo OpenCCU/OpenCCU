@@ -150,11 +150,11 @@
 +    request.done(function(response) {
        jQuery("#header").html(response);
 +      if (cb) { cb(); }
-+    });
+     });
 +
 +    request.fail(function() {
 +      if (cb) { cb(); }
-     });
++    });
 +
 +    return request;
    };
@@ -272,16 +272,18 @@
  {
    var language = getLang();
  
-@@ -53510,45 +53552,74 @@
-   var global_generic = '/config/easymodes/etc/localization/' + language + '/GENERIC.txt';
+@@ -53511,44 +53553,76 @@
  
    l_generic = false;
-+  window.__openCCU_langInfoPending = true;
-+
+ 
 +  if (typeof callback === "function") {
 +    window.__openCCU_langInfoCallbacks.push(callback);
 +  }
- 
++
++  if (window.__openCCU_langInfoPending === true) return;
++
++  window.__openCCU_langInfoPending = true;
++
    // die entsprechenden Uebersetzungstabellen der Easymodes einlesen
 +  // All four requests run in parallel; the eval() runs once all have completed.
 +  var pending = 4;
@@ -352,7 +354,7 @@
            }
  
      });
-@@ -53556,19 +53627,16 @@
+@@ -53556,19 +53630,16 @@
    new Ajax.Request(global_generic,
      {
      method:    'get',
@@ -374,7 +376,7 @@
  };
  
  getLangInfo_Special = function(file)
-@@ -53583,9 +53651,10 @@
+@@ -53583,9 +53654,10 @@
      new Ajax.Request(path,
        {
          method: 'get',
@@ -386,7 +388,7 @@
          },
  
          onFailure: function (failure) {
-@@ -53593,59 +53662,57 @@
+@@ -53593,59 +53665,57 @@
  
          }
        });
@@ -403,10 +405,7 @@
  {
 -  var language = getLang();
 -  var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
-+  OpenCCU_whenLocalizedReady(function() {
-+    var language = getLang();
-+    var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
- 
+-
 -  // die entsprechenden Optionen einlesen
 -  new Ajax.Request(path,
 -    {
@@ -415,7 +414,10 @@
 -    onSuccess: function(success) {
 -            set_newprofile = eval(success.responseText);
 -          },
--
++  OpenCCU_whenLocalizedReady(function() {
++    var language = getLang();
++    var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
+ 
 -    onFailure: function(failure) {
 -            Ajax_failure(path, failure.statusText);
 -          }
