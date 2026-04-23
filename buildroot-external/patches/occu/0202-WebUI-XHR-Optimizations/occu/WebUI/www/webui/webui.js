@@ -53523,7 +53523,6 @@ getPathPNAME = function(actor, language) {
 };
 
 window.__openCCU_langInfoPending = false;
-window.__openCCU_langInfoStarted = false;
 window.__openCCU_langInfoCallbacks = window.__openCCU_langInfoCallbacks || [];
 
 OpenCCU_isLocalizedReady = function()
@@ -53537,10 +53536,8 @@ OpenCCU_whenLocalizedReady = function(callback)
 
   if (OpenCCU_isLocalizedReady()) {
     callback();
-  } else if (window.__openCCU_langInfoStarted === true && window.__openCCU_langInfoPending === true) {
-    window.__openCCU_langInfoCallbacks.push(callback);
   } else {
-    callback();
+    window.__openCCU_langInfoCallbacks.push(callback);
   }
 };
 
@@ -53555,7 +53552,6 @@ getLangInfo = function(sender, actor, callback)
   var global_generic = '/config/easymodes/etc/localization/' + language + '/GENERIC.txt';
 
   l_generic = false;
-  window.__openCCU_langInfoStarted = true;
   window.__openCCU_langInfoPending = true;
 
   if (typeof callback === "function") {
@@ -53574,12 +53570,9 @@ getLangInfo = function(sender, actor, callback)
       } finally {
         window.__openCCU_langInfoPending = false;
 
-        var callbacks = window.__openCCU_langInfoCallbacks;
-        window.__openCCU_langInfoCallbacks = [];
-
-        for (var idx = 0; idx < callbacks.length; idx++) {
+        while (window.__openCCU_langInfoCallbacks.length > 0) {
           try {
-            callbacks[idx]();
+            window.__openCCU_langInfoCallbacks.shift()();
           } catch (e) {
             if (window.console && typeof console.error === "function") console.error("OpenCCU localization callback error:", e);
           }

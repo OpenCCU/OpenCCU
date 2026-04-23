@@ -244,13 +244,12 @@
  
          onSuccess:  function(success) {
                  eval(success.responseText);
-@@ -53499,7 +53522,29 @@
+@@ -53499,7 +53522,26 @@
    return result;
  };
  
 -getLangInfo = function(sender, actor)
 +window.__openCCU_langInfoPending = false;
-+window.__openCCU_langInfoStarted = false;
 +window.__openCCU_langInfoCallbacks = window.__openCCU_langInfoCallbacks || [];
 +
 +OpenCCU_isLocalizedReady = function()
@@ -264,10 +263,8 @@
 +
 +  if (OpenCCU_isLocalizedReady()) {
 +    callback();
-+  } else if (window.__openCCU_langInfoStarted === true && window.__openCCU_langInfoPending === true) {
-+    window.__openCCU_langInfoCallbacks.push(callback);
 +  } else {
-+    callback();
++    window.__openCCU_langInfoCallbacks.push(callback);
 +  }
 +};
 +
@@ -275,11 +272,10 @@
  {
    var language = getLang();
  
-@@ -53510,45 +53555,78 @@
+@@ -53510,45 +53552,74 @@
    var global_generic = '/config/easymodes/etc/localization/' + language + '/GENERIC.txt';
  
    l_generic = false;
-+  window.__openCCU_langInfoStarted = true;
 +  window.__openCCU_langInfoPending = true;
 +
 +  if (typeof callback === "function") {
@@ -298,12 +294,9 @@
 +      } finally {
 +        window.__openCCU_langInfoPending = false;
 +
-+        var callbacks = window.__openCCU_langInfoCallbacks;
-+        window.__openCCU_langInfoCallbacks = [];
-+
-+        for (var idx = 0; idx < callbacks.length; idx++) {
++        while (window.__openCCU_langInfoCallbacks.length > 0) {
 +          try {
-+            callbacks[idx]();
++            window.__openCCU_langInfoCallbacks.shift()();
 +          } catch (e) {
 +            if (window.console && typeof console.error === "function") console.error("OpenCCU localization callback error:", e);
 +          }
@@ -359,7 +352,7 @@
            }
  
      });
-@@ -53556,19 +53634,16 @@
+@@ -53556,19 +53627,16 @@
    new Ajax.Request(global_generic,
      {
      method:    'get',
@@ -381,7 +374,7 @@
  };
  
  getLangInfo_Special = function(file)
-@@ -53583,9 +53658,10 @@
+@@ -53583,9 +53651,10 @@
      new Ajax.Request(path,
        {
          method: 'get',
@@ -393,7 +386,7 @@
          },
  
          onFailure: function (failure) {
-@@ -53593,59 +53669,57 @@
+@@ -53593,59 +53662,57 @@
  
          }
        });
