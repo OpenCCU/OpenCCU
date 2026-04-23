@@ -115,11 +115,25 @@ function resolve_hash() {
 HASH_X64=$(resolve_hash zulu x64)
 HASH_AARCH64=$(resolve_hash zulu aarch64)
 
+# extract DISCLAIMER hash from the x64 archive (DISCLAIMER is arch-independent)
+PROJECT_URL="${DOWNLOAD_URL}/zulu/bin"
+ARCHIVE_URL="${PROJECT_URL}/zulu${ID}-linux_x64.tar.gz"
+DISCLAIMER_HASH=$(wget --passive-ftp -nd -t 3 -O - "${ARCHIVE_URL}" \
+  | tar --wildcards -xzO "*/DISCLAIMER" 2>/tmp/tar-stderr \
+  | sha256sum | awk '{ print $1 }')
+if [[ -z "${DISCLAIMER_HASH}" ]]; then
+  echo "Failed to extract DISCLAIMER hash from ${PACKAGE_NAME} archive (wget/tar stderr: $(cat /tmp/tar-stderr 2>/dev/null))" >&2
+  exit 1
+fi
+
 # update package hashes
-sed -i "/_x64\.tar.gz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-echo "sha256  ${HASH_X64}  zulu${ID}-linux_x64.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-sed -i "/_aarch64\.tar.gz/d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-echo "sha256  ${HASH_AARCH64}  zulu${ID}-linux_aarch64.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+sed -i -e '/DISCLAIMER/d' -e '/_x64\.tar\.gz/d' -e '/_aarch64\.tar\.gz/d' \
+  "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+{
+  echo "sha256  ${DISCLAIMER_HASH}  DISCLAIMER"
+  echo "sha256  ${HASH_X64}  zulu${ID}-linux_x64.tar.gz"
+  echo "sha256  ${HASH_AARCH64}  zulu${ID}-linux_aarch64.tar.gz"
+} >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
 
 # update package info
 BR_PACKAGE_NAME=${PACKAGE_NAME^^}
