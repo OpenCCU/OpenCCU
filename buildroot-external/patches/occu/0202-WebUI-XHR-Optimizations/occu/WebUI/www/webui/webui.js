@@ -53523,21 +53523,24 @@ getPathPNAME = function(actor, language) {
 };
 
 window.__openCCU_langInfoPending = false;
+window.__openCCU_langInfoStarted = false;
 window.__openCCU_langInfoCallbacks = window.__openCCU_langInfoCallbacks || [];
 
 OpenCCU_isLocalizedReady = function()
 {
-  return (typeof localized !== "undefined" && localized != null && typeof localized[0] !== "undefined");
+  return typeof localized !== "undefined" && localized != null && typeof localized[0] !== "undefined";
 };
 
 OpenCCU_whenLocalizedReady = function(callback)
 {
-  if (typeof callback != "function") return;
+  if (typeof callback !== "function") return;
 
   if (OpenCCU_isLocalizedReady()) {
     callback();
-  } else {
+  } else if (window.__openCCU_langInfoStarted === true && window.__openCCU_langInfoPending === true) {
     window.__openCCU_langInfoCallbacks.push(callback);
+  } else {
+    callback();
   }
 };
 
@@ -53552,9 +53555,10 @@ getLangInfo = function(sender, actor, callback)
   var global_generic = '/config/easymodes/etc/localization/' + language + '/GENERIC.txt';
 
   l_generic = false;
+  window.__openCCU_langInfoStarted = true;
   window.__openCCU_langInfoPending = true;
 
-  if (typeof callback == "function") {
+  if (typeof callback === "function") {
     window.__openCCU_langInfoCallbacks.push(callback);
   }
 
@@ -53577,6 +53581,7 @@ getLangInfo = function(sender, actor, callback)
           try {
             callbacks[idx]();
           } catch (e) {
+            if (window.console && typeof console.error === "function") console.error("OpenCCU localization callback error:", e);
           }
         }
       }
@@ -53685,12 +53690,12 @@ translate_newProfile = function(callback)
               $('id_header').innerHTML = TrimPath.processDOMTemplate('title_SaveNewProfile', set_newprofile[0]);
               $('id_body').innerHTML = TrimPath.processDOMTemplate('id_body_textarea', set_newprofile[0]);
               $('id_footer').innerHTML = TrimPath.processDOMTemplate('id_footer_textarea', set_newprofile[0]);
-              if (typeof callback == "function") callback();
+              if (typeof callback === "function") callback();
             },
 
       onFailure: function(failure) {
               Ajax_failure(path, failure.statusText);
-              if (typeof callback == "function") callback();
+              if (typeof callback === "function") callback();
             }
       });
   });
