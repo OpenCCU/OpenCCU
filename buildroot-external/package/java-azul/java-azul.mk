@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JAVA_AZUL_VERSION = 21.48.17-ca-jre21.0.10
+JAVA_AZUL_VERSION = 21.50.19-ca-jre21.0.11
 JAVA_AZUL_SITE = https://cdn.azul.com/zulu/bin
 ifeq ($(call qstrip,$(BR2_ARCH)),aarch64)
 JAVA_AZUL_SOURCE = zulu$(JAVA_AZUL_VERSION)-linux_aarch64.tar.gz
@@ -12,7 +12,7 @@ else ifeq ($(call qstrip,$(BR2_ARCH)),x86_64)
 JAVA_AZUL_SOURCE = zulu$(JAVA_AZUL_VERSION)-linux_x64.tar.gz
 endif
 JAVA_AZUL_LICENSE = GPL
-JAVA_AZUL_LICENSE_FILES = DISCLAIMER
+JAVA_AZUL_LICENSE_FILES = DISCLAIMER legal/java.base/LICENSE legal/java.base/ADDITIONAL_LICENSE_INFO legal/java.base/ASSEMBLY_EXCEPTION
 JAVA_AZUL_DEPENDENCIES = fontconfig dejavu liberation
 
 define JAVA_AZUL_INSTALL_TARGET_CMDS

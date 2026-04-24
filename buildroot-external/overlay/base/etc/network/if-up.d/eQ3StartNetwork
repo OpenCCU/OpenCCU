@@ -47,6 +47,10 @@ if [[ -f /var/status/hasIP ]] &&
     wlan*)
       /usr/sbin/iw dev "${IFACE}" set power_save on
       /usr/sbin/rfkill block wlan
+      if echo "${HM_HOST}" | grep -q rpi; then
+        modprobe -r brcmfmac_wcc brcmfmac_cyw brcmfmac brcmutil 2>/dev/null
+        echo -n "poweroff, "
+      fi
     ;;
   esac
   exit 0
@@ -129,6 +133,10 @@ case "${IFACE}" in
       # if not required
       /usr/sbin/iw dev "${IFACE}" set power_save on
       /usr/sbin/rfkill block wlan
+      if echo "${HM_HOST}" | grep -q rpi; then
+        modprobe -r brcmfmac_wcc brcmfmac_cyw brcmfmac brcmutil 2>/dev/null
+        echo -n "disable+poweroff, "
+      fi
       exit 1
     fi
   ;;

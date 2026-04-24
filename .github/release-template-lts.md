@@ -1,6 +1,6 @@
 This is release ${VERSION} of OpenCCU-LTS (the LTS variant of [OpenCCU](http://github.com/OpenCCU/OpenCCU)) with the following bugfixes and feature changes:
 
-[![Downloads](https://img.shields.io/github/downloads/homematicip/OpenCCU-LTS/${VERSION}/total.svg?style=flat-square)](https://github.com/homematicip/OpenCCU-LTS/releases/${VERSION}) ![License](https://img.shields.io/github/license/homematicip/OpenCCU-LTS.svg?style=flat-square) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL) [![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/jens-maus)](https://github.com/sponsors/jens-maus)
+[![Downloads](https://img.shields.io/github/downloads/homematicip/OpenCCU-LTS/${VERSION}/total.svg?style=flat-square)](https://github.com/homematicip/OpenCCU-LTS/releases/${VERSION}) ![License](https://img.shields.io/github/license/homematicip/OpenCCU-LTS.svg?style=flat-square) [![Donate](https://img.shields.io/badge/donate-PayPal-green.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL) [![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/OpenCCU)](https://github.com/sponsors/OpenCCU)
 
 ## 🚧 Changes:
 <sub>For all changes, see the [full commit log](https://github.com/homematicip/OpenCCU-LTS/compare/${PREVIOUS_TAG}...${VERSION}).</sub>
