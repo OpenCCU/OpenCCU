@@ -7,12 +7,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
 function resolve_stable_rpi_eeprom_firmware() {
-  local archive_path=${1}
-  local firmware_dir=${2}
+  local firmware_dir=${1}
   local firmware_name
 
-  firmware_name=$(tar -tzf "${archive_path}" \
-    | sed -nE "s|.*/${firmware_dir}/stable/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)$|\\1|p" \
+  firmware_name=$(wget --quiet -O - \
+    "https://api.github.com/repos/raspberrypi/rpi-eeprom/contents/${firmware_dir}/stable" \
+    | grep -oE '"name": *"pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin"' \
+    | grep -oE 'pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin' \
     | sort -V \
     | tail -n1)
 
@@ -54,11 +55,11 @@ if ! wget -nd -t 3 -O "${ARCHIVE_TMP}" "${ARCHIVE_URL}"; then
 fi
 
 if [[ -z "${RPI4_FIRMWARE_PATH}" ]]; then
-  RPI4_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2711")
+  RPI4_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "firmware-2711")
 fi
 
 if [[ -z "${RPI5_FIRMWARE_PATH}" ]]; then
-  RPI5_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2712")
+  RPI5_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "firmware-2712")
 fi
 
 ARCHIVE_HASH=$(sha256sum "${ARCHIVE_TMP}" | awk '{ print $1 }')
