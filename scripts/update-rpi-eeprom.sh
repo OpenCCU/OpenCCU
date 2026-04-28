@@ -12,12 +12,9 @@ function resolve_stable_rpi_eeprom_firmware() {
 
   firmware_name=$(wget --quiet -O - \
     "https://api.github.com/repos/raspberrypi/rpi-eeprom/contents/${firmware_dir}/stable" \
-    | grep -oE '"name": *"pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin"' \
-    | grep -oE 'pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin' \
-    | sort -V \
-    | tail -n1)
+    | jq -r '[.[].name | select(test("^pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin$"))] | sort | last')
 
-  if [[ -z "${firmware_name}" ]]; then
+  if [[ -z "${firmware_name}" || "${firmware_name}" == "null" ]]; then
     echo "Failed to resolve latest stable firmware for ${firmware_dir}" >&2
     exit 1
   fi
