@@ -11,7 +11,7 @@ function resolve_stable_rpi_eeprom_firmware() {
   local firmware_dir=${2}
   local firmware_name
 
-  firmware_name=$(tar -tf "${archive_file}" | sed -nE "s#^.*/${firmware_dir}/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" | sort | tail -n1)
+  firmware_name=$(tar -tf "${archive_file}" | sed -nE "s#^.*/${firmware_dir}/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" | sort -V | tail -n1)
   echo "${firmware_name}"
 }
 
