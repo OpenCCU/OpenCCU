@@ -163,9 +163,11 @@ start() {
   # get the architecture
   ARCH=$(uname -m)
 
-  # add --add-opens required for Netty/Vert.x reflective access under Java 9+
-  # strong encapsulation (necessary since OpenCCU ships Java 21 via Azul JRE)
-  JAVAOPT="--add-opens java.base/java.lang=ALL-UNNAMED"
+  # add "tryReflectionSetAccessible" and --add-opens required for
+  # Netty/Vert.x reflective access under Java 9+ strong encapsulation
+  # (cf. https://github.com/OpenCCU/OpenCCU/pull/3832)
+  JAVAOPT="-Dio.netty.tryReflectionSetAccessible=true"
+  JAVAOPT="${JAVAOPT} --add-opens java.base/java.lang=ALL-UNNAMED"
   JAVAOPT="${JAVAOPT} --add-opens java.base/java.util=ALL-UNNAMED"
   JAVAOPT="${JAVAOPT} --add-opens java.base/java.nio=ALL-UNNAMED"
   JAVAOPT="${JAVAOPT} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
