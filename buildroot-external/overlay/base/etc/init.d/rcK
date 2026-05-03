@@ -7,6 +7,11 @@
 # psplash helpers
 # ---------------------------------------------------------------------------
 psplash_ensure() {
+  # continue only if /dev/fb0 exists
+  if [ ! -c /dev/fb0 ]; then
+    return 0
+  fi
+
   # fast path: psplash is already running
   if pidof psplash >/dev/null 2>&1; then
     return 0

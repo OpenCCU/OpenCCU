@@ -162,7 +162,18 @@ start() {
 
   # get the architecture
   ARCH=$(uname -m)
-  JAVAOPT=""
+
+  # add "tryReflectionSetAccessible" and --add-opens required for
+  # Netty/Vert.x reflective access under Java 9+ strong encapsulation
+  # (cf. https://github.com/OpenCCU/OpenCCU/pull/3832)
+  JAVAOPT="-Dio.netty.tryReflectionSetAccessible=true"
+  JAVAOPT="${JAVAOPT} --add-opens java.base/java.lang=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-opens java.base/java.util=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-opens java.base/java.nio=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-opens java.base/jdk.internal.misc=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-exports java.base/jdk.internal.misc=ALL-UNNAMED"
 
   # calculate the maximum used heap size (-Xmx) depending on the
   # total amount of RAM we have (use max. 25%) - use multiple of 128MB
