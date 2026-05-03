@@ -7,20 +7,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
 function resolve_stable_rpi_eeprom_firmware() {
-  local archive_path=${1}
+  local archive_file=${1}
   local firmware_dir=${2}
   local firmware_name
 
-  firmware_name=$(tar -tzf "${archive_path}" \
-    | sed -nE "s|.*/${firmware_dir}/stable/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)$|\\1|p" \
-    | sort -V \
-    | tail -n1)
-
-  if [[ -z "${firmware_name}" ]]; then
-    echo "Failed to resolve latest stable firmware for ${firmware_dir}" >&2
-    exit 1
-  fi
-
+  firmware_name=$(tar -tf "${archive_file}" | sed -nE "s#^.*/${firmware_dir}/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" | sort -V | tail -n1)
   echo "${firmware_name}"
 }
 
@@ -67,8 +58,16 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   BR_PACKAGE_NAME=${PACKAGE_NAME^^}
   BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
   sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/stable/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/stable/${RPI5_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  if [[ -n "${RPI4_FIRMWARE_PATH}" ]]; then
+    sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/stable/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  else
+    echo "No firmware image found in archive for firmware-2711, keeping existing firmware path unchanged"
+  fi
+  if [[ -n "${RPI5_FIRMWARE_PATH}" ]]; then
+    sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/stable/${RPI5_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+  else
+    echo "No firmware image found in archive for firmware-2712, keeping existing firmware path unchanged"
+  fi
   # update package hash
   sed -i "$ d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"

@@ -11,10 +11,15 @@ on:
         required: true
         type: string
         default: 'YYYYMMDD'
-      previous_tag:
-        description: 'Previous LTS version tag (3.X.Y.YYYYMMDD)'
+      previous_lts_version:
+        description: 'Previous LTS version in homematicip/OpenCCU-LTS (3.X.Y.YYYYMMDD)'
         required: true
         type: string
+      previous_openccu_ref_override:
+        description: 'Optional OpenCCU/OpenCCU commit/ref override for changelog base'
+        required: false
+        type: string
+        default: ''
       test_workflow:
         description: 'Test workflow (dry-run)?'
         required: true
@@ -64,12 +69,184 @@ jobs:
             echo "tag=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Resolve previous LTS base
+        id: previous_base
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIOUS_LTS_VERSION: ${{ github.event.inputs.previous_lts_version }}
+          PREVIOUS_OPENCCU_REF_OVERRIDE: ${{ github.event.inputs.previous_openccu_ref_override }}
+          CURRENT_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          def fail(message):
+            raise RuntimeError(f"Previous LTS base resolution failed: {message}")
+
+          LTS_VERSION_PATTERN = r"\d+\.\d+\.\d+\.\d{8}(?:-draft)?"
+          COMMIT_SHA_PATTERN = r"[0-9a-f]{40}"
+          SAFE_GIT_REF_PATTERN = r"[0-9A-Za-z._/\-]{1,200}"
+
+          def gh_json(path):
+            req = urllib.request.Request(
+              f"https://api.github.com{path}",
+              headers={
+                "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+              },
+            )
+            with urllib.request.urlopen(req) as resp:
+              try:
+                return json.load(resp)
+              except json.JSONDecodeError as err:
+                fail(f"GitHub API returned malformed JSON for '{path}': {err}")
+
+          def http_error_context(err):
+            preview = ""
+            try:
+              preview = err.read().decode("utf-8", errors="replace").strip().replace("\n", " ")
+            except Exception:
+              preview = ""
+            if preview:
+              preview = preview[:200]
+              return f" Response: {preview}"
+            return ""
+
+          def resolve_local_commit(ref):
+            if not re.fullmatch(SAFE_GIT_REF_PATTERN, ref):
+              fail(f"Ref '{ref}' contains unsupported characters.")
+            if ref.startswith("/") or ".." in ref:
+              fail(f"Ref '{ref}' is not allowed.")
+            try:
+              return subprocess.check_output(
+                ["git", "--no-pager", "rev-parse", "--verify", f"{ref}^{{commit}}"],
+                text=True,
+              ).strip()
+            except subprocess.CalledProcessError as err:
+              fail(f"Unable to resolve '{ref}' to a commit in OpenCCU/OpenCCU checkout: {err}")
+
+          def ensure_ancestor(base_sha, head_sha, context):
+            rc = subprocess.run(
+              ["git", "--no-pager", "merge-base", "--is-ancestor", base_sha, head_sha],
+              check=False,
+            ).returncode
+            if rc == 0:
+              return
+            if rc == 1:
+              fail(
+                f"Resolved base commit {base_sha} for '{context}' is not an ancestor of current LTS HEAD ({head_sha}). "
+                "Use previous_openccu_ref_override with a valid ancestor commit if histories diverged."
+              )
+            fail(f"Failed to validate ancestry for base commit {base_sha} and HEAD {head_sha}.")
+
+          previous_lts_version = os.environ["PREVIOUS_LTS_VERSION"].strip()
+          override_ref = os.environ["PREVIOUS_OPENCCU_REF_OVERRIDE"].strip()
+          current_sha = os.environ["CURRENT_SHA"].strip()
+
+          if not previous_lts_version:
+            fail("Input 'previous_lts_version' must not be empty.")
+
+          if not re.fullmatch(LTS_VERSION_PATTERN, previous_lts_version):
+            fail(
+              f"Input 'previous_lts_version' ({previous_lts_version}) has invalid format. "
+              f"Expected pattern: {LTS_VERSION_PATTERN}."
+            )
+
+          previous_lts_tag = previous_lts_version
+          if override_ref:
+            previous_openccu_ref = resolve_local_commit(override_ref)
+            ensure_ancestor(previous_openccu_ref, current_sha, f"override '{override_ref}'")
+          else:
+            try:
+              release = gh_json(
+                f"/repos/homematicip/OpenCCU-LTS/releases/tags/{urllib.parse.quote(previous_lts_version, safe='')}"
+              )
+            except urllib.error.HTTPError as err:
+              if err.code == 404:
+                fail(
+                  f"Unable to find release/tag '{previous_lts_version}' in homematicip/OpenCCU-LTS. "
+                  "Provide an existing previous_lts_version or set previous_openccu_ref_override."
+                )
+              if err.code == 403:
+                rate_remaining = (err.headers.get("X-RateLimit-Remaining", "") if err.headers else "").strip()
+                context = http_error_context(err)
+                if rate_remaining == "0" or "rate limit" in context.lower():
+                  fail(
+                    f"GitHub API rate limit reached while resolving '{previous_lts_version}' "
+                    f"in homematicip/OpenCCU-LTS (HTTP 403). Retry later.{context}"
+                  )
+                fail(
+                  f"GitHub API access denied while resolving '{previous_lts_version}' "
+                  f"in homematicip/OpenCCU-LTS (HTTP 403). Verify GITHUB_TOKEN permissions.{context}"
+                )
+              if err.code == 429:
+                context = http_error_context(err)
+                fail(
+                  f"GitHub API rate limit reached while resolving '{previous_lts_version}' "
+                  f"in homematicip/OpenCCU-LTS (HTTP 429). Retry later.{context}"
+                )
+              context = http_error_context(err)
+              fail(
+                f"GitHub API error while resolving release/tag '{previous_lts_version}' "
+                f"in homematicip/OpenCCU-LTS (HTTP {err.code}).{context}"
+              )
+            except urllib.error.URLError as err:
+              fail(
+                f"Network error while resolving release/tag '{previous_lts_version}' "
+                f"in homematicip/OpenCCU-LTS: {err}"
+              )
+
+            previous_lts_tag = (release.get("tag_name") or previous_lts_version).strip()
+            target_commitish = (release.get("target_commitish") or "").strip()
+            if not target_commitish:
+              fail(
+                f"Release '{previous_lts_version}' in homematicip/OpenCCU-LTS has no target_commitish."
+              )
+
+            try:
+              commit = gh_json(
+                f"/repos/homematicip/OpenCCU-LTS/commits/{urllib.parse.quote(target_commitish, safe='')}"
+              )
+            except urllib.error.HTTPError as err:
+              context = http_error_context(err)
+              fail(
+                f"Unable to resolve target_commitish '{target_commitish}' for release "
+                f"'{previous_lts_version}' in homematicip/OpenCCU-LTS (HTTP {err.code}).{context}"
+              )
+            except urllib.error.URLError as err:
+              fail(
+                f"Network error while resolving target_commitish '{target_commitish}' for "
+                f"release '{previous_lts_version}': {err}"
+              )
+
+            commit_sha = (commit.get("sha") or "").strip().lower()
+            if not re.fullmatch(COMMIT_SHA_PATTERN, commit_sha):
+              fail(
+                f"Resolved commit SHA for release '{previous_lts_version}' is invalid: '{commit_sha}'."
+              )
+
+            previous_openccu_ref = resolve_local_commit(commit_sha)
+            ensure_ancestor(previous_openccu_ref, current_sha, previous_lts_version)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+            fh.write(f"previous_lts_tag={previous_lts_tag}\n")
+            fh.write(f"previous_openccu_ref={previous_openccu_ref}\n")
+          PY
+
       - name: Generate changelog
         id: changelog_final
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          FROM_TAG: ${{ github.event.inputs.previous_tag }}
+          FROM_OPENCCU_REF: ${{ steps.previous_base.outputs.previous_openccu_ref }}
           TO_SHA: ${{ github.sha }}
         shell: bash
         run: |
@@ -178,18 +355,18 @@ jobs:
           empty_template = config.get("empty_template", "- No changes")
 
           repo = os.environ["REPO"]
-          from_tag = os.environ["FROM_TAG"]
+          from_openccu_ref = os.environ["FROM_OPENCCU_REF"]
           to_sha = os.environ["TO_SHA"]
 
           candidate_prs = set()
           try:
             log = subprocess.check_output(
-              ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_tag}..{to_sha}"],
+              ["git", "--no-pager", "log", "--no-merges", "--format=%s", f"{from_openccu_ref}..{to_sha}"],
               text=True,
             )
           except subprocess.CalledProcessError as err:
             raise RuntimeError(
-              f"Unable to collect commit subjects for range {from_tag}..{to_sha}: {err}"
+              f"Unable to collect commit subjects for range {from_openccu_ref}..{to_sha}: {err}"
             ) from err
           for subject in log.splitlines():
               if exclude_merge_markers and should_exclude_subject(subject, exclude_merge_markers):
@@ -257,7 +434,7 @@ jobs:
           EOF
           )"
           export VERSION=${{ steps.env.outputs.version }}
-          export PREVIOUS_TAG=${{ github.event.inputs.previous_tag }}
+          export PREVIOUS_TAG=${{ steps.previous_base.outputs.previous_lts_tag }}
           envsubst <.github/release-template-lts.md >/tmp/release-template.md
 
       - name: Generate ChangeLog summary
