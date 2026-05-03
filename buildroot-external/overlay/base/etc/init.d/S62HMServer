@@ -172,6 +172,8 @@ start() {
   JAVAOPT="${JAVAOPT} --add-opens java.base/java.nio=ALL-UNNAMED"
   JAVAOPT="${JAVAOPT} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
   JAVAOPT="${JAVAOPT} --add-opens java.base/jdk.internal.misc=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
+  JAVAOPT="${JAVAOPT} --add-exports java.base/jdk.internal.misc=ALL-UNNAMED"
 
   # calculate the maximum used heap size (-Xmx) depending on the
   # total amount of RAM we have (use max. 25%) - use multiple of 128MB
