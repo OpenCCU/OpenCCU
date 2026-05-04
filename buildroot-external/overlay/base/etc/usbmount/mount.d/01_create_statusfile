@@ -13,3 +13,8 @@ fi
 touch /var/status/hasUSB
 # CCU2 compatibility 
 touch /var/status/hasSD
+
+# trigger monit to check
+# for USB changes again
+/usr/bin/monit monitor hasUSB
+/usr/bin/monit monitor usb1

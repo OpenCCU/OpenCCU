@@ -243,7 +243,7 @@ check process hs485d with pidfile /var/run/hs485dLoader.pid
       exec "/bin/triggerAlarm.tcl 'hs485d: high filedescriptor usage (>95%)' 'WatchDog: hs485d-highfd' true"
     depends on hs485dEnabled, hmlangwDisabled
 
-check program hs485dEnabled with path "/bin/grep -q '^\[Interface .\]' /var/etc/hs485d.conf"
+check program hs485dEnabled with path /bin/sh -c "/bin/grep -q '^\[Interface .\]' /var/etc/hs485d.conf 2>/dev/null"
     group homematic
     if status != 0 for 1 cycles then unmonitor
 
@@ -378,7 +378,7 @@ check filesystem usb1 with path /media/usb1
 
 check program hasUSB with path "/usr/bin/test -e /var/status/hasUSB"
     group system
-    if status != 0 for 5 cycles then unmonitor
+    if status != 0 for 1 cycles then unmonitor
 
 # check system temperature limits
 check program temperature with path /bin/sh -c "(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo 0) | awk '{ print $1/1000; if($1/1000 < 80.0) { exit 10 } else { exit 20 } }';"
@@ -419,7 +419,7 @@ check program wlan0CheckEnabled with path /bin/sh -c "[[ -e /etc/config/wpa_supp
 # monitor under-voltage condition (RaspberryPi only)
 check program underVoltageCheck with path "/bin/checkUndervoltage.sh"
     group system
-    if status = 1 for 3 cycles then unmonitor
+    if status = 1 for 1 cycles then unmonitor
     if status = 2 for 2 cycles then
       exec "/bin/triggerAlarm.tcl 'under-voltage detected' 'WatchDog: low-voltage' true"
       repeat every 24 cycles
@@ -474,7 +474,7 @@ check program coProcessorCheck with path "/bin/checkCoProcessor.sh"
 # check remaining eMMC life-time
 check program eMMCLifeTimeCheck with path "/bin/checkEMMCLifeTime.sh"
     group system
-    if status = 1 for 3 cycles then unmonitor
+    if status = 1 for 1 cycles then unmonitor
     if status = 2 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'eMMC life time >90% exceeded' 'WatchDog: emmc-lifetime90' true"
       repeat every 280 cycles
@@ -485,7 +485,7 @@ check program eMMCLifeTimeCheck with path "/bin/checkEMMCLifeTime.sh"
 # check if a pi4 with usb3+gpio rf module is used
 check program rpi4usb3Check with path "/bin/checkRpi4Usb3.sh"
     group system
-    if status = 1 for 3 cycles then unmonitor
+    if status = 1 for 1 cycles then unmonitor
     if status = 2 for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'Critical RaspberryPi4+USB3+GPIO use detected' 'WatchDog: rpi4-usb3' true"
       repeat every 24 cycles
