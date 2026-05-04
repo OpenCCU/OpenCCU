@@ -1,8 +1,11 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169,SC3010
 #
 # Starts irqbalance
 #
+
+# skip irqbalance on virtualized environments
+/usr/bin/lscpu | grep -q "Hypervisor vendor:" && exit 0
 
 # skip irqbalance use for systems with less than
 # 2 cpus/cores
@@ -16,26 +19,26 @@ ARGS="--foreground"
 PID="/var/run/irqbalance.pid"
 
 case "$1" in
-    start)
-	printf "Starting irqbalance: "
-	# shellcheck disable=SC2086
-	if ! start-stop-daemon -S -q -b -m -p ${PID} --exec $EXEC -- $ARGS; then
-	    echo "FAILED"
-	    exit 1
-	else
-	    echo "OK"
-	fi
-	;;
-    stop)
-	printf "Stopping irqbalance: "
-	start-stop-daemon -K -q -p ${PID}
-	echo "OK"
-	;;
-    restart|reload)
-	$0 stop
-	$0 start
-	;;
-    *)
-	echo "Usage: $0 {start|stop|restart}"
-	exit 1
+  start)
+    printf "Starting irqbalance: "
+    # shellcheck disable=SC2086
+    if ! start-stop-daemon -S -q -b -m -p ${PID} --exec $EXEC -- $ARGS; then
+      echo "FAILED"
+      exit 1
+    else
+      echo "OK"
+    fi
+    ;;
+  stop)
+    printf "Stopping irqbalance: "
+    start-stop-daemon -K -q -p ${PID}
+    echo "OK"
+    ;;
+  restart|reload)
+    $0 stop
+    $0 start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
 esac

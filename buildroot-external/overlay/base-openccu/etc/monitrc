@@ -83,7 +83,7 @@ check process irqbalance with pidfile /var/run/irqbalance.pid
       exec "/bin/triggerAlarm.tcl 'irqbalance: high filedescriptor usage (>95%)' 'WatchDog: irqbalance-highfd' true"
     depends on irqbalanceEnabled
 
-check program irqbalanceEnabled with path /bin/sh -c "/usr/bin/test $(nproc) -gt 1"
+check program irqbalanceEnabled with path "/bin/sh -c '/usr/bin/test $(nproc) -gt 1 && ! /usr/bin/lscpu | grep -q Hypervisor\\ vendor:'"
     group system
     if status != 0 for 1 cycles then unmonitor
 
