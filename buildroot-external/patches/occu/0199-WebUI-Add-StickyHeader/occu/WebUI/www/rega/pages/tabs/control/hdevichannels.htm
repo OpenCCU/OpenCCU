@@ -1,0 +1,334 @@
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+  Cursor.set(Cursor.WAIT);
+   iseInitUpdateArrays();
+  <%
+    boolean firstSort = false;
+    object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+    if( (system.GetSessionVar("sessionCTV")=="true") || (system.GetSessionVar("sessionTAB1") != system.GetVar("id")) )
+    {
+      system.SetSessionVar("sessionLS","");
+      oUser.UserTempViewIDs().RemoveAll();
+      
+      Write('iseClearLastSort();');
+
+      object oTmpArray = dom.GetObject(system.GetVar("id"));
+      if( oTmpArray )
+      {
+        string sTmp;
+        foreach(sTmp,oTmpArray.Channels())
+        {
+          object oTmp = dom.GetObject( sTmp );
+          if( oTmp )
+          {
+            boolean bHasDPs = (oTmp.DPs().EnumEnabledVisibleIDs().Length());
+            if( (bHasDPs) )
+            {
+              oUser.UserTempViewIDs().Add( oTmp.ID() );
+            }
+          }
+        }
+      }
+      oUser.UserTempViewIDs().SortByName(soAsc,stNatural);
+      firstSort = true;
+    }
+    system.SetSessionVar("sessionTAB1", system.GetVar("id") );
+  %>
+  arChns = new Array();
+  chn = null;
+</script>
+
+<img id="ajaxLoad" style="margin: 30px;" alt="Loading..." src="/ise/img/loading.gif" />
+
+<table id="tblHDeviChannel" class="filterTable CLASS03500 j_translate" cellpadding="0" cellspacing="0" border="1" >
+  <colgroup>
+     <col />
+     <col style="width:55px;" />
+     <col />
+     <col />
+     <col style="width:100px;" />
+     <col />
+  </colgroup>
+  <thead>  
+  <tr>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+  <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thChannel}</div></th>
+  <th>${thPicture}</th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
+  <th><div id="room" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'room',true);">${thRoom}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
+  <th><div id="func" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'func',true);">${thFunc}</div></th>
+  <th>${thLastChange}</th>
+  <th>${thControl}</th>
+  </tr>
+  <%
+    Write("<script type='text/javascript'>");
+      Write("translatePage('#tblHDeviChannel');");
+    Write("</script>");
+  %>
+  <tr>
+  <td class="CLASS03501">
+    <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+        <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03503" />
+        <div id="ftSetNameBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltHD, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+        <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
+    </div>
+  </td>
+  <td class="CLASS03501">
+  </td>
+  <td class="CLASS03501">
+    <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
+      <% 
+        Write("<table class='CLASS03505'>");
+        object obj = dom.GetObject(ID_ROOMS);
+        if ( obj ) {
+          string tmp = "";
+          foreach( tmp, obj.EnumEnabledIDs() ) {
+            object elem = dom.GetObject(tmp);
+            if (elem) {
+              string divId = "rdiv"#tmp;
+                Write("<tr>");
+                  Write("<td  class='CLASS03506'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
+                Write("</tr>");
+            }
+          }
+        }
+        Write("</table>");
+        Write("<div class='FilterSetButton' onclick='setAFilter(fltHD, \"rooms\");updateTable();$(\"btnFilterRoomSub\").hide();'>${filterSet}</div>");
+        Write("<div class='FilterSetButton' onclick='$(\"btnFilterRoomSub\").hide();'>${filterClose}</div>");
+      %>
+    </div>
+  </td>
+  <td class="CLASS03501">
+    <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterFuncSub" style="display:none">
+      <% 
+        Write("<table class='CLASS03505'>");
+        object obj = dom.GetObject(ID_FUNCTIONS);
+        if ( obj ) {
+          string tmp = "";
+          foreach( tmp, obj.EnumEnabledIDs() ) {
+            object elem = dom.GetObject(tmp);
+            if (elem) {
+              string divId = "rdiv"#tmp;
+                Write("<tr>");
+                  Write("<td  class='CLASS03506'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
+                Write("</tr>");
+            }
+          }
+        }
+        Write("</table>");
+        Write("<div class='FilterSetButton' onclick='setAFilter(fltHD, \"funcs\");updateTable();$(\"btnFilterFuncSub\").hide();'>${filterSet}</div>");
+        Write("<div class='FilterSetButton' onclick='$(\"btnFilterFuncSub\").hide();'>${filterClose}</div>");
+      %>
+    </div>
+  </td>
+  <td class="CLASS03501">
+  </td>
+  <td class="CLASS03501">
+  </td>
+  </tr>
+  </thead>
+   <%
+
+    object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
+    integer userID = oUser.ID();
+    object user = dom.GetObject(userID);
+    integer virtChnCounter = 0;
+
+    object device = dom.GetObject(system.GetVar("id"));
+    if (device) {
+      if (device.Visible()) {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = "";
+        if( system.IsSessionVar("sessionSIDC") ) {
+          if( system.GetSessionVar("sessionSIDC") == "1" ) {
+           sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+          }
+        }
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
+        string tmp;
+        foreach(tmp, sEnumUserIDs) {
+          object chn = dom.GetObject(tmp);
+          object oDev = dom.GetObject(chn.Device());
+          string oDevHssType = oDev.HssType();
+
+          integer chNumber = chn.ChnNumber();
+
+          ! Determine the name of the interface
+          integer iFaceID = chn.Interface();
+          object oIface = dom.GetObject(iFaceID);
+          string sInterface = oIface.Name();
+
+          boolean bShow = false;
+          if (chn.Visible() && (chn.UserAccessRights(iulOtherThanAdmin) == iarFullAccess)) {
+            bShow = true;
+          }
+         
+          boolean bShowChannel = false;
+          if (user.UserEasyLinkMode() != true) {
+            ! User is expert
+            bShowChannel = true;
+          } else {
+            if (chn.HssType().Find("VIRTUAL_") == -1) {
+                ! not a virtual channel
+                bShowChannel = true;        
+            } else {
+              if (chn.HssType().Find("VIRTUAL_KEY") != -1) { 
+                ! virtual key of the ccu 
+                bShowChannel = true;        
+              }
+            }
+          }
+
+          if ((sInterface != "HmIP-RF") && (sInterface != "VirtualDevices")) {
+            Call("/esp/functions.fn::showHideRFChannel()");
+          } else {
+            Call("/esp/functions.fn::showHideHmIPChannel()");
+          }
+          if( bShow && oDev.ReadyConfig() && bShowChannel )
+          {
+            string trId = device.ID()#tmp;
+            boolean showExtDesc = false;
+            Write("<tr id='"#trId#"'>");
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("<td class='GrayBkg CLASS03905' name='devName' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.className=\"DeviceListRow_Highlight\";' onmouseout='this.className=\"DeviceListRow\";'>");
+            } else {
+              Write("<td class='GrayBkg' name='devName'>");
+            }
+
+            Call("/pages/tabs/control/function.fn::ShowExtDesc()");
+
+            if (showExtDesc == false) {
+              Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+            }
+
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+              string sPicDivId = "picDiv"#chn.ID();
+              Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
+                Write("onmouseover='picDivShow(jg_250, \""#chn.Label()#"\", 250, \""#chn.ChnNumber()#"\", this);'");
+                Write("onmouseout='picDivHide(jg_250);'");
+               Write("></div>");
+              Write("<script type='text/javascript'>");
+                Write("var jg_0 = new jsGraphics('"#sPicDivId#"');");
+                Write("InitGD(jg_0, 50);");
+                Write("Draw(jg_0, '"#chn.Label()#"', 50, '"#chn.ChnNumber()#"');");
+              Write("</script>");
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+            string rooms = "";
+            string roomTmp = "";
+            string roomIDs = "";
+            foreach(roomTmp, chn.ChnRoom()) {
+              object objTmp = dom.GetObject(roomTmp);
+              rooms = rooms # objTmp.Name() # "<br />";
+              roomIDs = roomIDs # objTmp.ID() # '\t';
+            }
+            Write(rooms);
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+            string functions = "";
+            string funcTmp = "";
+            string funcIDs = "";
+            foreach(funcTmp, chn.ChnFunction()) {
+              object objTmp = dom.GetObject(funcTmp);
+              functions = functions # objTmp.Name() # "<br />";
+              funcIDs = funcIDs # objTmp.ID() # '\t';
+            }
+            Write(functions);
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+            
+            Write("<table style='width:100%;'>");
+            Write("<tr><td class='CLASS03502'><span id='tmc"#chn.ID()#"' name='timeStamp'>");
+            
+            integer cId = chn.ID();
+            string sLastTime = "";
+            Call("/esp/system.fn::getLastTime()");
+            Write(sLastTime);
+            
+            Write("</span></td></tr>");
+            Write( '<tr><td style="text-align:center;" class="CLASS03502">' );
+            string sDisplay = 'none';
+            if( chn.WorkingDPState() ) { sDisplay = "inline"; }
+            Write( '<span id="work'#cId#'" style="display:'#sDisplay#';"><img src="/ise/img/pinion_gears_32.png" /></span>' );
+            sDisplay = 'none';
+            if( chn.ExistServiceMsg() ) { sDisplay = "inline"; }
+            Write( '<span id="warn'#cId#'" style="display:'#sDisplay#'"><img name="attention" src="/ise/img/warning.png"/></span>' );
+            Write( '</td></tr></table>' );
+            
+            Write("</td>");
+            Write("<td id='dpc"#chn.ID()#"' class='GrayBkg'>");
+            
+            integer cId = chn.ID();
+            string sCtrlId = "";
+            integer iStatusOnly = 0;
+            boolean bSliderFlag = true;
+            Call("/esp/datapointconfigurator.fn::dcCreate()");
+            
+            Write("</td>");           
+            Write("</tr>");
+            
+            Write("<script type='text/javascript'>");
+            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name()#"','"#rooms#"','"#functions#"','"#roomIDs#"', '"#funcIDs#"');");
+
+            Write("arChns[arChns.length] = o;");
+            Write("if (!fltHD.objPassFilter(o ))");
+            Write("hide(o['trid']);");
+            Call("/esp/system.fn::writeWarnStateJS()");
+            Write("</script>");
+          }
+        }
+      }
+    }
+    
+  %>
+  <script type="text/javascript">
+    Cursor.set(Cursor.NORMAL);
+  </script>
+</table>
+<script type="text/javascript">
+  <%
+    if(firstSort)
+    {
+      Write("//IseSort(arChns,'name',true);");
+    }
+  %>
+  colorFilterBtns(fltHD);
+  var mouseOpts = {
+    onTopOver: function(divToShow) {
+      selectFilters(fltHD, divToShow);
+    }
+  };  
+  new iseSubMenuControl("btnFilterRoom", "btnFilterRoomSub", "divRTD",  {d:2}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "divRTD",  {d:2}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterFunc", "btnFilterFuncSub", "divRTD",  {d:2}, mouseOpts, false, true);
+
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
+ jQuery("#ajaxLoad").hide();
+
+ jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
+
+  translatePage("#tblHDeviChannel", function () {
+    jQuery("[name='hssType']").each(function(index, elm) {
+      var chText = jQuery(elm).text();
+      if (chText.indexOf("chType_") == -1) {
+        jQuery(elm).show();
+      }
+    });
+  });
+
+</script>
