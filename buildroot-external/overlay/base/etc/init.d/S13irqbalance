@@ -4,9 +4,6 @@
 # Starts irqbalance
 #
 
-# skip irqbalance on virtualized environments
-/usr/bin/lscpu | grep -q "Hypervisor vendor:" && exit 0
-
 # skip irqbalance use for systems with less than
 # 2 cpus/cores
 [[ $(nproc) -lt 2 ]] && exit 0
