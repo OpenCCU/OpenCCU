@@ -6,7 +6,7 @@
 
 # skip irqbalance use for systems with less than
 # 2 cpus/cores
-[[ $(nproc) -lt 2 ]] && exit 0
+[[ $(/usr/bin/nproc) -lt 2 ]] && exit 0
 
 # irqbalance requires /run/irqbalance
 mkdir -p /run/irqbalance
