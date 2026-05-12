@@ -22,7 +22,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="1.22"
+VERSION="1.23"
 LOGFILE="/tmp/install-lxc.log"
 LINE=
 
@@ -685,7 +685,7 @@ done
 
 # Request memory limits (requires cgroup memory)
 MIN_MEM=1024
-NUM_MEM=${MIN_MEM}
+NUM_MEM=2048
 while true; do
   if NUM_MEM=$(whiptail --inputbox "Please enter the memory limit to assign to the container (minimum is ${MIN_MEM} MiB)" 9 58 ${NUM_MEM} --title "Memory limit request" 3>&1 1>&2 2>&3); then
     if [[ -z "${NUM_MEM}" ]]; then

@@ -24,7 +24,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.20"
+VERSION="3.21"
 LOGFILE="/tmp/install-proxmox.log"
 LINE=
 
@@ -704,8 +704,8 @@ info "Using '${STORAGE}' for storage location."
 
 # Select storage size
 info "Selecting virtual disk size"
-DISK_MINSIZE=4
-DISK_CURSIZE=6
+DISK_MINSIZE=6
+DISK_CURSIZE=8
 while true; do
   if DISK_SIZE=$(whiptail --inputbox "Please enter the virtual disk size (GB) for the OpenCCU ${VMTYPE} (minimum is ${DISK_MINSIZE} GB)" 8 58 ${DISK_CURSIZE} --title "Virtual disk size" 3>&1 1>&2 2>&3); then
     if [[ -z "${DISK_SIZE}" ]]; then
@@ -820,7 +820,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
     info "Creating VM ${VMID}..."
     qm create ${VMID} -bios ovmf \
                       -cores 2 \
-                      -memory 1024 \
+                      -memory 2048 \
                       -name "OpenCCU"
 
     # create EFI disk
@@ -910,7 +910,7 @@ elif [[ "${VMTYPE}" == "CT" ]]; then
     --net0 name=eth0,bridge=vmbr0,ip=dhcp \
     --unprivileged 0 \
     --ostype unmanaged \
-    --memory 1024 \
+    --memory 2048 \
     --rootfs volume=${STORAGE}:1,mountoptions=noatime \
     --mp0 volume=${STORAGE}:${DISK_SIZE},mp=/usr/local,mountoptions=noatime \
     --description "[![OpenCCU](https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/logo.png 'OpenCCU')](https://openccu.de)" \
