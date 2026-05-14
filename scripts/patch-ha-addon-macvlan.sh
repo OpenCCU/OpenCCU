@@ -43,7 +43,7 @@
 #############################################################
 #                         Main App                          #
 #############################################################
-echo "OpenCCU HA-Addon macvlan patch script v1.2"
+echo "OpenCCU HA-Addon macvlan patch script v1.3"
 echo "Copyright (c) 2023-2024 Jens Maus <mail@jens-maus.de>"
 echo
 
@@ -181,8 +181,21 @@ docker network create -d macvlan \
 echo "Connecting add-on to macvlan network"
 docker network connect --ip "${CCU_CONTAINER_IP}" ccu "${CCU_CONTAINER_NAME}"
 
+echo "Edit /etc/rc.local in the Add-On to configure the Routing for the Unicast network"
+docker exec -e CCU_NETWORK_GATEWAY=$CCU_NETWORK_GATEWAY "${CCU_CONTAINER_NAME}" sh -c 'if test -f /etc/rc.local; then
+          rm /etc/rc.local
+        fi
+
+        touch /etc/rc.local
+        chmod +x /etc/rc.local
+
+        echo "#!/bin/sh" >> /etc/rc.local
+        echo "ADDON_CCU_NETWORK_INTERFACE=\$(ip route get to match $CCU_NETWORK_GATEWAY | awk '\''{print \$3}'\'')"  >> /etc/rc.local
+        echo "route add -net 224.0.0.0/24 dev \$ADDON_CCU_NETWORK_INTERFACE" >> /etc/rc.local
+        '
+
 echo "Stopping add-on (${CCU_CONTAINER_NAME})"
-docker stop --time 120 "${CCU_CONTAINER_NAME}"
+docker stop --timeout 120 "${CCU_CONTAINER_NAME}"
 
 echo "Starting add-on (${CCU_CONTAINER_NAME})"
 docker start "${CCU_CONTAINER_NAME}"
