@@ -170,6 +170,14 @@ if docker network inspect ccu >/dev/null 2>&1; then
   docker network rm ccu
 fi
 
+#  Enable promiscuous mode
+if ip link show "$CCU_NETWORK_INTERFACE" | grep -qi promisc; then
+  log "Promiscuous mode already enabled"
+else
+  log "Enabling promiscuous mode"
+  ip link set "$CCU_NETWORK_INTERFACE" promisc on
+fi
+
 # re-create docker macvlan network
 echo "Creating docker macvlan network"
 docker network create -d macvlan \
@@ -182,9 +190,12 @@ echo "Connecting add-on to macvlan network"
 docker network connect --ip "${CCU_CONTAINER_IP}" ccu "${CCU_CONTAINER_NAME}"
 
 echo "Stopping add-on (${CCU_CONTAINER_NAME})"
-docker stop --time 120 "${CCU_CONTAINER_NAME}"
+docker stop --timeout  120 "${CCU_CONTAINER_NAME}"
 
 echo "Starting add-on (${CCU_CONTAINER_NAME})"
 docker start "${CCU_CONTAINER_NAME}"
+
+# Routing fix issue: 1373
+docker exec "${CCU_CONTAINER_NAME}" sh -c route add -net 224.0.0.0/8 dev "$CCU_NETWORK_INTERFACE"
 
 exit 0
