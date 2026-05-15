@@ -6,9 +6,19 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(strip_v_prefix "$(resolve_latest_github_stable_tag "tailscale" "tailscale" '^[vV][0-9]+(\.[0-9]+)*$')")}
 PACKAGE_NAME="tailscale-bin"
 PROJECT_URL="https://pkgs.tailscale.com/stable"
+
+# Resolve the latest stable version directly from pkgs.tailscale.com to ensure
+# only officially published releases are used (not just GitHub tags that may
+# not yet have corresponding binaries published to pkgs.tailscale.com).
+ID=${1:-$(curl -fsSL "${PROJECT_URL}/?mode=json" | jq -r '.version // empty')}
+
+if [[ -z "${ID}" ]]; then
+  echo "Failed to resolve latest stable version from pkgs.tailscale.com" >&2
+  exit 1
+fi
+
 ARCHIVE_URL="${PROJECT_URL}/tailscale_${ID}_CPU.tgz"
 CURRENT_ID=$(sed -nE 's/^TAILSCALE_BIN_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
