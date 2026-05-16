@@ -12,7 +12,7 @@ PROJECT_URL="https://pkgs.tailscale.com/stable"
 # Resolve the latest stable version directly from pkgs.tailscale.com to ensure
 # only officially published releases are used (not just GitHub tags that may
 # not yet have corresponding binaries published to pkgs.tailscale.com).
-ID=${1:-$(curl -fsSL "${PROJECT_URL}/?mode=json" | jq -r '.version // empty')}
+ID=${1:-$(curl -fsSL "${PROJECT_URL}/?mode=json" | jq -r '.Version // .version // empty')}
 
 if [[ -z "${ID}" ]]; then
   echo "Failed to resolve latest stable version from pkgs.tailscale.com" >&2
