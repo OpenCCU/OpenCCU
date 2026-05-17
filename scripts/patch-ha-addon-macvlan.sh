@@ -43,7 +43,7 @@
 #############################################################
 #                         Main App                          #
 #############################################################
-echo "OpenCCU HA-Addon macvlan patch script v1.3"
+echo "OpenCCU HA-Addon macvlan patch script v1.4"
 echo "Copyright (c) 2023-2026 Jens Maus <mail@jens-maus.de>"
 echo
 
@@ -139,7 +139,7 @@ if [[ -z "${CCU_CONTAINER_NAME}" ]]; then
 else
   echo "${CCU_CONTAINER_NAME}"
 fi
-CCU_CONTAINER_NAME=$(echo "addon_${CCU_CONTAINER_NAME}" | sed 's/-rasp/_rasp/')
+CCU_CONTAINER_NAME=$(echo "addon_${CCU_CONTAINER_NAME}" | sed 's/-open/_open/')
 
 echo -n "OpenCCU Add-on IP (e.g. 192.168.178.4): "
 if [[ -z "${CCU_CONTAINER_IP}" ]]; then
@@ -186,5 +186,31 @@ docker stop --timeout 120 "${CCU_CONTAINER_NAME}"
 
 echo "Starting add-on (${CCU_CONTAINER_NAME})"
 docker start "${CCU_CONTAINER_NAME}"
+
+# Wait until network interfaces in openccu add-on are ready so
+# that we can setup some stuff
+echo "Waiting for add-on network interfaces to be ready..."
+sleep 5
+
+# Determine the macvlan network interface inside the container:
+# find the interface that has the macvlan IP assigned (CCU_CONTAINER_IP)
+CCU_MACVLAN_IFACE=$(docker exec "${CCU_CONTAINER_NAME}" ip -o -f inet addr show \
+  | awk -v ip="${CCU_CONTAINER_IP}" '$4 ~ ip {print $2}')
+
+if [[ -z "${CCU_MACVLAN_IFACE}" ]]; then
+  echo "WARNING: Could not determine macvlan interface inside container."
+  echo "         Multicast route (224.0.0.0/24) was NOT added."
+  echo "         HmIP-HAP/HmIPW-DRAP connectivity may be affected."
+else
+  # we found the macvlan interface so lets setup a multicast route to that
+  # particular interface for the HmIP-HAP/DRAP communication to work correctly.
+  docker exec "${CCU_CONTAINER_NAME}" \
+    ip route replace 224.0.0.0/24 dev "${CCU_MACVLAN_IFACE}" scope link
+  echo "Multicast route added: 224.0.0.0/24 dev ${CCU_MACVLAN_IFACE} scope link"
+
+  # in addition we move the default route to the same macvlan interface
+  docker exec "${CCU_CONTAINER_NAME}" \
+    ip route replace default via "${CCU_NETWORK_GATEWAY}"
+fi
 
 exit 0
