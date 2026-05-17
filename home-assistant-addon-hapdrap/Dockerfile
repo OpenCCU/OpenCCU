@@ -31,4 +31,4 @@ LABEL \
     io.hass.type="addon" \
     io.hass.version=${package_version}
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/app/entrypoint.sh"]
