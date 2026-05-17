@@ -63,6 +63,7 @@ handle_renew() {
     done
   fi
 
+  # keep HmIP multicast on the active interface in multi-NIC setups
   /sbin/ip route replace 224.0.0.0/24 dev "${interface}" scope link 2>/dev/null
 
   # query for NTP server information

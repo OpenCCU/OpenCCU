@@ -214,6 +214,7 @@ case "${MODE}" in
     # reset default gateway
     /sbin/ip route del default 2>/dev/null
     /sbin/ip route add default via "${GATEWAY}"
+    # keep HmIP multicast on the active interface in multi-NIC setups
     /sbin/ip route replace 224.0.0.0/24 dev "${IFACE}" scope link 2>/dev/null
 
     # take care of resolv.conf
