@@ -584,10 +584,10 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type time-exceeded -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type parameter-problem -j ACCEPT"
     # MLD multicast listener discovery/control (130=query, 131=report, 132=done, 143=v2-report)
-    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 130 -j ACCEPT"
-    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 131 -j ACCEPT"
-    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 132 -j ACCEPT"
-    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 143 -j ACCEPT"
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 130 -m hl --hl-eq 1 -j ACCEPT"
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 131 -m hl --hl-eq 1 -j ACCEPT"
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 132 -m hl --hl-eq 1 -j ACCEPT"
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 143 -m hl --hl-eq 1 -j ACCEPT"
   }
   
   # allow echo request
