@@ -215,7 +215,9 @@ case "${MODE}" in
     /sbin/ip route del default 2>/dev/null
     /sbin/ip route add default via "${GATEWAY}"
     # keep HmIP multicast on the active interface in multi-NIC setups
-    /sbin/ip route replace 224.0.0.0/24 dev "${IFACE}" scope link 2>/dev/null
+    if ! /sbin/ip -4 route show 224.0.0.0/24 | grep -q " dev "; then
+      /sbin/ip route add 224.0.0.0/24 dev "${IFACE}" scope link 2>/dev/null
+    fi
 
     # take care of resolv.conf
     if [[ -n "${NAMESERVER1}" ]]; then

@@ -64,7 +64,9 @@ handle_renew() {
   fi
 
   # keep HmIP multicast on the active interface in multi-NIC setups
-  /sbin/ip route replace 224.0.0.0/24 dev "${interface}" scope link 2>/dev/null
+  if ! /sbin/ip -4 route show 224.0.0.0/24 | grep -q " dev "; then
+    /sbin/ip route add 224.0.0.0/24 dev "${interface}" scope link 2>/dev/null
+  fi
 
   # query for NTP server information
   [[ -n "${ntpsrv}" ]] && echo "NTPSERVERS_DHCP='${ntpsrv}'" >/var/etc/ntp-dhcp.conf
