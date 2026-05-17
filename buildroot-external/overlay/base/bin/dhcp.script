@@ -63,6 +63,8 @@ handle_renew() {
     done
   fi
 
+  /sbin/ip route replace 224.0.0.0/24 dev "${interface}" scope link
+
   # query for NTP server information
   [[ -n "${ntpsrv}" ]] && echo "NTPSERVERS_DHCP='${ntpsrv}'" >/var/etc/ntp-dhcp.conf
 
