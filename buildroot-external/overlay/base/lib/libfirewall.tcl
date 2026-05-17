@@ -480,8 +480,8 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
   try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport 1900 -j ACCEPT"
 
   # allow IPv4 multicast control/data traffic required for HmIP-HAP/HmIPW-DRAP discovery
-  try_exec_cmd "/usr/sbin/iptables -A INPUT -p igmp -j ACCEPT"
-  try_exec_cmd "/usr/sbin/iptables -A INPUT -d 224.0.0.0/24 -j ACCEPT"
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -p igmp -d 224.0.0.0/24 -j ACCEPT"
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp -d 224.0.0.0/24 -j ACCEPT"
   
   # IPv6
   set has_ip6tables [FirewallInternal::ip6Supported]
@@ -583,6 +583,7 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type packet-too-big -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type time-exceeded -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type parameter-problem -j ACCEPT"
+    # MLD multicast listener discovery/control (130=query, 131=report, 132=done, 143=v2-report)
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 130 -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 131 -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p icmpv6 --icmpv6-type 132 -j ACCEPT"
