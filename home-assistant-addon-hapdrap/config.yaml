@@ -1,0 +1,38 @@
+---
+name: OpenCCU HAP/DRAP Helper
+version: 0.1.0
+stage: experimental
+slug: openccu-hapdrap
+image: ghcr.io/jens-maus/openccu
+arch:
+  - aarch64
+  - amd64
+description: OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivity
+url: https://github.com/OpenCCU/OpenCCU/
+ingress: false
+startup: services
+init: false
+full_access: true
+hassio_api: true
+hassio_role: admin
+docker_api: true
+host_network: true
+apparmor: false
+options:
+  openccu_slug: openccu
+  network_name: ccu
+  parent_interface: ""
+  subnet: ""
+  gateway: ""
+  openccu_ip: ""
+  check_interval: 30
+  reconnect_container: true
+schema:
+  openccu_slug: str
+  network_name: str
+  parent_interface: str
+  subnet: str
+  gateway: str
+  openccu_ip: str
+  check_interval: int(10,3600)
+  reconnect_container: bool
