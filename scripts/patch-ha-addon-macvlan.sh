@@ -190,27 +190,38 @@ docker start "${CCU_CONTAINER_NAME}"
 # Wait until network interfaces in openccu add-on are ready so
 # that we can setup some stuff
 echo "Waiting for add-on network interfaces to be ready..."
-sleep 5
 
 # Determine the macvlan network interface inside the container:
 # find the interface that has the macvlan IP assigned (CCU_CONTAINER_IP)
-CCU_MACVLAN_IFACE=$(docker exec "${CCU_CONTAINER_NAME}" ip -o -f inet addr show \
-  | awk -v ip="${CCU_CONTAINER_IP}" '$4 ~ ip {print $2}')
+CCU_MACVLAN_IFACE=""
+for _ in {1..30}; do
+  CCU_MACVLAN_IFACE=$(docker exec "${CCU_CONTAINER_NAME}" ip -o -f inet addr show \
+    | awk -v ip="${CCU_CONTAINER_IP}" '{split($4,a,"/"); if (a[1] == ip) {print $2; exit}}')
+  [[ -n "${CCU_MACVLAN_IFACE}" ]] && break
+  sleep 1
+done
 
 if [[ -z "${CCU_MACVLAN_IFACE}" ]]; then
-  echo "WARNING: Could not determine macvlan interface inside container."
-  echo "         Multicast route (224.0.0.0/24) was NOT added."
-  echo "         HmIP-HAP/HmIPW-DRAP connectivity may be affected."
+  echo "ERROR: Could not determine macvlan interface inside container."
+  echo "       Multicast route (224.0.0.0/24) was NOT added."
+  echo "       HmIP-HAP/HmIPW-DRAP connectivity may be affected."
+  exit 1
 else
   # we found the macvlan interface so lets setup a multicast route to that
   # particular interface for the HmIP-HAP/DRAP communication to work correctly.
-  docker exec "${CCU_CONTAINER_NAME}" \
-    ip route replace 224.0.0.0/24 dev "${CCU_MACVLAN_IFACE}" scope link
+  if ! docker exec "${CCU_CONTAINER_NAME}" \
+    ip route replace 224.0.0.0/24 dev "${CCU_MACVLAN_IFACE}" scope link; then
+    echo "ERROR: Failed to add multicast route on ${CCU_MACVLAN_IFACE}."
+    exit 1
+  fi
   echo "Multicast route added: 224.0.0.0/24 dev ${CCU_MACVLAN_IFACE} scope link"
 
   # in addition we move the default route to the same macvlan interface
-  docker exec "${CCU_CONTAINER_NAME}" \
-    ip route replace default via "${CCU_NETWORK_GATEWAY}"
+  if ! docker exec "${CCU_CONTAINER_NAME}" \
+    ip route replace default via "${CCU_NETWORK_GATEWAY}"; then
+    echo "ERROR: Failed to replace default route via ${CCU_NETWORK_GATEWAY}."
+    exit 1
+  fi
 fi
 
 exit 0
