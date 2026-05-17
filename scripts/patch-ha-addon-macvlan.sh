@@ -17,7 +17,7 @@
 #
 # CCU_CONTAINER_IP=192.168.178.30 ./patch-ha-addon-macvlan.sh -n
 #
-# Copyright (c) 2023-2024 Jens Maus <mail@jens-maus.de>
+# Copyright (c) 2023-2026 Jens Maus <mail@jens-maus.de>
 # Apache 2.0 License applies
 #
 
@@ -43,8 +43,8 @@
 #############################################################
 #                         Main App                          #
 #############################################################
-echo "OpenCCU HA-Addon macvlan patch script v1.2"
-echo "Copyright (c) 2023-2024 Jens Maus <mail@jens-maus.de>"
+echo "OpenCCU HA-Addon macvlan patch script v1.3"
+echo "Copyright (c) 2023-2026 Jens Maus <mail@jens-maus.de>"
 echo
 
 # check if non-interactive mode is requested
@@ -182,7 +182,7 @@ echo "Connecting add-on to macvlan network"
 docker network connect --ip "${CCU_CONTAINER_IP}" ccu "${CCU_CONTAINER_NAME}"
 
 echo "Stopping add-on (${CCU_CONTAINER_NAME})"
-docker stop --time 120 "${CCU_CONTAINER_NAME}"
+docker stop --timeout 120 "${CCU_CONTAINER_NAME}"
 
 echo "Starting add-on (${CCU_CONTAINER_NAME})"
 docker start "${CCU_CONTAINER_NAME}"
