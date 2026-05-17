@@ -1,0 +1,335 @@
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #122360;
+  color: #f0f0f0;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+#maintable {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Moderne Viewport-Einheiten als Progressive Enhancement */
+@supports (height: 100dvh) {
+  #maintable {
+    height: 100dvh;
+    width: 100dvw;
+  }
+}
+
+/* ── Left panel (form) ──────────────────────────────────── */
+#login-panel {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 40px;
+  background: #122360;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+#login-inner {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Logo + Heading */
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.login-logo img {
+  height: 36px;
+  width: auto;
+}
+
+.login-heading {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.login-subtext {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: -12px;
+}
+
+/* User pills */
+#user-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  background: #1a2e6e;
+  border: 1px solid #2a4090;
+  color: #c8d8ff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+
+.user-pill:hover {
+  background: #1e3880;
+  border-color: #4a90d9;
+  color: #fff;
+}
+
+.user-pill-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #1e5aa8;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Form labels */
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #888;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* Glass input wrapper */
+.glass-input {
+  background: #0f1d50;
+  border: 1px solid #2a4090;
+  border-radius: 14px;
+  transition: border-color 0.18s;
+}
+
+.glass-input:focus-within {
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 3px rgba(74,144,217,0.22);
+}
+
+.glass-input input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: #f0f0f0;
+  border-radius: 14px;
+}
+
+.glass-input input::placeholder {
+  color: #555;
+}
+
+.glass-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.glass-input-row input {
+  flex: 1;
+  padding-right: 8px;
+}
+
+.pw-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 14px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.pw-toggle:hover { color: #4a90d9; }
+
+.pw-toggle svg { display: block; width: 18px; height: 18px; }
+
+/* Error box */
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+  font-size: 0.83rem;
+}
+
+/* Primary login button */
+#btnLogin {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: #1e5aa8;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  appearance: none;
+  transition: background 0.18s, transform 0.1s;
+  user-select: none;
+}
+
+#btnLogin:hover { background: #2468c0; }
+#btnLogin:active { background: #183473; transform: scale(0.98); }
+
+/* Help link */
+.help-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #7090c0;
+  cursor: pointer;
+  transition: color 0.15s;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
+  text-decoration: none;
+}
+
+.help-link:hover { color: #4a90d9; }
+
+.help-link svg { width: 15px; height: 15px; }
+
+/* ── Right panel (hero) ─────────────────────────────────── */
+#hero-panel {
+  flex: 1 1 0;
+  position: relative;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+#hero-bg {
+  position: absolute;
+  inset: 16px;
+  border-radius: 24px;
+  background-image: url('/rega/login-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #1a1025;
+}
+
+#hero-overlay {
+  position: absolute;
+  inset: 16px;
+  border-radius: 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+}
+
+.hero-testimonials {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 12px;
+  padding: 0 4px 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.testimonial-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(20,10,40,0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.testimonial-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1e5aa8;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.testimonial-handle {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.45);
+}
+
+.testimonial-text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ── Responsive: hide hero on small screens ─────────────── */
+@media (max-width: 1200px) {
+  .testimonial-card:nth-child(n+3) { display: none; }
+}
+
+@media (max-width: 768px) {
+  #maintable { flex-direction: column; }
+  #hero-panel { display: none; }
+  #login-panel { padding: 32px 20px; justify-content: flex-start; padding-top: 60px; }
+  #login-inner { max-width: 100%; }
+  .login-heading { font-size: 1.7rem; }
+}
