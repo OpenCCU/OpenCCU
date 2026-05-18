@@ -11,31 +11,21 @@ CHECK_INTERVAL="$(bashio::config 'check_interval')"
 RECONNECT="$(bashio::config 'reconnect_container')"
 
 check_protection_mode() {
-  local protection_mode="" api_response="" config_response=""
+  local protection_mode="" supervisor_protection_mode="" key
 
-  if [ -z "${SUPERVISOR_TOKEN:-}" ]; then
-    bashio::log.error "SUPERVISOR_TOKEN is missing. Cannot determine Home Assistant protection mode."
+  if [ ! -r /data/options.json ]; then
+    bashio::log.error "Cannot read /data/options.json. Add-on options are not accessible."
     exit 1
   fi
 
-  api_response="$(curl -fsSL \
-    -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
-    -H "Content-Type: application/json" \
-    http://supervisor/addons/self/info 2>/dev/null || true)"
+  for key in openccu_slug network_name parent_interface subnet gateway openccu_ip check_interval reconnect_container; do
+    if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
+      bashio::log.error "Missing required key '${key}' in /data/options.json. Check add-on config.yaml options/schema."
+      exit 1
+    fi
+  done
 
-  if [ -n "${api_response}" ]; then
-    protection_mode="$(echo "${api_response}" | jq -r '.data.protected // .data.protection_mode // .data.options.protection_mode // empty' 2>/dev/null || true)"
-  fi
-
-  if [ -z "${protection_mode}" ] && [ -f /data/options.json ]; then
-    config_response="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
-    protection_mode="${config_response}"
-  fi
-
-  if [ -z "${protection_mode}" ]; then
-    bashio::log.error "Could not determine Home Assistant protection mode from supervisor API."
-    exit 1
-  fi
+  protection_mode="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
 
   if [ "${protection_mode}" = "true" ]; then
     bashio::log.error "Home Assistant protection mode is enabled for this add-on."
@@ -43,7 +33,26 @@ check_protection_mode() {
     exit 1
   fi
 
-  bashio::log.info "Protection mode check passed (disabled=false)."
+  if [ -n "${protection_mode}" ]; then
+    bashio::log.info "Protection mode check passed (disabled)."
+    return 0
+  fi
+
+  if [ -n "${SUPERVISOR_TOKEN:-}" ]; then
+    supervisor_protection_mode="$(curl -fsSL \
+      -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+      -H "Content-Type: application/json" \
+      http://supervisor/addons/self/info 2>/dev/null \
+      | jq -r '.data.protected // .data.protection_mode // .data.options.protection_mode // empty' 2>/dev/null || true)"
+  fi
+
+  if [ "${supervisor_protection_mode}" = "true" ]; then
+    bashio::log.error "Home Assistant protection mode is enabled for this add-on."
+    bashio::log.error "Disable protection mode in the add-on configuration and start the add-on again."
+    exit 1
+  fi
+
+  bashio::log.info "Protection mode check passed (disabled)."
 }
 
 validate_required_config() {
