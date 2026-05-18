@@ -10,6 +10,17 @@ OPENCCU_IP="$(bashio::config 'openccu_ip')"
 CHECK_INTERVAL="$(bashio::config 'check_interval')"
 RECONNECT="$(bashio::config 'reconnect_container')"
 
+validate_required_config() {
+  if [ -z "${OPENCCU_SLUG}" ]; then
+    bashio::log.error "Missing required config option: 'openccu_slug'."
+    exit 1
+  fi
+  if [ -z "${NETWORK_NAME}" ]; then
+    bashio::log.error "Missing required config option: 'network_name'."
+    exit 1
+  fi
+}
+
 to_num() {
   local b1 b2 b3 b4
   IFS=. read -r b1 b2 b3 b4 <<<"$1"
@@ -115,13 +126,9 @@ resolve_openccu_ip() {
     return 0
   fi
 
-  bashio::log.info "No existing network IP found; deriving default OpenCCU IP from gateway"
-  if [[ ! "${GATEWAY}" =~ ^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+$ ]]; then
-    bashio::log.error "Gateway '${GATEWAY}' is not a valid IPv4 address."
-    exit 1
-  fi
-  OPENCCU_IP="${BASH_REMATCH[1]}.4"
-  bashio::log.info "Derived OpenCCU IP: ${OPENCCU_IP}"
+  bashio::log.error "No OpenCCU IP configured and no existing '${NETWORK_NAME}' IP detected."
+  bashio::log.error "Set 'openccu_ip' to a free LAN IP and restart this helper."
+  exit 1
 }
 
 ensure_network() {
@@ -219,6 +226,7 @@ setup_container_routes() {
 }
 
 bashio::log.info "Starting OpenCCU HAP/DRAP helper (network=${NETWORK_NAME}, interval=${CHECK_INTERVAL}s, reconnect=${RECONNECT})"
+validate_required_config
 resolve_parent_interface
 resolve_subnet
 resolve_gateway
