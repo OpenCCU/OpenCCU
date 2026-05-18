@@ -1,6 +1,6 @@
 ---
 name: OpenCCU HAP/DRAP Helper
-version: 0.1.1
+version: 0.1.2
 stage: experimental
 slug: openccu-hapdrap
 image: ghcr.io/jens-maus/openccu-hapdrap
@@ -13,10 +13,7 @@ ingress: false
 startup: services
 init: false
 full_access: true
-hassio_api: true
-hassio_role: admin
 docker_api: true
-host_network: true
 apparmor: false
 options:
   openccu_slug: openccu
@@ -25,7 +22,7 @@ options:
   subnet: ""
   gateway: ""
   openccu_ip: ""
-  check_interval: 30
+  check_interval: 15
   reconnect_container: true
 schema:
   openccu_slug: str
