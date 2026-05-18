@@ -10,6 +10,21 @@ OPENCCU_IP="$(bashio::config 'openccu_ip')"
 CHECK_INTERVAL="$(bashio::config 'check_interval')"
 RECONNECT="$(bashio::config 'reconnect_container')"
 
+check_protection_mode() {
+  local protection_mode=""
+  if [ -f /data/options.json ]; then
+    protection_mode="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
+  fi
+
+  if [ "${protection_mode}" = "true" ]; then
+    bashio::log.error "Home Assistant protection mode is enabled for this add-on."
+    bashio::log.error "Disable protection mode in the add-on configuration and start the add-on again."
+    exit 1
+  fi
+
+  bashio::log.info "Protection mode check passed (disabled)."
+}
+
 validate_required_config() {
   if [ -z "${OPENCCU_SLUG}" ]; then
     bashio::log.error "Missing required config option: 'openccu_slug'."
@@ -59,7 +74,7 @@ resolve_parent_interface() {
   fi
 
   bashio::log.info "Detecting parent network interface from default route"
-  PARENT_IF="$(ip -o -f inet route | awk '/^default/ {print $5; exit}')"
+  PARENT_IF="$(ip -o -f inet route 2>/dev/null | awk '/^default/ {print $5; exit}' || true)"
   if [ -z "${PARENT_IF}" ]; then
     bashio::log.error "Could not detect parent interface. Please set 'parent_interface'."
     exit 1
@@ -75,7 +90,7 @@ resolve_subnet() {
 
   bashio::log.info "Detecting subnet on parent interface ${PARENT_IF}"
   local iface_cidr
-  iface_cidr="$(ip -o -f inet addr show dev "${PARENT_IF}" | awk '/scope global/ {print $4; exit}')"
+  iface_cidr="$(ip -o -f inet addr show dev "${PARENT_IF}" 2>/dev/null | awk '/scope global/ {print $4; exit}' || true)"
   if [ -z "${iface_cidr}" ]; then
     bashio::log.error "Could not detect subnet on ${PARENT_IF}. Please set 'subnet'."
     exit 1
@@ -96,9 +111,9 @@ resolve_gateway() {
   fi
 
   bashio::log.info "Detecting gateway for parent interface ${PARENT_IF}"
-  GATEWAY="$(ip route list dev "${PARENT_IF}" | awk '/^default/ {print $3; exit}')"
+  GATEWAY="$(ip route list dev "${PARENT_IF}" 2>/dev/null | awk '/^default/ {print $3; exit}' || true)"
   if [ -z "${GATEWAY}" ]; then
-    GATEWAY="$(ip -o -f inet route | awk '/^default/ {print $3; exit}')"
+    GATEWAY="$(ip -o -f inet route 2>/dev/null | awk '/^default/ {print $3; exit}' || true)"
   fi
   if [ -z "${GATEWAY}" ]; then
     bashio::log.error "Could not detect gateway. Please set 'gateway'."
@@ -226,6 +241,7 @@ setup_container_routes() {
 }
 
 bashio::log.info "Starting OpenCCU HAP/DRAP helper (network=${NETWORK_NAME}, interval=${CHECK_INTERVAL}s, reconnect=${RECONNECT})"
+check_protection_mode
 validate_required_config
 resolve_parent_interface
 resolve_subnet
