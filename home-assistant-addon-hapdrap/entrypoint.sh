@@ -11,9 +11,30 @@ CHECK_INTERVAL="$(bashio::config 'check_interval')"
 RECONNECT="$(bashio::config 'reconnect_container')"
 
 check_protection_mode() {
-  local protection_mode=""
-  if [ -f /data/options.json ]; then
-    protection_mode="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
+  local protection_mode="" api_response="" config_response=""
+
+  if [ -z "${SUPERVISOR_TOKEN:-}" ]; then
+    bashio::log.error "SUPERVISOR_TOKEN is missing. Cannot determine Home Assistant protection mode."
+    exit 1
+  fi
+
+  api_response="$(curl -fsSL \
+    -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+    -H "Content-Type: application/json" \
+    http://supervisor/addons/self/info 2>/dev/null || true)"
+
+  if [ -n "${api_response}" ]; then
+    protection_mode="$(echo "${api_response}" | jq -r '.data.protected // .data.protection_mode // .data.options.protection_mode // empty' 2>/dev/null || true)"
+  fi
+
+  if [ -z "${protection_mode}" ] && [ -f /data/options.json ]; then
+    config_response="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
+    protection_mode="${config_response}"
+  fi
+
+  if [ -z "${protection_mode}" ]; then
+    bashio::log.error "Could not determine Home Assistant protection mode from supervisor API."
+    exit 1
   fi
 
   if [ "${protection_mode}" = "true" ]; then
@@ -22,7 +43,7 @@ check_protection_mode() {
     exit 1
   fi
 
-  bashio::log.info "Protection mode check passed (disabled)."
+  bashio::log.info "Protection mode check passed (disabled=false)."
 }
 
 validate_required_config() {
@@ -209,7 +230,7 @@ ensure_connected() {
 
   if [ "${connected_changed}" -eq 1 ] && [ "${RECONNECT}" = "true" ]; then
     bashio::log.info "Restarting '${container}' (reconnect_container=true)"
-    docker restart --time 120 "${container}" >/dev/null
+    docker restart --timeout 120 "${container}" >/dev/null
     bashio::log.info "Container '${container}' restarted"
   fi
 }
@@ -219,8 +240,8 @@ setup_container_routes() {
 
   bashio::log.info "Determining macvlan interface inside '${container}' for IP ${OPENCCU_IP}"
   for _ in $(seq 1 30); do
-    macvlan_iface="$(docker exec "${container}" sh -c \
-      "ip -o -f inet addr show | awk -v ip='${OPENCCU_IP}' '{split(\\\$4,a,\"/\"); if (a[1] == ip) {print \\\$2; exit}}'")"
+    macvlan_iface="$(docker exec "${container}" ip -o -f inet addr show 2>/dev/null \
+      | awk -v ip="${OPENCCU_IP}" '{split($4,a,"/"); if (a[1] == ip) {print $2; exit}}' || true)"
     if [ -n "${macvlan_iface}" ]; then
       break
     fi
