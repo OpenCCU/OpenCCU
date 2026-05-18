@@ -245,7 +245,7 @@ ensure_connected() {
 }
 
 setup_container_routes() {
-  local container="$1" macvlan_iface=""
+  local container="$1" macvlan_iface="" current_multicast_route="" current_default_route=""
 
   bashio::log.info "Determining macvlan interface inside '${container}' for IP ${OPENCCU_IP}"
   for _ in $(seq 1 30); do
@@ -263,11 +263,21 @@ setup_container_routes() {
   fi
   bashio::log.info "Detected macvlan interface: ${macvlan_iface}"
 
-  bashio::log.info "Applying multicast route in '${container}': 224.0.0.0/24 dev ${macvlan_iface} scope link"
-  docker exec "${container}" ip route replace 224.0.0.0/24 dev "${macvlan_iface}" scope link
+  current_multicast_route="$(docker exec "${container}" ip -o route show 224.0.0.0/24 2>/dev/null | head -n1 || true)"
+  if echo "${current_multicast_route}" | grep -Eq "^224\.0\.0\.0/24 dev ${macvlan_iface}( |$).*scope link( |$)"; then
+    bashio::log.info "Multicast route already set in '${container}': 224.0.0.0/24 dev ${macvlan_iface} scope link"
+  else
+    bashio::log.info "Applying multicast route in '${container}': 224.0.0.0/24 dev ${macvlan_iface} scope link"
+    docker exec "${container}" ip route replace 224.0.0.0/24 dev "${macvlan_iface}" scope link
+  fi
 
-  bashio::log.info "Applying default route in '${container}': default via ${GATEWAY}"
-  docker exec "${container}" ip route replace default via "${GATEWAY}"
+  current_default_route="$(docker exec "${container}" ip -o route show default 2>/dev/null | head -n1 || true)"
+  if echo "${current_default_route}" | grep -Eq "^default via ${GATEWAY}( |$)"; then
+    bashio::log.info "Default route already set in '${container}': default via ${GATEWAY}"
+  else
+    bashio::log.info "Applying default route in '${container}': default via ${GATEWAY}"
+    docker exec "${container}" ip route replace default via "${GATEWAY}"
+  fi
 }
 
 bashio::log.info "Starting OpenCCU HAP/DRAP helper (network=${NETWORK_NAME}, interval=${CHECK_INTERVAL}s, reconnect=${RECONNECT})"

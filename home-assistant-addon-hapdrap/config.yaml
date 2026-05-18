@@ -1,6 +1,6 @@
 ---
 name: OpenCCU HAP/DRAP Helper
-version: 0.1.6
+version: 0.1.7
 stage: experimental
 slug: openccu-hapdrap
 image: ghcr.io/jens-maus/openccu-hapdrap
