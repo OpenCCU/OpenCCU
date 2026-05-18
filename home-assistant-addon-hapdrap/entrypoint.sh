@@ -8,7 +8,6 @@ SUBNET="$(bashio::config 'subnet')"
 GATEWAY="$(bashio::config 'gateway')"
 OPENCCU_IP="$(bashio::config 'openccu_ip')"
 CHECK_INTERVAL="$(bashio::config 'check_interval')"
-RECONNECT="$(bashio::config 'reconnect_container')"
 
 check_protection_mode() {
   local protection_mode="" supervisor_protection_mode="" key
@@ -20,7 +19,7 @@ check_protection_mode() {
 
   for key in openccu_slug network_name parent_interface subnet gateway openccu_ip check_interval reconnect_container; do
     if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
-      bashio::log.error "Missing required key '${key}' in /data/options.json. Check add-on config.yaml options/schema."
+      bashio::log.error "Missing required key '${key}' in /data/options.json. Check app config.yaml options/schema."
       exit 1
     fi
   done
@@ -28,8 +27,8 @@ check_protection_mode() {
   protection_mode="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
 
   if [ "${protection_mode}" = "true" ]; then
-    bashio::log.error "Home Assistant protection mode is enabled for this add-on."
-    bashio::log.error "Disable protection mode in the add-on configuration and start the add-on again."
+    bashio::log.error "Home Assistant protection mode is enabled for this app."
+    bashio::log.error "Disable protection mode in the app configuration and start the app again."
     exit 1
   fi
 
@@ -47,8 +46,8 @@ check_protection_mode() {
   fi
 
   if [ "${supervisor_protection_mode}" = "true" ]; then
-    bashio::log.error "Home Assistant protection mode is enabled for this add-on."
-    bashio::log.error "Disable protection mode in the add-on configuration and start the add-on again."
+    bashio::log.error "Home Assistant protection mode is enabled for this app."
+    bashio::log.error "Disable protection mode in the app configuration and start the app again."
     exit 1
   fi
 
@@ -236,12 +235,6 @@ ensure_connected() {
   else
     bashio::log.info "Container already connected with expected IP ${OPENCCU_IP}"
   fi
-
-  if [ "${connected_changed}" -eq 1 ] && [ "${RECONNECT}" = "true" ]; then
-    bashio::log.info "Restarting '${container}' (reconnect_container=true)"
-    docker restart --timeout 120 "${container}" >/dev/null
-    bashio::log.info "Container '${container}' restarted"
-  fi
 }
 
 setup_container_routes() {
@@ -280,7 +273,7 @@ setup_container_routes() {
   fi
 }
 
-bashio::log.info "Starting OpenCCU HAP/DRAP helper (network=${NETWORK_NAME}, interval=${CHECK_INTERVAL}s, reconnect=${RECONNECT})"
+bashio::log.info "Starting OpenCCU HAP/DRAP helper (network=${NETWORK_NAME}, interval=${CHECK_INTERVAL}s)"
 check_protection_mode
 validate_required_config
 resolve_parent_interface
@@ -288,10 +281,11 @@ resolve_subnet
 resolve_gateway
 
 while true; do
-  bashio::log.info "Polling for OpenCCU add-on container (slug=${OPENCCU_SLUG})"
+  bashio::log.info "==================================================="
+  bashio::log.info "Polling for OpenCCU app container (slug=${OPENCCU_SLUG})"
   CONTAINER="$(find_openccu_container || true)"
   if [ -z "${CONTAINER}" ]; then
-    bashio::log.warning "OpenCCU add-on container not running/found."
+    bashio::log.warning "OpenCCU app container not running/found."
     sleep "${CHECK_INTERVAL}"
     continue
   fi
