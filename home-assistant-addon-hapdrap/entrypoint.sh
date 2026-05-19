@@ -2,7 +2,6 @@
 set -euo pipefail
 
 OPENCCU_SLUG="$(bashio::config 'openccu_slug')"
-NETWORK_NAME="$(bashio::config 'network_name')"
 PARENT_IF="$(bashio::config 'parent_interface')"
 SUBNET="$(bashio::config 'subnet')"
 GATEWAY="$(bashio::config 'gateway')"
@@ -56,12 +55,12 @@ check_protection_mode() {
 
 validate_required_config() {
   if [ -z "${OPENCCU_SLUG}" ]; then
-    bashio::log.error "Missing required config option: 'openccu_slug'."
-    exit 1
+    bashio::log.info "Using 'openccu' as default OpenCCU App slug name."
+    OPENCCU_SLUG="openccu"
   fi
   if [ -z "${NETWORK_NAME}" ]; then
-    bashio::log.error "Missing required config option: 'network_name'."
-    exit 1
+    bashio::log.info "Using '${OPENCCU_SLUG}' as default OpenCCU docker network."
+    NETWORK_NAME=${OPENCCU_SLUG}
   fi
 }
 
