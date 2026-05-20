@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bashio
+# shellcheck disable=SC1008
 set -euo pipefail
 
 OPENCCU_SLUG="$(bashio::config 'openccu_slug')"
@@ -217,7 +218,7 @@ ensure_network() {
 }
 
 ensure_connected() {
-  local container="$1" current_ip connected_changed=0
+  local container="$1" current_ip
 
   bashio::log.info "Checking '${container}' network attachment to '${NETWORK_NAME}'"
   current_ip="$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.IPAddress}}{{end}}" "${container}" 2>/dev/null || true)"
@@ -225,12 +226,10 @@ ensure_connected() {
   if [ -z "${current_ip}" ]; then
     bashio::log.info "Connecting '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP}"
     docker network connect --ip "${OPENCCU_IP}" "${NETWORK_NAME}" "${container}"
-    connected_changed=1
   elif [ "${current_ip}" != "${OPENCCU_IP}" ]; then
     bashio::log.info "Reconnecting '${container}' to '${NETWORK_NAME}' with corrected IP ${OPENCCU_IP} (was ${current_ip})"
     docker network disconnect "${NETWORK_NAME}" "${container}" >/dev/null 2>&1 || true
     docker network connect --ip "${OPENCCU_IP}" "${NETWORK_NAME}" "${container}"
-    connected_changed=1
   else
     bashio::log.info "Container already connected with expected IP ${OPENCCU_IP}"
   fi
