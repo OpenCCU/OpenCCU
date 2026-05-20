@@ -16,7 +16,7 @@ check_protection_mode() {
     exit 1
   fi
 
-  for key in openccu_slug network_name parent_interface subnet gateway openccu_ip check_interval; do
+  for key in openccu_slug parent_interface subnet gateway openccu_ip check_interval; do
     if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
       bashio::log.error "Missing required key '${key}' in /data/options.json. Check app config.yaml options/schema."
       exit 1
