@@ -272,7 +272,7 @@ setup_container_routes() {
   fi
 }
 
-bashio::log.info "Starting OpenCCU HAP/DRAP helper (network=${NETWORK_NAME}, interval=${CHECK_INTERVAL}s)"
+bashio::log.info "Starting OpenCCU HAP/DRAP helper (openccu_ip=${OPENCCU_IP}, interval=${CHECK_INTERVAL}s)"
 check_protection_mode
 validate_required_config
 resolve_parent_interface
