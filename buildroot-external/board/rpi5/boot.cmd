@@ -13,8 +13,16 @@ setenv recoveryfs_initrd "recoveryfs-initrd"
 setenv usbstoragequirks "174c:55aa:u,2109:0715:u,152d:0578:u,152d:0579:u,152d:1561:u,174c:0829:u,14b0:0206:u,174c:225c:u,7825:a2a4:u,152d:0562:u,125f:a88a:u,152d:a583:u,152d:a578:u,152d:0583:u"
 
 # output where we are booting from
-itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
-itest.b ${devnum} == 1 && echo "U-boot loaded from eMMC"
+if test "${devtype}" = "mmc"; then
+  itest.b ${devnum} == 0 && echo "U-boot loaded from SD"
+  itest.b ${devnum} == 1 && echo "U-boot loaded from eMMC"
+elif test "${devtype}" = "nvme"; then
+  echo "U-boot loaded from NVMe (PCIe)"
+elif test "${devtype}" = "usb"; then
+  echo "U-boot loaded from USB"
+else
+  echo "U-boot loaded from ${devtype} ${devnum}"
+fi
 
 # import environment from /boot/bootEnv.txt
 if test -e ${devtype} ${devnum}:${bootfs} bootEnv.txt; then
