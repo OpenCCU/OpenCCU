@@ -28,7 +28,8 @@ reliably with HmIP-HAP/HmIPW-DRAP devices via multicast UDP.
 |---|---|---|
 | `openccu_ip` | Yes | Static free LAN IPv4 address used for the OpenCCU app macvlan interface. |
 | `check_interval` | No | Interval in seconds for periodic network setup checks (`10..3600`, default `15`). |
-| `openccu_slug` | No | Slug of the OpenCCU app if different from default naming. |
+| `openccu_slug` | No | Slug of the OpenCCU app if different from default naming (default: `openccu`). |
+| `network_name` | No | Name of the macvlan Docker network used for OpenCCU connectivity (default: `ccu`). |
 | `parent_interface` | No | Parent NIC for macvlan (for example `enp0s18`). If empty, auto-detection is used. |
 | `subnet` | No | Subnet for macvlan network. If empty, derived automatically. |
 | `gateway` | No | Gateway for macvlan network. If empty, derived automatically. |
