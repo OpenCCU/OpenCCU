@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          persist-credentials: false
 
       - name: Get information
         id: info
@@ -97,7 +99,7 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
             io.hass.name=OpenCCU HAP/DRAP-Helper
-            io.hass.description=OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivityroxy to externally running OpenCCU
+            io.hass.description=OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivity
             io.hass.version=${{ steps.info.outputs.version }}
             io.hass.type=addon
             io.hass.arch=aarch64|amd64

@@ -23,7 +23,7 @@ configuration:
     name: Parent interface name (optional)
     description: >-
       Interface name (e.g. enp0s18) of the parent network interface (NIC) to
-      which the macvlan network will be linked to (default: automatic identification)
+      which the macvlan network will be linked (default: automatic identification)
   subnet:
     name: Subnet mask for macvlan interface (optional)
     description: >-
@@ -31,4 +31,4 @@ configuration:
   gateway:
     name: Gateway address for macvlan interface (optional)
     description: >-
-      IP address for the macvlan network interface (default: derived from parent interface)
+      Gateway IP address for the macvlan network interface (default: derived from parent interface)

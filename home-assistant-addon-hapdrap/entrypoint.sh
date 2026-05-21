@@ -18,7 +18,7 @@ check_protection_mode() {
     exit 1
   fi
 
-  for key in openccu_slug parent_interface subnet gateway openccu_ip check_interval; do
+  for key in openccu_ip check_interval; do
     if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
       bashio::log.error "Missing required key '${key}' in /data/options.json. Check app config.yaml options/schema."
       exit 1
@@ -224,7 +224,10 @@ ensure_network() {
   if [ -n "${container}" ]; then
     docker network disconnect "${NETWORK_NAME}" "${container}" >/dev/null 2>&1 || true
   fi
-  docker network rm "${NETWORK_NAME}" >/dev/null
+  if ! docker network rm "${NETWORK_NAME}" >/dev/null 2>&1; then
+    bashio::log.warning "Failed to remove docker network '${NETWORK_NAME}'; will retry next cycle."
+    return 1
+  fi
   set +e
   create_output="$(docker network create -d macvlan \
     --opt parent="${PARENT_IF}" \
