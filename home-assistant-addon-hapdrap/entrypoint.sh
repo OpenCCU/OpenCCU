@@ -3,6 +3,7 @@
 set -euo pipefail
 
 OPENCCU_SLUG="$(bashio::config 'openccu_slug')"
+NETWORK_NAME="$(bashio::config 'network_name')"
 PARENT_IF="$(bashio::config 'parent_interface')"
 SUBNET="$(bashio::config 'subnet')"
 GATEWAY="$(bashio::config 'gateway')"
@@ -59,8 +60,10 @@ validate_required_config() {
     bashio::log.info "Using 'openccu' as default OpenCCU App slug name."
     OPENCCU_SLUG="openccu"
   fi
-  bashio::log.info "Using '${OPENCCU_SLUG}' as default OpenCCU docker network."
-  NETWORK_NAME=${OPENCCU_SLUG}
+  if [ -z "${NETWORK_NAME}" ]; then
+    bashio::log.info "Using 'ccu' as default OpenCCU docker network."
+    NETWORK_NAME="ccu"
+  fi
 }
 
 to_num() {
@@ -164,11 +167,11 @@ resolve_openccu_ip() {
   bashio::log.info "Detecting OpenCCU IP from existing ${NETWORK_NAME} connection"
   OPENCCU_IP="$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.IPAddress}}{{end}}" "${container}" 2>/dev/null || true)"
   if [ -n "${OPENCCU_IP}" ]; then
-    bashio::log.info "Detected OpenCCU IP from docker network: ${OPENCCU_IP}"
+    bashio::log.info "Detected OpenCCU IP from docker network '${NETWORK_NAME}: ${OPENCCU_IP}"
     return 0
   fi
 
-  bashio::log.error "No OpenCCU IP configured and no existing '${NETWORK_NAME}' IP detected."
+  bashio::log.error "No OpenCCU IP configured and no existing '${NETWORK_NAME}' network IP detected."
   bashio::log.error "Set 'openccu_ip' to a free LAN IP and restart this helper."
   exit 1
 }
@@ -176,6 +179,7 @@ resolve_openccu_ip() {
 ensure_network() {
   local container="${1:-}"
   local inspect_output existing_driver existing_parent existing_subnet existing_gateway
+  local create_output create_status
 
   bashio::log.info "Inspecting docker network '${NETWORK_NAME}'"
   inspect_output="$(docker network inspect "${NETWORK_NAME}" \
@@ -184,11 +188,25 @@ ensure_network() {
 
   if [ -z "${inspect_output}" ]; then
     bashio::log.info "Creating docker macvlan network '${NETWORK_NAME}'"
-    docker network create -d macvlan \
+    set +e
+    create_output="$(docker network create -d macvlan \
       --opt parent="${PARENT_IF}" \
       --subnet "${SUBNET}" \
       --gateway "${GATEWAY}" \
-      "${NETWORK_NAME}" >/dev/null
+      "${NETWORK_NAME}" 2>&1)"
+    create_status=$?
+    set -e
+    if [ "${create_status}" -ne 0 ]; then
+      if echo "${create_output}" | grep -Fq "invalid pool request: Pool overlaps with other one on this address space"; then
+        bashio::log.error "Cannot create docker network '${NETWORK_NAME}': subnet '${SUBNET}' overlaps with an existing docker network."
+        bashio::log.error "Remove the conflicting network, then this helper will retry automatically."
+        bashio::log.error "Hint: use 'docker network ls' and 'docker network inspect <network>' to identify it."
+        bashio::log.error "Hint: remove it with 'docker network rm <network>' (only if that network is not needed)."
+      else
+        bashio::log.error "Failed to create docker network '${NETWORK_NAME}': ${create_output}"
+      fi
+      return 1
+    fi
     bashio::log.info "Docker network '${NETWORK_NAME}' created"
     return 0
   fi
@@ -207,11 +225,25 @@ ensure_network() {
     docker network disconnect "${NETWORK_NAME}" "${container}" >/dev/null 2>&1 || true
   fi
   docker network rm "${NETWORK_NAME}" >/dev/null
-  docker network create -d macvlan \
+  set +e
+  create_output="$(docker network create -d macvlan \
     --opt parent="${PARENT_IF}" \
     --subnet "${SUBNET}" \
     --gateway "${GATEWAY}" \
-    "${NETWORK_NAME}" >/dev/null
+    "${NETWORK_NAME}" 2>&1)"
+  create_status=$?
+  set -e
+  if [ "${create_status}" -ne 0 ]; then
+    if echo "${create_output}" | grep -Fq "invalid pool request: Pool overlaps with other one on this address space"; then
+      bashio::log.error "Cannot recreate docker network '${NETWORK_NAME}': subnet '${SUBNET}' overlaps with an existing docker network."
+      bashio::log.error "Remove the conflicting network, then this helper will retry automatically."
+      bashio::log.error "Hint: use 'docker network ls' and 'docker network inspect <network>' to identify it."
+      bashio::log.error "Hint: remove it with 'docker network rm <network>' (only if that network is not needed)."
+    else
+      bashio::log.error "Failed to recreate docker network '${NETWORK_NAME}': ${create_output}"
+    fi
+    return 1
+  fi
   bashio::log.info "Docker network '${NETWORK_NAME}' recreated"
 }
 
@@ -288,7 +320,11 @@ while true; do
 
   bashio::log.info "OpenCCU container detected: ${CONTAINER}"
   resolve_openccu_ip "${CONTAINER}"
-  ensure_network "${CONTAINER}"
+  if ! ensure_network "${CONTAINER}"; then
+    bashio::log.warning "Skipping this cycle due to docker network setup failure; retrying in ${CHECK_INTERVAL}s."
+    sleep "${CHECK_INTERVAL}"
+    continue
+  fi
   ensure_connected "${CONTAINER}"
   setup_container_routes "${CONTAINER}"
   bashio::log.info "Cycle completed successfully for '${CONTAINER}'"

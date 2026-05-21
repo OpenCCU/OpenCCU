@@ -12,6 +12,12 @@ configuration:
     name: OpenCCU App slug (optional)
     description: >-
       Alternative slug (naming) of the OpenCCU App (default='openccu')
+  network_name:
+    name: Name of macvlan docker network (optional)
+    description: >-
+      Name of the docker network to be created for a dedicated macvlan interface
+      which will be connected to the parent interface for direct communication
+      in the LAN (default: 'ccu')
   parent_interface:
     name: Parent interface name (optional)
     description: >-
