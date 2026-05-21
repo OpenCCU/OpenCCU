@@ -1,15 +1,19 @@
-# OpenCCU HA-HAP/DRAP Helper-App Release build
+# OpenCCU HAP/DRAP-Helper HA-App Release build
 # yamllint disable rule:truthy
 ---
-name: Release Build (HA HAP/DRAP-Helper App)
+name: Release Build (HAP/DRAP-Helper HA-App)
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-24.04
-    name: Build HA HAP/DRAP-App
+    name: Build HAP/DRAP-Helper HA-App
     steps:
       - name: Check out repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
@@ -35,7 +39,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ github.token }}
 
       - name: Extract docker metadata
         id: meta
@@ -43,14 +47,14 @@ jobs:
         with:
           images: ${{ steps.info.outputs.image }}
           labels: |
-            org.opencontainers.image.title=OpenCCU HA HAP/DRAP-App
+            org.opencontainers.image.title=OpenCCU HAP/DRAP-Helper HA-App
             org.opencontainers.image.description=OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivity
             org.opencontainers.image.vendor=OpenCCU OpenSource Project
             org.opencontainers.image.authors=OpenCCU OpenSource Team
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
             org.opencontainers.image.url=https://openccu.de
           annotations: |
-            org.opencontainers.image.title=OpenCCU HA HAP/DRAP-App
+            org.opencontainers.image.title=OpenCCU HAP/DRAP-Helper HA-App
             org.opencontainers.image.description=OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivity
             org.opencontainers.image.vendor=OpenCCU OpenSource Project
             org.opencontainers.image.authors=OpenCCU OpenSource Team
@@ -82,7 +86,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           labels: |
-            org.opencontainers.image.title=OpenCCU HA HAP/DRAP-App
+            org.opencontainers.image.title=OpenCCU HAP/DRAP-Helper HA-App
             org.opencontainers.image.description=OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivity
             org.opencontainers.image.vendor=OpenCCU OpenSource Project
             org.opencontainers.image.authors=OpenCCU OpenSource Team
@@ -92,7 +96,7 @@ jobs:
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/wiki
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
-            io.hass.name=OpenCCU (HAP/DRAP-Helper)
+            io.hass.name=OpenCCU HAP/DRAP-Helper
             io.hass.description=OpenCCU Helper App for HmIP-HAP / HmIPW-DRAP connectivityroxy to externally running OpenCCU
             io.hass.version=${{ steps.info.outputs.version }}
             io.hass.type=addon

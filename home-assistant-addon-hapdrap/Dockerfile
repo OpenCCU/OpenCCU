@@ -1,4 +1,4 @@
-FROM ghcr.io/hassio-addons/app-base:20.1.1
+FROM ghcr.io/hassio-addons/base:20.1.1
 
 # add docker and ip route stuff
 RUN apk add --no-cache docker-cli iproute2 jq
@@ -31,4 +31,4 @@ LABEL \
     io.hass.type="addon" \
     io.hass.version=${package_version}
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/app/entrypoint.sh"]

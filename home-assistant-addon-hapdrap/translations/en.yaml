@@ -1,0 +1,34 @@
+---
+configuration:
+  openccu_ip:
+    name: OpenCCU IP (required)
+    description: >-
+      Free static IP LAN address to be assigned to the OpenCCU App macvlan interface.
+  check_interval:
+    name: Check interval (required)
+    description: >-
+      Interval in seconds to regularly check for proper OpenCCU App network setup
+      (default: 15 seconds).
+  openccu_slug:
+    name: OpenCCU App slug (optional)
+    description: >-
+      Alternative slug (naming) of the OpenCCU App (default: 'openccu')
+  network_name:
+    name: Name of macvlan docker network (optional)
+    description: >-
+      Name of the docker network to be created for a dedicated macvlan interface
+      which will be connected to the parent interface for direct communication
+      in the LAN (default: 'ccu')
+  parent_interface:
+    name: Parent interface name (optional)
+    description: >-
+      Interface name (e.g. enp0s18) of the parent network interface (NIC) to
+      which the macvlan network will be linked to (default: automatic identification)
+  subnet:
+    name: Subnet mask for macvlan interface (optional)
+    description: >-
+      Subnet mask for the macvlan network interface (default: derived from parent interface)
+  gateway:
+    name: Gateway address for macvlan interface (optional)
+    description: >-
+      IP address for the macvlan network interface (default: derived from parent interface)
