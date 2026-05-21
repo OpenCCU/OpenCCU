@@ -59,10 +59,8 @@ validate_required_config() {
     bashio::log.info "Using 'openccu' as default OpenCCU App slug name."
     OPENCCU_SLUG="openccu"
   fi
-  if [ -z "${NETWORK_NAME}" ]; then
-    bashio::log.info "Using '${OPENCCU_SLUG}' as default OpenCCU docker network."
-    NETWORK_NAME=${OPENCCU_SLUG}
-  fi
+  bashio::log.info "Using '${OPENCCU_SLUG}' as default OpenCCU docker network."
+  NETWORK_NAME=${OPENCCU_SLUG}
 }
 
 to_num() {
