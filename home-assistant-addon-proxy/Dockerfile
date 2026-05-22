@@ -18,7 +18,7 @@ LABEL \
     org.opencontainers.image.vendor="OpenCCU OpenSource Project" \
     org.opencontainers.image.authors="OpenCCU OpenSource Team" \
     org.opencontainers.image.licenses="Apache-2.0" \
-    org.opencontainers.image.url="https://raspberrymatic.de" \
+    org.opencontainers.image.url="https://openccu.de" \
     org.opencontainers.image.source="https://github.com/OpenCCU/OpenCCU" \
     org.opencontainers.image.documentation="https://github.com/OpenCCU/OpenCCU/wiki" \
     org.opencontainers.image.version=${package_version} \
