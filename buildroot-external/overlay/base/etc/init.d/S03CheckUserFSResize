@@ -6,124 +6,124 @@
 #
 
 check_userfs_resize() {
-	local RESIZEFS E2FSCK_RC PARTED_ERR RESIZE2FS_ERR
+  local RESIZEFS E2FSCK_RC PARTED_ERR RESIZE2FS_ERR
 
-	# source all data from /var/hm_mode
-	[[ -r /var/hm_mode ]] && . /var/hm_mode
+  # source all data from /var/hm_mode
+  [[ -r /var/hm_mode ]] && . /var/hm_mode
 
-	# remove obsolete /usr/local/.doResizeLocalFS
-	[[ -f "/usr/local/.doResizeLocalFS" ]] && rm -f /usr/local/.doResizeLocalFS
+  # remove obsolete /usr/local/.doResizeLocalFS
+  [[ -f "/usr/local/.doResizeLocalFS" ]] && rm -f /usr/local/.doResizeLocalFS
 
-	# skip execution on OCI or LXC-based systems
-	if [[ ! "${HM_HOST}" =~ oci\|lxc ]]; then
+  # skip execution on OCI or LXC-based systems
+  if [[ ! "${HM_HOST}" =~ oci\|lxc ]]; then
 
-		# extract partition number and device name
-		DEVNODE=$(mountpoint -d /usr/local)
-		DEVNAME=$(mountpoint -n /usr/local | cut -d' ' -f1)
-		PARTNUM=$(echo -n "${DEVNAME}" | tail -c 1)
-		DEV="/dev/$(readlink "/sys/dev/block/${DEVNODE}" | awk -F/ '{print $(NF-1)}')"
+    # extract partition number and device name
+    DEVNODE=$(mountpoint -d /usr/local)
+    DEVNAME=$(mountpoint -n /usr/local | cut -d' ' -f1)
+    PARTNUM=$(echo -n "${DEVNAME}" | tail -c 1)
+    DEV="/dev/$(readlink "/sys/dev/block/${DEVNODE}" | awk -F/ '{print $(NF-1)}')"
 
-		# find out maximum size (in sectors)
-		PART_END_SECTOR=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "^ ${PARTNUM} " | awk '{print $3}' | tr -d 's')
-		DISK_SECTORS=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "Disk ${DEV}" | awk '{print $3}' | tr -d 's')
+    # find out maximum size (in sectors)
+    PART_END_SECTOR=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "^ ${PARTNUM} " | awk '{print $3}' | tr -d 's')
+    DISK_SECTORS=$(/usr/sbin/parted -s -f "${DEV}" unit s print | grep "Disk ${DEV}" | awk '{print $3}' | tr -d 's')
 
-		# allow up to 2048 sectors (~1 MiB for 512B sectors) gap to account for GPT
-		# backup header reserved space (typically 33-34 sectors) plus safety margin
-		RESIZE_THRESHOLD=2048
+    # allow up to 2048 sectors (~1 MiB for 512B sectors) gap to account for GPT
+    # backup header reserved space (typically 33-34 sectors) plus safety margin
+    RESIZE_THRESHOLD=2048
 
-		# only resize the partition if remaining space exceeds the threshold
-		if [[ -n "${PART_END_SECTOR}" && -n "${DISK_SECTORS}" && $((DISK_SECTORS - PART_END_SECTOR)) -gt ${RESIZE_THRESHOLD} ]]; then
-			echo -n "resizepart, "
+    # only resize the partition if remaining space exceeds the threshold
+    if [[ -n "${PART_END_SECTOR}" && -n "${DISK_SECTORS}" && $((DISK_SECTORS - PART_END_SECTOR)) -gt ${RESIZE_THRESHOLD} ]]; then
+      echo -n "resizepart, "
 
-			# check if we should do resizefs afterwards before we umount
-			# the userfs
-			if [[ ! -r /usr/local/.doFactoryReset ]]; then
-				RESIZEFS=1
-			else
-				RESIZEFS=0
-			fi
+      # check if we should do resizefs afterwards before we umount
+      # the userfs
+      if [[ ! -r /usr/local/.doFactoryReset ]]; then
+        RESIZEFS=1
+      else
+        RESIZEFS=0
+      fi
 
-			# umount /usr/local to resize it
-			umount -f /usr/local
+      # umount /usr/local to resize it
+      umount -f /usr/local
 
-			# use resizepart to resize the /usr/local partition to the maximum size of
-			# the disk
-			if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100% 2>&1); then
-				echo -n "resizepart failed (${PARTED_ERR}), "
-				mount /usr/local
-				return 2
-			fi
+      # use resizepart to resize the /usr/local partition to the maximum size of
+      # the disk
+      if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100% 2>&1); then
+        echo -n "resizepart failed (${PARTED_ERR}), "
+        mount /usr/local
+        return 2
+      fi
 
-			# force PARTUUID to 0xDEEDBEEF because parted changes partuuid
-			echo -en '\xEF\xBE\xED\xDE' | dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+      # force PARTUUID to 0xDEEDBEEF because parted changes partuuid
+      echo -en '\xEF\xBE\xED\xDE' | dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
 
-			# check if we need to resize the filesystem as well or if we skip it
-			# since a factory reset is anyway done in the next step
-			if [[ ${RESIZEFS} -eq 1 ]]; then
-				echo -n "resizefs, "
+      # check if we need to resize the filesystem as well or if we skip it
+      # since a factory reset is anyway done in the next step
+      if [[ ${RESIZEFS} -eq 1 ]]; then
+        echo -n "resizefs, "
 
-				# check the filesystem first
-				/sbin/e2fsck -pDf "${DEVNAME}" >/dev/null 2>&1
-				E2FSCK_RC=$?
+        # check the filesystem first
+        /sbin/e2fsck -pDf "${DEVNAME}" >/dev/null 2>&1
+        E2FSCK_RC=$?
 
-				if [[ ${E2FSCK_RC} -ge 4 ]]; then
-					echo -n "e2fsck failed (rc=${E2FSCK_RC}, filesystem needs manual repair before resize), "
-					mount /usr/local
-					return 2
-				fi
+        if [[ ${E2FSCK_RC} -ge 4 ]]; then
+          echo -n "e2fsck failed (rc=${E2FSCK_RC}, filesystem needs manual repair before resize), "
+          mount /usr/local
+          return 2
+        fi
 
-				# resize userfs
-				if ! RESIZE2FS_ERR=$(/sbin/resize2fs "${DEVNAME}" 2>&1); then
-					echo -n "resize2fs failed (${RESIZE2FS_ERR}), "
-					mount /usr/local
-					return 2
-				fi
-			fi
+        # resize userfs
+        if ! RESIZE2FS_ERR=$(/sbin/resize2fs "${DEVNAME}" 2>&1); then
+          echo -n "resize2fs failed (${RESIZE2FS_ERR}), "
+          mount /usr/local
+          return 2
+        fi
+      fi
 
-			# mount /usr/local again
-			mount /usr/local
+      # mount /usr/local again
+      mount /usr/local
 
-			return 0
-		fi
-	fi
+      return 0
+    fi
+  fi
 
-	return 1
+  return 1
 }
 
 start() {
-	local RC
+  local RC
 
-	echo -n "Checking for UserFS Resize: "
+  echo -n "Checking for UserFS Resize: "
 
-	check_userfs_resize
-	RC=$?
+  check_userfs_resize
+  RC=$?
 
-	if [[ ${RC} -eq 0 ]]; then
-		echo "OK"
-	elif [[ ${RC} -eq 1 ]]; then
-		echo "not required"
-	else
-		echo "ERROR"
-	fi
+  if [[ ${RC} -eq 0 ]]; then
+    echo "OK"
+  elif [[ ${RC} -eq 1 ]]; then
+    echo "not required"
+  else
+    echo "ERROR"
+  fi
 }
 
 restart() {
-	start
+  start
 }
 
 case "$1" in
-	start)
-		start
-	;;
-	stop)
-		# nothing
-	;;
-	restart|reload)
-		restart
-	;;
-	*)
-		echo "Usage: $0 {start|stop|restart}"
-		exit 1
+  start)
+    start
+  ;;
+  stop)
+    # nothing
+  ;;
+  restart|reload)
+    restart
+  ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
 esac
 
 exit 0
