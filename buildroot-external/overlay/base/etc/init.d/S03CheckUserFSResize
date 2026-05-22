@@ -6,7 +6,7 @@
 #
 
 check_userfs_resize() {
-	local RESIZEFS E2FSCK_RC PARTED_ERR
+	local RESIZEFS E2FSCK_RC PARTED_ERR RESIZE2FS_ERR
 
 	# source all data from /var/hm_mode
 	[[ -r /var/hm_mode ]] && . /var/hm_mode
@@ -48,7 +48,7 @@ check_userfs_resize() {
 
 			# use resizepart to resize the /usr/local partition to the maximum size of
 			# the disk
-			if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100% 2>&1 >/dev/null); then
+			if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100% 2>&1); then
 				echo -n "resizepart failed (${PARTED_ERR}), "
 				mount /usr/local
 				return 2
@@ -67,14 +67,14 @@ check_userfs_resize() {
 				E2FSCK_RC=$?
 
 				if [[ ${E2FSCK_RC} -ge 4 ]]; then
-					echo -n "e2fsck failed (rc=${E2FSCK_RC}, filesystem errors require manual repair), "
+					echo -n "e2fsck failed (rc=${E2FSCK_RC}, filesystem needs manual repair before resize), "
 					mount /usr/local
 					return 2
 				fi
 
 				# resize userfs
-				if ! /sbin/resize2fs "${DEVNAME}" >/dev/null 2>&1; then
-					echo -n "resize2fs failed, "
+				if ! RESIZE2FS_ERR=$(/sbin/resize2fs "${DEVNAME}" 2>&1); then
+					echo -n "resize2fs failed (${RESIZE2FS_ERR}), "
 					mount /usr/local
 					return 2
 				fi
