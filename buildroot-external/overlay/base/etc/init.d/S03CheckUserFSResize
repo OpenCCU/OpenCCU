@@ -48,8 +48,7 @@ check_userfs_resize() {
 
 			# use resizepart to resize the /usr/local partition to the maximum size of
 			# the disk
-			PARTED_ERR=$(/usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100% 2>&1 >/dev/null)
-			if [[ $? -ne 0 ]]; then
+			if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100% 2>&1 >/dev/null); then
 				echo -n "resizepart failed (${PARTED_ERR}), "
 				mount /usr/local
 				return 2
