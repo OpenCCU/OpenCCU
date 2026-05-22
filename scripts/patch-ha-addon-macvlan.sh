@@ -47,18 +47,33 @@ echo "OpenCCU HA-Addon macvlan patch script v1.5"
 echo "Copyright (c) 2023-2026 Jens Maus <mail@jens-maus.de>"
 echo
 
-if [[ "${1}" != "-f" ]]; then
+# parse command-line arguments
+FORCE_MODE=false
+NON_INTERACTIVE=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -f)
+      FORCE_MODE=true
+      shift
+      ;;
+    -n)
+      NON_INTERACTIVE=true
+      shift
+      ;;
+    *)
+      echo "ERROR: Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
+if [[ "${FORCE_MODE}" != "true" ]]; then
   echo "ERROR: The functionality of this patch script has been replaced by a new"
   echo "       'OpenCCU HAP/DRAP-Helper' Home Assistant App. So instead of using"
   echo "       this script to get the communication with a HmIP-HAP / HmIPW-DRAP"
   echo "       running please install this Helper HA-App which is available from"
   echo "       the OpenCCU HA-Apps repository."
   exit 2
-fi
-
-# check if non-interactive mode is requested
-if [[ "${1}" == "-n" ]]; then
-  NON_INTERACTIVE=true
 fi
 
 # network calc helper functions
