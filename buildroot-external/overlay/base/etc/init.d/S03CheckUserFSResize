@@ -6,6 +6,7 @@
 #
 
 check_userfs_resize() {
+  local RESIZEFS E2FSCK_RC
 
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
@@ -47,7 +48,11 @@ check_userfs_resize() {
 
       # use resizepart to resize the /usr/local partition to the maximum size of
       # the disk
-      /usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100%
+      if ! /usr/sbin/parted -s -f "${DEV}" resizepart "${PARTNUM}" 100%; then
+        echo -n "resizepart failed, "
+        mount /usr/local
+        return 2
+      fi
 
       # force PARTUUID to 0xDEEDBEEF because parted changes partuuid
       echo -en '\xEF\xBE\xED\xDE' | dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
@@ -59,9 +64,20 @@ check_userfs_resize() {
 
         # check the filesystem first
         /sbin/e2fsck -pDf "${DEVNAME}" >/dev/null 2>&1
+        E2FSCK_RC=$?
+
+        if [[ ${E2FSCK_RC} -ge 4 ]]; then
+          echo -n "e2fsck failed (rc=${E2FSCK_RC}), "
+          mount /usr/local
+          return 2
+        fi
 
         # resize userfs
-        /sbin/resize2fs "${DEVNAME}" >/dev/null 2>&1
+        if ! /sbin/resize2fs "${DEVNAME}" >/dev/null 2>&1; then
+          echo -n "resize2fs failed, "
+          mount /usr/local
+          return 2
+        fi
       fi
 
       # mount /usr/local again
@@ -75,12 +91,19 @@ check_userfs_resize() {
 }
 
 start() {
+  local RC
+
   echo -n "Checking for UserFS Resize: "
 
-  if check_userfs_resize; then
+  check_userfs_resize
+  RC=$?
+
+  if [[ ${RC} -eq 0 ]]; then
     echo "OK"
-  else
+  elif [[ ${RC} -eq 1 ]]; then
     echo "not required"
+  else
+    echo "ERROR"
   fi
 }
 

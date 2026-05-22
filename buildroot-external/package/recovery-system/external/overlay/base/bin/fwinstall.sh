@@ -282,7 +282,7 @@ EOF
     e2fsck -f -y "${USER_DEV}" >/dev/null 2>&1
     E2FSCK_RC=$?
     if [[ ${E2FSCK_RC} -ge 4 ]]; then
-      echo "ERROR: (e2fsck userfs, rc=${E2FSCK_RC})"
+      echo "ERROR: (userfs requires manual fsck before resize, e2fsck rc=${E2FSCK_RC})"
       return 1
     fi
 
@@ -354,11 +354,11 @@ EOF
   e2fsck -f -y "${USER_DEV}" >/dev/null 2>&1
   E2FSCK_USER_RC=$?
   if [[ ${E2FSCK_USER_RC} -ge 4 ]]; then
-    echo "ERROR: (e2fsck userfs post-move, rc=${E2FSCK_USER_RC})"
+    echo "ERROR: (userfs inconsistent after move, manual fsck required, rc=${E2FSCK_USER_RC})"
     return 1
   fi
   if ! resize2fs -p "${USER_DEV}"; then
-    echo "WARNING: (resize2fs expand userfs failed on ${USER_DEV}, userfs may be smaller than partition)"
+    echo "WARNING: (resize2fs expand userfs failed on ${USER_DEV}; run e2fsck/resize2fs manually, userfs may be smaller than partition)"
   fi
 
   # re-mount stuff again
