@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.5.2
+- pin Node.js dependencies to keep `http-proxy-middleware` on CommonJS-compatible v3 releases.
+- add direct dependency declarations and reproducible npm lockfile for stable proxy app builds.
+
 ## 0.4.3
 - add healthcheck for better addon watchdog support
 - add debug output when starting ha-proxy.

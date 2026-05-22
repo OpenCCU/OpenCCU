@@ -1,0 +1,17 @@
+{
+  "name": "openccu-ha-proxy",
+  "version": "0.5.2",
+  "description": "Proxy to externally running OpenCCU for Home Assistant ingress",
+  "main": "ha-proxy.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "5.1.0",
+    "http-proxy-middleware": "3.0.5",
+    "ipaddr.js": "2.4.0"
+  }
+}

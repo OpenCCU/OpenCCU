@@ -8,6 +8,8 @@ VOLUME /config
 
 COPY ha-proxy.js.gtpl /app/ha-proxy.js.gtpl
 COPY entrypoint.sh /app/entrypoint.sh
+COPY package.json /app/package.json
+COPY package-lock.json /app/package-lock.json
 RUN chmod +x /app/entrypoint.sh
 
 ARG package_version
@@ -35,7 +37,6 @@ HEALTHCHECK --interval=60s --timeout=30s --start-period=30s --retries=3 \
 # Install express + http-proxy-middleware packages for
 # ha-proxy.js
 ENV NODE_PATH=/app/node_modules
-RUN npm install express
-RUN npm install http-proxy-middleware
+RUN npm ci --omit=dev
 
 ENTRYPOINT ["/app/entrypoint.sh"]
