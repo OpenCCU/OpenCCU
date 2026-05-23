@@ -329,6 +329,14 @@ EOF
       TARGET_BLKS=${MIN_BLKS}
     fi
 
+    # Defensive second fsck right before shrinking to avoid resize2fs precondition failures.
+    e2fsck -f -y "${USER_DEV}" >/dev/null 2>&1
+    E2FSCK_RC=$?
+    if [[ ${E2FSCK_RC} -ge 4 ]]; then
+      echo "ERROR: (userfs requires manual fsck before resize, second e2fsck rc=${E2FSCK_RC})"
+      return 1
+    fi
+
     resize2fs -p "${USER_DEV}" "${TARGET_BLKS}" || { echo "ERROR: (resize2fs userfs)"; return 1; }
     OLD_USER_OFFSET=$((USER_START * SECTOR_SIZE))
     NEW_USER_OFFSET=$((NEW_USER_START * SECTOR_SIZE))
