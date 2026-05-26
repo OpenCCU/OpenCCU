@@ -21,12 +21,10 @@ check_protection_mode() {
     exit 1
   fi
 
-  for key in openccu_ip; do
-    if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
-      bashio::log.error "Missing required key '${key}' in /data/options.json. Check app config.yaml options/schema."
-      exit 1
-    fi
-  done
+  if ! jq -e 'has("openccu_ip")' /data/options.json >/dev/null 2>&1; then
+    bashio::log.error "Missing required key 'openccu_ip' in /data/options.json. Check app config.yaml options/schema."
+    exit 1
+  fi
 
   protection_mode="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
 
