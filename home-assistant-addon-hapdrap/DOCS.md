@@ -19,8 +19,9 @@ reliably with HmIP-HAP/HmIPW-DRAP devices via multicast UDP.
 1. Install and start the regular OpenCCU app.
 2. Install this OpenCCU HAP/DRAP Helper app.
 3. In this app configuration, set **OpenCCU IP** to a free and dedicated LAN IPv4 address.
-4. Disable **Protection mode** for this helper app.
-5. Enable **Start on boot** so it starts with Home Assistant.
+4. Optionally set **OpenCCU MAC** to a fixed MAC address if you want it to stay stable across host changes.
+5. Disable **Protection mode** for this helper app.
+6. Enable **Start on boot** so it starts with Home Assistant.
 
 ## Configuration
 
