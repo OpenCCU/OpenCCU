@@ -1,6 +1,6 @@
 ---
 name: OpenCCU HAP/DRAP-Helper
-version: 0.2.0
+version: 0.3.0
 slug: openccu-hapdrap
 image: ghcr.io/openccu/openccu-hapdrap
 arch:
