@@ -158,7 +158,7 @@ mac_in_use() {
   fi
 
   docker_macs="$(
-    docker ps -aq 2>/dev/null | while read -r container_id; do
+    docker ps -q 2>/dev/null | while read -r container_id; do
       [ -n "${container_id}" ] || continue
       if [ -n "${ignored_container_id}" ] && [ "${container_id}" = "${ignored_container_id}" ]; then
         continue
