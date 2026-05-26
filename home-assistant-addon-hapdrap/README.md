@@ -41,7 +41,7 @@ Use this app if:
 |---|---|---|---|
 | `openccu_ip` | Yes | `""` | Static dedicated LAN IPv4 address for the OpenCCU app macvlan attachment. |
 | `openccu_mac` | No | auto-derived | Static MAC address for the OpenCCU app macvlan attachment. If empty, the helper derives it from the parent interface by incrementing the last octet and trying higher values when needed. |
-| `check_interval` | No | `15` | Polling interval in seconds (`10..3600`). |
+| `check_interval` | No | `15` | Polling interval in seconds (`10..3600`). If left empty, the helper uses `15`. |
 | `openccu_slug` | No | `openccu` | Slug of the OpenCCU app if different from default naming. |
 | `network_name` | No | `ccu` | Name of the macvlan Docker network to create/manage for OpenCCU. |
 | `parent_interface` | No | auto-detected | Parent NIC for macvlan (example: `enp0s18`). |

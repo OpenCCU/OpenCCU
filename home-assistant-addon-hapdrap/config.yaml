@@ -18,7 +18,6 @@ apparmor: true
 options:
   openccu_ip: ""
   openccu_mac: ""
-  check_interval: 15
   openccu_slug: ""
   network_name: ""
   parent_interface: ""
