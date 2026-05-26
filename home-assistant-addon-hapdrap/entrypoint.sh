@@ -130,7 +130,7 @@ mac_in_use() {
     ignored_container_id="$(docker inspect -f '{{.Id}}' "${container_to_ignore}" 2>/dev/null || true)"
   fi
 
-  host_macs="$(ip -o link show 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i == "link/ether") print $(i+1)}' | tr '[:upper:]' '[:lower:]' || true)"
+  host_macs="$(ip -o link show 2>/dev/null | awk '/link\/ether/ {for (i=1; i<NF; i++) if ($i == "link/ether") {print $(i+1); break}}' | tr '[:upper:]' '[:lower:]' || true)"
   if printf '%s\n' "${host_macs}" | grep -Fxiq "${candidate_mac}"; then
     return 0
   fi
@@ -176,6 +176,7 @@ resolve_openccu_mac() {
   last_octet="${parent_mac##*:}"
   last_octet=$((16#${last_octet}))
 
+  # Try all 255 alternate last-octet values while never reusing the parent MAC itself.
   for offset in $(seq 1 255); do
     candidate_mac="$(printf '%s:%02x' "${mac_prefix}" "$(( (last_octet + offset) & 0xFF ))")"
     if ! mac_in_use "${candidate_mac}" "${container}"; then
