@@ -148,6 +148,7 @@ resolve_openccu_mac() {
   fi
 
   IFS=: read -r b0 b1 b2 b3 b4 b5 <<<"${parent_mac}"
+  # Convert the first octet into a locally administered unicast MAC prefix.
   b0=$(( (16#${b0} | 0x02) & 0xFE ))
   b1=$((16#${b1}))
   b2=$((16#${b2}))
@@ -312,7 +313,7 @@ ensure_network() {
 }
 
 ensure_connected() {
-  local container="$1" current_ip="" current_mac="" connect_payload="" connect_output="" connect_status="" response_file=""
+  local container="$1" current_ip="" current_mac="" connect_payload="" connect_output="" connect_response="" connect_status="" connect_error=""
 
   bashio::log.info "Checking '${container}' network attachment to '${NETWORK_NAME}'"
   IFS='|' read -r current_ip current_mac <<<"$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.IPAddress}}|{{.MacAddress}}{{end}}" "${container}" 2>/dev/null || true)"
@@ -333,19 +334,23 @@ ensure_connected() {
     --arg ip "${OPENCCU_IP}" \
     --arg mac "${OPENCCU_MAC}" \
     '{Container:$container, EndpointConfig:{IPAMConfig:{IPv4Address:$ip}, MacAddress:$mac}}')"
-  response_file="$(mktemp /tmp/openccu-hapdrap-connect.XXXXXX)"
   set +e
-  connect_status="$(curl -sS -o "${response_file}" -w '%{http_code}' \
+  connect_response="$(curl -sS -w '\nHTTPSTATUS:%{http_code}' \
     --unix-socket /var/run/docker.sock \
     -H 'Content-Type: application/json' \
     -X POST \
     -d "${connect_payload}" \
-    "${DOCKER_API_BASE}/networks/${NETWORK_NAME}/connect")"
+    "${DOCKER_API_BASE}/networks/${NETWORK_NAME}/connect" 2>&1)"
   set -e
-  connect_output="$(cat "${response_file}" 2>/dev/null || true)"
-  rm -f "${response_file}"
+  connect_status="${connect_response##*HTTPSTATUS:}"
+  connect_output="${connect_response%$'\n'HTTPSTATUS:*}"
   if [ "${connect_status}" != "200" ]; then
-    bashio::log.error "Failed to connect '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC}: HTTP ${connect_status} ${connect_output}"
+    connect_error="$(printf '%s' "${connect_output}" | jq -r '.message // empty' 2>/dev/null || true)"
+    if [ -z "${connect_error}" ]; then
+      connect_error="${connect_output}"
+    fi
+    bashio::log.error "Failed to connect '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC}: HTTP ${connect_status} ${connect_error}"
+    bashio::log.error "Check whether the MAC address is already in use and whether the Docker network '${NETWORK_NAME}' still exists."
     exit 1
   fi
 }
