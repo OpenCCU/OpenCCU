@@ -27,7 +27,7 @@ options:
 schema:
   openccu_ip: str
   openccu_mac: str
-  check_interval: int(10,3600)
+  check_interval: int(10,3600)?
   openccu_slug: str
   network_name: str
   parent_interface: str

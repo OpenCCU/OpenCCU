@@ -11,10 +11,10 @@ configuration:
       If left empty, the helper derives it from the parent interface by
       incrementing the last octet and trying the next values when needed.
   check_interval:
-    name: Check interval (required)
+    name: Check interval (optional)
     description: >-
-      Interval in seconds to regularly check for proper OpenCCU App network setup
-      (default: 15 seconds).
+      Interval in seconds to regularly check for proper OpenCCU App network setup.
+      If left empty, the helper uses the default of 15 seconds automatically.
   openccu_slug:
     name: OpenCCU App slug (optional)
     description: >-

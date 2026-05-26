@@ -10,6 +10,7 @@ GATEWAY="$(bashio::config 'gateway')"
 OPENCCU_IP="$(bashio::config 'openccu_ip')"
 OPENCCU_MAC="$(bashio::config 'openccu_mac')"
 CHECK_INTERVAL="$(bashio::config 'check_interval')"
+DEFAULT_CHECK_INTERVAL=15
 DOCKER_API_BASE=""
 
 check_protection_mode() {
@@ -20,7 +21,7 @@ check_protection_mode() {
     exit 1
   fi
 
-  for key in openccu_ip check_interval; do
+  for key in openccu_ip; do
     if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
       bashio::log.error "Missing required key '${key}' in /data/options.json. Check app config.yaml options/schema."
       exit 1
@@ -58,6 +59,10 @@ check_protection_mode() {
 }
 
 validate_required_config() {
+  if [ -z "${CHECK_INTERVAL}" ]; then
+    bashio::log.info "Using ${DEFAULT_CHECK_INTERVAL}s as default check interval."
+    CHECK_INTERVAL="${DEFAULT_CHECK_INTERVAL}"
+  fi
   if [ -z "${OPENCCU_SLUG}" ]; then
     bashio::log.info "Using 'openccu' as default OpenCCU App slug name."
     OPENCCU_SLUG="openccu"
