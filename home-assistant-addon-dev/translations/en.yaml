@@ -42,5 +42,5 @@ network:
   8883/tcp: CCU-Jack MQTT-Secure external port mapping
   2110/tcp: homeputer CL Exec-Engine external port mapping
   8911/tcp: Haus-Bus WebUI external port mapping
-  5855/udp: 5855/udp: Haus-Bus communication external port mapping
+  5855/udp: Haus-Bus communication external port mapping
   2812/tcp: Monit Monitoring WebUI external port mapping
