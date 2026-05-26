@@ -122,8 +122,33 @@ resolve_parent_interface() {
   bashio::log.info "Detected parent interface: ${PARENT_IF}"
 }
 
+mac_in_use() {
+  local candidate_mac="$1" container_to_ignore="${2:-}" ignored_container_id="" host_macs="" docker_macs=""
+
+  candidate_mac="$(normalize_mac "${candidate_mac}")"
+  if [ -n "${container_to_ignore}" ]; then
+    ignored_container_id="$(docker inspect -f '{{.Id}}' "${container_to_ignore}" 2>/dev/null || true)"
+  fi
+
+  host_macs="$(ip -o link show 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i == "link/ether") print $(i+1)}' | tr '[:upper:]' '[:lower:]' || true)"
+  if printf '%s\n' "${host_macs}" | grep -Fxiq "${candidate_mac}"; then
+    return 0
+  fi
+
+  docker_macs="$(
+    docker ps -aq 2>/dev/null | while read -r container_id; do
+      [ -n "${container_id}" ] || continue
+      if [ -n "${ignored_container_id}" ] && [ "${container_id}" = "${ignored_container_id}" ]; then
+        continue
+      fi
+      docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{println $v.MacAddress}}{{end}}' "${container_id}" 2>/dev/null || true
+    done | tr '[:upper:]' '[:lower:]'
+  )"
+  printf '%s\n' "${docker_macs}" | grep -Fxiq "${candidate_mac}"
+}
+
 resolve_openccu_mac() {
-  local parent_mac="" mac_derivation_seed="" slug_seed="" network_seed="" b0="" b1="" b2="" b3="" b4="" b5=""
+  local container="${1:-}" parent_mac="" mac_prefix="" last_octet="" offset="" candidate_mac=""
 
   if [ -n "${OPENCCU_MAC}" ]; then
     OPENCCU_MAC="$(normalize_mac "${OPENCCU_MAC}")"
@@ -147,21 +172,21 @@ resolve_openccu_mac() {
     exit 1
   fi
 
-  IFS=: read -r b0 b1 b2 b3 b4 b5 <<<"${parent_mac}"
-  slug_seed="${OPENCCU_SLUG:-openccu}"
-  network_seed="${NETWORK_NAME:-ccu}"
-  # Set bit 1 to mark the MAC as locally administered and clear bit 0 to keep it unicast.
-  b0=$(( (16#${b0} | 0x02) & 0xFE ))
-  b1=$((16#${b1}))
-  b2=$((16#${b2}))
-  b3=$((16#${b3}))
-  b4=$((16#${b4}))
-  b5=$((16#${b5}))
-  mac_derivation_seed="$(printf '%s' "${parent_mac}|${network_seed}|${slug_seed}" | cksum | awk '{print $1}')"
-  # Add 1..253 so the last octet always differs from the parent MAC without using a zero offset.
-  b5=$(( (b5 + (mac_derivation_seed % 253) + 1) & 0xFF ))
-  OPENCCU_MAC="$(printf '%02x:%02x:%02x:%02x:%02x:%02x' "${b0}" "${b1}" "${b2}" "${b3}" "${b4}" "${b5}")"
-  bashio::log.info "Derived OpenCCU MAC ${OPENCCU_MAC} from parent interface ${PARENT_IF} (${parent_mac})"
+  mac_prefix="${parent_mac%:*}"
+  last_octet="${parent_mac##*:}"
+  last_octet=$((16#${last_octet}))
+
+  for offset in $(seq 1 255); do
+    candidate_mac="$(printf '%s:%02x' "${mac_prefix}" "$(( (last_octet + offset) & 0xFF ))")"
+    if ! mac_in_use "${candidate_mac}" "${container}"; then
+      OPENCCU_MAC="${candidate_mac}"
+      bashio::log.info "Derived OpenCCU MAC ${OPENCCU_MAC} from parent interface ${PARENT_IF} (${parent_mac}) using +${offset} on the last octet"
+      return 0
+    fi
+  done
+
+  bashio::log.error "Could not derive a free OpenCCU MAC address from parent interface ${PARENT_IF} (${parent_mac}). Please set 'openccu_mac'."
+  exit 1
 }
 
 resolve_subnet() {
@@ -353,7 +378,7 @@ ensure_connected() {
       connect_error="${connect_output}"
     fi
     bashio::log.error "Failed to connect '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC}: HTTP ${connect_status} ${connect_error}"
-    bashio::log.error "Check whether the MAC address is already in use and whether the Docker network '${NETWORK_NAME}' still exists."
+    bashio::log.error "Check whether the derived/configured MAC address is already in use and whether the Docker network '${NETWORK_NAME}' still exists."
     exit 1
   fi
 }
@@ -400,7 +425,6 @@ validate_required_config
 resolve_parent_interface
 resolve_subnet
 resolve_gateway
-resolve_openccu_mac
 resolve_docker_api_base
 
 while true; do
@@ -415,6 +439,7 @@ while true; do
 
   bashio::log.info "OpenCCU container detected: ${CONTAINER}"
   resolve_openccu_ip "${CONTAINER}"
+  resolve_openccu_mac "${CONTAINER}"
   if ! ensure_network "${CONTAINER}"; then
     bashio::log.warning "Skipping this cycle due to docker network setup failure; retrying in ${CHECK_INTERVAL}s."
     sleep "${CHECK_INTERVAL}"

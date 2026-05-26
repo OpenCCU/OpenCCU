@@ -8,8 +8,8 @@ configuration:
     name: OpenCCU MAC (optional)
     description: >-
       Static MAC address to be assigned to the OpenCCU App macvlan interface.
-      If left empty, a stable locally administered MAC is derived from the parent
-      interface and may change if the host NIC changes.
+      If left empty, the helper derives it from the parent interface by
+      incrementing the last octet and trying the next values when needed.
   check_interval:
     name: Check interval (required)
     description: >-
