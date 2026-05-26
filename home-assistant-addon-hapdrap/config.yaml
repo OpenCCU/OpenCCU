@@ -17,18 +17,12 @@ host_network: true
 apparmor: true
 options:
   openccu_ip: ""
-  openccu_mac: ""
-  openccu_slug: ""
-  network_name: ""
-  parent_interface: ""
-  subnet: ""
-  gateway: ""
 schema:
   openccu_ip: str
-  openccu_mac: str
+  openccu_mac: str?
   check_interval: int(10,3600)?
-  openccu_slug: str
-  network_name: str
-  parent_interface: str
-  subnet: str
-  gateway: str
+  openccu_slug: str?
+  network_name: str?
+  parent_interface: str?
+  subnet: str?
+  gateway: str?

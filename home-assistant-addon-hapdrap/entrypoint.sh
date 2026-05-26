@@ -13,6 +13,17 @@ CHECK_INTERVAL="$(bashio::config 'check_interval')"
 DEFAULT_CHECK_INTERVAL=15
 DOCKER_API_BASE=""
 
+normalize_optional_config() {
+  local value="${1:-}"
+
+  if [ "${value}" = "null" ]; then
+    echo ""
+    return 0
+  fi
+
+  echo "${value}"
+}
+
 check_protection_mode() {
   local protection_mode="" supervisor_protection_mode=""
 
@@ -57,6 +68,14 @@ check_protection_mode() {
 }
 
 validate_required_config() {
+  OPENCCU_MAC="$(normalize_optional_config "${OPENCCU_MAC}")"
+  CHECK_INTERVAL="$(normalize_optional_config "${CHECK_INTERVAL}")"
+  OPENCCU_SLUG="$(normalize_optional_config "${OPENCCU_SLUG}")"
+  NETWORK_NAME="$(normalize_optional_config "${NETWORK_NAME}")"
+  PARENT_IF="$(normalize_optional_config "${PARENT_IF}")"
+  SUBNET="$(normalize_optional_config "${SUBNET}")"
+  GATEWAY="$(normalize_optional_config "${GATEWAY}")"
+
   if [ -z "${CHECK_INTERVAL}" ]; then
     bashio::log.info "Using ${DEFAULT_CHECK_INTERVAL}s as default check interval."
     CHECK_INTERVAL="${DEFAULT_CHECK_INTERVAL}"
@@ -423,9 +442,9 @@ setup_container_routes() {
   fi
 }
 
-bashio::log.info "Starting OpenCCU HAP/DRAP helper (openccu_ip=${OPENCCU_IP}, openccu_mac=${OPENCCU_MAC:-auto}, interval=${CHECK_INTERVAL}s)"
 check_protection_mode
 validate_required_config
+bashio::log.info "Starting OpenCCU HAP/DRAP helper (openccu_ip=${OPENCCU_IP}, openccu_mac=${OPENCCU_MAC:-auto}, interval=${CHECK_INTERVAL}s)"
 resolve_parent_interface
 resolve_subnet
 resolve_gateway
