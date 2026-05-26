@@ -17,6 +17,7 @@ host_network: true
 apparmor: true
 options:
   openccu_ip: ""
+  openccu_mac: ""
   check_interval: 15
   openccu_slug: ""
   network_name: ""
@@ -25,6 +26,7 @@ options:
   gateway: ""
 schema:
   openccu_ip: str
+  openccu_mac: str
   check_interval: int(10,3600)
   openccu_slug: str
   network_name: str

@@ -4,6 +4,12 @@ configuration:
     name: OpenCCU IP (required)
     description: >-
       Free static IP LAN address to be assigned to the OpenCCU App macvlan interface.
+  openccu_mac:
+    name: OpenCCU MAC (optional)
+    description: >-
+      Static MAC address to be assigned to the OpenCCU App macvlan interface.
+      If left empty, a stable locally administered MAC is derived from the parent
+      interface and may change if the host NIC changes.
   check_interval:
     name: Check interval (required)
     description: >-
