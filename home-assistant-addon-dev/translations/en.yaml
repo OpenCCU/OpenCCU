@@ -1,0 +1,46 @@
+---
+network:
+  22/tcp: SSH external port mapping
+  80/tcp: WebUI HTTP external port mapping
+  443/tcp: WebUI HTTPS external port mapping
+  2001/tcp: HomeMatic/BidCos-RF XMLRPC external port mapping
+  2000/tcp: HomeMatic/BidCos-Wired XMLRPC external port mapping
+  2010/tcp: homematicIP-RF+Wired XMLRPC external port mapping
+  9292/tcp: HomeMatic/BidCos+homematicIP VirtualDevices XMLRPC external port mapping
+  1999/tcp: ReGaHss XMLRPC external port mapping
+  8181/tcp: ReGaHss HTTP ReGa-scripting external port mapping
+  42001/tcp: HomeMatic/BidCos-RF XMLRPC-SSL external port mapping
+  42000/tcp: HomeMatic/BidCos-Wired XMLRPC-SSL external port mapping
+  42010/tcp: homematicIP-RF+Wired XMLRPC-SSL external port mapping
+  49292/tcp: HomeMatic/BidCos+homematicIP VirtualDevices XMLRPC-SSL external port mapping
+  41999/tcp: ReGaHss XMLRPC-SSL external port mapping
+  48181/tcp: ReGaHss HTTPS ReGa-scripting external port mapping
+  9293/tcp: HmIP-HAP/HmIPW-DRAP update server external port mapping
+  9294/tcp: HmIP-HAP2 update server external port mapping
+  43438/udp: HmIPW-DRAP gateway communication external port mapping
+  1900/udp: SSDPd auto-discovery external port mapping
+  43439/udp: NetFinder external port mapping
+  161/udp: SNMP external port mapping
+  8701/tcp: CUxD BINRPC external port mapping
+  1901/udp: Mediola NeoServer external port mapping
+  1902/udp: Mediola NeoServer external port mapping
+  5987/udp: Mediola NeoServer external port mapping
+  8088/tcp: Mediola NeoServer external port mapping
+  9099/tcp: Mediola NeoServer external port mapping
+  10000/udp: Mediola NeoServer external port mapping
+  48899/udp: Mediola NeoServer external port mapping
+  49880/udp: Mediola NeoServer external port mapping
+  8082/tcp: CCU-Historian WebUI external port mapping
+  2098/tcp: CCU-Historian XMLRPC external port mapping
+  2099/tcp: CCU-Historian BINRPC external port mapping
+  8083/tcp: CCU-Historian DB-WebUI external port mapping
+  9092/tcp: CCU-Historian DB-Port external port mapping
+  5435/tcp: CCU-Historian DB-pgPort external port mapping
+  2121/tcp: CCU-Jack HTTP external port mapping
+  2122/tcp: CCU-Jack HTTPS external port mapping
+  1883/tcp: CCU-Jack MQTT external port mapping
+  8883/tcp: CCU-Jack MQTT-Secure external port mapping
+  2110/tcp: homeputer CL Exec-Engine external port mapping
+  8911/tcp: Haus-Bus WebUI external port mapping
+  5855/udp: 5855/udp: Haus-Bus communication external port mapping
+  2812/tcp: Monit Monitoring WebUI external port mapping
