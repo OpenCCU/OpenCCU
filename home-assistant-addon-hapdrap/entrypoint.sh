@@ -123,7 +123,7 @@ resolve_parent_interface() {
 }
 
 resolve_openccu_mac() {
-  local parent_mac="" mac_derivation_seed="" b0="" b1="" b2="" b3="" b4="" b5=""
+  local parent_mac="" mac_derivation_seed="" slug_seed="" network_seed="" b0="" b1="" b2="" b3="" b4="" b5=""
 
   if [ -n "${OPENCCU_MAC}" ]; then
     OPENCCU_MAC="$(normalize_mac "${OPENCCU_MAC}")"
@@ -148,15 +148,17 @@ resolve_openccu_mac() {
   fi
 
   IFS=: read -r b0 b1 b2 b3 b4 b5 <<<"${parent_mac}"
-  # Convert the first octet into a locally administered unicast MAC prefix.
+  slug_seed="${OPENCCU_SLUG:-openccu}"
+  network_seed="${NETWORK_NAME:-ccu}"
+  # Set bit 1 to mark the MAC as locally administered and clear bit 0 to keep it unicast.
   b0=$(( (16#${b0} | 0x02) & 0xFE ))
   b1=$((16#${b1}))
   b2=$((16#${b2}))
   b3=$((16#${b3}))
   b4=$((16#${b4}))
   b5=$((16#${b5}))
-  mac_derivation_seed="$(printf '%s' "${parent_mac}|${NETWORK_NAME}|${OPENCCU_SLUG}" | cksum | awk '{print $1}')"
-  # Keep the last octet different from the parent MAC by adding 1..253.
+  mac_derivation_seed="$(printf '%s' "${parent_mac}|${network_seed}|${slug_seed}" | cksum | awk '{print $1}')"
+  # Add 1..253 so the last octet always differs from the parent MAC without using a zero offset.
   b5=$(( (b5 + (mac_derivation_seed % 253) + 1) & 0xFF ))
   OPENCCU_MAC="$(printf '%02x:%02x:%02x:%02x:%02x:%02x' "${b0}" "${b1}" "${b2}" "${b3}" "${b4}" "${b5}")"
   bashio::log.info "Derived OpenCCU MAC ${OPENCCU_MAC} from parent interface ${PARENT_IF} (${parent_mac})"
