@@ -14,7 +14,7 @@ DEFAULT_CHECK_INTERVAL=15
 DOCKER_API_BASE=""
 
 check_protection_mode() {
-  local protection_mode="" supervisor_protection_mode="" key
+  local protection_mode="" supervisor_protection_mode=""
 
   if [ ! -r /data/options.json ]; then
     bashio::log.error "Cannot read /data/options.json. Add-on options are not accessible."
