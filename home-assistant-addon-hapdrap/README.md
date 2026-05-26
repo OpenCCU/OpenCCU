@@ -40,7 +40,8 @@ Use this app if:
 | Option | Required | Default | Description |
 |---|---|---|---|
 | `openccu_ip` | Yes | `""` | Static dedicated LAN IPv4 address for the OpenCCU app macvlan attachment. |
-| `check_interval` | No | `15` | Polling interval in seconds (`10..3600`). |
+| `openccu_mac` | No | auto-derived | Static MAC address for the OpenCCU app macvlan attachment. If empty, the helper first reuses the OpenCCU container's existing macvlan MAC when available, otherwise it derives one from the parent interface by incrementing the last octet and trying higher values when needed. |
+| `check_interval` | No | `15` | Polling interval in seconds (`10..3600`). If left empty, the helper uses `15`. |
 | `openccu_slug` | No | `openccu` | Slug of the OpenCCU app if different from default naming. |
 | `network_name` | No | `ccu` | Name of the macvlan Docker network to create/manage for OpenCCU. |
 | `parent_interface` | No | auto-detected | Parent NIC for macvlan (example: `enp0s18`). |
@@ -52,8 +53,9 @@ Use this app if:
 1. Install and start the regular "OpenCCU" app.
 2. Install this "OpenCCU HAP/DRAP-Helper" app.
 3. Set **OpenCCU IP** to a free, dedicated LAN IPv4 address.
-4. Disable **Protection mode** for this helper app.
-5. Enable **Start on boot**.
+4. Optionally set **OpenCCU MAC** to a fixed MAC address if you want the OpenCCU app to keep the same MAC across host changes.
+5. Disable **Protection mode** for this helper app.
+6. Enable **Start on boot**.
 
 ## Runtime behavior
 
@@ -61,7 +63,7 @@ At each cycle, the app:
 
 1. Searches for the OpenCCU HA-App by slug.
 2. Ensures the macvlan network exists with the expected parent/subnet/gateway.
-3. Ensures OpenCCU is connected to that network with the configured IP.
+3. Ensures OpenCCU is connected to that network with the configured IP and MAC address.
 4. Ensures routes inside the OpenCCU container:
    - `224.0.0.0/24 dev <macvlan-if> scope link`
    - `default via <gateway>`
@@ -72,6 +74,7 @@ If OpenCCU is not currently running, the helper keeps polling and applies networ
 
 - This app requires elevated permissions because it manages Docker networking and container routes.
 - Keep this app running together with the regular OpenCCU app.
+- If `openccu_mac` is left empty, the helper first reuses the OpenCCU container's current macvlan MAC when one is already attached. Otherwise it derives the MAC from the parent interface by incrementing the last octet (`+1`, then `+2`, and so on if needed). This keeps the MAC stable across helper restarts while still allowing fallback to higher values when needed. For the most predictable behavior, set `openccu_mac` explicitly.
 - If startup fails, verify Protection mode is disabled and the configured IP/gateway/subnet values are valid for your LAN.
 
 ## More information

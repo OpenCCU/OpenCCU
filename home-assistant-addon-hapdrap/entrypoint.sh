@@ -8,22 +8,34 @@ PARENT_IF="$(bashio::config 'parent_interface')"
 SUBNET="$(bashio::config 'subnet')"
 GATEWAY="$(bashio::config 'gateway')"
 OPENCCU_IP="$(bashio::config 'openccu_ip')"
+OPENCCU_MAC="$(bashio::config 'openccu_mac')"
 CHECK_INTERVAL="$(bashio::config 'check_interval')"
+DEFAULT_CHECK_INTERVAL=15
+DOCKER_API_BASE=""
+
+normalize_optional_config() {
+  local value="${1:-}"
+
+  if [ "${value}" = "null" ]; then
+    echo ""
+    return 0
+  fi
+
+  echo "${value}"
+}
 
 check_protection_mode() {
-  local protection_mode="" supervisor_protection_mode="" key
+  local protection_mode="" supervisor_protection_mode=""
 
   if [ ! -r /data/options.json ]; then
     bashio::log.error "Cannot read /data/options.json. Add-on options are not accessible."
     exit 1
   fi
 
-  for key in openccu_ip check_interval; do
-    if ! jq -e "has(\"${key}\")" /data/options.json >/dev/null 2>&1; then
-      bashio::log.error "Missing required key '${key}' in /data/options.json. Check app config.yaml options/schema."
-      exit 1
-    fi
-  done
+  if ! jq -e 'has("openccu_ip")' /data/options.json >/dev/null 2>&1; then
+    bashio::log.error "Missing required key 'openccu_ip' in /data/options.json. Check app config.yaml options/schema."
+    exit 1
+  fi
 
   protection_mode="$(jq -r '.protection_mode // empty' /data/options.json 2>/dev/null || true)"
 
@@ -56,6 +68,18 @@ check_protection_mode() {
 }
 
 validate_required_config() {
+  OPENCCU_MAC="$(normalize_optional_config "${OPENCCU_MAC}")"
+  CHECK_INTERVAL="$(normalize_optional_config "${CHECK_INTERVAL}")"
+  OPENCCU_SLUG="$(normalize_optional_config "${OPENCCU_SLUG}")"
+  NETWORK_NAME="$(normalize_optional_config "${NETWORK_NAME}")"
+  PARENT_IF="$(normalize_optional_config "${PARENT_IF}")"
+  SUBNET="$(normalize_optional_config "${SUBNET}")"
+  GATEWAY="$(normalize_optional_config "${GATEWAY}")"
+
+  if [ -z "${CHECK_INTERVAL}" ]; then
+    bashio::log.info "Using ${DEFAULT_CHECK_INTERVAL}s as default check interval."
+    CHECK_INTERVAL="${DEFAULT_CHECK_INTERVAL}"
+  fi
   if [ -z "${OPENCCU_SLUG}" ]; then
     bashio::log.info "Using 'openccu' as default OpenCCU App slug name."
     OPENCCU_SLUG="openccu"
@@ -64,6 +88,14 @@ validate_required_config() {
     bashio::log.info "Using 'ccu' as default OpenCCU docker network."
     NETWORK_NAME="ccu"
   fi
+}
+
+normalize_mac() {
+  echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+validate_mac() {
+  [[ "$(normalize_mac "$1")" =~ ^([0-9a-f]{2}:){5}[0-9a-f]{2}$ ]]
 }
 
 to_num() {
@@ -112,6 +144,84 @@ resolve_parent_interface() {
   bashio::log.info "Detected parent interface: ${PARENT_IF}"
 }
 
+mac_in_use() {
+  local candidate_mac="$1" container_to_ignore="${2:-}" ignored_container_id="" host_macs="" docker_macs=""
+
+  candidate_mac="$(normalize_mac "${candidate_mac}")"
+  if [ -n "${container_to_ignore}" ]; then
+    ignored_container_id="$(docker inspect -f '{{.Id}}' "${container_to_ignore}" 2>/dev/null || true)"
+  fi
+
+  host_macs="$(ip -o link show 2>/dev/null | awk '/link\/ether/ {for (i=1; i<NF; i++) if ($i == "link/ether") {print $(i+1); break}}' | tr '[:upper:]' '[:lower:]' || true)"
+  if printf '%s\n' "${host_macs}" | grep -Fxiq "${candidate_mac}"; then
+    return 0
+  fi
+
+  docker_macs="$(
+    docker ps -q 2>/dev/null | while read -r container_id; do
+      [ -n "${container_id}" ] || continue
+      if [ -n "${ignored_container_id}" ] && [ "${container_id}" = "${ignored_container_id}" ]; then
+        continue
+      fi
+      docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{println $v.MacAddress}}{{end}}' "${container_id}" 2>/dev/null || true
+    done | tr '[:upper:]' '[:lower:]'
+  )"
+  printf '%s\n' "${docker_macs}" | grep -Fxiq "${candidate_mac}"
+}
+
+resolve_openccu_mac() {
+  local container="${1:-}" parent_mac="" existing_mac="" mac_prefix="" last_octet="" offset="" candidate_mac=""
+
+  if [ -n "${OPENCCU_MAC}" ]; then
+    OPENCCU_MAC="$(normalize_mac "${OPENCCU_MAC}")"
+    if ! validate_mac "${OPENCCU_MAC}"; then
+      bashio::log.error "Configured OpenCCU MAC '${OPENCCU_MAC}' is invalid. Please use the format '02:11:22:33:44:55'."
+      exit 1
+    fi
+    bashio::log.info "Using configured OpenCCU MAC: ${OPENCCU_MAC}"
+    return 0
+  fi
+
+  parent_mac="$(ip link show dev "${PARENT_IF}" 2>/dev/null | awk '/link\/ether/ {print $2; exit}' || true)"
+  if [ -z "${parent_mac}" ]; then
+    bashio::log.error "Could not detect MAC address of parent interface ${PARENT_IF}. Please set 'openccu_mac'."
+    exit 1
+  fi
+
+  parent_mac="$(normalize_mac "${parent_mac}")"
+  if ! validate_mac "${parent_mac}"; then
+    bashio::log.error "Detected invalid MAC address '${parent_mac}' on parent interface ${PARENT_IF}. Please set 'openccu_mac'."
+    exit 1
+  fi
+
+  if [ -n "${container}" ]; then
+    existing_mac="$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.MacAddress}}{{end}}" "${container}" 2>/dev/null || true)"
+    existing_mac="$(normalize_mac "${existing_mac}")"
+    if validate_mac "${existing_mac}" && [ "${existing_mac}" != "${parent_mac}" ]; then
+      OPENCCU_MAC="${existing_mac}"
+      bashio::log.info "Reusing existing OpenCCU MAC ${OPENCCU_MAC} from '${container}' network attachment to '${NETWORK_NAME}'"
+      return 0
+    fi
+  fi
+
+  mac_prefix="${parent_mac%:*}"
+  last_octet="${parent_mac##*:}"
+  last_octet=$((16#${last_octet}))
+
+  # Try all 255 alternate last-octet values while never reusing the parent MAC itself.
+  for offset in $(seq 1 255); do
+    candidate_mac="$(printf '%s:%02x' "${mac_prefix}" "$(( (last_octet + offset) & 0xFF ))")"
+    if ! mac_in_use "${candidate_mac}" "${container}"; then
+      OPENCCU_MAC="${candidate_mac}"
+      bashio::log.info "Derived OpenCCU MAC ${OPENCCU_MAC} from parent interface ${PARENT_IF} (${parent_mac}) using +${offset} on the last octet"
+      return 0
+    fi
+  done
+
+  bashio::log.error "Could not derive a free OpenCCU MAC address from parent interface ${PARENT_IF} (${parent_mac}). Please set 'openccu_mac'."
+  exit 1
+}
+
 resolve_subnet() {
   if [ -n "${SUBNET}" ]; then
     bashio::log.info "Using configured subnet: ${SUBNET}"
@@ -150,6 +260,19 @@ resolve_gateway() {
     exit 1
   fi
   bashio::log.info "Detected gateway: ${GATEWAY}"
+}
+
+resolve_docker_api_base() {
+  local api_version=""
+
+  api_version="$(docker version --format '{{.Server.APIVersion}}' 2>/dev/null || true)"
+  if [ -z "${api_version}" ]; then
+    bashio::log.error "Could not determine Docker API version."
+    exit 1
+  fi
+
+  DOCKER_API_BASE="http://localhost/v${api_version}"
+  bashio::log.info "Using Docker API ${api_version}"
 }
 
 find_openccu_container() {
@@ -251,20 +374,45 @@ ensure_network() {
 }
 
 ensure_connected() {
-  local container="$1" current_ip
+  local container="$1" current_ip="" current_mac="" connect_payload="" connect_output="" connect_response="" connect_status="" connect_error=""
 
   bashio::log.info "Checking '${container}' network attachment to '${NETWORK_NAME}'"
-  current_ip="$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.IPAddress}}{{end}}" "${container}" 2>/dev/null || true)"
+  IFS='|' read -r current_ip current_mac <<<"$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.IPAddress}}|{{.MacAddress}}{{end}}" "${container}" 2>/dev/null || true)"
+  current_mac="$(normalize_mac "${current_mac}")"
 
   if [ -z "${current_ip}" ]; then
-    bashio::log.info "Connecting '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP}"
-    docker network connect --ip "${OPENCCU_IP}" "${NETWORK_NAME}" "${container}"
-  elif [ "${current_ip}" != "${OPENCCU_IP}" ]; then
-    bashio::log.info "Reconnecting '${container}' to '${NETWORK_NAME}' with corrected IP ${OPENCCU_IP} (was ${current_ip})"
+    bashio::log.info "Connecting '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC}"
+  elif [ "${current_ip}" != "${OPENCCU_IP}" ] || [ "${current_mac}" != "${OPENCCU_MAC}" ]; then
+    bashio::log.info "Reconnecting '${container}' to '${NETWORK_NAME}' with corrected IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC} (was ${current_ip}/${current_mac:-unknown})"
     docker network disconnect "${NETWORK_NAME}" "${container}" >/dev/null 2>&1 || true
-    docker network connect --ip "${OPENCCU_IP}" "${NETWORK_NAME}" "${container}"
   else
-    bashio::log.info "Container already connected with expected IP ${OPENCCU_IP}"
+    bashio::log.info "Container already connected with expected IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC}"
+    return 0
+  fi
+
+  connect_payload="$(jq -cn \
+    --arg container "${container}" \
+    --arg ip "${OPENCCU_IP}" \
+    --arg mac "${OPENCCU_MAC}" \
+    '{Container:$container, EndpointConfig:{IPAMConfig:{IPv4Address:$ip}, MacAddress:$mac}}')"
+  set +e
+  connect_response="$(curl -sS -w '\nHTTPSTATUS:%{http_code}' \
+    --unix-socket /var/run/docker.sock \
+    -H 'Content-Type: application/json' \
+    -X POST \
+    -d "${connect_payload}" \
+    "${DOCKER_API_BASE}/networks/${NETWORK_NAME}/connect" 2>&1)"
+  set -e
+  connect_status="${connect_response##*HTTPSTATUS:}"
+  connect_output="${connect_response%$'\n'HTTPSTATUS:*}"
+  if [ "${connect_status}" != "200" ]; then
+    connect_error="$(printf '%s' "${connect_output}" | jq -r '.message // empty' 2>/dev/null || true)"
+    if [ -z "${connect_error}" ]; then
+      connect_error="${connect_output}"
+    fi
+    bashio::log.error "Failed to connect '${container}' to '${NETWORK_NAME}' with IP ${OPENCCU_IP} and MAC ${OPENCCU_MAC}: HTTP ${connect_status} ${connect_error}"
+    bashio::log.error "Check whether the derived/configured MAC address is already in use and whether the Docker network '${NETWORK_NAME}' still exists."
+    exit 1
   fi
 }
 
@@ -304,12 +452,13 @@ setup_container_routes() {
   fi
 }
 
-bashio::log.info "Starting OpenCCU HAP/DRAP helper (openccu_ip=${OPENCCU_IP}, interval=${CHECK_INTERVAL}s)"
 check_protection_mode
 validate_required_config
+bashio::log.info "Starting OpenCCU HAP/DRAP helper (openccu_ip=${OPENCCU_IP}, openccu_mac=${OPENCCU_MAC:-auto}, interval=${CHECK_INTERVAL}s)"
 resolve_parent_interface
 resolve_subnet
 resolve_gateway
+resolve_docker_api_base
 
 while true; do
   bashio::log.info "==================================================="
@@ -323,6 +472,7 @@ while true; do
 
   bashio::log.info "OpenCCU container detected: ${CONTAINER}"
   resolve_openccu_ip "${CONTAINER}"
+  resolve_openccu_mac "${CONTAINER}"
   if ! ensure_network "${CONTAINER}"; then
     bashio::log.warning "Skipping this cycle due to docker network setup failure; retrying in ${CHECK_INTERVAL}s."
     sleep "${CHECK_INTERVAL}"

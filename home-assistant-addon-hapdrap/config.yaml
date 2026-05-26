@@ -1,6 +1,6 @@
 ---
 name: OpenCCU HAP/DRAP-Helper
-version: 0.2.0
+version: 0.3.0
 slug: openccu-hapdrap
 image: ghcr.io/openccu/openccu-hapdrap
 arch:
@@ -17,17 +17,12 @@ host_network: true
 apparmor: true
 options:
   openccu_ip: ""
-  check_interval: 15
-  openccu_slug: ""
-  network_name: ""
-  parent_interface: ""
-  subnet: ""
-  gateway: ""
 schema:
   openccu_ip: str
-  check_interval: int(10,3600)
-  openccu_slug: str
-  network_name: str
-  parent_interface: str
-  subnet: str
-  gateway: str
+  openccu_mac: str?
+  check_interval: int(10,3600)?
+  openccu_slug: str?
+  network_name: str?
+  parent_interface: str?
+  subnet: str?
+  gateway: str?
