@@ -170,7 +170,7 @@ mac_in_use() {
 }
 
 resolve_openccu_mac() {
-  local container="${1:-}" parent_mac="" mac_prefix="" last_octet="" offset="" candidate_mac=""
+  local container="${1:-}" parent_mac="" existing_mac="" mac_prefix="" last_octet="" offset="" candidate_mac=""
 
   if [ -n "${OPENCCU_MAC}" ]; then
     OPENCCU_MAC="$(normalize_mac "${OPENCCU_MAC}")"
@@ -192,6 +192,16 @@ resolve_openccu_mac() {
   if ! validate_mac "${parent_mac}"; then
     bashio::log.error "Detected invalid MAC address '${parent_mac}' on parent interface ${PARENT_IF}. Please set 'openccu_mac'."
     exit 1
+  fi
+
+  if [ -n "${container}" ]; then
+    existing_mac="$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.MacAddress}}{{end}}" "${container}" 2>/dev/null || true)"
+    existing_mac="$(normalize_mac "${existing_mac}")"
+    if validate_mac "${existing_mac}"; then
+      OPENCCU_MAC="${existing_mac}"
+      bashio::log.info "Reusing existing OpenCCU MAC ${OPENCCU_MAC} from '${container}' network attachment to '${NETWORK_NAME}'"
+      return 0
+    fi
   fi
 
   mac_prefix="${parent_mac%:*}"

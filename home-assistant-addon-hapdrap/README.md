@@ -40,7 +40,7 @@ Use this app if:
 | Option | Required | Default | Description |
 |---|---|---|---|
 | `openccu_ip` | Yes | `""` | Static dedicated LAN IPv4 address for the OpenCCU app macvlan attachment. |
-| `openccu_mac` | No | auto-derived | Static MAC address for the OpenCCU app macvlan attachment. If empty, the helper derives it from the parent interface by incrementing the last octet and trying higher values when needed. |
+| `openccu_mac` | No | auto-derived | Static MAC address for the OpenCCU app macvlan attachment. If empty, the helper first reuses the OpenCCU container's existing macvlan MAC when available, otherwise it derives one from the parent interface by incrementing the last octet and trying higher values when needed. |
 | `check_interval` | No | `15` | Polling interval in seconds (`10..3600`). If left empty, the helper uses `15`. |
 | `openccu_slug` | No | `openccu` | Slug of the OpenCCU app if different from default naming. |
 | `network_name` | No | `ccu` | Name of the macvlan Docker network to create/manage for OpenCCU. |
@@ -74,7 +74,7 @@ If OpenCCU is not currently running, the helper keeps polling and applies networ
 
 - This app requires elevated permissions because it manages Docker networking and container routes.
 - Keep this app running together with the regular OpenCCU app.
-- If `openccu_mac` is left empty, the helper derives the MAC from the parent interface by incrementing the last octet (`+1`, then `+2`, and so on if needed). This keeps the MAC close to the host MAC, but it can change if the parent NIC changes or if a later fallback value must be used. For the most predictable behavior, set `openccu_mac` explicitly.
+- If `openccu_mac` is left empty, the helper first reuses the OpenCCU container's current macvlan MAC when one is already attached. Otherwise it derives the MAC from the parent interface by incrementing the last octet (`+1`, then `+2`, and so on if needed). This keeps the MAC stable across helper restarts while still allowing fallback to higher values when needed. For the most predictable behavior, set `openccu_mac` explicitly.
 - If startup fails, verify Protection mode is disabled and the configured IP/gateway/subnet values are valid for your LAN.
 
 ## More information
