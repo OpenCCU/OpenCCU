@@ -123,7 +123,7 @@ resolve_parent_interface() {
 }
 
 resolve_openccu_mac() {
-  local parent_mac="" mac_seed="" b0="" b1="" b2="" b3="" b4="" b5=""
+  local parent_mac="" mac_derivation_seed="" b0="" b1="" b2="" b3="" b4="" b5=""
 
   if [ -n "${OPENCCU_MAC}" ]; then
     OPENCCU_MAC="$(normalize_mac "${OPENCCU_MAC}")"
@@ -155,8 +155,9 @@ resolve_openccu_mac() {
   b3=$((16#${b3}))
   b4=$((16#${b4}))
   b5=$((16#${b5}))
-  mac_seed="$(printf '%s' "${parent_mac}|${NETWORK_NAME}|${OPENCCU_SLUG}" | cksum | awk '{print $1}')"
-  b5=$(( (b5 + (mac_seed % 253) + 1) & 0xFF ))
+  mac_derivation_seed="$(printf '%s' "${parent_mac}|${NETWORK_NAME}|${OPENCCU_SLUG}" | cksum | awk '{print $1}')"
+  # Keep the last octet different from the parent MAC by adding 1..253.
+  b5=$(( (b5 + (mac_derivation_seed % 253) + 1) & 0xFF ))
   OPENCCU_MAC="$(printf '%02x:%02x:%02x:%02x:%02x:%02x' "${b0}" "${b1}" "${b2}" "${b3}" "${b4}" "${b5}")"
   bashio::log.info "Derived OpenCCU MAC ${OPENCCU_MAC} from parent interface ${PARENT_IF} (${parent_mac})"
 }
