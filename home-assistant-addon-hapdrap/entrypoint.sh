@@ -197,7 +197,7 @@ resolve_openccu_mac() {
   if [ -n "${container}" ]; then
     existing_mac="$(docker inspect -f "{{with index .NetworkSettings.Networks \"${NETWORK_NAME}\"}}{{.MacAddress}}{{end}}" "${container}" 2>/dev/null || true)"
     existing_mac="$(normalize_mac "${existing_mac}")"
-    if validate_mac "${existing_mac}"; then
+    if validate_mac "${existing_mac}" && [ "${existing_mac}" != "${parent_mac}" ]; then
       OPENCCU_MAC="${existing_mac}"
       bashio::log.info "Reusing existing OpenCCU MAC ${OPENCCU_MAC} from '${container}' network attachment to '${NETWORK_NAME}'"
       return 0
