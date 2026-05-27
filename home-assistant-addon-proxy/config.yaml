@@ -1,6 +1,6 @@
 ---
 name: OpenCCU (Proxy)
-version: 0.5.2
+version: 0.5.3
 slug: openccu_proxy
 image: ghcr.io/openccu/openccu-proxy
 arch:
@@ -12,8 +12,9 @@ ingress: true
 ingress_stream: true
 panel_title: OpenCCU
 panel_icon: mdi:router-wireless
+startup: services
 boot: auto
-init: true
+init: false
 timeout: 30
 options:
   webui-url: http://openccu

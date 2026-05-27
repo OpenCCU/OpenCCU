@@ -1,10 +1,12 @@
-FROM ghcr.io/hassio-addons/base-nodejs:0.2.5
+FROM ghcr.io/hassio-addons/app-base:20.1.1
 
 # set workdir to /app
 WORKDIR /app
 
 ENV SUPERVISOR_TOKEN ""
 VOLUME /config
+
+RUN apk add --no-cache nodejs npm
 
 COPY ha-proxy.js.gtpl /app/ha-proxy.js.gtpl
 COPY entrypoint.sh /app/entrypoint.sh
@@ -39,4 +41,4 @@ HEALTHCHECK --interval=60s --timeout=30s --start-period=30s --retries=3 \
 ENV NODE_PATH=/app/node_modules
 RUN npm ci --omit=dev
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/app/entrypoint.sh"]

@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.5.3
+- migrate the proxy add-on from the deprecated `base-nodejs` image to `app-base`.
+- install Node.js and npm explicitly and let the app-base init system manage process startup.
+
 ## 0.5.2
 - pin Node.js dependencies to keep `http-proxy-middleware` on CommonJS-compatible v3 releases.
 - add direct dependency declarations and reproducible npm lockfile for stable proxy app builds.
