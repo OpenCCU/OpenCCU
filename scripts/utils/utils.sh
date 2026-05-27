@@ -41,7 +41,6 @@ owner, repo, tag_filter_pattern = sys.argv[1:]
 api_url = f"https://api.github.com/repos/{owner}/{repo}/releases?per_page=100"
 feed_url = f"https://github.com/{owner}/{repo}/releases.atom"
 tag_regex = re.compile(tag_filter_pattern)
-unstable_regex = re.compile(r"(^|[._-])(alpha|beta|rc|pre|preview)([._-]?[0-9]*|$)", re.IGNORECASE)
 ns = {"atom": "http://www.w3.org/2005/Atom"}
 
 try:
@@ -58,33 +57,36 @@ try:
         tag = release.get("tag_name", "")
         if release.get("draft") or release.get("prerelease"):
             continue
-        if not tag_regex.fullmatch(tag) or unstable_regex.search(tag):
+        if not tag_regex.fullmatch(tag):
             continue
         print(tag)
         sys.exit(0)
 except Exception:
     pass
 
-with urllib.request.urlopen(feed_url) as response:
-    root = ET.fromstring(response.read())
+try:
+    with urllib.request.urlopen(feed_url) as response:
+        root = ET.fromstring(response.read())
 
-for entry in root.findall("atom:entry", ns):
-    link = entry.find("atom:link", ns)
-    if link is None:
-        continue
+    for entry in root.findall("atom:entry", ns):
+        link = entry.find("atom:link", ns)
+        if link is None:
+            continue
 
-    release_url = link.attrib.get("href", "")
-    tag = release_url.rsplit("/", 1)[-1]
-    if not tag_regex.fullmatch(tag) or unstable_regex.search(tag):
-        continue
+        release_url = link.attrib.get("href", "")
+        tag = release_url.rsplit("/", 1)[-1]
+        if not tag_regex.fullmatch(tag):
+            continue
 
-    with urllib.request.urlopen(release_url) as response:
-        html = response.read().decode("utf-8", errors="ignore")
-    if ">Pre-release<" in html or ">Draft<" in html:
-        continue
+        with urllib.request.urlopen(release_url) as response:
+            html = response.read().decode("utf-8", errors="ignore")
+        if ">Pre-release<" in html or ">Draft<" in html:
+            continue
 
-    print(tag)
-    break
+        print(tag)
+        sys.exit(0)
+except Exception:
+    pass
 PY
 )
 
