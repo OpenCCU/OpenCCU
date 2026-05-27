@@ -62,7 +62,7 @@ try:
         print(tag)
         sys.exit(0)
 except Exception:
-    pass
+    print(f"GitHub API lookup failed for {owner}/{repo}, falling back to release pages", file=sys.stderr)
 
 try:
     with urllib.request.urlopen(feed_url) as response:
@@ -80,13 +80,14 @@ try:
 
         with urllib.request.urlopen(release_url) as response:
             html = response.read().decode("utf-8", errors="ignore")
+        # The Atom feed omits prerelease/draft flags, so the rendered release label is the fallback signal.
         if ">Pre-release<" in html or ">Draft<" in html:
             continue
 
         print(tag)
         sys.exit(0)
 except Exception:
-    pass
+    print(f"GitHub release page fallback failed for {owner}/{repo}", file=sys.stderr)
 PY
 )
 
