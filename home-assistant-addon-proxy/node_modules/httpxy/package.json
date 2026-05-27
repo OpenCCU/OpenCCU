@@ -1,0 +1,55 @@
+{
+  "name": "httpxy",
+  "version": "0.5.3",
+  "description": "A full-featured HTTP proxy for Node.js.",
+  "license": "MIT",
+  "repository": "unjs/httpxy",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "scripts": {
+    "build": "obuild",
+    "dev": "vitest",
+    "lint": "oxlint . && oxfmt --check",
+    "fmt": "oxlint . --fix && oxfmt",
+    "prepack": "pnpm run build",
+    "release": "pnpm test && pnpm build && changelogen --release && npm publish && git push --follow-tags",
+    "test": "pnpm lint && pnpm typecheck && vitest run --coverage",
+    "typecheck": "tsgo --noEmit"
+  },
+  "devDependencies": {
+    "@types/async": "^3.2.25",
+    "@types/concat-stream": "^2.0.3",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.0",
+    "@types/semver": "^7.7.1",
+    "@types/sse": "^0.0.0",
+    "@types/ws": "^8.18.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260518.1",
+    "@vitest/coverage-v8": "^4.1.6",
+    "async": "^3.2.6",
+    "changelogen": "^0.6.2",
+    "concat-stream": "^2.0.0",
+    "eslint-config-unjs": "^0.6.2",
+    "expect.js": "^0.3.1",
+    "obuild": "^0.4.35",
+    "ofetch": "^1.5.1",
+    "oxfmt": "^0.50.0",
+    "oxlint": "^1.65.0",
+    "semver": "^7.8.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "sse": "^0.0.8",
+    "typescript": "^6.0.3",
+    "undici": "^8.3.0",
+    "vitest": "^4.1.6",
+    "ws": "^8.20.1"
+  },
+  "packageManager": "pnpm@11.1.3"
+}

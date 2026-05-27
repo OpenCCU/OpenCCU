@@ -1,0 +1,58 @@
+import { Debug } from '../../debug.js';
+const debug = Debug.extend('debug-proxy-errors-plugin');
+/**
+ * Subscribe to {@link https://github.com/unjs/httpxy#events `httpxy` error events} to prevent server from crashing.
+ * Errors are logged with {@link https://www.npmjs.com/package/debug debug} library.
+ */
+export const debugProxyErrorsPlugin = (proxyServer) => {
+    /**
+     * The old `http-proxy` doesn't handle any errors by default (https://github.com/http-party/node-http-proxy#listening-for-proxy-events)
+     * > We do not do any error handling of messages passed between client and proxy, and messages passed between proxy and target, so it is recommended that you listen on errors and handle them.
+     * Subscribing to error event to prevent server from crashing
+     */
+    proxyServer.on('error', (error, req, res, target) => {
+        debug(`httpxy error event: \n%O`, error);
+    });
+    proxyServer.on('proxyReq', (proxyReq, req, socket) => {
+        socket.on('error', (error) => {
+            debug('Socket error in proxyReq event: \n%O', error);
+        });
+    });
+    /**
+     * Fix SSE close events
+     * @link https://github.com/chimurai/http-proxy-middleware/issues/678
+     * @link https://github.com/http-party/node-http-proxy/issues/1520#issue-877626125
+     */
+    proxyServer.on('proxyRes', (proxyRes, req, res) => {
+        res.on('close', () => {
+            if (!res.writableEnded) {
+                debug('Destroying proxyRes in proxyRes close event');
+                proxyRes.destroy();
+            }
+        });
+    });
+    /**
+     * Fix crash when target server restarts
+     * https://github.com/chimurai/http-proxy-middleware/issues/476#issuecomment-746329030
+     * https://github.com/webpack/webpack-dev-server/issues/1642#issuecomment-790602225
+     */
+    proxyServer.on('proxyReqWs', (proxyReq, req, socket) => {
+        socket.on('error', (error) => {
+            debug('Socket error in proxyReqWs event: \n%O', error);
+        });
+    });
+    proxyServer.on('open', (proxySocket) => {
+        proxySocket.on('error', (error) => {
+            debug('Socket error in open event: \n%O', error);
+        });
+    });
+    proxyServer.on('close', (req, socket, head) => {
+        socket.on('error', (error) => {
+            debug('Socket error in close event: \n%O', error);
+        });
+    });
+    // https://github.com/webpack/webpack-dev-server/issues/1642#issuecomment-1103136590
+    proxyServer.on('econnreset', (error, req, res, target) => {
+        debug(`httpxy econnreset event: \n%O`, error);
+    });
+};

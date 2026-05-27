@@ -1,0 +1,41 @@
+import { Debug } from '../../debug.js';
+import { getFunctionName } from '../../utils/function.js';
+const debug = Debug.extend('proxy-events-plugin');
+/**
+ * Implements option.on object to subscribe to `httpxy` events.
+ *
+ * @example
+ * ```js
+ * createProxyMiddleware({
+ *  on: {
+ *    error: (error, req, res, target) => {},
+ *    proxyReq: (proxyReq, req, res, options) => {},
+ *    proxyReqWs: (proxyReq, req, socket, options) => {},
+ *    proxyRes: (proxyRes, req, res) => {},
+ *    open: (proxySocket) => {},
+ *    close: (proxyRes, proxySocket, proxyHead) => {},
+ *    start: (req, res, target) => {},
+ *    end: (req, res, proxyRes) => {},
+ *    econnreset: (error, req, res, target) => {},
+ *  }
+ * });
+ * ```
+ */
+export const proxyEventsPlugin = (proxyServer, options) => {
+    if (!options.on) {
+        return;
+    }
+    // hoist variable here for better typing
+    let eventName;
+    // for in provide better typing than Object.entries()
+    for (eventName in options.on) {
+        if (Object.prototype.hasOwnProperty.call(options.on, eventName)) {
+            const handler = options.on[eventName];
+            if (!handler) {
+                continue;
+            }
+            debug(`register event handler: "${eventName}" -> "${getFunctionName(handler)}"`);
+            proxyServer.on(eventName, handler);
+        }
+    }
+};
