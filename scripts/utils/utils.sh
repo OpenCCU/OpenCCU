@@ -34,13 +34,36 @@ function resolve_latest_github_stable_release_tag() {
 import re
 import sys
 import urllib.request
+import json
 import xml.etree.ElementTree as ET
 
 owner, repo, tag_filter_pattern = sys.argv[1:]
+api_url = f"https://api.github.com/repos/{owner}/{repo}/releases?per_page=100"
 feed_url = f"https://github.com/{owner}/{repo}/releases.atom"
 tag_regex = re.compile(tag_filter_pattern)
-unstable_regex = re.compile(r"(alpha|beta|rc|pre|preview)", re.IGNORECASE)
+unstable_regex = re.compile(r"(^|[._-])(alpha|beta|rc|pre|preview)([._-]?[0-9]*|$)", re.IGNORECASE)
 ns = {"atom": "http://www.w3.org/2005/Atom"}
+
+try:
+    request = urllib.request.Request(
+        api_url,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "OpenCCU-dependency-updater",
+        },
+    )
+    with urllib.request.urlopen(request) as response:
+        releases = json.load(response)
+    for release in releases:
+        tag = release.get("tag_name", "")
+        if release.get("draft") or release.get("prerelease"):
+            continue
+        if not tag_regex.fullmatch(tag) or unstable_regex.search(tag):
+            continue
+        print(tag)
+        sys.exit(0)
+except Exception:
+    pass
 
 with urllib.request.urlopen(feed_url) as response:
     root = ET.fromstring(response.read())
