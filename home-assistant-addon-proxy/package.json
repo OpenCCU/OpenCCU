@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "type": "commonjs",
   "dependencies": {
-    "express": "5.1.0",
+    "express": "5.2.1",
     "http-proxy-middleware": "4.0.0",
     "ipaddr.js": "2.4.0"
   }
