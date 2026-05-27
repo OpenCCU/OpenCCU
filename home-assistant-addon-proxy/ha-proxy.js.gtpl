@@ -16,13 +16,15 @@ const express = require('express');
 const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
 const ipaddr = require('ipaddr.js');
 
+const REQUEST_TIMEOUT = 20 * 60 * 1000; // 20 min
+
 const apiProxy = createProxyMiddleware({
   target: '{{ index . "webui-url" }}',
   pathFilter: '/',
   changeOrigin: true, // for vhosted sites
   //logger: console,
   selfHandleResponse: true,
-  timeout: 1200000, // max 20 min
+  proxyTimeout: REQUEST_TIMEOUT,
   on: {
     proxyRes: responseInterceptor(async (responseBody, proxyRes, req, res) => {
       // modify Location: response header if present
@@ -90,10 +92,13 @@ app.use((req, res, next) => {
 }, apiProxy);
 
 // listen on port 8099
-app.listen(8099, (err) => {
+const server = app.listen(8099, (err) => {
   if(err) {
     console.error(`ERROR: could not start ha-proxy: ${err}`);
   } else {
     console.log('Serving proxy requests for ' + '{{ index . "webui-url" }}' + ' on port 8099.');
   }
 });
+
+server.setTimeout(REQUEST_TIMEOUT);
+server.requestTimeout = REQUEST_TIMEOUT;
