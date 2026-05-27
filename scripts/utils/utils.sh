@@ -34,38 +34,46 @@ function resolve_latest_github_stable_release_tag() {
 import re
 import sys
 import urllib.request
+import urllib.error
 import json
 import xml.etree.ElementTree as ET
 
 owner, repo, tag_filter_pattern = sys.argv[1:]
-api_url = f"https://api.github.com/repos/{owner}/{repo}/releases?per_page=100"
+api_url = f"https://api.github.com/repos/{owner}/{repo}/releases"
 feed_url = f"https://github.com/{owner}/{repo}/releases.atom"
 tag_regex = re.compile(tag_filter_pattern)
 ns = {"atom": "http://www.w3.org/2005/Atom"}
+headers = {
+    "Accept": "application/vnd.github+json",
+    "Accept-Language": "en-US,en;q=0.5",
+    "User-Agent": "OpenCCU-dependency-updater",
+}
 
 try:
-    request = urllib.request.Request(
-        api_url,
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "OpenCCU-dependency-updater",
-        },
-    )
-    with urllib.request.urlopen(request) as response:
-        releases = json.load(response)
-    for release in releases:
-        tag = release.get("tag_name", "")
-        if release.get("draft") or release.get("prerelease"):
-            continue
-        if not tag_regex.fullmatch(tag):
-            continue
-        print(tag)
-        sys.exit(0)
-except Exception:
+    page = 1
+    while True:
+        request = urllib.request.Request(
+            f"{api_url}?per_page=100&page={page}",
+            headers=headers,
+        )
+        with urllib.request.urlopen(request) as response:
+            releases = json.load(response)
+        if not releases:
+            break
+        for release in releases:
+            tag = release.get("tag_name", "")
+            if release.get("draft") or release.get("prerelease"):
+                continue
+            if not tag_regex.fullmatch(tag):
+                continue
+            print(tag)
+            sys.exit(0)
+        page += 1
+except (urllib.error.URLError, json.JSONDecodeError, ET.ParseError):
     print(f"GitHub API lookup failed for {owner}/{repo}, falling back to release pages", file=sys.stderr)
 
 try:
-    with urllib.request.urlopen(feed_url) as response:
+    with urllib.request.urlopen(urllib.request.Request(feed_url, headers=headers)) as response:
         root = ET.fromstring(response.read())
 
     for entry in root.findall("atom:entry", ns):
@@ -78,7 +86,7 @@ try:
         if not tag_regex.fullmatch(tag):
             continue
 
-        with urllib.request.urlopen(release_url) as response:
+        with urllib.request.urlopen(urllib.request.Request(release_url, headers=headers)) as response:
             html = response.read().decode("utf-8", errors="ignore")
         # The Atom feed omits prerelease/draft flags, so the rendered release label is the fallback signal.
         if ">Pre-release<" in html or ">Draft<" in html:
@@ -86,7 +94,7 @@ try:
 
         print(tag)
         sys.exit(0)
-except Exception:
+except (urllib.error.URLError, ET.ParseError):
     print(f"GitHub release page fallback failed for {owner}/{repo}", file=sys.stderr)
 PY
 )
