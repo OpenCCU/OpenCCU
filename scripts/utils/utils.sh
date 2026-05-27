@@ -24,6 +24,27 @@ function resolve_latest_github_stable_tag() {
   echo "${tag}"
 }
 
+function resolve_latest_github_stable_release_tag() {
+  local owner=${1}
+  local repo=${2}
+  local tag_filter_pattern=${3:-'^[vV]?[0-9]+(\.[0-9]+)*$'}
+  local tag
+
+  tag=$(wget --quiet -O - "https://api.github.com/repos/${owner}/${repo}/releases?per_page=100" \
+    | python3 -c 'import json, sys; releases = json.load(sys.stdin); print("\n".join(release["tag_name"] for release in releases if not release.get("draft") and not release.get("prerelease") and release.get("tag_name")))' \
+    | grep -E "${tag_filter_pattern}" \
+    | grep -Eiv '(alpha|beta|rc|pre|preview)' \
+    | sort -V \
+    | tail -n1)
+
+  if [[ -z "${tag}" ]]; then
+    echo "Failed to resolve latest stable release tag for ${owner}/${repo} (pattern: ${tag_filter_pattern})" >&2
+    exit 1
+  fi
+
+  echo "${tag}"
+}
+
 function strip_v_prefix() {
   local version=${1}
   echo "${version#v}"

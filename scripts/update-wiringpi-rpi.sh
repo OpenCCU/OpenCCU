@@ -6,7 +6,7 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_stable_tag "wiringpi" "wiringpi")}
+ID=${1:-$(resolve_latest_github_stable_release_tag "wiringpi" "wiringpi")}
 PACKAGE_NAME="wiringpi-rpi"
 PROJECT_URL="https://github.com/wiringpi/wiringpi"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
