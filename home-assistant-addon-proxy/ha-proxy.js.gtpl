@@ -24,6 +24,7 @@ const apiProxy = createProxyMiddleware({
   changeOrigin: true, // for vhosted sites
   //logger: console,
   selfHandleResponse: true,
+  // Use upstream proxyTimeout here; incoming client-facing timeouts are set once on the server below.
   proxyTimeout: REQUEST_TIMEOUT,
   on: {
     proxyRes: responseInterceptor(async (responseBody, proxyRes, req, res) => {
