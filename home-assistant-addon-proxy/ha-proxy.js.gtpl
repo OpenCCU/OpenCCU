@@ -13,9 +13,7 @@
 //
 
 const util = require('node:util');
-if (util._extend !== Object.assign) {
-  util._extend = Object.assign;
-}
+util._extend = Object.assign;
 
 const express = require('express');
 const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
