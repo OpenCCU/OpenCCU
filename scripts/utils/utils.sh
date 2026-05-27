@@ -30,12 +30,40 @@ function resolve_latest_github_stable_release_tag() {
   local tag_filter_pattern=${3:-'^[vV]?[0-9]+(\.[0-9]+)*$'}
   local tag
 
-  tag=$(wget --quiet -O - "https://api.github.com/repos/${owner}/${repo}/releases?per_page=100" \
-    | python3 -c 'import json, sys; releases = json.load(sys.stdin); print("\n".join(release["tag_name"] for release in releases if not release.get("draft") and not release.get("prerelease") and release.get("tag_name")))' \
-    | grep -E "${tag_filter_pattern}" \
-    | grep -Eiv '(alpha|beta|rc|pre|preview)' \
-    | sort -V \
-    | tail -n1)
+  tag=$(python3 - "${owner}" "${repo}" "${tag_filter_pattern}" <<'PY'
+import re
+import sys
+import urllib.request
+import xml.etree.ElementTree as ET
+
+owner, repo, tag_filter_pattern = sys.argv[1:]
+feed_url = f"https://github.com/{owner}/{repo}/releases.atom"
+tag_regex = re.compile(tag_filter_pattern)
+unstable_regex = re.compile(r"(alpha|beta|rc|pre|preview)", re.IGNORECASE)
+ns = {"atom": "http://www.w3.org/2005/Atom"}
+
+with urllib.request.urlopen(feed_url) as response:
+    root = ET.fromstring(response.read())
+
+for entry in root.findall("atom:entry", ns):
+    link = entry.find("atom:link", ns)
+    if link is None:
+        continue
+
+    release_url = link.attrib.get("href", "")
+    tag = release_url.rsplit("/", 1)[-1]
+    if not tag_regex.fullmatch(tag) or unstable_regex.search(tag):
+        continue
+
+    with urllib.request.urlopen(release_url) as response:
+        html = response.read().decode("utf-8", errors="ignore")
+    if ">Pre-release<" in html or ">Draft<" in html:
+        continue
+
+    print(tag)
+    break
+PY
+)
 
   if [[ -z "${tag}" ]]; then
     echo "Failed to resolve latest stable release tag for ${owner}/${repo} (pattern: ${tag_filter_pattern})" >&2
