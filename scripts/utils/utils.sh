@@ -76,7 +76,8 @@ try:
     with urllib.request.urlopen(urllib.request.Request(feed_url, headers=headers)) as response:
         root = ET.fromstring(response.read())
 
-    for entry in root.findall("atom:entry", ns)[:20]:
+    # Check only the first 100 Atom entries to mirror the API page size and avoid unbounded fallback requests.
+    for entry in root.findall("atom:entry", ns)[:100]:
         link = entry.find("atom:link", ns)
         if link is None:
             continue
@@ -89,6 +90,7 @@ try:
         with urllib.request.urlopen(urllib.request.Request(release_url, headers=headers)) as response:
             html = response.read().decode("utf-8", errors="ignore")
         # Best-effort fallback: the Atom feed omits prerelease/draft flags, so use the rendered release label.
+        # This intentionally trades some fragility for a structured-data-free fallback when the API is unavailable.
         if ">Pre-release<" in html or ">Draft<" in html:
             continue
 
