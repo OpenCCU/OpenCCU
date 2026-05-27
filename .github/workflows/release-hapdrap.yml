@@ -22,7 +22,7 @@ jobs:
 
       - name: Get information
         id: info
-        uses: home-assistant/actions/helpers/info@f6f29a7ee3fa0eccadf3620a7b9ee00ab54ec03b  # master
+        uses: home-assistant/actions/helpers/info@868e6cb4607727d764341a158d98872cd63fa658  # master
         with:
           path: "./home-assistant-addon-hapdrap"
 
