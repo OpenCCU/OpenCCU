@@ -69,14 +69,14 @@ try:
             print(tag)
             sys.exit(0)
         page += 1
-except (urllib.error.URLError, json.JSONDecodeError, ET.ParseError):
+except (urllib.error.URLError, json.JSONDecodeError):
     print(f"GitHub API lookup failed for {owner}/{repo}, falling back to release pages", file=sys.stderr)
 
 try:
     with urllib.request.urlopen(urllib.request.Request(feed_url, headers=headers)) as response:
         root = ET.fromstring(response.read())
 
-    for entry in root.findall("atom:entry", ns):
+    for entry in root.findall("atom:entry", ns)[:20]:
         link = entry.find("atom:link", ns)
         if link is None:
             continue
@@ -88,14 +88,14 @@ try:
 
         with urllib.request.urlopen(urllib.request.Request(release_url, headers=headers)) as response:
             html = response.read().decode("utf-8", errors="ignore")
-        # The Atom feed omits prerelease/draft flags, so the rendered release label is the fallback signal.
+        # Best-effort fallback: the Atom feed omits prerelease/draft flags, so use the rendered release label.
         if ">Pre-release<" in html or ">Draft<" in html:
             continue
 
         print(tag)
         sys.exit(0)
 except (urllib.error.URLError, ET.ParseError):
-    print(f"GitHub release page fallback failed for {owner}/{repo}", file=sys.stderr)
+    print(f"GitHub release page fallback failed for {owner}/{repo}; no stable release could be resolved", file=sys.stderr)
 PY
 )
 
