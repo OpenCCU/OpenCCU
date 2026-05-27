@@ -2,7 +2,7 @@
 
 ## 0.5.3
 - migrate the proxy add-on from the deprecated `base-nodejs` image to the general app-base (`base`) image.
-- stage the Node.js runtime and proxy dependencies explicitly and let the app-base init system manage process startup.
+- stage the Node.js runtime and proxy dependencies explicitly and let the app-base init system manage process startup via the add-on `services` startup mode.
 
 ## 0.5.2
 - pin Node.js dependencies to keep `http-proxy-middleware` on CommonJS-compatible v3 releases.

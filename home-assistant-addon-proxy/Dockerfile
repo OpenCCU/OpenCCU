@@ -13,6 +13,7 @@ WORKDIR /app
 
 VOLUME /config
 
+# Carry the Node.js runtime and its required shared libraries from the builder.
 COPY --from=nodejs /usr/local/ /usr/local/
 COPY --from=nodejs /usr/lib/libstdc++.so.6 /usr/lib/libstdc++.so.6
 COPY --from=nodejs /usr/lib/libgcc_s.so.1 /usr/lib/libgcc_s.so.1
