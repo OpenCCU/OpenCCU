@@ -11,9 +11,11 @@ PIDFILE="/var/run/${DAEMON}.pid"
 
 # Path detection: Give priority to /usr/local/etc/config/argononed_override.sh, if it exists
 if [ -x "/usr/local/etc/config/argononed_override.sh" ]; then
-    DAEMON_PATH="/usr/local/etc/config/argononed_override.sh"
+if [ -x "/usr/local/etc/config/argononed_override.sh" ]; then
+	DAEMON_PATH="/usr/local/etc/config/argononed_override.sh"
 else
-    DAEMON_PATH="/opt/argononed/${DAEMON}.sh"
+	DAEMON_PATH="/opt/argononed/${DAEMON}.sh"
+fi
 fi
 
 # Exit if daemon script is not executable
