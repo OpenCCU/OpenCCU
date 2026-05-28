@@ -9,7 +9,15 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON="argononed"
 PIDFILE="/var/run/${DAEMON}.pid"
 
-test -x "/opt/argononed/${DAEMON}.sh" || exit 0
+# Path detection: Give priority to /usr/local/etc/config/argononed_override.sh, if it exists
+if [ -x "/usr/local/etc/config/argononed_override.sh" ]; then
+    DAEMON_PATH="/usr/local/etc/config/argononed_override.sh"
+else
+    DAEMON_PATH="/opt/argononed/${DAEMON}.sh"
+fi
+
+# Exit if daemon script is not executable
+test -x "${DAEMON_PATH}" || exit 0
 
 # source all data from /var/hm_mode
 [[ -r /var/hm_mode ]] && . /var/hm_mode
@@ -22,7 +30,7 @@ case $1 in
 		# Both seem to listen at 0x1a i2c address
 		if i2cget -y 1 0x1a 2>/dev/null >/dev/null; then
 
-			if start-stop-daemon -S -q -b -m -p "${PIDFILE}" --exec "/opt/argononed/${DAEMON}.sh" 2>/dev/null >/dev/null; then
+			if start-stop-daemon -S -q -b -m -p "${PIDFILE}" --exec "${DAEMON_PATH}" 2>/dev/null >/dev/null; then
 				echo "OK"
 			else
 				echo "FAIL"
@@ -54,7 +62,7 @@ case $1 in
 	;;
 
 	status)
-		/opt/argononed/${DAEMON}.sh --status
+		"${DAEMON_PATH}" --status
 	;;
 
 	*)
