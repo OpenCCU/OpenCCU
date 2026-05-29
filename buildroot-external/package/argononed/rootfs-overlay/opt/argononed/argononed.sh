@@ -78,22 +78,43 @@ fancontrol()
     esac
   }
 
+  validate_curve()
+  {
+    local prev_temp temp hyst level
+
+    prev_temp=-1
+    for level in 0 1 2 3 4; do
+      temp=$(level_temp "${level}")
+      hyst=$(level_hyst "${level}")
+
+      if [[ ${temp} -le ${prev_temp} ]] || [[ ${hyst} -gt ${temp} ]]; then
+        return 1
+      fi
+      prev_temp=${temp}
+    done
+  }
+
+  set_default_curve()
+  {
+    fan_temp0=56000
+    fan_temp0_speed=10
+    fan_temp0_hyst=2000
+    fan_temp1=66000
+    fan_temp1_speed=15
+    fan_temp1_hyst=2000
+    fan_temp2=70000
+    fan_temp2_speed=26
+    fan_temp2_hyst=2000
+    fan_temp3=75000
+    fan_temp3_speed=128
+    fan_temp3_hyst=2000
+    fan_temp4=80000
+    fan_temp4_speed=255
+    fan_temp4_hyst=2000
+  }
+
   # default fan curve, can be overwritten in /etc/config/argoned.conf
-  fan_temp0=56000
-  fan_temp0_speed=10
-  fan_temp0_hyst=2000
-  fan_temp1=66000
-  fan_temp1_speed=15
-  fan_temp1_hyst=2000
-  fan_temp2=70000
-  fan_temp2_speed=26
-  fan_temp2_hyst=2000
-  fan_temp3=75000
-  fan_temp3_speed=128
-  fan_temp3_hyst=2000
-  fan_temp4=80000
-  fan_temp4_speed=255
-  fan_temp4_hyst=2000
+  set_default_curve
 
   # shellcheck disable=SC1091
   [[ -r /etc/config/argoned.conf ]] && . /etc/config/argoned.conf
@@ -119,6 +140,16 @@ fancontrol()
   fan_temp2_speed_percent=$(speed255_to_percent "${fan_temp2_speed}")
   fan_temp3_speed_percent=$(speed255_to_percent "${fan_temp3_speed}")
   fan_temp4_speed_percent=$(speed255_to_percent "${fan_temp4_speed}")
+
+  if ! validate_curve; then
+    logger -t argononed "Invalid fan curve in /etc/config/argoned.conf, falling back to defaults"
+    set_default_curve
+    fan_temp0_speed_percent=$(speed255_to_percent "${fan_temp0_speed}")
+    fan_temp1_speed_percent=$(speed255_to_percent "${fan_temp1_speed}")
+    fan_temp2_speed_percent=$(speed255_to_percent "${fan_temp2_speed}")
+    fan_temp3_speed_percent=$(speed255_to_percent "${fan_temp3_speed}")
+    fan_temp4_speed_percent=$(speed255_to_percent "${fan_temp4_speed}")
+  fi
 
   while true; do
     curtemp=$(sanitize_uint "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo 0)" "0")
