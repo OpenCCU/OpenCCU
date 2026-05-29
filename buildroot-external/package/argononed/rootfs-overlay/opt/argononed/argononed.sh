@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169,SC3010
 #
 # A shell script variant of a control daemon to
 # control the fan and power buttons of a ArgonONE case
@@ -12,25 +12,146 @@ fancontrol()
 {
   curspeed=-1
   dstspeed=0
+  current_level=-1
+
+  speed255_to_percent()
+  {
+    local speed255
+
+    speed255=$1
+    if [[ ${speed255} -lt 0 ]]; then
+      speed255=0
+    elif [[ ${speed255} -gt 255 ]]; then
+      speed255=255
+    fi
+    echo $(( (speed255 * 100 + 127) / 255 ))
+  }
+
+  sanitize_uint()
+  {
+    local value fallback
+
+    value=$1
+    fallback=$2
+    case "${value}" in
+      ''|*[!0-9]*)
+        echo "${fallback}"
+        ;;
+      *)
+        echo "${value}"
+        ;;
+    esac
+  }
+
+  level_temp()
+  {
+    case "$1" in
+      0) echo "${fan_temp0}" ;;
+      1) echo "${fan_temp1}" ;;
+      2) echo "${fan_temp2}" ;;
+      3) echo "${fan_temp3}" ;;
+      4) echo "${fan_temp4}" ;;
+    esac
+  }
+
+  level_hyst()
+  {
+    case "$1" in
+      0) echo "${fan_temp0_hyst}" ;;
+      1) echo "${fan_temp1_hyst}" ;;
+      2) echo "${fan_temp2_hyst}" ;;
+      3) echo "${fan_temp3_hyst}" ;;
+      4) echo "${fan_temp4_hyst}" ;;
+      *) echo "0" ;;
+    esac
+  }
+
+  level_speed_percent()
+  {
+    case "$1" in
+      0) echo "${fan_temp0_speed_percent}" ;;
+      1) echo "${fan_temp1_speed_percent}" ;;
+      2) echo "${fan_temp2_speed_percent}" ;;
+      3) echo "${fan_temp3_speed_percent}" ;;
+      4) echo "${fan_temp4_speed_percent}" ;;
+      *) echo "0" ;;
+    esac
+  }
+
+  # default fan curve, can be overwritten in /etc/config/argoned.conf
+  fan_temp0=56000
+  fan_temp0_speed=10
+  fan_temp0_hyst=2000
+  fan_temp1=66000
+  fan_temp1_speed=15
+  fan_temp1_hyst=2000
+  fan_temp2=70000
+  fan_temp2_speed=26
+  fan_temp2_hyst=2000
+  fan_temp3=75000
+  fan_temp3_speed=128
+  fan_temp3_hyst=2000
+  fan_temp4=80000
+  fan_temp4_speed=255
+  fan_temp4_hyst=2000
+
+  # shellcheck disable=SC1091
+  [[ -r /etc/config/argoned.conf ]] && . /etc/config/argoned.conf
+
+  fan_temp0=$(sanitize_uint "${fan_temp0}" "56000")
+  fan_temp1=$(sanitize_uint "${fan_temp1}" "66000")
+  fan_temp2=$(sanitize_uint "${fan_temp2}" "70000")
+  fan_temp3=$(sanitize_uint "${fan_temp3}" "75000")
+  fan_temp4=$(sanitize_uint "${fan_temp4}" "80000")
+  fan_temp0_hyst=$(sanitize_uint "${fan_temp0_hyst}" "2000")
+  fan_temp1_hyst=$(sanitize_uint "${fan_temp1_hyst}" "2000")
+  fan_temp2_hyst=$(sanitize_uint "${fan_temp2_hyst}" "2000")
+  fan_temp3_hyst=$(sanitize_uint "${fan_temp3_hyst}" "2000")
+  fan_temp4_hyst=$(sanitize_uint "${fan_temp4_hyst}" "2000")
+  fan_temp0_speed=$(sanitize_uint "${fan_temp0_speed}" "10")
+  fan_temp1_speed=$(sanitize_uint "${fan_temp1_speed}" "15")
+  fan_temp2_speed=$(sanitize_uint "${fan_temp2_speed}" "26")
+  fan_temp3_speed=$(sanitize_uint "${fan_temp3_speed}" "128")
+  fan_temp4_speed=$(sanitize_uint "${fan_temp4_speed}" "255")
+
+  fan_temp0_speed_percent=$(speed255_to_percent "${fan_temp0_speed}")
+  fan_temp1_speed_percent=$(speed255_to_percent "${fan_temp1_speed}")
+  fan_temp2_speed_percent=$(speed255_to_percent "${fan_temp2_speed}")
+  fan_temp3_speed_percent=$(speed255_to_percent "${fan_temp3_speed}")
+  fan_temp4_speed_percent=$(speed255_to_percent "${fan_temp4_speed}")
 
   while true; do
-    curtemp=$( (cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo 0) | awk '{printf "%.0f\n", $1/1000}' )
-    if [[ ${curtemp} -ge 80 ]]; then
-      dstspeed=100
-    elif [[ ${curtemp} -ge 75 ]]; then
-      dstspeed=50
-    elif [[ ${curtemp} -ge 70 ]]; then
-      dstspeed=10
-    elif [[ ${curtemp} -ge 65 ]]; then
-      dstspeed=5
-    elif [[ ${curtemp} -ge 55 ]]; then
-      dstspeed=3
+    curtemp=$(sanitize_uint "$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo 0)" "0")
+
+    next_level=$(( current_level + 1 ))
+    while [[ ${next_level} -le 4 ]]; do
+      next_temp=$(level_temp "${next_level}")
+      if [[ ${curtemp} -ge ${next_temp} ]]; then
+        current_level=${next_level}
+        next_level=$(( next_level + 1 ))
+      else
+        break
+      fi
+    done
+
+    while [[ ${current_level} -ge 0 ]]; do
+      level_temp_value=$(level_temp "${current_level}")
+      level_hyst_value=$(level_hyst "${current_level}")
+      if [[ ${curtemp} -lt $(( level_temp_value - level_hyst_value )) ]]; then
+        current_level=$(( current_level - 1 ))
+      else
+        break
+      fi
+    done
+
+    if [[ ${current_level} -ge 0 ]]; then
+      dstspeed=$(level_speed_percent "${current_level}")
     else
       dstspeed=0
     fi
 
     if [[ ${dstspeed} -ne ${curspeed} ]]; then
-      /usr/sbin/i2cset -y 1 0x1a ${dstspeed}
+      /usr/sbin/i2cset -y 1 0x1a "${dstspeed}"
       curspeed=${dstspeed}
     fi
 
