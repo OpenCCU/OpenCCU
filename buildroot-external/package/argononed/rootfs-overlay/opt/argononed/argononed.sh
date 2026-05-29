@@ -113,11 +113,11 @@ fancontrol()
     fan_temp4_hyst=2000
   }
 
-  # default fan curve, can be overwritten in /etc/config/argoned.conf
+  # default fan curve, can be overwritten in /etc/config/argononed.conf
   set_default_curve
 
   # shellcheck disable=SC1091
-  [[ -r /etc/config/argoned.conf ]] && . /etc/config/argoned.conf
+  [[ -r /etc/config/argononed.conf ]] && . /etc/config/argononed.conf
 
   fan_temp0=$(sanitize_uint "${fan_temp0}" "56000")
   fan_temp1=$(sanitize_uint "${fan_temp1}" "66000")
@@ -142,7 +142,7 @@ fancontrol()
   fan_temp4_speed_percent=$(speed255_to_percent "${fan_temp4_speed}")
 
   if ! validate_curve; then
-    logger -t argononed "Invalid fan curve in /etc/config/argoned.conf, falling back to defaults"
+    logger -t argononed "Invalid fan curve in /etc/config/argononed.conf, falling back to defaults"
     set_default_curve
     fan_temp0_speed_percent=$(speed255_to_percent "${fan_temp0_speed}")
     fan_temp1_speed_percent=$(speed255_to_percent "${fan_temp1_speed}")
