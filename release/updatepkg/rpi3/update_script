@@ -64,19 +64,24 @@ if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
     ROOT_IMG_SIZE=$(/bin/gzip -l "${STARTPWD}/${ROOT_FS}" 2>/dev/null | awk 'NR==2 {print $2}')
 
     if [[ -z "${ROOT_PART_SIZE}" ]] || [[ -z "${ROOT_IMG_SIZE}" ]] || [[ "${ROOT_IMG_SIZE}" -le 0 ]]; then
-      echo "ERROR: (rootfs size detection failed)<br/>"
+      echo "ERROR: (rootfs size detection failed: partition=${ROOT_PART_SIZE:-unset}, image=${ROOT_IMG_SIZE:-unset})<br/>"
       RC=1
-    elif [[ "${ROOT_PART_SIZE}" != "${ROOT_IMG_SIZE}" ]]; then
+    elif [[ "${ROOT_PART_SIZE}" -ne "${ROOT_IMG_SIZE}" ]]; then
       STAGED_ROOT_FS=/usr/local/tmp/rootfs.ext4.gz
-      echo -ne "Scheduling rootfs handover to recoveryfs (${ROOT_PART_SIZE} != ${ROOT_IMG_SIZE})... "
-      mount -o rw,remount /userfs >/dev/null 2>&1 || true
-      if ! cp -f "${STARTPWD}/${ROOT_FS}" "${STAGED_ROOT_FS}"; then
+      echo -ne "Scheduling rootfs handoff to recoveryfs (${ROOT_PART_SIZE} != ${ROOT_IMG_SIZE})... "
+      if ! mount -o rw,remount /userfs >/dev/null 2>&1; then
+        echo "ERROR: (remount /userfs rw)<br/>"
+        RC=1
+      elif ! cp -f "${STARTPWD}/${ROOT_FS}" "${STAGED_ROOT_FS}"; then
         echo "ERROR: (cp ${STAGED_ROOT_FS})<br/>"
         RC=1
       elif ! ln -sfn "${STAGED_ROOT_FS}" /usr/local/.firmwareUpdate; then
+        rm -f "${STAGED_ROOT_FS}" >/dev/null 2>&1 || true
         echo "ERROR: (ln /usr/local/.firmwareUpdate)<br/>"
         RC=1
       elif ! touch /usr/local/.recoveryMode; then
+        rm -f "${STAGED_ROOT_FS}" >/dev/null 2>&1 || true
+        rm -f /usr/local/.firmwareUpdate >/dev/null 2>&1 || true
         echo "ERROR: (touch /usr/local/.recoveryMode)<br/>"
         RC=1
       else
