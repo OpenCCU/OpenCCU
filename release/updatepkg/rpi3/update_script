@@ -60,16 +60,46 @@ fi
 if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
   ROOT_DEV=$(/bin/mount | grep "/rootfs" | cut -f1 -d" ")
   if [[ -n "${ROOT_DEV}" ]]; then
-    echo -ne "Writing rootfs to ${ROOT_DEV}... "
-    /bin/umount -f /rootfs
-    if ! zcat "${STARTPWD}/${ROOT_FS}" | /bin/dd of="${ROOT_DEV}" bs=1M conv=fsync; then
-      echo "ERROR: (dd)"
+    ROOT_PART_SIZE=$(/sbin/blockdev --getsize64 "${ROOT_DEV}" 2>/dev/null)
+    ROOT_IMG_SIZE=$(/bin/gzip -l "${STARTPWD}/${ROOT_FS}" 2>/dev/null | awk 'NR==2 {print $2}')
+
+    if [[ -z "${ROOT_PART_SIZE}" ]] || [[ -z "${ROOT_IMG_SIZE}" ]] || [[ "${ROOT_IMG_SIZE}" -le 0 ]]; then
+      echo "ERROR: (rootfs size detection failed)<br/>"
       RC=1
+    elif [[ "${ROOT_PART_SIZE}" != "${ROOT_IMG_SIZE}" ]]; then
+      STAGED_ROOT_FS=/usr/local/tmp/rootfs.ext4.gz
+      echo -ne "Scheduling rootfs handover to recoveryfs (${ROOT_PART_SIZE} != ${ROOT_IMG_SIZE})... "
+      mount -o rw,remount /userfs >/dev/null 2>&1 || true
+      if ! cp -f "${STARTPWD}/${ROOT_FS}" "${STAGED_ROOT_FS}"; then
+        echo "ERROR: (cp ${STAGED_ROOT_FS})<br/>"
+        RC=1
+      elif ! ln -sfn "${STAGED_ROOT_FS}" /usr/local/.firmwareUpdate; then
+        echo "ERROR: (ln /usr/local/.firmwareUpdate)<br/>"
+        RC=1
+      elif ! touch /usr/local/.recoveryMode; then
+        echo "ERROR: (touch /usr/local/.recoveryMode)<br/>"
+        RC=1
+      else
+        sync
+        mount -o ro,remount /userfs >/dev/null 2>&1 || true
+        echo "OK, rebooting to recoveryfs<br/>"
+        RC=0
+        /sbin/reboot
+        exit 0
+      fi
+      mount -o ro,remount /userfs >/dev/null 2>&1 || true
     else
-      echo "OK<br/>"
-      RC=0
+      echo -ne "Writing rootfs to ${ROOT_DEV}... "
+      /bin/umount -f /rootfs
+      if ! zcat "${STARTPWD}/${ROOT_FS}" | /bin/dd of="${ROOT_DEV}" bs=1M conv=fsync; then
+        echo "ERROR: (dd)"
+        RC=1
+      else
+        echo "OK<br/>"
+        RC=0
+      fi
+      /bin/mount /rootfs
     fi
-    /bin/mount /rootfs
   else
     echo "ERROR: not /rootfs found<br/>"
     RC=1

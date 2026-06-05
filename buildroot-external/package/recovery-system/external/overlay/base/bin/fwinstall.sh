@@ -510,6 +510,51 @@ fwprepare()
 
   FILETYPE=""
 
+  # check for gzip compressed rootfs.ext4
+  if [[ -z "${FILETYPE}" ]]; then
+    if echo "${filename}" | grep -E -q '\.ext4\.gz$'; then
+      echo -ne "rootfs ext4.gz identified, validating, "
+
+      # check if unarchived size is < available space or we abort right away!
+      REQSIZE=$(/bin/gzip -l "${filename}" 2>/dev/null | awk 'NR==2 {print $2}')
+      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]] || [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+        echo "ERROR: ${REQSIZE} bytes required!"
+        exit 1
+      fi
+
+      # start unarchiving
+      echo -ne "unarchiving.."
+
+      # start a progress bar outputing dots every few seconds
+      awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
+      PROGRESS_PID=$!
+      # shellcheck disable=SC2064
+      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+
+      if ! /bin/gzip -dc "${filename}" >"${TMPDIR}/rootfs.ext4"; then
+        echo "ERROR: (gunzip)"
+        exit 1
+      fi
+
+      # stop the progress output
+      kill ${PROGRESS_PID} 2>/dev/null || true
+      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+
+      # the uncompressed file must be a valid rootfs ext4 filesystem
+      if ! /usr/bin/file -b "${TMPDIR}/rootfs.ext4" | grep -E -q "ext4 filesystem.*rootfs"; then
+        echo "ERROR: (.ext4.gz payload is not a rootfs ext4 image)"
+        exit 1
+      fi
+      if ! /sbin/e2fsck -nf "${TMPDIR}/rootfs.ext4" 2>/dev/null >/dev/null; then
+        echo "ERROR: (e2fsck)"
+        exit 1
+      fi
+
+      rm -f "${filename}"
+      FILETYPE="ext4"
+    fi
+  fi
+
   # check for tar.gz or .tar
   if [[ -z "${FILETYPE}" ]]; then
     if /usr/bin/file -b "${filename}" | grep -E -q "(gzip compressed|tar archive)"; then
@@ -904,8 +949,19 @@ fwinstall()
 
       # check if the found rootfs ext4 file matches the current rootfs partition size
       if [[ "${ROOTFS_SIZE}" != $(stat -c%s "${ext4_file}") ]]; then
-        echo "ERROR: rootfs partition has different size than provided image<br/>"
-        exit 1
+        ROOTFS_IMG_SIZE=$(stat -c%s "${ext4_file}")
+        sync 2>/dev/null || true
+        echo -ne "resize rootfs, "
+        if ! resize_rootfs "${ROOTFS_SIZE}" "${ROOTFS_IMG_SIZE}"; then
+          echo "ERROR: (resize_rootfs)<br/>"
+          exit 1
+        fi
+
+        ROOTFS_DEV=$(/sbin/blkid --label rootfs)
+        if [[ -z "${ROOTFS_DEV}" ]]; then
+          echo "ERROR: (blkid)<br/>"
+          exit 1
+        fi
       fi
 
       # find out if the hardware platform of the current rootfs and the one
