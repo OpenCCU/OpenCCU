@@ -114,7 +114,7 @@ if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
         mount -o ro,remount /userfs >/dev/null 2>&1 || true
         echo "OK, rebooting to recoveryfs<br/>"
         RC=0
-        /sbin/reboot
+        sync ; /sbin/reboot -f
         exit 0
       fi
       mount -o ro,remount /userfs >/dev/null 2>&1 || true
