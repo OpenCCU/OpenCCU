@@ -39,7 +39,7 @@ fi
 
 RC=1
 if [[ -f "${STARTPWD}/${BOOT_FS}" ]]; then
-  BOOT_DEV=$(/bin/mount | grep "/bootfs" | cut -f1 -d" ")
+  BOOT_DEV=$(/sbin/blkid --label bootfs 2>/dev/null || true)
   if [[ -n "${BOOT_DEV}" ]]; then
     # backup extraconfig.txt before overwriting bootfs
     EXTRACONFIG_BACKUP=""
@@ -83,7 +83,7 @@ else
 fi
 
 if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
-  ROOT_DEV=$(/bin/mount | grep "/rootfs" | cut -f1 -d" ")
+  ROOT_DEV=$(/sbin/blkid --label rootfs 2>/dev/null || true)
   if [[ -n "${ROOT_DEV}" ]]; then
     ROOT_PART_SIZE=$(/sbin/blockdev --getsize64 "${ROOT_DEV}" 2>/dev/null)
     ROOT_IMG_SIZE=$(get_gzip_uncompressed_size "${STARTPWD}/${ROOT_FS}")
