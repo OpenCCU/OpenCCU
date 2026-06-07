@@ -12,45 +12,20 @@
 get_gzip_uncompressed_size()
 {
   local filename="$1"
-  local gzip_magic isize_bytes b1 b2 b3 b4 ISIZE FALLBACK_SIZE
+  local size
 
   if [[ ! -f "${filename}" ]]; then
     return 1
   fi
 
-  gzip_magic=$(od -An -N2 -tx1 -v "${filename}" 2>/dev/null | tr -d '[:space:]')
-  if [[ "${gzip_magic}" != "1f8b" ]]; then
-    return 1
-  fi
-
-  # Primary method: parse gzip ISIZE footer (last 4 bytes, little-endian)
-  isize_bytes=$(tail -c 4 "${filename}" 2>/dev/null | od -An -tu1 -v 2>/dev/null)
-  read -r b1 b2 b3 b4 _ <<EOF
-${isize_bytes}
-EOF
-  if [[ -n "${b1}" && -n "${b2}" && -n "${b3}" && -n "${b4}" ]]; then
-    case "${b1}${b2}${b3}${b4}" in
-      *[!0-9]*)
-        ;;
-      *)
-        ISIZE=$(awk -v b1="${b1}" -v b2="${b2}" -v b3="${b3}" -v b4="${b4}" 'BEGIN { printf "%.0f", b1 + (b2 * 256) + (b3 * 65536) + (b4 * 16777216) }')
-        if [[ "${ISIZE}" -gt 0 ]] && /bin/gzip -t "${filename}" >/dev/null 2>&1; then
-          echo "${ISIZE}"
-          return 0
-        fi
-        ;;
-    esac
-  fi
-
-  # Fallback method: stream-decompress and count bytes
-  FALLBACK_SIZE=$(/bin/gzip -dc "${filename}" 2>/dev/null | wc -c 2>/dev/null | tr -d '[:space:]')
-  case "${FALLBACK_SIZE}" in
+  size=$(/bin/gzip -dc "${filename}" 2>/dev/null | wc -c 2>/dev/null | tr -d '[:space:]')
+  case "${size}" in
     ''|*[!0-9]*)
       return 1
       ;;
     *)
-      if [[ "${FALLBACK_SIZE}" -gt 0 ]]; then
-        echo "${FALLBACK_SIZE}"
+      if [[ "${size}" -gt 0 ]]; then
+        echo "${size}"
         return 0
       fi
       ;;
