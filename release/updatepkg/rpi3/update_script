@@ -25,7 +25,7 @@ EOF
         ;;
       *)
         ISIZE=$((b1 + (b2 << 8) + (b3 << 16) + (b4 << 24)))
-        if [[ "${ISIZE}" -gt 0 ]]; then
+        if [[ "${ISIZE}" -gt 0 ]] && /bin/gzip -t "${filename}" >/dev/null 2>&1; then
           echo "${ISIZE}"
           return 0
         fi
