@@ -9,6 +9,51 @@
 # Apache 2.0 License applies
 #
 
+get_gzip_uncompressed_size()
+{
+  local filename="$1"
+  local isize_bytes b1 b2 b3 b4 ISIZE FALLBACK_SIZE
+
+  if [[ ! -f "${filename}" ]]; then
+    return 1
+  fi
+
+  # Primary method: parse gzip ISIZE footer (last 4 bytes, little-endian)
+  isize_bytes=$(tail -c 4 "${filename}" 2>/dev/null | od -An -tu1 -v 2>/dev/null)
+  read -r b1 b2 b3 b4 _ <<EOF
+${isize_bytes}
+EOF
+  if [[ -n "${b1}" && -n "${b2}" && -n "${b3}" && -n "${b4}" ]]; then
+    case "${b1}${b2}${b3}${b4}" in
+      *[!0-9]*)
+        ;;
+      *)
+        ISIZE=$((b1 + (b2 << 8) + (b3 << 16) + (b4 << 24)))
+        if [[ "${ISIZE}" -gt 0 ]]; then
+          echo "${ISIZE}"
+          return 0
+        fi
+        ;;
+    esac
+  fi
+
+  # Fallback method: stream-decompress and count bytes
+  FALLBACK_SIZE=$(/bin/gzip -dc "${filename}" 2>/dev/null | wc -c 2>/dev/null | tr -d '[:space:]')
+  case "${FALLBACK_SIZE}" in
+    ''|*[!0-9]*)
+      return 1
+      ;;
+    *)
+      if [[ "${FALLBACK_SIZE}" -gt 0 ]]; then
+        echo "${FALLBACK_SIZE}"
+        return 0
+      fi
+      ;;
+  esac
+
+  return 1
+}
+
 ######
 # function that is called to resize the rootfs partition
 resize_rootfs()
@@ -516,7 +561,7 @@ fwprepare()
       echo -ne "rootfs ext4.gz identified, validating, "
 
       # check if unarchived size is < available space or we abort right away!
-      REQSIZE=$(/bin/gzip -l "${filename}" 2>/dev/null | awk 'NR==2 {print $2}')
+      REQSIZE=$(get_gzip_uncompressed_size "${filename}")
       if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]] || [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
         exit 1

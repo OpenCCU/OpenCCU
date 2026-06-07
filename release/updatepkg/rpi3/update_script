@@ -5,6 +5,51 @@ STARTPWD=$(pwd)
 BOOT_FS=boot.vfat.gz
 ROOT_FS=rootfs.ext4.gz
 
+get_gzip_uncompressed_size()
+{
+  local filename="$1"
+  local isize_bytes b1 b2 b3 b4 ISIZE FALLBACK_SIZE
+
+  if [[ ! -f "${filename}" ]]; then
+    return 1
+  fi
+
+  # Primary method: parse gzip ISIZE footer (last 4 bytes, little-endian)
+  isize_bytes=$(tail -c 4 "${filename}" 2>/dev/null | od -An -tu1 -v 2>/dev/null)
+  read -r b1 b2 b3 b4 _ <<EOF
+${isize_bytes}
+EOF
+  if [[ -n "${b1}" && -n "${b2}" && -n "${b3}" && -n "${b4}" ]]; then
+    case "${b1}${b2}${b3}${b4}" in
+      *[!0-9]*)
+        ;;
+      *)
+        ISIZE=$((b1 + (b2 << 8) + (b3 << 16) + (b4 << 24)))
+        if [[ "${ISIZE}" -gt 0 ]]; then
+          echo "${ISIZE}"
+          return 0
+        fi
+        ;;
+    esac
+  fi
+
+  # Fallback method: stream-decompress and count bytes
+  FALLBACK_SIZE=$(/bin/gzip -dc "${filename}" 2>/dev/null | wc -c 2>/dev/null | tr -d '[:space:]')
+  case "${FALLBACK_SIZE}" in
+    ''|*[!0-9]*)
+      return 1
+      ;;
+    *)
+      if [[ "${FALLBACK_SIZE}" -gt 0 ]]; then
+        echo "${FALLBACK_SIZE}"
+        return 0
+      fi
+      ;;
+  esac
+
+  return 1
+}
+
 # check that this is a rpi3 and nothing else
 PLATFORM=$(grep PLATFORM= /VERSION | cut -d= -f2)
 if [[ "${PLATFORM}" != "rpi3" ]]; then
@@ -61,7 +106,7 @@ if [[ -f "${STARTPWD}/${ROOT_FS}" ]]; then
   ROOT_DEV=$(/bin/mount | grep "/rootfs" | cut -f1 -d" ")
   if [[ -n "${ROOT_DEV}" ]]; then
     ROOT_PART_SIZE=$(/sbin/blockdev --getsize64 "${ROOT_DEV}" 2>/dev/null)
-    ROOT_IMG_SIZE=$(/bin/gzip -l "${STARTPWD}/${ROOT_FS}" 2>/dev/null | awk 'NR==2 {print $2}')
+    ROOT_IMG_SIZE=$(get_gzip_uncompressed_size "${STARTPWD}/${ROOT_FS}")
 
     if [[ -z "${ROOT_PART_SIZE}" ]] || [[ -z "${ROOT_IMG_SIZE}" ]] || [[ "${ROOT_IMG_SIZE}" -le 0 ]]; then
       echo "ERROR: (rootfs size detection failed: partition=${ROOT_PART_SIZE:-unset}, image=${ROOT_IMG_SIZE:-unset})<br/>"
