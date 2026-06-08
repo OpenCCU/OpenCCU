@@ -34,6 +34,109 @@ get_gzip_uncompressed_size()
   return 1
 }
 
+expand_userfs_to_max()
+{
+  local USER_DEV DISK_DEV SECTOR_SIZE DISK_SIZE_BYTES DISK_LAST_SECTOR
+  local SFDISK_DUMP LINE_USER USER_START USER_SIZE USER_END FREE_SECTORS
+  local USER_PARTNUM PARTED_ERR E2FSCK_RC RESIZE2FS_ERR RESIZE_THRESHOLD
+
+  USER_DEV=$(/sbin/blkid --label userfs 2>/dev/null || true)
+  if [[ -z "${USER_DEV}" ]]; then
+    echo "ERROR: (blkid userfs)"
+    return 2
+  fi
+
+  DISK_DEV="/dev/$(lsblk -d -n -i -o PKNAME "${USER_DEV}")"
+  if [[ "${DISK_DEV}" == "/dev/" ]] || [[ ! -b "${DISK_DEV}" ]]; then
+    echo "ERROR: (cannot determine disk devnode for userfs)"
+    return 2
+  fi
+
+  SECTOR_SIZE=$(/sbin/blockdev --getss "${DISK_DEV}" 2>/dev/null || echo 512)
+  DISK_SIZE_BYTES=$(/sbin/blockdev --getsize64 "${DISK_DEV}" 2>/dev/null || true)
+  if [[ -z "${DISK_SIZE_BYTES}" ]] || [[ "${DISK_SIZE_BYTES}" -le 0 ]] || [[ "${DISK_SIZE_BYTES}" -lt "${SECTOR_SIZE}" ]]; then
+    echo "ERROR: (invalid disk size for ${DISK_DEV})"
+    return 2
+  fi
+  DISK_LAST_SECTOR=$(((DISK_SIZE_BYTES / SECTOR_SIZE) - 1))
+
+  SFDISK_DUMP=$(/sbin/sfdisk -d "${DISK_DEV}" 2>/dev/null || true)
+  if [[ -z "${SFDISK_DUMP}" ]]; then
+    echo "ERROR: (sfdisk -d)"
+    return 2
+  fi
+
+  LINE_USER=$(echo "${SFDISK_DUMP}" | awk -v p="${USER_DEV}" '{ gsub(/\r/,"",$0); if (substr($0,1,length(p))==p) { print $0; exit } }')
+  if [[ -z "${LINE_USER}" ]]; then
+    echo "ERROR: (cannot parse userfs partition line)"
+    return 2
+  fi
+
+  USER_START=$(printf '%s\n' "${LINE_USER}" | awk '
+    { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+      for(i=1;i<=NF;i++){
+        if($i=="start="){v=$(i+1); gsub(/[^0-9]/,"",v); print v; exit}
+        if(index($i,"start=")==1){v=$i; sub("start=","",v); gsub(/[^0-9]/,"",v); print v; exit}
+      }
+    }')
+  USER_SIZE=$(printf '%s\n' "${LINE_USER}" | awk '
+    { gsub(/\r/,"",$0); gsub(/,/,"",$0);
+      for(i=1;i<=NF;i++){
+        if($i=="size="){v=$(i+1); gsub(/[^0-9]/,"",v); print v; exit}
+        if(index($i,"size=")==1){v=$i; sub("size=","",v); gsub(/[^0-9]/,"",v); print v; exit}
+      }
+    }')
+  if [[ -z "${USER_START}" ]] || [[ -z "${USER_SIZE}" ]]; then
+    echo "ERROR: (invalid userfs geometry)"
+    return 2
+  fi
+
+  USER_END=$((USER_START + USER_SIZE - 1))
+  FREE_SECTORS=$((DISK_LAST_SECTOR - USER_END))
+  RESIZE_THRESHOLD=2048
+  if [[ "${FREE_SECTORS}" -le "${RESIZE_THRESHOLD}" ]]; then
+    echo -ne "userfs already maxed, "
+    return 1
+  fi
+
+  USER_PARTNUM=$(/bin/lsblk -n -o PARTN "${USER_DEV}" 2>/dev/null | head -n 1 | tr -d '[:space:]')
+  if [[ -z "${USER_PARTNUM}" ]] || echo "${USER_PARTNUM}" | grep -q '[^0-9]'; then
+    echo "ERROR: (cannot determine userfs part number)"
+    return 2
+  fi
+
+  echo -ne "resize userfs to disk end, "
+  umount -f /userfs 2>/dev/null || true
+
+  if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DISK_DEV}" resizepart "${USER_PARTNUM}" 100% 2>&1); then
+    echo "ERROR: (resizepart userfs failed: ${PARTED_ERR})"
+    mount -o rw /userfs 2>/dev/null || true
+    return 2
+  fi
+  partprobe "${DISK_DEV}" 2>/dev/null || true
+
+  /sbin/e2fsck -pDf "${USER_DEV}" >/dev/null 2>&1
+  E2FSCK_RC=$?
+  if [[ ${E2FSCK_RC} -ge 4 ]]; then
+    echo "ERROR: (e2fsck userfs failed rc=${E2FSCK_RC})"
+    mount -o rw /userfs 2>/dev/null || true
+    return 2
+  fi
+
+  if ! RESIZE2FS_ERR=$(/sbin/resize2fs "${USER_DEV}" 2>&1); then
+    echo "ERROR: (resize2fs userfs failed: ${RESIZE2FS_ERR})"
+    mount -o rw /userfs 2>/dev/null || true
+    return 2
+  fi
+
+  if ! mount -o rw /userfs; then
+    echo "ERROR: (mount /userfs)"
+    return 2
+  fi
+
+  return 0
+}
+
 ######
 # function that is called to resize the rootfs partition
 resize_rootfs()
@@ -542,7 +645,24 @@ fwprepare()
 
       # check if unarchived size is < available space or we abort right away!
       REQSIZE=$(get_gzip_uncompressed_size "${filename}")
-      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]] || [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]]; then
+        echo "ERROR: ${REQSIZE} bytes required!"
+        exit 1
+      fi
+      if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+        echo -ne "insufficient free space, "
+        expand_userfs_to_max
+        RESIZE_RC=$?
+        if [[ ${RESIZE_RC} -eq 0 ]]; then
+          AVAILSPACE=$(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }')
+          echo -ne "${AVAILSPACE} bytes available after userfs resize, "
+        elif [[ ${RESIZE_RC} -eq 1 ]]; then
+          echo -ne "no userfs resize possible, "
+        else
+          exit 1
+        fi
+      fi
+      if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
         exit 1
       fi
