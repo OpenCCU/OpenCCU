@@ -113,6 +113,11 @@ expand_userfs_to_max()
     mount -o rw /userfs 2>/dev/null || true
     return 2
   fi
+
+  # force PARTUUID to 0xDEEDBEEF because parted changes partuuid
+  echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+
+  # use partprobe to query for updated parttable
   partprobe "${DISK_DEV}" 2>/dev/null || true
 
   /sbin/e2fsck -pDf "${USER_DEV}" >/dev/null 2>&1
