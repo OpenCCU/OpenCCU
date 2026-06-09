@@ -45,7 +45,7 @@
 +exit $?
 --- buildroot/package/ca-certificates/ca-certificates.mk.orig
 +++ buildroot/package/ca-certificates/ca-certificates.mk
-@@ -17,30 +17,22 @@
+@@ -18,32 +18,24 @@
  
  define CA_CERTIFICATES_INSTALL_TARGET_CMDS
  	$(INSTALL) -d -m 0755 $(TARGET_DIR)/usr/share/ca-certificates
@@ -85,4 +85,6 @@
 +		$(TARGET_DIR)/etc/init.d/S07ca-certificates
 +endef
 +
- $(eval $(generic-package))
+ define HOST_CA_CERTIFICATES_BUILD_CMDS
+ 	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) clean all
+ endef
