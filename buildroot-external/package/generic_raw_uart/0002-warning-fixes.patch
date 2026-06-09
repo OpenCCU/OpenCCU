@@ -1,0 +1,35 @@
+kernel/generic_raw_uart.c: modification to fix compiler warnings
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- ./kernel/generic_raw_uart.c.orig	2026-06-09 22:40:40.710190017 +0200
++++ ./kernel/generic_raw_uart.c	2026-06-09 22:42:31.418858544 +0200
+@@ -933,7 +933,7 @@
+ }
+ #endif /*PROC_DEBUG*/
+ 
+-int generic_raw_uart_get_gpio_index(struct device *dev, char *con_id, unsigned int idx)
++static int generic_raw_uart_get_gpio_index(struct device *dev, char *con_id, unsigned int idx)
+ {
+   int res;
+   struct gpio_desc *gpiod = gpiod_get_index(dev, con_id, idx, GPIOD_ASIS);
+@@ -948,7 +948,7 @@
+   return res;
+ }
+ 
+-int generic_raw_uart_get_led_gpio_index(struct generic_raw_uart_instance *instance, struct device *dev, enum generic_raw_uart_led led)
++static int generic_raw_uart_get_led_gpio_index(struct generic_raw_uart_instance *instance, struct device *dev, enum generic_raw_uart_led led)
+ {
+   if (instance->driver->get_led_gpio_index == 0)
+   {
+@@ -1084,7 +1084,7 @@
+ }
+ #endif
+ 
+-int generic_raw_uart_probe_rtc_device(struct device *dev, bool *rtc_detected)
++static int generic_raw_uart_probe_rtc_device(struct device *dev, bool *rtc_detected)
+ {
+   int err = 0;
+ 
