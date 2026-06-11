@@ -19,8 +19,6 @@ QEMU_GUEST_AGENT_DEPENDENCIES = \
 	host-pkgconf \
 	host-python3 \
 	host-python-distlib \
-	host-python-setuptools \
-	host-python-wheel \
 	libglib2 \
 	zlib
 
