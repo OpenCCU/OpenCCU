@@ -255,11 +255,8 @@
    StartPage.showUpdate();
    if (forceUpdate) {
        StartPage.showCurrentFirmware();
-@@ -402,9 +401,9 @@
-       jQuery("#favSelector").show();
-       jQuery("#favView").show();
-       StartPage.showUpdate();
--      StartPage.showAddonUpdate();
+@@ -405,6 +404,7 @@
+       StartPage.showAddonUpdate();
        StartPage.showCurrentFirmware();
        StartPage.showAllDeviceFirmware();
 +      StartPage.showDutyCycle();
