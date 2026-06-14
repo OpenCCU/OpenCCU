@@ -62,14 +62,34 @@ log() {
 # whitespace tolerant to also catch reverse-proxied or differently formatted
 # answers.
 checkCCU() {
-  _res=$(/usr/bin/curl -k -s --max-time 15 "${1}/api/homematic.cgi" \
-           --data-raw '{"version": "1.1", "method": "ReGa.isPresent", "params": {}}' 2>/dev/null)
-  [[ $? -ne 0 ]] && return 1
+  if ! _res=$(/usr/bin/curl -k -s --max-time 15 "${1}/api/homematic.cgi" \
+              --data-raw '{"version": "1.1", "method": "ReGa.isPresent", "params": {}}' 2>/dev/null); then
+    return 1
+  fi
   _res=$(echo "${_res}" | tr -d ' \t\r\n')
   case "${_res}" in
     *'"result":true'*) return 0 ;;
   esac
   return 1
+}
+
+# hasLocalGateRules <iptables -S INPUT output>
+# Returns 0 if INPUT contains the expected WebUI protection rules
+# (--dport 80/443 -> OPENCCU_LOCAL) and no conflicting explicit SSH open rule.
+hasLocalGateRules() {
+  _rules="${1}"
+
+  # WebUI ports must explicitly go through the local-only gate.
+  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( |$).* -j OPENCCU_LOCAL( |$)' || return 1
+  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( |$).* -j OPENCCU_LOCAL( |$)' || return 1
+
+  # SSH is optional; if it is explicitly opened, it must not bypass the gate.
+  _ssh_rules=$(echo "${_rules}" | /bin/grep -E -- '^-A INPUT( .*)?-p tcp( .*)?--dport 22( |$)')
+  if [[ -n "${_ssh_rules}" ]]; then
+    echo "${_ssh_rules}" | /bin/grep -Eq -- '-j (OPENCCU_LOCAL|DROP)( |$)' || return 1
+  fi
+
+  return 0
 }
 
 # exit in HMLGW mode immediately
@@ -114,23 +134,24 @@ fi
 ########################################################################
 if [[ ! -e "${OVERRIDE_FILE}" ]]; then
 
-  # gate_state: active   = OPENCCU_LOCAL gate chain is referenced in INPUT
-  #             inactive = INPUT could be queried but the gate is missing
+  # gate_state: active   = expected protected INPUT rules are present
+  #             inactive = INPUT could be queried but expected protection is missing
   #             unknown  = iptables could not be queried (e.g. inside an
   #                        unprivileged container) - not verifiable
   gate_state="unknown"
-  if [[ -x /usr/sbin/iptables ]] && fw_input=$(/usr/sbin/iptables -nL INPUT 2>/dev/null); then
-    case "${fw_input}" in
-      *OPENCCU_LOCAL*) gate_state="active" ;;
-      *)               gate_state="inactive" ;;
-    esac
-    # if IPv6 is available the gate must be active there as well
+  if [[ -x /usr/sbin/iptables ]] && fw_input=$(/usr/sbin/iptables -S INPUT 2>/dev/null); then
+    if hasLocalGateRules "${fw_input}"; then
+      gate_state="active"
+    else
+      gate_state="inactive"
+    fi
+
+    # if IPv6 is available the same protection must be verifiable there as well
     if [[ "${gate_state}" == "active" ]] && [[ -e /proc/net/if_inet6 ]] && [[ -x /usr/sbin/ip6tables ]]; then
-      if fw_input6=$(/usr/sbin/ip6tables -nL INPUT 2>/dev/null); then
-        case "${fw_input6}" in
-          *OPENCCU_LOCAL*) ;;
-          *)               gate_state="inactive" ;;
-        esac
+      if fw_input6=$(/usr/sbin/ip6tables -S INPUT 2>/dev/null); then
+        hasLocalGateRules "${fw_input6}" || gate_state="inactive"
+      else
+        gate_state="unknown"
       fi
     fi
   fi
