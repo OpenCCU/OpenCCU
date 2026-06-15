@@ -24,7 +24,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.21"
+VERSION="3.22"
 LOGFILE="/tmp/install-proxmox.log"
 LINE=
 
@@ -513,6 +513,9 @@ EOF
   fi
   if ! pkg_installed gpg; then
     apt install -y gpg
+  fi
+  if ! pkg_installed python3-requests; then
+    apt install -y python3-requests
   fi
 
   # use gpg to dearmor the pivccu public key
