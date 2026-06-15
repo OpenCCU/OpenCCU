@@ -442,6 +442,16 @@ fi
 # check that this script is run as root/sudo
 check_sudo
 
+info "Checking/Installing host package dependencies..."
+
+# check that all necessary host packages are installed
+if ! pkg_installed wget; then
+  apt install -y wget
+fi
+if ! pkg_installed python3-requests; then
+  apt install -y python3-requests
+fi
+
 # PVE platform
 PLATFORM=$(uname -m)
 
@@ -493,9 +503,6 @@ EOF
   info "Checking/Installing host package dependencies..."
 
   # check that all necessary host packages are installed
-  if ! pkg_installed wget; then
-    apt install -y wget
-  fi
   if ! pkg_installed ca-certificates; then
     apt install -y ca-certificates
   fi
@@ -513,9 +520,6 @@ EOF
   fi
   if ! pkg_installed gpg; then
     apt install -y gpg
-  fi
-  if ! pkg_installed python3-requests; then
-    apt install -y python3-requests
   fi
 
   # use gpg to dearmor the pivccu public key
