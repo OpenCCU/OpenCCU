@@ -2061,7 +2061,9 @@ CheckAndCreateSysVarEnergyCounter = function(chn) {
 
       if (chnLabel.indexOf('HmIP-ESI') !== -1) {
         if (chn.index != 1) {
-          CreateSysVarEnergyCounterScriptESI(chn);
+          if (chnLabel != "HmIP-ESI-IND") {
+            CreateSysVarEnergyCounterScriptESI(chn);
+          }
           CreateSysVarGasCounterScriptESI(chn);
           CreateMetaEnergyCounter(chn);
           storeEnergyValuesAtMidnight(chn);

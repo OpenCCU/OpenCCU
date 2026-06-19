@@ -11,7 +11,7 @@
  
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1688,16 +1688,20 @@
+@@ -1721,16 +1721,20 @@
                      tbWrite = false;
                    }
  
@@ -35,7 +35,7 @@
                    }
                    else
                    {
-@@ -1776,47 +1780,41 @@
+@@ -1809,47 +1813,41 @@
  
   integer iValue = sValue.ToInteger() ; 
   
@@ -149,7 +149,7 @@
      "aqiGood" : "Gut",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.label.js
-@@ -116,7 +116,7 @@
+@@ -117,7 +117,7 @@
      "lblGeneralSettingsConditionNumber" : "Zustandszahl",
      "lblGeneralSettingsCurrent" : "Strom",
      "lblGeneralSettingsGas" : "Gas",
@@ -158,7 +158,7 @@
      "lblGenericLinkPartner" : "Verkn%FCpfungspartner",
      "lblGenericUnit" : "Einheit",
      "lblGetEnergyCounterToday" : "Bezug heute:",
-@@ -149,8 +149,8 @@
+@@ -150,8 +150,8 @@
      "lblInfoLevelReal" : "Realer Wert",
      "lblInfoLevelRealBrightness" : "Reale Helligkeit",
      "lblInfoStatusControlCurrent" : "Strom",
@@ -169,7 +169,7 @@
      "lblInfoStatusControlFrequency" : "Netzfrequenz",
      "lblInfoStatusControlGas" : "Verbrauch",
      "lblInfoStatusControlGasFlow" : "Gasdurchfluss",
-@@ -352,4 +352,4 @@
+@@ -355,4 +355,4 @@
  
      "noMOreKeys" : ""
    }
@@ -214,7 +214,7 @@
      "btnScanDevices" :  "Search devices",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.label.js
-@@ -62,7 +62,7 @@
+@@ -63,7 +63,7 @@
      "lblCurrentFirmwareVersionNotKnown": "unknown",
      "lblCurrentOperatingVoltage": "Actual operating voltage",
      "lblCurrentPowerConsumption": "Actual current consumption",
@@ -223,7 +223,7 @@
      "lblCyanShort" : "Cyan short",
      "lblDataInputPropertie" : "Data input settings",
      "lblDelayExternalArming" : "External alarm activated with delay",
-@@ -149,8 +149,8 @@
+@@ -150,8 +150,8 @@
      "lblInfoLevelReal" : "Actual value",
      "lblInfoLevelRealBrightness" : "Actual brightness",
      "lblInfoStatusControlCurrent" : "Current",
@@ -234,7 +234,7 @@
      "lblInfoStatusControlFrequency" : "Frequency",
      "lblInfoStatusControlGas" : "Consumption",
      "lblInfoStatusControlGasFlow" : "Gas flow",
-@@ -352,4 +352,4 @@
+@@ -355,4 +355,4 @@
  
      "noMOreKeys" : ""
    }

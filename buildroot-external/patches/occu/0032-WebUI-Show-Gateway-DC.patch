@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -26074,6 +26074,8 @@
+@@ -26206,6 +26206,8 @@
    m_gatewayTableKeyHeader: null,
    m_gatewayTableIPHeader: null,
    m_gatewayTableStateHeader: null,
@@ -9,7 +9,7 @@
    m_gatewayTableActionHeader: null,
    m_gatewayTableBody: null,
    m_optionsButtonBar: null,
-@@ -26186,7 +26188,21 @@
+@@ -26318,7 +26320,21 @@
      //this.m_gatewayTableStateHeader.appendChild(document.createTextNode("Status"));
      this.m_gatewayTableStateHeader.appendChild(document.createTextNode(translateKey("thState")));
      this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableStateHeader);
@@ -32,7 +32,7 @@
      /* Spaltenüberschrift Verbunden (Tabelle für BidCoS-RF Gateways */
      this.m_gatewayTableActionHeader = document.createElement("th");
      this.m_gatewayTableActionHeader.className = "bidcosrf_tableheader";
-@@ -26506,6 +26522,16 @@
+@@ -26638,6 +26654,16 @@
  				    	 lgw = rfGateways[j];
  				    	}
  				    }
@@ -49,7 +49,7 @@
  		        	if(lgw) 
  		        	{
  					  if(lgwStatus.connstat == "NO_ERROR") {
-@@ -26539,6 +26565,25 @@
+@@ -26671,6 +26697,25 @@
  		  {
  			  var text = "";
  	   	      var status = rfGateways[i].determineState(gatewayStatus);
@@ -75,7 +75,7 @@
  		      if (status)
  		      {
  		        text = (status.isConnected) ? translateKey("lanGatewayLblConnected") : translateKey("lanGatewayLblNotConnected");
-@@ -26739,6 +26784,8 @@
+@@ -26871,6 +26916,8 @@
    m_keyLabel: null,
    m_ipLabel: null,
    m_stateLabel: null,
@@ -84,7 +84,7 @@
    m_actionCell: null,
    m_deleteButton: null,
    m_onDeleteHandler: null,
-@@ -26791,6 +26838,16 @@
+@@ -26923,6 +26970,16 @@
      this.m_stateLabel.className = "bidcosrf_tablecell";
      this.m_element.appendChild(this.m_stateLabel);
      
@@ -101,7 +101,7 @@
      /* Aktion */
      this.m_actionCell = document.createElement("td");
      this.m_actionCell.className = "bidcosrf_actioncell";
-@@ -26930,6 +26987,18 @@
+@@ -27062,6 +27119,18 @@
      return this;
    },
    

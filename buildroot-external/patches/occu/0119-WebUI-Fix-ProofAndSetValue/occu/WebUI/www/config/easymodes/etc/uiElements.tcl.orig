@@ -234,6 +234,10 @@ proc getCondTXThresholdUnit {devType chn} {
           if {$chn == "5"} {return "°C"}
           if {$chn == "6"} {return "%"}
         }
+        hmip-wss -
+        hmip-wss-gb {
+          return \${unitLiters}
+        }
       default {return ""}
     }
 }

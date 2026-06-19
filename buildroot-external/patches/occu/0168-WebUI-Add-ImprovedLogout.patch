@@ -33,7 +33,7 @@
      "menuStartPage" : "Home page",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -33481,11 +33481,27 @@
+@@ -33606,11 +33606,27 @@
  
  
  logout = function() {

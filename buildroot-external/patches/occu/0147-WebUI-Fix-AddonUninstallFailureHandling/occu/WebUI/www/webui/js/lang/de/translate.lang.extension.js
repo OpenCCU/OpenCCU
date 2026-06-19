@@ -260,7 +260,7 @@ jQuery.extend(true,langJSON, {
     "replaceDeviceDlgConfirmContentRow1b" : ":",
     "replaceDeviceDlgConfirmContentRow1c" : "<br/><br/>",
     "replaceDeviceDlgConfirmContentRow2a" : "Die Ger%E4tetypen sind identisch und k%F6nnen problemlos getauscht werden.",
-    "replaceDeviceDlgConfirmContentRow2b" : "Die Ger%E4tetypen sind <b>nicht<b/> identisch, k%F6nnen aber problemlos getauscht werden.<br/><br/>",
+    "replaceDeviceDlgConfirmContentRow2b" : "Die Ger%E4tetypen sind <b>nicht</b> identisch, k%F6nnen aber problemlos getauscht werden.<br/><br/>",
     "replaceDeviceDlgConfirmContentRow3a" : "Das Ger%E4t mit der Adresse:",
     "replaceDeviceDlgConfirmContentRow3b" : " wird aus dem System gel%F6scht.",
     "replaceDeviceDlgConfirmFooter" : "<br/><br/>M%F6chten Sie die Ger%E4te tauschen?",
@@ -892,7 +892,7 @@ jQuery.extend(true,langJSON, {
       "<li>Vollzugriff: Remote und lokaler Zugriff erlaubt</li>" +
       "<li>Eingeschr%E4nkt: Nur lokaler Zugriff erlaubt</li>" +
       "<li>Kein Zugriff: Zugriff nicht gestattet</li>" +
-    "<ul>",
+    "</ul>",
     "dialogSettingsFirewallLblHintIPAddresses" : "Sie k%F6nnen den Zugriff f%FCr einzelne IP-Adressen oder ganze Adressbereiche sowohl f%FCr IPv4 als auch f%FCr IPv6 freigeben. Geben Sie die Adressen durch ein ';' getrennt ein.",
     "dialogSettingsFirewallLblHintIPAddressesWithoutIPv6" : "Sie k%F6nnen den Zugriff f%FCr einzelne IP-Adressen (z. B. 192.168.0.1) oder ganze Adressbereiche (z. B. 192.168.0.0/16) f%FCr IPv4 freigeben. Geben Sie die Adressen durch ein ';' getrennt ein.",
     "dglUserNewFwSettingsTitle" : "Bitte beachten!",
@@ -1002,7 +1002,7 @@ jQuery.extend(true,langJSON, {
     "apMigrationErrorOrTimeout" : "Bei dem Firmware-Update ist ein Fehler aufgetreten. Bitte aktualisieren Sie die Ansicht und versuchen Sie es erneut.",
     "apMigrationUpdateSuccessfulAddition" : "Sie k%F6nnen den Access Point jetzt %FCber &ldquo;Ger%E4te anlernen&rdquo; anlernen.",
     "apMigrationUpdateSuccessfulAdditionMigrationMode" : "Der Access Point befindet sich jetzt im Posteingang.",
-    "hintDeviceDoesNotSupportAction" : "Die aktuell installierte GerÃ¤te-Firmware unterstÃ¼tzt diese Funktion nicht.",
+    "hintDeviceDoesNotSupportAction" : "Die aktuell installierte Ger%E4te-Firmware unterst%FCtzt diese Funktion nicht.",
     "noUpdateNeeded" : "Kein Update erforderlich.",
     "notCompatible" : "Nicht kompatibel",
     "aqiGood" : "Gut",

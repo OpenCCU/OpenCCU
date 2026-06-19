@@ -66,7 +66,7 @@
      "chType_OPTICAL_SIGNAL_RECEIVERB" : "Statusmitteilung Farbsignal",
      "chType_PASSAGE_DETECTOR_COUNTER_TRANSMITTER" : "Durchgangsz%E4hler",
      "chType_PASSAGE_DETECTOR_DIRECTION_TRANSMITTER_LR" : "Durchgangserkennung<br/>Links nach Rechts",
-@@ -189,7 +240,7 @@
+@@ -191,7 +242,7 @@
      "SENSOR_WINDOW" : "Homematic IP Fenster Zustandserkennung",
      "SWITCH_ACTUATOR" : "Homematic IP Schaltaktor",
      "WALLMOUNTED_THERMOSTAT" : "Homematic IP Wandthermostat",

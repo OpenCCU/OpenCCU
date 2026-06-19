@@ -169,6 +169,10 @@ jQuery.extend(true, langJSON, {
     "helpColorBehaviour_8" : "Das eingestellte Verhalten wird nur f%FCr Kanal 8 ber%FCcksichtigt!",
     "helpColorBehaviour_12" : "Das eingestellte Verhalten wird nur f%FCr Kanal 12 ber%FCcksichtigt!",
 
+    "helpConditionWaterFlow" :
+      "Bestimmen Sie hier die %D6ffnungsdauer des Bew%E4sserungsaktors. Sie k%F6nnen zwischen der Zeitdauer und der Durchflussmenge w%E4hlen.<br/><br/>" +
+      "Wenn die Zeitdauer und die Durchflussmenge angegeben sind, wird gestoppt, sobald das Erste von beiden erreicht ist.",
+
     "END" : ""
   }
 });

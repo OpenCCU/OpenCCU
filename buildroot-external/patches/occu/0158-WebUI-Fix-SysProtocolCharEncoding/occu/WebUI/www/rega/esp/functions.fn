@@ -420,10 +420,23 @@ function ::showHideHmIPChannel() {
         bShowChannel = true;
       }
 
-      if ((oDevHssType.Find("HmIP-WGS") != -1 ) || (oDevHssType.Find("HmIP-WGT") != -1)) {
+      if ((oDevHssType.Find("-WGS") != -1 ) || (oDevHssType.Find("-WGT") != -1)) {
         bShowChannel = true;
       }
 
+      if ((oDevHssType.Find("HmIP-FAL") != -1) || (oDevHssType.Find("HmIP-eTRV") != -1)) {
+        string sEnum = chn.DPs().EnumEnabledVisibleIDs();
+        string s;
+
+        foreach( s, sEnum ) {
+          object oDP = dom.GetObject( s );
+          if( oDP ) {
+            if (oDP.HSSID() == "HEATING_COOLING") {
+              bShowChannel = true;
+            }
+          }
+        }
+      }
       return;
     }
 
@@ -547,7 +560,8 @@ function ::conditionIsParameterVisible() {
     excludeParams = excludeParams#"TIME_OF_OPERATION,TIME_OF_OPERATION_STATUS,COLOR_TEMPERATURE_STATUS,HUE_STATUS,SATURATION_STATUS,DIM2WARM_STATE,HUMAN_CENTRIC_LIGHT_STATE,INCLUSION_UNSUPPORTED_DEVICE,";
     excludeParams = excludeParams#"ERROR_CONTROL_GEAR_FAILURE,ERROR_LAMP_FAILURE,ERROR_LIMIT,ERROR_DALI_BUS,GAS_FLOW_STATUS,GAS_VOLUME_STATUS,POWER_STATUS,ENERGY_COUNTER_STATUS,SELF_CALIBRATION_RESULT,";
     excludeParams = excludeParams#"ENERGY_COUNTER_FEED_IN_OVERFLOW,ERROR_MOUNTING_MODULE,WATER_FLOW_STATUS,WATER_VOLUME_OVERFLOW,WATER_VOLUME_SINCE_OPEN_OVERFLOW,";
-    excludeParams = excludeParams#"SOIL_MOISTURE_STATUS,SOIL_MOISTURE_RAW_VALUE_STATUS,SOIL_TEMPERATURE_STATUS,LOCK_TEACH_IN_STATE";
+    excludeParams = excludeParams#"SOIL_MOISTURE_STATUS,SOIL_MOISTURE_RAW_VALUE_STATUS,SOIL_TEMPERATURE_STATUS,LOCK_TEACH_IN_STATE,DISTANCE_STATUS,REFERENCE_HEIGHT,";
+    excludeParams = excludeParams#"BOOTED,MANUAL_SELF_CALIBRATION_BOTTOM_POS_SET,MANUAL_SELF_CALIBRATION_TOP_POS_SET,MANUAL_SELF_CALIBRATION_LEVEL,STATE_STATUS";
 
     if ((oCC.HssType().Find("DIMMER_TRANSMITTER") != -1)
     || (oCC.HssType().Find("DIMMER_VIRTUAL_RECEIVER")!= -1)
@@ -758,6 +772,19 @@ function ::conditionIsParameterVisible() {
     }
   }
 
+  if (oCC.HssType() == "BACKLIGHTING_RECEIVER") {
+    if (oDP.HSSID().Find("ACTIVITY_STATE") != -1) {
+      showChannelParam = false;
+      return;
+    }
+  }
+
+  if (oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
+    if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
+      showChannelParam = false;
+    }
+  }
+
   if ( sInterface == hmIPVirtualDevIdentifier ) {
     excludeParams = "BOOST_TIME,CONTROL_DIFFERENTIAL_TEMPERATURE,LEVEL_STATUS,OPERATING_VOLTAGE,PARTY_,PARTY_MODE,PROCESS,QUICK_VETO_TIME,";
     excludeParams = excludeParams#"RSSI_DEVICE,RSSI_PEER,SECTION,SMOKE_DETECTOR_TEST_RESULT=NONE,VALVE_STATE";
@@ -954,9 +981,20 @@ function ::destinationIsParameterVisible() {
     }
   }
 
+  if (oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) {
+    if (
+    (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
+    || (oDP.HSSID().Find("DURATION_VALUE") != -1)
+    || (oDP.HSSID().Find("DURATION_UNIT") != -1)
+    ) {
+      showChannelParam = false;
+    }
+  }
+
   !HmIP-DLP
   ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
+    ! TODO - refactoring necessary
     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
     if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
@@ -1175,6 +1213,29 @@ function ::getSpecialTranslationPrgCond() {
       }
     }
   }
+
+
+  if (oCC.HssType().Find("ENERGIE_METER_TRANSMITTER") != -1) {
+    if ((oCC.Label() == "HmIP-ESI-IND")) {
+      object oDevice = dom.GetObject(oCC.Device());
+      integer devMode = oDevice.MetaData("modeGasWater");
+
+      if (sShortKey.Find("GAS_FLOW") != -1) {
+        sValue = "${stringTablePowerMeterGasFlow}";
+        if (devMode == 1) {
+          sValue = "${stringTablePowerMeterWaterFlow}";
+        }
+      }
+
+      if (sShortKey.Find("GAS_VOLUME") != -1) {
+        sValue = "${stringTablePowerMeterGasVolume}";
+        if (devMode == 1) {
+          sValue = "${stringTablePowerMeterWaterVolume}";
+        }
+      }
+    }
+  }
+
 
   return;
 }

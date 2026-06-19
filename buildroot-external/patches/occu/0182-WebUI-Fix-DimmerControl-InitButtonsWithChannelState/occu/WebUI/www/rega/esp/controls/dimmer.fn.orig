@@ -18,7 +18,7 @@ function ::CreateDimmingActuator()
   object oIface = dom.GetObject(iFaceID);
   string sInterface = oIface.Name();
 
-  if ((cObj.Label().Find("HmIP-WGS") != -1) || (cObj.Label().Find("HmIP-WGT") != -1)) {
+  if ((cObj.Label().Find("-WGS") != -1) || (cObj.Label().Find("-WGT") != -1)) {
     object oOnTime = cObj.DPByControl("BACKLIGHTING_RECEIVER.ON_TIME");
     object oLevelA = cObj.DPByControl("BACKLIGHTING_RECEIVER.LEVEL");
     isBacklightingReceiver = true;

@@ -164,6 +164,10 @@ jQuery.extend(true, langJSON, {
     "helpColorBehaviour_8" : "The selected behaviour is only taken into account for channel 8!",
     "helpColorBehaviour_12" : "The selected behaviour is only taken into account for channel 12!",
 
+    "helpConditionWaterFlow" :
+      "en* Bestimmen Sie hier die %D6ffnungsdauer des Bew%E4sserungsaktors. Sie k%F6nnen zwischen der Zeitdauer und der Durchflussmenge w%E4hlen.<br/><br/>" +
+      "Wenn die Zeitdauer und die Durchflussmenge angegeben sind, wird gestoppt, sobald das Erste von beiden erreicht ist.",
+
     "END" : ""
   }
 });

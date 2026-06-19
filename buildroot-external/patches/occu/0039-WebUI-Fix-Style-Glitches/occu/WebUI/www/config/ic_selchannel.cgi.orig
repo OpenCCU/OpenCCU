@@ -726,7 +726,7 @@ proc showHmIPChannel {devType direction address chType} {
   # Also don't show the channel COND_SWITCH_TRANSMITTER for PSM's with a fw. < 2.x.y (see TWIST-1648)
   if {(
     ($devType == "HMIP-PS")
-    || (([string equal -nocase -length 8 $devType "HMIP-PSM"] == 1) && ($major < 2))
+    || ((([string equal -nocase -length 8 $devType "HMIP-PSM"] == 1) && ($major < 2)) && (($devType != "HMIP-PSMCO") && ($devType != "ELV-SH-PSMCI")))
     || (([string equal -nocase -length 8 $devType "HMIP-PSM"] == 1) && ($chType == "KEY_TRANSCEIVER"))
     || ([string equal -nocase -length 8 $devType "HMIP-PDT"] == 1)
     || ([string equal -nocase -length 9 $devType "HMIP-PCBS"] == 1)
@@ -909,7 +909,7 @@ proc showHmIPChannel {devType direction address chType} {
     }
   }
 
-  if {(($devType == "HMIP-WGS") || ($devType == "HMIP-WGS-A")) && ($chType == "KEY_TRANSCEIVER")} {
+  if {(($devType == "HMIP-WGS") || ($devType == "HMIP-WGS-A") || ($devType == "HMIPW-WGS") || ($devType == "HMIPW-WGS-A")) && ($chType == "KEY_TRANSCEIVER")} {
     # Determine the selected layout mode of the device
     set devAddress [lindex [split $address ":"] 0]
     set url $iface_url(HmIP-RF)
@@ -922,6 +922,11 @@ proc showHmIPChannel {devType direction address chType} {
     if {($mode == 1) || ($mode == 2)} {
       if {($ch == 3) || ($ch == 4)} {return 0} ;# hide chn 3 and 4
     }
+  }
+
+  if {$chType == "KWL_CONTROLLER_TRANSMITTER"} {
+    # hide the channel
+    return 0
   }
 
   # Hide the virtual channel 2 and 3 of HmIP devices when the expert mode is not activated.

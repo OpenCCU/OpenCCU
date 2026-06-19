@@ -67,7 +67,7 @@
    <\/div>\n
  \n
    <div id=\"ChannelConfigDialogContentMain\">\n
-@@ -15471,7 +15485,43 @@
+@@ -15595,7 +15609,43 @@
        _this_.pollTest();
      });
    },

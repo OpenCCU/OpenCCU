@@ -117,7 +117,7 @@
      "hintProblemSensorIdent" : "Bei der Erkennung des Sensors ist ein Fehler aufgetreten.",
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.label.js
-@@ -22,7 +22,6 @@
+@@ -23,7 +23,6 @@
      "lblBGColorBR" : "Hintergrund-<br/>Farbe",
      "lblBehaviour" : "Verhalten",
      "lblBellButton" : "Klingeltaster",
@@ -140,7 +140,7 @@
      "hintProblemSensorIdent" : "An error has occurred when detecting the sensor.",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.label.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.label.js
-@@ -22,7 +22,6 @@
+@@ -23,7 +23,6 @@
      "lblBGColorBR" : "Background-<br/>Colour",
      "lblBehaviour" : "Response",
      "lblBellButton" : "Bell button",
@@ -150,7 +150,7 @@
      "lblBreak" : "Pause",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -25490,8 +25490,6 @@
+@@ -25615,8 +25615,6 @@
  StartPage = Singleton.create(Page, {
    MAINMENU_ID: "MAINMENU_STARTPAGE",
    downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
@@ -159,7 +159,7 @@
    downloadURL : "",
    prevDownloadURL : "",
    devList: [],
-@@ -25535,11 +25533,7 @@
+@@ -25660,11 +25658,7 @@
  
      this.serial = homematic("CCU.getSerial");
  
@@ -172,7 +172,7 @@
  
      if (this.prevDownloadURL != this.downloadURL) {
        this.devList = [];
-@@ -29735,7 +29729,6 @@
+@@ -29860,7 +29854,6 @@
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
      this.m_product = "HM-RASPBERRYMATIC";
      this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
@@ -180,7 +180,7 @@
  
      this.serial = homematic("CCU.getSerial");
      this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
-@@ -29803,19 +29796,13 @@
+@@ -29928,19 +29921,13 @@
    },
  
    getListOfAvailableFirmware: function(callback) {
@@ -201,7 +201,7 @@
        $("body").appendChild(script);
        homematic.com.callback = callback;
    },
-@@ -37003,22 +36990,6 @@
+@@ -37140,22 +37127,6 @@
    dlg.resetHeight();
  };
  

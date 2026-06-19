@@ -11,7 +11,7 @@
    }
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -801,7 +801,7 @@
+@@ -812,7 +812,7 @@
                Call("/esp/controls/hap.fn::CreateHAP()");
              }
  
@@ -122,7 +122,7 @@
 +});
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -4498,6 +4498,12 @@
+@@ -4594,6 +4594,12 @@
  DEV_PATHS["RPI-RF-MOD"]["50"] = "/config/img/devices/50/CCU3_thumb.png";
  DEV_PATHS["RPI-RF-MOD"]["250"] = "/config/img/devices/250/CCU3.png";
  DEV_HIGHLIGHT["RPI-RF-MOD"] = new Object();
@@ -135,7 +135,7 @@
  DEV_LIST.push('HM-LC-Dim1T-CV-2');
  DEV_DESCRIPTION["HM-LC-Dim1T-CV-2"] = "HM-LC-Dim1T-CV";
  DEV_PATHS["HM-LC-Dim1T-CV-2"] = new Object();
-@@ -11417,7 +11423,8 @@
+@@ -11535,7 +11541,8 @@
      "HM-Sec-SD-Team",
      "HM-Sec-SD-2-Team",
      "HmIP-CCU3",

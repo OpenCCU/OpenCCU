@@ -156,10 +156,19 @@ proc action_cert_upload {} {
   file rename -force -- [lindex $cert_file 0] "/var/server.pem"
   
   set filename [open "/var/server.pem" r]
-  gets $filename line
+  
+  set beginPrivateKeyFound 0
+  set beginCertificateFound 0
+
+  while { [gets $filename line] >= 0 } {
+    if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
+      set beginPrivateKeyFound 1
+    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] == 1 } {
+      set beginCertificateFound 1
+    }
+  }
   close $filename
-  #puts $line;
-  if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
+  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
     file copy -force -- "/var/server.pem" "/etc/config/server.pem"
     file delete "/var/server.pem"
     
@@ -173,12 +182,12 @@ proc action_cert_upload {} {
     }
   } else {
     cgi_javascript {
-    puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-    puts {
-      parent.top.dlgPopup.hide();
-      parent.top.dlgPopup.setWidth(600);
-      parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_failed");
-    }
+      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
+      puts {
+        parent.top.dlgPopup.hide();
+        parent.top.dlgPopup.setWidth(600);
+        parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_failed");
+      }
     }
   }
 }

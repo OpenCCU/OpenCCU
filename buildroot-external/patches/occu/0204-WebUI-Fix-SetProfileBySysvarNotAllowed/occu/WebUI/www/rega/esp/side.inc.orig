@@ -33,6 +33,8 @@
   string wgd = "-WGD";
   string wgd_pl = "-WGD-PL";
   string hmip_wgs = "HmIP-WGS";
+  string hmipw_wgs = "HmIPW-WGS";
+  string hmipw_wgt = "HmIPW-WGT";
   string udi_pb2 = "-UDI-PB2";
   string udi_smi55 = "-UDI-SMI55";
 
@@ -748,10 +750,10 @@
              if ((i_backLightingReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
 
                if (iV.Find("L=") == -1) {
-                 if ((oCH.Label().Find(hmip_mp3p) == -1) && (oCH.Label().Find(hmip_bsl) == -1) && (oCH.Label().Find(hmip_wgs) == -1)) {
+                 if ((oCH.Label().Find(hmip_mp3p) == -1) && (oCH.Label().Find(hmip_bsl) == -1) && (oCH.Label().Find(hmip_wgs) == -1) && (oCH.Label().Find(hmipw_wgs) == -1) && (oCH.Label().Find(hmipw_wgt) == -1)) {
                    iV = "L=100,DV=31,DU=2,RTV=0,RTU=0,C=7,CB=1,RTTOV=0,RTTOU=3";
                  } else {
-                   if (oCH.Label().Find(hmip_wgs) == -1) {
+                   if ((oCH.Label().Find(hmip_wgs) == -1) && (oCH.Label().Find(hmipw_wgs) == -1) && (oCH.Label().Find(hmipw_wgt) == -1)) {
                     iV = "L=100,DV=31,DU=2,RTV=0, RTU=1,C=7";
                    } else {
                      iV = "L=100,OT=0";

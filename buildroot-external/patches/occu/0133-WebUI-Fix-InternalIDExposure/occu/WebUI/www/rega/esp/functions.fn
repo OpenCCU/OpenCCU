@@ -419,10 +419,23 @@ function ::showHideHmIPChannel() {
         bShowChannel = true;
       }
 
-      if ((oDevHssType.Find("HmIP-WGS") != -1 ) || (oDevHssType.Find("HmIP-WGT") != -1)) {
+      if ((oDevHssType.Find("-WGS") != -1 ) || (oDevHssType.Find("-WGT") != -1)) {
         bShowChannel = true;
       }
 
+      if ((oDevHssType.Find("HmIP-FAL") != -1) || (oDevHssType.Find("HmIP-eTRV") != -1)) {
+        string sEnum = chn.DPs().EnumEnabledVisibleIDs();
+        string s;
+
+        foreach( s, sEnum ) {
+          object oDP = dom.GetObject( s );
+          if( oDP ) {
+            if (oDP.HSSID() == "HEATING_COOLING") {
+              bShowChannel = true;
+            }
+          }
+        }
+      }
       return;
     }
 
@@ -758,6 +771,19 @@ function ::conditionIsParameterVisible() {
     }
   }
 
+  if (oCC.HssType() == "BACKLIGHTING_RECEIVER") {
+    if (oDP.HSSID().Find("ACTIVITY_STATE") != -1) {
+      showChannelParam = false;
+      return;
+    }
+  }
+
+  if (oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
+    if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
+      showChannelParam = false;
+    }
+  }
+
   if ( sInterface == hmIPVirtualDevIdentifier ) {
     excludeParams = "BOOST_TIME,CONTROL_DIFFERENTIAL_TEMPERATURE,LEVEL_STATUS,OPERATING_VOLTAGE,PARTY_,PARTY_MODE,PROCESS,QUICK_VETO_TIME,";
     excludeParams = excludeParams#"RSSI_DEVICE,RSSI_PEER,SECTION,SMOKE_DETECTOR_TEST_RESULT=NONE,VALVE_STATE";
@@ -950,6 +976,16 @@ function ::destinationIsParameterVisible() {
     || (oCH.Label().Find("HmIP-FSI6") != -1)
     )) {
     if ( (oDP.HSSID().Find("COMBINED_PARAMETER") == -1)) {
+      showChannelParam = false;
+    }
+  }
+
+  if (oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) {
+    if (
+    (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
+    || (oDP.HSSID().Find("DURATION_VALUE") != -1)
+    || (oDP.HSSID().Find("DURATION_UNIT") != -1)
+    ) {
       showChannelParam = false;
     }
   }
@@ -1176,6 +1212,29 @@ function ::getSpecialTranslationPrgCond() {
       }
     }
   }
+
+
+  if (oCC.HssType().Find("ENERGIE_METER_TRANSMITTER") != -1) {
+    if ((oCC.Label() == "HmIP-ESI-IND")) {
+      object oDevice = dom.GetObject(oCC.Device());
+      integer devMode = oDevice.MetaData("modeGasWater");
+
+      if (sShortKey.Find("GAS_FLOW") != -1) {
+        sValue = "${stringTablePowerMeterGasFlow}";
+        if (devMode == 1) {
+          sValue = "${stringTablePowerMeterWaterFlow}";
+        }
+      }
+
+      if (sShortKey.Find("GAS_VOLUME") != -1) {
+        sValue = "${stringTablePowerMeterGasVolume}";
+        if (devMode == 1) {
+          sValue = "${stringTablePowerMeterWaterVolume}";
+        }
+      }
+    }
+  }
+
 
   return;
 }

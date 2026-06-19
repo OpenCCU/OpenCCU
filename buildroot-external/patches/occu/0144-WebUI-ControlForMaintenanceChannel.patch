@@ -376,7 +376,7 @@
 + }
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
-@@ -1329,6 +1329,12 @@
+@@ -1362,6 +1362,12 @@
          }
        }
      }
@@ -391,7 +391,7 @@
        WriteLine( '</tr></table><table cellspacing="0" class="ctrlTbl CLASS02510" border="0" ><tr>' );
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.option.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.option.js
-@@ -200,6 +200,7 @@
+@@ -201,6 +201,7 @@
      "optionUnit8H" : "8 Stunden",
      "optionUnit8M": "8 Minuten",
      "optionUnit90S" : "90 Sekunden",
@@ -401,7 +401,7 @@
      "optionUnitM" : "Minuten",
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.option.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.option.js
-@@ -200,6 +200,7 @@
+@@ -201,6 +201,7 @@
      "optionUnit8H" : "8 hours",
      "optionUnit8M": "8 minutes",
      "optionUnit90S" : "90 seconds",
