@@ -1,0 +1,47 @@
+--- occu/WebUI/www/api/eq3/hmscript.tcl.orig
++++ occu/WebUI/www/api/eq3/hmscript.tcl
+@@ -59,6 +59,7 @@
+ 
+ proc hmscript_escapeString { str } {
+   return [string map {
++    "\\" "\\\\"
+     "\'" "\\\'"
+     "\"" "\\\""
+     "\n" "\\n"
+--- occu/WebUI/www/pda/fav.cgi.orig
++++ occu/WebUI/www/pda/fav.cgi
+@@ -153,6 +153,11 @@
+ 	set uiStyle {}
+ 	catch { import uiStyle }
+ 	
++	# OpenCCU: object IDs must be numeric; reject anything else to avoid
++	# HomeMatic-Script (ReGa) injection via downstream string interpolation.
++	if {![regexp {^[0-9]+$} $favListId]} { set favListId "" }
++	if {![regexp {^[0-9]+$} $favId]}     { set favId "" }
++	
+ 	if { {true} != [session_isValid $sid] } then {
+ 		http_head
+ 		puts [eval [template_parseFile $TEMPLATE_FILE_ERROR_SESSION]]
+--- occu/WebUI/www/pda/favlist.cgi.orig
++++ occu/WebUI/www/pda/favlist.cgi
+@@ -27,6 +27,10 @@
+ 	set uiStyle {}
+ 	catch { import uiStyle }
+ 	
++	# OpenCCU: object IDs must be numeric; reject anything else to avoid
++	# HomeMatic-Script (ReGa) injection via downstream string interpolation.
++	if {![regexp {^[0-9]+$} $favListId]} { set favListId "" }
++	
+ 	if { {true} != [session_isValid $sid] } then {
+ 		http_head
+ 		puts [eval [template_parseFile $TEMPLATE_FILE_ERROR_SESSION]]
+--- occu/WebUI/www/tcl/eq3/rega.tcl.orig
++++ occu/WebUI/www/tcl/eq3/rega.tcl
+@@ -13,6 +13,7 @@
+ ##
+ proc rega_escape {value} {
+   return [string map {
++    "\\"  "\\\\"
+     "\'"  "\\\'"
+     "\""  "\\\""
+     "\f"  "\\\f"
