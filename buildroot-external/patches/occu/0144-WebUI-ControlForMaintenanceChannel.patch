@@ -1,9 +1,11 @@
 --- occu/WebUI/www/rega/esp/controls/maintenance.fn.orig
 +++ occu/WebUI/www/rega/esp/controls/maintenance.fn
-@@ -57,4 +57,371 @@
-       WriteLine("</table>");
+@@ -103,4 +103,371 @@
+     Call("/esp/controls/maintenance.fn::CreateNoFunction()");
    }
  
+-}
+\ No newline at end of file
 +}
 +
 +function ::OutputMaintenanceDataPoint()
@@ -371,8 +373,7 @@
 +  WriteLine("</tr>");
 +  WriteLine("</table>");
 +  WriteLine("</td>");
- }
-\ No newline at end of file
++ }
 --- occu/WebUI/www/rega/esp/datapointconfigurator.fn.orig
 +++ occu/WebUI/www/rega/esp/datapointconfigurator.fn
 @@ -1329,6 +1329,12 @@

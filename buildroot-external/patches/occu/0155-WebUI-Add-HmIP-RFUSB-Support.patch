@@ -52,7 +52,7 @@
 + 
 --- occu/WebUI/www/webui/js/lang/de/translate.lang.deviceDescription.js.orig
 +++ occu/WebUI/www/webui/js/lang/de/translate.lang.deviceDescription.js
-@@ -193,7 +193,7 @@
+@@ -196,7 +196,7 @@
      "HmIP-BROLL-2": "Homematic IP Rollladenaktor f%FCr Markenschalter",
      "HmIP-BS2": "Homematic IP Wandtaster f%FCr Markenschalter - 2-fach",
      "HmIP-BSL": "Homematic IP Schaltaktor f%FCr Markenschalter - mit Signalleuchte",
@@ -61,7 +61,7 @@
      "HmIP-DRG-DALI": "Homematic IP DALI Gateway",
      "HmIP-DBB": "Homematic IP T%FCrklingeltaster",
      "HmIP-DLD" : "Homematic IP T%FCrschlossantrieb",
-@@ -237,6 +237,7 @@
+@@ -241,6 +241,7 @@
      "HmIP-PCBS2": "Homematic IP Schaltplatine - 2-fach",
      "HmIP-PMFS": "Homematic IP Netzausfall%FCberwachung",
      "HmIP-RCV-50": "Virtuelle Fernbedienung",
@@ -69,16 +69,16 @@
      "HmIP-RGBW" : "Homematic IP LED Controller - RGBW",
      "HmIP-SAM" :"Homematic IP Ersch%FCtterungs- / Beschleunigungssensor",
      "HmIP-SCI" : "Homematic IP Kontakt-Schnittstelle",
-@@ -338,7 +339,7 @@
-     "PSMCO": "Homematic IP Schalten/Messen",
+@@ -345,7 +346,7 @@
      "RC8": "Homematic IP Fernbedienung, 8 Kanal",
      "RF-LAN-Sniffer" : "RF-LAN-Sniffer",
+     "RM-110-45" : "TEXINO Rohrmotor HmIP 8-Kantwelle 60mm/15Nm",
 -    "RPI-RF-MOD" : "CO-PROCESSOR",
 +    "RPI-RF-MOD" : "Homematic IP Zentrale",
      "SMI": "Homematic IP Bewegungsmelder innen",
      "SMO": "Homematic IP Bewegungsmelder au%DFen",
      "SRH": "Homematic IP Fenster-/ Drehgriffkontakt",
-@@ -374,4 +375,4 @@
+@@ -381,4 +382,4 @@
      "ZEL_STG_RM_WT_2": "Funk-Wandtaster 2-fach im 55er Rahmen",
      "The END": ""
    }
@@ -87,7 +87,7 @@
 +});
 --- occu/WebUI/www/webui/js/lang/en/translate.lang.deviceDescription.js.orig
 +++ occu/WebUI/www/webui/js/lang/en/translate.lang.deviceDescription.js
-@@ -191,7 +191,7 @@
+@@ -196,7 +196,7 @@
      "HmIP-BROLL-2": "Homematic IP Blind Actuator for brand switch systems, flush-mount",
      "HmIP-BS2": "Homematic IP Remote Control for brand switches - 2 channels",
      "HmIP-BSL": "Homematic IP Switch Actuator with Signal Lamp - for brand switches",
@@ -96,7 +96,7 @@
      "HmIP-DRG-DALI": "Homematic IP DALI Gateway",
      "HmIP-DBB": "Homematic IP Doorbell Button",
      "HmIP-DLD" : "Homematic IP Door Lock Drive",
-@@ -235,6 +235,7 @@
+@@ -241,6 +241,7 @@
      "HmIP-PCBS2": "Homematic IP Switch Circuit Board - 2 channels",
      "HmIP-PMFS": "Homematic IP Mains Failure Surveillance",
      "HmIP-RCV-50": "Virtual Remote Control",
@@ -104,16 +104,16 @@
      "HmIP-RGBW" : "Homematic IP LED Controller - RGBW",
      "HmIP-SAM": "Homematic IP Acceleration Sensor",
      "HmIP-SCTH230" : "Homematic IP CO2 Sensor, 230 V",
-@@ -332,7 +333,7 @@
-     "PSMCO": "Homematic IP Switch and Meter",
+@@ -343,7 +344,7 @@
      "RC8": "Homematic IP Remote Contro, 8-channel",
      "RF-LAN-Sniffer" : "RF-LAN-Sniffer",
+     "RM-110-45" : "TEXINO Tubular Drive HmIP Octagonal Shaft 60mm/15Nm",
 -    "RPI-RF-MOD" : "CO-PROCESSOR",
 +    "RPI-RF-MOD" : "Homematic IP Central Control Unit",
      "SMI": "Homematic IP Motion Detector - indoor",
      "SMO": "Homematic IP Motion Detector, outdoor",
      "SRH": "Homematic IP Rotary Handle Sensor",
-@@ -368,4 +369,4 @@
+@@ -379,4 +380,4 @@
      "ZEL_STG_RM_WT_2": "Wireless Push-button 2-channel in 55mm frame",
      "The END": ""
    }

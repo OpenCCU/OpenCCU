@@ -18,11 +18,18 @@
        && (channelTypeName != "hmip-ps")
        && (channelTypeName.indexOf("hmip-psm") == -1)
        && (channelTypeName != "hmip-pdt")
-@@ -14344,7 +14344,7 @@
+@@ -14344,14 +14344,7 @@
      var channelTypeName = channel.typeName.toLowerCase(),
      oMaintChannel, deviceMode, endOfScreens = false;
  
 -    if (channel.isVisible) {
+-
+-      // Channel 1 of the hmip-esi-ind has only 1 parameter (SELF_CALIBRATION) for the use in a program condition but it's not in use
+-      // Therefore we hide the channel
+-      if (channelTypeName == "hmip-esi-ind") {
+-        return arChannels;
+-      }
+-
 +    if (channel) {
        if (channelTypeName == "hmip-wkp") {
          if ((channel.channelType == "MAINTENANCE") || ((channel.channelType == "ACCESS_TRANSCEIVER") && (channel.index % 2 != 0))) {

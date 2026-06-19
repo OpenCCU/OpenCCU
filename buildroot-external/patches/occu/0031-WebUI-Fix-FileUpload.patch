@@ -119,7 +119,7 @@
    set downloadOnly 0
 --- occu/WebUI/www/config/cp_network.cgi.orig
 +++ occu/WebUI/www/config/cp_network.cgi
-@@ -148,36 +148,43 @@
+@@ -148,45 +148,43 @@
  }
  
  proc action_cert_upload {} {
@@ -133,15 +133,25 @@
 -  file rename -force -- [lindex $cert_file 0] "/var/server.pem"
 -  
 -  set filename [open "/var/server.pem" r]
--  gets $filename line
+-  
+-  set beginPrivateKeyFound 0
+-  set beginCertificateFound 0
+-
+-  while { [gets $filename line] >= 0 } {
+-    if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
+-      set beginPrivateKeyFound 1
+-    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] == 1 } {
+-      set beginCertificateFound 1
+-    }
+-  }
 -  close $filename
+-  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
+-    file copy -force -- "/var/server.pem" "/etc/config/server.pem"
+-    file delete "/var/server.pem"
 +  set fp [open "$filename" r]
 +  gets $fp line
 +  close $fp
-   #puts $line;
--  if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
--    file copy -force -- "/var/server.pem" "/etc/config/server.pem"
--    file delete "/var/server.pem"
++  #puts $line;
 +  if { [string first "-----BEGIN " $line] != -1 } {
 +    catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
 +    file rename -force -- $filename "/etc/config/server.pem"
@@ -165,22 +175,22 @@
 +    file delete -force -- $filename
 +
      cgi_javascript {
-     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-     puts {
--      parent.top.dlgPopup.hide();
--      parent.top.dlgPopup.setWidth(600);
--      parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_failed");
-+      var dlgPopup = parent.top.dlgPopup;
-+      if (dlgPopup === undefined) {
-+        dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
-+      }
-+      dlgPopup.hide();
-+      dlgPopup.setWidth(600);
-+      dlgPopup.LoadFromFile(url, "action=cert_update_failed");
-     }
+       puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
+       puts {
+-        parent.top.dlgPopup.hide();
+-        parent.top.dlgPopup.setWidth(600);
+-        parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_failed");
++        var dlgPopup = parent.top.dlgPopup;
++        if (dlgPopup === undefined) {
++          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
++        }
++        dlgPopup.hide();
++        dlgPopup.setWidth(600);
++        dlgPopup.LoadFromFile(url, "action=cert_update_failed");
+       }
      }
    }
-@@ -345,8 +352,7 @@
+@@ -354,8 +352,7 @@
              table_row {
                table_data {width="20"} {}
                table_data {colspan="2"} {
@@ -190,7 +200,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -721,13 +727,15 @@
+@@ -730,13 +727,15 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
