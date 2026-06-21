@@ -1,0 +1,58 @@
+eq3_char_loop: report transient buffer-full on write as EAGAIN, not EFAULT
+
+Both eq3loop_write_slave() and eq3loop_write_master() return -EFAULT when the
+ring buffer cannot currently hold a whole frame (CIRC_SPACE < count). -EFAULT
+means "bad userspace address"; here the address is fine and the condition is
+ordinary, transient backpressure. The wrong errno is harmful in practice: the
+HmIP stack (HMIPServer) reaches the slave device through librxtx, which maps
+EFAULT to a fatal java.io.IOException ("Ungueltige Adresse"), so HMIPServer
+treats a recoverable full buffer as unrecoverable and stops writing -- the HmIP
+RF stack then stays dead until a reboot while BidCos keeps working.
+
+Return -EAGAIN instead, so a full buffer is a normal, retryable condition. The
+legitimate -EFAULT returns from copy_from_user() are left untouched. The
+master-side KERN_ERR log line is rate-limited because, under the retryable
+errno, the writer retries and an unthrottled message would flood the kernel log
+(cf. OpenCCU #3407).
+
+This is the minimal, latency-neutral part of the fix. Full backpressure
+(blocking until a whole frame fits) and a distinct -ENODEV for a vanished peer
+are intentionally left as a separate, benchmarked change because multimacd runs
+under SCHED_FIFO.
+
+Refs: OpenCCU #3968
+Upstream: Not applicable
+
+Signed-off-by: Chris <christian.kamien@gmail.com>
+
+--- a/KernelDrivers/eq3_char_loop.c
++++ b/KernelDrivers/eq3_char_loop.c
+@@ -287,7 +287,8 @@
+ 	head = channel->slave2master_buf.head;
+ 	if(CIRC_SPACE( head, channel->slave2master_buf.tail, BUFSIZE) < count)
+ 	{
+-		ret=-EFAULT;
++		/* no room for a whole frame yet -- let the writer retry */
++		ret=-EAGAIN;
+ 		goto out;
+ 	}
+ 	
+@@ -358,9 +359,10 @@
+ 	head = channel->master2slave_buf.head;
+ 	if(CIRC_SPACE( head, channel->master2slave_buf.tail, BUFSIZE) < count)
+ 	{
+-		ret=-EFAULT;
++		/* no room for a whole frame yet -- let the writer retry */
++		ret=-EAGAIN;
+ 		count_to_end = CIRC_SPACE( head, channel->master2slave_buf.tail, BUFSIZE);
+-		printk( KERN_ERR EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() %s: not enough space in buffers. free space = %zu, required space = %zu", channel->name,count_to_end,count );
++		printk_ratelimited( KERN_ERR EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() %s: not enough space in buffers. free space = %zu, required space = %zu", channel->name,count_to_end,count );
+ 		goto out;
+ 	}
+ 	/* ok, space is free, write something */
+@@ -1069,4 +1071,4 @@
+ module_exit(eq3loop_exit);
+ MODULE_DESCRIPTION("eQ-3 IPC loopback char driver");
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.3");
++MODULE_VERSION("1.4");
