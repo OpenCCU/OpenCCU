@@ -21,7 +21,7 @@ set TEMPLATE_FILE               templates/fav.tmpl
 set TEMPLATE_FILE_ERROR_SESSION templates/error_session.tmpl
 
 array set COMMANDS {}
-set COMMANDS(exec) [list executePorgram]
+set COMMANDS(exec) [list executeProgram]
 
 proc getProgramStatus { progId } { 
 	array set status [Program_getStatus $progId]
@@ -44,7 +44,7 @@ proc getProgramStatus { progId } {
 }
 
 
-proc executePorgram { } { 
+proc executeProgram { } { 
 	global fav
 	
 	Program_execute $fav(ID)

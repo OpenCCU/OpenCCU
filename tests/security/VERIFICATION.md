@@ -18,7 +18,7 @@ the PDA interface did no escaping at all.
 and `rega_escape`, plus the *old* (vulnerable) escaper, and asserts the
 invariant above against quote/backslash payloads.
 
-```
+```text
 $ tclsh tests/security/rega_script_injection_test.tcl
 ... 22 assertions ...
 ALL TESTS PASSED   (exit 0)
@@ -39,7 +39,7 @@ assumed. We confirmed it directly on a live engine, **non-destructively
 (`WriteLine` markers only — no `system.Exec`, no writes, no state change)**,
 feeding the exact bytes each escaper produces:
 
-```
+```text
 # vulnerable output:
 WriteLine("PRE");
 var p = "\\";WriteLine(31337);!";        -> output:  PRE
@@ -56,7 +56,9 @@ the would-be payload is just data.
 
 ## Layer 3 — patch hygiene
 
-- `.orig` files are pristine upstream (OCCU `3.87.6-3`); no other patch in
+- `.orig` files are pristine upstream — byte-identical to the four target files
+  in the currently-pinned OCCU (`3.89.2-1`; these files are unchanged since
+  `3.87.6-3`, where this was first verified); no other patch in
   `buildroot-external/patches/occu/` touches these 4 files, so the base is correct.
 - `patch -p1 --dry-run` applies cleanly against the pinned occu tree.
 - The committed `.patch` matches `create_patches.sh` output (keeps CI
@@ -75,7 +77,7 @@ the would-be payload is just data.
 
 ## Reproduce
 
-```
+```sh
 tclsh tests/security/rega_script_injection_test.tcl     # layer 1
 # layer 2: run the two scripts above via any ReGa runner (rega.exe / tclrega)
 ```
