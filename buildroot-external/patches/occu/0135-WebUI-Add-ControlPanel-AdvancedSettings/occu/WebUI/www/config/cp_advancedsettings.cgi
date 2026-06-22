@@ -15,6 +15,7 @@ set CLOUDMATICFILENAME "/etc/config/cloudmaticDisabled"
 set NOUPDATEDCVARSFILENAME "/etc/config/NoUpdateDCVars"
 set NOBADBLOCKSCHECKFILENAME "/etc/config/NoBadBlocksCheck"
 set NOPORTFORWARDINGCHECKFILENAME "/etc/config/NoPortForwardingCheck"
+set ALLOWEXTERNALACCESSFILENAME "/etc/config/AllowExternalAccess"
 set NOFSTRIMFILENAME "/etc/config/NoFSTRIM"
 set NOADDONUPDATECHECKFILENAME "/etc/config/NoAddonUpdateCheck"
 set DISABLELEDFILENAME "/etc/config/disableLED"
@@ -145,7 +146,7 @@ proc put_message {title msg args} {
 }
 
 proc action_put_page {} {
-  global env sid INETCHECKFILENAME RPI4USB3CHECKFILENAME MEDIOLAFILENAME CLOUDMATICFILENAME NOCRONBACKUPFILENAME NOUPDATEDCVARSFILENAME NOBADBLOCKSCHECKFILENAME NOPORTFORWARDINGCHECKFILENAME NOFSTRIMFILENAME NOADDONUPDATECHECKFILENAME CRONBACKUPMAXBACKUPSFILENAME CRONBACKUPPATHFILENAME CUSTOMSTORAGEPATHFILENAME HBRFETHIPADDRESSFILENAME TWEAKFILENAME DISABLELEDFILENAME DISABLEONBOARDLEDFILENAME
+  global env sid INETCHECKFILENAME RPI4USB3CHECKFILENAME MEDIOLAFILENAME CLOUDMATICFILENAME NOCRONBACKUPFILENAME NOUPDATEDCVARSFILENAME NOBADBLOCKSCHECKFILENAME NOPORTFORWARDINGCHECKFILENAME ALLOWEXTERNALACCESSFILENAME NOFSTRIMFILENAME NOADDONUPDATECHECKFILENAME CRONBACKUPMAXBACKUPSFILENAME CRONBACKUPPATHFILENAME CUSTOMSTORAGEPATHFILENAME HBRFETHIPADDRESSFILENAME TWEAKFILENAME DISABLELEDFILENAME DISABLEONBOARDLEDFILENAME
    
   set inetcheckDisabled [file exists $INETCHECKFILENAME]
   set rpi4usb3CheckDisabled [file exists $RPI4USB3CHECKFILENAME]
@@ -155,6 +156,7 @@ proc action_put_page {} {
   set noDCVars [file exists $NOUPDATEDCVARSFILENAME]
   set noBadBlocksCheck [file exists $NOBADBLOCKSCHECKFILENAME]
   set noPortforwardingCheck [file exists $NOPORTFORWARDINGCHECKFILENAME]
+  set allowExternalAccess [file exists $ALLOWEXTERNALACCESSFILENAME]
   set noFSTRIM [file exists $NOFSTRIMFILENAME]
   set noAddonUpdateCheck [file exists $NOADDONUPDATECHECKFILENAME]
   set disableLED [file exists $DISABLELEDFILENAME]
@@ -286,6 +288,14 @@ proc action_put_page {} {
             }
             table_row {
               set checked ""
+              if {!$allowExternalAccess} { set checked "checked=true" }
+              table_data {class="CLASS21112"} {colspan="3"} {
+                cgi_checkbox mode=allowExternalAccess {id="cb_allowExternalAccess"} $checked
+                puts "\${dialogSettingsAdvancedSettingsAllowExternalAccess}"
+              }
+            }
+            table_row {
+              set checked ""
               if {!$noAddonUpdateCheck} { set checked "checked=true" }
               table_data {class="CLASS21112"} {colspan="3"} {
                 cgi_checkbox mode=noAddonUpdateCheck {id="cb_noAddonUpdateCheck"} $checked
@@ -358,6 +368,7 @@ proc action_put_page {} {
           p { ${dialogSettingsAdvancedSettingsHintSystem5} }
           p { ${dialogSettingsAdvancedSettingsHintSystem6} }
           p { ${dialogSettingsAdvancedSettingsHintSystem12} }
+          p { ${dialogSettingsAdvancedSettingsHintSystem16} }
           p { ${dialogSettingsAdvancedSettingsHintSystem13} }
           p { ${dialogSettingsAdvancedSettingsHintSystem7} }
           p { ${dialogSettingsAdvancedSettingsHintSystem8} }
@@ -447,6 +458,7 @@ proc action_put_page {} {
         pb += "&noDCVars="+(document.getElementById("cb_noDCVars").checked?"0":"1");
         pb += "&noBadBlocksCheck="+(document.getElementById("cb_noBadBlocksCheck").checked?"0":"1");
         pb += "&noPortforwardingCheck="+(document.getElementById("cb_noPortforwardingCheck").checked?"0":"1");
+        pb += "&allowExternalAccess="+(document.getElementById("cb_allowExternalAccess").checked?"0":"1");
         pb += "&disableLED="+(document.getElementById("cb_disableLED").checked?"0":"1");
         pb += "&disableOnboardLED="+(document.getElementById("cb_disableOnboardLED").checked?"0":"1");
         pb += "&noFSTRIM="+(document.getElementById("cb_noFSTRIM").checked?"0":"1");
@@ -510,7 +522,7 @@ proc action_put_page {} {
 }
 
 proc action_save_settings {} {
-  global INETCHECKFILENAME RPI4USB3CHECKFILENAME MEDIOLAFILENAME CLOUDMATICFILENAME NOCRONBACKUPFILENAME NOUPDATEDCVARSFILENAME NOBADBLOCKSCHECKFILENAME NOPORTFORWARDINGCHECKFILENAME NOFSTRIMFILENAME NOADDONUPDATECHECKFILENAME CRONBACKUPMAXBACKUPSFILENAME CRONBACKUPPATHFILENAME CUSTOMSTORAGEPATHFILENAME HBRFETHIPADDRESSFILENAME TWEAKFILENAME DISABLELEDFILENAME DISABLEONBOARDLEDFILENAME
+  global INETCHECKFILENAME RPI4USB3CHECKFILENAME MEDIOLAFILENAME CLOUDMATICFILENAME NOCRONBACKUPFILENAME NOUPDATEDCVARSFILENAME NOBADBLOCKSCHECKFILENAME NOPORTFORWARDINGCHECKFILENAME ALLOWEXTERNALACCESSFILENAME NOFSTRIMFILENAME NOADDONUPDATECHECKFILENAME CRONBACKUPMAXBACKUPSFILENAME CRONBACKUPPATHFILENAME CUSTOMSTORAGEPATHFILENAME HBRFETHIPADDRESSFILENAME TWEAKFILENAME DISABLELEDFILENAME DISABLEONBOARDLEDFILENAME
   set errMsg ""
 
   import inetcheckDisabled
@@ -523,6 +535,7 @@ proc action_save_settings {} {
   import disableOnboardLED
   import noBadBlocksCheck
   import noPortforwardingCheck
+  import allowExternalAccess
   import noFSTRIM
   import noAddonUpdateCheck
   import devConfig
@@ -604,6 +617,12 @@ proc action_save_settings {} {
     append errMsg [createfile $NOPORTFORWARDINGCHECKFILENAME]
   } else {
     append errMsg [deletefile $NOPORTFORWARDINGCHECKFILENAME]
+  }
+
+  if {$allowExternalAccess} {
+    append errMsg [createfile $ALLOWEXTERNALACCESSFILENAME]
+  } else {
+    append errMsg [deletefile $ALLOWEXTERNALACCESSFILENAME]
   }
 
   if {$noFSTRIM} {

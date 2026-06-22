@@ -654,6 +654,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsAdvancedSettingsBadBlocksCheck" : "Speicher%FCberpr%FCfung (Bad-Blocks)",
     "dialogSettingsAdvancedSettingsFSTRIM" : "Speicher%FCberpr%FCfung (FSTRIM)",
     "dialogSettingsAdvancedSettingsPortforwardingCheck" : "Sicherheits%FCberpr%FCfung (Port-Forwarding)",
+    "dialogSettingsAdvancedSettingsAllowExternalAccess" : "Schutz vor externen Internetzugriffen",
     "dialogSettingsAdvancedSettingsAddonUpdateCheck" : "Pr%FCfung auf aktualisierte Zusatzsoftware (CCU-Addons)",
     "dialogSettingsAdvancedSettingsHintSystem1" : "<b>Automatische Backups:</b><br/>Automatische Generierung von Backups (jede Nacht um 00:07).",
     "dialogSettingsAdvancedSettingsHintSystem2" : "<b>Backup-Speicherpfad:</b><br/>Speicherpfad zur Ablage der automatischen Backups (*.sbk). Systemvorgabe: angeschlossenes USB-Medium (bei Nutzung einer SD-Karte als zentrales Speichermedium).",
@@ -667,6 +668,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsAdvancedSettingsHintSystem10" : "<b>Mediola NEO-Server Autostart:</b><br/>Bei Hochfahren der Zentrale wird automatisch der Mediola NEO Server gestartet, wenn dieser in seiner Konfiguration aktiviert wurde.",
     "dialogSettingsAdvancedSettingsHintSystem11" : "<b>Systemname:</b><br/>Legt einen Namen f%FCr dieses System fest, der in der Titelleiste des Browsers, Browser-Tabs sowie auf der Startseite angezeigt wird.",
     "dialogSettingsAdvancedSettingsHintSystem12" : "<b>Sicherheits%FCberpr%FCfung (Port-Forwarding):</b><br/>Um einen sicherheitskritischen Zugriff vom Internet aus via Port-Forwarding/Weiterleitung auszuschlie%DFen, wird jeden Sonntag um 04:00 Uhr nachts eine %DCberpr%FCfung der Internetverbindung durchgef%FChrt und ggf. bei erkanntem Port-Forwarding eine Alarmmeldung ausgegeben.",
+    "dialogSettingsAdvancedSettingsHintSystem16" : "<b>Schutz vor externen Internetzugriffen:</b><br/>Wenn aktiviert, werden externe WebUI/API-Zugriffe vom Internet aus via zusätzlicher Firewallregeln unterbunden. Wenn deaktiviert, wird /etc/config/AllowExternalAccess gesetzt und der lokale Firewall-Schutz f%FCr direkte Zugriffe aus dem Internet deaktiviert.",
     "dialogSettingsAdvancedSettingsHintSystem13" : "<b>Pr%FCfung auf aktualisierte Zusatzsoftware:</b><br/>Pr%FCft 1x t%E4glich online auf neue verf%FCgbare Versionen installierter Zusatzsoftware (CCU-Addons) und zeigt diese auf der Startseite an.",
     "dialogSettingsAdvancedSettingsHintSystem14" : "<b>CloudMatic Autostart:</b><br/>Bei Hochfahren der Zentrale wird automatisch der CloudMatic Dienst eingerichtet und gestartet, wenn dies hier aktiviert wurde.",
     "dialogSettingsAdvancedSettingsHintSystem15" : "<b>IP-Adresse (HB-RF-ETH):</b><br/>Falls ein <a href='https://github.com/alexreinert/HB-RF-ETH'>HB-RF-ETH Funkmoduladapter</a> zum Einsatz kommt kann hier die IP-Adresse eingetragen werden unter der dieser Adapter erreichbar ist (ben%F6tigt Neustart).",
@@ -1086,4 +1088,3 @@ jQuery.extend(true,langJSON, {
     "HelpTitle" : "Hilfe"
   }
 });
-
