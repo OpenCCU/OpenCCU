@@ -1,5 +1,19 @@
-function ::CreateOperationVoltage()
-{
+function ::CreateNoFunction() {
+  WriteLine("<td>");
+    WriteLine("<table class=\"ControlBtnInfo\">");
+      WriteLine("<tr>");
+        WriteLine("<td>");
+          WriteLine("<div>");
+            WriteLine("${controlChannelHasNoFunction}");
+          WriteLine("</div>");
+        WriteLine("</td>");
+      WriteLine("</tr>");
+    WriteLine("</table>");
+  WriteLine("</td>");
+  return;
+}
+
+function ::CreateOperationVoltage() {
   object objVoltage = cObj.DPByControl("MAINTENANCE.OPERATING_VOLTAGE");
   object objVoltageStatus = cObj.DPByControl("MAINTENANCE.OPERATING_VOLTAGE_STATUS");
 
@@ -23,8 +37,7 @@ function ::CreateOperationVoltage()
 }
 
 
-function ::CreateSystemStatusPanelDali()
-{
+function ::CreateSystemStatusPanelDali() {
 
   object objErrorCoProcessor = cObj.DPByControl("MAINTENANCE.ERROR_COPROCESSOR");
   object objErrorCode = cObj.DPByControl("MAINTENANCE.ERROR_CODE");
@@ -55,6 +68,39 @@ function ::CreateSystemStatusPanelDali()
 
         WriteLine("</tr>");
       WriteLine("</table>");
+  }
+
+}
+
+function ::CreateHeatingCooling() {
+
+  !object oHeatingCooling is set in the datapointconfigurator.fn;
+
+  ! Should always be true
+  if (oHeatingCooling) {
+    string btnStateHeating = "ControlBtnOn";
+    string btnStateCooling = "ControlBtnOff";
+
+    string statusHeating = "${stringTableHeating}";
+    string statusCooling = "${stringTableCooling}";
+
+    if (oHeatingCooling.Value() == 1) {
+      btnStateHeating = "ControlBtnOff";
+      btnStateCooling = "ControlBtnOn";
+    }
+
+    WriteLine("<td><table class='CLASS02532b'><tr>");
+      WriteLine("<td>");
+        WriteLine("<div class='"#btnStateHeating#" CLASS02551' style='line-height:35px' id='"#chnId#"Heating' onclick='setDpState("#oHeatingCooling.ID()#", 0); JControlBtn.pressed(jQuery(this));'>"#statusHeating#"</div>");
+      WriteLine("</td>");
+      WriteLine("<td><img src='/ise/img/help.png' style='curor: pointer; width:25px; height:25px;' onclick='showParamHelp(translateKey(\"helpHeatingCooling\"), 450, 150);'></td>");
+      WriteLine("<td>");
+        WriteLine("<div class='"#btnStateCooling#" CLASS02551' style='line-height:35px; margin-left:12%;' id='"#chnId#"Cooling' onclick='setDpState("#oHeatingCooling.ID()#", 1); JControlBtn.pressed(jQuery(this));'>"#statusCooling#"</div>");
+      WriteLine("</td>");
+    WriteLine("</tr></table></td>");
+  }  else {
+    ! Should never be called.
+    Call("/esp/controls/maintenance.fn::CreateNoFunction()");
   }
 
 }
@@ -424,4 +470,4 @@ function ::CreateDeviceMaintenanceChannel()
   WriteLine("</tr>");
   WriteLine("</table>");
   WriteLine("</td>");
-}
+ }

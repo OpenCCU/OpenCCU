@@ -11,7 +11,7 @@
  #prgcontent
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -9086,6 +9086,7 @@
+@@ -9204,6 +9204,7 @@
  
        var content = document.createElement("div");
        content.id = "content";
@@ -19,7 +19,7 @@
        Element.setStyle(content, {cursor: "wait"});
        layer0.appendChild(content);
  
-@@ -9334,6 +9335,11 @@
+@@ -9452,6 +9453,11 @@
      
      this.currentPage.enter(options);
      window.name = 'ccu-main-window';

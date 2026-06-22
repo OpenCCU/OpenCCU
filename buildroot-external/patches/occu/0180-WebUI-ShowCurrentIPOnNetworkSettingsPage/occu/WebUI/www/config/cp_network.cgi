@@ -176,16 +176,16 @@ proc action_cert_upload {} {
     file delete -force -- $filename
 
     cgi_javascript {
-    puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-    puts {
-      var dlgPopup = parent.top.dlgPopup;
-      if (dlgPopup === undefined) {
-        dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
+      puts {
+        var dlgPopup = parent.top.dlgPopup;
+        if (dlgPopup === undefined) {
+          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+        }
+        dlgPopup.hide();
+        dlgPopup.setWidth(600);
+        dlgPopup.LoadFromFile(url, "action=cert_update_failed");
       }
-      dlgPopup.hide();
-      dlgPopup.setWidth(600);
-      dlgPopup.LoadFromFile(url, "action=cert_update_failed");
-    }
     }
   }
 }

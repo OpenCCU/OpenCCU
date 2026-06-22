@@ -49,7 +49,7 @@
         jQuery.each(helpContainer, function(index, container){
 --- occu/WebUI/www/config/cp_advancedsettings.cgi.orig
 +++ occu/WebUI/www/config/cp_advancedsettings.cgi
-@@ -0,0 +1,657 @@
+@@ -0,0 +1,662 @@
 +#!/bin/tclsh
 +source once.tcl
 +sourceOnce cgi.tcl
@@ -92,6 +92,11 @@
 +}
 +
 +proc set_systemname { systemname } {
++  # SECURITY: the value is interpolated into a single-quoted ReGaScript string
++  # literal below and executed by ReGaHss as root. Escape backslash and single
++  # quote so an attacker-supplied systemName cannot break out of the literal and
++  # inject arbitrary ReGaScript (e.g. system.Exec). Single pass: \ -> \\, ' -> \'
++  set systemname [string map {\\ \\\\ ' \\'} $systemname]
 +  set isecmd "system.Name('$systemname');"
 +  array set result [rega_script $isecmd]
 +  return $result(STDOUT);
@@ -881,7 +886,7 @@
      "dialogSettingsNetworkTDIPSettings" : "IP settings",
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -33639,15 +33639,25 @@
+@@ -33764,15 +33764,25 @@
  };
  
  setPath = function (path) {
@@ -914,7 +919,7 @@
  
  
  
-@@ -35572,7 +35582,7 @@
+@@ -35697,7 +35707,7 @@
  
  
  showDutyCycle = function() {
@@ -923,7 +928,7 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
-@@ -50717,6 +50727,11 @@
+@@ -51323,6 +51333,11 @@
    CreateCPPopup("/config/cp_maintenance.cgi");
  };
  

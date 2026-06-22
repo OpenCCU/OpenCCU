@@ -33,7 +33,7 @@ version: 3.87.6
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 3.87.6.20260509
+appVersion: 3.87.6.20260614
 
 dependencies:
   - name: common
@@ -42,7 +42,7 @@ dependencies:
 
 annotations:
   artifacthub.io/changes: |
-    - Release of 3.87.6.20260509 (https://github.com/OpenCCU/OpenCCU/releases/tag/3.87.6.20260509)
+    - Release of 3.87.6.20260614 (https://github.com/OpenCCU/OpenCCU/releases/tag/3.87.6.20260614)
   artifacthub.io/license: Apache-2.0
   artifacthub.io/links: |
     - name: Webpage

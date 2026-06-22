@@ -307,7 +307,7 @@ function ::CreateDoorStateTranseiver() {
       WriteLine("<table width='100%' _height='100%' cellspacing='4'>");
         WriteLine("<tr>");
           WriteLine("<td>");
-            WriteLine("<div class='ControlBtnOff CLASS02550' style='width:125px; line-height:35px' id='"#chnId#"calibrate' onclick='calibrate(this);' >${stringTableDigitalAnalogInputCalibration}</div>");
+            WriteLine("<div class='ControlBtnOff CLASS02550' style='width:200px; line-height:35px' id='"#chnId#"calibrate' onclick='calibrate(this);' >${stringTableDLPCalibration}</div>");
           WriteLine("</td>");
         WriteLine("</tr>");
       WriteLine("</table>");
@@ -379,7 +379,8 @@ function ::CreateDoorLockTranseiver() {
             if (oLockTargetLevel) {
               string tmp;
               ! string options = "LOCKED,UNLOCKED,OPEN,RESET_TEACH_IN,SET_NEUTRAL_LOCKED,SET_NEUTRAL_UNLOCKED,TESTRUN_SAVE_LOCK_UNLOCK,TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_UNLOCKED,TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_VERTICAL,TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_HORIZONTAL,LOAD_CALIBRATION_CLOSED_DOOR,LOAD_CALIBRATION_OPEN_DOOR";
-              string options = "A,B,C,D,E";
+              ! string options = "A,B,C,D"; SPHM-1516
+              string options = "A,B,C";
 
               WriteLine("<td class='CLASS02518'>");
                 WriteLine("<div id='lockTargetLevelOFF_"#chnId#"' class='CLASS02550 ControlBtnOff' align='center' style='margin-bottom:3px;' onclick=\"setBtnPress(this.id);setDpState("#oLockTargetLevel.ID()#", 0);\">${lblLock}</div>");
@@ -406,10 +407,10 @@ function ::CreateDoorLockTranseiver() {
               WriteLine("<td>");
                 WriteLine("<table>");
                   WriteLine("<tr>");
-                    WriteLine("<td><div id='"#chnId#"lockTargetLevel' class='ControlBtnOff CLASS02550' style='width:125px; line-height:35px; cursor:pointer;'>${btnTeachInDoorLock}</div></td>");
+                    WriteLine("<td><div id='"#chnId#"lockTargetLevel' class='ControlBtnOff CLASS02550' style='width:150px; line-height:35px; cursor:pointer;'>${btnTeachInDoorLock}</div></td>");
                   WriteLine("</tr>");
                   WriteLine("<tr>");
-                    WriteLine("<td><div id='"#chnId#"showDLPInfoPanel' class='ControlBtnOff CLASS02550' style='width:125px; line-height:35px; cursor:pointer;'>${btnInfo}</div></td>");
+                    WriteLine("<td><div id='"#chnId#"showDLPInfoPanel' class='ControlBtnOff CLASS02550' style='width:150px; line-height:35px; cursor:pointer;'>${btnInfo}</div></td>");
                   WriteLine("</tr>");
                 WriteLine("</table>");
               WriteLine("</td>");

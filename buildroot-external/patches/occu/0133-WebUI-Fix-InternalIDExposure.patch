@@ -56,7 +56,7 @@
        }
  
        ! Necessary to be able to learn the codes of keypads and finger print sensors
-@@ -995,7 +957,7 @@
+@@ -1031,7 +993,7 @@
    !HmIP-DLP
    ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
    if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {

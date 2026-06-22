@@ -24,7 +24,7 @@ trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.21"
+VERSION="3.22"
 LOGFILE="/tmp/install-proxmox.log"
 LINE=
 
@@ -442,6 +442,16 @@ fi
 # check that this script is run as root/sudo
 check_sudo
 
+info "Checking/Installing host package dependencies..."
+
+# check that all necessary host packages are installed
+if ! pkg_installed wget; then
+  apt install -y wget
+fi
+if ! pkg_installed python3-requests; then
+  apt install -y python3-requests
+fi
+
 # PVE platform
 PLATFORM=$(uname -m)
 
@@ -493,9 +503,6 @@ EOF
   info "Checking/Installing host package dependencies..."
 
   # check that all necessary host packages are installed
-  if ! pkg_installed wget; then
-    apt install -y wget
-  fi
   if ! pkg_installed ca-certificates; then
     apt install -y ca-certificates
   fi

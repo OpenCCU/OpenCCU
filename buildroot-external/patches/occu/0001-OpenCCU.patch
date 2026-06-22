@@ -114,7 +114,7 @@
        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
 --- occu/WebUI/www/config/cp_network.cgi.orig
 +++ occu/WebUI/www/config/cp_network.cgi
-@@ -225,6 +225,7 @@
+@@ -234,6 +234,7 @@
                  cgi_text hostname=$hostname {id="text_hostname"}
                }
              }
@@ -122,7 +122,7 @@
              table_row {
                set checked ""
                if {! $dhcp} { set checked "checked=true" }
-@@ -315,6 +316,7 @@
+@@ -324,6 +325,7 @@
                }
  
              }
@@ -130,7 +130,7 @@
            }
          }
          table_data {class="CLASS21113"} {align="left"} {
-@@ -440,12 +442,21 @@
+@@ -449,12 +451,21 @@
        OnOK = function() {
          var pb = "action=save_settings";
          pb += "&hostname="+document.getElementById("text_hostname").value;
@@ -152,7 +152,7 @@
          
          var opts = {
            postBody: pb,
-@@ -546,7 +557,9 @@
+@@ -555,7 +566,9 @@
          },timeDelay);
        };
      }
@@ -1241,7 +1241,7 @@
  
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -24238,16 +24238,16 @@
+@@ -24370,16 +24370,16 @@
  
     // WebUI-Version
    showCurrentFirmware: function() {
@@ -1267,7 +1267,7 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -28360,7 +28360,7 @@
+@@ -28492,7 +28492,7 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
@@ -1276,7 +1276,7 @@
      this.m_URLServer = (isHTTPS) ? "https://"+this.preURL+"update.homematic.com:8443" : "http://"+this.preURL+"update.homematic.com";
      this.m_fieldTestURLServer = (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com" : "http://fieldtest-ccu3-update.homematic.com";
  
-@@ -28371,7 +28371,7 @@
+@@ -28503,7 +28503,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1285,7 +1285,7 @@
      $("body").appendChild(script);
    },
  
-@@ -33747,11 +33747,11 @@
+@@ -33879,11 +33879,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {
@@ -1299,7 +1299,7 @@
          }
        }
      },
-@@ -33766,12 +33766,12 @@
+@@ -33898,12 +33898,12 @@
  
  SwitchOnFlashLight = function()
  {

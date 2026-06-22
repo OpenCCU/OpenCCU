@@ -118,6 +118,7 @@ function ::dcCreate()
     var CN_DIGITAL_STATE      = "DIGITAL_STATE.";
     var CN_DIMMER          = "DIMMER.";
     var CN_DIMMER_REAL     = "DIMMER_REAL.";
+    var CN_DISTANCE_TRANSMITTER     = "DISTANCE_TRANSMITTER.";
     var CN_DOOR_LOCK_STATE_TRANSCEIVER = "DOOR_LOCK_STATE_TRANSCEIVER.";
     var CN_DOOR_LOCK_STATE_TRANSMITTER = "DOOR_LOCK_STATE_TRANSMITTER.";
     var CN_DOOR_LOCK_TRANSCEIVER = "DOOR_LOCK_TRANSCEIVER.";
@@ -417,7 +418,7 @@ function ::dcCreate()
           }
 
           !# CN_CARBON_DIOXIDE_RECEIVER
-          if ((ch.Label() != "HmIPW-SCTHD") && (ch.Label().Substr(5,4) != "WGTC") ) {
+          if ((ch.Label() != "HmIPW-SCTHD") && (ch.Label().Substr(5,4) != "WGTC") && (ch.Label().Substr(6,4) != "WGTC") ) {
             bIsControl = ( sControlName.Find(CN_CARBON_DIOXIDE_RECEIVER) > -1 );
             if( bIsControl && (sLastControlName!=CN_CARBON_DIOXIDE_RECEIVER) )
             {
@@ -548,6 +549,16 @@ function ::dcCreate()
             isKnownControl = true;
             sLastControlName = CN_DIMMER_REAL;
             Call("/esp/controls/dimmer.fn::CreateDimmerRealInfoControl()");
+          }
+
+          !# CN_DISTANCE_TRANSMITTER
+          bIsControl = ( sControlName.Find(CN_DISTANCE_TRANSMITTER) > -1 );
+          if( bIsControl && (sLastControlName != CN_DISTANCE_TRANSMITTER) )
+          {
+            WriteLine( "<script>conInfo('Control CN_DISTANCE_TRANSMITTER found.');</script>" );
+            isKnownControl = true;
+            sLastControlName = CN_DISTANCE_TRANSMITTER;
+            Call("/esp/controls/distance_transmitter.fn::CreateDistanceTransmitterControl()");
           }
 
           !# DOOR_LOCK_STATE_TRANSCEIVER
@@ -828,7 +839,22 @@ function ::dcCreate()
               isKnownControl = true;
               Call("/esp/controls/maintenanceSmokeDetector.fn::CreateMaintenance()");
             }
-         }
+
+            ! The maintenance channel of a HMIP-FAL* or HmIP-eTRV* should only be visible when the VALUE parameter HEATING_COOLING is available
+            ! Nevertheless we check here again, if the parameter HEATING_COOLING is available
+            if ((ch.Label().Find("HmIP-FAL") > -1) || (ch.Label().Find("HmIP-eTRV") > -1)) {
+              object oHeatingCooling = cObj.DPByControl("MAINTENANCE.HEATING_COOLING");
+              if (oHeatingCooling) {
+                WriteLine( "<script>conInfo('Create "#ch.Label()#" MAINTENANCE Control.');</script>" );
+                sLastControlName = CN_MAINTENANCE;
+                isKnownControl = true;
+                Call("/esp/controls/maintenance.fn::CreateHeatingCooling()");
+              } else {
+                ! This should never be called.
+                Call("/esp/datapointconfigurator.fn::CreateNoFunction()");
+              }
+            }
+          }
 
           !# CN_MOTIONDETECTOR
           bIsControl = ( sControlName.Find(CN_MOTIONDETECTOR) > -1 );
@@ -921,8 +947,16 @@ function ::dcCreate()
             isKnownControl = true;
             sLastControlName = CN_POWERMETER_PSM;
 
-            if (ch.Label() != "HmIP-ESI") {
+            if ((ch.Label() != "HmIP-ESI") && (ch.Label() != "HmIP-ESI-IND")) {
               Call("/esp/controls/powermeter.fn::CreatePowermeterPSMControl()");
+            } elseif (ch.Label() == "HmIP-ESI-IND") {
+                if (chnNumber == 1) {
+                  Call("/esp/controls/powermeter.fn::CreatePowermeterESIIndControl_1()");
+                }
+                if (chnNumber == 2) {
+                  Call("/esp/controls/powermeter.fn::CreatePowermeterESIIndControl_2()");
+                }
+
             } else {
               string esiSensor;
               string sensorState = "SENSOR_UNKNOWN,SENSOR_ES_GAS,SENSOR_ES_LED,SENSOR_ES_IEC,SENSOR_ES_IEC_SML,SENSOR_ES_IEC_SML_WH,SENSOR_ES_IEC_D0_A,SENSOR_ES_IEC_D0_B,SENSOR_ES_IEC_D0_C,SENSOR_ES_IEC_D0_D";
@@ -1114,7 +1148,7 @@ function ::dcCreate()
           }
 
           !# SWITCH
-          bIsControl = ( sControlName.Find(CN_SWITCH) > -1 );
+          bIsControl = ( sControlName.Find(CN_SWITCH) == 0 );
           if( bIsControl && (sLastControlName != CN_SWITCH) )
           {
             isKnownControl = true;
@@ -1127,7 +1161,7 @@ function ::dcCreate()
             if (isWGT) {wgtChMode = ch.MetaData("channelMode");}
 
             if (((ch.Label().Substr(5,4) != "BWTH") && (! isWGT)) || ((isWGT) && (wgtChMode == "modeSWITCH"))) {
-              WriteLine( "<script>conInfo('Control SWITCH found.');</script>" );
+              WriteLine( "<script>conInfo('Control CN_SWITCH found. "#ch.Address()#"');</script>" );
               Call("/esp/controls/switch.fn::CreateBinaryActuator()");
             } else {
               ! If the device is a HmIP-BWTH* or HmIP-WGT*
@@ -1140,18 +1174,17 @@ function ::dcCreate()
           bIsControl = ( sControlName.Find(CN_WATER_SWITCH) > -1 );
           if( bIsControl && (sLastControlName != CN_WATER_SWITCH))
           {
-            WriteLine( "<script>conInfo('Control CN_WATER_SWITCH found.');</script>" );
+            WriteLine( "<script>conInfo('Control CN_WATER_SWITCH found. "#ch.Address()#"');</script>" );
             isKnownControl = true;
             sLastControlName = CN_WATER_SWITCH;
             Call("/esp/controls/switch.fn::CreateWaterSwitch()");
           }
 
-
           !# SWITCH_TRANSMITTER
           bIsControl = ( sControlName.Find(CN_SWITCH_TRANSM) > -1 );
           if( bIsControl && (sLastControlName != CN_SWITCH_TRANSM) )
           {
-            WriteLine( "<script>conInfo('Control SWITCH_TRANSMITTER found.');</script>" );
+            WriteLine( "<script>conInfo('Control CN_SWITCH_TRANSM found.');</script>" );
             isKnownControl = true;
             sLastControlName = CN_SWITCH_TRANSM;
             Call("/esp/controls/switch.fn::CreateSwitchTansmitter()");
@@ -1161,7 +1194,7 @@ function ::dcCreate()
           bIsControl = ( sControlName.Find(CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER) > -1 );
           if( bIsControl && (sLastControlName != CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER) )
           {
-            WriteLine( "<script>conInfo('Control TEMP_HUM_PARTICLE_MATTER_TRANSMITTER found.');</script>" );
+            WriteLine( "<script>conInfo('Control CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER found.');</script>" );
             isKnownControl = true;
             sLastControlName = CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER;
             Call("/esp/controls/weather_sensor.fn::CreateTempHuminityParticulateMatterTransmitter()");

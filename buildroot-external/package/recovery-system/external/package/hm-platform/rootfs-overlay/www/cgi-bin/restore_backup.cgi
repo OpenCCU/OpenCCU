@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC2034 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC2034
 
 echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
 
@@ -95,8 +95,16 @@ echo "OK<br>"
 
 # check the firmware version
 echo -ne "[4/8] Checking backup version... "
-source "${TMPDIR}/firmware_version"
-BACKUP_VERSION=${VERSION}
+# SECURITY: never 'source' the firmware_version file. It originates from the
+# uploaded archive which is still unverified at this point, so sourcing would
+# execute arbitrary shell code as root. Parse the VERSION value without
+# evaluating the file (the file format is a single "VERSION=..." line, see
+# createBackup.sh).
+if [ ! -f "${TMPDIR}/firmware_version" ]; then
+  echo "ERROR: backup is missing firmware_version"
+  exit 1
+fi
+BACKUP_VERSION=$(sed -n 's/^VERSION=//p' "${TMPDIR}/firmware_version" | head -n1 | tr -d '[:space:]')
 if [ "$(echo "${BACKUP_VERSION}" | cut -d'.' -f1)" != "2" ] && [ "$(echo "${BACKUP_VERSION}" | cut -d'.' -f1)" != "3" ]; then
   echo "ERROR: backup version (${BACKUP_VERSION}) not supported"
   exit 1

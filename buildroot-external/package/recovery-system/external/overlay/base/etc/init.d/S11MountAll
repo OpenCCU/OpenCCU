@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169,SC3010
 #
 # Startup script to mount all filesystems
 #
@@ -8,7 +8,7 @@ start() {
   echo -n "Mounting Filesystems: "
 
   # wait until bootfs is actually ready to be mounted
-  MAXSTEPS=10
+  MAXSTEPS=120
   # shellcheck disable=SC2034
   for i in $(seq 1 ${MAXSTEPS}); do
     if /sbin/blkid | grep -q deedbeef-01; then
@@ -17,6 +17,11 @@ start() {
     sleep 2
     echo -n "."
   done
+
+  if ! /sbin/blkid | grep -q deedbeef-01; then
+    echo "ERROR: bootfs did not show up in time."
+    exit 1
+  fi
 
   # mount all relevant filesystems (read-only first)
   mount -a

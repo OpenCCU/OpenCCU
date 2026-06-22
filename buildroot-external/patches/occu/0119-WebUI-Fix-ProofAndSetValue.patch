@@ -64,7 +64,7 @@
            append html "<input id='separate_CHANNEL_$chn\_$prn' name='$param' type='text' class='hidden'>"
          append html "</td>"
        append html "</tr>"
-@@ -3979,7 +3979,7 @@
+@@ -4217,7 +4217,7 @@
          append html "<td>\${stringTableCondThresholdLo}</td>"
          append html "<td>"
  
@@ -73,7 +73,7 @@
            append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
  
          append html "</td>"
-@@ -3993,7 +3993,7 @@
+@@ -4231,7 +4231,7 @@
          append html "<td>\${stringTableCondThresholdHi}</td>"
          append html "<td>"
  
@@ -190,7 +190,7 @@
        set min [format {%1.1f} $min]
        set max [format {%1.1f} $max]
      } else {
-@@ -251,7 +261,7 @@
+@@ -255,7 +265,7 @@
        hmip-usbsm
         {
          if {$param == "TX_THRESHOLD_POWER"} {return "W (0.0 - [getUserDefinedMaxValue $devType $param])"}
@@ -199,7 +199,7 @@
        }
        default {return "<span class=\"attention\">missing description</span>"}
     }
-@@ -307,6 +317,12 @@
+@@ -311,6 +321,12 @@
        set maxValue "stringUTF8"
        set maxLength "maxLength=16"
        set sizeTextfield 16
@@ -212,7 +212,7 @@
      }
    }
  
-@@ -329,7 +345,7 @@
+@@ -333,7 +349,7 @@
  
    # Limit float to 2 decimal places
    if {[llength [split $value "."]] == 2} {
@@ -221,7 +221,7 @@
        catch {set value [format {%1.1f} $value]}
      } else {
        catch {set value [format {%1.3f} $value]}
-@@ -425,7 +441,7 @@
+@@ -429,7 +445,7 @@
    }
  
    set s "<input id=$elemIdTmp type=\"text\" size=\"5\" value=[format %.0f [expr $value * 100]] name=$param\_tmp onblur="
@@ -230,7 +230,7 @@
    append s "jQuery('#separate_CHANNEL\_$chn\_$prn').val(this.value / 100);\">"
  
    append s "<input id=$elemId type=\"text\" size=\"5\" class=\"hidden\" value=$value name=$param>"
-@@ -439,10 +455,18 @@
+@@ -443,10 +459,18 @@
    set select ""
    foreach val [lsort -real [array names optionValues]] {
  
@@ -252,7 +252,7 @@
       }
  
       append s "<option class=\"[extractParamFromTranslationKey $optionValues($val)]\" value=$val $select>$optionValues($val)</option>"
-@@ -1969,4 +1993,4 @@
+@@ -1973,4 +1997,4 @@
      append result "</script>"
      return $result
    }
@@ -552,7 +552,7 @@
            append s1 "</td>"
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -46942,50 +46942,65 @@
+@@ -47548,50 +47548,65 @@
      srcElm.value = value;
    }
  
@@ -632,7 +632,7 @@
      }
      srcElm.setAttribute("valvalid", "true");
    }
-@@ -46993,9 +47008,9 @@
+@@ -47599,9 +47614,9 @@
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";

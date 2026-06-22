@@ -30,11 +30,14 @@ jQuery.extend(true,langJSON, {
     "ELV-SH-CRC" : "ELV Smart Home Taster Kompakt",
     "ELV-SH-CTH" : "ELV Smart Home<br/>Temperatur- und Luftfeuchtigkeitssensor<br/>Kompakt",
     "ELV-SH-CTV" : "ELV Smart Home<br/>Neigungs- und Ersch%FCtterungssensor<br/>Kompakt",
+
+    "ELV-SH-CWD" : "ELV-SH-CWD",
+
+    "ELV-SH-DUSI" : "ELV-SH-DUSI",
+
     "ELV-SH-KRC" : "ELV Smart Home Schl%FCsselbundfernbedienung",
     "ELV-SH-KRCO" : "ELV Smart Home Taster Kompakt - Outdoor",
-
     "ELV-SH-PTI2" : "ELV Smart Home Temperatursensor mit externen F%FChlern - 2-fach",
-
     "ELV-SH-SB8" : "ELV Smart Home<br/>Status-Board",
     "ELV-SH-SMS2" : "ELV Smart Home<br/>Oberfl%E4chen-montierter Schalt-Aktor<br/>2-fach",
     "ELV-SH-SMSI" : "ELV Smart Home<br/>Bodenfeuchtesensor",
@@ -217,7 +220,7 @@ jQuery.extend(true,langJSON, {
     "HmIP-FLC" : "Homematic IP Universal Motorschloss Controller",
     "HmIP-FROLL": "Homematic IP Rollladenaktor, Unterputzmontage",
     "HmIP-FS" : "Homematic IP Schaltaktor - Unterputz",
-    "HmIP-FSI6" : "Homematic IP Schaltaktor mit Tastereingang – Unterputz",
+    "HmIP-FSI6" : "Homematic IP Schaltaktor mit Tastereingang - Unterputz",
     "HmIP-FSI16" : "Homematic IP Schaltaktor mit Tastereingang (16 A) - Unterputz",
     "HmIP-FWI" : "Homematic IP Wiegand-Schnittstelle",
     "HmIP-HAP" : "LAN ROUTER",
@@ -231,6 +234,7 @@ jQuery.extend(true,langJSON, {
     "HmIP-MOD-RC8": "Homematic IP Modulplatine Sender - 8-fach",
     "HmIP-MOD-TM": "Homematic IP Tormatic Modul",
     "HmIP-MOD-WD-VK": "Homematic IP Modul f%FCr VEKA Fensterantriebe",
+    "HmIP-M-TD15" : "Homematic IP Rohrmotor - 15 Nm",
     "HmIP-MP3P": "Homematic IP MP3 Kombisignalgeber",
     "HmIP-PCBS": "Homematic IP Schaltplatine",
     "HmIP-PCBS-BAT": "Homematic IP Schaltplatine f%FCr Batteriebetrieb",
@@ -270,6 +274,7 @@ jQuery.extend(true,langJSON, {
     "HmIP-WGD-PL": "Homematic IP Funk Glasdisplay - plus",
     "HmIP-WGS": "Homematic IP Glastaster",
     "HmIP-WGT": "Homematic IP Glasthermostat - 230 V",
+    "HmIP-WGTC" : "Homematic IP Glas-Wandthermostat mit CO2-Sensor",
     "HmIP-WHS2": "Homematic IP Schaltaktor f%FCr Heiz-Systeme - 2 Kanal",
     "HmIP-WKP": "Homematic IP Keypad",
     "HmIP-WRCD" : "Homematic IP Wandtaster mit Statusdisplay",
@@ -277,9 +282,7 @@ jQuery.extend(true,langJSON, {
     "HmIP-WRC2": "Homematic IP Wandtaster 2-fach",
     "HmIP-WRCC2": "Homematic IP Wandtaster - flach",
     "HmIP-WSC" : "Homematic IP Servosteuerung",
-
     "HmIP-WSM" : "Homematic IP Bew%E4sserungsaktor",
-
     "HmIP-WTH": "Homematic IP Wandthermostat",
     "HmIP-WTH-B": "Homematic IP Wandthermostat - basic",
     "HmIP-WTH-2": "Homematic IP Wandthermostat mit Luftfeuchtigkeitssensor",
@@ -304,6 +307,9 @@ jQuery.extend(true,langJSON, {
     "HmIPW-STHD": "Homematic IP Wired Temperatur- und Luftfeuchtigkeitssensor mit Display - innen",
     "HmIPW-WGD" :"Homematic IP Wired Glasdisplay",
     "HmIPW-WGD-PL" :"Homematic IP Wired Glasdisplay - plus",
+    "HmIPW-WGS": "Homematic IP Wired Glastaster",
+    "HmIPW-WGT": "Homematic IP Wired Glasthermostat",
+    "HmIPW-WGTC" : "Homematic IP Wired Glas-Wandthermostat mit CO2-Sensor",
     "HmIPW-WRC2" : "Homematic IP Wired Wandtaster - 2-fach",
     "HmIPW-WRC6" : "Homematic IP Wired Wandtaster - 6-fach",
     "HmIPW-WTH" : "Homematic IP Wired Wandthermostat mit Luftfeuchtigkeitssensor",
@@ -338,6 +344,7 @@ jQuery.extend(true,langJSON, {
     "PSMCO": "Homematic IP Schalten/Messen",
     "RC8": "Homematic IP Fernbedienung, 8 Kanal",
     "RF-LAN-Sniffer" : "RF-LAN-Sniffer",
+    "RM-110-45" : "TEXINO Rohrmotor HmIP 8-Kantwelle 60mm/15Nm",
     "RPI-RF-MOD" : "CO-PROCESSOR",
     "SMI": "Homematic IP Bewegungsmelder innen",
     "SMO": "Homematic IP Bewegungsmelder au%DFen",

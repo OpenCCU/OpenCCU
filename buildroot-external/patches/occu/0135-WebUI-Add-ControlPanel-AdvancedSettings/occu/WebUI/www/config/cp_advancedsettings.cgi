@@ -40,6 +40,11 @@ proc get_systemname {} {
 }
 
 proc set_systemname { systemname } {
+  # SECURITY: the value is interpolated into a single-quoted ReGaScript string
+  # literal below and executed by ReGaHss as root. Escape backslash and single
+  # quote so an attacker-supplied systemName cannot break out of the literal and
+  # inject arbitrary ReGaScript (e.g. system.Exec). Single pass: \ -> \\, ' -> \'
+  set systemname [string map {\\ \\\\ ' \\'} $systemname]
   set isecmd "system.Name('$systemname');"
   array set result [rega_script $isecmd]
   return $result(STDOUT);

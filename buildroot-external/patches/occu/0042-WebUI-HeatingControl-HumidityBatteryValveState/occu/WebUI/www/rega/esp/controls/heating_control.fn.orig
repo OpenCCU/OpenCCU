@@ -400,12 +400,15 @@ function ::CreateHeatingControlHmIP() {
 
   WriteLine("<tr>");
     WriteLine("<td>");
-      WriteLine("<table width='100%' height='100%' class='hidden_'>");
+      WriteLine("<table width='205px' height='100%' style='margin-left:-3px;' class='hidden_'>");
         WriteLine("<tr>");
           WriteLine("<td>");
             ! AUTO
             WriteLine("<div class='ControlBtnOff CLASS02551' id='"#chnId#"Auto' >${stringTableClimateControlRTTransceiverAutoModeBR}</div>");
           WriteLine("</td>");
+
+          WriteLine("<td><div></div></td>");
+
           WriteLine("<td>");
             ! BOOST
             WriteLine("<div class='ControlBtnOff CLASS02551' id='"#chnId#"Boost' >${stringTableClimateControlRTTransceiverBoostModeBR}</div>");
@@ -416,6 +419,9 @@ function ::CreateHeatingControlHmIP() {
             ! MANU
             WriteLine("<div class='ControlBtnOff CLASS02551' id='"#chnId#"Manu' >${stringTableClimateControlRTTransceiverManuModeBR}</div>");
           WriteLine("</td>");
+
+          WriteLine("<td><div></div></td>");
+
           WriteLine("<td>");
             ! PARTY
             WriteLine("<div class='ControlBtnOff CLASS02551 hidden_' id='"#chnId#"Party' >${stringTableClimateControlRTTransceiverPartyModeBR}</div>");
@@ -435,21 +441,66 @@ function ::CreateHeatingControlHmIP() {
           btnStateHeating = "ControlBtnOff";
           btnStateCooling = "ControlBtnOn";
         }
+        ! END HEATING_COOLING
 
         WriteLine("<tr>");
-          WriteLine("<td>");
-            WriteLine("<div class='"#btnStateHeating#" CLASS02551' style='line-height:35px' id='"#chnId#"Heating' onclick='setDpState("#oHeatingCooling.ID()#", 0); JControlBtn.pressed(jQuery(this));'>"#statusHeating#"</div>");
+          WriteLine("<td style='width:20%;'>");
+            WriteLine("<div class='"#btnStateHeating#" CLASS02551' style='line-height:35px;' id='"#chnId#"Heating' onclick='setDpState("#oHeatingCooling.ID()#", 0); JControlBtn.pressed(jQuery(this));'>"#statusHeating#"</div>");
           WriteLine("</td>");
+
+          WriteLine("<td><div><img src='/ise/img/help.png' style='cursor: pointer; width:25px; height:25px;' onclick='showParamHelp(translateKey(\"helpHeatingCooling\"), 450, 150);'></div></td>");
+
           WriteLine("<td>");
-            WriteLine("<div class='"#btnStateCooling#" CLASS02551' style='line-height:35px' id='"#chnId#"Cooling' onclick='setDpState("#oHeatingCooling.ID()#", 1); JControlBtn.pressed(jQuery(this));'>"#statusCooling#"</div>");
+            WriteLine("<div class='"#btnStateCooling#" CLASS02551' style='line-height:35px;' id='"#chnId#"Cooling' onclick='setDpState("#oHeatingCooling.ID()#", 1); JControlBtn.pressed(jQuery(this));'>"#statusCooling#"</div>");
           WriteLine("</td>");
+            WriteLine("<tr>");
+              WriteLine("<td colspan='3'>");
+                WriteLine("<div class='ControlBtnOff'>");
+                  WriteLine("<span>${weeklyProfileLbl}</span>");
+                  WriteLine("<select id='"#chnId#"ActiveProfile' style='margin-left:15%;' onchange='setDpState("#oActiveProfile.ID()#",this.value)'>");
+                    WriteLine("<option value='1'>${optionWeeklyProfile1}</option>");
+                    WriteLine("<option value='2'>${optionWeeklyProfile2}</option>");
+                    WriteLine("<option value='3'>${optionWeeklyProfile3}</option>");
+
+                    ! Some devices (eTRV and WTH with a firmware < 1.6 and others) do have only 3 weekly programs while others have 6 of them.
+                    if (
+                      (
+                        (chnLabel != "HMIP-eTRV")
+                        && (chnLabel != "HmIP-eTRV")
+                        && (chnLabel != "HMIP-eTRV-2")
+                        && (chnLabel != "HmIP-eTRV-2")
+                        && (chnLabel != "HmIP-eTRV-2 I9F")
+                        && (chnLabel != "HmIP-eTRV-2-UK")
+                        && (chnLabel != "HmIP-eTRV-B")
+                        && (chnLabel != "HmIP-eTRV-B-2")
+                        && (chnLabel != "HmIP-eTRV-B-2 R4M")
+                        && (chnLabel != "HmIP-eTRV-B-UK")
+                        && (chnLabel != "HmIP-eTRV-B1")
+                        && (chnLabel != "HmIP-WTH")
+                        && (chnLabel != "HmIP-WTH-A")
+                        && (chnLabel != "HMIP-WTH")
+                        && (chnLabel != "HmIP-eTRV-C")
+                        && (chnLabel != "HmIP-eTRV-C-2")
+                        && (chnLabel != "HmIP-eTRV-CL")
+                        && (chnLabel != "HmIP-eTRV-E")
+                        && (chnLabel != "HmIP-eTRV-E-S")
+                        && (chnLabel != "HmIP-eTRV-E-A")
+                      )
+                      || (((chnLabel == "HmIP-WTH") || (chnLabel == "HMIP-WTH") || (chnLabel == "HmIP-WTH-A")) && ((devFwMajor > 1) || ((devFwMajor == 1) && (devFwMinor >= 6))))
+                     ) {
+                        WriteLine("<option value='4'>${optionWeeklyProfile4}</option>");
+                        WriteLine("<option value='5'>${optionWeeklyProfile5}</option>");
+                        WriteLine("<option value='6'>${optionWeeklyProfile6}</option>");
+                    }
+                  WriteLine("</select>");
+                WriteLine("</div>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
         WriteLine("</tr>");
       }
-      ! END HEATING_COOLING
-
-
       WriteLine("</table>");
     WriteLine("</td>");
+
     WriteLine("<td>");
       WriteLine("<table width='100%' height='100%' class='hidden_'>");
 
@@ -466,61 +517,11 @@ function ::CreateHeatingControlHmIP() {
             WriteLine("<div class='ControlBtnOff CLASS02551 hidden' style='line-height:35px' id='"#chnId#"On'>${actionStatusControlLblOn}</div>");
           WriteLine("</td>");
         WriteLine("</tr>");
-
       WriteLine("</table>");
     WriteLine("</td>");
   WriteLine("</tr>");
 
-  WriteLine("<tr>");
-    WriteLine("<td>");
-      WriteLine("<table class='ControlBtnInfo' style='width: 80%;'>");
-        WriteLine("<tr>");
-          WriteLine("<td>");
-             WriteLine("<span>${weeklyProfileLbl}</span>");
-          WriteLine("</td>");
-          WriteLine("<td>");
-            WriteLine("<select id='"#chnId#"ActiveProfile' onchange='setDpState("#oActiveProfile.ID()#",this.value)'>");
-              WriteLine("<option value='1'>${optionWeeklyProfile1}</option>");
-              WriteLine("<option value='2'>${optionWeeklyProfile2}</option>");
-              WriteLine("<option value='3'>${optionWeeklyProfile3}</option>");
 
-              ! Some devices (eTRV and WTH with a firmware < 1.6 and others) do have only 3 weekly programs while others have 6 of them.
-              if (
-                (
-                  (chnLabel != "HMIP-eTRV")
-                  && (chnLabel != "HmIP-eTRV")
-                  && (chnLabel != "HMIP-eTRV-2")
-                  && (chnLabel != "HmIP-eTRV-2")
-                  && (chnLabel != "HmIP-eTRV-2 I9F")
-                  && (chnLabel != "HmIP-eTRV-2-UK")
-                  && (chnLabel != "HmIP-eTRV-B")
-                  && (chnLabel != "HmIP-eTRV-B-2")
-                  && (chnLabel != "HmIP-eTRV-B-2 R4M")
-                  && (chnLabel != "HmIP-eTRV-B-UK")
-                  && (chnLabel != "HmIP-eTRV-B1")
-                  && (chnLabel != "HmIP-WTH")
-                  && (chnLabel != "HmIP-WTH-A")
-                  && (chnLabel != "HMIP-WTH")
-                  && (chnLabel != "HmIP-eTRV-C")
-                  && (chnLabel != "HmIP-eTRV-C-2")
-                  && (chnLabel != "HmIP-eTRV-CL")
-                  && (chnLabel != "HmIP-eTRV-E")
-                  && (chnLabel != "HmIP-eTRV-E-S")
-                  && (chnLabel != "HmIP-eTRV-E-A")
-                )
-                || (((chnLabel == "HmIP-WTH") || (chnLabel == "HMIP-WTH") || (chnLabel == "HmIP-WTH-A")) && ((devFwMajor > 1) || ((devFwMajor == 1) && (devFwMinor >= 6))))
-               ) {
-                  WriteLine("<option value='4'>${optionWeeklyProfile4}</option>");
-                  WriteLine("<option value='5'>${optionWeeklyProfile5}</option>");
-                  WriteLine("<option value='6'>${optionWeeklyProfile6}</option>");
-              }
-            WriteLine("</select>");
-          WriteLine("</td>");
-
-        WriteLine("</tr>");
-      WriteLine("</table>");
-    WriteLine("</td>");
-  WriteLine("</tr>");
 
   WriteLine("<tr>");
     WriteLine("<td colspan='2'>");

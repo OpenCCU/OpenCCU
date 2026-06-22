@@ -1,6 +1,6 @@
 --- occu/WebUI/www/webui/webui.js.orig
 +++ occu/WebUI/www/webui/webui.js
-@@ -9570,7 +9570,23 @@
+@@ -9688,7 +9688,23 @@
  		document.body.style.cursor = cursorType;
  	}
  	
@@ -25,7 +25,7 @@
   * stringfilter.js
   **/
   
-@@ -9656,12 +9672,23 @@
+@@ -9774,12 +9790,23 @@
      //var patternList = m_value.split("|");
      text            = text.toLowerCase();
      
@@ -53,7 +53,7 @@
    };
    
    /**
-@@ -37259,7 +37286,15 @@
+@@ -37396,7 +37423,15 @@
      {
        if (typeof obj['type'] != 'undefined') {
          if (obj['type'] === "")                      { return false; }
@@ -70,7 +70,7 @@
        }
      }
      if (this.filDesc !== "")
-@@ -37269,7 +37304,15 @@
+@@ -37406,7 +37441,15 @@
        {
          //conInfo( "iseFilter: desc="+obj['desc'] );
          if (obj['desc'] === "")                      { return false; }
@@ -87,7 +87,7 @@
        }
      }
      if (this.filName !== "")
-@@ -37278,7 +37321,15 @@
+@@ -37415,7 +37458,15 @@
        {
          if (obj['name'] === "")                      { return false; }
          var transName = translateString(obj['name']);
@@ -104,7 +104,7 @@
        }
      }
      if (this.filSn !== "")
-@@ -37286,7 +37337,15 @@
+@@ -37423,7 +37474,15 @@
        if (typeof obj['sn'] != 'undefined')
        {
          if (obj['sn'] === "")                     { return false; }
@@ -121,7 +121,7 @@
        }
      }
      if (this.filUnit !== "")
-@@ -37294,7 +37353,15 @@
+@@ -37431,7 +37490,15 @@
        if (typeof obj['unit'] != 'undefined')
        {
          if (obj['unit'] === "")                      { return false; }
@@ -138,7 +138,7 @@
        }
      }
  
-@@ -37318,7 +37385,15 @@
+@@ -37455,7 +37522,15 @@
      if (this.filChnLink !== "")
      {
        if (obj['chn'] === "")                         { return false; }
