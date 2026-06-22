@@ -75,18 +75,18 @@ checkCCU() {
 
 # hasLocalGateRules <iptables -S INPUT output>
 # Returns 0 if INPUT contains the expected WebUI protection rules
-# (--dport 80/443 -> OPENCCU_LOCAL) and no conflicting explicit SSH open rule.
+# (--dport 80/443 -> local-only) and no conflicting explicit SSH open rule.
 hasLocalGateRules() {
   _rules="${1}"
 
   # WebUI ports must explicitly go through the local-only gate.
-  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( |$).* -j OPENCCU_LOCAL( |$)' || return 1
-  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( |$).* -j OPENCCU_LOCAL( |$)' || return 1
+  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( |$).* -j local-only( |$)' || return 1
+  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( |$).* -j local-only( |$)' || return 1
 
   # SSH is optional; if it is explicitly opened, it must not bypass the gate.
   _ssh_rules=$(echo "${_rules}" | /bin/grep -E -- '^-A INPUT( .*)?-p tcp( .*)?--dport 22( |$)')
   if [[ -n "${_ssh_rules}" ]]; then
-    echo "${_ssh_rules}" | /bin/grep -Eq -- '-j (OPENCCU_LOCAL|DROP)( |$)' || return 1
+    echo "${_ssh_rules}" | /bin/grep -Eq -- '-j (local-only|DROP)( |$)' || return 1
   fi
 
   return 0
@@ -125,7 +125,7 @@ fi
 #
 # The external access prevention is implemented in the on-device firewall
 # (see /lib/libfirewall.tcl) which restricts the WebUI and other services to
-# local source networks via the OPENCCU_LOCAL gate chain. As a watchdog we
+# local source networks via the local-only gate chain. As a watchdog we
 # verify that this protection is actually active when it is supposed to be
 # (i.e. when the user did not opt into external access). If the firewall
 # silently failed to apply, the protection would be missing without anybody
@@ -163,7 +163,7 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
       /bin/triggerAlarm.tcl "${MSG}" "WatchDog: security-portforward" true
       RESULT=1
     else
-      log warning "firewall protection (OPENCCU_LOCAL gate chain) is not active - WebUI/services are currently protected by authentication only"
+      log warning "firewall protection (local-only gate chain) is not active - WebUI/services are currently protected by authentication only"
     fi
   elif [[ "${gate_state}" == "unknown" ]]; then
     log notice "could not verify firewall protection state (iptables not usable)"

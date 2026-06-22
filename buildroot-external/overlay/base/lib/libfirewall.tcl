@@ -41,7 +41,7 @@ set Firewall_USER_PORTS {}
 # geoeffnete Ports (WebUI auf 80/443, SSH, Dienste mit 'full'-Zugriff) auf
 # lokale Quell-Netze beschraenkt.
 ##
-set Firewall_LOCAL_CHAIN "OPENCCU_LOCAL"
+set Firewall_LOCAL_CHAIN "local-only"
 
 ##
 # @const Firewall_LOCAL_OVERRIDE_FILE
