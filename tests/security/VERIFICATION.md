@@ -65,6 +65,27 @@ the would-be payload is just data.
   `git diff --exit-code` green).
 - All 4 edited Tcl files pass `info complete` (brace balance).
 
+## Layer 4 — functional regression on the live WebUI (does legit `\` still work?)
+
+The added `\`-escaping must not break legitimate backslash use. Verified on a dev
+instance (3.87.6.20260614) by deploying the patched `hmscript.tcl` over the live
+file (bind-mount; `/www` is read-only squashfs) and driving the **real JSON-RPC
+API** — `SysVar.createBool`, whose `name` flows through `hmscript_escapeString`
+and whose response echoes the stored `sv.Name()`. Before/after, with a positive
+control:
+
+```text
+input name              UNPATCHED (control)              PATCHED
+a\test\b             -> a<TAB>est\b  (\t corrupted)   -> a\test\b      (exact)
+ends\                -> result:null  (create failed)  -> ends\         (exact)
+x\";WriteLine(31337) -> 31337 executed (RCE)          -> stored inert  (no exec)
+```
+
+So the patch is not just non-breaking — the *unpatched* escaper silently corrupts
+valid backslash data (`\t`/`\n`/… interpreted as control chars) and fails on
+trailing `\`. The fix preserves every legit value exactly (ReGa decodes `\\`→`\`,
+so escaper-doubling and parser-halving cancel) and neutralizes the injection.
+
 ## Scope coverage
 
 - **JSON-RPC** (`/api/homematic.cgi`): every method routes user strings through
