@@ -44,7 +44,8 @@ new file mode 100644
 index 00000000000..7a259e21352
 --- /dev/null
 +++ b/cmd/fileenv.c
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0+
 +#include <config.h>
 +#include <command.h>
 +#include <env.h>
