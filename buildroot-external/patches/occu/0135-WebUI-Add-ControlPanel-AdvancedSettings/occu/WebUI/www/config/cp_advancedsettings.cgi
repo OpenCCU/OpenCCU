@@ -619,10 +619,14 @@ proc action_save_settings {} {
     append errMsg [deletefile $NOPORTFORWARDINGCHECKFILENAME]
   }
 
+  set allowExternalAccessCurrent [file exists $ALLOWEXTERNALACCESSFILENAME]
   if {$allowExternalAccess} {
     append errMsg [createfile $ALLOWEXTERNALACCESSFILENAME]
   } else {
     append errMsg [deletefile $ALLOWEXTERNALACCESSFILENAME]
+  }
+  if {$allowExternalAccess != $allowExternalAccessCurrent} {
+    catch {exec /bin/setfirewall.tcl 2>/dev/null >/dev/null}
   }
 
   if {$noFSTRIM} {
