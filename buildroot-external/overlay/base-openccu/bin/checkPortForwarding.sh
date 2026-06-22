@@ -42,6 +42,9 @@
 # 0 = No insecure internet exposure identified (or check not possible)
 # 1 = Insecure internet exposure identified
 #
+# Usage:
+#   checkPortForwarding.sh [-q|--quiet]
+# Default mode prints execution details to stdout.
 
 # presence of this file means the user explicitly allowed external (internet)
 # access to the WebUI and services (disabling the local-only firewall
@@ -56,20 +59,31 @@ log() {
   /usr/bin/logger -t checkPortForwarding -p "user.${1}" "${2}"
 }
 
+# progress <message>
+progress() {
+  [[ "${QUIET}" == "0" ]] && echo "[checkPortForwarding] ${1}"
+}
+
 # checkCCU <baseurl>
 # Returns 0 if the given base URL points to a CCU (i.e. answers the
 # homematic ReGa.isPresent API call positively), 1 otherwise. The match is
 # whitespace tolerant to also catch reverse-proxied or differently formatted
 # answers.
 checkCCU() {
+  progress "probing ${1}/api/homematic.cgi"
   if ! _res=$(/usr/bin/curl -k -s --max-time 15 "${1}/api/homematic.cgi" \
               --data-raw '{"version": "1.1", "method": "ReGa.isPresent", "params": {}}' 2>/dev/null); then
+    progress "probe failed (no valid API response)"
     return 1
   fi
   _res=$(echo "${_res}" | tr -d ' \t\r\n')
   case "${_res}" in
-    *'"result":true'*) return 0 ;;
+    *'"result":true'*)
+      progress "probe matched OpenCCU API response"
+      return 0
+      ;;
   esac
+  progress "probe did not match OpenCCU API response"
   return 1
 }
 
@@ -92,10 +106,33 @@ hasLocalGateRules() {
   return 0
 }
 
+QUIET=0
+while [[ $# -gt 0 ]]; do
+  case "${1}" in
+    -q|--quiet)
+      QUIET=1
+      ;;
+    -h|--help)
+      echo "Usage: $0 [-q|--quiet]"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: ${1}" >&2
+      echo "Usage: $0 [-q|--quiet]" >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
 # exit in HMLGW mode immediately
-[[ -e /usr/local/HMLGW ]] && exit 0
+if [[ -e /usr/local/HMLGW ]]; then
+  progress "HMLGW mode detected, skipping check"
+  exit 0
+fi
 
 RESULT=0
+progress "starting security checks"
 
 ########################################################################
 # 1) local configuration audit
@@ -108,16 +145,21 @@ RESULT=0
 # itself - independent of any (unreliable) self-scan.
 ########################################################################
 if [[ -e "${OVERRIDE_FILE}" ]]; then
+  progress "check 1/3: external access override is enabled"
   if [[ ! -e "${AUTH_FILE}" ]]; then
     MSG="CRITICAL SECURITY ISSUE: WebUI is reachable from the internet WITHOUT a password (external access is allowed and authentication is disabled). Enable WebUI authentication or disable external access immediately."
     log err "${MSG}"
     /bin/triggerAlarm.tcl "${MSG}" "WatchDog: security-portforward" true
     RESULT=1
+    progress "check 1/3: CRITICAL finding (override enabled and authentication disabled)"
   else
     # external access is allowed but at least protected by a password - log
     # it so the exposure is not silently forgotten
     log notice "external (internet) access to the WebUI is explicitly allowed (password protected)"
+    progress "check 1/3: override enabled but authentication active"
   fi
+else
+  progress "check 1/3: external access override is disabled"
 fi
 
 ########################################################################
@@ -133,6 +175,7 @@ fi
 # opposed to prevention) is meant to catch.
 ########################################################################
 if [[ ! -e "${OVERRIDE_FILE}" ]]; then
+  progress "check 2/3: verifying local-only firewall gate state"
 
   # gate_state: active   = expected protected INPUT rules are present
   #             inactive = INPUT could be queried but expected protection is missing
@@ -140,6 +183,7 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
   #                        unprivileged container) - not verifiable
   gate_state="unknown"
   if [[ -x /usr/sbin/iptables ]] && fw_input=$(/usr/sbin/iptables -S INPUT 2>/dev/null); then
+    progress "check 2/3: IPv4 INPUT rules readable"
     if hasLocalGateRules "${fw_input}"; then
       gate_state="active"
     else
@@ -149,12 +193,14 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
     # if IPv6 is available the same protection must be verifiable there as well
     if [[ "${gate_state}" == "active" ]] && [[ -e /proc/net/if_inet6 ]] && [[ -x /usr/sbin/ip6tables ]]; then
       if fw_input6=$(/usr/sbin/ip6tables -S INPUT 2>/dev/null); then
+        progress "check 2/3: IPv6 INPUT rules readable"
         hasLocalGateRules "${fw_input6}" || gate_state="inactive"
       else
         gate_state="unknown"
       fi
     fi
   fi
+  progress "check 2/3: gate_state=${gate_state}"
 
   if [[ "${gate_state}" == "inactive" ]]; then
     if [[ ! -e "${AUTH_FILE}" ]]; then
@@ -168,6 +214,8 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
   elif [[ "${gate_state}" == "unknown" ]]; then
     log notice "could not verify firewall protection state (iptables not usable)"
   fi
+else
+  progress "check 2/3: skipped because external access override is enabled"
 fi
 
 ########################################################################
@@ -178,14 +226,17 @@ fi
 # this is intentional, so the scan is skipped in that case.
 ########################################################################
 if [[ ! -e "${OVERRIDE_FILE}" ]]; then
+  progress "check 3/3: running best-effort external IPv4 scan"
 
   # get public ipv4 using different public services
   PUBIP_URIS="ifconfig.me icanhazip.com ipecho.net/plain ifconfig.co"
   PUBLIC_IP4=""
   for uri in ${PUBIP_URIS}; do
+    progress "check 3/3: resolving public IPv4 via ${uri}"
     PUBLIC_IP4=$(/usr/bin/curl -s -4 --max-time 10 "${uri}")
     # check if we received a valid ipv4 address
     if expr "${PUBLIC_IP4}" : '[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$' >/dev/null; then
+      progress "check 3/3: using detected public IPv4 ${PUBLIC_IP4}"
       break
     fi
     PUBLIC_IP4=""
@@ -196,11 +247,14 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
     # connection or all lookup services being unreachable). This is explicitly
     # NOT an all-clear, so we log it to avoid a false sense of security.
     log notice "could not determine public IPv4 address - external port scan skipped"
+    progress "check 3/3: skipped (public IPv4 could not be determined)"
   elif [[ ! -x /usr/bin/nmap ]]; then
     log notice "nmap not available - external port scan skipped"
+    progress "check 3/3: skipped (nmap not available)"
   else
     # use nmap to get all open ports @ the public IP (use -T4 instead of -T5
     # to reduce the amount of missed open ports caused by dropped packets)
+    progress "check 3/3: scanning open ports on ${PUBLIC_IP4}"
     OPEN_PORTS=$(/usr/bin/nmap --open -Pn -oG - -p- -n -T4 "${PUBLIC_IP4}" 2>/dev/null | /usr/bin/awk '
       BEGIN { OFS=":" }
       { ip = $2 }
@@ -217,15 +271,21 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
     # walk through all open ports and try to see if there is a CCU listening
     # using HTTP or HTTPS
     for p in ${OPEN_PORTS}; do
+      progress "check 3/3: probing detected open port ${p}"
       if checkCCU "http://${p}" || checkCCU "https://${p}"; then
         MSG="CRITICAL SECURITY ISSUE: a port forwarding linking back to this CCU was identified at ${p}. Disable the port forwarding in your internet router immediately."
         log err "${MSG}"
         /bin/triggerAlarm.tcl "${MSG}" "WatchDog: security-portforward" true
         RESULT=1
+        progress "check 3/3: CRITICAL finding at ${p}"
         break
       fi
     done
+    [[ "${RESULT}" == "0" ]] && progress "check 3/3: no OpenCCU service detected on scanned open ports"
   fi
+else
+  progress "check 3/3: skipped because external access override is enabled"
 fi
 
+progress "finished with result=${RESULT}"
 exit ${RESULT}
