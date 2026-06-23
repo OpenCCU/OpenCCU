@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.6.1
+- Bump http-proxy-middleware dependency to 4.1.1
+
 ## 0.6.0
 - migrate the proxy add-on from the deprecated `base-nodejs` image to the general app-base (`base`) image.
 - stage the Node.js runtime and proxy dependencies explicitly and let the app-base init system manage process startup via the add-on `services` startup mode.
