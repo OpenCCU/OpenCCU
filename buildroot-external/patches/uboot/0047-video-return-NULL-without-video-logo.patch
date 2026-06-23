@@ -8,7 +8,7 @@
  #define SPLASH_DECL(_name) \
  	extern u8 __splash_ ## _name ## _begin[]; \
  	extern u8 __splash_ ## _name ## _end[]
-@@ -586,17 +587,25 @@
+@@ -586,18 +587,25 @@
  #define SPLASH_START(_name)	__splash_ ## _name ## _begin
  
  SPLASH_DECL(u_boot_logo);
@@ -25,13 +25,12 @@
  
  static int show_splash(struct udevice *dev)
  {
--	u8 *data = SPLASH_START(u_boot_logo);
-+	u8 *data = video_get_u_boot_logo();
++#if defined(CONFIG_VIDEO_LOGO)
+ 	u8 *data = SPLASH_START(u_boot_logo);
  	int ret;
  
-+	if (!data)
-+		return 0;
-+
  	ret = video_bmp_display(dev, map_to_sysmem(data), -4, 4, true);
++#endif
  
  	return 0;
+ }
