@@ -1,0 +1,37 @@
+--- a/drivers/video/video-uclass.c
++++ b/drivers/video/video-uclass.c
+@@ -579,24 +579,32 @@
+ 	return priv->ysize;
+ }
+ 
++#if defined(CONFIG_VIDEO_LOGO)
+ #define SPLASH_DECL(_name) \
+ 	extern u8 __splash_ ## _name ## _begin[]; \
+ 	extern u8 __splash_ ## _name ## _end[]
+ 
+ #define SPLASH_START(_name)	__splash_ ## _name ## _begin
+-
+ SPLASH_DECL(u_boot_logo);
++#endif
+ 
+ void *video_get_u_boot_logo(void)
+ {
++#if defined(CONFIG_VIDEO_LOGO)
+ 	return SPLASH_START(u_boot_logo);
++#else
++	return NULL;
++#endif
+ }
+ 
+ static int show_splash(struct udevice *dev)
+ {
+-	u8 *data = SPLASH_START(u_boot_logo);
++	u8 *data = video_get_u_boot_logo();
+ 	int ret;
+ 
++	if (!data)
++		return 0;
++
+ 	ret = video_bmp_display(dev, map_to_sysmem(data), -4, 4, true);
+ 
+ 	return 0;
