@@ -26,12 +26,21 @@ check_factory_reset() {
     # umount /usr/local to regenerate it
     umount -f /usr/local
 
-    # force PARTUUID to 0xDEEDBEEF because due to some tools the
-    # correct partuuid might have been lost
-    PARTUUID=$(/sbin/blkid -o export "${DEVNAME}" | grep -m1 PARTUUID | cut -d= -f2)
-    if [[ "${PARTUUID}" != "deedbeef-03" ]]; then
-      echo -en '\xEF\xBE\xED\xDE' | dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
-    fi
+    # reset MBR disk signature (thus PARTUUID to 0xDEEDBEEF)
+    # because due to some tools the correct partuuid might have been lost
+    PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DEV}" 2>/dev/null || true)"
+    case "${PTTYPE}" in
+      dos)
+        # MBR: required because parted resets disk signature, thus PARTUUID will be different
+        PARTUUID=$(/sbin/blkid -o export "${DEVNAME}" | grep -m1 PARTUUID | cut -d= -f2)
+        if [[ "${PARTUUID}" != "deedbeef-03" ]]; then
+          echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+        fi
+        ;;
+      gpt)
+        # GPT: not required; GPT-PARTUUID comes from unique partition GUID
+        ;;
+    esac
 
     # we create a clean ext4 partition now
     /sbin/mkfs.ext4 -F -L userfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${DEVNAME}"

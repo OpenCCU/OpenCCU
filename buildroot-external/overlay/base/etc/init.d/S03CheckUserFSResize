@@ -54,8 +54,17 @@ check_userfs_resize() {
         return 2
       fi
 
-      # force PARTUUID to 0xDEEDBEEF because parted changes partuuid
-      echo -en '\xEF\xBE\xED\xDE' | dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+      # set MBR disk signature in case we have a dos/mbr partitioning
+      PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DEV}" 2>/dev/null || true)"
+      case "${PTTYPE}" in
+        dos)
+          # MBR: required because parted resets disk signature, thus PARTUUID will be different
+          echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+          ;;
+        gpt)
+          # GPT: not required; GPT-PARTUUID comes from unique partition GUID
+          ;;
+      esac
 
       # check if we need to resize the filesystem as well or if we skip it
       # since a factory reset is anyway done in the next step
