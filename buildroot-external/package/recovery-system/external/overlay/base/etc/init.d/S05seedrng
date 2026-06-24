@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169,SC3010
 #
 # Startup script to seed the kernel RNG and preserve it during reboots.
 #
@@ -15,6 +15,10 @@ SEEDRNG_ARGS="-d /var/lib/seedrng"
 case "$1" in
 	start|stop|restart|reload)
 		echo -n "Running ${DAEMON}: "
+
+		# make sure /var/lib exists
+		# shellcheck disable=SC2174
+		mkdir -p -m 0775 /var/lib
 
 		# shellcheck disable=SC2086 # we need the word splitting
 		/usr/sbin/seedrng ${SEEDRNG_ARGS} >/dev/null
