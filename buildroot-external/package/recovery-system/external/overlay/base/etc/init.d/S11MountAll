@@ -13,7 +13,7 @@ start() {
 
   # shellcheck disable=SC2034
   for i in $(seq 1 ${MAXSTEPS}); do
-    if /sbin/blkid | grep -E -i -q 'PARTUUID="deedbeef-.*(01)"'
+    if /sbin/blkid | grep -E -i -q 'PARTUUID="deedbeef-.*(01)"'; then
       FOUND=1
       break
     fi
