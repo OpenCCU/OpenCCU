@@ -52,6 +52,14 @@ dtparam=pwr_led_trigger=timer,act_led_trigger=mmc0
 [pi5]
 dtparam=act_led_activelow=off
 
+# Enable PCIe port for NVMe SSD (required for U-Boot NVMe boot support).
+# This enables the external PCIe x1 port used by M.2 NVMe HATs.
+# U-Boot will enumerate the PCIe bus (via "pci enum" in PREBOOT) and
+# probe NVMe devices through the BCM2712 PCIe controller.
+# Note: The RPi5 firmware must also have NVMe in its boot order for
+# NVMe boot to work (configure via raspi-config or rpi-eeprom-config).
+dtparam=pciex1
+
 # reset to apply to all platforms
 [all]
 
