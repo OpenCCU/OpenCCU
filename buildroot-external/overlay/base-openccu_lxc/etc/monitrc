@@ -326,7 +326,7 @@ check process tailscaled with pidfile /var/run/tailscale/tailscaled.pid
 # network interface (tailscale0) monitoring
 check network tailscale0 interface tailscale0
     group system
-    if failed link then restart
+    if failed link for 3 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'tailscale0 interface: link down' 'WatchDog: tailscale0-down' true"
     depends on tailscaleEnabled
