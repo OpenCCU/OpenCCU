@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html lang="de">
+  <head>
+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
+
+    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
+    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+    <link rel="manifest" href="/webui/site.webmanifest" />
+
+    <link rel="stylesheet" type="text/css" href="/webui/style.cgi" />
+    <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
+
+    <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
+    <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="/rega/login.css" />
+    <script type="text/javascript" src="/rega/login.js"></script>
+  </head>
+  <body>
+    <div id="maintable">
+
+      <!-- Anmelde-Formular -->
+      <div id="login-panel">
+        <div id="login-inner">
+
+          <!-- Logo und Überschrift -->
+          <div class="login-logo">
+            <img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" />
+          </div>
+          <h1 class="login-heading">${lblUsrLogin}</h1>
+          <p class="login-subtext">OpenCCU WebUI</p>
+
+          <!-- Liste der Benutzer -->
+          <div id="user-pills">
+            <%
+              object oUsers = dom.GetObject(ID_USERS);
+              if ( oUsers )
+              {
+                string uId;
+                foreach( uId , oUsers.EnumEnabledIDs() )
+                {
+                  object uObj = dom.GetObject(uId);
+                  if (uObj.Visible() && uObj.UserShowLogin()) {
+                    string sFirstName = uObj.UserFirstName();
+                    string sLastName = uObj.UserLastName();
+                    string sUserFullName;
+                    if( sFirstName != '' && sLastName != '' ) { sUserFullName = sFirstName#' '#sLastName; }
+                    else if( sFirstName != '' ) { sUserFullName = sFirstName; }
+                    else if( sLastName != '' ) { sUserFullName = sLastName; }
+                    else { sUserFullName = uObj.Name(); }
+                    string sInitial = sUserFullName.Trim().Substr(0,1);
+                    string sFullNameHtml = sUserFullName.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
+                    string sUsernameHtml = uObj.Name().Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;').Replace('"','&quot;').Replace("'",'&#39;');
+                    string sInitialHtml = sInitial.Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;');
+                    Write('<button type="button" class="user-pill" data-fullname="'#sFullNameHtml#'" data-username="'#sUsernameHtml#'">');
+                    Write('<span class="user-pill-avatar">'#sInitialHtml#'</span>');
+                    Write(sFullNameHtml);
+                    Write('</button>');
+                  }
+                }
+              }
+            %>
+          </div>
+
+          <!-- Kennwort-Eingabefeld -->
+          <form id="gwlogin" method="post">
+
+            <div style="margin-bottom:14px;">
+              <label class="field-label" for="UserNameShow">${lblEnterUserName}</label>
+              <div class="glass-input">
+                <input id="UserNameShow" type="text" name="tbUsernameShow" placeholder="${lblEnterUserName}" autocomplete="username" />
+              </div>
+              <input id="UserName" type="hidden" name="tbUsername" />
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <label class="field-label" for="Password">${lblEnterPassWord}</label>
+              <div class="glass-input">
+                <div class="glass-input-row">
+                  <input id="Password" type="password" onkeypress="PasswordKeyUp(event)" name="tbPassword" placeholder="••••••••" autocomplete="current-password" />
+                  <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="${lblShowPassword}">
+                    <span id="pw-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fehlermeldung -->
+            <%
+              if( system.IsVar("error") )
+              {
+                if( system.GetVar("error") == "1" )
+                {
+                  Write( '<div class="login-error"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${hintLoginInvalid}</div>' );
+                }
+              }
+            %>
+
+            <button type="button" id="btnLogin" onclick="FormSubmit()">${btnLogin}</button>
+
+          </form>
+
+          <!-- Hilfe-Link -->
+          <div class="help-row">
+            <button type="button" class="help-link" onclick="loadHelp()" aria-label="${lblHelp}">
+              <svg id="idHelp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              ${lblHelp}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Hero-Bereich -->
+      <div id="hero-panel">
+        <div id="hero-bg"></div>
+        <div id="hero-overlay"></div>
+
+        <div class="hero-testimonials">
+          <div class="testimonial-card">
+            <div class="testimonial-avatar">H</div>
+            <div>
+              <div class="testimonial-name">HomeMatic</div>
+              <div class="testimonial-handle">@openccu</div>
+              <div class="testimonial-text">${lblTestimonialHomeMatic}</div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-avatar">R</div>
+            <div>
+              <div class="testimonial-name">ReGaHss</div>
+              <div class="testimonial-handle">@regahss</div>
+              <div class="testimonial-text">${lblTestimonialReGaHss}</div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-avatar">O</div>
+            <div>
+              <div class="testimonial-name">OpenCCU</div>
+              <div class="testimonial-handle">@community</div>
+              <div class="testimonial-text">${lblTestimonialOpenCCU}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="content" style="display:none;"></div>
+
+    <script type="text/javascript">
+      document.getElementById('UserNameShow').addEventListener('input', function() {
+        document.getElementById('UserName').value = '';
+      });
+
+      document.querySelectorAll('.user-pill').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          UserButtonClick(this.dataset.fullname, this.dataset.username);
+        });
+      });
+
+      translatePage("#maintable");
+      translateAttribute("#idHelp", "title", "tooltipHelp");
+      translateAttribute("#UserNameShow", "placeholder", "lblEnterUserName");
+      translateAttribute(".pw-toggle", "aria-label", "lblShowPassword");
+      translateAttribute(".help-link", "aria-label", "lblHelp");
+    </script>
+  </body>
+</html>
