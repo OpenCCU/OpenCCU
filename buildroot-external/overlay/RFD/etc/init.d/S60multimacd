@@ -99,6 +99,14 @@ start() {
         # to ensure that others are killed first in case of low memory situations
         echo -900 >/proc/$$/oom_score_adj 2>/dev/null
 
+        # cap the open-file-descriptor limit for multimacd well below FD_SETSIZE (1024)
+        # to prevent a glibc abort ("bit out of range 0 - FD_SETSIZE on fd_set") that
+        # occurs when select()/FD_SET() is used with an fd number >= 1024. multimacd
+        # uses at most a handful of FDs in normal operation, so 1000 is a safe ceiling.
+        # The upstream fix (replacing select() with poll() in OpenCCU-Base) will remove
+        # the need for this workaround once a new multimacd binary is shipped.
+        ulimit -n 1000
+
         # start multimacd with nice level -15 to increase
         # process priority
         start-stop-daemon -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}

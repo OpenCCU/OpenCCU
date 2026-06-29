@@ -114,8 +114,17 @@ expand_userfs_to_max()
     return 2
   fi
 
-  # force PARTUUID to 0xDEEDBEEF because parted changes partuuid
-  echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+  # set MBR disk signature in case we have a dos/mbr partitioning
+  PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DISK_DEV}" 2>/dev/null || true)"
+  case "${PTTYPE}" in
+    dos)
+      # MBR: required because parted resets disk signature, thus PARTUUID will be different
+      echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+      ;;
+    gpt)
+      # GPT: not required; GPT-PARTUUID comes from unique partition GUID
+      ;;
+  esac
 
   # use partprobe to query for updated parttable
   partprobe "${DISK_DEV}" 2>/dev/null || true

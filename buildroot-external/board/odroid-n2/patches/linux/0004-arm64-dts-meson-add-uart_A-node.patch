@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Hyeonki Hong <hhk7734@gmail.com>
+Date: Fri, 27 Mar 2020 17:05:22 +0900
+Subject: [PATCH] arm64: dts: meson: add uart_A node
+
+The UART_A is available through J3 pin 8/10 and documented to be
+available as UART by default.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
+index a4d5c6d6ee050..1ec7aaefe493f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
+@@ -12,6 +12,7 @@
+ / {
+ 	aliases {
+ 		serial0 = &uart_AO;
++		serial1 = &uart_A;
+ 		ethernet0 = &ethmac;
+ 		rtc1 = &vrtc;
+ 	};
+@@ -486,6 +487,12 @@ &uart_AO {
+ 	pinctrl-names = "default";
+ };
+ 
++&uart_A {
++	status = "okay";
++	pinctrl-0 = <&uart_a_pins>;
++	pinctrl-names = "default";
++};
++
+ &usb {
+ 	status = "okay";
+ };

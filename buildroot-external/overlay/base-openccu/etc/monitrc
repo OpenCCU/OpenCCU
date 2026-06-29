@@ -390,7 +390,7 @@ check program temperature with path /bin/sh -c "(cat /sys/class/thermal/thermal_
 # network interface (eth0) monitoring
 check network eth0 interface eth0
     group system
-    if failed link then restart
+    if failed link for 3 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'eth0 interface: link down' 'WatchDog: eth0-down' true"
     if changed link capacity then
@@ -406,7 +406,7 @@ check network wlan0 interface wlan0
     group system
     start = "/sbin/ifup wlan0"
     stop = "/sbin/ifdown wlan0"
-    if failed link then restart
+    if failed link for 3 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'wlan0 interface link down' 'WatchDog: wlan0-down' true"
     depends on wlan0CheckEnabled, wlan0Exists
@@ -507,7 +507,7 @@ check process tailscaled with pidfile /var/run/tailscale/tailscaled.pid
 # network interface (tailscale0) monitoring
 check network tailscale0 interface tailscale0
     group system
-    if failed link then restart
+    if failed link for 3 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'tailscale0 interface: link down' 'WatchDog: tailscale0-down' true"
     depends on tailscaleEnabled

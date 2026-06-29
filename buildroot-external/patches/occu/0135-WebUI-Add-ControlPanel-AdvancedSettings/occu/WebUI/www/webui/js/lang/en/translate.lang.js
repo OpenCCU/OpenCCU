@@ -654,6 +654,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsAdvancedSettingsBadBlocksCheck" : "Storage check (Bad Blocks)",
     "dialogSettingsAdvancedSettingsFSTRIM" : "Storage check (FSTRIM)",
     "dialogSettingsAdvancedSettingsPortforwardingCheck" : "Security check (Portforwarding)",
+    "dialogSettingsAdvancedSettingsAllowExternalAccess" : "Protect from external internet access",
     "dialogSettingsAdvancedSettingsAddonUpdateCheck" : "Check for additional software updates (ccu-addons)",
     "dialogSettingsAdvancedSettingsHintSystem1" : "<b>Auto Backups:</b><br/>Creates automatic daily backups (at 00:07 am).",
     "dialogSettingsAdvancedSettingsHintSystem2" : "<b>Backup Storage Path:</b><br/>Storage location where automatic backups files (*.sbk) are stored. Default: connected USB media (when using a SD card as the central storage).",
@@ -667,6 +668,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsAdvancedSettingsHintSystem10" : "<b>Mediola NEO-Server Autostartup:</b><br/>Upon startup of the CCU, the Mediola NEO server process will be automatically started if it has been activated in the configuration.",
     "dialogSettingsAdvancedSettingsHintSystem11" : "<b>System name:</b><br/>Defines a custom name for this system that shows up in the browser title bar, tab and start page.",
     "dialogSettingsAdvancedSettingsHintSystem12" : "<b>Security check (Portforwarding):</b><br/>To ensure, that no security critical portforwarding is enabled in the internet connectivity used, a regular check will be performed each sunday at 04:00 am. In case a critical portforwarding is identified an alarm message will be raised accordingly.",
+    "dialogSettingsAdvancedSettingsHintSystem16" : "<b>Protect from external internet access:</b><br/>If enabled, an additional local firewall protection for WebUI/services will be setup. If disabled, /etc/config/AllowExternalAccess will be set and the local firewall protection for direct internet access will be disabled.",
     "dialogSettingsAdvancedSettingsHintSystem13" : "<b>Check for additional software updates:</b><br/>Checks for new versions of additional software (ccu-addons) once a day and shows it on the startpage.",
     "dialogSettingsAdvancedSettingsHintSystem14" : "<b>CloudMatic Autostartup:</b><br/>Upon startup of the CCU, the CloudMatic service will be automatically initialized and started if this is activated here.",
     "dialogSettingsAdvancedSettingsHintSystem15" : "<b>IP address (HB-RF-ETH):</b><br/>If available the IP address of a <a href='https://github.com/alexreinert/HB-RF-ETH'>HB-RF-ETH adapter</a> can be configued here (requires reboot).",
@@ -1162,4 +1164,3 @@ jQuery.extend(true,langJSON, {
     "HelpTitle" : "Help"
   }
 });
-

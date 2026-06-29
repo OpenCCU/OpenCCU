@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 15 Feb 2023 20:16:29 +0100
+Subject: [PATCH] arm64: dts: amlogic: meson-gx: add missing pins for I2C A/B
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index a9c830a570cc6..529bbf00671bb 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -339,6 +339,8 @@ &hwrng {
+ 
+ &i2c_A {
+ 	clocks = <&clkc CLKID_I2C>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_a_pins>;
+ };
+ 
+ &i2c_AO {
+@@ -347,6 +349,8 @@ &i2c_AO {
+ 
+ &i2c_B {
+ 	clocks = <&clkc CLKID_I2C>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_b_pins>;
+ };
+ 
+ &i2c_C {

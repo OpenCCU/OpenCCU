@@ -36,6 +36,26 @@ set Firewall_SERVICES(SNMP) [list PORTS [list 161] ACCESS none]
 set Firewall_USER_PORTS {}
 
 ##
+# @const Firewall_LOCAL_CHAIN
+# Name der iptables/ip6tables-Chain, die den Zugriff auf ansonsten oeffentlich
+# geoeffnete Ports (WebUI auf 80/443, SSH, Dienste mit 'full'-Zugriff) auf
+# lokale Quell-Netze beschraenkt.
+##
+set Firewall_LOCAL_CHAIN "local-only"
+
+##
+# @const Firewall_LOCAL_OVERRIDE_FILE
+# Existiert diese Datei, wird die standardmaessige Beschraenkung ansonsten
+# oeffentlich geoeffneter Ports (WebUI auf 80/443, SSH, Dienste mit
+# 'full'-Zugriff) auf lokale/private Quell-Netze vollstaendig deaktiviert.
+# Dadurch ist ein direkter Zugriff aus dem Internet (z.B. ueber eine
+# Portfreigabe im Router) wieder moeglich. Dies sollte nur von Nutzern
+# aktiviert werden, die sich der damit verbundenen Sicherheitsrisiken
+# bewusst sind (siehe Sicherheitseinstellungen in der WebUI).
+##
+set Firewall_LOCAL_OVERRIDE_FILE "/etc/config/AllowExternalAccess"
+
+##
 # @const Firewall_MODE_RESTRICTIVE
 # Firewall Modus RESTRICTIVE. INPUT Policy DROP. Last Rule REJECTs all.
 ##
@@ -302,6 +322,96 @@ proc FirewallInternal::ip6Supported {} {
 }
 
 ##
+# @fn FirewallInternal::localAccessOnly
+# Gibt 1 zurueck, wenn ansonsten oeffentlich geoeffnete Ports (WebUI, SSH,
+# Dienste mit 'full'-Zugriff) auf lokale/private Quell-Netze beschraenkt
+# werden sollen (sicherer Standard), oder 0, wenn der Nutzer ueber die
+# Override-Datei explizit einen externen Zugriff erlaubt hat.
+##
+proc FirewallInternal::localAccessOnly {} {
+  global Firewall_LOCAL_OVERRIDE_FILE
+  if { [file exists $Firewall_LOCAL_OVERRIDE_FILE] } {
+    return 0
+  }
+  return 1
+}
+
+##
+# @fn FirewallInternal::localNetworks
+# Liefert die Liste der Quell-Netze, die als 'lokal' gelten und damit auf
+# ansonsten oeffentlich geoeffnete Ports zugreifen duerfen. Die Liste
+# kombiniert die bekannten privaten/Loopback/Link-Local-Bereiche mit den
+# aktuell auf den Schnittstellen des Geraets konfigurierten Netzen. Dadurch
+# funktioniert jede LAN-Konfiguration (auch ein global geroutetes IPv6-Praefix
+# auf dem LAN oder ein VPN-Tunnel) weiterhin und der Nutzer kann sich niemals
+# selbst aussperren.
+#
+# @param family  'inet' fuer IPv4- bzw. 'inet6' fuer IPv6-Netze
+##
+proc FirewallInternal::localNetworks { family } {
+  if { [string equal $family "inet6"] } {
+    set nets [list ::1/128 fc00::/7 fe80::/10]
+  } else {
+    set nets [list 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 169.254.0.0/16 100.64.0.0/10]
+  }
+
+  # Aktuell auf den Schnittstellen konfigurierte Netze hinzufuegen. iptables
+  # maskiert die Host-Bits eines '-s addr/prefix'-Matches, somit deckt die
+  # Schnittstellenadresse zusammen mit ihrer Praefixlaenge das gesamte
+  # Subnetz ab.
+  if { ![catch { set out [exec /sbin/ip -o -f $family addr show scope global] }] } {
+    foreach line [split $out "\n"] {
+      set ifname ""
+      set cidr ""
+      if { [regexp {^\s*\d+:\s+(\S+)\s+inet6?\s+(\S+)} $line dummy ifname cidr] } {
+        if { [string equal $ifname "lo"] } { continue }
+        if { $cidr ne "" && [lsearch -exact $nets $cidr] == -1 } {
+          lappend nets $cidr
+        }
+      }
+    }
+  }
+  return $nets
+}
+
+##
+# @fn FirewallInternal::setupLocalChain
+# (Neu-)Erzeugt die Chain, die Pakete aus lokalen Quell-Netzen akzeptiert und
+# alle anderen verwirft. Wird verwendet, um ansonsten oeffentlich geoeffnete
+# Ports auf lokalen Zugriff zu beschraenken.
+#
+# @param iptablesCmd  Pfad zum iptables- bzw. ip6tables-Kommando
+# @param family       'inet' fuer IPv4 bzw. 'inet6' fuer IPv6
+##
+proc FirewallInternal::setupLocalChain { iptablesCmd family } {
+  global Firewall_LOCAL_CHAIN
+  # Chain anlegen (Fehler wird ignoriert, falls sie bereits existiert) und leeren
+  try_exec_cmd "$iptablesCmd -N $Firewall_LOCAL_CHAIN"
+  try_exec_cmd "$iptablesCmd -F $Firewall_LOCAL_CHAIN"
+  foreach net [FirewallInternal::localNetworks $family] {
+    set net [string trim $net]
+    if { $net eq "" } { continue }
+    try_exec_cmd "$iptablesCmd -A $Firewall_LOCAL_CHAIN -s $net -j ACCEPT"
+  }
+  # jeglichen nicht-lokalen Zugriff auf die abgesicherten Ports verwerfen
+  try_exec_cmd "$iptablesCmd -A $Firewall_LOCAL_CHAIN -j DROP"
+}
+
+##
+# @fn FirewallInternal::accessTarget
+# Liefert das iptables-Ziel fuer ansonsten oeffentlich geoeffnete Ports:
+# die lokale Gate-Chain (sicherer Standard) oder ACCEPT, wenn der Nutzer
+# ueber die Override-Datei einen externen Zugriff erlaubt hat.
+##
+proc FirewallInternal::accessTarget {} {
+  global Firewall_LOCAL_CHAIN
+  if { [FirewallInternal::localAccessOnly] } {
+    return $Firewall_LOCAL_CHAIN
+  }
+  return "ACCEPT"
+}
+
+##
 # @fn configureFirewallMostOpen
 # Gibt 1 zurueck, wenn es sich um einen UDP Port handelt, ansonsten 0.
 ##
@@ -355,6 +465,8 @@ proc Firewall_configureFirewall { } {
 proc FirewallInternal::Firewall_configureFirewallMostOpen { } {
   global Firewall_SERVICES Firewall_IPS Firewall_USER_PORTS
   
+  set has_ip6tables [FirewallInternal::ip6Supported]
+
   try_exec_cmd "/usr/sbin/iptables -F"
   try_exec_cmd "/usr/sbin/iptables -P INPUT ACCEPT"
   try_exec_cmd "/usr/sbin/iptables -A INPUT -i lo -j ACCEPT"
@@ -366,13 +478,40 @@ proc FirewallInternal::Firewall_configureFirewallMostOpen { } {
   try_exec_cmd "/usr/sbin/ip6tables -A INPUT -i lo -j ACCEPT"
   try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 8182 -j DROP"
   try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 8183 -j DROP"
-  if { [FirewallInternal::sshEnabled] == 1 } {
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 22 -j ACCEPT"  
-  } else {
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 22 -j DROP"
+
+  # (re)create the gate chains that restrict otherwise publicly opened ports
+  # (WebUI, SSH, services with 'full' access) to local source networks unless
+  # the user opted into external access via the override file. Even in the
+  # MOST_OPEN compatibility mode (INPUT policy ACCEPT) these ports stay
+  # local-only by default.
+  FirewallInternal::setupLocalChain "/usr/sbin/iptables" "inet"
+  set localTarget [FirewallInternal::accessTarget]
+  set localTarget6 "ACCEPT"
+  if { $has_ip6tables } {
+    FirewallInternal::setupLocalChain "/usr/sbin/ip6tables" "inet6"
+    set localTarget6 [FirewallInternal::accessTarget]
   }
 
-  set has_ip6tables [FirewallInternal::ip6Supported]
+  # ssh (restricted to local source networks by default)
+  if { [FirewallInternal::sshEnabled] == 1 } {
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 22 -j $localTarget"
+    if { $has_ip6tables } {
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 22 -j $localTarget6"
+    }
+  } else {
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 22 -j DROP"
+    if { $has_ip6tables } {
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 22 -j DROP"
+    }
+  }
+
+  # http(s) WebUI (restricted to local source networks by default)
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 80 -j $localTarget"
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 443 -j $localTarget"
+  if { $has_ip6tables } {
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 80 -j $localTarget6"
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 443 -j $localTarget6"
+  }
 
   # user defined ports (the only reason to do this is to enable the user to override settings for services)
   foreach userport $Firewall_USER_PORTS {
@@ -385,17 +524,17 @@ proc FirewallInternal::Firewall_configureFirewallMostOpen { } {
       continue
     }
 
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport $userport -j ACCEPT"
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport $userport -j ACCEPT"
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport $userport -j $localTarget"
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport $userport -j $localTarget"
     if { $has_ip6tables } {
-      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport $userport -j ACCEPT"
-      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p udp --dport $userport -j ACCEPT"
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport $userport -j $localTarget6"
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p udp --dport $userport -j $localTarget6"
     }
   }
 
   foreach serviceName [array names Firewall_SERVICES] {
     array set service $Firewall_SERVICES($serviceName)
-  
+
     if { $service(ACCESS) == "restricted" } then {
       foreach port $service(PORTS) {
         set prot tcp
@@ -415,7 +554,23 @@ proc FirewallInternal::Firewall_configureFirewallMostOpen { } {
         }
       }
     }
-    
+
+    # 'full' access is restricted to local source networks by default; in the
+    # MOST_OPEN mode (INPUT policy ACCEPT) the ports would otherwise be reachable
+    # from any source, so an explicit gate is required here.
+    if { $service(ACCESS) == "full" } then {
+      foreach port $service(PORTS) {
+        set prot tcp
+        if { [ FirewallInternal::Firewall_isUdpPort $port ] } {
+          set prot udp
+        }
+        try_exec_cmd "/usr/sbin/iptables -A INPUT -p $prot --dport $port -j $localTarget"
+        if { $has_ip6tables } {
+          try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p $prot --dport $port -j $localTarget6"
+        }
+      }
+    }
+
     if { $service(ACCESS) == "none" || $service(ACCESS) == "restricted"} then {
       foreach port $service(PORTS) {
         set prot tcp
@@ -452,20 +607,26 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
   # flush rules
   try_exec_cmd "/usr/sbin/iptables -F"
 
+  # (re)create the gate chain that restricts otherwise publicly opened ports
+  # (WebUI, SSH) to local source networks unless the user opted into external
+  # access via the override file
+  FirewallInternal::setupLocalChain "/usr/sbin/iptables" "inet"
+  set localTarget [FirewallInternal::accessTarget]
+
   # allow all loopback
   try_exec_cmd "/usr/sbin/iptables -A INPUT -i lo -j ACCEPT"
-  # allow all established and related packets to pass  
-  try_exec_cmd "/usr/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT" 
+  # allow all established and related packets to pass
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT"
   # tcp ports for internal hmip update server (9293: HmIP-HAP, HmIPW-DRAP, 9294: HmIP-HAP2)
   try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 9293 -m state --state NEW -j ACCEPT"
   try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 9294 -m state --state NEW -j ACCEPT"
-  # ssh
+  # ssh (restricted to local source networks by default)
   if { [FirewallInternal::sshEnabled] == 1 } {
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT"  
-  } 
-  # http(s)
-  try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT"
-  try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT"
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j $localTarget"
+  }
+  # http(s) (restricted to local source networks by default)
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j $localTarget"
+  try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j $localTarget"
 
   # ha-proxy
   set res [catch {exec grep HM_HAPROXY_SRC= /var/hm_mode | cut -d= -f2 | tr -d \'} haproxy_src]
@@ -494,21 +655,26 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
   #exec logger -t firewall -p user.info "has ip6 $has_ip6tables"
   if { $has_ip6tables } {
     # flush rules
-    try_exec_cmd "/usr/sbin/ip6tables -F"    
+    try_exec_cmd "/usr/sbin/ip6tables -F"
+    # (re)create the gate chain that restricts otherwise publicly opened ports
+    # (WebUI, SSH) to local source networks unless the user opted into external
+    # access via the override file
+    FirewallInternal::setupLocalChain "/usr/sbin/ip6tables" "inet6"
+    set localTarget6 [FirewallInternal::accessTarget]
     # allow all loopback
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -i lo -j ACCEPT"
-    # allow all established and related packets to pass  
+    # allow all established and related packets to pass
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT"
     # tcp ports for internal hmip update server (9293: HmIP-HAP, HmIPW-DRAP, 9294: HmIP-HAP2)
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 9293 -m state --state NEW -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 9294 -m state --state NEW -j ACCEPT"
-    # ssh
+    # ssh (restricted to local source networks by default)
     if { [FirewallInternal::sshEnabled] == 1 } {
-      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT" 
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 22 -m state --state NEW -j $localTarget6"
     }
-    # http(s)
-    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT"
-    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT" 
+    # http(s) (restricted to local source networks by default)
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 80 -m state --state NEW -j $localTarget6"
+    try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport 443 -m state --state NEW -j $localTarget6"
     # udp port for eq3configd
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p udp --sport 43439 -j ACCEPT"
     try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p udp --dport 43439 -j ACCEPT"
@@ -533,18 +699,18 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
       continue
     }
 
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport $userport -m state --state NEW -j ACCEPT"
-    try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport $userport -j ACCEPT"
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p tcp --dport $userport -m state --state NEW -j $localTarget"
+    try_exec_cmd "/usr/sbin/iptables -A INPUT -p udp --dport $userport -j $localTarget"
     if { $has_ip6tables } {
-      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport $userport -m state --state NEW -j ACCEPT"
-      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p udp --dport $userport -j ACCEPT"
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p tcp --dport $userport -m state --state NEW -j $localTarget6"
+      try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p udp --dport $userport -j $localTarget6"
     }
   }
 
   # services ports
   foreach serviceName [array names Firewall_SERVICES] {
     array set service $Firewall_SERVICES($serviceName)
-  
+
     if { $service(ACCESS) == "restricted" } then {
       foreach port $service(PORTS) {
         set prot "tcp"
@@ -575,9 +741,10 @@ proc FirewallInternal::Firewall_configureFirewallRestrictive { } {
             set prot "udp"
             set options ""
         }
-        try_exec_cmd "/usr/sbin/iptables -A INPUT -p $prot --dport $port $options -j ACCEPT"
+        # 'full' access is restricted to local source networks by default
+        try_exec_cmd "/usr/sbin/iptables -A INPUT -p $prot --dport $port $options -j $localTarget"
         if { $has_ip6tables } {
-          try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p $prot --dport $port $options -j ACCEPT"
+          try_exec_cmd "/usr/sbin/ip6tables -A INPUT -p $prot --dport $port $options -j $localTarget6"
         }
       }
     }

@@ -9,16 +9,19 @@ start() {
 
   # wait until bootfs is actually ready to be mounted
   MAXSTEPS=120
+  FOUND=0
+
   # shellcheck disable=SC2034
   for i in $(seq 1 ${MAXSTEPS}); do
-    if /sbin/blkid | grep -q deedbeef-01; then
+    if /sbin/blkid | grep -E -i -q 'PARTUUID="deedbeef-.*(01)"'; then
+      FOUND=1
       break
     fi
     sleep 2
     echo -n "."
   done
 
-  if ! /sbin/blkid | grep -q deedbeef-01; then
+  if [[ ${FOUND} -ne 1 ]]; then
     echo "ERROR: bootfs did not show up in time."
     exit 1
   fi

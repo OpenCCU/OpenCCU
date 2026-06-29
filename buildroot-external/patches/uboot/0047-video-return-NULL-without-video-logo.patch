@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Copilot <198982749+Copilot@users.noreply.github.com>
+Date: Tue, 23 Jun 2026 18:18:00 +0000
+Subject: [PATCH] video: fix build without VIDEO_LOGO
+
+When U-Boot is built with CONFIG_VIDEO enabled but CONFIG_VIDEO_LOGO
+disabled, video_get_u_boot_logo() and show_splash() still reference the
+__splash_u_boot_logo_begin linker symbol. Recent U-Boot versions no
+longer provide that symbol in this configuration, so linking fails.
+
+Guard the splash-logo symbol usage behind CONFIG_VIDEO_LOGO and keep the
+existing splash return value when the logo is enabled.
+---
+ drivers/video/video-uclass.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+--- a/drivers/video/video-uclass.c
++++ b/drivers/video/video-uclass.c
+@@ -579,6 +579,7 @@
+ 	return priv->ysize;
+ }
+ 
++#if defined(CONFIG_VIDEO_LOGO)
+ #define SPLASH_DECL(_name) \
+ 	extern u8 __splash_ ## _name ## _begin[]; \
+ 	extern u8 __splash_ ## _name ## _end[]
+@@ -586,20 +587,29 @@
+ #define SPLASH_START(_name)	__splash_ ## _name ## _begin
+ 
+ SPLASH_DECL(u_boot_logo);
++#endif
+ 
+ void *video_get_u_boot_logo(void)
+ {
++#if defined(CONFIG_VIDEO_LOGO)
+ 	return SPLASH_START(u_boot_logo);
++#else
++	return NULL;
++#endif
+ }
+ 
+ static int show_splash(struct udevice *dev)
+ {
++#if defined(CONFIG_VIDEO_LOGO)
+ 	u8 *data = SPLASH_START(u_boot_logo);
+ 	int ret;
+ 
+ 	ret = video_bmp_display(dev, map_to_sysmem(data), -4, 4, true);
+ 
++	return ret;
++#else
+ 	return 0;
++#endif
+ }
+ 
+ int video_default_font_height(struct udevice *dev)

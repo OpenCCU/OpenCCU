@@ -1,0 +1,18 @@
+--- a/scripts/dtc/Makefile
++++ b/scripts/dtc/Makefile
+@@ -19,11 +19,11 @@ HOST_EXTRACFLAGS := -I$(srctree)/$(src)/libfdt
+ 
+-ifeq ($(wildcard $(PKG_CONFIG_SYSROOT_DIR)/usr/include/yaml.h),)
+-HOST_EXTRACFLAGS += -DNO_YAML
+-else
+-dtc-objs	+= yamltree.o
++ifeq ($(shell pkg-config --exists yaml-0.1 2>/dev/null && echo y),y)
++dtc-objs	+= yamltree.o
+ # To include <yaml.h> installed in a non-default path
+ HOSTCFLAGS_yamltree.o := $(shell pkg-config --cflags yaml-0.1)
+ # To link libyaml installed in a non-default path
+ HOSTLDLIBS_dtc	:= $(shell pkg-config --libs yaml-0.1)
+-endif
++else
++HOST_EXTRACFLAGS += -DNO_YAML
++endif
