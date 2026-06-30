@@ -140,8 +140,8 @@ jobs:
         id: env
         run: |
           echo "DATE=$(date +%Y%m%d)" >> $GITHUB_ENV
-          echo "OCCU_VERSION=$(grep 'OCCU_VERSION =' buildroot-external/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)" >> $GITHUB_ENV
-          echo "VERSION=$(grep 'OCCU_VERSION =' buildroot-external/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1).$(date +%Y%m%d)" >> $GITHUB_ENV
+          echo "OCCU_VERSION=$(grep 'OPENCCU_BASE_COMPAT_VERSION =' buildroot-external/package/openccu-base/openccu-base.mk | cut -d' ' -f3)" >> $GITHUB_ENV
+          echo "VERSION=$(grep 'OPENCCU_BASE_COMPAT_VERSION =' buildroot-external/package/openccu-base/openccu-base.mk | cut -d' ' -f3).$(date +%Y%m%d)" >> $GITHUB_ENV
           echo "GITHUB_SHA7=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
           if [[ "${{ github.event.inputs.full_build }}" == "true" ]]; then
             echo "FAKE_BUILD=" >> $GITHUB_ENV
@@ -164,7 +164,7 @@ jobs:
           fi
           echo "JLEVEL=${JLEVEL}" >> $GITHUB_ENV
           echo "build_datetime=$(date -u +'%FT%T.%3NZ')" >> $GITHUB_OUTPUT
-          echo "build_version=$(grep 'OCCU_VERSION =' buildroot-external/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1).$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+          echo "build_version=$(grep 'OPENCCU_BASE_COMPAT_VERSION =' buildroot-external/package/openccu-base/openccu-base.mk | cut -d' ' -f3).$(date +%Y%m%d)" >> $GITHUB_OUTPUT
 
       - name: Switch to experimental EULA files
         run: |

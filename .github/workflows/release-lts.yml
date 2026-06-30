@@ -59,7 +59,7 @@ jobs:
           else
             BUILD_DATE=${{ github.event.inputs.release_date }}
           fi
-          OCCU_VERSION=$(grep 'OCCU_VERSION =' buildroot-external/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)
+          OCCU_VERSION=$(grep 'OPENCCU_BASE_COMPAT_VERSION =' buildroot-external/package/openccu-base/openccu-base.mk | cut -d' ' -f3)
           echo "occu_version=${OCCU_VERSION}" >> $GITHUB_OUTPUT
           echo "version=${OCCU_VERSION}.${BUILD_DATE}" >> $GITHUB_OUTPUT
           echo "date=${BUILD_DATE}" >> $GITHUB_OUTPUT

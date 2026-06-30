@@ -30,11 +30,11 @@ jobs:
             package: buildroot
             version_file: Makefile
             version_regex: '^BUILDROOT_VERSION=(.*)$'
-          - slug: occu
-            script: scripts/update-occu.sh
-            package: occu
-            version_file: buildroot-external/package/occu/occu.mk
-            version_regex: '^OCCU_VERSION = (.*)$'
+          - slug: openccu-base
+            script: scripts/update-openccu-base.sh
+            package: openccu-base
+            version_file: buildroot-external/package/openccu-base/openccu-base.mk
+            version_regex: '^OPENCCU_BASE_VERSION = (.*)$'
           - slug: qemu-guest-agent
             script: scripts/update-qemu-guest-agent.sh
             package: qemu-guest-agent

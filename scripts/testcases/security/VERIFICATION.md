@@ -59,7 +59,7 @@ the would-be payload is just data.
 - `.orig` files are pristine upstream — byte-identical to the four target files
   in the currently-pinned OCCU (`3.89.2-1`; these files are unchanged since
   `3.87.6-3`, where this was first verified); no other patch in
-  `buildroot-external/patches/occu/` touches these 4 files, so the base is correct.
+  `buildroot-external/package/openccu-base/*.patch` (if present) must still apply cleanly, so the base selection remains correct.
 - `patch -p1 --dry-run` applies cleanly against the pinned occu tree.
 - The committed `.patch` matches `create_patches.sh` output (keeps CI
   `git diff --exit-code` green).

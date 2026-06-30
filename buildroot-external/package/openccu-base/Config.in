@@ -1,0 +1,58 @@
+config BR2_PACKAGE_OPENCCU_BASE
+	bool "OpenCCU Base Services"
+	help
+	  OpenCCU base services and runtime assets from OpenCCU-Base.
+
+if BR2_PACKAGE_OPENCCU_BASE
+
+choice
+	prompt "RF Protocol"
+
+config BR2_PACKAGE_OPENCCU_BASE_RF_PROTOCOL_HM_ONLY
+	bool "HM RF only"
+	help
+	  Support BidCos-RF Protocol only
+
+config BR2_PACKAGE_OPENCCU_BASE_RF_PROTOCOL_HMIP_ONLY
+	bool "HmIP RF Only"
+	help
+	  Support HomeMaticIP-RF Protocol only
+
+config BR2_PACKAGE_OPENCCU_BASE_RF_PROTOCOL_HM_HMIP
+	bool "HM and HmIP RF"
+	help
+	  Support BidCos-RF and HomeMaticIP-RF Protocol
+
+endchoice
+
+choice
+	prompt "Wired Protocol"
+
+config BR2_PACKAGE_OPENCCU_BASE_WIRED_PROTOCOL_HM_ONLY
+	bool "HM Wired only"
+	help
+	  Support HomeMatic Wired Protocol only
+
+endchoice
+
+config BR2_PACKAGE_OPENCCU_BASE_WEBUI
+	bool "HomeMatic WebUI"
+	help
+	  HomeMatic WebUI
+
+if BR2_PACKAGE_OPENCCU_BASE_WEBUI
+
+config BR2_PACKAGE_OPENCCU_BASE_WEBUI_REGAHSS_BETA
+	bool "ReGaHss Beta"
+	default "false"
+	help
+	  Install Beta version of ReGaHss
+
+endif
+
+config BR2_PACKAGE_OPENCCU_BASE_HMSERVER
+	bool "HomeMatic HM-/HMIPServer"
+	help
+	  HomeMatic HM-/HMIPServer
+
+endif

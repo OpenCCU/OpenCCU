@@ -38,6 +38,6 @@ This Home Assistant App as well as the OpenCCU base system is licensed under the
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [openccu]: https://github.com/OpenCCU/OpenCCU
-[occu]: https://github.com/eq-3/occu
+[occu]: https://github.com/OpenCCU/OpenCCU-Base
 [eq3]: https://www.eq-3.com/
 [homematic]: https://www.homematic-ip.com/en/start.html

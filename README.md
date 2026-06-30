@@ -167,7 +167,7 @@ OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and
 
 - **Project & release images.** The OpenCCU project (this repository) and the downloadable images under **[Releases](https://github.com/OpenCCU/OpenCCU/releases)** are provided under the **[Apache License 2.0](https://opensource.org/licenses/Apache-2.0)**, unless stated otherwise. OpenCCU is distributed free of charge and without commercial intent.
 
-- **Third-party components.** Some included components are licensed differently and remain under their respective terms. For example, **Buildroot/Linux** is licensed under **[GPLv2](http://www.gnu.org/licenses/gpl-2.0.html)**, which may have implications when modifying sources or redistributing derived images. The **[eQ-3 OCCU](https://github.com/eq-3/occu)** components used for connectivity are redistributed under the **[HMSL](https://github.com/eq-3/occu/blob/master/LicenseEN.txt)**.
+- **Third-party components.** Some included components are licensed differently and remain under their respective terms. For example, **Buildroot/Linux** is licensed under **[GPLv2](http://www.gnu.org/licenses/gpl-2.0.html)**, which may have implications when modifying sources or redistributing derived images. The **[OpenCCU-Base](https://github.com/OpenCCU/OpenCCU-Base)** components used for connectivity are redistributed under the **[HMSL 2.0](https://github.com/OpenCCU/OpenCCU-Base/blob/main/licenses/licenses.md)**.
 
 - **Branding & artwork.** The OpenCCU logo and other graphics in this repository and in the downloadable images are copyrighted by their respective authors. Any commercial or non-commercial reuse—especially in redistributed binaries or forks—**is prohibited without prior written permission**.
 

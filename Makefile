@@ -2,10 +2,10 @@ BUILDROOT_VERSION=2026.05
 BUILDROOT_SHA256=d245765f04436d57a0f038332bc14d6ff5ba1d1c6f059f57dc79e66d9b50838a
 BUILDROOT_EXTERNAL=buildroot-external
 DEFCONFIG_DIR=$(BUILDROOT_EXTERNAL)/configs
-OCCU_VERSION=$(shell grep "OCCU_VERSION =" $(BUILDROOT_EXTERNAL)/package/occu/occu.mk | cut -d' ' -f3 | cut -d'-' -f1)
+OPENCCU_BASE_VERSION=$(shell grep "OPENCCU_BASE_COMPAT_VERSION =" $(BUILDROOT_EXTERNAL)/package/openccu-base/openccu-base.mk | cut -d' ' -f3)
 DATE=$(shell date +%Y%m%d)
 PRODUCT=
-PRODUCT_VERSION:=$(OCCU_VERSION).$(DATE)
+PRODUCT_VERSION:=$(OPENCCU_BASE_VERSION).$(DATE)
 PRODUCTS:=$(sort $(notdir $(patsubst %.config,%,$(wildcard $(DEFCONFIG_DIR)/*.config))))
 BR2_DL_DIR=$(shell pwd)/download
 BR2_CCACHE_DIR=${HOME}/.buildroot-ccache
@@ -107,12 +107,15 @@ check: buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
 	python3 -c "import flake8" >/dev/null 2>&1 || (echo "Installing missing python dependency: flake8" && python3 -m pip install --user flake8)
 	@echo "[checking status: $(BUILDROOT_EXTERNAL)]"
 	buildroot-$(BUILDROOT_VERSION)/utils/check-package --exclude PackageHeader --br2-external $(BUILDROOT_EXTERNAL)/package/*/*
-	@echo "[checking apply patch status: OCCU $(OCCU_VERSION)]"
-	(cd $(BUILDROOT_EXTERNAL)/patches/occu ; ./create_patches.sh)
-	rm -rf build-$(PRODUCT)/build/occu-$(OCCU_VERSION)*
-	$(MAKE) -C build-$(PRODUCT) occu-patch
-	@echo "[checking clean patch status: OCCU $(OCCU_VERSION)]"
-	git diff --exit-code $(BUILDROOT_EXTERNAL)/patches/occu/*.patch
+	@echo "[checking apply patch status: OPENCCU_BASE $(OPENCCU_BASE_VERSION)]"
+	rm -rf build-$(PRODUCT)/build/openccu-base-*
+	$(MAKE) -C build-$(PRODUCT) openccu-base-patch
+	@echo "[checking clean patch status: OPENCCU_BASE $(OPENCCU_BASE_VERSION)]"
+	@if ls $(BUILDROOT_EXTERNAL)/package/openccu-base/*.patch >/dev/null 2>&1; then \
+		git diff --exit-code $(BUILDROOT_EXTERNAL)/package/openccu-base/*.patch; \
+	else \
+		echo "No openccu-base package patch files found"; \
+	fi
 
 clean-all: $(addsuffix -clean, $(PRODUCTS))
 $(addsuffix -clean, $(PRODUCTS)): %:
