@@ -94,8 +94,8 @@ hasLocalGateRules() {
   _rules="${1}"
 
   # WebUI ports must explicitly go through the local-only gate.
-  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( |$).* -j local-only( |$)' || return 1
-  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( |$).* -j local-only( |$)' || return 1
+  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( |$)( .*)?-j local-only( |$)' || return 1
+  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( |$)( .*)?-j local-only( |$)' || return 1
 
   # SSH is optional; if it is explicitly opened, it must not bypass the gate.
   _ssh_rules=$(echo "${_rules}" | /bin/grep -E -- '^-A INPUT( .*)?-p tcp( .*)?--dport 22( |$)')
