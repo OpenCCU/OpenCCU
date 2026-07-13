@@ -120,8 +120,10 @@ trap "rm -f ${RELEASES_JSON}" EXIT
 ret=4
 if [[ -s "${RELEASES_JSON}" ]]; then
 
-  # parse json
-  AVAILABLE_VERSIONS=$(/usr/bin/jq -r ".assets[] | select(.browser_download_url | endswith(\"${TARGET_VERSION}-${PLATFORM}.${EXTENSION}\")) | .browser_download_url" "${RELEASES_JSON}")
+  # parse json - use (.assets // []) to handle GitHub API error responses
+  # gracefully (e.g. rate-limit exceeded, tag not found) which return a JSON
+  # object without an "assets" field, making .assets[] fail with "null" error
+  AVAILABLE_VERSIONS=$(/usr/bin/jq -r "(.assets // [])[] | select(.browser_download_url | endswith(\"${TARGET_VERSION}-${PLATFORM}.${EXTENSION}\")) | .browser_download_url" "${RELEASES_JSON}")
 
   # get LATEST
   LATEST_VERSION_URL=$(echo "${AVAILABLE_VERSIONS}" | head -1)
@@ -129,7 +131,13 @@ if [[ -s "${RELEASES_JSON}" ]]; then
 
   # check if not empty
   if [[ -z "${LATEST_VERSION}" ]]; then
-    echo "ERROR: online update check not working or target version (${TARGET_VERSION}) does not exist."
+    # check if GitHub API returned an error message (e.g. rate limit, not found)
+    API_ERR=$(/usr/bin/jq -r '.message // empty' "${RELEASES_JSON}" 2>/dev/null)
+    if [[ -n "${API_ERR}" ]]; then
+      echo "ERROR: GitHub API error: ${API_ERR}"
+    else
+      echo "ERROR: online update check not working or target version (${TARGET_VERSION}) does not exist."
+    fi
     exit ${ret}
   fi
 
