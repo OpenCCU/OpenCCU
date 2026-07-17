@@ -1,0 +1,63 @@
+--- occu/WebUI/www/config/easymodes/etc/hmipWeeklyProgramDevice.tcl.orig
++++ occu/WebUI/www/config/easymodes/etc/hmipWeeklyProgramDevice.tcl
+@@ -1,7 +1,7 @@
+ #!/bin/tclsh
+ 
+ 
+-puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HmIPWeeklyDeviceProgram.js');load_JSFunc('/config/easymodes/js/HmIPWeeklyProgram.js');</script>"
++puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HmIPWeeklyDeviceProgram.js?v=20260712');load_JSFunc('/config/easymodes/js/HmIPWeeklyProgram.js?v=20260712');</script>"
+ 
+ proc getHmIPWeeklyProgram {address chn p descr devType {extraparam ""}} {
+ 
+--- occu/WebUI/www/config/easymodes/js/HmIPWeeklyProgram.js.orig
++++ occu/WebUI/www/config/easymodes/js/HmIPWeeklyProgram.js
+@@ -307,6 +307,23 @@
+ 
+ 
+     this.isWired = (this.device.deviceType.id.split("-")[0] == "HmIPW") ? true : false;
++    if (typeof this.device.channels == "undefined") {
++      this.device.channels = {};
++    }
++
++    if (typeof this.device.channels[this.chn] == "undefined") {
++      var fallbackChnType = "";
++      for (var psKey in ps) {
++        if (ps.hasOwnProperty(psKey) && (psKey.indexOf("|") > -1)) {
++          fallbackChnType = psKey.split("|")[0];
++          break;
++        }
++      }
++      if (fallbackChnType == "") {
++        fallbackChnType = this.BLIND;
++      }
++      this.device.channels[this.chn] = {channelType: fallbackChnType};
++    }
+ 
+     this.chnType = (this.device.channels[this.chn].channelType == this.DIMMER_OUTPUT_BEHAVIOUR) ? this.DIMMER : this.device.channels[this.chn].channelType;
+ 
+--- occu/WebUI/www/config/ic_deviceparameters.cgi.orig
++++ occu/WebUI/www/config/ic_deviceparameters.cgi
+@@ -945,7 +945,7 @@
+ 
+     set sourcePath [file join $env(DOCUMENT_ROOT) config/easymodes/$ch_paramid.tcl]
+ 
+-    if {[isHmIP] == "true" || [isHmIPGroup $ch_descr(PARENT_TYPE)] == "true" } {
++    if {[isHmIP] == "true" || [isHmIPGroup $ch_descr(PARENT_TYPE)] == "true" || (($iface == "CCU-Jack") && (([string first "HmIP-" $ch_descr(PARENT_TYPE)] == 0) || ([string first "HmIPW-" $ch_descr(PARENT_TYPE)] == 0)) && ([string equal $ch_descr(TYPE) "SHUTTER_TRANSMITTER"] == 0))} {
+       if {[file exists [file join $env(DOCUMENT_ROOT) config/easymodes/hmip/$ch_paramid.tcl]]} {
+         set sourcePath [file join $env(DOCUMENT_ROOT) config/easymodes/hmip/$ch_paramid.tcl]
+       } elseif {[file exists [file join $env(DOCUMENT_ROOT) config/easymodes/hmip/$ch_descr(TYPE).tcl]]} {
+@@ -1152,7 +1152,13 @@
+     array set ch_descr [array get ch_descr_orig]
+  
+     #if {$s == ""} then { set s "<div class=\"CLASS22004\">Keine Parameter einstellbar.</div>" }
+-    if {$s == ""} then { set s "<div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div>" }
++    if {$s == ""} then {
++      set s "<div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div>"
++    } elseif {[string trim $s] == "<table class=\"ProfileTbl\"></table>"} then {
++      set s "<div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div>"
++    } elseif {([string first "id=\"virtual_ch_help_" $s] != -1) && ([string first "style=\"display:none\"" $s] != -1) && ![regexp {<(input|select|textarea|button)\b} $s]} then {
++      set s "<div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div>"
++    }
+ 
+     catch {
+       if {([isExpertChannel $ch_descr(PARENT_TYPE) $ch_descr(TYPE) $ch_descr(INDEX)] == "true") && ([session_is_expert] == 0) } {
