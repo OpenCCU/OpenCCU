@@ -34,11 +34,11 @@ if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
       DVERSION=$(echo "${DINFO}" | grep "Version:" | awk '{print $2}')
       DUPDATESCRIPT=$(echo "${DINFO}" | grep "Update:" | awk '{print $2}')
       if [[ -n "${DUPDATESCRIPT}" ]]; then
-        WEBRESULT=$(/usr/bin/curl -fsS --max-time 10 "http://localhost${DUPDATESCRIPT}" 2>/dev/null | tr -d '\r\n' | xargs | tr '[:upper:]' '[:lower:]')
-        if [[ $? -ne 0 ]]; then
+        if ! RAWWEBRESULT=$(/usr/bin/curl -fsS --max-time 10 "http://localhost${DUPDATESCRIPT}" 2>/dev/null); then
           logger -t "${logtag}" "Skipping update check result for ${DNAME}: failed to fetch ${DUPDATESCRIPT}"
           continue
         fi
+        WEBRESULT=$(echo "${RAWWEBRESULT}" | tr -d '\r\n' | xargs | tr '[:upper:]' '[:lower:]')
 
         if ! is_valid_webversion "${WEBRESULT}"; then
           logger -t "${logtag}" "Skipping invalid update check result for ${DNAME}: '${WEBRESULT}' (${DUPDATESCRIPT})"

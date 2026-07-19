@@ -172,7 +172,33 @@
  
      if (this.prevDownloadURL != this.downloadURL) {
        this.devList = [];
-@@ -29860,7 +29854,6 @@
+@@ -25977,6 +25971,16 @@
+   
+   showAddonUpdate: function() {
+     addonUpdateList = "";
++    var isValidAddonWebVersion = function(version) {
++      if (typeof version !== "string") { return false; }
++      version = version.toLowerCase();
++      return (version !== "" &&
++              version !== "n/a" &&
++              version.indexOf("error") === -1 &&
++              version.indexOf("not found") === -1 &&
++              version.indexOf("<") === -1 &&
++              /^[0-9a-z][0-9a-z._:+~\/-]*$/.test(version));
++    };
+     var addonversions = homematic('CCU.getAddonVersions');
+     if (addonversions && addonversions !== "false") {
+       var localaddonversions = addonversions.local;
+@@ -25989,7 +25993,7 @@
+              
+                if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
+                   //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
+-                  if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
++                  if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && isValidAddonWebVersion(onlineaddonversions[o_obj].webversion)) {
+                     addonUpdateList += "<br/>&#183; "+onlineaddonversions[o_obj].name+" ("+onlineaddonversions[o_obj].webversion+")";
+                   }
+                }
+@@ -29860,7 +29864,6 @@
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
      this.m_product = "HM-RASPBERRYMATIC";
      this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
@@ -180,7 +206,7 @@
  
      this.serial = homematic("CCU.getSerial");
      this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
-@@ -29928,19 +29921,13 @@
+@@ -29928,19 +29931,13 @@
    },
  
    getListOfAvailableFirmware: function(callback) {
@@ -201,7 +227,7 @@
        $("body").appendChild(script);
        homematic.com.callback = callback;
    },
-@@ -37140,22 +37127,6 @@
+@@ -37140,22 +37137,6 @@
    dlg.resetHeight();
  };
  

@@ -51,7 +51,7 @@ CHANNELCHOOSER_JST = "{macro printHead(name, id, transKey)}\n
       <col style=\"width:17%;\"\/>\n
     <\/colgroup>\n
     <thead>\n
-      <tr> <!-- ï¿½berschriften -->\n
+      <tr> <!-- Überschriften -->\n
         ${printHead(\"Name\", \"NAME\", \"thName\")}\n
         <th class=\"ChannelChooserHead\" name=\"thPicture\">Bild<\/th>\n
         ${printHead(\"Beschreibung\", \"DESCRIPTION\", \"thDescription\")}\n
@@ -189,8 +189,8 @@ CHANNEL_CONFIG_DIALOG_JST = "<div id=\"ChannelConfigDialog\">\n
           <p name=\"generalChannelConfigHint\">\n
             Im Rahmen des Funktionstests wird gepr&uuml;ft, ob die Kommunikation mit dem Kanal fehlerfrei funktioniert.\n
           <\/p>\n
-          {if channel.category == Channel.CATEGORY.SENDER}<p name=\"generalChannelConfigHintSender\">Bei Sensoren wartet die HomeMatic Zentrale, bis diese sich melden. Eine Fernbedienung meldet sich z.B. erst dann, wenn sie manuell betï¿½tigt wird.<\/p>{\/if}\n
-          {if channel.category == Channel.CATEGORY.RECEIVER}<p name=\"generalChannelConfigHintReceiver\">Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgelï¿½st.<\/p>{\/if}\n
+          {if channel.category == Channel.CATEGORY.SENDER}<p name=\"generalChannelConfigHintSender\">Bei Sensoren wartet die HomeMatic Zentrale, bis diese sich melden. Eine Fernbedienung meldet sich z.B. erst dann, wenn sie manuell betätigt wird.<\/p>{\/if}\n
+          {if channel.category == Channel.CATEGORY.RECEIVER}<p name=\"generalChannelConfigHintReceiver\">Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgelöst.<\/p>{\/if}\n
           <\/div>\n
       <\/div>\n
     <\/div>\n
@@ -276,7 +276,7 @@ CHANNEL_CONFIG_DIALOG_JST = "<div id=\"ChannelConfigDialog\">\n
 <\/div>\n
 ";
 DEVICE_CONFIG_DIALOG_JST = "<div id=\"DeviceConfigDialog\">\n
-<div id=\"DeviceConfigDialogTitle\" onmousedown=\"new Drag($(\'DeviceConfigDialog\'), event);\"><span name=\"generalDeviceConfigTitle\">Allgemeine Gerï¿½teeinstellungen:<\/span> ${device.address}<\/div>\n
+<div id=\"DeviceConfigDialogTitle\" onmousedown=\"new Drag($(\'DeviceConfigDialog\'), event);\"><span name=\"generalDeviceConfigTitle\">Allgemeine Geräteeinstellungen:<\/span> ${device.address}<\/div>\n
 <div id=\"DeviceConfigDialogContent\">\n
 \n
   <div id=\"DeviceConfigDialogContentLeft\">\n
@@ -325,7 +325,7 @@ DEVICE_CONFIG_DIALOG_JST = "<div id=\"DeviceConfigDialog\">\n
       <div>\n
         <table border=\"0\"  class=\"DeviceConfigDialogTable\" width=\"250px\">\n
           <tr>\n
-		    <td width=\"50%\"><div id=\"DeviceConfigDialogRenameChannelButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnRenameChannels\" onclick=\"DeviceConfigDialog.renameChannels();\">Kanï¿½le umbenennen<\/div><\/td>\n
+		    <td width=\"50%\"><div id=\"DeviceConfigDialogRenameChannelButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnRenameChannels\" onclick=\"DeviceConfigDialog.renameChannels();\">Kanäle umbenennen<\/div><\/td>\n
 \n
 			<td width=\"40%\"><\/td>\n
 \n
@@ -483,7 +483,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" border=\"0\" cellspacing=\"
   <\/colgroup>\n
   <thead>\n
     <tr>\n
-      <!-- Alle Elemente mit Name-Attribut werden ï¿½bersetzt. Der Wert des Name-Attributs ist der Key f. die ï¿½bersetzungsdatei -->\n
+      <!-- Alle Elemente mit Name-Attribut werden übersetzt. Der Wert des Name-Attributs ist der Key f. die Übersetzungsdatei -->\n
       <th class=\"DeviceListCell_Invisible\"><div class=\"CLASS10900\">&nbsp;<\/div><\/th>\n
       <th class=\"DeviceListHead clickable\" name=\"thName\" colspan=\"3\" onclick=\"DeviceListPage.sortBy(\'NAME\');\">Name<\/th>\n
       <th class=\"DeviceListHead clickable\" name=\"thTypeDescriptor\" onclick=\"DeviceListPage.sortBy(\'NAME\');\">Typen- Bezeichnung<\/th>\n
@@ -710,7 +710,7 @@ MULTI_CHANNELCHOOSER_JST = "{macro printHead(name, id, langKey)}\n
       <col style=\"width:17%;\"\/>\n
     <\/colgroup>\n
     <thead>\n
-      <tr> <!-- ï¿½berschriften -->\n
+      <tr> <!-- Überschriften -->\n
         <th class=\"MultiChannelChooserHead\">&nbsp;<\/th>\n
         ${printHead(\"Name\", \"NAME\", \"thName\")}\n
         <th class=\"MultiChannelChooserHead\" name=\"thPicture\">Bild<\/th>\n
@@ -843,7 +843,7 @@ RF_CONFIG_JST = "<div class=\"CLASS10500\">\n
   <\/tr>\n
 \t{forelse}\n
 \t<tr class=\"RFConfig_InterfacesTable_tr\">\n
-    <td colspan=\"4\" style=\"text-align:center; vertical-align:middle;\">Momentan sind keine Funk-LAN-Gateways verfï¿½gbar.<\/td>\n
+    <td colspan=\"4\" style=\"text-align:center; vertical-align:middle;\">Momentan sind keine Funk-LAN-Gateways verfügbar.<\/td>\n
   <\/tr>\n
 \t{\/for}\n
 <\/table>\n
@@ -8120,14 +8120,14 @@ elvST['TYPICAL_PARTICLE_SIZE_STATUS=NORMAL'] = '${stringTableTypicalParticelSize
 elvST['TYPICAL_PARTICLE_SIZE_STATUS=UNKNOWN'] = '${stringTableTypicalParticelSize} ${lblStatus} ${lblUnknown}';
 elvST['TYPICAL_PARTICLE_SIZE_STATUS=OVERFLOW'] = '${stringTableTypicalParticelSize} ${lblStatus} ${lblOverflow}';
 /*
-ï¿½bersetzt den Inhalt der HTML-Elemente <span class="stringtable_value">...</span>
+Übersetzt den Inhalt der HTML-Elemente <span class="stringtable_value">...</span>
 und <select class="stringtable_select">...</select>
 */
 st_setStringTableValues = function()
 {
 	var translation;
 	
-	//In <span class="stringtable_value">...</span> eingeschlossene Wï¿½rter ï¿½bersetzen
+	//In <span class="stringtable_value">...</span> eingeschlossene Wörter übersetzen
 	var temp = document.getElementsByClassName('stringtable_value');
   
     var wrappers = new Array();
@@ -8143,7 +8143,7 @@ st_setStringTableValues = function()
 	}
 	//-------------------------------------------------------------------------
 
-	//Comboboxen ï¿½bersetzen <select class="stringtable_select" ... >...</select>
+	//Comboboxen übersetzen <select class="stringtable_select" ... >...</select>
 	var temp = document.getElementsByClassName('stringtable_select');
 
 	var selboxes = new Array();
@@ -8167,7 +8167,7 @@ st_setStringTableValues = function()
 	}
 	//-------------------------------------------------------------------------
 	
-	//Input-Felder ï¿½bersetzen <input class="stringtable_input" ...> 
+	//Input-Felder übersetzen <input class="stringtable_input" ...> 
 	var temp = document.getElementsByClassName('stringtable_input');
 
 	var input = new Array();
@@ -8188,13 +8188,13 @@ st_setStringTableValues = function()
 //context: <channeltype>|<value_id>(=<value>)?
 //context: <channeltype>|<value_id>
 //context: <value_id>
-//Rï¿½ckgabeparameter:
-//return: ï¿½bersetzung, wenn context gefunden in den Spezialisierungsgraden:
+//Rückgabeparameter:
+//return: übersetzung, wenn context gefunden in den Spezialisierungsgraden:
 //	1. <channeltype>|<value_id>(=<value>)?
 //	2. <channeltype>|<value_id>
 //	3. <value_id>
 //	sonst: value, wenn value aus dem context extrahiert werden kann
-//	sonst: context wird wieder zurï¿½ckgegeben.
+//	sonst: context wird wieder zurückgegeben.
 st_getValue = function(context)
 {
 	var translation;
@@ -8282,7 +8282,7 @@ Interface = {
   },
   
   /**
-   * Prï¿½ft, ob ein Objekt eine spezielle Schnittstelle implementiert
+   * Prüft, ob ein Objekt eine spezielle Schnittstelle implementiert
    **/
   isImplemented: function(obj, iface)
   {
@@ -8405,7 +8405,7 @@ Array.prototype.ex_contains = function(item)
 };
 
 /**
- * Fï¿½gt einem Array ein Element hinzu, falls
+ * Fügt einem Array ein Element hinzu, falls
  * dieses noch nicht enthalten ist.
  **/
 Array.prototype.ex_pushUnique = function(item)
@@ -8422,7 +8422,7 @@ String.prototype.reverse = function () {
     return result;
 };/*******************************************************************************
  * xmlhttprequest.js
- * Browserunabhï¿½ngiger Zugriff auf das XMLHttpRequest-Objekt.
+ * Browserunabhängiger Zugriff auf das XMLHttpRequest-Objekt.
  *
  * Autor      : Falk Werner
  * Erstellt am: 04.06.2008
@@ -8434,7 +8434,7 @@ String.prototype.reverse = function () {
  
 /*******************************************************************************
  * XMLHttpRequest_create ()
- * Erstellt browserunabhï¿½ngig ein neuen XMLHttpRequest-Objekt.
+ * Erstellt browserunabhängig ein neuen XMLHttpRequest-Objekt.
  *
  * Dieser Code wurde inspiriert von folgendem Buch:
  * Titel : Ajax - schnell und kompakt
@@ -8474,11 +8474,11 @@ XMLHttpRequest_create = function ()
 
 /*******************************************************************************
  * XMLHttpRequest_supported ()
- * Prï¿½ft, ob das XMLHttpRequest-Objekt verfï¿½gbar ist.
+ * Prüft, ob das XMLHttpRequest-Objekt verfügbar ist.
  *
- * Rï¿½ckgabe:
- *  true  - Das XMLHttpRequest-Objekt ist verfï¿½gbar.
- *  false - Das XMLHttpRequest-Objekt ist NICHT verfï¿½gbar.
+ * Rückgabe:
+ *  true  - Das XMLHttpRequest-Objekt ist verfügbar.
+ *  false - Das XMLHttpRequest-Objekt ist NICHT verfügbar.
  ******************************************************************************/
 XMLHttpRequest_supported = function ()
 {
@@ -8492,7 +8492,7 @@ XMLHttpRequest_supported = function ()
  **/
  
 /**
- * Lï¿½dt XML- bzw Textdateien synchron.
+ * Lädt XML- bzw Textdateien synchron.
  **/ 
 HttpLoader = new function()
 {
@@ -8501,7 +8501,7 @@ HttpLoader = new function()
   /*####################*/
   
   /**
-   * Lï¿½dt synchron Daten und gibt das XMLHttpRequest-Objekt zurï¿½ck.
+   * Lädt synchron Daten und gibt das XMLHttpRequest-Objekt zurück.
    **/
   var load = function(method, url, data)
   {
@@ -8518,11 +8518,11 @@ HttpLoader = new function()
   };
  
   /*########################*/
-  /*# ï¿½ffentliche Elemente #*/
+  /*# Öffentliche Elemente #*/
   /*########################*/
   
   /**
-   * Lï¿½dt einen Text synchron.
+   * Lädt einen Text synchron.
    **/
   this.getText = function(url)
   {
@@ -8533,7 +8533,7 @@ HttpLoader = new function()
   };
   
   /**
-   * Lï¿½dt ein XML-Dokument synchron.
+   * Lädt ein XML-Dokument synchron.
    **/
   this.getXML = function(url)
   {
@@ -8554,19 +8554,19 @@ HttpLoader = new function()
 eQ3 = {};
 
 /**
- * Singleton fï¿½r systemweite Hilfsfunktionen
+ * Singleton für systemweite Hilfsfunktionen
  **/
 eQ3.system = {
 
-	MAX_OBJECT_ID: 1000000,		//< grï¿½ï¿½te Id, die ein Objekt haben kann
+	MAX_OBJECT_ID: 1000000,		//< größte Id, die ein Objekt haben kann
 	
-	m_objects: {},						//< Enthï¿½lt alle registierten Objekte
-	m_id: 0,									//< vorgeschlagene Id fï¿½r das nï¿½chste Objekt
+	m_objects: {},						//< Enthält alle registierten Objekte
+	m_id: 0,									//< vorgeschlagene Id für das nächste Objekt
 	m_objectCount: 0,					//< Aktuelle Anzahl der registrieten Objekte (zu Debug-Zwecken)
 	
 	/**
 	 * @fn m_getNextFreeId
-	 * @brief Liefert die nï¿½chste freie Id, die einem Objekt zugewiesen 
+	 * @brief Liefert die nächste freie Id, die einem Objekt zugewiesen 
 	 *        werden kann. 
 	 **/
 	m_getNextFreeId: function()
@@ -8593,7 +8593,7 @@ eQ3.system = {
 	
 	/**
 	 * @fn registerObject
-	 * @brief Weist einem Objekt eine Id zu, ï¿½ber die es angesprochen werden kann
+	 * @brief Weist einem Objekt eine Id zu, über die es angesprochen werden kann
 	 */
 	registerObject: function(object)
 	{
@@ -8630,13 +8630,13 @@ eQ3.system = {
 
 /**
  * @fn $o
- * @brief Shortcut fï¿½r eq3.system.getObjectById
+ * @brief Shortcut für eq3.system.getObjectById
  **/
 $o = eQ3.system.getObjectById;
 
 
 /**
- * Klasse fï¿½r allgemeine Ereignisse
+ * Klasse für allgemeine Ereignisse
  **/
 eQ3.Event = Class.create({
 
@@ -8649,8 +8649,8 @@ eQ3.Event = Class.create({
   },
   
   /**
-   * Fï¿½gt einen neuen Event-Listener hinzu.
-   * Falls ein Listener bereits existiert, wird er kein zweites Mal hinzugefï¿½gt.
+   * Fügt einen neuen Event-Listener hinzu.
+   * Falls ein Listener bereits existiert, wird er kein zweites Mal hinzugefügt.
    **/
   add: function(listener)
   {
@@ -8671,7 +8671,7 @@ eQ3.Event = Class.create({
   },
   
   /**
-   * Lï¿½st das Ereinigs aus
+   * Löst das Ereinigs aus
    **/
   fire: function(source, event)
   {
@@ -8681,8 +8681,8 @@ eQ3.Event = Class.create({
   },
   
   /**
-   * Setzt das Ereignis zurï¿½ck.
-   * Lï¿½scht alle angemeldeten Event-Handler.
+   * Setzt das Ereignis zurück.
+   * Löscht alle angemeldeten Event-Handler.
    **/
   reset: function()
   {
@@ -8810,7 +8810,7 @@ jsonrpc_sync = function(url, method, params)
 };
 
 /**
- * JSON-RPC Aufruf ohne Rï¿½ckgabewert.
+ * JSON-RPC Aufruf ohne Rückgabewert.
  **/
 jsonrpc_notify = function(url, method, params)
 {
@@ -8910,7 +8910,7 @@ Drag = function(element, event, callback)
   };
   
   Element.absolutize(m_element);
-  Element.setStyle(m_element, {marginTop: "0px", marginLeft: "0px"}); // BugFix: relativ positionierte Elemente werden ï¿½ber margin ausgerichtet, absolutize() setzz dies jedoch nicht zurï¿½ck
+  Element.setStyle(m_element, {marginTop: "0px", marginLeft: "0px"}); // BugFix: relativ positionierte Elemente werden über margin ausgerichtet, absolutize() setzz dies jedoch nicht zurück
   Element.observe(document, "mousemove", onMouseMove);
   Element.observe(document, "mouseup", onMouseUp);
 
@@ -8920,7 +8920,7 @@ Drag = function(element, event, callback)
  **/
  
 /**
- * @fileOverview Daten fï¿½r die Konfgurationsseiten
+ * @fileOverview Daten für die Konfgurationsseiten
  * @author F. Werner (eQ-3)
  **/
  
@@ -9060,14 +9060,14 @@ ConfigDataLoader.TITLE = translateKey('infoLoadConfigData');
 ConfigDataLoader.CONTENT = "<img src='/ise/img/ajaxload_white.gif' style='float:left;margin-right:10px' />" + translateKey('infoLoadConfigDataPlsWait');
 /**
  * webui.js
- * Allgemeine Funktionen der Web-Oberflï¿½che.
+ * Allgemeine Funktionen der Web-Oberfläche.
  **/
  
 WebUI = Singleton.create({  
-  HEADER_HEIGHT: 72,   // Hï¿½he der Kopfzeile
-  MENUBAR_HEIGHT: 34,   // Hï¿½he der Navigationsleiste
-  FOOTER_HEIGHT: 47,   // Hï¿½he der Fuï¿½leiste
-  BOTTOM_HEIGHT: 27,   // Hï¿½he des weiï¿½en Bereichs unter der Seite
+  HEADER_HEIGHT: 72,   // Höhe der Kopfzeile
+  MENUBAR_HEIGHT: 34,   // Höhe der Navigationsleiste
+  FOOTER_HEIGHT: 47,   // Höhe der Fußleiste
+  BOTTOM_HEIGHT: 27,   // Höhe des weißen Bereichs unter der Seite
   MIN_WIDTH: 750,  
   MIN_HEIGHT: 400,
  
@@ -9084,7 +9084,7 @@ WebUI = Singleton.create({
   },  
   
   /*########################*/
-  /*# ï¿½ffentliche Elemente #*/
+  /*# Öffentliche Elemente #*/
   /*########################*/
   
   start: function()
@@ -9143,7 +9143,7 @@ WebUI = Singleton.create({
     globalValues.appendChild(globalValuesForm);
     bodyElem.appendChild(globalValues);
 
-    // picDiv: Vergrï¿½ï¿½erte Bild von HomeMatic Gerï¿½ten und Kanï¿½len
+    // picDiv: Vergrößerte Bild von HomeMatic Geräten und Kanälen
     var picDiv = document.createElement("div");
     picDiv.id = "picDiv";
     Element.setStyle(picDiv, {
@@ -9162,7 +9162,7 @@ WebUI = Singleton.create({
       jg_250 = new jsGraphics("picDiv");
       InitGD(jg_250, 250);
 
-      // Elemente fï¿½r Popup-Fenster der ersten Ebene
+      // Elemente für Popup-Fenster der ersten Ebene
       var trLayer = document.createElement("div");
       trLayer.id = "trlayer";
       Element.setStyle(trLayer, {
@@ -9199,7 +9199,7 @@ WebUI = Singleton.create({
       });
     bodyElem.appendChild(progressBox);
 
-      // Elemente fï¿½r Popup-Fenster der zweiten Ebene
+      // Elemente für Popup-Fenster der zweiten Ebene
       var trLayer2 = document.createElement("div");
       trLayer2.id = "trlayer2";
       Element.setStyle(trLayer2, {
@@ -9224,7 +9224,7 @@ WebUI = Singleton.create({
       });
     bodyElem.appendChild(centerBox2);
 
-      // Elemente fï¿½r den Seiteninhalt
+      // Elemente für den Seiteninhalt
       Layer.init();
       var layer0 = document.createElement("div");
       Element.addClassName(layer0, "Layer0");
@@ -9429,7 +9429,7 @@ WebUI = Singleton.create({
   },
   
   /**
-   * Read-Only. Hï¿½he des Browserfensters (Pixel).
+   * Read-Only. Höhe des Browserfensters (Pixel).
    */
   getHeight: function()
   {
@@ -9467,7 +9467,7 @@ WebUI = Singleton.create({
   },
   
   /**
-   * Lï¿½dt eine Seite.
+   * Lädt eine Seite.
    */
   enter: function(page, options)
   {
@@ -9499,7 +9499,7 @@ WebUI = Singleton.create({
   },
   
   /**
-   * Zurï¿½ck zur vorherigen Seite.
+   * Zurück zur vorherigen Seite.
    */
   goBack: function()
   {
@@ -9544,7 +9544,7 @@ WebUI = Singleton.create({
   
   /**
    * @fn m_loadColorMap
-   * @brief [intern] Lï¿½dt die Farbtabelle
+   * @brief [intern] Lädt die Farbtabelle
    **/
   m_loadColorMap: function()
   {
@@ -9562,7 +9562,7 @@ ControlBtn = {
 
   CLASSNAME_ON : "ControlBtnOn",          //< CSS-Klasse "aktiv"
   CLASSNAME_OFF: "ControlBtnOff",          //< CSS-Klasse "inaktiv"
-  CLASSNAME_PUSHED: "ControlBtnPushed",    //< CSS-Klasse "gedrï¿½ckt"
+  CLASSNAME_PUSHED: "ControlBtnPushed",    //< CSS-Klasse "gedrückt"
 
   /**
    * Entfernt alle ControlBtn-Klassenamen von dem Element
@@ -9602,7 +9602,7 @@ ControlBtn = {
   },
   
   /**
-   * Zeigt das Element als gedrï¿½ckten ControlBtn an
+   * Zeigt das Element als gedrückten ControlBtn an
    **/
   pushed: function(element)
   {
@@ -9619,7 +9619,7 @@ ControlBtn = {
 JControlBtn = {
   CLASSNAME_ON : "ControlBtnOn",          //< CSS-Klasse "aktiv"
   CLASSNAME_OFF: "ControlBtnOff",          //< CSS-Klasse "inaktiv"
-  CLASSNAME_PUSHED: "ControlBtnPushed",    //< CSS-Klasse "gedrï¿½ckt"
+  CLASSNAME_PUSHED: "ControlBtnPushed",    //< CSS-Klasse "gedrückt"
 
   /**
    * Entfernt alle ControlBtn-Klassenamen von dem Element
@@ -9659,7 +9659,7 @@ JControlBtn = {
   },
 
   /**
-   * Zeigt das Element als gedrï¿½ckten ControlBtn an
+   * Zeigt das Element als gedrückten ControlBtn an
    **/
   pushed: function(element)
   {
@@ -9671,7 +9671,7 @@ JControlBtn = {
   },
 
   /**
-   * Zeigt das Element kurz gedrï¿½ckt an und geht dann wieder in den inaktiven Zustand
+   * Zeigt das Element kurz gedrückt an und geht dann wieder in den inaktiven Zustand
    */
   pressed: function(element)
   {
@@ -9725,7 +9725,7 @@ const isValidRegex = function(possiblyValidRegex)
  **/
  
 /**
- * Konstrukor. Filter fï¿½r Zeichenketten
+ * Konstrukor. Filter für Zeichenketten
  **/
 StringFilter = function(name, callback)
 {
@@ -9747,7 +9747,7 @@ StringFilter = function(name, callback)
   };
   
   /*########################*/
-  /*# ï¿½ffentliche Elemente #*/
+  /*# Öffentliche Elemente #*/
   /*########################*/
   
   /**
@@ -9796,7 +9796,7 @@ StringFilter = function(name, callback)
   };
   
   /**
-   * Prï¿½ft, ob der Filter auf einen Text zutrifft
+   * Prüft, ob der Filter auf einen Text zutrifft
    **/
   this.match = function(text)
   {
@@ -9826,7 +9826,7 @@ StringFilter = function(name, callback)
   };
   
   /**
-   * Schlieï¿½t den Filter und ruft dei Callback-Funktion auf
+   * Schließt den Filter und ruft dei Callback-Funktion auf
    **/
   this.set = function()
   {
@@ -9859,7 +9859,7 @@ StringFilter = function(name, callback)
   };
   
   /**
-   * Schlieï¿½t den Filter ohne ï¿½nderungen zu ï¿½bernehmen
+   * Schließt den Filter ohne Änderungen zu übernehmen
    **/
   this.close = function()
   {
@@ -9868,7 +9868,7 @@ StringFilter = function(name, callback)
   };
   
   /**
-   * Setzt den Filter zurï¿½ck
+   * Setzt den Filter zurück
    **/
   this.reset = function()
   {
@@ -9878,7 +9878,7 @@ StringFilter = function(name, callback)
   };
 
   /**
-   * Prï¿½ft, ob Enter oder ESC gedrï¿½ckt wurde und schlieï¿½t den Filter entsprechend
+   * Prüft, ob Enter oder ESC gedrückt wurde und schließt den Filter entsprechend
    */
   this.checkEnterEsc = function(key)
   {
@@ -9944,7 +9944,7 @@ ListFilter = Class.create({
   },
 
   /**
-   * Prï¿½ft, ob der Filter aktiv ist
+   * Prüft, ob der Filter aktiv ist
    **/
   isSet: function()
   {
@@ -9956,7 +9956,7 @@ ListFilter = Class.create({
   },
   
   /**
-   * Wï¿½hlt ein Listenelement aus
+   * Wählt ein Listenelement aus
    **/
   select: function(id, selected)
   {
@@ -9971,7 +9971,7 @@ ListFilter = Class.create({
   },
   
   /**
-   * Prï¿½ft, ob ein Listenelement ausgewï¿½hlt ist
+   * Prüft, ob ein Listenelement ausgewählt ist
    **/
   isSelected: function(id)
   {
@@ -10044,7 +10044,7 @@ ListFilter = Class.create({
   },
   
   /**
-   * Schlieï¿½t den Filter und ruft die Callback-Funktion auf
+   * Schließt den Filter und ruft die Callback-Funktion auf
    **/
   set: function()
   {
@@ -10070,7 +10070,7 @@ ListFilter = Class.create({
   },
   
   /**
-   * Schlieï¿½t den Filter ohne ï¿½nderungen zu ï¿½bernhemen
+   * Schließt den Filter ohne Änderungen zu übernhemen
    **/
   close: function()
   {
@@ -10092,7 +10092,7 @@ ListFilter = Class.create({
   },
   
   /**
-   * Setzt den Filter zurï¿½ck
+   * Setzt den Filter zurück
    **/
   reset: function()
   {
@@ -10113,12 +10113,12 @@ ListFilter.TEMPLATE = TrimPath.parseTemplate(LISTFILTER_JST);
  **/
 
 /**
- * Namensraum fï¿½r UI-Komponenten
+ * Namensraum für UI-Komponenten
  **/ 
 UI = { };
 
 /**
- * Basisklasse fï¿½r UI-Komponenten
+ * Basisklasse für UI-Komponenten
  **/
 UI.Component = Class.create({
 
@@ -10157,7 +10157,7 @@ UI.Component = Class.create({
   },
   
   /**
-   * Setzt die Hï¿½he der Komponente in Pixeln
+   * Setzt die Höhe der Komponente in Pixeln
    **/
   setHeight: function(height)
   {
@@ -10268,7 +10268,7 @@ UI.InputComponent = Class.create(UI.Component, {
 });
 
 /**
- * Basisklasse fï¿½r UI-Container
+ * Basisklasse für UI-Container
  **/
 UI.Container = Class.create(UI.Component, {
 
@@ -10283,7 +10283,7 @@ UI.Container = Class.create(UI.Component, {
   },
 
   /**
-   * Fï¿½gt dem Container eine neue Komponente hinzu
+   * Fügt dem Container eine neue Komponente hinzu
    **/
   add: function(component)
   {
@@ -10321,7 +10321,7 @@ UI.Container = Class.create(UI.Component, {
  **/
 
 /**
- * Rahmen fï¿½r Dialog-Fenster
+ * Rahmen für Dialog-Fenster
  **/ 
 UI.Frame = Class.create(UI.Container, {
 
@@ -10383,7 +10383,7 @@ UI.Frame = Class.create(UI.Container, {
   },
   
   /**
-   * Setzt die Hï¿½he und Breite des Content-Bereichs.
+   * Setzt die Höhe und Breite des Content-Bereichs.
    **/
   setContentSize: function(contentWidth, contentHeight)
   {
@@ -10403,7 +10403,7 @@ UI.Frame = Class.create(UI.Container, {
   },
   
   /**
-   * Liefert die Hï¿½he des Content-Bereichs in Pixeln
+   * Liefert die Höhe des Content-Bereichs in Pixeln
    **/
   getContentHeight: function()
   {
@@ -10419,7 +10419,7 @@ UI.Frame = Class.create(UI.Container, {
   },
   
   /**
-   * Liefert die Gesamthï¿½he des Frames in Pixeln
+   * Liefert die Gesamthöhe des Frames in Pixeln
    **/
   getHeight: function()
   {
@@ -10513,9 +10513,9 @@ UI.Label = Class.create(UI.Component, {
   },
   
   /**
-   * Setzt die Hï¿½he des Labels.
+   * Setzt die Höhe des Labels.
    * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
-   * Es wird immer auch die Zeilenhï¿½he gesetzt!
+   * Es wird immer auch die Zeilenhöhe gesetzt!
    **/
   setHeight: function(height)
   {
@@ -10608,7 +10608,7 @@ UI.Text = Class.create(UI.Component, {
   },
   
   /**
-   * Setzt die Hï¿½he des Labels.
+   * Setzt die Höhe des Labels.
    * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
    **/
   setHeight: function(height)
@@ -10670,7 +10670,7 @@ UI.ScrollPane = Class.create(UI.Container, {
   },
   
   /**
-   * Setzt die Hï¿½he der Komponente in Pixeln
+   * Setzt die Höhe der Komponente in Pixeln
    **/
   setHeight: function(height)
   {
@@ -10990,7 +10990,7 @@ UI.ListBox = Class.create(UI.InputComponent, {
 	
 	/**
 	 * @fn selectItemById
-	 * Wï¿½hlt ein
+	 * Wählt ein
 	 **/
 	selectItemById: function(id)
 	{
@@ -11074,7 +11074,7 @@ UI.Checkbox = Class.create(UI.Component, {
   },
   
   /**
-   * Setzt die Hï¿½he des Labels.
+   * Setzt die Höhe des Labels.
    * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
    **/
   setHeight: function(height)
@@ -11179,14 +11179,14 @@ Room = Class.create({
     this.id          = data["id"];           // Id
     this.name        = data["name"];         // Name 
     this.description = data["description"];  // Beschreibung
-    this.channelIds  = [];                   // Ids der Kanï¿½le
+    this.channelIds  = [];                   // Ids der Kanäle
     
     data["channelIds"].each(function(id) { this.addChannel(id); }, this);
   },
   
   /**
-   * Fï¿½gt einen Kanal hinzu.
-   * writeBack: [bool] Optional: false. Falls true, wird die ï¿½nderung an die HomeMatic Zentrale ï¿½bermittelt.
+   * Fügt einen Kanal hinzu.
+   * writeBack: [bool] Optional: false. Falls true, wird die Änderung an die HomeMatic Zentrale übermittelt.
    **/
   addChannel: function(channelId, writeBack)
   {
@@ -11200,7 +11200,7 @@ Room = Class.create({
   
   /**
    * Entfernt einen Kanal.
-   * writeBack: [bool] Optional: false. Falls true, wird die ï¿½nderung an die HomeMatic Zentrale ï¿½bermittelt.
+   * writeBack: [bool] Optional: false. Falls true, wird die Änderung an die HomeMatic Zentrale übermittelt.
    **/
   removeChannel: function(channelId, writeBack)
   {
@@ -11213,7 +11213,7 @@ Room = Class.create({
   },
   
   /**
-   * Prï¿½ft, ob ein Kanal in dem Raum definiert ist.
+   * Prüft, ob ein Kanal in dem Raum definiert ist.
    **/
   contains: function(channelId)
   {
@@ -11280,7 +11280,7 @@ RoomList = Singleton.create({
   },
   
   /**
-   * Liefert die Liste aller Rï¿½ume.
+   * Liefert die Liste aller Räume.
    **/
   list: function() 
   { 
@@ -11373,14 +11373,14 @@ Subsection = Class.create({
     this.id          = data["id"];            // Id
     this.name        = data["name"];          // Name
     this.description = data["description"];   // Beschreibung
-    this.channelIds  = [];                    // Ids der Kanï¿½le
+    this.channelIds  = [];                    // Ids der Kanäle
     
     data["channelIds"].each(function(id) { this.addChannel(id); }, this);
   },
   
   /**
-   * Fï¿½gt einen Kanal hinzu.
-   * writeback: [bool] Optional (false). Falls true, wird die ï¿½nderung an die HomeMatic Zentrale ï¿½bermittelt.
+   * Fügt einen Kanal hinzu.
+   * writeback: [bool] Optional (false). Falls true, wird die Änderung an die HomeMatic Zentrale übermittelt.
    **/
   addChannel: function(channelId, writeBack)
   {
@@ -11394,7 +11394,7 @@ Subsection = Class.create({
   
   /**
    * Entfernt einen Kanal.
-   * writeBack: [bool] Optional (false). Falls true, wird die ï¿½nderung an die HomeMatic Zentrale ï¿½bermittelt.
+   * writeBack: [bool] Optional (false). Falls true, wird die Änderung an die HomeMatic Zentrale übermittelt.
    **/
   removeChannel: function(channelId, writeBack)
   {
@@ -11407,7 +11407,7 @@ Subsection = Class.create({
   },
   
   /**
-   * Prï¿½ft, ob ein Kanal in dem Raum definiert ist.
+   * Prüft, ob ein Kanal in dem Raum definiert ist.
    **/
   contains: function(channelId)
   {
@@ -11481,7 +11481,7 @@ SubsectionList = Singleton.create({
   },
 
   /**
-   * Lï¿½dt die Gewerkeliste erneut
+   * Lädt die Gewerkeliste erneut
    **/
   reload: function(loader)
   {
@@ -11532,7 +11532,7 @@ SubsectionList = Singleton.create({
  **/
  
 /**
- * Gerï¿½tetyp.
+ * Gerätetyp.
  **/
 DeviceType = Class.create({
  
@@ -11549,7 +11549,7 @@ DeviceType = Class.create({
   },
   
   /**
-   * Liefert den HTML-Code eines Thumbnails fï¿½r das Gerï¿½t.
+   * Liefert den HTML-Code eines Thumbnails für das Gerät.
    **/
   getThumbnailHTML: function(formName)
   { 
@@ -11557,7 +11557,7 @@ DeviceType = Class.create({
   },
   
   /**
-   * Liefert den HTML-Code eines Bildes fï¿½r das Gerï¿½t.
+   * Liefert den HTML-Code eines Bildes für das Gerät.
    **/
   getImageHTML: function(formName)
   {
@@ -11569,14 +11569,14 @@ DeviceType = Class.create({
  **/
 
 /**
- * Liste der verfï¿½gbaren Gerï¿½tetypen.
+ * Liste der verfügbaren Gerätetypen.
  **/
 DeviceTypeList = Singleton.create({
-  THUMBNAIL_SIZE: 50,   // Grï¿½ï¿½e eines (quadratischen) Thumbnails
-  IMAGE_SIZE: 250,   // Grï¿½ï¿½e eines (quadratischen) Bildes
+  THUMBNAIL_SIZE: 50,   // Größe eines (quadratischen) Thumbnails
+  IMAGE_SIZE: 250,   // Größe eines (quadratischen) Bildes
   
   /**
-   * Liste der nicht lï¿½schbaren Gerï¿½tetypen
+   * Liste der nicht löschbaren Gerätetypen
    **/
   m_undeletableTypeNames: [
     "HM-CCU-1",
@@ -11595,7 +11595,7 @@ DeviceTypeList = Singleton.create({
    **/
   initialize: function()
   {
-    this.deviceTypes = {};     // verfï¿½gbare Gerï¿½tetypen
+    this.deviceTypes = {};     // verfügbare Gerätetypen
     
     for (var i = 0, len = DEV_LIST.length; i < len; i++)
     {
@@ -11607,7 +11607,7 @@ DeviceTypeList = Singleton.create({
   },
   
   /**
-   * Ermittelt, ob ein Gerï¿½t von diesem Typ gelï¿½scht werden kann.
+   * Ermittelt, ob ein Gerät von diesem Typ gelöscht werden kann.
    **/
   isDeletable: function(deviceType)
   {
@@ -11644,7 +11644,7 @@ DeviceTypeList = Singleton.create({
   },
   
   /**
-   * Liefert die Liste aller Gerï¿½tetypen.
+   * Liefert die Liste aller Gerätetypen.
    **/
   listDeviceTypes: function()
   {
@@ -11927,7 +11927,7 @@ Channel = Class.create({
   },
 
   /**
-   * Ermittelt alls Rï¿½ume, in denen der Kanal definiert ist
+   * Ermittelt alls Räume, in denen der Kanal definiert ist
    **/
   m_getRooms: function()
   {
@@ -12013,7 +12013,7 @@ Channel = Class.create({
   },
   
   /**
-   * Legt fest, ob der Kanal fï¿½r normale Anwender sichtbar ist
+   * Legt fest, ob der Kanal für normale Anwender sichtbar ist
    **/
   setVisibility: function(isVisible)
   {
@@ -12031,7 +12031,7 @@ Channel = Class.create({
   },
   
   /**
-   * Legt fest, ob der Kanal fï¿½r normale Anwender bedienbar ist
+   * Legt fest, ob der Kanal für normale Anwender bedienbar ist
    **/
   setUsability: function(isUsable)
   {
@@ -12085,7 +12085,7 @@ Channel = Class.create({
   },
 
   /**
-   * Legt den ï¿½bertragungsmodus des Kanals fest.
+   * Legt den Übertragungsmodus des Kanals fest.
    **/
   setMode: function(mode)
   {
@@ -12136,9 +12136,9 @@ Channel = Class.create({
   },
   
   /**
-   * Fï¿½gt dem Kanal ein Gewerk hinzu.
+   * Fügt dem Kanal ein Gewerk hinzu.
    * Diese Methode dient lediglich zur Aktualisierung des Datenmodells.
-   * Um den Kanal einem Gewerk hinzuzufï¿½gen, sollte 
+   * Um den Kanal einem Gewerk hinzuzufügen, sollte 
    *   Subsection.addChannel(channel, true)
    * verwendet werden.
    **/
@@ -12155,7 +12155,7 @@ Channel = Class.create({
   /**
    * Entfernt den Kanal aus einem Gewerk.
    * Diese Methode dient lediglich zur Aktualisierung des Datenmodells.
-   * Um den Kanal aus dem Gewerk zu lï¿½schen, sollte 
+   * Um den Kanal aus dem Gewerk zu löschen, sollte 
    *   Subsection.removeChannel(channel, true)
    * verwendet werden.
    **/
@@ -12171,7 +12171,7 @@ Channel = Class.create({
   
   
   /**
-   * Liefert eine Liste sï¿½mtlicher Programme (Ids), die den Kanal verwenden
+   * Liefert eine Liste sämtlicher Programme (Ids), die den Kanal verwenden
    **/
   listProgramIds: function()
   {
@@ -12179,7 +12179,7 @@ Channel = Class.create({
   },
 
   /**
-   * Liefert eine Liste sï¿½mtlicher Programme (Ids), die den Kanal verwenden
+   * Liefert eine Liste sämtlicher Programme (Ids), die den Kanal verwenden
    **/
   hasProgramIds: function()
   {
@@ -12187,7 +12187,7 @@ Channel = Class.create({
   },
 
   /**
-   * Ermittelt, ob der Kanal den Funktionstest unterstï¿½tzt.
+   * Ermittelt, ob der Kanal den Funktionstest unterstützt.
    **/
   supportsComTest: function()
   {
@@ -12221,7 +12221,7 @@ Channel.INVALID_ID = "";
 /*########################*/
 
 /**
- * Liefert den ï¿½bertragungsmodus anhand seines Namens.
+ * Liefert den Übertragungsmodus anhand seines Namens.
  **/
 Channel.getMode = function(modeName)
 {
@@ -12236,7 +12236,7 @@ Channel.getMode = function(modeName)
 };
 
 /**
- * Liefert den Namen eines ï¿½bertragungs-Modus
+ * Liefert den Namen eines Übertragungs-Modus
  **/
 Channel.getModeName = function(mode)
 {
@@ -12373,7 +12373,7 @@ ChannelGroup = Class.create({
  **/
  
 /**
- * HomeMatic Gerï¿½t.
+ * HomeMatic Gerät.
  **/
 Device = Class.create({
 
@@ -12388,7 +12388,7 @@ Device = Class.create({
   },
   
   /**
-   * Aktualisiert die Gerï¿½tedaten
+   * Aktualisiert die Gerätedaten
    **/
   update: function(data)
   {
@@ -12477,7 +12477,7 @@ Device = Class.create({
   },
 
   /**
-   * ï¿½ndert das Default Vorschaubild eines Gerï¿½tes
+   * Ändert das Default Vorschaubild eines Gerätes
    * @param pic
    */
   setPrevPic: function(dev) {
@@ -12506,7 +12506,7 @@ Device = Class.create({
   },
 
   /**
-   * Startet die Aktualisierung der Werte des Gerï¿½testatus
+   * Startet die Aktualisierung der Werte des Gerätestatus
    **/
   updateStatus:function(deviceStatus, rssiListHmRF)
   {
@@ -12669,7 +12669,7 @@ Device = Class.create({
     }
   },
   /**
-   * Legt den Namen des Gerï¿½ts fest.
+   * Legt den Namen des Geräts fest.
    **/
   setName: function(name)
   {
@@ -12698,7 +12698,7 @@ Device = Class.create({
   },  
 
   /**
-   * Legt fest, ob das Geraet Servicemeldungen auslï¿½st oder nicht
+   * Legt fest, ob das Geraet Servicemeldungen auslöst oder nicht
    **/
   setEnabledServiceMsg: function(enabledServiceMsg)
   {
@@ -12750,7 +12750,7 @@ Device = Class.create({
   },
 
   /**
-   * Liefert den HTML-Code des Gerï¿½te-Vorschau-Bildes
+   * Liefert den HTML-Code des Geräte-Vorschau-Bildes
    **/
   getThumbnailHTML: function()
   {
@@ -12763,7 +12763,7 @@ Device = Class.create({
   },
   
   /**
-   * Liefert den HTML-Code des Gerï¿½tebildes
+   * Liefert den HTML-Code des Gerätebildes
    **/
   getImageHTML: function()
   {
@@ -12776,7 +12776,7 @@ Device = Class.create({
   },
   
   /**
-   * Liefert die Ids der Programme, die mindestens einen Kanal des Gerï¿½ts verwenden
+   * Liefert die Ids der Programme, die mindestens einen Kanal des Geräts verwenden
    **/
   listProgramIds: function()
   {
@@ -12784,7 +12784,7 @@ Device = Class.create({
   },
   
   /**
-   * Ermittelt, ob das Gerï¿½t direkte Verknï¿½pfungen oder Programme besitzt.
+   * Ermittelt, ob das Gerät direkte Verknüpfungen oder Programme besitzt.
    **/
   hasLinksOrPrograms: function(callback)
   {
@@ -12815,7 +12815,7 @@ Device = Class.create({
   },
   
   /**
-   * Asynchron. Versucht ein Gerï¿½t zu lï¿½schen.
+   * Asynchron. Versucht ein Gerät zu löschen.
    **/
   remove: function(flags, callback)
   {
@@ -12838,11 +12838,11 @@ Device = Class.create({
 });
 /**
  * devicelist.js
- * Gerï¿½teliste.
+ * Geräteliste.
  **/
 
 /**
- * Gerï¿½teliste.
+ * Geräteliste.
  **/
 DeviceList = Singleton.create({
 
@@ -12870,7 +12870,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Aktualisiert ein Gerï¿½t
+   * Aktualisiert ein Gerät
    **/
   updateDevice: function(data, callback)
   {
@@ -12946,7 +12946,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Entfernt ein Gerï¿½t aus dem Datenmodell
+   * Entfernt ein Gerät aus dem Datenmodell
    **/
   removeDevice: function(device)
   {
@@ -12960,7 +12960,7 @@ DeviceList = Singleton.create({
   },
 
   /**
-   * Liefert die Liste aller Gerï¿½te.
+   * Liefert die Liste aller Geräte.
    **/
   listDevices: function()
   {
@@ -12976,7 +12976,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Liefert die Liste aller Kanï¿½le.
+   * Liefert die Liste aller Kanäle.
    **/
   listChannels: function()
   {
@@ -12984,7 +12984,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Liefert die Liste aller Kanï¿½le ohne Gruppen-Partner.
+   * Liefert die Liste aller Kanäle ohne Gruppen-Partner.
    **/
   listSingleChannels: function()
   {
@@ -13037,7 +13037,7 @@ DeviceList = Singleton.create({
     return dispname;
   },
   /**
-   * Lï¿½dt die Gerï¿½teliste erneut
+   * Lädt die Geräteliste erneut
    **/
   reload: function(loader)
   {
@@ -13118,7 +13118,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Startet die Aktualisierung des Status aller Gerï¿½te.
+   * Startet die Aktualisierung des Status aller Geräte.
    **/
   updateDeviceStatus:function()
   {
@@ -13158,7 +13158,7 @@ DeviceList = Singleton.create({
   },
 
   /**
-   * Startet die Akualisierung eines Gerï¿½ts.
+   * Startet die Akualisierung eines Geräts.
    **/
   beginUpdateDevice:function(id, callback)
   {
@@ -13169,7 +13169,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Liefert ein Gerï¿½t anhand seiner Id.
+   * Liefert ein Gerät anhand seiner Id.
    **/
   getDevice: function(id)
   {
@@ -13177,7 +13177,7 @@ DeviceList = Singleton.create({
   },
   
   /**
-   * Liefert ein Gerï¿½t anhand seiner Seriennummer.
+   * Liefert ein Gerät anhand seiner Seriennummer.
    **/
   getDeviceByAddress: function(address)
   {
@@ -13243,7 +13243,7 @@ DeviceList = Singleton.create({
   
   /**
    * Event-Handler. 
-   * Wird aufgerufen, sobald ein Raum hinzugefï¿½gt wurde.
+   * Wird aufgerufen, sobald ein Raum hinzugefügt wurde.
    **/
   m_onAddRoom: function(roomList, eventArgs)
   {
@@ -13259,7 +13259,7 @@ DeviceList = Singleton.create({
   
   /**
    * Event-Handler.
-   * Wird aufgerufen, sobald ein Raum gelï¿½scht wurde.
+   * Wird aufgerufen, sobald ein Raum gelöscht wurde.
    **/
   m_onRemoveRoom: function(roomList, eventArgs)
   {
@@ -13275,7 +13275,7 @@ DeviceList = Singleton.create({
   
   /**
    * Event-Handler.
-   * Wird aufgerufen, sobald ein Kanal einem Raum hinzugefï¿½gr wurde.
+   * Wird aufgerufen, sobald ein Kanal einem Raum hinzugefügr wurde.
    **/
   m_onAddChannelToRoom: function(room, eventArgs)
   {
@@ -13295,7 +13295,7 @@ DeviceList = Singleton.create({
   
   /**
    * Event-Handler.
-   * Wird aufgerufen, sobald ein neues Gewerk hinzugefï¿½gt wurde.
+   * Wird aufgerufen, sobald ein neues Gewerk hinzugefügt wurde.
    **/
   m_onAddSubsection: function(subsectionList, eventArgs)
   {
@@ -13311,7 +13311,7 @@ DeviceList = Singleton.create({
   
   /**
    * Event-Handler.
-   * Wird aufgerufen, sobald ein Gewerk gelï¿½scht wurde.
+   * Wird aufgerufen, sobald ein Gewerk gelöscht wurde.
    **/
   m_onRemoveSubsection: function(subsectionList, eventArgs)
   {
@@ -13327,7 +13327,7 @@ DeviceList = Singleton.create({
   
   /**
    * Event-Handler.
-   * Wird aufgerufen, sobald ein Kanal einem Gewerk hinzugefï¿½gt wurde.
+   * Wird aufgerufen, sobald ein Kanal einem Gewerk hinzugefügt wurde.
    **/
   m_onAddChannelToSubsection: function(subsection, eventArgs)
   {
@@ -13360,9 +13360,9 @@ Layer = new function()
   /*# Private Elemente #*/
   /*####################*/
   
-  var Z_INDEX_INCR = 100;    // Inkrement fï¿½r den Ebenenindex
+  var Z_INDEX_INCR = 100;    // Inkrement für den Ebenenindex
   
-  var m_container = null;   // Container fï¿½r die Ebenen
+  var m_container = null;   // Container für die Ebenen
   var m_maxIndex  = 0;      // Maximal vergebener Index
   var m_layer     = {};     // Speichert die Indizes aller Ebenen
   
@@ -13383,7 +13383,7 @@ Layer = new function()
   };
   
   /*########################*/
-  /*# ï¿½ffentliche Elemente #*/
+  /*# Öffentliche Elemente #*/
   /*########################*/
   
   /**
@@ -13400,7 +13400,7 @@ Layer = new function()
   };
   
   /**
-   * Fï¿½gt eine Ebene hinzu.
+   * Fügt eine Ebene hinzu.
    **/
   this.add = function(layer)
   {
@@ -13431,7 +13431,7 @@ Layer = new function()
  **/
  
 /**
- * Allgmeine Dialogbox fï¿½r die Kommunikation mit dem Benutzer.
+ * Allgmeine Dialogbox für die Kommunikation mit dem Benutzer.
  **/
 DialogBox = function(callback, width, height)
 {
@@ -13440,11 +13440,11 @@ DialogBox = function(callback, width, height)
   /*####################*/
  
   var DEFAULT_CONTENT_WIDTH  = 320; // Konstante. Standardbreite des Arbeitsbereichs
-  var DEFAULT_CONTENT_HEIGHT = 80;  // Konstante. Standardhï¿½he des Arbeitsbereichs
-  var TITLE_HEIGHT           = 20;  // Konstante. Hï¿½he der Titelleiste  
-  var FOOTER_HEIGHT          = 40;  // Konstante. Hï¿½he der Fuï¿½leiste
+  var DEFAULT_CONTENT_HEIGHT = 80;  // Konstante. Standardhöhe des Arbeitsbereichs
+  var TITLE_HEIGHT           = 20;  // Konstante. Höhe der Titelleiste  
+  var FOOTER_HEIGHT          = 40;  // Konstante. Höhe der Fußleiste
   var BORDER_WIDTH           = 2;   // Konstante. Breite des Dialog-Rahmens
-  var BUTTON_HEIGHT          = 32;  // Konstante. Hï¿½he eines Buttons
+  var BUTTON_HEIGHT          = 32;  // Konstante. Höhe eines Buttons
   var BUTTON_WIDTH           = 100; // Konstante. Breite eines Buttons
   var BUTTON_BORDER          = 1;   // Konstante. Rahmenbreite eines Buttons
  
@@ -13452,8 +13452,8 @@ DialogBox = function(callback, width, height)
   var m_dialog;               // DOM-Element. Dialogfenster
   var m_title;                // DOM-Element. Dialog-Titel
   var m_content;              // DOM-Element. Inhalt
-  var m_footer;               // DOM-Element. Fuï¿½leiste
-  var m_callback = callback;  // Rï¿½ckruffunktion
+  var m_footer;               // DOM-Element. Fußleiste
+  var m_callback = callback;  // Rückruffunktion
     
   /**
    * Interne Klasse.
@@ -13467,7 +13467,7 @@ DialogBox = function(callback, width, height)
     var m_button;                       // DOM-Element. Button
     var m_caption;                      // DOM-Element. Beschriftung
     var m_onClickListener;              // onClick-Ereignis
-    var m_dialogResult = dialogResult;  // Rï¿½ckgabewert
+    var m_dialogResult = dialogResult;  // Rückgabewert
     
     /**
      * onClick-Ereignis-Handler.
@@ -13478,7 +13478,7 @@ DialogBox = function(callback, width, height)
     };
     
     /*########################*/
-    /*# ï¿½ffentliche Elemente #*/
+    /*# Öffentliche Elemente #*/
     /*########################*/
     
     /**
@@ -13534,7 +13534,7 @@ DialogBox = function(callback, width, height)
   };
   
   /*########################*/
-  /*# ï¿½ffentliche Elemente #*/
+  /*# Öffentliche Elemente #*/
   /*########################*/
   
   /**
@@ -13547,7 +13547,7 @@ DialogBox = function(callback, width, height)
   };
   
   /**
-   * Schlieï¿½t die Dialogbox und entfernt sie aus dem DOM.
+   * Schließt die Dialogbox und entfernt sie aus dem DOM.
    **/
   this.close = function()
   {
@@ -13581,7 +13581,7 @@ DialogBox = function(callback, width, height)
   };
   
   /**
-   * Fï¿½gt dem Dialog einen Button hinzu.
+   * Fügt dem Dialog einen Button hinzu.
    **/
   this.addButton = function(caption, dialogResult, style)
   {
@@ -13625,7 +13625,7 @@ DialogBox = function(callback, width, height)
     "height": contentHeight + "px"
   });
   
-  // Fuï¿½leiste
+  // Fußleiste
   m_footer = document.createElement("div");
   Element.addClassName(m_footer, "DialogBoxFooter");
   Element.setStyle(m_footer, 
@@ -13659,7 +13659,7 @@ DialogBox = function(callback, width, height)
  
 /**
  * DialogResult
- * Vordefinierte Rï¿½ckgabewerte der DialogBox.
+ * Vordefinierte Rückgabewerte der DialogBox.
  **/ 
 DialogResult = 
 {
@@ -13854,10 +13854,10 @@ MessageBox.setContentSize =function(width, height) {
  **/
  
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 YesNoDialog = Class.create({
  
@@ -14011,7 +14011,7 @@ YesNoDialog = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   }
@@ -14025,10 +14025,10 @@ YesNoDialog.RESULT_YES = 1;
  **/
  
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 EulaDialog = Class.create({
  
@@ -14114,7 +14114,7 @@ EulaDialog = Class.create({
       jQuery(".EulaDialogContentWrapper").css("overflow", "scroll");
     }
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".EulaDialog").css("height", jQuery(".EulaDialogContentWrapper").height() + 108);
     jQuery(".EulaDialogFooter").css("top", jQuery(".EulaDialogContentWrapper").height() + 26);
 
@@ -14254,7 +14254,7 @@ FirstSecurityDialog = Class.create({
       jQuery(".EulaDialogContentWrapper").css("overflow", "scroll");
     }
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".EulaDialog").css("height", jQuery(".EulaDialogContentWrapper").height() + 108);
     jQuery(".EulaDialogFooter").css("top", jQuery(".EulaDialogContentWrapper").height() + 26);
 
@@ -14301,10 +14301,10 @@ EulaDialog.RESULT_YES = 1;
 
 ChannelChooser = Singleton.create({
 
-  SHOW_READABLE: 0x1,    // zeigt lesbare Kanï¿½le an
-  SHOW_WRITABLE: 0x2,    // zeigt schreibbare Kanï¿½le an
-  SHOW_EVENTABLE: 0x4,    // zeigt Kanï¿½le mit Ereignisbehandlung an
-  SHOW_ALL: 0x7,    // zeigt alle Kanï¿½le an
+  SHOW_READABLE: 0x1,    // zeigt lesbare Kanäle an
+  SHOW_WRITABLE: 0x2,    // zeigt schreibbare Kanäle an
+  SHOW_EVENTABLE: 0x4,    // zeigt Kanäle mit Ereignisbehandlung an
+  SHOW_ALL: 0x7,    // zeigt alle Kanäle an
 
   FAV_CHANNELS: 0,
   PRG_CONDITION: 1,
@@ -14341,9 +14341,9 @@ ChannelChooser = Singleton.create({
     }
   },
     
-  PREFIX: "ChannelChooser",                // Prefix fï¿½r Ids der Tabellenzeilen
+  PREFIX: "ChannelChooser",                // Prefix für Ids der Tabellenzeilen
   WRAPPER_ID: "ChannelChooserWrapper",         // Id des Wrapper-Elements
-  HIGHLIGHT_CLASS: "ChannelChooserCell_Highlight",  // Klasse fï¿½r hervorgehobene Tabellenzellen
+  HIGHLIGHT_CLASS: "ChannelChooserCell_Highlight",  // Klasse für hervorgehobene Tabellenzellen
   
   /**
    * Konstruktor
@@ -14796,7 +14796,7 @@ ChannelChooser = Singleton.create({
   },
     
   /**
-   * Schlieï¿½t das Dialogfenster
+   * Schließt das Dialogfenster
    **/
   close: function(result)
   {
@@ -14853,7 +14853,7 @@ ChannelChooser = Singleton.create({
   },
 
   /**
-   * Wï¿½hlt einen Kanal aus
+   * Wählt einen Kanal aus
    **/
   select: function(str_id)
   {
@@ -14882,7 +14882,7 @@ ChannelChooser = Singleton.create({
   },
   
   /**
-   * Blendet virtuelle Kanï¿½le ein bzw. aus
+   * Blendet virtuelle Kanäle ein bzw. aus
    **/
   toggleVirtualChannels: function()
   {
@@ -14892,7 +14892,7 @@ ChannelChooser = Singleton.create({
   },
   
   /**
-   * Setzt alle Filter zurï¿½ck
+   * Setzt alle Filter zurück
    **/
   resetFilters: function()
   {
@@ -14980,10 +14980,10 @@ ChannelChooser = Singleton.create({
  * Kanal-Mehrfachauswahl.
  **/
 MultiChannelChooser = Singleton.create({
-  SHOW_READABLE: 0x1,    // zeigt lesbare Kanï¿½le an
-  SHOW_WRITABLE: 0x2,    // zeigt schreibbare Kanï¿½le an
-  SHOW_EVENTABLE: 0x4,    // zeigt Kanï¿½le mit Ereignisbehandlung an
-  SHOW_ALL: 0x7,    // zeigt alle Kanï¿½le an
+  SHOW_READABLE: 0x1,    // zeigt lesbare Kanäle an
+  SHOW_WRITABLE: 0x2,    // zeigt schreibbare Kanäle an
+  SHOW_EVENTABLE: 0x4,    // zeigt Kanäle mit Ereignisbehandlung an
+  SHOW_ALL: 0x7,    // zeigt alle Kanäle an
   
   SORT_FN: {
     NAME       : function(channels, reverse) { return channels.ex_sortBy("name", reverse); },
@@ -15233,7 +15233,7 @@ MultiChannelChooser = Singleton.create({
   },
     
   /**
-   * Schlieï¿½t das Dialogfenster
+   * Schließt das Dialogfenster
    **/
   close: function(result)
   {    
@@ -15254,11 +15254,11 @@ MultiChannelChooser = Singleton.create({
     var m_id = id;
     
     /*########################*/
-    /*# ï¿½ffentliche Elemente #*/
+    /*# Öffentliche Elemente #*/
     /*########################*/
     
     this._hidden   = true;  // markiert den Kanal als versteckt
-    this._selected = true;  // markiert den Kanal als ausgewï¿½hlt
+    this._selected = true;  // markiert den Kanal als ausgewählt
 
     /**
      * Liefert die Id des Kanals
@@ -15291,9 +15291,9 @@ MultiChannelChooser = Singleton.create({
       channel._hidden   = false;
     }, this);
     
-    // Die Kanï¿½le, die im Posteingang schon einem Raum oder Gewerk zugeordnet
-    // wurden, existieren noch nicht in der Gerï¿½teliste.
-    // Diese Kanï¿½le werden hier als "versteckte" Kanï¿½le behandelt.
+    // Die Kanäle, die im Posteingang schon einem Raum oder Gewerk zugeordnet
+    // wurden, existieren noch nicht in der Geräteliste.
+    // Diese Kanäle werden hier als "versteckte" Kanäle behandelt.
     ids.each(function(id) {    
       if (null === DeviceList.getChannel(id)) 
       { 
@@ -15318,7 +15318,7 @@ MultiChannelChooser = Singleton.create({
   },
   
   /**
-   * Wï¿½hlt einen Kanal aus
+   * Wählt einen Kanal aus
    **/
   ok: function()
   {
@@ -15340,7 +15340,7 @@ MultiChannelChooser = Singleton.create({
   },
   
   /**
-   * Wï¿½hlt einen Kanal aus bzw. ab
+   * Wählt einen Kanal aus bzw. ab
    **/
   select: function(id, checkBox)
   {
@@ -15365,7 +15365,7 @@ MultiChannelChooser = Singleton.create({
   },
   
   /**
-   * Blendet virtuelle Kanï¿½le ein bzw. aus
+   * Blendet virtuelle Kanäle ein bzw. aus
    **/
   toggleVirtualChannels: function()
   {
@@ -15375,7 +15375,7 @@ MultiChannelChooser = Singleton.create({
   },
   
   /**
-   * Setzt alle Filter zurï¿½ck
+   * Setzt alle Filter zurück
    **/
   resetFilters: function()
   {
@@ -15453,7 +15453,7 @@ MultiChannelChooser = Singleton.create({
  **/
 
 /**
- * Dialog fï¿½r Kanaleinstellungen (Name, Rï¿½ume, Gewerke, Funktionstest)
+ * Dialog für Kanaleinstellungen (Name, Räume, Gewerke, Funktionstest)
  **/ 
 ChannelConfigDialog = Singleton.create({
   PLUS_IMAGE_SRC: "/ise/img/plus.png",
@@ -15532,7 +15532,7 @@ ChannelConfigDialog = Singleton.create({
   },
 
   /**
-   * Schlieï¿½t den Konfigurationsdialog.
+   * Schließt den Konfigurationsdialog.
    **/
   close: function(result)
   {
@@ -15542,7 +15542,7 @@ ChannelConfigDialog = Singleton.create({
   },
   
   /**
-   * ï¿½bernimmt die ï¿½nderungen und schlieï¿½t den Dialog.
+   * Übernimmt die Änderungen und schließt den Dialog.
    **/
   ok: function()
   {
@@ -15588,7 +15588,7 @@ ChannelConfigDialog = Singleton.create({
   },
   
   /**
-   * Schlieï¿½t den Dialog ohne die ï¿½nderungen zu ï¿½bernehmen.
+   * Schließt den Dialog ohne die Änderungen zu übernehmen.
    **/
   abort: function()
   {
@@ -15714,7 +15714,7 @@ ChannelConfigDialog = Singleton.create({
  **/
 
 /**
- * Dialog fï¿½r Kanaleinstellungen (Name, Rï¿½ume, Gewerke, Funktionstest)
+ * Dialog für Kanaleinstellungen (Name, Räume, Gewerke, Funktionstest)
  **/ 
 DeviceConfigDialog = Singleton.create({
   LAYER_ID: "DeviceConfigDialogLayer",
@@ -15787,7 +15787,7 @@ DeviceConfigDialog = Singleton.create({
   },
 
   /**
-   * Schlieï¿½t den Konfigurationsdialog.
+   * Schließt den Konfigurationsdialog.
    **/
   close: function(result)
   {
@@ -15797,7 +15797,7 @@ DeviceConfigDialog = Singleton.create({
   },
   
   /**
-   * ï¿½bernimmt die ï¿½nderungen und schlieï¿½t den Dialog.
+   * Übernimmt die Änderungen und schließt den Dialog.
    **/
   ok: function()
   {
@@ -15828,7 +15828,7 @@ DeviceConfigDialog = Singleton.create({
   },
 
   /**
-   * Schlieï¿½t den Dialog ohne die ï¿½nderungen zu ï¿½bernehmen.
+   * Schließt den Dialog ohne die Änderungen zu übernehmen.
    **/
   abort: function()
   {
@@ -15845,7 +15845,7 @@ DeviceConfigDialog = Singleton.create({
   },
   
   renameChannels: function() {
-    if (confirm("Alle Kanï¿½le umbenennen?")) {
+    if (confirm("Alle Kanäle umbenennen?")) {
       var renameOwnChannelNames = $(this.RENAME_OWN_ID).checked;
 
       this.device.channels.each(function(channel) {
@@ -16089,22 +16089,22 @@ deleteProgSysvarHmIPWeatherTransmitSunshine = function(chId, chAddress) {
 
 /**
  * Ablauf:
- *   1) Prï¿½fe, ob direkte Verknï¿½pfungen oder Programme bestehen
- *   2) Anwender muss bestï¿½tigen, ob er das Gerï¿½t wirklich lï¿½schen mï¿½chte
- *      --> dabei wird angezeigt, on direkte Verknï¿½pfungen oder Programme bestehen
- *      --> der Anwender wï¿½hlt eine Lï¿½schoption:
+ *   1) Prüfe, ob direkte Verknüpfungen oder Programme bestehen
+ *   2) Anwender muss bestätigen, ob er das Gerät wirklich löschen möchte
+ *      --> dabei wird angezeigt, on direkte Verknüpfungen oder Programme bestehen
+ *      --> der Anwender wählt eine Löschoption:
  *          - nur ablernen
- *          - in Werkzustand zurï¿½cksetzen
- *   3) Falls das Gerï¿½t gelï¿½scht werden soll, wird nun der Lï¿½schvorgang durchgefï¿½hrt
- *   4) Falls der Lï¿½schvorgang fehlgeschlagen ist, kann der Anwender wï¿½hlen:
- *      - erneute lï¿½schen
- *      - spï¿½ter automatisch lï¿½schen
- *      - lï¿½schen, auch wenn nicht erreichbar
- *      - abbrechen (nicht lï¿½schen)
+ *          - in Werkzustand zurücksetzen
+ *   3) Falls das Gerät gelöscht werden soll, wird nun der Löschvorgang durchgeführt
+ *   4) Falls der Löschvorgang fehlgeschlagen ist, kann der Anwender wählen:
+ *      - erneute löschen
+ *      - später automatisch löschen
+ *      - löschen, auch wenn nicht erreichbar
+ *      - abbrechen (nicht löschen)
  */
 
 /**
- * "Bitte warten...", "Prï¿½fe Programme und direkte Verknï¿½pfungen..."
+ * "Bitte warten...", "Prüfe Programme und direkte Verknüpfungen..."
  **/
 CheckLinksAndProgramsWindow = Class.create({
 
@@ -16159,7 +16159,7 @@ CheckLinksAndProgramsWindow.CONTENT_HEIGHT = 60;
 //CheckLinksAndProgramsWindow.CONTENT = "<img src='/ise/img/ajaxload_white.gif' style='float:left;margin-right:10px' />" + translateKey("CheckLinksAndProgramsWindowContent");
 
 /**
- * "Mï¿½chten Sie das Gerï¿½t wirklich lï¿½schen?"
+ * "Möchten Sie das Gerät wirklich löschen?"
  **/
 ConfirmDeleteDeviceWindow = Class.create({
 
@@ -16214,8 +16214,8 @@ ConfirmDeleteDeviceWindow = Class.create({
       this.m_listbox.add({name: ConfirmDeleteDeviceWindow.REMOVE, description: ConfirmDeleteDeviceWindow.REMOVE_DESCRIPTION, flags: 0});
     }
 
-    // The deviceType doesnï¿½t exist when in device inbox.
-    // That means as long as a device is in the device inbox a factory reset isnï¿½t possible when deleting the device.
+    // The deviceType doesn´t exist when in device inbox.
+    // That means as long as a device is in the device inbox a factory reset isn´t possible when deleting the device.
     if(this.m_device.deviceType != null) {
       // The new group device has no factory reset
       if (this.m_device.deviceType.id != "HM-CC-VG-1") {
@@ -16328,7 +16328,7 @@ ConfirmDeleteDeviceWindow.WARNING = translateKey("ConfirmDeleteDeviceWindowWarni
 */
 
 /**
- * "Bitte warten", "Gerï¿½t wird gelï¿½scht..."
+ * "Bitte warten", "Gerät wird gelöscht..."
  **/
 DeleteDeviceWindow = Class.create({
   
@@ -16368,8 +16368,8 @@ DeleteDeviceWindow = Class.create({
     device.remove(this.m_flags, onResultHandler);
 
     if (flags == 5) {
-      // Prï¿½fen, ob ein Kanal des Gerï¿½tes ein HmIP-Wettersensor ist, als Energy-Counter oder ob das Gerï¿½t ein HmIP-MOD-RC8 ist dient.
-      // Wenn ja, mï¿½ssen beim Lï¿½schen die dazugehï¿½rigen Systemvariablen
+      // Prüfen, ob ein Kanal des Gerätes ein HmIP-Wettersensor ist, als Energy-Counter oder ob das Gerät ein HmIP-MOD-RC8 ist dient.
+      // Wenn ja, müssen beim Löschen die dazugehörigen Systemvariablen
       // sowie das enstprechende Systemprogramm zum aktualisieren der Systemvariablen entfernt werden.
       var oChnIdAndAddress = hasDeviceInternalProgramOrSysvar(this.m_device),
         chId = oChnIdAndAddress.id,
@@ -16438,7 +16438,7 @@ DeleteDeviceWindow.CONTENT = "<img src='/ise/img/ajaxload_white.gif' style='floa
 */
 
 /**
- * "Fehler", "Gerï¿½t konnte nicht gelï¿½scht werden"
+ * "Fehler", "Gerät konnte nicht gelöscht werden"
  **/
 ErrorOnDeleteWindow = Class.create({
 
@@ -16553,8 +16553,8 @@ ErrorOnDeleteWindow = Class.create({
     Layer.remove(this.m_layer);
 
     if (result == null && this.m_flags == 1 && this.m_errorCode == 507) {
-      // Prï¿½fen, ob ein Kanal des Gerï¿½tes ein HmIP-Wettersensor ist, als Energy-Counter oder ob das Gerï¿½t ein HmIP-MOD-RC8 ist dient.
-      // Wenn ja, mï¿½ssen beim Lï¿½schen die dazugehï¿½rigen Systemvariablen
+      // Prüfen, ob ein Kanal des Gerätes ein HmIP-Wettersensor ist, als Energy-Counter oder ob das Gerät ein HmIP-MOD-RC8 ist dient.
+      // Wenn ja, müssen beim Löschen die dazugehörigen Systemvariablen
       // sowie das enstprechende Systemprogramm zum aktualisieren der Systemvariablen entfernt werden.
       var oChnIdAndAddress = hasDeviceInternalProgramOrSysvar(this.m_device),
         chId = oChnIdAndAddress.id,
@@ -16608,7 +16608,7 @@ ErrorOnDeleteWindow.CONTENT_WIDTH = 400;
 ErrorOnDeleteWindow.CONTENT_HEIGHT = 260;
 
 /**
- * Dialogbox zum Lï¿½schen eines Gerï¿½ts
+ * Dialogbox zum Löschen eines Geräts
  **/
 DeleteDeviceDialog = Class.create({
 
@@ -16682,8 +16682,8 @@ DeleteDeviceDialog = Class.create({
     //if ((errorCode === DeleteDeviceDialog.ERROR_NO_ERROR) || (errorCode === DeleteDeviceDialog.HmIP_CONFIG_PENDING) || (errorCode === DeleteDeviceDialog.ERROR_UNKNOWN_DEVICE))
     if ((errorCode === DeleteDeviceDialog.ERROR_NO_ERROR) || (errorCode === DeleteDeviceDialog.ERROR_UNKNOWN_DEVICE))
     {
-      // Prï¿½fen, ob ein Kanal des Gerï¿½tes ein HmIP-Wettersensor ist, als Energy-Counter oder ob das Gerï¿½t ein HmIP-MOD-RC8 ist dient.
-      // Wenn ja, mï¿½ssen beim Lï¿½schen die dazugehï¿½rigen Systemvariablen
+      // Prüfen, ob ein Kanal des Gerätes ein HmIP-Wettersensor ist, als Energy-Counter oder ob das Gerät ein HmIP-MOD-RC8 ist dient.
+      // Wenn ja, müssen beim Löschen die dazugehörigen Systemvariablen
       // sowie das enstprechende Systemprogramm zum aktualisieren der Systemvariablen entfernt werden.
       var oChnIdAndAddress = hasDeviceInternalProgramOrSysvar(this.m_device),
         chId = oChnIdAndAddress.id,
@@ -16782,13 +16782,13 @@ CrashDialog.CONTENT_WIDTH = 400;
 CrashDialog.CONTENT_HEIGHT = 260;
 /*
 CrashDialog.TEXT  = "<div style='font-weight: bold;'>Eine Komponente der HomeMatic Zentrale reagiert nicht mehr.</div>"
-                  + "<p>Hierfï¿½r kann es eine Reihe von Ursachen geben:</p>"
+                  + "<p>Hierfür kann es eine Reihe von Ursachen geben:</p>"
                   + "<ul>"
                   + "<li>es besteht keine Netzwerk-Verbindung</li>"
                   + "<li>die Stromversorung der HomeMatic Zentrale wurde unterbrochen</li>"
-                  + "<li>mindestens eine Komponente der HomeMatic Zentrale ist abgestï¿½rzt</li>"
+                  + "<li>mindestens eine Komponente der HomeMatic Zentrale ist abgestürzt</li>"
                   + "</ul>"
-                  + "<p>ï¿½berprï¿½fen Sie die Netzwerk-Verbindung und die Stromversorgung der HomeMatic Zentrale. Starten Sie ggf. die HomeMatic Zentrale neu.</p>";
+                  + "<p>Überprüfen Sie die Netzwerk-Verbindung und die Stromversorgung der HomeMatic Zentrale. Starten Sie ggf. die HomeMatic Zentrale neu.</p>";
 */
 
 /**
@@ -17060,7 +17060,7 @@ FirewallConfigDialog = Class.create({
       .add(new UI.Text()
         .setPosition(10, 110)
         .setWidth(FirewallConfigDialog.CONTENT_WIDTH - 20)
-        //.setText("Ermï¿½glicht den direkten Zugriff auf angelernte HomeMatic Gerï¿½te")
+        //.setText("Ermöglicht den direkten Zugriff auf angelernte HomeMatic Geräte")
         .setText(translateKey("dialogSettingsFirewallLblHintXMLRPCAPI"))
       )
       .add(this.m_xmlrpcListBox)
@@ -17081,7 +17081,7 @@ FirewallConfigDialog = Class.create({
       .add(new UI.Text()
         .setPosition(10, 180)
         .setWidth(FirewallConfigDialog.CONTENT_WIDTH - 20)
-        //.setText("Ermï¿½glicht den Zugriff auf die Logikschicht der HomeMatic Zentrale")
+        //.setText("Ermöglicht den Zugriff auf die Logikschicht der HomeMatic Zentrale")
         .setText(translateKey("dialogSettingsFirewallLblHintScriptAPI"))
       )
       .add(this.m_hmscriptListBox)
@@ -17126,14 +17126,14 @@ FirewallConfigDialog = Class.create({
 
       .add(new UI.Text()
         .setPosition(10, 170 + yOffset)
-        //.setHtml("<b>IP-Adressen fï¿½r den eingeschrï¿½nkten Zugriff:</b>")
+        //.setHtml("<b>IP-Adressen für den eingeschränkten Zugriff:</b>")
         .setHtml(translateKey("dialogSettingsFirewallLblIPAddresses"))
       )
       .add(this.m_ipTextArea)
       .add(new UI.Text()
         .setPosition(10, 310 + yOffset)
         .setWidth(FirewallConfigDialog.CONTENT_WIDTH - 20)
-        //.setText("Sie kï¿½nnen den Zugriff wahlweise fï¿½r einzelne IP-Adressen (z.B. 192.168.0.1) oder ganze Adressbereiche (z.B. 192.168.0.0/16) freigeben.")
+        //.setText("Sie können den Zugriff wahlweise für einzelne IP-Adressen (z.B. 192.168.0.1) oder ganze Adressbereiche (z.B. 192.168.0.0/16) freigeben.")
         .setText(translateKey("dialogSettingsFirewallLblHintIPAddresses"))
       )
       .add(new UI.Button()
@@ -17198,14 +17198,14 @@ FirewallConfigDialog = Class.create({
   },
 
   /**
-   * Schlieï¿½t den FirewallConfigDialog ohne ï¿½nderungen zu ï¿½bernehmen.
+   * Schließt den FirewallConfigDialog ohne Änderungen zu übernehmen.
    **/
   close: function () {
     Layer.remove(this.m_layer);
   },
 
   /**
-   * ï¿½bernimmt die ï¿½nderungen und schlieï¿½t den FirewallConfigDialog anschlieï¿½end.
+   * Übernimmt die Änderungen und schließt den FirewallConfigDialog anschließend.
    **/
   ok: function () {
     var xmlrpcAccess = this.m_xmlrpcListBox.getSelectedItem().id,
@@ -17284,7 +17284,7 @@ FirewallConfigDialog_CCU2 = Class.create({
       .setPosition(FirewallConfigDialog.CONTENT_WIDTH - 160, 10)
       .setWidth(150)
       //.add({id: "full"      , name: "Vollzugriff"})
-      //.add({id: "restricted", name: "eingeschrï¿½nkt"})
+      //.add({id: "restricted", name: "eingeschränkt"})
       //.add({id: "none"      , name: "kein Zugriff"});
       .add({id: "full", name: translateKey("dialogSettingsFirewallLblFullAccess")})
       .add({id: "restricted", name: translateKey("dialogSettingsFirewallLblRestrictedAccess")})
@@ -17295,7 +17295,7 @@ FirewallConfigDialog_CCU2 = Class.create({
       .setPosition(FirewallConfigDialog.CONTENT_WIDTH - 160, 80)
       .setWidth(150)
       //.add({id: "full"      , name: "Vollzugriff"})
-      //.add({id: "restricted", name: "eingeschrï¿½nkt"})
+      //.add({id: "restricted", name: "eingeschränkt"})
       //.add({id: "none"      , name: "kein Zugriff"});
       .add({id: "full", name: translateKey("dialogSettingsFirewallLblFullAccess")})
       .add({id: "restricted", name: translateKey("dialogSettingsFirewallLblRestrictedAccess")})
@@ -17320,7 +17320,7 @@ FirewallConfigDialog_CCU2 = Class.create({
       .add(new UI.Text()
         .setPosition(10, 40)
         .setWidth(FirewallConfigDialog.CONTENT_WIDTH - 20)
-        //.setText("Ermï¿½glicht den direkten Zugriff auf angelernte HomeMatic Gerï¿½te")
+        //.setText("Ermöglicht den direkten Zugriff auf angelernte HomeMatic Geräte")
         .setText(translateKey("dialogSettingsFirewallLblHintXMLRPCAPI"))
     )
       .add(this.m_xmlrpcListBox)
@@ -17332,20 +17332,20 @@ FirewallConfigDialog_CCU2 = Class.create({
       .add(new UI.Text()
         .setPosition(10, 110)
         .setWidth(FirewallConfigDialog.CONTENT_WIDTH - 20)
-        //.setText("Ermï¿½glicht den Zugriff auf die Logikschicht der HomeMatic Zentrale")
+        //.setText("Ermöglicht den Zugriff auf die Logikschicht der HomeMatic Zentrale")
         .setText(translateKey("dialogSettingsFirewallLblHintScriptAPI"))
     )
       .add(this.m_hmscriptListBox)
       .add(new UI.Text()
         .setPosition(10, 150)
-        //.setHtml("<b>IP-Adressen fï¿½r den eingeschrï¿½nkten Zugriff:</b>")
+        //.setHtml("<b>IP-Adressen für den eingeschränkten Zugriff:</b>")
         .setHtml(translateKey("dialogSettingsFirewallLblIPAddresses"))
     )
       .add(this.m_ipTextArea)
       .add(new UI.Text()
         .setPosition(10, 290)
         .setWidth(FirewallConfigDialog.CONTENT_WIDTH - 20)
-        //.setText("Sie kï¿½nnen den Zugriff wahlweise fï¿½r einzelne IP-Adressen (z.B. 192.168.0.1) oder ganze Adressbereiche (z.B. 192.168.0.0/16) freigeben.")
+        //.setText("Sie können den Zugriff wahlweise für einzelne IP-Adressen (z.B. 192.168.0.1) oder ganze Adressbereiche (z.B. 192.168.0.0/16) freigeben.")
         .setText(translateKey("dialogSettingsFirewallLblHintIPAddressesWithoutIPv6"))
     )
       .add(new UI.Button()
@@ -17395,14 +17395,14 @@ FirewallConfigDialog_CCU2 = Class.create({
   },
 
   /**
-   * Schlieï¿½t den FirewallConfigDialog ohne ï¿½nderungen zu ï¿½bernehmen.
+   * Schließt den FirewallConfigDialog ohne Änderungen zu übernehmen.
    **/
   close: function () {
     Layer.remove(this.m_layer);
   },
 
   /**
-   * ï¿½bernimmt die ï¿½nderungen und schlieï¿½t den FirewallConfigDialog anschlieï¿½end.
+   * Übernimmt die Änderungen und schließt den FirewallConfigDialog anschließend.
    **/
   ok: function () {
     var xmlrpcAccess = this.m_xmlrpcListBox.getSelectedItem().id,
@@ -17508,10 +17508,10 @@ allDataSet = function() {
 };
 
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Nein"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Nein"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 PartyModeDialog = Class.create({
  
@@ -17587,7 +17587,7 @@ PartyModeDialog = Class.create({
     this.j_YesButton = jQuery("#yesButton");
     if (showEmptyTimeFields) {this.j_YesButton.hide();}
 
-    //Sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //Sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
 
@@ -17842,7 +17842,7 @@ PartyModeDialog = Class.create({
     allDataSet();
   },
 
-  // Makes only valid time selectors selectable - e. g. itsï¿½s not possible to set an end time earlier than the start time
+  // Makes only valid time selectors selectable - e. g. its´s not possible to set an end time earlier than the start time
   OnEndHourShowCallBack: function(hour) {
     var startHour = jQuery("#partyStartTime").timepicker('getHour'),
     startMin = jQuery("#partyStartTime").timepicker('getMinute');
@@ -18064,7 +18064,7 @@ StatusDisplayDialog = Class.create({
     setStatusDisplayTableHeader();
 
 
-    // Remark 1: This doesnï¿½t work satisfying -- see Remark 2
+    // Remark 1: This doesn´t work satisfying -- see Remark 2
     // This should display an icon within the options of the icon selector
     //jQuery("[name='statusDialogIconOptions']").msDropDown({childWidth:"200px"});
 
@@ -18157,7 +18157,7 @@ StatusDisplayDialog = Class.create({
 
     options += "<option name='option_NotUsed' value='-1'>" + translateKey("stringTableNotUsed") + "</option>";
     for (var loop = 0; loop < 12; loop++) {
-      // Remark 2: This doesnï¿½t work satisfying -- see Remark 1
+      // Remark 2: This doesn´t work satisfying -- see Remark 1
       //options += "<option name='option'"+loop+" value='"+loop+"' data-image='/ise/img/tr50.gif'>Icon "+loop+"</option>";
       options += "<option name='option_"+loop+"' value='"+loop+"'>" + arOptionText[loop] + "</option>";
     }
@@ -18171,7 +18171,7 @@ StatusDisplayDialog = Class.create({
     var arValues = val.split(","), //replace(/ /g, "").split(","),
     arLines = []; // contains the lines 0 - 5
 
-    // Is a start key and end key available? Otherwise the string isnï¿½t valid.
+    // Is a start key and end key available? Otherwise the string isn´t valid.
     if (arValues[0] == this.startKey && arValues[arValues.length - 1] == this.endKey) {
       var lineIndex = 0,
       textEndIndex,
@@ -18615,7 +18615,7 @@ StatusDisplayDialogEPaper = Class.create(StatusDisplayDialog, {
     var arValues = val.split(","), //replace(/ /g, "").split(","),
     arLines = []; // contains the lines 1,2,3
 
-    // Is a start key and end key available? Otherwise the string isnï¿½t valid.
+    // Is a start key and end key available? Otherwise the string isn´t valid.
     if (arValues[0] == this.startKey && arValues[arValues.length - 1] == this.endKey) {
       var lineIndex = 0,
       textIndex,
@@ -18651,14 +18651,14 @@ StatusDisplayDialogEPaper = Class.create(StatusDisplayDialog, {
             nextTextBlockIndex++;
           } while ((arValues[textIndex] != this.iconKey) && (arValues[textIndex] != this.lf)) ;
 
-          // Icon hinzufï¿½gen, entweder nicht benutzt (-1) oder den entsprechenden Wert
+          // Icon hinzufügen, entweder nicht benutzt (-1) oder den entsprechenden Wert
           // Add the icon, either not used (-1) or the correspondent value
           valueSet.icon = (arValues[textIndex] == this.iconKey) ? arValues[textIndex + 1] : -1;
           arLines[lineIndex] = valueSet;
           lineIndex++;
           if (valueSet.icon == -1) {textOffset = 1;} else {textOffset = 3;}
           // Jump to the next text block
-          loopx += nextTextBlockIndex + textOffset; // Springe zum nï¿½chsten Textblock
+          loopx += nextTextBlockIndex + textOffset; // Springe zum nächsten Textblock
           //console.log("new loopx : " + loopx);
         }
       }
@@ -19081,28 +19081,28 @@ StatusDisplayDialogAcousticEPaper = Class.create({
 
   _encodeSpecialChars: function(txt) {
     return txt
-      .replace(/ï¿½/g,"[")
-      .replace(/ï¿½/g,"#")
-      .replace(/ï¿½/g,"$")
-      .replace(/ï¿½/g,"ï¿½")
-      .replace(/ï¿½/g,"|")
-      .replace(/ï¿½/g,"ï¿½")
-      .replace(/ï¿½/g,"_")
+      .replace(/Ä/g,"[")
+      .replace(/Ö/g,"#")
+      .replace(/Ü/g,"$")
+      .replace(/ä/g,"²")
+      .replace(/ö/g,"|")
+      .replace(/ü/g,"³")
+      .replace(/ß/g,"_")
       .replace(/&/g,"]")
-      .replace(/'/g,"ï¿½");
+      .replace(/'/g,"µ");
   },
 
   _decodeSpecialChars: function(txt) {
     return txt
-      .replace(/\[/g,"ï¿½")
-      .replace(/#/g,"ï¿½")
-      .replace(/\$/g,"ï¿½")
-      .replace(/ï¿½/g,"ï¿½")
-      .replace(/\|/g,"ï¿½")
-      .replace(/ï¿½/g,"ï¿½")
-      .replace(/\_/g,"ï¿½")
+      .replace(/\[/g,"Ä")
+      .replace(/#/g,"Ö")
+      .replace(/\$/g,"Ü")
+      .replace(/²/g,"ä")
+      .replace(/\|/g,"ö")
+      .replace(/³/g,"ü")
+      .replace(/\_/g,"ß")
       .replace(/\]/g,"&")
-      .replace(/ï¿½/g,"'");
+      .replace(/µ/g,"'");
   },
 
   _getAcousticConfigString: function() {
@@ -19212,7 +19212,7 @@ StatusDisplayDialogAcousticEPaper = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   }
@@ -19223,10 +19223,10 @@ StatusDisplayDialogAcousticEPaper = Class.create({
  **/
 
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 RGBWControllerDialog = Class.create({
 
@@ -19297,7 +19297,7 @@ RGBWControllerDialog = Class.create({
 
     this.__activateSubDialog();
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
 
@@ -19671,10 +19671,10 @@ YesNoDialog.RESULT_YES = 1;
  **/
 
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 VIR_LG_RGBWControllerDialog = Class.create({
 
@@ -19750,7 +19750,7 @@ VIR_LG_RGBWControllerDialog = Class.create({
 
     this.__activateSubDialog();
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
 
@@ -19912,10 +19912,10 @@ YesNoDialog.RESULT_YES = 1;
  **/
 
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 VIR_LG_WHITEControllerDialog = Class.create({
 
@@ -19991,7 +19991,7 @@ VIR_LG_WHITEControllerDialog = Class.create({
 
     this.__activateSubDialog();
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
 
@@ -20145,7 +20145,7 @@ ASIR_SetAlarmDialog = Class.create({
     
     Layer.add(this.m_layer);
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
     translatePage(".YesNoDialog");
@@ -20240,10 +20240,10 @@ ASIR_SetAlarmDialog.RESULT_YES = 1;
  **/
  
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 JalousieActorConvertHexValDialog = Class.create({
  
@@ -20305,7 +20305,7 @@ JalousieActorConvertHexValDialog = Class.create({
     
     Layer.add(this.m_layer);
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
 
@@ -20456,7 +20456,7 @@ WTHSelectModeDialog = Class.create({
     
     Layer.add(this.m_layer);
 
-    //AG sorgt dafï¿½r, daï¿½ die Dialoghï¿½he sich dynamisch dem Content anpasst.
+    //AG sorgt dafür, daß die Dialoghöhe sich dynamisch dem Content anpasst.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + 78);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + 26);
     translatePage(".YesNoDialog");
@@ -20997,10 +20997,10 @@ DialogUserDefinedSettings = Class.create({
  **/
  
 /**
- * Dialogbox mit den Schaltflï¿½chen "Ja" und "Neine"
- * Normalerweise wird als content Text ï¿½bergeben,
- * wenn contentType 'html' gesetzt ist, kann auch HTML ï¿½bergeben werden.
- * Die Hï¿½he des Dialoges sollte sich dynamisch der Contentgrï¿½ï¿½e anpassen.
+ * Dialogbox mit den Schaltflächen "Ja" und "Neine"
+ * Normalerweise wird als content Text übergeben,
+ * wenn contentType 'html' gesetzt ist, kann auch HTML übergeben werden.
+ * Die Höhe des Dialoges sollte sich dynamisch der Contentgröße anpassen.
  **/
 AcousticSignalController = Class.create({
  
@@ -21298,7 +21298,7 @@ AcousticSignalController = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   }
@@ -21455,7 +21455,7 @@ RenameDeviceDialog = Class.create({
 
   convertToValidBasicName: function(value) {
     value = value.substring(0,99);
-    value = value.replace(/[!\"ï¿½$%&\/=?\ï¿½\ï¿½#\'^ï¿½;,~]/g,"");
+    value = value.replace(/[!\"§$%&\/=?\´\´#\'^°;,~]/g,"");
     value = value.replace(/<[^>]*>/g, " "); // replace html code with a space
     //value = value.replace(/(<\/?(?:br)[^>]*>)|<[^>]+>/ig, '$1'); // Remove html code except <br/>
     value = value.trim(); // Remove whitespace from the start and the end of the value
@@ -21542,7 +21542,7 @@ RenameDeviceDialog = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   },
@@ -21703,7 +21703,7 @@ LegacyAPIMigrationDialog = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   }
@@ -21905,7 +21905,7 @@ SoundfileChooserDialog = Class.create({
     jQuery(".YesNoDialogFooterA").width(width);
     jQuery(".YesNoDialogA_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialogA").css("height", jQuery(".YesNoDialogContentWrapperA").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooterA").css("top", jQuery(".YesNoDialogContentWrapperA").height() + offsetDialogFooterHeight);
   }
@@ -22108,7 +22108,7 @@ BlindCombinedParamDialog = Class.create({
     yesNoDlgFooterElm.width(width);
     yesNoDlgYesBtnElm.css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     yesNoDlgElm.css("height", yesNoDlgContentWrapperElm.height() + offsetDialogHeight);
     yesNoDlgFooterElm.css("top", yesNoDlgContentWrapperElm.height() + offsetDialogFooterHeight);
   }
@@ -22847,7 +22847,7 @@ DimmerCombinedParamDialog = Class.create({
     yesNoDialogFooterElm.width(width);
     yesNoDialogYesButton.css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     yesNoDialogElm.css("height", yesNoDialogContentWrapperElm.height() + offsetDialogHeight);
     yesNoDialogFooterElm.css("top", yesNoDialogContentWrapperElm.height() + offsetDialogFooterHeight);
   }
@@ -23203,7 +23203,7 @@ SwitchCombinedParamDialog = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   }
@@ -23431,7 +23431,7 @@ WiredDisplaySystemKey = Class.create({
     jQuery(".YesNoDialogFooter").width(width);
     jQuery(".YesNoDialog_yesButton").css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     jQuery(".YesNoDialog").css("height", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogHeight);
     jQuery(".YesNoDialogFooter").css("top", jQuery(".YesNoDialogContentWrapper").height() + offsetDialogFooterHeight);
   }
@@ -24740,7 +24740,7 @@ UniveralLightReceiverDialog = Class.create(YesNoDialog,{
     yesNoDialogFooterElm.width(width);
     yesNoDialogYesButton.css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     yesNoDialogElm.css("height", yesNoDialogContentWrapperElm.height() + offsetDialogHeight);
     yesNoDialogFooterElm.css("top", yesNoDialogContentWrapperElm.height() + offsetDialogFooterHeight);
   }
@@ -25292,7 +25292,7 @@ UniveralLightReceiverDialog = Class.create(YesNoDialog,{
     yesNoDialogFooterElm.width(width);
     yesNoDialogYesButton.css("left", yesButtonPos);
 
-    //Dialoghï¿½he an Content anpassen.
+    //Dialoghöhe an Content anpassen.
     yesNoDialogElm.css("height", yesNoDialogContentWrapperElm.height() + offsetDialogHeight);
     yesNoDialogFooterElm.css("top", yesNoDialogContentWrapperElm.height() + offsetDialogFooterHeight);
   }
@@ -25368,7 +25368,7 @@ HeaderBar = new function()
  **/
 
 /**
- * Hauptmenï¿½
+ * Hauptmenü
  **/
 MainMenu = Singleton.create({  
   MAINMENU_ADMIN_FILE:   "/webui/js/mainmenu/admin.js",
@@ -25385,7 +25385,7 @@ MainMenu = Singleton.create({
   SUBITEM_HIGHLIGHT:     "MainMenuSubItem_Highlight",
   
   /**
-   * Initialisiert das Hauptmenï¿½
+   * Initialisiert das Hauptmenü
    **/
   initialize: function()
   {
@@ -25401,7 +25401,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Erzeugt ein Untermenï¿½-Element.
+   * Erzeugt ein Untermenü-Element.
    **/
   m_createSubmenuItem: function(menuItem, submenuItem)
   {
@@ -25424,7 +25424,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Erzeugt ein Menï¿½element
+   * Erzeugt ein Menüelement
    **/
   m_createMenuItem: function(menuItem)
   {
@@ -25473,7 +25473,7 @@ MainMenu = Singleton.create({
   },
     
   /**
-   * Erzeugt ein neues Hauptmenï¿½
+   * Erzeugt ein neues Hauptmenü
    **/
   create: function(menubar)
   {
@@ -25491,7 +25491,7 @@ MainMenu = Singleton.create({
   },
     
   /**
-   * Zeigt ein Untermenï¿½ an
+   * Zeigt ein Untermenü an
    **/
   showSubmenu: function(menuItem)
   {
@@ -25507,7 +25507,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Beginnt damit, ein Untermenï¿½ verzï¿½gert zu schlieï¿½en
+   * Beginnt damit, ein Untermenü verzögert zu schließen
    **/
   beginHideSubmenu: function(menuItem)
   {
@@ -25516,7 +25516,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Schlieï¿½t ein Untermenï¿½
+   * Schließt ein Untermenü
    **/
   hideSubmenu: function()
   {
@@ -25532,7 +25532,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Hebt ein Untermenï¿½element farblich hervor.
+   * Hebt ein Untermenüelement farblich hervor.
    **/
   highlightOn: function(element, event)
   {
@@ -25540,7 +25540,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Deaktiviert die Hervorhebung eines Untermenï¿½elements
+   * Deaktiviert die Hervorhebung eines Untermenüelements
    **/
   highlightOff: function(element, event)
   {    
@@ -25548,7 +25548,7 @@ MainMenu = Singleton.create({
   },
   
   /**
-   * Wï¿½hlt ein Menï¿½element aus.
+   * Wählt ein Menüelement aus.
    * Dieses wird dann entsprechend farblich hinterlegt.
    **/
   select: function(id)
@@ -25564,17 +25564,17 @@ MainMenu = Singleton.create({
  **/
 
 /**
- * Schnittstelle fï¿½r Seiten
+ * Schnittstelle für Seiten
  **/
 IPage = Interface.create({
 
   /**
-   * Callback fï¿½r das Betreten der Seite
+   * Callback für das Betreten der Seite
    **/
   enter: function(options) {},
   
   /**
-   * Callback fï¿½r das Verlassen der Seite
+   * Callback für das Verlassen der Seite
    **/
   leave: function() {},
   
@@ -25584,7 +25584,7 @@ IPage = Interface.create({
  **/
 
 /**
- * Basisklasse fï¿½r alle Seiten
+ * Basisklasse für alle Seiten
  **/ 
 Page = Class.create({
   __interfaces__: [IPage],
@@ -25840,7 +25840,7 @@ StartPage = Singleton.create(Page, {
       var devAddress = self.devList[self.devIndex].address,
         curFw = self.devList[self.devIndex].firmware,
         arCurFw = curFw.split("."),
-        availableFW = self.devList[self.devIndex].availableFirmware,// auf der CCU gespeicherte Gerï¿½te-Fw.
+        availableFW = self.devList[self.devIndex].availableFirmware,// auf der CCU gespeicherte Geräte-Fw.
         devIsUpdatable = self.devList[self.devIndex].updatable,
         arResultMajorMinorPatch,
         resultMajorMinor,
@@ -26338,7 +26338,7 @@ userFirstStartup = new function()
  **/
 
 /**
- * Gerï¿½teliste.
+ * Geräteliste.
  **/
 
 if (PLATFORM == "Central") {
@@ -26397,8 +26397,8 @@ if (PLATFORM == "Central") {
   CATEGORIES:
   [
     {id: "CATEGORY_SENDER", name: translateKey("generalChannelConfigLblSender")}, // Sender
-    {id: "CATEGORY_RECEIVER", name: translateKey("generalChannelConfigLblReceiver")}, // Empfï¿½nger
-    {id: "CATEGORY_NOT_LINKABLE", name: translateKey("generalChannelConfigLblNone")} // nicht verknï¿½pfbar
+    {id: "CATEGORY_RECEIVER", name: translateKey("generalChannelConfigLblReceiver")}, // Empfänger
+    {id: "CATEGORY_NOT_LINKABLE", name: translateKey("generalChannelConfigLblNone")} // nicht verknüpfbar
   ],
   MODES:
   [
@@ -26441,7 +26441,7 @@ if (PLATFORM == "Central") {
   },
     
   /**
-   * Aktualisiert die zwischengespeicherten Daten eines Gerï¿½ts
+   * Aktualisiert die zwischengespeicherten Daten eines Geräts
    **/
   updateDeviceData: function(device)
   {
@@ -26543,7 +26543,7 @@ if (PLATFORM == "Central") {
   },
 
   /**
-   * Betreten der Gerï¿½teliste
+   * Betreten der Geräteliste
    **/
   enter: function(options)
   {
@@ -26583,8 +26583,8 @@ if (PLATFORM == "Central") {
   },
   
   /**
-   *  Prï¿½ft, ob es sich bei dem Kanal um einen der neuen virtellen Kanï¿½le handelt (z. B. VIRTUAL_DIMMER, VIRTUAL_SWITCH, VIRTUAL_BLIND)
-   *  Diese Kanï¿½le sollen nur dann angezeigt werden, wenn der User den Expertenmodus aktiviert hat.
+   *  Prüft, ob es sich bei dem Kanal um einen der neuen virtellen Kanäle handelt (z. B. VIRTUAL_DIMMER, VIRTUAL_SWITCH, VIRTUAL_BLIND)
+   *  Diese Kanäle sollen nur dann angezeigt werden, wenn der User den Expertenmodus aktiviert hat.
    *  Die virtuellen Fernbedienungen der CCU 'VIRTUAL_KEY' sind nicht betroffen
    **/
   showVirtualChannel: function(channel) {
@@ -26651,7 +26651,7 @@ if (PLATFORM == "Central") {
 
 
   /**
-   * Zeigt den Konfigurationsdialog fï¿½r einen Kanal an.
+   * Zeigt den Konfigurationsdialog für einen Kanal an.
    **/
   selectChannel: function(id)
   {
@@ -26667,7 +26667,7 @@ if (PLATFORM == "Central") {
   },
   
   /**
-   * Zeigt den Konfigurationsdialog fï¿½r ein Gerï¿½t an.
+   * Zeigt den Konfigurationsdialog für ein Gerät an.
    **/
   selectDevice: function(id)
   {
@@ -26705,7 +26705,7 @@ if (PLATFORM == "Central") {
   
   
   /**
-   * Filter zurï¿½cksetzen
+   * Filter zurücksetzen
    **/
   resetFilters: function(update)
   {
@@ -26859,7 +26859,7 @@ if (PLATFORM == "Central") {
   }, 
   
   /**
-   * Gerï¿½t lï¿½schen
+   * Gerät löschen
    **/
   deleteDevice: function(event, id)
   {
@@ -26873,7 +26873,7 @@ if (PLATFORM == "Central") {
   },
   
   /**
-   * Gerï¿½t, Kanal oder Kanalgruppe konfigurieren
+   * Gerät, Kanal oder Kanalgruppe konfigurieren
    **/
   showConfiguration: function(event, typeId, id)
   {
@@ -26910,7 +26910,7 @@ if (PLATFORM == "Central") {
   },
   
   /**
-   * Direkte Verknï¿½pfungen anzeigen
+   * Direkte Verknüpfungen anzeigen
    **/
   showDirectLinks: function(event, typeId, id)
   {
@@ -27058,7 +27058,7 @@ if (PLATFORM == "Central") {
 
  DeviceListPage = new function()
  {
-  //Gerï¿½teliste Konfigtool
+  //Geräteliste Konfigtool
   var m_menuId = "MAINMENU_OPTIONS_DEVICES";
   this.enter = function(options)
   {
@@ -27111,7 +27111,7 @@ NewDeviceListPage = new function()
     MainMenu.select(MAINMENU_ID);    
     
     // Aktualisiert alle Gewerke
-    // ==> neue Gerï¿½te werden beim Anlernen automatisch einem Gewerk zugeordnet
+    // ==> neue Geräte werden beim Anlernen automatisch einem Gewerk zugeordnet
     var subsections = SubsectionList.list();
     subsections.each(function(subsection) {
       SubsectionList.beginUpdate(subsection.id);
@@ -27573,7 +27573,7 @@ BidcosRfPage =
     this.m_optionsContainer = document.createElement("div");
     this.m_page.appendChild(this.m_optionsContainer);
     
-    /* ï¿½berschrift */
+    /* Überschrift */
     this.m_optionsHeadline = document.createElement("h1");
     //this.m_optionsHeadline.appendChild(document.createTextNode("Allgmeine Einstellungen"));
     this.m_optionsHeadline.appendChild(document.createTextNode(translateKey("dialogSettingsBidCosRFConfLblSettings")));    
@@ -27583,111 +27583,111 @@ BidcosRfPage =
     this.m_optionsForm = document.createElement("form");
     this.m_optionsContainer.appendChild(this.m_optionsForm);
     
-    /* Container fï¿½r BidCoS-RF Gateways */
+    /* Container für BidCoS-RF Gateways */
     this.m_gatewayContainer = document.createElement("div");
     $(this.m_gatewayContainer).hide();
     this.m_optionsContainer.appendChild(this.m_gatewayContainer);
     
-    /* Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTable = document.createElement("table");
     this.m_gatewayTable.className = "bidcosrf_table";
     $(this.m_gatewayTable).writeAttribute("cellspacing", "0");
     this.m_gatewayContainer.appendChild(this.m_gatewayTable);
     
-    /* Tabellenkopf (Tabelle fï¿½r BidCoS-RF Gateways) */
+    /* Tabellenkopf (Tabelle für BidCoS-RF Gateways) */
     this.m_gatewayTableHead = document.createElement("thead");
     this.m_gatewayTable.appendChild(this.m_gatewayTableHead);
     
-    /* Kopfzeile (Tabelle fï¿½r BidCoS-RF Gateways) */
+    /* Kopfzeile (Tabelle für BidCoS-RF Gateways) */
     this.m_gatewayTableHeadRow = document.createElement("tr");
     this.m_gatewayTableHead.appendChild(this.m_gatewayTableHeadRow);
 
-    /* Spaltenï¿½berschrift Name (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift Name (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableAddressHeader = document.createElement("th");
     this.m_gatewayTableAddressHeader.className = "bidcosrf_tableheader";
     this.m_gatewayTableAddressHeader.appendChild(document.createTextNode(translateKey("thName")));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableAddressHeader);
 
-    /* Spaltenï¿½berschrift Seriennummer (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift Seriennummer (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableAddressHeader = document.createElement("th");
     this.m_gatewayTableAddressHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableAddressHeader.appendChild(document.createTextNode("Seriennummer"));
     this.m_gatewayTableAddressHeader.appendChild(document.createTextNode("Gateway"));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableAddressHeader);
     
-    /* Spaltenï¿½berschrift AES-Schlï¿½ssel (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift AES-Schlüssel (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableKeyHeader = document.createElement("th");
     this.m_gatewayTableKeyHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableKeyHeader.appendChild(document.createTextNode("Zugriffscode"));
     this.m_gatewayTableKeyHeader.appendChild(document.createTextNode(translateKey("dialogSettingsBidcosRFSecurityKey")));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableKeyHeader);
 
-    /* Spaltenï¿½berschrift IP (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift IP (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableIPHeader = document.createElement("th");
     this.m_gatewayTableIPHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableIPHeader.appendChild(document.createTextNode("IP-Adresse"));
     this.m_gatewayTableIPHeader.appendChild(document.createTextNode(translateKey("thIPAddress")));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableIPHeader);
 
-    /* Spaltenï¿½berschrift Status (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift Status (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableStateHeader = document.createElement("th");
     this.m_gatewayTableStateHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableStateHeader.appendChild(document.createTextNode("Status"));
     this.m_gatewayTableStateHeader.appendChild(document.createTextNode(translateKey("thState")));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableStateHeader);
 
-    /* Spaltenï¿½berschrift DutyCycle Status (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift DutyCycle Status (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableDCStateHeader = document.createElement("th");
     this.m_gatewayTableDCStateHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableStateHeader.appendChild(document.createTextNode("Status"));
     this.m_gatewayTableDCStateHeader.appendChild(document.createTextNode("DutyCycle"));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableDCStateHeader);
 
-    /* Spaltenï¿½berschrift Firmware Status (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift Firmware Status (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableFWStateHeader = document.createElement("th");
     this.m_gatewayTableFWStateHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableStateHeader.appendChild(document.createTextNode("Status"));
     this.m_gatewayTableFWStateHeader.appendChild(document.createTextNode("Firmware"));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableFWStateHeader);
 
-    /* Spaltenï¿½berschrift Verbunden (Tabelle fï¿½r BidCoS-RF Gateways */
+    /* Spaltenüberschrift Verbunden (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableActionHeader = document.createElement("th");
     this.m_gatewayTableActionHeader.className = "bidcosrf_tableheader";
     //this.m_gatewayTableActionHeader.appendChild(document.createTextNode("Aktion"));
     this.m_gatewayTableActionHeader.appendChild(document.createTextNode(translateKey("thAction")));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableActionHeader);
     
-    /* Tabellenkï¿½rper (Tabelle fï¿½r BidCoS-RF Gateways) */
+    /* Tabellenkörper (Tabelle für BidCoS-RF Gateways) */
     this.m_gatewayTableBody = document.createElement("tbody");
     this.m_gatewayTable.appendChild(this.m_gatewayTableBody);
     
-    /* Optionsmenï¿½ */
+    /* Optionsmenü */
     this.m_optionsButtonBar = document.createElement("div");
     this.m_optionsContainer.appendChild(this.m_optionsButtonBar);
     
-    /* Button zum ï¿½bernehmen der Einstellungen */
+    /* Button zum Übernehmen der Einstellungen */
     this.m_applyButton = document.createElement("div");
-    //this.m_applyButton.appendChild(document.createTextNode("ï¿½bernehmen"));
+    //this.m_applyButton.appendChild(document.createTextNode("Übernehmen"));
     this.m_applyButton.appendChild(document.createTextNode(translateKey("dialogSettingsBidCosRFConfBtnSave")));
     Event.observe($(this.m_applyButton), "click", this.m_onApplyHandler);
     this.m_applyButton.className = "StdButton bidcosrf_optionbutton";
     this.m_optionsButtonBar.appendChild(this.m_applyButton);
     
-    /* Button zum Hinzufï¿½gen von RF Gateways */
+    /* Button zum Hinzufügen von RF Gateways */
     this.m_addGatewayButton = document.createElement("div");
     $(this.m_addGatewayButton).hide();
-    //this.m_addGatewayButton.appendChild(document.createTextNode("Hinzufï¿½gen"));
+    //this.m_addGatewayButton.appendChild(document.createTextNode("Hinzufügen"));
     this.m_addGatewayButton.appendChild(document.createTextNode(translateKey("dialogSettingsBidCosRFConfBtnAdd")));
     Event.observe($(this.m_addGatewayButton), "click", this.m_onAddGatewayHandlerRF);
     this.m_addGatewayButton.className = "StdButton bidcosrf_optionbutton";
     this.m_optionsButtonBar.appendChild(this.m_addGatewayButton);  
 
-    /* float-Bereich lï¿½schen */
+    /* float-Bereich löschen */
     this.m_optionButtonClear = document.createElement("div");
     this.m_optionButtonClear.className = "bidcosrf_clear";
     this.m_optionsButtonBar.appendChild(this.m_optionButtonClear);
     
-    /* Footer fï¿½r allgemeine Einstellungen*/
+    /* Footer für allgemeine Einstellungen*/
     this.m_optionsFooter = document.createElement("div");
     this.m_optionsFooter.className = "bidcosrf_footer";
     this.m_optionsContainer.appendChild(this.m_optionsFooter);
@@ -27696,61 +27696,61 @@ BidcosRfPage =
     this.m_allocationContainer = document.createElement("div");
     this.m_page.appendChild(this.m_allocationContainer);
     
-    /* ï¿½berschrift fï¿½r Gateway-Zuordnung */
+    /* Überschrift für Gateway-Zuordnung */
     this.m_allocationHeadline = document.createElement("h1");
     //this.m_allocationHeadline.appendChild(document.createTextNode("Interface-Zuordnung"));
     this.m_allocationHeadline.appendChild(document.createTextNode(translateKey("dialogSettingsBidCosRFConfIfaceAssignment")));
     this.m_allocationContainer.appendChild(this.m_allocationHeadline);
     
-    /* Tabelle fï¿½r Gateway-Zuordnung */
+    /* Tabelle für Gateway-Zuordnung */
     this.m_allocationTable = document.createElement("table");
     this.m_allocationTable.className = "bidcosrf_table";    
     $(this.m_allocationTable).writeAttribute("cellspacing", "0");
     this.m_allocationContainer.appendChild(this.m_allocationTable);
     
-    /* Tabellenkopf (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Tabellenkopf (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableHead = document.createElement("thead");
     this.m_allocationTable.appendChild(this.m_allocationTableHead);
     
-    /* Zeile im Tabellenkopf (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Zeile im Tabellenkopf (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableHeadRow = document.createElement("tr");
     this.m_allocationTableHead.appendChild(this.m_allocationTableHeadRow);
     
-    /* Spaltenï¿½berschrift "Name" (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Spaltenüberschrift "Name" (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableNameHeader = document.createElement("th");
     this.m_allocationTableNameHeader.className = "bidcosrf_tableheader";
     //this.m_allocationTableNameHeader.appendChild(document.createTextNode("Name"));
     this.m_allocationTableNameHeader.appendChild(document.createTextNode(translateKey("thName")));
     this.m_allocationTableHeadRow.appendChild(this.m_allocationTableNameHeader);
 
-    /* Spaltenï¿½berschrift "Bild" (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Spaltenüberschrift "Bild" (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableImageHeader = document.createElement("th");
     this.m_allocationTableImageHeader.className = "bidcosrf_tableheader";
     //this.m_allocationTableImageHeader.appendChild(document.createTextNode("Bild"));
     this.m_allocationTableImageHeader.appendChild(document.createTextNode(translateKey("thPicture")));
     this.m_allocationTableHeadRow.appendChild(this.m_allocationTableImageHeader);
 
-    /* Spaltenï¿½berschrift "Seriennummer" (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Spaltenüberschrift "Seriennummer" (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableAddressHeader = document.createElement("th");
     this.m_allocationTableAddressHeader.className = "bidcosrf_tableheader";
     //this.m_allocationTableAddressHeader.appendChild(document.createTextNode("Seriennummer"));
     this.m_allocationTableAddressHeader.appendChild(document.createTextNode(translateKey("thSerialNumber")));
     this.m_allocationTableHeadRow.appendChild(this.m_allocationTableAddressHeader);
 
-    /* Spaltenï¿½berschrift "Gatway" (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Spaltenüberschrift "Gatway" (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableGatewayHeader = document.createElement("th");
     this.m_allocationTableGatewayHeader.className = "bidcosrf_tableheader";
     this.m_allocationTableGatewayHeader.appendChild(document.createTextNode("Gateway"));
     this.m_allocationTableHeadRow.appendChild(this.m_allocationTableGatewayHeader);
 
-    /* Spaltenï¿½berschrift "Aktion" (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Spaltenüberschrift "Aktion" (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableActionHeader = document.createElement("th");
     this.m_allocationTableActionHeader.className = "bidcosrf_tableheader";
     //this.m_allocationTableActionHeader.appendChild(document.createTextNode("Aktion"));
     this.m_allocationTableActionHeader.appendChild(document.createTextNode(translateKey("thAction")));
     this.m_allocationTableHeadRow.appendChild(this.m_allocationTableActionHeader);
     
-    /* Tabellenkï¿½rper (Tabelle fï¿½r Gateway-Zuordnung) */
+    /* Tabellenkörper (Tabelle für Gateway-Zuordnung) */
     this.m_allocationTableBody = document.createElement("tbody");
     this.m_allocationTable.appendChild(this.m_allocationTableBody);
     
@@ -27780,7 +27780,7 @@ BidcosRfPage =
     }
     this.m_gateways = [];
     
-    /* Gerï¿½te entfernen */
+    /* Geräte entfernen */
     for (i = 0, len = this.m_devices.length; i < len; i++)
     {
       var device = this.m_devices[i];
@@ -27924,7 +27924,7 @@ BidcosRfPage =
  //   }
  //   else
  //   {
-      //MessageBox.show("Info", "Die Konfiguration wurde an die HomeMatic Zentrale ï¿½bertragen.\nDie ï¿½nderungen werden mit dem nï¿½chsten Start der HomeMatic Zentrale wirksam.");
+      //MessageBox.show("Info", "Die Konfiguration wurde an die HomeMatic Zentrale übertragen.\nDie Änderungen werden mit dem nächsten Start der HomeMatic Zentrale wirksam.");
       MessageBox.show(translateKey("dialogInfo"), translateKey("dialogSettingsBidcosRFSaveConfigSucceed"));
       WebUI.enter(BidcosRfPage);
  //   }
@@ -28296,10 +28296,10 @@ BidcosRfPage.Gateway.prototype =
     this.m_actionCell.className = "bidcosrf_actioncell";
     this.m_element.appendChild(this.m_actionCell);
     
-    /* Lï¿½schen-Button */
+    /* Löschen-Button */
     this.m_deleteButton = document.createElement("div");
     this.m_deleteButton.className = "StdButton";//"bidcosrf_button";
-    //this.m_deleteButton.appendChild(document.createTextNode("Lï¿½schen"));
+    //this.m_deleteButton.appendChild(document.createTextNode("Löschen"));
     this.m_deleteButton.appendChild(document.createTextNode(translateKey("btnRemove")));
     Event.observe($(this.m_deleteButton), "click", this.m_onDeleteHandler);
       Element.setStyle(this.m_deleteButton, {
@@ -28463,7 +28463,7 @@ BidcosRfPage.Gateway.prototype =
   onDelete: function()
   {
     var that = this;
-    //new YesNoDialog("Sicherheitsabfrage", "Mï¿½chten Sie den HomeMatic Konfigurations-Adapter wirklich lï¿½schen?", function(result) {
+    //new YesNoDialog("Sicherheitsabfrage", "Möchten Sie den HomeMatic Konfigurations-Adapter wirklich löschen?", function(result) {
     new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveCFG"), function(result) {
       
       if (result == YesNoDialog.RESULT_YES)
@@ -28875,7 +28875,7 @@ BidcosRfPage.EditGatewayDialog = Class.create({
   
   /**
    * @fn close
-   * @brief Schlieï¿½t das Dialogfenster
+   * @brief Schließt das Dialogfenster
    **/
   close: function()
   {
@@ -28883,8 +28883,8 @@ BidcosRfPage.EditGatewayDialog = Class.create({
   },
   
   /** @fn ok
-   *  @brief Fï¿½hrt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
-   *        und schlieï¿½t anschlieï¿½end das Dialogfenster
+   *  @brief Führt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
+   *        und schließt anschließend das Dialogfenster
    **/
   ok: function()
   {
@@ -28893,7 +28893,7 @@ BidcosRfPage.EditGatewayDialog = Class.create({
   },
   
   /** @fn cancel
-   * @brief Schlieï¿½t das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
+   * @brief Schließt das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
    **/
   cancel: function()
   {
@@ -28902,7 +28902,7 @@ BidcosRfPage.EditGatewayDialog = Class.create({
   
    /**
    * @fn setAction
-   * @brief Setzt die Callbackfuntion, die aufgerufen wird, wenn OK-gedrï¿½ckt wurde
+   * @brief Setzt die Callbackfuntion, die aufgerufen wird, wenn OK-gedrückt wurde
    * @param action  Callbackfuntion "onOK"
    * @param context Optional. Kontext, an die action gebunden wird
    **/
@@ -29015,7 +29015,7 @@ BidcosRfPage.ChangeKeyDialog = Class.create({
 	
   /**
   * @fn setAction
-  * @brief Setzt die Callbackfuntion, die aufgerufen wird, wenn OK-gedrï¿½ckt wurde
+  * @brief Setzt die Callbackfuntion, die aufgerufen wird, wenn OK-gedrückt wurde
   * @param action  Callbackfuntion "onOK"
   * @param context Optional. Kontext, an die action gebunden wird
   **/
@@ -29029,7 +29029,7 @@ BidcosRfPage.ChangeKeyDialog = Class.create({
   
     /**
    * @fn close
-   * @brief Schlieï¿½t das Dialogfenster
+   * @brief Schließt das Dialogfenster
    **/
   close: function()
   {
@@ -29037,8 +29037,8 @@ BidcosRfPage.ChangeKeyDialog = Class.create({
   },
   
   /** @fn ok
-   *  @brief Fï¿½hrt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
-   *        und schlieï¿½t anschlieï¿½end das Dialogfenster
+   *  @brief Führt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
+   *        und schließt anschließend das Dialogfenster
    **/
   ok: function()
   {
@@ -29047,7 +29047,7 @@ BidcosRfPage.ChangeKeyDialog = Class.create({
   },
   
   /** @fn cancel
-   * @brief Schlieï¿½t das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
+   * @brief Schließt das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
    **/
   cancel: function()
   {
@@ -29067,7 +29067,7 @@ BidcosRfPage.AddGatewayDialog = Class.create({
 
   /**
    * @constructor
-   * Fï¿½hrt eine Grundinitialisierung durch und zeigt das Dialogfenster an.
+   * Führt eine Grundinitialisierung durch und zeigt das Dialogfenster an.
    **/
   initialize: function(wiredGWExists, gateway)
   {
@@ -29151,7 +29151,7 @@ BidcosRfPage.AddGatewayDialog = Class.create({
       .setWidth(BidcosRfPage.AddGatewayDialog.CONTENT_WIDTH - 190);
     
     this.m_frame = new UI.Frame()
-      //.setTitle("HomeMatic Konfigurations-Adapter hinzufï¿½gen")
+      //.setTitle("HomeMatic Konfigurations-Adapter hinzufügen")
       .setTitle(translateKey("dialogSettingsBidCosRFAddCFGTitle"))
       .setContentSize(frameWidth, frameHeight)
       .setPosition(frameX, frameY)
@@ -29221,7 +29221,7 @@ BidcosRfPage.AddGatewayDialog = Class.create({
   
   /**
    * @fn setAction
-   * @brief Setzt die Callbackfuntion, die aufgerufen wird, wenn OK-gedrï¿½ckt 
+   * @brief Setzt die Callbackfuntion, die aufgerufen wird, wenn OK-gedrückt 
    *        wurde
    *
    * @param action  Callbackfuntion "onOK"
@@ -29305,7 +29305,7 @@ BidcosRfPage.AddGatewayDialog = Class.create({
   
   /**
    * @fn close
-   * @brief Schlieï¿½t das Dialogfenster
+   * @brief Schließt das Dialogfenster
    **/
   close: function()
   {
@@ -29314,8 +29314,8 @@ BidcosRfPage.AddGatewayDialog = Class.create({
   
   /**
    * @fn ok
-   * @brief Fï¿½hrt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
-   *        und schlieï¿½t anschlieï¿½end das Dialogfenster
+   * @brief Führt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
+   *        und schließt anschließend das Dialogfenster
    **/
   ok: function()
   {
@@ -29325,7 +29325,7 @@ BidcosRfPage.AddGatewayDialog = Class.create({
   
   /**
    * @fn cancel
-   * @brief Schlieï¿½t das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
+   * @brief Schließt das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
    **/
   cancel: function()
   {
@@ -29335,7 +29335,7 @@ BidcosRfPage.AddGatewayDialog = Class.create({
 });
 
 BidcosRfPage.AddGatewayDialog.CONTENT_WIDTH  = 500;    //< Breite des Dialogfensters
-BidcosRfPage.AddGatewayDialog.CONTENT_HEIGHT = 200; //< Hï¿½he des Dialogfensters
+BidcosRfPage.AddGatewayDialog.CONTENT_HEIGHT = 200; //< Höhe des Dialogfensters
 
 
 BidcosRfPage.EditAssignmentDialog = Class.create({
@@ -29458,7 +29458,7 @@ BidcosRfPage.EditAssignmentDialog = Class.create({
   
   /**
    * @fn close
-   * @brief Schlieï¿½t das Dialogfenster
+   * @brief Schließt das Dialogfenster
    **/
   close: function()
   {
@@ -29467,8 +29467,8 @@ BidcosRfPage.EditAssignmentDialog = Class.create({
   
   /**
    * @fn ok
-   * @brief Fï¿½hrt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
-   *        und schlieï¿½t anschlieï¿½end das Dialogfenster
+   * @brief Führt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
+   *        und schließt anschließend das Dialogfenster
    **/
   ok: function()
   {
@@ -29478,7 +29478,7 @@ BidcosRfPage.EditAssignmentDialog = Class.create({
   
   /**
    * @fn cancel
-   * @brief Schlieï¿½t das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
+   * @brief Schließt das Dialogfenster, nachdem auf "Abbrechen" geklickt wurde 
    **/
   cancel: function()
   {
@@ -29511,13 +29511,13 @@ BidcosRfPage.OptionsDialog = Class.create({
       .setWidth(BidcosRfPage.OptionsDialog.CONTENT_WIDTH - 100);
     
     this.m_frame = new UI.Frame()
-      //.setTitle("Sicherheitsschlï¿½ssel: ")
+      //.setTitle("Sicherheitsschlüssel: ")
       .setTitle(translateKey("dialogSettingsBidcosRFEnterSecKeyTitle"))
       .setContentSize(frameWidth, frameHeight)
       .setPosition(frameX, frameY)
       .add(new UI.Text()
         .setPosition(10, 10)
-        //.setText("Bitte geben Sie den System-Sicherheitsschlï¿½ssel ein:")
+        //.setText("Bitte geben Sie den System-Sicherheitsschlüssel ein:")
         .setText(translateKey("dialogSettingsBidcosRFEnterSecKeyContent"))
       )
       .add(this.m_passwordEdit)
@@ -29533,7 +29533,7 @@ BidcosRfPage.OptionsDialog = Class.create({
     
   /**
    * @fn close
-   * @brief Schlieï¿½t das Dialogfenster
+   * @brief Schließt das Dialogfenster
    **/
   close: function()
   {
@@ -29542,8 +29542,8 @@ BidcosRfPage.OptionsDialog = Class.create({
   
   /**
    * @fn ok
-   * @brief Fï¿½hrt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
-   *        und schlieï¿½t anschlieï¿½end das Dialogfenster
+   * @brief Führt die Callbackfuntion aus nachdem auf "OK" geklickt wurde
+   *        und schließt anschließend das Dialogfenster
    **/
   ok: function()
   {
@@ -29553,12 +29553,12 @@ BidcosRfPage.OptionsDialog = Class.create({
     
     if (homematic("BidCoS_RF.validateKey", {"key": key}))
     {
-      //MessageBox.show("Info", "Die Konfiguration wurde an die HomeMatic Zentrale ï¿½bertragen.\nDie ï¿½nderungen werden mit dem nï¿½chsten Start der HomeMatic Zentrale wirksam.");
+      //MessageBox.show("Info", "Die Konfiguration wurde an die HomeMatic Zentrale übertragen.\nDie Änderungen werden mit dem nächsten Start der HomeMatic Zentrale wirksam.");
       MessageBox.show(translateKey("dialogInfo"), translateKey("dialogSettingsBidcosRFSaveConfigSucceed"));
     }
     else
     {
-      //MessageBox.show("Hinweis", "Der eingegebene Schlï¿½ssel entspricht nicht dem aktuellen System-Sicherheitsschlï¿½ssel.\nDie Konfiguration wurde an die HomeMatic Zentrale ï¿½bertragen.\nDie ï¿½nderungen werden mit dem nï¿½chsten Start der HomeMatic Zentrale wirksam.\nFalls Probleme auftreten, wiederholen Sie ggf. die Eingabe.", null, 320, 120);
+      //MessageBox.show("Hinweis", "Der eingegebene Schlüssel entspricht nicht dem aktuellen System-Sicherheitsschlüssel.\nDie Konfiguration wurde an die HomeMatic Zentrale übertragen.\nDie Änderungen werden mit dem nächsten Start der HomeMatic Zentrale wirksam.\nFalls Probleme auftreten, wiederholen Sie ggf. die Eingabe.", null, 320, 120);
       MessageBox.show(translateKey("dialogHint"), translateKey("dialogSettingsBidcosRFSaveConfigFailure"), null, 320, 120);
     }
     
@@ -29603,7 +29603,7 @@ homematic = function(method, params, callback)
 homematic.URL = "/api/homematic.cgi";
 
 /**
- * Prï¿½ft die JSON-Antwort ud liefert deren Resultat
+ * Prüft die JSON-Antwort ud liefert deren Resultat
  **/
 homematic._checkResponse = function(response)
 {
@@ -29622,7 +29622,7 @@ homematic._checkResponse = function(response)
  **/
  
 /**
- * ï¿½berwacht die Logikschicht "ReGa" und gibt eine Meldung, falls diese sich nicht meldet.
+ * Überwacht die Logikschicht "ReGa" und gibt eine Meldung, falls diese sich nicht meldet.
  **/
 ReGaMonitor = Class.create({
   
@@ -29681,7 +29681,7 @@ ReGaMonitor.FAILURE_RETRY = 3;
  **/
  
 /**
- * ï¿½berwacht einen Schnittstellenprozess
+ * Überwacht einen Schnittstellenprozess
  **/
 InterfaceMonitor = Class.create({
   
@@ -29982,7 +29982,7 @@ homematic.com =
   },
 
   /**
-   * wird von homematic.com zurï¿½ck geliefert
+   * wird von homematic.com zurück geliefert
    **/
   setLatestVersion: function(latestVersion, product)
   {
@@ -29996,12 +29996,12 @@ homematic.com =
     }
   },
 
-  // wird von homematic.com zurï¿½ck geliefert
+  // wird von homematic.com zurück geliefert
   setDeviceFirmwareVersions: function(result) {
     homematic.com.callback(result);
   },
 
-  // wird von homematic.com zurï¿½ck geliefert
+  // wird von homematic.com zurück geliefert
   getCCU2LicenceText: function(result) {
     homematic.com.callback(result);
   }
@@ -30023,7 +30023,7 @@ ReGa = {
 
   /**
    * 1) ReGa arbeitet mit Latin-1 Zeichencodierung (ISO-8859-1)
-   * 2) Anfragen ï¿½ber das XMLHttpRequest-Objekt sind i.d.R. UTF-8-codiert
+   * 2) Anfragen über das XMLHttpRequest-Objekt sind i.d.R. UTF-8-codiert
    *
    * ==> Codierung der Anfrage:
    *     - escape() wandelt UTF-8 nach ASCII um 
@@ -30846,17 +30846,17 @@ ise.Devices.prototype = {
   // ### SetReadyConfig
   // [id]: id of device 
   setReadyConfig: function(id) {
-    // dazugehï¿½rige Tabellenreihe ausblenden
+    // dazugehörige Tabellenreihe ausblenden
     //$("tr" + id).hide();
     var url = "/esp/devices.htm?sid="+SessionId;
     var pb = "integer devId = " + id + ";";
     pb += "string action= 'setReadyConfig';";
     new Ajax.Updater("dummy", url, {postBody: ReGa.encode(pb), evalScripts: true, onComplete: function(t){if(dbg){alert(t.responseText);}}});
     
-    // Gerï¿½t in Gerï¿½teliste ï¿½bernehmen
+    // Gerät in Geräteliste übernehmen
     //DeviceList.beginUpdateDevice(id);
 
-     // Gerï¿½t in Gerï¿½teliste ï¿½bernehmen
+     // Gerät in Geräteliste übernehmen
     DeviceList.beginUpdateDevice(id, function() {
      //DeviceList.devices[id].isOperateGroupOnly = this.deviceOperateGroupOnly;
       if (DeviceList.devices[id]) {
@@ -31723,7 +31723,7 @@ ise.SingleDestination.prototype =
       value = min;
     }
 
-    if ((unit == "ï¿½C" || unit == "&deg;C") && (value != min) && (value != max)) {
+    if ((unit == "°C" || unit == "&deg;C") && (value != min) && (value != max)) {
       value = roundValue05(value);
     }
 
@@ -32126,9 +32126,9 @@ iseMessageBox = Class.create();
 iseMessageBox.prototype =
 {
   /* id:        Steuert welches Popup dargestellt wird
-   * type:      "Extra-parameter" fï¿½r einige Popups
-   * secondary: Popup wird ï¿½ber einem anderen Popup eingeblendet
-   * showAll:   All Kanï¿½le auch virtuelle sollen angezeigt werden
+   * type:      "Extra-parameter" für einige Popups
+   * secondary: Popup wird über einem anderen Popup eingeblendet
+   * showAll:   All Kanäle auch virtuelle sollen angezeigt werden
    * popUpTitle:Titel der auf dem popUp angezeigt werden soll
    */
   initialize: function(id, type, secondary)
@@ -32583,21 +32583,21 @@ iseMessageBox.prototype =
 iseSubMenuControl = Class.create();
 
 iseSubMenuControl.prototype = {
-  // topMenuId: Id des TopMenï¿½s bei dessen MouseOver das Submenï¿½ eingeblendet werden soll
-  // subMenuId: Id des SubMenï¿½s das eingeblendet werden soll
-  // offsetDivId [optional]: wird benï¿½tigt um Verhalten des IE7 bei Positionierung auszugleichen
+  // topMenuId: Id des TopMenüs bei dessen MouseOver das Submenü eingeblendet werden soll
+  // subMenuId: Id des SubMenüs das eingeblendet werden soll
+  // offsetDivId [optional]: wird benötigt um Verhalten des IE7 bei Positionierung auszugleichen
   //
   //      Wird eine Seite per Ajax nachgeladen ergibt im IE7 der Aufruf von Position.page() und
-  //      Position.cumulativeOffset() (fï¿½r ein Element bei dem Position auf 'aboslute' oder 'relative'
+  //      Position.cumulativeOffset() (für ein Element bei dem Position auf 'aboslute' oder 'relative'
   //      gesetzt ist) immer die Position vom Ursprung der nachgeladenen Seite wieder,
   //      nicht die Position vom Ursprung des Browser-Fensters.
-  //      Wenn ein Div direkt am Anfang der nachgeladenen Seite eingefï¿½gt wird (mit Position:'static'), kann mit
+  //      Wenn ein Div direkt am Anfang der nachgeladenen Seite eingefügt wird (mit Position:'static'), kann mit
   //      Position.cumulativeOffset() etc. dessen Position zum Ursprung des Browser-Fenstern ermittelt
-  //      werden, und somit kann man die Position des SubMenï¿½s berechnen. 
+  //      werden, und somit kann man die Position des SubMenüs berechnen. 
   // shiftLeft: zur Darstellungs-Korrektur
-  // mouseOpts: Um Custom-MouseOvers etc. hinzuzufï¿½gen
-  // popup: submenï¿½s sind in einem Popup (Darstellungskorrektur MOZ)
-  // bOnClick: Submenï¿½s ï¿½ffnen bei OnClick, nicht bei MouseOver
+  // mouseOpts: Um Custom-MouseOvers etc. hinzuzufügen
+  // popup: submenüs sind in einem Popup (Darstellungskorrektur MOZ)
+  // bOnClick: Submenüs öffnen bei OnClick, nicht bei MouseOver
   initialize: function(topMenuId, subMenuId, offsetDivId, shiftOpts, mouseOpts, popup, bOnClick,iFuncCount,iScreenHight)
   {
     this.bIE = NAV_IE;
@@ -32786,7 +32786,7 @@ iseSubMenuControl.prototype = {
     var xPos = Event.pointerX(mEvent);
     var yPos = Event.pointerY(mEvent);
     
-    if (this.bIE) { // IE-Probleme fï¿½r linken Rand beheben
+    if (this.bIE) { // IE-Probleme für linken Rand beheben
       var subCoords = Position.cumulativeOffset(this.sub);
       if (xPos < (subCoords[0] + 5)) // wenn Maus am linken Rand...
         xPos = xPos - 3;
@@ -32811,7 +32811,7 @@ iseSubMenuControl.prototype = {
  **/
 
 // isePropEditorRow
-// Reprï¿½sentiert eine Zeile in den Popup-Fenstern "Eigenschaft bearbeiten"
+// Repräsentiert eine Zeile in den Popup-Fenstern "Eigenschaft bearbeiten"
 
 /**
  * @class
@@ -32881,7 +32881,7 @@ isePropEditorRow.prototype = {
       var s = "<input id='"+inputId+"' type='text' value='"+this.oldVal+"' />";
       nameElem.innerHTML = s;
       
-      // Namen im DOM ï¿½ndern beim Verlassen des Textfeldes
+      // Namen im DOM ändern beim Verlassen des Textfeldes
       var changeListener = this.saveNameToDom.bindAsEventListener(this);
       Event.observe($(inputId), 'blur', changeListener);
       
@@ -32965,7 +32965,7 @@ isePropEditorRow.prototype = {
       var s = "<input id='"+inputId+"' type='text' value='"+oldVal+"' />";
       commentElem.innerHTML = s;
       
-      // Namen im DOM ï¿½ndern beim Verlassen des Textfeldes
+      // Namen im DOM ändern beim Verlassen des Textfeldes
       var changeListener = this.saveCommentToDom.bindAsEventListener(this);
       Event.observe($(inputId), 'blur', changeListener);
       
@@ -33008,7 +33008,7 @@ iseCellEditor.prototype = {
       var s = "<input id='"+inputId+"' type='text' value='"+this.oldVal+"' />";
       this.cell.innerHTML = s;
       
-      // Namen im DOM ï¿½ndern beim Verlassen des Textfeldes
+      // Namen im DOM ändern beim Verlassen des Textfeldes
       var changeListener = this.saveNameToDom.bindAsEventListener(this);
       Event.observe($(inputId), 'blur', changeListener);
       
@@ -33102,7 +33102,7 @@ iseEventLog.prototype = {
 
 /**
  * @fileOverview Allgemeine Funktionen
- * @author ise, ï¿½nderungen durch Falk Werner (eQ-3)
+ * @author ise, Änderungen durch Falk Werner (eQ-3)
  **/
 
 /* * * * * * * * * * * * * * * * * * * * * * * * *
@@ -33347,13 +33347,13 @@ updateSysVarEnergyCounter = function() {
         arrEnergyCounter.push(sysvar);
       }
     });
-    readEnergyCounter = false; // wird beim Anlernen eines neuen Gerï¿½tes wieder auf true gesetzt
+    readEnergyCounter = false; // wird beim Anlernen eines neuen Gerätes wieder auf true gesetzt
   }
   setValueOfEnergyCounters();
  };
 
 /**
- * Markiert ein Gerï¿½t im Posteingang als fertig bzw. nicht fertig
+ * Markiert ein Gerät im Posteingang als fertig bzw. nicht fertig
  **/
 setDeviceReadyConfig = function(id, isReady)
 {
@@ -33435,7 +33435,7 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
     var opts;
     if (file.substring(0, UI_PATH.length) == UI_PATH)
     {
-      //method: 'get' ist fï¿½r die ELV-CGIs notwendig.
+      //method: 'get' ist für die ELV-CGIs notwendig.
       opts = {
         evalScripts: true,
         method: 'get',
@@ -33791,7 +33791,7 @@ logout = function() {
  * * * * *     Misc Functions        * * * * * * *
  * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* Funktion fï¿½r Popup */
+/* Funktion für Popup */
 CreatePopup = function(id, type)
 {
   dlgPopup = new iseMessageBox(id, type, false);
@@ -33887,7 +33887,7 @@ SetFilter = function(id)
 */
 };
 
- // Prï¿½ft anhand der filterOptions ob Checkboxen in Submenï¿½s gesetzt werden sollen
+ // Prüft anhand der filterOptions ob Checkboxen in Submenüs gesetzt werden sollen
 selectFilters = function(divToShow) {
  if ($(divToShow)) {
     var inplist = $(divToShow).getElementsByTagName('input');
@@ -34168,7 +34168,7 @@ writeDeviceAction = function(tdParent, includeChecks, bIsDev, bDelBtn, obj, bIsG
   var tdLeft = Builder.node('td');
   var tdRight = Builder.node('td');
 
-  // buttons Lï¿½schen / Einstellen
+  // buttons Löschen / Einstellen
   var tblSub = Builder.node('table', {width: '100%'});
   var tbodySub = Builder.node('tbody');
   var trSub;
@@ -34619,17 +34619,17 @@ textEditInfo = function(ctrlId, id, allowEmptyString)
 
 isPasswordAllowed = function(text,minLen,suppressAlert)
 {
-  var re = new RegExp( '^[a-zA-Z0-9.=!$():;#*ï¿½ï¿½ï¿½ï¿½-]{'+minLen+',}$', 'i' );
+  var re = new RegExp( '^[a-zA-Z0-9.=!$():;#*ßüäö-]{'+minLen+',}$', 'i' );
   var bRet = re.test( text );
   var bShowAlert = (typeof(suppressAlert)=="undefined");
-  //if( !bRet && ( bShowAlert ) ) alert( "Bitte verwenden Sie nur die erlaubten Sonderzeichen [., !, $, (, ), :, ;, #, ï¿½, ï¿½, ï¿½, ï¿½, -]." );
+  //if( !bRet && ( bShowAlert ) ) alert( "Bitte verwenden Sie nur die erlaubten Sonderzeichen [., !, $, (, ), :, ;, #, ß, ä, ö, ü, -]." );
   if( !bRet && ( bShowAlert ) ) alert( translateKey("alertUseOnlySpecialChars") );
   return bRet;
 };
 
 /**
- * Prï¿½ft, ob ein Text verbotene Sonderzeichen verwendet.
- * Zu diesen Zeichen gehï¿½ren: <, >, ', ", &, $, [, ], {, } und \
+ * Prüft, ob ein Text verbotene Sonderzeichen verwendet.
+ * Zu diesen Zeichen gehören: <, >, ', ", &, $, [, ], {, } und \
  * --> Es ist alles erlaubt, was nicht verboten ist
  **/
 isTextAllowed = function(text, minLen, suppressAlert)
@@ -34639,7 +34639,7 @@ isTextAllowed = function(text, minLen, suppressAlert)
   
   if ((isForbidden) && (typeof(suppressAlert) == "undefined"))
   {
-    //alert("Bezeichnungen dï¿½rfen keines der folgenden Zeichen enthalten: <, >, ', \", &, $, [, ], {, } und \\");
+    //alert("Bezeichnungen dürfen keines der folgenden Zeichen enthalten: <, >, ', \", &, $, [, ], {, } und \\");
     alert(translateKey("alertCharsNotAllowed"));
   }
   
@@ -34657,7 +34657,7 @@ if (PLATFORM == "Central")
 {  
   saveEdit = function(ctrlId, id, allowEmptyString, callback, callStrFunc)
   {
-    // verhindern dass das OnBlur-Event ausgelï¿½st wird wenn mit ENTER bestï¿½tigt wurde
+    // verhindern dass das OnBlur-Event ausgelöst wird wenn mit ENTER bestätigt wurde
     if (!bTxtEditMode) return;
     bTxtEditMode = false;
     var divId = ctrlId.substr(0, ctrlId.length - 3);
@@ -34705,7 +34705,7 @@ if (PLATFORM == "Central")
   
   saveEditInfo = function(ctrlId, id, allowEmptyString) 
   {
-    // verhindern dass das OnBlur-Event ausgelï¿½st wird wenn mit ENTER bestï¿½tigt wurde
+    // verhindern dass das OnBlur-Event ausgelöst wird wenn mit ENTER bestätigt wurde
     if (!bTxtEditMode) return;
     bTxtEditMode = false;
     var divId = ctrlId.substr(0, ctrlId.length - 3);
@@ -34728,10 +34728,10 @@ if (PLATFORM == "Central")
 } 
 else 
 {
-  //Funktionen fï¿½r das Konfigtool
+  //Funktionen für das Konfigtool
   saveEdit = function(ctrlId, id, allowEmptyString, callback, callStrFunc)
   {
-    // verhindern dass das OnBlur-Event ausgelï¿½st wird wenn mit ENTER bestï¿½tigt wurde
+    // verhindern dass das OnBlur-Event ausgelöst wird wenn mit ENTER bestätigt wurde
     if (!bTxtEditMode) return;
     bTxtEditMode = false;
     var divId = ctrlId.substr(0, ctrlId.length - 3);
@@ -34779,7 +34779,7 @@ else
   };
   saveEditInfo = function(ctrlId, id, allowEmptyString) 
   {
-    // verhindern dass das OnBlur-Event ausgelï¿½st wird wenn mit ENTER bestï¿½tigt wurde
+    // verhindern dass das OnBlur-Event ausgelöst wird wenn mit ENTER bestätigt wurde
     if (!bTxtEditMode) return;
     bTxtEditMode = false;
     var divId = ctrlId.substr(0, ctrlId.length - 3);
@@ -35451,7 +35451,7 @@ DeleteObject = function(id)
     {
       if( t.responseText == "false" )
       {
-        //if(dbg){alert("Objekt konnte nicht gelï¿½scht werden.");}
+        //if(dbg){alert("Objekt konnte nicht gelöscht werden.");}
         if(dbg){alert(translateKey("alertErrorDeleteObject"));}
       }
       reloadPage();
@@ -35472,7 +35472,7 @@ DeleteObject2 = function(id)
     { 
       if( t.responseText == "false" )
       {
-        //if(dbg){alert("Objekt konnte nicht gelï¿½scht werden.");}
+        //if(dbg){alert("Objekt konnte nicht gelöscht werden.");}
         if(dbg){alert(translateKey("alertErrorDeleteObject"));}
       }
       dlgPopup.load(); 
@@ -35548,7 +35548,7 @@ roundValue05 = function(val) {
 
 round = function(x, n)
 { 
-  // x = Flieï¿½kommazahl, n = gewï¿½nschte Nachkommastellen
+  // x = Fließkommazahl, n = gewünschte Nachkommastellen
   if (!n) n = 2; //wenn n fehlt wird n = 2
   if (n < 1 || n > 14) return false;
   var e = Math.pow(10, n);
@@ -35603,7 +35603,7 @@ removeChannelFromRoom = function(roomId, channelId)
 };
 
 /**
- * Entfernt einen Kanal aus allen Rï¿½umen.
+ * Entfernt einen Kanal aus allen Räumen.
  **/
 removeChannelFromAllRooms = function(roomId, channelId)
 {
@@ -36076,7 +36076,7 @@ showAllCarrierSense = function(ccuAddress, arHapAddress) {
 
 encodeStringStatusDisplay = function(elmID, is4Dis, specialSZ)
 {
-	//Wird zur Zeit nur fï¿½r die Textzeilen des HM-PB-4Dis-WM und des HM-Dis-WM55 genutzt,
+	//Wird zur Zeit nur für die Textzeilen des HM-PB-4Dis-WM und des HM-Dis-WM55 genutzt,
 	//da dort einige Zeichen im Speicher an anderer Stelle liegen.
   var jElm = jQuery("#"+elmID),
   inString = jElm.val(),
@@ -36085,11 +36085,11 @@ encodeStringStatusDisplay = function(elmID, is4Dis, specialSZ)
 
   conInfo("encodeStringStatusDisplay - inString: " + inString);
 
-  // Beim HM-PB-4Dis-WM wird die Tilde zum Darstellen des ï¿½ benutzt.
+  // Beim HM-PB-4Dis-WM wird die Tilde zum Darstellen des ß benutzt.
   // Hier ist kein ReGa im Spiel.
   // Beim HM-Dis-WM55 ist ReGA im Spiel. Leider wandelt Ise-Script
-  // die Tilde in ein " um, so daï¿½ der generierte String zerstï¿½rt wird.
-  // Daher hier die Prï¿½fung ....
+  // die Tilde in ein " um, so daß der generierte String zerstört wird.
+  // Daher hier die Prüfung ....
   szKey = (is4Dis == true) ? "~" : szKey;
 
   if (specialSZ) {
@@ -36097,25 +36097,25 @@ encodeStringStatusDisplay = function(elmID, is4Dis, specialSZ)
   }
 
   if (is4Dis == true) {
-    outString = inString.replace(/ï¿½/g, "[");
-    outString = outString.replace(/ï¿½/g, "#");
-    outString = outString.replace(/ï¿½/g, "$");
-    outString = outString.replace(/ï¿½/g, "{");
-    outString = outString.replace(/ï¿½/g, "|");
-    outString = outString.replace(/ï¿½/g, "}");
-    outString = outString.replace(/ï¿½/g, szKey);
+    outString = inString.replace(/Ä/g, "[");
+    outString = outString.replace(/Ö/g, "#");
+    outString = outString.replace(/Ü/g, "$");
+    outString = outString.replace(/ä/g, "{");
+    outString = outString.replace(/ö/g, "|");
+    outString = outString.replace(/ü/g, "}");
+    outString = outString.replace(/ß/g, szKey);
     outString = outString.replace(/&/g, "]");
     outString = outString.replace(/=/g, "'");
     jQuery("#"+elmID.replace(/^_/, "")).val(outString);
     return;
   } else {
-    outString = inString.replace(/0xc4/g, "0x5b"); //ï¿½
-    outString = outString.replace(/0xd6/g, "0x23"); // ï¿½
-    outString = outString.replace(/0xdc/g, "0x24"); // ï¿½
-    outString = outString.replace(/0xe4/g, "0x7b"); // ï¿½
-    outString = outString.replace(/0xf6/g, "0x7c"); // ï¿½
-    outString = outString.replace(/0xfc/g, "0x7d"); // ï¿½
-    outString = outString.replace(/0xdf/g, szKey); // ï¿½
+    outString = inString.replace(/0xc4/g, "0x5b"); //Ä
+    outString = outString.replace(/0xd6/g, "0x23"); // Ö
+    outString = outString.replace(/0xdc/g, "0x24"); // Ü
+    outString = outString.replace(/0xe4/g, "0x7b"); // ä
+    outString = outString.replace(/0xf6/g, "0x7c"); // ö
+    outString = outString.replace(/0xfc/g, "0x7d"); // ü
+    outString = outString.replace(/0xdf/g, szKey); // ß
     outString = outString.replace(/0x26/g, "0x5d"); // &
     outString = outString.replace(/0x3d/g, "0x27"); // =
   }
@@ -36123,13 +36123,13 @@ encodeStringStatusDisplay = function(elmID, is4Dis, specialSZ)
 };
 
 decodeStringStatusDisplay = function(sString) {
-  var outString = sString.replace(/\[/g,"ï¿½");
-  outString = outString.replace(/#/g,"ï¿½");
-  outString = outString.replace(/\$/g,"ï¿½");
-  outString = outString.replace(/{/g,"ï¿½");
-  outString = outString.replace(/\|/g,"ï¿½");
-  outString = outString.replace(/}/g,"ï¿½");
-  outString = outString.replace(/\_/g,"ï¿½");
+  var outString = sString.replace(/\[/g,"Ä");
+  outString = outString.replace(/#/g,"Ö");
+  outString = outString.replace(/\$/g,"Ü");
+  outString = outString.replace(/{/g,"ä");
+  outString = outString.replace(/\|/g,"ö");
+  outString = outString.replace(/}/g,"ü");
+  outString = outString.replace(/\_/g,"ß");
   outString = outString.replace(/\]/g,"&");
   outString = outString.replace(/\'/g,"=");
   return outString;
@@ -37268,7 +37268,7 @@ createDebugAlarmMsgs = function() {
   var td2 = Builder.node("td", {}, "Bewegungsmelder - Eingang");
   var td3 = Builder.node("td", {}, "Low Bat");
   
-  // Zeile 1 hinzufï¿½gen
+  // Zeile 1 hinzufügen
   tr.appendChild(td1);
   tr.appendChild(td2);
   tr.appendChild(td3);
@@ -37280,16 +37280,16 @@ createDebugAlarmMsgs = function() {
   td2 = Builder.node("td", {}, "Kombi-Wettersensor");
   td3 = Builder.node("td", {}, "Empfangsausfall");
   
-  // Zeile 2 hinzufï¿½gen
+  // Zeile 2 hinzufügen
   tr.appendChild(td1);
   tr.appendChild(td2);
   tr.appendChild(td3);
   
   tbody.appendChild(tr);
   
-  tr = Builder.node("tr");td1 = Builder.node("td", {}, "01.03. 13:44");td2 = Builder.node("td", {}, "Mï¿½lleimer");td3 = Builder.node("td", {}, "Voll");tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
+  tr = Builder.node("tr");td1 = Builder.node("td", {}, "01.03. 13:44");td2 = Builder.node("td", {}, "Mülleimer");td3 = Builder.node("td", {}, "Voll");tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
   tbody.appendChild(tr);
-  tr = Builder.node("tr");td1 = Builder.node("td", {}, "01.03. 13:45");td2 = Builder.node("td", {}, "Badewanne");td3 = Builder.node("td", {}, "ï¿½bergelaufen");tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
+  tr = Builder.node("tr");td1 = Builder.node("td", {}, "01.03. 13:45");td2 = Builder.node("td", {}, "Badewanne");td3 = Builder.node("td", {}, "Übergelaufen");tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
   tbody.appendChild(tr);
   
   table.appendChild(tbody);
@@ -37342,7 +37342,7 @@ showTimemodule = function() {
  **/
 
 /**
- * @fileOverview Speichert und verwaltet Filter-Kriterien fï¿½r Listen-Ansichten
+ * @fileOverview Speichert und verwaltet Filter-Kriterien für Listen-Ansichten
  * @author Michael Niehaus (ise)
  **/
 
@@ -37350,7 +37350,7 @@ showTimemodule = function() {
 // author: Michael Niehaus
 // date created: 15.05.2007
 //
-// speichert und verwaltet Filter-Kriterien fï¿½r Listen-Ansichten
+// speichert und verwaltet Filter-Kriterien für Listen-Ansichten
 FLT_OBJ_TYP_VARS = 1;
 bFilterUsed = false;           
 
@@ -37842,13 +37842,13 @@ iseFilter.prototype = {
         console.error(e);
       }
     });
-    conInfo("Alle Filter wurden zurï¿½ckgesetzt.");
+    conInfo("Alle Filter wurden zurückgesetzt.");
   }
 };
  
 /* * * * * * * * * * * * *   HILFS-FUNKTIONEN   * * * * * * * * * * * * * * */
 
-// Prï¿½ft anhand der filterOptions ob Checkboxen in Submenï¿½s gesetzt werden sollen
+// Prüft anhand der filterOptions ob Checkboxen in Submenüs gesetzt werden sollen
 selectFilters = function(fltObj, divToShow)
 {
   var i;
@@ -40320,7 +40320,7 @@ iseButtonsWinMatic.prototype = {
             "<img src='/ise/img/window/circle.png' /></div></div>";
     this.Circle.innerHTML = s;
     this.graphics = new jsGraphics(this.id+"Ctrl");
-    this.graphics.setColor(WebUI.getColor("active")); // grï¿½n
+    this.graphics.setColor(WebUI.getColor("active")); // grün
     
     // Add event handlers
     if (iViewOnly === 0) {
@@ -40865,7 +40865,7 @@ iseButtonsWin_SC_SENSOR = Class.create(iseButtonsWinMatic, {
 
     this.level = (this.state < 0 ) ? 0 : this.state;
 
-    jQuery("#" + this.id + "lblPerc").html("ï¿½ffnungs-<br/>winkel<br/>" + this.level);
+    jQuery("#" + this.id + "lblPerc").html("Öffnungs-<br/>winkel<br/>" + this.level);
     this.initControls();
   },
 
@@ -40937,7 +40937,7 @@ iseButtonsWin_SC_SENSOR = Class.create(iseButtonsWinMatic, {
  * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
- * @class Bedien-Control fï¿½r die KeyMatic
+ * @class Bedien-Control für die KeyMatic
  **/ 
 iseButtonsKeyMatic = Class.create();
 
@@ -41017,7 +41017,7 @@ iseButtonsKeyMatic.prototype = {
 };
 /**
  * ise/DoorOpener.js
- * Tï¿½rï¿½ffner.
+ * Türöffner.
  **/
 
 /**
@@ -41026,14 +41026,14 @@ iseButtonsKeyMatic.prototype = {
  **/
 
 /**
- * @class Bedien-Control fï¿½r den Tï¿½rï¿½ffner
+ * @class Bedien-Control für den Türöffner
  **/ 
 DoorOpenerControl = Class.create();
 DoorOpenerControl.prototype = {
 
   /**
    * Konstruktor.
-   *   channelId  : Id des Tï¿½rï¿½ffners (Kanal)
+   *   channelId  : Id des Türöffners (Kanal)
    *   dataPointId: Id des Datenpunkts DOOROPENER.STATE
    *   iViewOnly  :     0: Control bedienbar
    *                sonst: Control nicht bedienbar
@@ -41056,7 +41056,7 @@ DoorOpenerControl.prototype = {
   
   /**
    * Ereignis: Click auf this.doorOpenerDiv
-   * ï¿½ffnet die Tï¿½r.
+   * Öffnet die Tür.
    **/
   onClick: function() 
   {
@@ -42070,33 +42070,33 @@ sysVarsPopupLoader.prototype = {
  * * * Enthaltene Funktionen
  *
  * checkTemperatureMinMax(input, MinVal, MaxVal)
- *    ï¿½berprï¿½ft ob Temperatur gï¿½ltig und innerhalb von MinVal und MaxVal ist
+ *    Überprüft ob Temperatur gültig und innerhalb von MinVal und MaxVal ist
  *
  * checkTemperature(input)
- *    ï¿½berprï¿½ft Temperatur ohne Min- und Max-Werte
- *    Erlaubt sind Eingaben wie 12, 13, 12C, 12ï¿½C, 87F, 87ï¿½F (sowie Dezimalwerte)
+ *    Überprüft Temperatur ohne Min- und Max-Werte
+ *    Erlaubt sind Eingaben wie 12, 13, 12C, 12°C, 87F, 87°F (sowie Dezimalwerte)
  * 
  * checkCharOnly(input)
  *
  * checkDigitsOnly(input)
  *
  * checkDecimal(input)
- *    Prï¿½ft auf eine Dezimalzahl
+ *    Prüft auf eine Dezimalzahl
  *
  * checkPercentage(input)
  *   Erlaubte Eingaben: 50, 12, 13%, 13 %
  * 
  * convertPercentage(input)
- *   Entfernt das Prozentzeichen der Eingabe und gibt (input / 100) zurï¿½ck
+ *   Entfernt das Prozentzeichen der Eingabe und gibt (input / 100) zurück
  *
  * checkInput(input, type)
  *   Kann mit einer der globalen Konstanten aufgerufen werden
  *
  * checkTime(val)
- *   gï¿½ltige Eingabe  --> 12:54
+ *   gültige Eingabe  --> 12:54
  *
  * checkDate(val)
- *   gï¿½ltige Eingabe  -->  18.09.2007 oder 18.09.07
+ *   gültige Eingabe  -->  18.09.2007 oder 18.09.07
  */
 
  
@@ -42113,23 +42113,23 @@ CHK_DECIMAL = 5;
 // * * * * * * * * * * * * * * * * 
 
 // Temperatur: erlaubt sind Zahlen sowie '.' und ','
-// ausserdem: 'C', 'F', 'ï¿½C'und 'ï¿½F' als letzte Zeichen
+// ausserdem: 'C', 'F', '°C'und '°F' als letzte Zeichen
 // Bei Fahrenheit-Werten wird ausserdem nach Celsius umgerechnet
 // und mit MinVal und MaxVal verglichen
 //
-// Wenn kein Vergleich mit Minimal- und Maximal-Werten gewï¿½nscht ist
-// mï¿½ssen MinVal und MaxVal auf 0 gesetzt werden
+// Wenn kein Vergleich mit Minimal- und Maximal-Werten gewünscht ist
+// müssen MinVal und MaxVal auf 0 gesetzt werden
 checkTemperatureMinMax = function(input, MinVal, MaxVal) {
   var doMinMaxCheck = ((MinVal !== 0) || (MaxVal !== 0));
   var tmpInput = input;
   var isFarVal = false;
   if (!checkDecimal(tmpInput)) {
-    // Zeichen fï¿½r Temperaturangaben rausfiltern
+    // Zeichen für Temperaturangaben rausfiltern
     if (tmpInput.indexOf('&deg;C') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('&deg;C'));
     }
-    if (tmpInput.indexOf('ï¿½C') != -1) {
-      tmpInput = tmpInput.substr(0, tmpInput.indexOf('ï¿½C'));
+    if (tmpInput.indexOf('°C') != -1) {
+      tmpInput = tmpInput.substr(0, tmpInput.indexOf('°C'));
     }
     if (tmpInput.indexOf('C') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('C'));
@@ -42138,8 +42138,8 @@ checkTemperatureMinMax = function(input, MinVal, MaxVal) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('&deg;F'));
       isFarVal = true;      
     }
-    if (tmpInput.indexOf('ï¿½F') != -1) {
-      tmpInput = tmpInput.substr(0, tmpInput.indexOf('ï¿½F'));
+    if (tmpInput.indexOf('°F') != -1) {
+      tmpInput = tmpInput.substr(0, tmpInput.indexOf('°F'));
       isFarVal = true;      
     }
     if (tmpInput.indexOf('F') != -1) {
@@ -42147,12 +42147,12 @@ checkTemperatureMinMax = function(input, MinVal, MaxVal) {
       isFarVal = true;      
     }
     
-    // Fall Abgleich mit MinValue und MaxValue gewï¿½nscht wird und ein
+    // Fall Abgleich mit MinValue und MaxValue gewünscht wird und ein
     // Fahrenheit-Wert eingegeben wurde...
     if (doMinMaxCheck) {
       if (isFarVal) { 
         if (checkDecimal(tmpInput)) {
-          var celVal = farToCel(tmpInput); // Umrechnen und prï¿½fen ob innerhalb MinVal und MaxVal
+          var celVal = farToCel(tmpInput); // Umrechnen und prüfen ob innerhalb MinVal und MaxVal
           return ((celVal > MinVal) && (celVal < MaxVal));
         }
         else {
@@ -42164,7 +42164,7 @@ checkTemperatureMinMax = function(input, MinVal, MaxVal) {
   // Falls Chars entfernt wurden nochmal auf Dezimalwert testen
   if (checkDecimal(tmpInput)) {
     if (doMinMaxCheck) {
-      tmpInput = tmpInput.replace(/,/, "."); // fï¿½r WerteVergleich
+      tmpInput = tmpInput.replace(/,/, "."); // für WerteVergleich
       return ((tmpInput >= MinVal) && (tmpInput <= MaxVal ));
     } 
     else {
@@ -42176,7 +42176,7 @@ checkTemperatureMinMax = function(input, MinVal, MaxVal) {
   }     
 };
 
-// Temperatur-ï¿½berprï¿½fung ohne Beachtung von Minimal- und Maximal-Werten
+// Temperatur-Überprüfung ohne Beachtung von Minimal- und Maximal-Werten
 checkTemperature = function(input) {
   return checkTemperatureMinMax(input, 0, 0);
 };
@@ -42204,16 +42204,16 @@ checkDigitsOnly = function(input) {
 };
 
 // CheckDecimal: erlaubt sind [0..9] und ' und .
-// True wird auch bei ganzen oder negativen Zahlen zurï¿½ckgegeben 
+// True wird auch bei ganzen oder negativen Zahlen zurückgegeben 
 checkDecimal = function(input) {
   var ok = true;
   var i = 0;
-  if (input.charAt(0) == '-') // fï¿½r negative Zahlen
+  if (input.charAt(0) == '-') // für negative Zahlen
     i = 1;
   for (i; i < input.length; i++) {
     tmp = input.charAt(i);
     if (isNaN(tmp)) {
-      // Ausnahmen fï¿½r '.' und ','
+      // Ausnahmen für '.' und ','
       if (tmp != '.' && tmp != ',') {
         ok = false;
         break;
@@ -42231,7 +42231,7 @@ checkPercentage = function(input) {
   // Evtl. vorhandenes Prozentzeichen zuerst entfernen
   if (input.indexOf('%') != -1) {
     tmpInput = input.substr(0, input.indexOf('%'));
-    if(tmpInput.length < 1) { // falls nur '%' ï¿½bergeben wurde
+    if(tmpInput.length < 1) { // falls nur '%' übergeben wurde
       return false;
     }
   } 
@@ -42251,13 +42251,13 @@ checkPercentage = function(input) {
 };
 
 // Von einem Prozentwert (string: 50, 50%, 50 % usw.) wird das
-// Prozentzeichen entfernt und der Wert geteilt durch 100 zurï¿½ckgegeben
+// Prozentzeichen entfernt und der Wert geteilt durch 100 zurückgegeben
 convertPercentage = function(input) {
   var tmpInput = "";
   // Evtl. vorhandenes Prozentzeichen zuerst entfernen
   if (input.indexOf('%') != -1) {
     tmpInput = input.substr(0, input.indexOf('%'));
-    if(tmpInput.length < 1) { // falls nur '%' ï¿½bergeben wurde
+    if(tmpInput.length < 1) { // falls nur '%' übergeben wurde
       return false;
     }
   } 
@@ -42346,7 +42346,7 @@ checkSeconds = function(val)
   return false;
 };
 
-// Eingabe abhï¿½ngig von Parameter bSeparator 
+// Eingabe abhängig von Parameter bSeparator 
 checkTime = function(val)
 {
   var sSplit = new Array(2);
@@ -42360,7 +42360,7 @@ checkTime = function(val)
 };
 
 
-// Eingabe abhï¿½ngig von Parameter bSeparator 
+// Eingabe abhängig von Parameter bSeparator 
 checkDate = function(val) {
   var ret = false;
   var sSplit = new Array(3);
@@ -42391,9 +42391,9 @@ farToCel = function(farVal) {
   return ((farVal - 32) / 1.8);
 };
 
-// Gibt true zurï¿½ck falls ein Character ï¿½bergeben wurde
+// Gibt true zurück falls ein Character übergeben wurde
 isChar = function(Data) {
-  var varChars = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+  var varChars = "éèàùûôoöë-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
   return (varChars.indexOf(Data) != -1);
 };
 /**
@@ -42478,7 +42478,7 @@ isePowerMeter.prototype = {
 
     this.energyConfig = homematic("system.getEnergyPrice", {}, function (result) {
       self.energyConfig = result;
-      // When the energy price config is available and itï¿½s a known sensor (electricity or gas)
+      // When the energy price config is available and it´s a known sensor (electricity or gas)
       // then show the energy cost
       if (result && (self.measurementType != self.sensorTypeID.unknown)) {
         self.showEnergyCost();
@@ -42845,7 +42845,7 @@ isePowerMeterESI.prototype = {
 
     this.energyConfig = homematic("system.getEnergyPrice", {}, function (result) {
       self.energyConfig = result;
-      // When the energy price config is available and itï¿½s a known sensor (electricity or gas)
+      // When the energy price config is available and it´s a known sensor (electricity or gas)
       // then show the energy cost
       if (result && (self.measurementType != self.sensorTypeID.unknown)) {
         self.showEnergyCost();
@@ -44394,11 +44394,11 @@ iseHmIPWeeklyProgram.prototype = {
     if (this.deviceIsHmIP_DALI) {
 
       /*
-       Das erste angeschlossene DAlI Gerï¿½t belegt Kanal 1, das nï¿½chste DALI Gerï¿½t bekommt Kanal 2 usw.
-       Es kï¿½nnen 32 DAlI Gerï¿½te angeschlossen werden, d. h. Kanal 1 - 32
-       Angezeigt werden nur die Kanï¿½le, welche auch benutzt werden. Damit kein XML-RPC Aufruf fï¿½r ungenutzte Kanï¿½le gemacht wird,
+       Das erste angeschlossene DAlI Gerät belegt Kanal 1, das nächste DALI Gerät bekommt Kanal 2 usw.
+       Es können 32 DAlI Geräte angeschlossen werden, d. h. Kanal 1 - 32
+       Angezeigt werden nur die Kanäle, welche auch benutzt werden. Damit kein XML-RPC Aufruf für ungenutzte Kanäle gemacht wird,
        wird die Variable lastUsedDaliChn eingesetzt.
-       Die Kanï¿½le 33 - 48 sind Gruppenkanï¿½le und werden immer angezeigt.
+       Die Kanäle 33 - 48 sind Gruppenkanäle und werden immer angezeigt.
 
        The first DAlI device connected occupies channel 1, the next DALI device gets channel 2, etc.
        32 DAlI devices can be connected, i.e. channel 1 - 32.
@@ -46540,7 +46540,7 @@ picDivShow = function(jg, devtype, size, formname, divelem)
 {
   if (! jg) return;
 
-  if (! DEV_TypeExists(devtype)) return; //kein Bild anzeigen, wenn das Gerï¿½t unbekannt ist.
+  if (! DEV_TypeExists(devtype)) return; //kein Bild anzeigen, wenn das Gerät unbekannt ist.
   
   var dim_div = Element.getDimensions(divelem);
   var dim     = getInnerDimensions();
@@ -46608,7 +46608,7 @@ UI_PATH = "/config/";
 Get_UI_CONTENTBOX_ID = function()
 {
   //Muss als Funktion abgefragt werden, weil zur Zeit des Ladens
-  //die Boxen noch nicht vollstï¿½ndig existieren.
+  //die Boxen noch nicht vollständig existieren.
   return ( document.getElementById('infobox') ? 'infobox' : 'centerbox'  );
 };
 
@@ -46676,7 +46676,7 @@ AddParam = function(elem)
       var arrId = elem.id.split("_");
       var type = arrId[1];
           
-      // falls es sich um Kanalparameter handelt (die ID ist lï¿½nger)
+      // falls es sich um Kanalparameter handelt (die ID ist länger)
       if (arrId.length == 6) {
         type = arrId[1] + "_" + arrId[2] + "_" + arrId[3]; 
       } 
@@ -46776,11 +46776,11 @@ AddParam = function(elem)
 
 Get_ReGa_Path = function(path)
 {
-  //WebUI lï¿½uft von ise aus (Session-Parameter ist "sid")
-  //der Pfad fï¿½ngt nicht mit dem vom ise WebUI aus nï¿½tigen Prefix an
+  //WebUI läuft von ise aus (Session-Parameter ist "sid")
+  //der Pfad fängt nicht mit dem vom ise WebUI aus nötigen Prefix an
   if ( ($('global_sid').name == "sid") && (path.substr(0, UI_PATH.length ) != UI_PATH))
   {
-    //Prefix anfï¿½gen:
+    //Prefix anfügen:
     path = UI_PATH + path;
   }
 
@@ -47030,7 +47030,7 @@ AddPeer2Channel = function(iface, device, radioid)
       
   if (inputelem === null)
   {
-    alert("Bitte wï¿½hlen Sie einen Kanal aus.");
+    alert("Bitte wählen Sie einen Kanal aus.");
     return;
   }
 
@@ -47060,11 +47060,11 @@ AddDeviceBySN = function(iface, sn)
 {
   if (sn.length != 10)
   {
-    alert('Bitte geben Sie eine gï¿½ltige Seriennummer ein.');
+    alert('Bitte geben Sie eine gültige Seriennummer ein.');
   }
   else
   {
-    ShowLoadingBox('Bitte warten, das Gerï¿½t mit der Seriennummer '+sn+' wird angelernt...');
+    ShowLoadingBox('Bitte warten, das Gerät mit der Seriennummer '+sn+' wird angelernt...');
     ResetPostString();
   
     document.getElementById('global_iface' ).value = iface;
@@ -47125,7 +47125,7 @@ PrepareDeleteDeviceForm_old = function(iface, sn, devname, devtype)
 
   SendPOSTRequest('ic_ifacecmd.cgi');
 
-  ProgressBar = new ProgressBarMsgBox("Verknï¿½pfungen und Programme werden abgefragt...", 1);
+  ProgressBar = new ProgressBarMsgBox("Verknüpfungen und Programme werden abgefragt...", 1);
   ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
 };
@@ -47139,9 +47139,9 @@ DeleteDeviceForm = function(iface, sn, devname, devtype, devimg, linkcount)
 
 DeleteDevice = function(iface, sn)
 {
-  if (confirm("Mï¿½chten Sie das Gerï¿½t mit der Seriennummer \'"+sn+"\' wirklich lï¿½schen?"))
+  if (confirm("Möchten Sie das Gerät mit der Seriennummer \'"+sn+"\' wirklich löschen?"))
   {
-    ShowLoadingBox('Bitte warten, das Gerï¿½t mit der Seriennummer '+sn+' wird abgelernt...');
+    ShowLoadingBox('Bitte warten, das Gerät mit der Seriennummer '+sn+' wird abgelernt...');
     ResetPostString();
 
     document.getElementById('global_iface' ).value = iface;
@@ -47159,9 +47159,9 @@ DeleteDevice = function(iface, sn)
 
 DeleteDeviceAndReset = function(iface, sn)
 {
-  if (confirm("Mï¿½chten Sie das Gerï¿½t mit der Seriennummer \'"+sn+"\' wirklich lï¿½schen und auf Werkseinstellungen zurï¿½cksetzen?"))
+  if (confirm("Möchten Sie das Gerät mit der Seriennummer \'"+sn+"\' wirklich löschen und auf Werkseinstellungen zurücksetzen?"))
   {
-    ShowLoadingBox('Bitte warten, das Gerï¿½t mit der Seriennummer '+sn+' wird abgelernt...');
+    ShowLoadingBox('Bitte warten, das Gerät mit der Seriennummer '+sn+' wird abgelernt...');
     ResetPostString();
 
     document.getElementById('global_iface' ).value = iface;
@@ -47180,7 +47180,7 @@ DeleteDeviceAndReset = function(iface, sn)
 
 AddLinkPeer = function(iface, device, peer)
 {
-  ShowLoadingBox('Bitte warten, der Verknï¿½pfungspartner \'' +peer+ '\' wird hinzugefï¿½gt...');
+  ShowLoadingBox('Bitte warten, der Verknüpfungspartner \'' +peer+ '\' wird hinzugefügt...');
   ResetPostString();
 
   document.getElementById('global_iface'  ).value = iface;
@@ -47199,9 +47199,9 @@ AddLinkPeer = function(iface, device, peer)
 
 DeleteLinkPeer = function(iface, device, peer)
 {
-  if (confirm("Mï¿½chten Sie diesen Verknï¿½pfungspartner \'" +peer+ "\' wirklich lï¿½schen?"))
+  if (confirm("Möchten Sie diesen Verknüpfungspartner \'" +peer+ "\' wirklich löschen?"))
   {
-    ShowLoadingBox('Bitte warten, der Verknï¿½pfungspartner \'' +peer+ '\' wird gelï¿½scht...');
+    ShowLoadingBox('Bitte warten, der Verknüpfungspartner \'' +peer+ '\' wird gelöscht...');
     ResetPostString();
 
     document.getElementById('global_iface'  ).value = iface;
@@ -47241,9 +47241,9 @@ CheckNetworkSettings = function()
   var b = isIPAddress(document.getElementsByName('NETMASK')[0].value);
   var c = isIPAddress(document.getElementsByName('GATEWAY')[0].value);
 
-  if (!a) alert("Die IP-Adresse ist ungï¿½ltig");
-  if (!b) alert("Die Netzmaske ist ungï¿½ltig");
-  if (!c) alert("Die Gateway-Adresse ist ungï¿½ltig");
+  if (!a) alert("Die IP-Adresse ist ungültig");
+  if (!b) alert("Die Netzmaske ist ungültig");
+  if (!c) alert("Die Gateway-Adresse ist ungültig");
   
   return ( a && b && c );
 };
@@ -47275,7 +47275,7 @@ SimulateLongKeyPress = function()
 
 SimulateKeyPress = function(longpress)
 {
-  ShowLoadingBox('Bitte warten, der Tastendruck wird ausgelï¿½st...');
+  ShowLoadingBox('Bitte warten, der Tastendruck wird ausgelöst...');
   ResetPostString();
   AddParam(document.getElementById('global_1'));//sid
   AddParam(document.getElementById('global_2'));//peer
@@ -47327,7 +47327,7 @@ SetCurrentTime = function()
 
 RebootCentral = function()
 {
-  if (confirm("Mï¿½chten Sie die Zentrale wirklich neu starten?"))
+  if (confirm("Möchten Sie die Zentrale wirklich neu starten?"))
   {
     ShowLoadingBox('Bitte warten, Zentrale startet neu...');
     ResetPostString();
@@ -47428,7 +47428,7 @@ getPageOffsets = function()
 };
 
 /*
-Wenn nur ein Gerï¿½t angezeigt werden soll, kann man sender_address, oder receiver_address leer lassen ( '' )
+Wenn nur ein Gerät angezeigt werden soll, kann man sender_address, oder receiver_address leer lassen ( '' )
 */
 CheckConfigPending = function(iface, sender_address, receiver_address, redirect_url, goBack)
 {
@@ -47504,7 +47504,7 @@ IsDirty = function(inputelem)
 
 ConvTime = function(u_value)
 {
-  //wird in SetInputValue fï¿½r User-Profilvorlagen benï¿½tigt
+  //wird in SetInputValue für User-Profilvorlagen benötigt
   var Userwert = "";
   var hour = parseInt(u_value / 3600);
   var min  = parseInt((u_value % 3600) / 60);
@@ -47581,7 +47581,7 @@ SetInputValue = function(html_inputelem_id, value)
     // falls in der Profilvorlage kein entsprechender Wert vorhanden ist,
     // weil eine beutzerdef. Wert eingegeben wurde, der nicht als Auswahl vorhanden ist,
     // wird hier ein neuer Eintrag mit dem entsprechenden Wert erzeugt.
-    // Die Werte mï¿½ssen entsprechend konvertiert werden, 90 Sek. werden z. B. zu 1min 30sec usw.
+    // Die Werte müssen entsprechend konvertiert werden, 90 Sek. werden z. B. zu 1min 30sec usw.
     
     if (no_entry === true) 
     {
@@ -47593,10 +47593,10 @@ SetInputValue = function(html_inputelem_id, value)
         if (h != -1 || m != -1 || s != -1) Userwert = ConvTime(value);   //es handelt sich um einen Zeitwert
         if (perc != -1) {Userwert = parseInt(value * 100) + "%";}    //es handelt sich um einen Prozentwert
           
-        new_option = new Option(Userwert,value,true,true);  //Userwert = angezeigter Wert, value = zu ï¿½bertragener Wert  
-        selectelem.options[selectelem.length] = new_option;  // hier wird der neue Eintrag hinzugefï¿½gt
+        new_option = new Option(Userwert,value,true,true);  //Userwert = angezeigter Wert, value = zu übertragener Wert  
+        selectelem.options[selectelem.length] = new_option;  // hier wird der neue Eintrag hinzugefügt
         
-      //  Optionen neu sortieren , die beiden nï¿½chsten Zeilen sortieren jeweils  wunderbar in Firefox. Im IE gehts mal wieder nicht
+      //  Optionen neu sortieren , die beiden nächsten Zeilen sortieren jeweils  wunderbar in Firefox. Im IE gehts mal wieder nicht
       //  $A(selectelem.options).sort(function(a,b) {return (parseFloat(a.value) < parseFloat(b.value)) ? -1 : 1;}).each(function(o,i){selectelem.options[i] = o});
       //  Array.prototype.sort.call(selectelem.options,function(a,b){return parseFloat(a.value) < parseFloat(b.value) ? -1 : parseFloat(a.value) > parseFloat(b.value) ? 1 : 0;});
         
@@ -47649,7 +47649,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   var srcElm = $(srcid);
   var dstElm = $(dstid);
 
-  // Falls das Tasten-Event nicht mit ï¿½bergeben wurde ....
+  // Falls das Tasten-Event nicht mit übergeben wurde ....
   /*
   var keyCode = 0,
     finalVal;
@@ -48128,9 +48128,9 @@ InfoMessageBox.prototype = Object.extend(new MsgBox(), {
 PROGRESSBAR_HL_COLOR = WebUI.getColor("progressbarHighlight");  //Highlight
 PROGRESSBAR_BG_COLOR = WebUI.getColor("progressbarBackground"); //Background
 PROGRESSBAR_TX_COLOR = WebUI.getColor("progressbarText");       //Text-Color
-PROGRESSBAR_HL_STROKE = 4;//Strichstï¿½rke
+PROGRESSBAR_HL_STROKE = 4;//Strichstärke
 PROGRESSBAR_WIDTH = 300;//Breite des Balkens
-PROGRESSBAR_HEIGHT = 20;//Hï¿½he des Balkens
+PROGRESSBAR_HEIGHT = 20;//Höhe des Balkens
 PROGRESSBAR_KNIGHTRIDER_WIDTH = parseInt(PROGRESSBAR_WIDTH/5);
 PROGRESSBAR_KNIGHTRIDER_STEP = 61;
 //-----
@@ -48219,7 +48219,7 @@ ProgressBarMsgBox.prototype = Object.extend(new MsgBox(), {
 
   if (this.knightrider_position + PROGRESSBAR_KNIGHTRIDER_STEP + PROGRESSBAR_KNIGHTRIDER_WIDTH > PROGRESSBAR_WIDTH)
   {
-    this.knightrider_position = PROGRESSBAR_WIDTH - PROGRESSBAR_KNIGHTRIDER_WIDTH; //Letzte mï¿½gliche Position
+    this.knightrider_position = PROGRESSBAR_WIDTH - PROGRESSBAR_KNIGHTRIDER_WIDTH; //Letzte mögliche Position
     PROGRESSBAR_KNIGHTRIDER_STEP = -PROGRESSBAR_KNIGHTRIDER_STEP; //anders herum
   }
   else if (this.knightrider_position + PROGRESSBAR_KNIGHTRIDER_STEP < 0)
@@ -48332,7 +48332,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
     this.AddDivWrapper("id_configpending_head");
     $("id_configpending_head").className = "popupTitle";
     $("id_configpending_head").style.fontWeight = "bold";
-    //this.AddTextNode("id_configpending_head", "Verknï¿½pfungs- und Programmstatus");
+    //this.AddTextNode("id_configpending_head", "Verknüpfungs- und Programmstatus");
     this.AddTextNode("id_configpending_head", translateKey("dialogCreateLinkTitle"));
   
     this.AddDivWrapper("id_configpending_overflow");
@@ -48437,7 +48437,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
     }
     else
     {
-      //var newInputDiv1 = this.CreateButton("Erneut prï¿½fen");
+      //var newInputDiv1 = this.CreateButton("Erneut prüfen");
       var newInputDiv1 = this.CreateButton(translateKey("btnDirectDeviceLinkCheckAgain"));
       newInputDiv1.onclick = function()
       {
@@ -48526,7 +48526,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
     tr.style.height = "50px";
     tr.className = "popupTableRowGray";
 
-    //var textnode = document.createTextNode("Die ï¿½bertragung ist erfolgreich verlaufen.");
+    //var textnode = document.createTextNode("Die Übertragung ist erfolgreich verlaufen.");
     var textnode = document.createTextNode(translateKey('dialogCreateLinkSuccessContent'));
     var td = document.createElement("td");
     td.colSpan = 4;
@@ -48595,34 +48595,34 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
     if (((linecount > 1) && (this.configpendingcount === 1) && (configpending === 1)) ||
         ((linecount > 1) && (this.configpendingcount === 0) && (configpending === 0))) /*linecount > 1 weil die erste Zeile unsichtbar ist.*/
     {
-      //Die letzte Meldung soll fï¿½r dieses Gerï¿½t mitgelten. Meldungen zusammenfassen:
+      //Die letzte Meldung soll für dieses Gerät mitgelten. Meldungen zusammenfassen:
 
       var msg_td = $('id_configpending_tr_0').getElementsByTagName("td")[3];
       var rs = msg_td.getAttribute("rowspan");
 
       if ( !rs || rs === "") { msg_td.rowSpan = 2; }                 //Attribut neu anlegen
-      else                   { msg_td.rowSpan = parseInt(rs) + 1; }  //Attributwert hochzï¿½hlen
+      else                   { msg_td.rowSpan = parseInt(rs) + 1; }  //Attributwert hochzählen
     }
     else if (configpending == 1)
     {
       td[3] = document.createElement("td");
       td[3].style.padding = "5px";
     
-      //textnode = document.createTextNode("Die ï¿½bertragung der Daten zum Gerï¿½t konnte nicht ordnungsgemï¿½ï¿½ durchgefï¿½hrt werden. Wï¿½hlen Sie:");
+      //textnode = document.createTextNode("Die Übertragung der Daten zum Gerät konnte nicht ordnungsgemäß durchgeführt werden. Wählen Sie:");
       textnode = document.createTextNode(translateKey("dialogCreateLinkErrorContent1"));
       td[3].appendChild(textnode);
     
       var ul = document.createElement("ul");
 
       var li_text = new Array(2);
-      //li_text[0] = document.createTextNode("\"Erneut prï¿½fen\", wenn Sie die ï¿½bertragung zum Gerï¿½t jetzt abschlieï¿½en mï¿½chten. Sorgen Sie dazu bitte dafï¿½r, dass sich");
+      //li_text[0] = document.createTextNode("\"Erneut prüfen\", wenn Sie die Übertragung zum Gerät jetzt abschließen möchten. Sorgen Sie dazu bitte dafür, dass sich");
       li_text[0] = document.createTextNode(translateKey("dialogCreateLinkErrorContent2"));
       
       var ul2 = document.createElement("ul");
       var li_text2 = new Array(2);
-      //li_text2[0] = document.createTextNode("das Gerï¿½t innerhalb der Funkreichweite befindet und aktiv ist,");
+      //li_text2[0] = document.createTextNode("das Gerät innerhalb der Funkreichweite befindet und aktiv ist,");
       li_text2[0] = document.createTextNode(translateKey("dialogCreateLinkErrorContent3"));
-      //li_text2[1] = document.createTextNode("das Gerï¿½t im Anlernmodus befindet.");
+      //li_text2[1] = document.createTextNode("das Gerät im Anlernmodus befindet.");
       li_text2[1] = document.createTextNode(translateKey("dialogCreateLinkErrorContent4"));
       var li2 = new Array(2);
       li2[0] = document.createElement("li");
@@ -48632,7 +48632,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
       ul2.appendChild(li2[0]);
       ul2.appendChild(li2[1]);
     
-      //li_text[1] = document.createTextNode("\"Ignorieren\", wenn die Zentrale die ï¿½bertragung zum Gerï¿½t bei nï¿½chster Gelegenheit selbststï¿½ndig durchfï¿½hren soll. Bis dahin ist dieser Konfigurationsvorgang als offene Servicemeldung sichtbar.");
+      //li_text[1] = document.createTextNode("\"Ignorieren\", wenn die Zentrale die Übertragung zum Gerät bei nächster Gelegenheit selbstständig durchführen soll. Bis dahin ist dieser Konfigurationsvorgang als offene Servicemeldung sichtbar.");
       li_text[1] = document.createTextNode(translateKey("dialogCreateLinkErrorContent5"));
       
       var li = new Array(2);
@@ -48663,7 +48663,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
     }
     else if (configpending === 0)
     {
-      //textnode = document.createTextNode("Die ï¿½bertragung der Daten zum Gerï¿½t wurde erfolgreich abgeschlossen.");
+      //textnode = document.createTextNode("Die Übertragung der Daten zum Gerät wurde erfolgreich abgeschlossen.");
       textnode = document.createTextNode(translateKey("dialogCreateLinkSuccessContent"));
       td[3] = document.createElement("td");
       td[3].appendChild(textnode);
@@ -48672,7 +48672,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
     }
     else
     {
-      //textnode = document.createTextNode("ï¿½bertragung nicht erfolgt, weil das Gerï¿½t unbekannt ist.");
+      //textnode = document.createTextNode("Übertragung nicht erfolgt, weil das Gerät unbekannt ist.");
       textnode = document.createTextNode(translateKey("dialogCreateLinkErrorUnknownDevice"));
       td[3] = document.createElement("td");
       td[3].appendChild(textnode);
@@ -48694,7 +48694,7 @@ ConfigPendingMsgBox.prototype = Object.extend(new MsgBox(), {
  **/
  
 //======================================================================
-// Globale Variablen fï¿½r diese Datei
+// Globale Variablen für diese Datei
 SORT_DESC   = false;
 IGNORE_CASE = true;
 SORTED_COL  = -1;
@@ -48703,7 +48703,7 @@ SORT_DESC_SRC = "/ise/img/arrow_down.gif";
 //======================================================================
 
 //------------------------------------------------------------------------
-//Klasse SelChannelBox fï¿½r das PopUp Kanalauswahl:
+//Klasse SelChannelBox für das PopUp Kanalauswahl:
 /*
 SelChannelBox = Class.create();
 
@@ -48738,7 +48738,7 @@ Sort = function(tableid, colNr)
       
   if (SORTED_COL != colNr && SORTED_COL != -1)
   {
-    //Highlighting ï¿½ndern
+    //Highlighting ändern
     $('tr_caption_colnames').getElementsByTagName("td")[SORTED_COL].className = "unsorted";
     $('tr_caption_colnames').getElementsByTagName("td")[colNr     ].className = "sorted";
   }
@@ -48757,7 +48757,7 @@ Sort = function(tableid, colNr)
 
 //Wenn b_order_desc nicht gesetzt, dann wird die Sortierreihenfolge gewechselt,
 //es sei denn, die Spalte wird zum ersten mal sortiert. Bei der ersten Sortierung
-//wird standardmï¿½ï¿½ig aufsteigend sortiert.
+//wird standardmäßig aufsteigend sortiert.
 SetSortingOrder = function(colNr, b_order_desc)
 {
   if (b_order_desc)
@@ -48814,7 +48814,7 @@ SortTable = function(tableid, colNr)
   {
     rowList = valueMap[valueList[i]];
     
-    for (var j = 0; j < rowList.length; j++) //Fï¿½r jede Zeile mit gleichem value (Array)
+    for (var j = 0; j < rowList.length; j++) //Für jede Zeile mit gleichem value (Array)
     {
       if (k+headerlen != rowList[j].rowIndex) swapRows(tableid, k + headerlen, rowList[j].rowIndex);
       k++;
@@ -48829,7 +48829,7 @@ compareStrings_globalsettings = function(x, y)
 
 //b_order_desc == true:  Sortierreihenfolge absteigend
 //             == false:                    aufsteigend
-//b_ignore_case == true: Groï¿½-/Kleinschreibung nicht beachten (Muster == muster)
+//b_ignore_case == true: Groß-/Kleinschreibung nicht beachten (Muster == muster)
 //              == false:                      beachten       (Muster != muster)
 compareStrings = function(x, y, b_order_desc, b_ignore_case)
 {
@@ -48854,7 +48854,7 @@ compareStrings = function(x, y, b_order_desc, b_ignore_case)
   
   if (b_ignore_case)
   {
-    //Groï¿½-/Kleinschreibung ignorieren
+    //Groß-/Kleinschreibung ignorieren
     xx = xx.toLowerCase();
     yy = yy.toLowerCase();
   }
@@ -49042,8 +49042,8 @@ filterCheckEnterEsc = function(keyCode, filterNr)
   }
 };
 
-//Filtert eine Tabelle und lï¿½sst nur die Zeilen sichtbar,
-//  die mit einem Muster (Liste) ï¿½bereinstimmen. Die 
+//Filtert eine Tabelle und lässt nur die Zeilen sichtbar,
+//  die mit einem Muster (Liste) übereinstimmen. Die 
 //  Tabelle muss ein <tbody> - Tag haben.
 //tableid: html-id des table-Tags
 //colNr: Spalte, die nach pattern gefiltert werden soll 
@@ -49078,7 +49078,7 @@ ToggleVirtualKeys = function()
   var i;
   var tr;
   
-  //if ( $('ToggleVirtualKeys').firstChild.nodeValue == "Virtuelle Kanï¿½le ausblenden" )
+  //if ( $('ToggleVirtualKeys').firstChild.nodeValue == "Virtuelle Kanäle ausblenden" )
   if ( $('ToggleVirtualKeys').firstChild.nodeValue == translateKey("footerBtnVirtualChannelsHide") )
   {
     tr = $A(document.getElementsByClassName('virtual_key_visible'));
@@ -49089,7 +49089,7 @@ ToggleVirtualKeys = function()
       tr[i].cells[2].childNodes[0].style.display = 'none';  //um die Bilder im IE auszublenden
     }
 
-    //$('ToggleVirtualKeys').firstChild.nodeValue  = "Virtuelle Kanï¿½le einblenden";
+    //$('ToggleVirtualKeys').firstChild.nodeValue  = "Virtuelle Kanäle einblenden";
     $('ToggleVirtualKeys').firstChild.nodeValue  = translateKey("footerBtnVirtualChannelsShow");
   }
   else
@@ -49105,7 +49105,7 @@ ToggleVirtualKeys = function()
       }
     }
     
-    //$('ToggleVirtualKeys').firstChild.nodeValue  = "Virtuelle Kanï¿½le ausblenden";
+    //$('ToggleVirtualKeys').firstChild.nodeValue  = "Virtuelle Kanäle ausblenden";
     $('ToggleVirtualKeys').firstChild.nodeValue  = translateKey("footerBtnVirtualChannelsHide");
   }
 
@@ -49118,10 +49118,10 @@ SizeTable = function()
 
   if (window.navigator.userAgent.toUpperCase().indexOf("MSIE ") > -1) return;
 
-  //Die Funktion SizeTable hat bei begrenzter Auflï¿½sung keinen Sinn.
+  //Die Funktion SizeTable hat bei begrenzter Auflösung keinen Sinn.
     if (screen.availWidth < 1200) return;
 
-  $('chnListBody').style.overflow = "";//um ï¿½berhaupt sinnvoll Hï¿½hen bestimmen zu kï¿½nnen
+  $('chnListBody').style.overflow = "";//um überhaupt sinnvoll Höhen bestimmen zu können
   $('chnListBody').style.height   = "";
     
   var dim = getInnerDimensions();
@@ -49170,7 +49170,7 @@ AddLink = function(iface, sender_address, sender_group, receiver_address, name, 
   poststr += "&specialVal="  +specialVal;
   poststr += "&cmd=addLink";
 
-  //ProgressBar = new ProgressBarMsgBox("Verknï¿½pfung wird erstellt...", 1);
+  //ProgressBar = new ProgressBarMsgBox("Verknüpfung wird erstellt...", 1);
   ProgressBar = new ProgressBarMsgBox(translateKey("progressBarCreateLinkTitle"), 1);
   ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
@@ -49350,7 +49350,7 @@ CloseSetProfiles = function () {
   //updateContent(UI_PATH + "ic_linkpeerlist.cgi");
 };
 
-// User-Profilvorlage fï¿½r die folgenden Gerï¿½te sperren
+// User-Profilvorlage für die folgenden Geräte sperren
 //var senderNoUserProfile =  "MOTION_DETECTOR, WEATHER";
 //var receiverNoUserProfile = "CLIMATECONTROL_VENT_DRIVE, BLIND, WATERDETECTIONSENSOR";
 isUserProfileAvailable = function (deviceType) {
@@ -49463,7 +49463,7 @@ ShowEasyMode = function (selectelem, iface) {
 };
 
 CheckGroup = function () {
-  //prï¿½fen, ob es sich um ein Tastenpaar handelt
+  //prüfen, ob es sich um ein Tastenpaar handelt
   try {
     if (document.getElementById('NewProfileTemplate_receivergroup')) {
       throw "true";
@@ -49498,7 +49498,7 @@ ActivateLinkParamset = function (iface, sender_address, receiver_address, hideWa
     }
 
     if (dirty) {
-      //ShowWarningMsg("Ihre ï¿½nderungen wurden noch nicht in die Komponenten ï¿½bertragen.");
+      //ShowWarningMsg("Ihre Änderungen wurden noch nicht in die Komponenten übertragen.");
       ShowWarningMsg(translateKey("dialogSetProfileMsgProfileNotYetSet"));
       InfoMsg.OnOK = function () {
         ActivateLinkParamset(iface, sender_address, receiver_address, true);
@@ -49618,7 +49618,7 @@ CollectData_SaveProfileSettings = function (reload) {
     CheckConfigPending($F('global_iface'), $F('global_sender_address'), $F('global_receiver_address'), redirect, go_back);
   }
   else {
-    //ProgressBar = new ProgressBarMsgBox("ï¿½bertrage Profileinstellungen an Komponenten...", actions);
+    //ProgressBar = new ProgressBarMsgBox("Übertrage Profileinstellungen an Komponenten...", actions);
     ProgressBar = new ProgressBarMsgBox(translateKey("dialogSetProfileProgressBarSendProfile"), actions);
     ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
@@ -49642,8 +49642,8 @@ IsProfileDirty = function (special_input_id) {
 
   if (IsDirty(selectelem)) return true;
 
-  //Der im Aktor gespeicherte Easy-Mode ist immer noch aktuell. Aber: einzelne Parameter verï¿½ndert?
-  //Einzelnen Input-Felder auf Verï¿½nderung prï¿½fen:
+  //Der im Aktor gespeicherte Easy-Mode ist immer noch aktuell. Aber: einzelne Parameter verändert?
+  //Einzelnen Input-Felder auf Veränderung prüfen:
 
   var pnr = selectelem.options[selectelem.selectedIndex].value;
 
@@ -49728,7 +49728,7 @@ EnterDescriptionTemplate = function (special_input_id) {
     while ($('separate_' + special_input_id + '_' + pnr + '_' + i)) {
       var input_id;
 
-      //Wenn es ein temporï¿½res Input-Element gibt, muss der Wert daraus kommen (z.B. die Umsetzung von 0..1 auf 0%..100% wird so gehandhabt)
+      //Wenn es ein temporäres Input-Element gibt, muss der Wert daraus kommen (z.B. die Umsetzung von 0..1 auf 0%..100% wird so gehandhabt)
       if ($('separate_' + special_input_id + '_' + pnr + '_' + i + '_temp')) input_id = 'separate_' + special_input_id + '_' + pnr + '_' + i + '_temp';
       else                                                                     input_id = 'separate_' + special_input_id + '_' + pnr + '_' + i;
 
@@ -49760,7 +49760,7 @@ EnterDescriptionTemplate = function (special_input_id) {
 RemoveProfile = function (special_input_id, pnr) {
   var selectelem = $(special_input_id + '_profiles');
 
-  //prï¿½fen, ob es sich um ein Kanalpaar handelt
+  //prüfen, ob es sich um ein Kanalpaar handelt
   try {
     var tmp = selectelem.options[0].value;
     if (tmp) {
@@ -49843,7 +49843,7 @@ DeleteEasyMode = function (special_input_id) {
 
   SendRequest('ic_neweasymode.cgi');
 
-  //ProgressBar = new ProgressBarMsgBox("Profilvorlage wird gelï¿½scht...", 1);
+  //ProgressBar = new ProgressBarMsgBox("Profilvorlage wird gelöscht...", 1);
   ProgressBar = new ProgressBarMsgBox(translateKey("dialogSettingsDeleteProfileTemplateTitle"), 1);
   ProgressBar.show();
   ProgressBar.StartKnightRiderLight();
@@ -50066,7 +50066,7 @@ SaveDeviceParameters = function()
   var actions = 0,
   parentChannelAddress;
 
-  //Gerï¿½teparameter speichern
+  //Geräteparameter speichern
   if (AreParametersDirty('DEVICE'))
   {
     SetParameters ($F('global_iface'), $F('global_address'), 'DEVICE');
@@ -50078,7 +50078,7 @@ SaveDeviceParameters = function()
   var channel_address;
   var startChannel = (($F('global_iface')!= "HmIP-RF") && ($F('global_iface')!= "HmIP-Wired") && ($F('global_iface') != "VirtualDevices"))? 1 : 0;
 
-  for (var i=startChannel; i<ch_count; i++) //(Kanal 0 ist bei BidCos-RF / Wired der Maintenance-Kanal, der nicht in seinen Parametern verï¿½ndert werden kann.)
+  for (var i=startChannel; i<ch_count; i++) //(Kanal 0 ist bei BidCos-RF / Wired der Maintenance-Kanal, der nicht in seinen Parametern verändert werden kann.)
   {
     channel_address = $F('global_channel_address_' +(i+1) );
 
@@ -50169,7 +50169,7 @@ SaveDeviceParameters = function()
   }
   else 
   {
-    //ProgressBar = new ProgressBarMsgBox("ï¿½bertrage Gerï¿½te-/Kanaleinstellungen an Komponenten...", actions);
+    //ProgressBar = new ProgressBarMsgBox("Übertrage Geräte-/Kanaleinstellungen an Komponenten...", actions);
     ProgressBar = new ProgressBarMsgBox(translateKey("transferConfigData"), actions);
     ProgressBar.OnFinish = function ()
     {
@@ -50189,9 +50189,9 @@ AreParametersDirty = function(special_input_id)
   {
     if (IsDirty(inputelem)) return true;
 
-    //Integer und Floats werden ï¿½ber ein zweites input-element eingestellt. das hidden-input ist relevant,
-    //jedoch ist es immer "clean" aufgrund seines Typs. Deshalb muss das dazugehï¿½rende input-element noch 
-    //geprï¿½ft werden (wenn es eines gibt).
+    //Integer und Floats werden über ein zweites input-element eingestellt. das hidden-input ist relevant,
+    //jedoch ist es immer "clean" aufgrund seines Typs. Deshalb muss das dazugehörende input-element noch 
+    //geprüft werden (wenn es eines gibt).
     if (IsDirty($('separate_' + special_input_id + '_' + i + '_temp'))) return true;
 
     i++;
@@ -50562,7 +50562,7 @@ TimeoutManager.prototype = Object.extend(new MsgBox(), {
     //Woche anlegen und initialisieren
     this.week = new Array(7);
     this.divname = new Array(7); //DIV-Container
-    this.weekdirty = new Array(7); //Sind ï¿½nderungen erfolgt?
+    this.weekdirty = new Array(7); //Sind Änderungen erfolgt?
 
     this.setMaxTimouts();
 
@@ -50729,7 +50729,7 @@ TimeoutManager.prototype = Object.extend(new MsgBox(), {
     var postStr = "";
 
     for (var dayidx = 0; dayidx < 7; dayidx++) {
-      //Welcher Tag enthï¿½lt die relevanten Daten: "wie am Vortag"-Funktion?
+      //Welcher Tag enthält die relevanten Daten: "wie am Vortag"-Funktion?
       var prev_day = $(this.prg + 'prevday_' + dayidx);
       var p = dayidx;
       while (prev_day.checked) {
@@ -50828,7 +50828,7 @@ TimeoutManager.prototype = Object.extend(new MsgBox(), {
     var timeouts = this.week[dayidx];
 
     if (timeouts.length >= this.maxTimeOuts ) {
-      //alert('Der Zeitabschnitt kann nicht angelegt werden. Es kï¿½nnen nur bis zu '+this.maxTimeOuts+'  Zeitabschnitte angelegt werden.');
+      //alert('Der Zeitabschnitt kann nicht angelegt werden. Es können nur bis zu '+this.maxTimeOuts+'  Zeitabschnitte angelegt werden.');
       alert(translateKey('errorCreateTimePeriod') + translateKey('maxTimePeriodReachedA') + this.maxTimeOuts+translateKey('maxTimePeriodReachedB'));
       return;
     }
@@ -50886,7 +50886,7 @@ TimeoutManager.prototype = Object.extend(new MsgBox(), {
 
     for (i = 1; i < timeouts.length; i++) {
       if (timeouts[i][tom_endtime] <= timeouts[i - 1][tom_endtime]) {
-        alert("Der " + i + ". Zeitabschnitt hat eine ungï¿½ltige Dauer");
+        alert("Der " + i + ". Zeitabschnitt hat eine ungültige Dauer");
       }
     }
   },
@@ -51001,7 +51001,7 @@ TimeoutManagerHmIPOnOff.prototype = Object.extend(new TimeoutManager(), {
     var postStr = "";
 
     for (var dayidx = 0; dayidx < 7; dayidx++) {
-      //Welcher Tag enthï¿½lt die relevanten Daten: "wie am Vortag"-Funktion?
+      //Welcher Tag enthält die relevanten Daten: "wie am Vortag"-Funktion?
       var prev_day = $(this.prg + 'prevday_' + dayidx);
       var p = dayidx;
       while (prev_day.checked) {
@@ -51291,7 +51291,7 @@ PartyEndTimeManager.prototype = Object.extend(new MsgBox(), {
   //msg += "max. 127 Tage";
   msg += translateKey("partyMaxDays127");
 
-  //Sammelobjekt fï¿½r richtigen Datenwert:
+  //Sammelobjekt für richtigen Datenwert:
   msg += "<span style=\"visibility: hidden; display: none;\"><input id=\""+this.id+"\" type=\"text\" value=\""+endtime+"\" name=\""+this.name+"\"/></span>";
 
   $(this.htmlcont).innerHTML = msg;
@@ -51482,7 +51482,7 @@ cpMessageBox.prototype =
     }
   },
 
-   // TODO Es wird zur Zeit nur die Hï¿½he ausgewertet und angepasst, die Breite ist noch nicht implementiert.
+   // TODO Es wird zur Zeit nur die Höhe ausgewertet und angepasst, die Breite ist noch nicht implementiert.
   /**
    * Adds a scrollbar and adjusts the position when the height of the message
    * box is > than those of the viewport
@@ -51852,17 +51852,17 @@ ActivateFreeTime = function(selectelem, pref, internalKey)
 // Kann hier entfernt werden.
 _encodeString = function(elem)
 {
-  //wird nur fï¿½r die ï¿½bersetzung der Parameter des HM-PB-4Dis-WM genutzt, 
+  //wird nur für die Übersetzung der Parameter des HM-PB-4Dis-WM genutzt, 
   //da dort einige Zeichen an anderer Stelle liegen.
 
   var inString = $F("_" + elem);
-  var outString = inString.replace(/ï¿½/g, "[");
-  outString = outString.replace(/ï¿½/g, "#");
-  outString = outString.replace(/ï¿½/g, "$");
-  outString = outString.replace(/ï¿½/g, "{");  
-  outString = outString.replace(/ï¿½/g, "|");  
-  outString = outString.replace(/ï¿½/g, "}");  
-  outString = outString.replace(/ï¿½/g, "~");  
+  var outString = inString.replace(/Ä/g, "[");
+  outString = outString.replace(/Ö/g, "#");
+  outString = outString.replace(/Ü/g, "$");
+  outString = outString.replace(/ä/g, "{");  
+  outString = outString.replace(/ö/g, "|");  
+  outString = outString.replace(/ü/g, "}");  
+  outString = outString.replace(/ß/g, "~");  
   outString = outString.replace(/&/g, "]");
   outString = outString.replace(/=/g, "'");
 
@@ -52235,7 +52235,7 @@ Disable_SimKey = function(ch, prn, specialInputId)
     {
       jBtnSim.disabled = true;
       if (jBtnLongSim) jBtnLongSim.disabled = true;
-      //jBtnSim.value = "Simulation nicht mï¿½glich!";
+      //jBtnSim.value = "Simulation nicht möglich!";
       jBtnSim.value = translateKey("simulateKeyPressBtnTxtNotPossible");
       if (jBtnLongSim) jBtnLongSim.value = translateKey("simulateKeyPressBtnTxtNotPossible");
       jHintSim.style.display = "inline";
@@ -52454,7 +52454,7 @@ MD_init = function(id, min, max)
 
 MD_getHelp = function(min, max, brightness, activeBright, ready, isHmIP)
 {
-  // liest die Hilfedatei fï¿½r den MotionSensor ein
+  // liest die Hilfedatei für den MotionSensor ein
 //  var language = $F('language') ;
   var language = getLang(),
    font_bold = "\"font-style:normal; font-weight:bold\"",
@@ -52463,7 +52463,7 @@ MD_getHelp = function(min, max, brightness, activeBright, ready, isHmIP)
    fileName0 = (isHmIP) ? 'MOTION_DETECTOR_HMIP_0.txt' : 'MOTION_DETECTOR_0.txt',
    fileName1 = (isHmIP) ? 'MOTION_DETECTOR_HMIP_1.txt' : 'MOTION_DETECTOR_1.txt';
 
-  //Je nachdem, ob die aktuelle Helligkeit zur Verfï¿½gung steht, oder nicht, werden verschiedene Hilfstexte generiert.
+  //Je nachdem, ob die aktuelle Helligkeit zur Verfügung steht, oder nicht, werden verschiedene Hilfstexte generiert.
   if (brightness != -1) {
     var path = '/config/easymodes/etc/localization/' + language + '/' + fileName1;
   } else {
@@ -52488,7 +52488,7 @@ MD_getHelp = function(min, max, brightness, activeBright, ready, isHmIP)
 
 MD_link_help = function()
 {
-  // Hilfetext fï¿½r die Art der Verweildauer des Motion-Detectors
+  // Hilfetext für die Art der Verweildauer des Motion-Detectors
   var help_txt = MD_getHelp();
   
   MessageBox.show(help_txt[0]['title_kind_of'], help_txt[0]['help_kind_of'] ,"" ,450 , 260);
@@ -52496,7 +52496,7 @@ MD_link_help = function()
 
 MD_catchBright_help = function(min, max, brightness, activeBright, ready, condition, sensorAddress) {
   var isHmIP = (sensorAddress.split(":")[0].length > 10) ? true : false;
-  //Hilfetext fï¿½r die Helligkeitsschwelle des Motion-Detectors
+  //Hilfetext für die Helligkeitsschwelle des Motion-Detectors
   var help_txt = MD_getHelp(min, max, brightness, activeBright, ready, isHmIP);
 
   if (condition == "LT_LO") {
@@ -53007,10 +53007,10 @@ add_HMW_onchange_ = function(ch_type)
 
 HMW_setIOType = function(elem)
 {
-  // Zeigt die einstellbaren Parameter des Kanals entsprechend der gewï¿½hlten Einstellung an.
+  // Zeigt die einstellbaren Parameter des Kanals entsprechend der gewählten Einstellung an.
   // Es wird zwischen Schalter und Taster unterschieden.
   
-  // gewï¿½hlte Einstellung
+  // gewählte Einstellung
   var sel = elem.selectedIndex;
   
   // Schalter (0)  oder Taster (1)
@@ -53037,11 +53037,11 @@ HMW_setIOType = function(elem)
 
 HMW_setBehaviour = function(id)
 {
-  // Zeigt die einstellbaren Parameter des Kanals entsprechend der gewï¿½hlten Einstellung an.
+  // Zeigt die einstellbaren Parameter des Kanals entsprechend der gewählten Einstellung an.
   // Es wird zwischen Ein-  und Ausgang unterschieden.
 
   // wird von tcl erledigt, da bei Ein- u. Ausgang verschiedene Parameter verwendet werden,
-  // muï¿½ die ï¿½nderung zuerst an den Aktor gesendet werden.
+  // muß die Änderung zuerst an den Aktor gesendet werden.
 };
 
 HMW_WebUIsetChannel = function(id, ch_type)
@@ -53193,7 +53193,7 @@ RF_existsLink = function(deviceType, ch, ch_type, internalLinkOnly) {
 
 HMW_existsLink = function(channel, ch_type)
 {
-  //var hint = document.createTextNode("Es besteht mindestens eine Verknï¿½pfung. Daher sind einige Funktionen gesperrt.");
+  //var hint = document.createTextNode("Es besteht mindestens eine Verknüpfung. Daher sind einige Funktionen gesperrt.");
   var hint = document.createTextNode(translateKey("hintLinkExists"));
   var new_tr = document.createElement("tr");
   var new_td = document.createElement("td");
@@ -53290,7 +53290,7 @@ VirtualChannel_help = function(ch, lc)
 WDS_DisableOnTime = function(selectelem)
 {
   // Schaltet beim WATERDETECTIONSENSOR die Einschaltdauer
-  // im Profil ï¿½nderungsignal / Subset Aus bei ....
+  // im Profil Änderungsignal / Subset Aus bei ....
   // unsichtbar
 
     if (selectelem.selectedIndex >= 5)
@@ -53683,11 +53683,11 @@ rfd_test = function() {
   homematic('Interface.isPresent', {"interface": "BidCos-RF"}, function(result, error) {
   if (result === true)
   {
-    alert("rfd lï¿½uft");
+    alert("rfd läuft");
   }
   else
   {
-    alert(Object.toJSON(error) + "  Achtung: rfd lï¿½uft nicht!");
+    alert(Object.toJSON(error) + "  Achtung: rfd läuft nicht!");
   }
   });
 };
@@ -54200,7 +54200,7 @@ setLanguage = function(lang)
 {
   //Funktion wird zur Zeit nicht genutzt
 
-  //Sprache dokumentenï¿½bergreifend speichern 
+  //Sprache dokumentenübergreifend speichern 
   $('language').value = lang; 
   //  language 0 = de , 1 = en
 };
@@ -54366,7 +54366,7 @@ translate = function(id, group)
     if (isNaN(isUser)) {   // wenn kein Userprofil
       $('param_' + id).id = group + '_param_' + id;
       $('profile_' + id).id = group + '_profile_' + id;
-      // hier werden die Platzhalter der EasyModes durch die ï¿½bersetzten Texte ersetzt.   
+      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.   
       $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
     } else translate_usrprofile(id, group);
   }
@@ -54374,7 +54374,7 @@ translate = function(id, group)
 
 translate_usrprofile = function(userid, group)
 {
-  // wenn es sich um ein Userprofil handelt, mï¿½ssen die IDs angepasst werden.
+  // wenn es sich um ein Userprofil handelt, müssen die IDs angepasst werden.
   // ansonsten kann nicht korrekt uebersetzt werden
 
   var loop ;
@@ -54390,7 +54390,7 @@ translate_usrprofile = function(userid, group)
       span[loop].nextSibling.id = group + "_param_" + userid;
       txtarea[0].id = group + "_profile_" + userid;
       
-      // hier werden die Platzhalter durch die ï¿½bersetzten Texte ersetzt.   
+      // hier werden die Platzhalter durch die übersetzten Texte ersetzt.   
     //  $('param_' + userid).innerHTML = TrimPath.processDOMTemplate('profile_' + userid, localized[0]);
       $(group + '_param_' + userid).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + userid, localized[0]);
       break;
@@ -54734,7 +54734,7 @@ configRefresher.prototype =
   }
 };
 
-// nur fï¿½r das Konfigtool implementiert, Code aus der Datei /www/configapp/js/function.js der Version 1.4
+// nur für das Konfigtool implementiert, Code aus der Datei /www/configapp/js/function.js der Version 1.4
 //ID_BIDCOS_INTERFACE = 1024;
 
 changeBidcosIface = function(chnId, ctrlId) {
@@ -54760,3 +54760,4 @@ setServiceMessage = function() {
                                        
   return service_count;
 };
+
