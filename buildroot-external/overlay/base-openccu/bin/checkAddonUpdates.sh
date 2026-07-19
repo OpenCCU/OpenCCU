@@ -17,7 +17,8 @@ is_valid_webversion() {
   [[ -z "${webversion}" ]] && return 1
   [[ "${webversion}" == "n/a" ]] && return 0
 
-  echo "${webversion}" | grep -Eiq '(not found|error|<html|<!doctype|^404($|[^0-9]))' && return 1
+  echo "${webversion}" | grep -Eiq '^(error|not[[:space:]]+found|404($|[[:space:]])|curl:)' && return 1
+  echo "${webversion}" | grep -Eiq '<(!doctype|html)' && return 1
   echo "${webversion}" | grep -Eq '^[0-9a-z][0-9a-z._:+~/-]*$' || return 1
 
   return 0
