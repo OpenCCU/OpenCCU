@@ -24,6 +24,22 @@ is_valid_webversion() {
   return 0
 }
 
+normalize_webversion() {
+  local rawresult="$1"
+  local singleline=""
+  local linecount=0
+
+  singleline=$(printf '%s' "${rawresult}" | tr -d '\r')
+  linecount=$(printf '%s' "${singleline}" | awk 'END { print NR }')
+  [[ ${linecount} -gt 1 ]] && return 1
+
+  singleline=$(printf '%s' "${singleline}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr '[:upper:]' '[:lower:]')
+  echo "${singleline}" | grep -Eq '[[:space:]]' && return 1
+
+  printf '%s' "${singleline}"
+  return 0
+}
+
 if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
   tmpjsonfile=$(mktemp "${jsonfile}.XXXXXX") || exit 1
   echo "[" > "${tmpjsonfile}"
@@ -39,7 +55,10 @@ if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
           logger -t "${logtag}" "Skipping update check result for ${DNAME}: failed to fetch ${DUPDATESCRIPT}"
           continue
         fi
-        WEBRESULT=$(echo "${RAWWEBRESULT}" | tr -d '\r\n' | xargs | tr '[:upper:]' '[:lower:]')
+        if ! WEBRESULT=$(normalize_webversion "${RAWWEBRESULT}"); then
+          logger -t "${logtag}" "Skipping invalid update check result for ${DNAME}: malformed response (${DUPDATESCRIPT})"
+          continue
+        fi
 
         if ! is_valid_webversion "${WEBRESULT}"; then
           logger -t "${logtag}" "Skipping invalid update check result for ${DNAME}: '${WEBRESULT}' (${DUPDATESCRIPT})"
