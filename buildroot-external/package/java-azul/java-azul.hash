@@ -3,5 +3,5 @@ sha256  d83d865ecf5cdbc8fe11c279a7f00876027f0f1eb8b521c76075480496db4ffb  DISCLA
 sha256  4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726  legal/java.base/LICENSE
 sha256  a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916  legal/java.base/ADDITIONAL_LICENSE_INFO
 sha256  75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33  legal/java.base/ASSEMBLY_EXCEPTION
-sha256  a080f14957bf0f2951cc6e3fb7b3cbfc3c0a324b8ef7e23c714ef58ef0d76cbd  zulu21.50.19-ca-jre21.0.11-linux_x64.tar.gz
-sha256  649464c11d6e8256f0ef6740c84c3401056f6d584efc7c439abeca87a201a9ab  zulu21.50.19-ca-jre21.0.11-linux_aarch64.tar.gz
+sha256  8e0374ffe9ff662c2f6b1872d6b48ab3859f69de11afe583af363264d24b299f  zulu21.52.15-ca-jre21.0.12-linux_x64.tar.gz
+sha256  8301c06f6e020d09fd30068160adc12d33728c11c03d9ace3a1087be8e84f6e2  zulu21.52.15-ca-jre21.0.12-linux_aarch64.tar.gz
