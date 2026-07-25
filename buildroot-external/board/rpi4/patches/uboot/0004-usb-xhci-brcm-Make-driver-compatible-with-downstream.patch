@@ -1,0 +1,33 @@
+From cca49e815fbdcbb436f238d362b5f145471153dc Mon Sep 17 00:00:00 2001
+Message-Id: <cca49e815fbdcbb436f238d362b5f145471153dc.1682350496.git.stefan@agner.ch>
+In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 7 Oct 2021 12:02:39 +0200
+Subject: [PATCH] usb: xhci-brcm: Make driver compatible with downstream device
+ tree
+
+The downstream device tree uses just "generic-xhci" as compatible
+string. Use this string to make U-Boot work with the downstream Kernel.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/usb/host/xhci-brcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-brcm.c b/drivers/usb/host/xhci-brcm.c
+index fe17924028..0c6938187b 100644
+--- a/drivers/usb/host/xhci-brcm.c
++++ b/drivers/usb/host/xhci-brcm.c
+@@ -82,7 +82,7 @@ static int xhci_brcm_deregister(struct udevice *dev)
+ }
+ 
+ static const struct udevice_id xhci_brcm_ids[] = {
+-	{ .compatible = "brcm,generic-xhci" },
++	{ .compatible = "generic-xhci" },
+ 	{ }
+ };
+ 
+-- 
+2.40.0
+
