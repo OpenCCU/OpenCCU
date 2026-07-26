@@ -211,14 +211,18 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
   # If IPv6 is available, the same protection must be verifiable there as
   # well. Evaluate it independently from IPv4 so a failure clearly identifies
   # the affected protocol family.
-  if [[ -e /proc/net/if_inet6 ]] && [[ -x /usr/sbin/ip6tables ]]; then
+  if [[ -e /proc/net/if_inet6 ]]; then
     gate_state6="unknown"
-    if fw_input6=$(/usr/sbin/ip6tables -S INPUT 2>/dev/null); then
-      progress "check 2/3: IPv6 INPUT rules readable"
-      if hasLocalGateRules "${fw_input6}" "IPv6"; then
-        gate_state6="active"
+    if [[ -x /usr/sbin/ip6tables ]]; then
+      if fw_input6=$(/usr/sbin/ip6tables -S INPUT 2>/dev/null); then
+        progress "check 2/3: IPv6 INPUT rules readable"
+        if hasLocalGateRules "${fw_input6}" "IPv6"; then
+          gate_state6="active"
+        else
+          gate_state6="inactive"
+        fi
       else
-        gate_state6="inactive"
+        progress "check 2/3: IPv6 INPUT rules are not readable"
       fi
     else
       progress "check 2/3: IPv6 INPUT rules are not readable"
