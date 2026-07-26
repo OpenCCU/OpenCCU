@@ -1,7 +1,7 @@
 #!/bin/sh
 # shellcheck shell=dash disable=SC2169,SC3010,SC3001
 #
-# Port Forwarding check script v2.0
+# Port Forwarding check script v2.1
 # Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -87,20 +87,31 @@ checkCCU() {
   return 1
 }
 
-# hasLocalGateRules <iptables -S INPUT output>
+# hasLocalGateRules <iptables -S INPUT output> <address family>
 # Returns 0 if INPUT contains the expected WebUI protection rules
 # (--dport 80/443 -> local-only) and no conflicting explicit SSH open rule.
 hasLocalGateRules() {
   _rules="${1}"
+  _family="${2}"
 
   # WebUI ports must explicitly go through the local-only gate.
-  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( |$)( .*)?-j local-only( |$)' || return 1
-  echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( |$)( .*)?-j local-only( |$)' || return 1
+  if ! echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 80( .*)?-j local-only( |$)'; then
+    progress "check 2/3: ${_family} local-only rule for TCP/80 is missing"
+    return 1
+  fi
+
+  if ! echo "${_rules}" | /bin/grep -Eq -- '^-A INPUT( .*)?-p tcp( .*)?--dport 443( .*)?-j local-only( |$)'; then
+    progress "check 2/3: ${_family} local-only rule for TCP/443 is missing"
+    return 1
+  fi
 
   # SSH is optional; if it is explicitly opened, it must not bypass the gate.
   _ssh_rules=$(echo "${_rules}" | /bin/grep -E -- '^-A INPUT( .*)?-p tcp( .*)?--dport 22( |$)')
   if [[ -n "${_ssh_rules}" ]]; then
-    echo "${_ssh_rules}" | /bin/grep -Eq -- '-j (local-only|DROP)( |$)' || return 1
+    if echo "${_ssh_rules}" | /bin/grep -Evq -- '-j (local-only|DROP)( |$)'; then
+      progress "check 2/3: ${_family} SSH rule bypasses the local-only gate"
+      return 1
+    fi
   fi
 
   return 0
@@ -177,30 +188,61 @@ fi
 if [[ ! -e "${OVERRIDE_FILE}" ]]; then
   progress "check 2/3: verifying local-only firewall gate state"
 
-  # gate_state: active   = expected protected INPUT rules are present
-  #             inactive = INPUT could be queried but expected protection is missing
-  #             unknown  = iptables could not be queried (e.g. inside an
-  #                        unprivileged container) - not verifiable
-  gate_state="unknown"
+  # gate_state4/gate_state6:
+  #   active         = expected protected INPUT rules are present
+  #   inactive       = INPUT could be queried but expected protection is missing
+  #   unknown        = firewall rules could not be queried
+  #   not-applicable = the corresponding protocol family is unavailable
+  gate_state4="unknown"
+  gate_state6="not-applicable"
+
   if [[ -x /usr/sbin/iptables ]] && fw_input=$(/usr/sbin/iptables -S INPUT 2>/dev/null); then
     progress "check 2/3: IPv4 INPUT rules readable"
-    if hasLocalGateRules "${fw_input}"; then
-      gate_state="active"
+    if hasLocalGateRules "${fw_input}" "IPv4"; then
+      gate_state4="active"
     else
-      gate_state="inactive"
+      gate_state4="inactive"
     fi
-
-    # if IPv6 is available the same protection must be verifiable there as well
-    if [[ "${gate_state}" == "active" ]] && [[ -e /proc/net/if_inet6 ]] && [[ -x /usr/sbin/ip6tables ]]; then
-      if fw_input6=$(/usr/sbin/ip6tables -S INPUT 2>/dev/null); then
-        progress "check 2/3: IPv6 INPUT rules readable"
-        hasLocalGateRules "${fw_input6}" || gate_state="inactive"
-      else
-        gate_state="unknown"
-      fi
-    fi
+  else
+    progress "check 2/3: IPv4 INPUT rules are not readable"
   fi
-  progress "check 2/3: gate_state=${gate_state}"
+  progress "check 2/3: IPv4 gate_state=${gate_state4}"
+
+  # If IPv6 is available, the same protection must be verifiable there as
+  # well. Evaluate it independently from IPv4 so a failure clearly identifies
+  # the affected protocol family.
+  if [[ -e /proc/net/if_inet6 ]] && [[ -x /usr/sbin/ip6tables ]]; then
+    gate_state6="unknown"
+    if fw_input6=$(/usr/sbin/ip6tables -S INPUT 2>/dev/null); then
+      progress "check 2/3: IPv6 INPUT rules readable"
+      if hasLocalGateRules "${fw_input6}" "IPv6"; then
+        gate_state6="active"
+      else
+        gate_state6="inactive"
+      fi
+    else
+      progress "check 2/3: IPv6 INPUT rules are not readable"
+    fi
+  else
+    progress "check 2/3: IPv6 firewall check is not applicable"
+  fi
+  progress "check 2/3: IPv6 gate_state=${gate_state6}"
+
+  # Derive the overall firewall state. Any confirmed missing protection is
+  # considered inactive. The state is active only if IPv4 is protected and
+  # IPv6 is either protected or not available.
+  if [[ "${gate_state4}" == "inactive" ]] ||
+     [[ "${gate_state6}" == "inactive" ]]; then
+    gate_state="inactive"
+  elif [[ "${gate_state4}" == "active" ]] &&
+       { [[ "${gate_state6}" == "active" ]] ||
+         [[ "${gate_state6}" == "not-applicable" ]]; }; then
+    gate_state="active"
+  else
+    gate_state="unknown"
+  fi
+
+  progress "check 2/3: overall gate_state=${gate_state}"
 
   if [[ "${gate_state}" == "inactive" ]]; then
     if [[ ! -e "${AUTH_FILE}" ]]; then
@@ -208,11 +250,14 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
       log err "${MSG}"
       /bin/triggerAlarm.tcl "${MSG}" "WatchDog: security-portforward" true
       RESULT=1
+      progress "check 2/3: CRITICAL finding (firewall gate inactive and authentication disabled)"
     else
       log warning "firewall protection (local-only gate chain) is not active - WebUI/services are currently protected by authentication only"
+      progress "check 2/3: firewall gate inactive but authentication enabled"
     fi
   elif [[ "${gate_state}" == "unknown" ]]; then
     log notice "could not verify firewall protection state (iptables not usable)"
+    progress "check 2/3: firewall gate state could not be verified"
   fi
 else
   progress "check 2/3: skipped because external access override is enabled"
