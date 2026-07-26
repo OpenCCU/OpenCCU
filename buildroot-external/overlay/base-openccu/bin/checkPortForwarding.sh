@@ -108,7 +108,7 @@ hasLocalGateRules() {
   # SSH is optional; if it is explicitly opened, it must not bypass the gate.
   _ssh_rules=$(echo "${_rules}" | /bin/grep -E -- '^-A INPUT( .*)?-p tcp( .*)?--dport 22( |$)')
   if [[ -n "${_ssh_rules}" ]]; then
-    if echo "${_ssh_rules}" | /bin/grep -Evq -- '-j (local-only|DROP)( |$)'; then
+    if echo "${_ssh_rules}" | /bin/grep -Evq -- '-j (local-only|DROP|REJECT)( |$)'; then
       progress "check 2/3: ${_family} SSH rule bypasses the local-only gate"
       return 1
     fi
@@ -245,8 +245,13 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
   progress "check 2/3: overall gate_state=${gate_state}"
 
   if [[ "${gate_state}" == "inactive" ]]; then
+    _failed_families=""
+    [[ "${gate_state4}" == "inactive" ]] && _failed_families="IPv4"
+    if [[ "${gate_state6}" == "inactive" ]]; then
+      _failed_families="${_failed_families:+${_failed_families}, }IPv6"
+    fi
     if [[ ! -e "${AUTH_FILE}" ]]; then
-      MSG="CRITICAL SECURITY ISSUE: the firewall protection that restricts the WebUI to local networks is not active and WebUI authentication is disabled. The WebUI may be reachable from the internet without a password. Check the firewall configuration immediately."
+      MSG="CRITICAL SECURITY ISSUE: the firewall protection that restricts the WebUI to local networks is not active for ${_failed_families} and WebUI authentication is disabled. The WebUI may be reachable from the internet without a password. Check the firewall configuration immediately."
       log err "${MSG}"
       /bin/triggerAlarm.tcl "${MSG}" "WatchDog: security-portforward" true
       RESULT=1
