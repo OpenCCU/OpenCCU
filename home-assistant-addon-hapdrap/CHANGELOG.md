@@ -11,6 +11,10 @@
 
 # ChangeLog
 
+## 0.3.1
+- fix OpenCCU container auto-detection to support both legacy `addon_*_<slug>` and newer Supervisor `app_*_<slug>` naming schemes.
+- update helper documentation to clarify supported Home Assistant Supervisor container naming variants.
+
 ## 0.3.0
 - add optional `openccu_mac` configuration for pinning the OpenCCU macvlan MAC address.
 - improve automatic MAC handling by incrementing only the parent MAC's last octet, ignoring stopped containers, reusing the current OpenCCU MAC on helper restarts, and avoiding reuse of the parent NIC MAC.
