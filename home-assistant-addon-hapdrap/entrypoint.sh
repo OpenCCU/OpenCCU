@@ -276,7 +276,7 @@ resolve_docker_api_base() {
 }
 
 find_openccu_container() {
-  docker ps --format '{{.Names}}' | grep -E "^addon_.*_${OPENCCU_SLUG}$|^addon_${OPENCCU_SLUG}$" | head -n1
+  docker ps --format '{{.Names}}' | grep -E "^(addon|app)(_.*)?_${OPENCCU_SLUG}$" | head -n1
 }
 
 resolve_openccu_ip() {

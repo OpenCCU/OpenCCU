@@ -30,7 +30,7 @@ reliably with HmIP-HAP/HmIPW-DRAP devices via multicast UDP.
 | `openccu_ip` | Yes | Static free LAN IPv4 address used for the OpenCCU app macvlan interface. |
 | `openccu_mac` | No | Static MAC address used for the OpenCCU app macvlan interface. If empty, the helper first reuses the OpenCCU container's existing macvlan MAC when available, otherwise it derives one from the parent interface by incrementing the last octet and trying the next values when needed. |
 | `check_interval` | No | Interval in seconds for periodic network setup checks (`10..3600`). If left empty, the helper uses the default `15`. |
-| `openccu_slug` | No | Slug of the OpenCCU app if different from default naming (default: `openccu`). |
+| `openccu_slug` | No | Slug of the OpenCCU app if different from default naming (default: `openccu`). Container auto-detection supports Supervisor naming variants like `addon_*_<slug>` and `app_*_<slug>`. |
 | `network_name` | No | Name of the macvlan Docker network used for OpenCCU connectivity (default: `ccu`). |
 | `parent_interface` | No | Parent NIC for macvlan (for example `enp0s18`). If empty, auto-detection is used. |
 | `subnet` | No | Subnet for macvlan network. If empty, derived automatically. |
