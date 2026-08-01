@@ -244,7 +244,7 @@ private:
     // these are functions used internally (don't bother about them):
     int ParseClearTag(void *pXML, void *pClear);
     int ParseXMLElement(void *pXML);
-    void addToOrder(int index, int type);
+    bool addToOrder(int index, int type);
     static int CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFormat);
     static void *enumContent(XMLNodeData *pEntry,int i, XMLElementType *nodeType);
     static int nElement(XMLNodeData *pEntry);

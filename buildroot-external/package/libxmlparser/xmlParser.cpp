@@ -65,6 +65,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "xmlParser.h"
 
 //#ifdef WIN32
@@ -170,9 +171,9 @@ LPTSTR toXMLString(LPTSTR dest,LPCTSTR source)
 }
 
 // private:
-int lengthXMLString(LPCTSTR source)
+size_t lengthXMLString(LPCTSTR source)
 {
-    int r=0;
+    size_t r=0;
     while (*source)
     {
         switch (*source)
@@ -199,11 +200,11 @@ LPTSTR toXMLString(LPCTSTR source)
 
 LPTSTR toXMLStringFast(LPTSTR *dest,int *destSz, LPCTSTR source)
 {
-    int l=lengthXMLString(source)+1;
-    if (l>*destSz) {
-        LPTSTR tmp=(LPTSTR)realloc(*dest,(size_t)l*sizeof(TCHAR));
+    size_t l=lengthXMLString(source)+1;
+    if (l>(size_t)*destSz) {
+        LPTSTR tmp=(LPTSTR)realloc(*dest,l*sizeof(TCHAR));
         if (!tmp) return NULL;
-        *destSz=l; *dest=tmp;
+        *destSz=(int)l; *dest=tmp;
     }
     return toXMLString(*dest,source);
 }
@@ -637,13 +638,14 @@ static void *myRealloc(void *p, int newsize, int memInc, int sizeofElem)
     return p;
 }
 
-void XMLNode::addToOrder(int index, int type)
+bool XMLNode::addToOrder(int index, int type)
 {
     int n=nElement();
     int *q=(int*)myRealloc(d->pOrder,n+1,memoryIncrease*3,sizeof(int));
-    if (!q) return;
+    if (!q) return false;
     d->pOrder=q;
     d->pOrder[n]=(index<<2)+type;
+    return true;
 }
 
 // Add a child node to the given element.
@@ -656,7 +658,12 @@ XMLNode XMLNode::addChild(LPCTSTR lpszName, int isDeclaration)
     d->pChild=qc;
     d->pChild[nc].d=NULL;
     d->pChild[nc]=XMLNode(d,lpszName,isDeclaration);
-    addToOrder(nc,eNodeChild);
+    if (!d->pChild[nc].d) return emptyXMLNode;
+    if (!addToOrder(nc,eNodeChild)) {
+        destroyCurrentBuffer(d->pChild[nc].d);
+        d->pChild[nc].d=NULL;
+        return emptyXMLNode;
+    }
     d->nChild++;
     return d->pChild[nc];
 }
@@ -682,7 +689,7 @@ XMLAttribute *XMLNode::addAttribute(LPCTSTR lpszName, LPCTSTR lpszValuev)
     XMLAttribute *pAttr=d->pAttribute+na;
     pAttr->lpszName = lpszName;
     pAttr->lpszValue = lpszValuev;
-    addToOrder(na,eNodeAttribute);
+    if (!addToOrder(na,eNodeAttribute)) return &emptyXMLAttribute;
     d->nAttribute++;
     return pAttr;
 }
@@ -707,7 +714,7 @@ LPCTSTR XMLNode::addText(LPCTSTR lpszValue)
     if (!qt) return NULL;
     d->pText=qt;
     d->pText[nt]=lpszValue;
-    addToOrder(nt,eNodeText);
+    if (!addToOrder(nt,eNodeText)) return NULL;
     d->nText++;
     return d->pText[nt];
 }
@@ -733,7 +740,7 @@ XMLClear *XMLNode::addClear(LPCTSTR lpszValue, LPCTSTR lpszOpen, LPCTSTR lpszClo
     pNewClear->lpszValue = lpszValue;
     pNewClear->lpszOpenTag = lpszOpen;
     pNewClear->lpszCloseTag = lpszClose;
-    addToOrder(nc,eNodeClear);
+    if (!addToOrder(nc,eNodeClear)) return &emptyXMLClear;
     d->nClear++;
     return pNewClear;
 }
@@ -1768,6 +1775,7 @@ LPTSTR XMLNode::createXMLString(int nFormat, int *pnSize)
     assert(cbStr);
     // Alllocate memory for the XML string + the NULL terminator and
     // create the recursively XML string.
+    if (cbStr <= 0) { if (pnSize) *pnSize=0; return NULL; }
     if ((size_t)cbStr > SIZE_MAX/sizeof(TCHAR)-1) { if (pnSize) *pnSize=0; return NULL; }
     lpszResult=(LPTSTR)malloc(((size_t)cbStr+1)*sizeof(TCHAR));
     if (!lpszResult) { if (pnSize) *pnSize=0; return NULL; }
