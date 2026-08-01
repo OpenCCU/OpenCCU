@@ -201,7 +201,7 @@ LPTSTR toXMLString(LPCTSTR source)
 LPTSTR toXMLStringFast(LPTSTR *dest,int *destSz, LPCTSTR source)
 {
     size_t l=lengthXMLString(source)+1;
-    if (l>(size_t)*destSz) {
+    if (*destSz < 0 || l>(size_t)*destSz) {
         LPTSTR tmp=(LPTSTR)realloc(*dest,l*sizeof(TCHAR));
         if (!tmp) return NULL;
         *destSz=(int)l; *dest=tmp;
@@ -660,7 +660,6 @@ XMLNode XMLNode::addChild(LPCTSTR lpszName, int isDeclaration)
     d->pChild[nc]=XMLNode(d,lpszName,isDeclaration);
     if (!d->pChild[nc].d) return emptyXMLNode;
     if (!addToOrder(nc,eNodeChild)) {
-        destroyCurrentBuffer(d->pChild[nc].d);
         d->pChild[nc].d=NULL;
         return emptyXMLNode;
     }
@@ -1780,6 +1779,7 @@ LPTSTR XMLNode::createXMLString(int nFormat, int *pnSize)
     lpszResult=(LPTSTR)malloc(((size_t)cbStr+1)*sizeof(TCHAR));
     if (!lpszResult) { if (pnSize) *pnSize=0; return NULL; }
     CreateXMLStringR(d, lpszResult, nFormat);
+    lpszResult[cbStr] = 0;
     if (pnSize) *pnSize = cbStr;
     return lpszResult;
 }
