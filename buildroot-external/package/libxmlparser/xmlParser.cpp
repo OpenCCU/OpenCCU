@@ -65,6 +65,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "xmlParser.h"
 
 //#ifdef WIN32
@@ -156,11 +157,11 @@ LPTSTR toXMLString(LPTSTR dest,LPCTSTR source)
     {
         switch (*source)
         {
-        case '<' : _tcscpy(dest,_T("&lt;"  )); dest+=4; break;
-        case '>' : _tcscpy(dest,_T("&gt;"  )); dest+=4; break;
-        case '&' : _tcscpy(dest,_T("&amp;" )); dest+=5; break;
-        case '\'': _tcscpy(dest,_T("&apos;")); dest+=6; break;
-        case '"' : _tcscpy(dest,_T("&quot;")); dest+=6; break;
+        case '<' : memcpy(dest,_T("&lt;"),   4*sizeof(TCHAR)); dest+=4; break;
+        case '>' : memcpy(dest,_T("&gt;"),   4*sizeof(TCHAR)); dest+=4; break;
+        case '&' : memcpy(dest,_T("&amp;"),  5*sizeof(TCHAR)); dest+=5; break;
+        case '\'': memcpy(dest,_T("&apos;"), 6*sizeof(TCHAR)); dest+=6; break;
+        case '"' : memcpy(dest,_T("&quot;"), 6*sizeof(TCHAR)); dest+=6; break;
         default:  *dest=*source; dest++; break;
         }
         source++;
@@ -170,9 +171,9 @@ LPTSTR toXMLString(LPTSTR dest,LPCTSTR source)
 }
 
 // private:
-int lengthXMLString(LPCTSTR source)
+size_t lengthXMLString(LPCTSTR source)
 {
-    int r=0;
+    size_t r=0;
     while (*source)
     {
         switch (*source)
@@ -190,14 +191,21 @@ int lengthXMLString(LPCTSTR source)
 
 LPTSTR toXMLString(LPCTSTR source)
 {
-    LPTSTR dest=(LPTSTR)malloc((lengthXMLString(source)+1)*sizeof(TCHAR));
+    size_t len=(size_t)lengthXMLString(source);
+    if (len>SIZE_MAX/sizeof(TCHAR)-1) return NULL;
+    LPTSTR dest=(LPTSTR)malloc((len+1)*sizeof(TCHAR));
+    if (!dest) return NULL;
     return toXMLString(dest,source);
 }
 
 LPTSTR toXMLStringFast(LPTSTR *dest,int *destSz, LPCTSTR source)
 {
-    int l=lengthXMLString(source)+1;
-    if (l>*destSz) { *destSz=l; *dest=(LPTSTR)realloc(*dest,l*sizeof(TCHAR)); }
+    size_t l=lengthXMLString(source)+1;
+    if (*destSz < 0 || l>(size_t)*destSz) {
+        LPTSTR tmp=(LPTSTR)realloc(*dest,l*sizeof(TCHAR));
+        if (!tmp) return NULL;
+        *destSz=(int)l; *dest=tmp;
+    }
     return toXMLString(*dest,source);
 }
 
@@ -232,7 +240,9 @@ LPTSTR fromXMLString(LPCTSTR s, int lo)
 		ll++;
     }
 
-    d=(LPTSTR)malloc((ll+1)*sizeof(TCHAR));
+    if ((size_t)ll>SIZE_MAX/sizeof(TCHAR)-1) return NULL;
+    d=(LPTSTR)malloc(((size_t)ll+1)*sizeof(TCHAR));
+    if (!d) return NULL;
     s=d;
     while (ll--)
     {
@@ -595,6 +605,7 @@ void XMLNode::setNameConst(LPCTSTR lpszName)
 XMLNode::XMLNode(XMLNodeData *pParent, LPCTSTR lpszName, int isDeclaration)
 {
     d=(XMLNodeData*)malloc(sizeof(XMLNodeData));
+    if (!d) return;
     d->ref_count=1;
 
 	d->lpszName=NULL;
@@ -619,20 +630,22 @@ const int memoryIncrease=50;
 
 static void *myRealloc(void *p, int newsize, int memInc, int sizeofElem)
 {
-    if (p==NULL) { return malloc(memInc*sizeofElem); }
-    if ((newsize%memInc)==0) p=realloc(p,(newsize+memInc)*sizeofElem);
-//    if (!p)
-//    {
-//        printf("XMLParser Error: Not enough memory! Aborting...\n"); exit(220);
-//    }
+    if (p==NULL) return malloc(memInc*sizeofElem);
+    if ((newsize%memInc)==0) {
+        void *q=realloc(p,(newsize+memInc)*sizeofElem);
+        return q;
+    }
     return p;
 }
 
-void XMLNode::addToOrder(int index, int type)
+bool XMLNode::addToOrder(int index, int type)
 {
     int n=nElement();
-    d->pOrder=(int*)myRealloc(d->pOrder,n+1,memoryIncrease*3,sizeof(int));
+    int *q=(int*)myRealloc(d->pOrder,n+1,memoryIncrease*3,sizeof(int));
+    if (!q) return false;
+    d->pOrder=q;
     d->pOrder[n]=(index<<2)+type;
+    return true;
 }
 
 // Add a child node to the given element.
@@ -640,10 +653,16 @@ XMLNode XMLNode::addChild(LPCTSTR lpszName, int isDeclaration)
 {
     if (!lpszName) return emptyXMLNode;
     int nc=d->nChild;
-    d->pChild=(XMLNode*)myRealloc(d->pChild,(nc+1),memoryIncrease,sizeof(XMLNode));
+    XMLNode *qc=(XMLNode*)myRealloc(d->pChild,(nc+1),memoryIncrease,sizeof(XMLNode));
+    if (!qc) return emptyXMLNode;
+    d->pChild=qc;
     d->pChild[nc].d=NULL;
     d->pChild[nc]=XMLNode(d,lpszName,isDeclaration);
-    addToOrder(nc,eNodeChild);
+    if (!d->pChild[nc].d) return emptyXMLNode;
+    if (!addToOrder(nc,eNodeChild)) {
+        d->pChild[nc].d=NULL;
+        return emptyXMLNode;
+    }
     d->nChild++;
     return d->pChild[nc];
 }
@@ -663,11 +682,13 @@ XMLAttribute *XMLNode::addAttribute(LPCTSTR lpszName, LPCTSTR lpszValuev)
 {
     if (!lpszName) return &emptyXMLAttribute;
     int na=d->nAttribute;
-    d->pAttribute=(XMLAttribute*)myRealloc(d->pAttribute,(na+1),memoryIncrease,sizeof(XMLAttribute));
+    XMLAttribute *qa=(XMLAttribute*)myRealloc(d->pAttribute,(na+1),memoryIncrease,sizeof(XMLAttribute));
+    if (!qa) return &emptyXMLAttribute;
+    d->pAttribute=qa;
     XMLAttribute *pAttr=d->pAttribute+na;
     pAttr->lpszName = lpszName;
     pAttr->lpszValue = lpszValuev;
-    addToOrder(na,eNodeAttribute);
+    if (!addToOrder(na,eNodeAttribute)) return &emptyXMLAttribute;
     d->nAttribute++;
     return pAttr;
 }
@@ -688,9 +709,11 @@ LPCTSTR XMLNode::addText(LPCTSTR lpszValue)
 {
     if (!lpszValue) return NULL;
     int nt=d->nText;
-    d->pText=(LPCTSTR*)myRealloc(d->pText,(nt+1),memoryIncrease,sizeof(LPTSTR));
+    LPCTSTR *qt=(LPCTSTR*)myRealloc(d->pText,(nt+1),memoryIncrease,sizeof(LPTSTR));
+    if (!qt) return NULL;
+    d->pText=qt;
     d->pText[nt]=lpszValue;
-    addToOrder(nt,eNodeText);
+    if (!addToOrder(nt,eNodeText)) return NULL;
     d->nText++;
     return d->pText[nt];
 }
@@ -709,12 +732,14 @@ XMLClear *XMLNode::addClear(LPCTSTR lpszValue, LPCTSTR lpszOpen, LPCTSTR lpszClo
 {
     if (!lpszValue) return &emptyXMLClear;
     int nc=d->nClear;
-    d->pClear=(XMLClear *)myRealloc(d->pClear,(nc+1),memoryIncrease,sizeof(XMLClear));
+    XMLClear *qcl=(XMLClear*)myRealloc(d->pClear,(nc+1),memoryIncrease,sizeof(XMLClear));
+    if (!qcl) return &emptyXMLClear;
+    d->pClear=qcl;
     XMLClear *pNewClear=d->pClear+nc;
     pNewClear->lpszValue = lpszValue;
     pNewClear->lpszOpenTag = lpszOpen;
     pNewClear->lpszCloseTag = lpszClose;
-    addToOrder(nc,eNodeClear);
+    if (!addToOrder(nc,eNodeClear)) return &emptyXMLClear;
     d->nClear++;
     return pNewClear;
 }
@@ -1498,7 +1523,7 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
             nResult = cb;
             lpszMarker[nResult++]=_T('<');
             if (pEntry->isDeclaration) lpszMarker[nResult++]=_T('?');
-            _tcscpy(&lpszMarker[nResult], pEntry->lpszName);
+            memcpy(&lpszMarker[nResult], pEntry->lpszName, cbElement*sizeof(TCHAR));
             nResult+=cbElement;
             lpszMarker[nResult++]=_T(' ');
 
@@ -1516,7 +1541,7 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
             cb = (int)LENSTR(pAttr->lpszName);
             if (cb)
             {
-                if (lpszMarker) _tcscpy(&lpszMarker[nResult], pAttr->lpszName);
+                if (lpszMarker) memcpy(&lpszMarker[nResult], pAttr->lpszName, cb*sizeof(TCHAR));
                 nResult += cb;
                 // "Attrib=Value "
                 cb = (int)lengthXMLString(pAttr->lpszValue);
@@ -1613,13 +1638,13 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
                     if (lpszMarker)
                     {
                         charmemset(&lpszMarker[nResult], INDENTCHAR, sizeof(TCHAR)*(nFormat + 1));
-                        _tcscpy(&lpszMarker[nResult+nFormat+1], ((XMLClear*)pChild)->lpszOpenTag);
+                        memcpy(&lpszMarker[nResult+nFormat+1], ((XMLClear*)pChild)->lpszOpenTag, cb*sizeof(TCHAR));
                     }
                     nResult+=cb+nFormat+1;
                 }
                 else
                 {
-                    if (lpszMarker)_tcscpy(&lpszMarker[nResult], ((XMLClear*)pChild)->lpszOpenTag);
+                    if (lpszMarker) memcpy(&lpszMarker[nResult], ((XMLClear*)pChild)->lpszOpenTag, cb*sizeof(TCHAR));
                     nResult += cb;
                 }
             }
@@ -1628,7 +1653,7 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
             cb = (int)LENSTR(((XMLClear*)pChild)->lpszValue);
             if (cb)
             {
-                if (lpszMarker) _tcscpy(&lpszMarker[nResult], ((XMLClear*)pChild)->lpszValue);
+                if (lpszMarker) memcpy(&lpszMarker[nResult], ((XMLClear*)pChild)->lpszValue, cb*sizeof(TCHAR));
                 nResult += cb;
             }
 
@@ -1636,7 +1661,7 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
             cb = (int)LENSTR(((XMLClear*)pChild)->lpszCloseTag);
             if (cb)
             {
-                if (lpszMarker) _tcscpy(&lpszMarker[nResult], ((XMLClear*)pChild)->lpszCloseTag);
+                if (lpszMarker) memcpy(&lpszMarker[nResult], ((XMLClear*)pChild)->lpszCloseTag, cb*sizeof(TCHAR));
                 nResult += cb;
             }
 
@@ -1676,18 +1701,18 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
                     }
                 }
 
-                _tcscpy(&lpszMarker[nResult], _T("</"));
+                memcpy(&lpszMarker[nResult], _T("</"), 2*sizeof(TCHAR));
                 nResult += 2;
-                _tcscpy(&lpszMarker[nResult], pEntry->lpszName);
+                memcpy(&lpszMarker[nResult], pEntry->lpszName, cbElement*sizeof(TCHAR));
                 nResult += cbElement;
 
                 if (nFormat == -1)
                 {
-                    _tcscpy(&lpszMarker[nResult], _T(">"));
+                    lpszMarker[nResult] = _T('>');
                     nResult++;
                 } else
                 {
-                    _tcscpy(&lpszMarker[nResult], _T(">\n"));
+                    memcpy(&lpszMarker[nResult], _T(">\n"), 2*sizeof(TCHAR));
                     nResult+=2;
                 }
             } else
@@ -1704,12 +1729,12 @@ int XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nForma
             {
                 if (nFormat == -1)
                 {
-                    _tcscpy(&lpszMarker[nResult], _T("/>"));
+                    memcpy(&lpszMarker[nResult], _T("/>"), 2*sizeof(TCHAR));
                     nResult += 2;
                 }
                 else
                 {
-                    _tcscpy(&lpszMarker[nResult], _T("/>\n"));
+                    memcpy(&lpszMarker[nResult], _T("/>\n"), 3*sizeof(TCHAR));
                     nResult += 3;
                 }
             }
@@ -1749,8 +1774,12 @@ LPTSTR XMLNode::createXMLString(int nFormat, int *pnSize)
     assert(cbStr);
     // Alllocate memory for the XML string + the NULL terminator and
     // create the recursively XML string.
-    lpszResult=(LPTSTR)malloc((cbStr+1)*sizeof(TCHAR));
+    if (cbStr <= 0) { if (pnSize) *pnSize=0; return NULL; }
+    if ((size_t)cbStr > SIZE_MAX/sizeof(TCHAR)-1) { if (pnSize) *pnSize=0; return NULL; }
+    lpszResult=(LPTSTR)malloc(((size_t)cbStr+1)*sizeof(TCHAR));
+    if (!lpszResult) { if (pnSize) *pnSize=0; return NULL; }
     CreateXMLStringR(d, lpszResult, nFormat);
+    lpszResult[cbStr] = 0;
     if (pnSize) *pnSize = cbStr;
     return lpszResult;
 }
