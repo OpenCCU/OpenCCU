@@ -436,6 +436,7 @@ static int bcm2835_raw_uart_close(struct inode *inode, struct file *filep)
   }
 
   kfree( conn );
+  filep->private_data = NULL;
 
   if( down_interruptible(&m_bcm2835_raw_uart_port->sem) )
   {
