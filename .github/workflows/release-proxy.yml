@@ -16,7 +16,7 @@ jobs:
 
       - name: Get information
         id: info
-        uses: home-assistant/actions/helpers/info@ab22029681aa532bfe7de5774a9972d67bfbd2c0  # master
+        uses: home-assistant/actions/helpers/info@a7c616ce81ccda50150bf1595786c71b1883fabb  # master
         with:
           path: "./home-assistant-addon-proxy"
 
