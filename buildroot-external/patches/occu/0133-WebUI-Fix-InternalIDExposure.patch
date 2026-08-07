@@ -1,23 +1,5 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
-@@ -158,7 +158,7 @@
- 
-           if( sVUTmp == "degree" )
-           {
--            sVUTmp = "°";
-+            sVUTmp = "ï¿½";
-           }
-           
-           if( bBinary )
-@@ -186,7 +186,7 @@
-           }
-           if( (!bBinary) && (!bFloat) )
-           {
--            if (((toCH.Label() != "HmIPW-DRAP") && (toCH.Label() != "HmIP-HAP") && (toCH.Label() != "HmIP-HAP-A") && (toCH.Label() != "HmIP-HAP2") && (toCH.Label() != "HmIP-HAP2-A") && (toCH.Label() != "HmIP-HAP-B1") && (toCH.Label() != "HmIP-HAP JS1")) || (sVUTmp == "°C") || (sVUTmp == "V")) { ! SPHM-599
-+            if (((toCH.Label() != "HmIPW-DRAP") && (toCH.Label() != "HmIP-HAP") && (toCH.Label() != "HmIP-HAP-A") && (toCH.Label() != "HmIP-HAP2") && (toCH.Label() != "HmIP-HAP2-A") && (toCH.Label() != "HmIP-HAP-B1") && (toCH.Label() != "HmIP-HAP JS1")) || (sVUTmp == "ï¿½C") || (sVUTmp == "V")) { ! SPHM-599
-               sValue = sValue.ToInteger();
-               sValue = sValue.ToString(0);
-             }
 @@ -396,52 +396,14 @@
    if (bShowChannel == true) {
  
@@ -74,28 +56,6 @@
        }
  
        ! Necessary to be able to learn the codes of keypads and finger print sensors
-@@ -1029,17 +991,15 @@
-   }
- 
-   !HmIP-DLP
--  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
-+  ! Hide all parameters of the channel DOOR_LOCK_TRANSCEIVER except LOCK_TARGET_LEVEL
-   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
--    // TODO - refactoring necessary
--    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
--    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
--    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-+    if ( oDP.HSSID().Find("LOCK_TARGET_LEVEL") == -1 ) {
-+      showChannelParam = false;
-+    }
-   }
- 
-   return;
- }
--
- ! [devFwMajor] [devFwMinor] [devFwPatch]
- function ::getFirmwareVersion() {
-   object channel = dom.GetObject(chnId);
 --- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
 +++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
 @@ -188,6 +188,38 @@

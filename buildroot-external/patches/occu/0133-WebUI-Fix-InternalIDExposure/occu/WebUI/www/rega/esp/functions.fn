@@ -158,7 +158,7 @@ function ::WriteDPText()
 
           if( sVUTmp == "degree" )
           {
-            sVUTmp = "ï¿½";
+            sVUTmp = "°";
           }
           
           if( bBinary )
@@ -186,7 +186,7 @@ function ::WriteDPText()
           }
           if( (!bBinary) && (!bFloat) )
           {
-            if (((toCH.Label() != "HmIPW-DRAP") && (toCH.Label() != "HmIP-HAP") && (toCH.Label() != "HmIP-HAP-A") && (toCH.Label() != "HmIP-HAP2") && (toCH.Label() != "HmIP-HAP2-A") && (toCH.Label() != "HmIP-HAP-B1") && (toCH.Label() != "HmIP-HAP JS1")) || (sVUTmp == "ï¿½C") || (sVUTmp == "V")) { ! SPHM-599
+            if (((toCH.Label() != "HmIPW-DRAP") && (toCH.Label() != "HmIP-HAP") && (toCH.Label() != "HmIP-HAP-A") && (toCH.Label() != "HmIP-HAP2") && (toCH.Label() != "HmIP-HAP2-A") && (toCH.Label() != "HmIP-HAP-B1") && (toCH.Label() != "HmIP-HAP JS1")) || (sVUTmp == "°C") || (sVUTmp == "V")) { ! SPHM-599
               sValue = sValue.ToInteger();
               sValue = sValue.ToString(0);
             }
@@ -991,15 +991,17 @@ function ::destinationIsParameterVisible() {
   }
 
   !HmIP-DLP
-  ! Hide all parameters of the channel DOOR_LOCK_TRANSCEIVER except LOCK_TARGET_LEVEL
+  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
-    if ( oDP.HSSID().Find("LOCK_TARGET_LEVEL") == -1 ) {
-      showChannelParam = false;
-    }
+    // TODO - refactoring necessary
+    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
   }
 
   return;
 }
+
 ! [devFwMajor] [devFwMinor] [devFwPatch]
 function ::getFirmwareVersion() {
   object channel = dom.GetObject(chnId);
