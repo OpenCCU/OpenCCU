@@ -58,7 +58,6 @@ function ::WriteDPText()
           sRet = sRet.Replace("\r\n", "<br/>");
           sRet = sRet.Replace("\r", "<br/>");
           sRet = sRet.Replace("\n", "<br/>");
-          sRet = sRet.Replace("'", "\\'");
         }
         if( to.ValueUnit() != "" )
         {
@@ -403,7 +402,7 @@ function ::showHideHmIPChannel() {
       !   can be MAINTENANCE_BAT_BL, MAINTENANCE_BAT_EL, MAINTENANCE_BAT_CL and so on
       ! For BidCos-RF this isn't necessary
 
-      if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A")  && (oDevHssType != "HmIP-HAP2") && (oDevHssType != "HmIP-HAP2-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD") && (oDevHssType != "HmIP-RFUSB")) {
+      if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A")  && (oDevHssType != "HmIP-HAP2") && (oDevHssType != "HmIP-HAP2-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD")) {
         bShowChannel = false;
       }
 
@@ -992,12 +991,11 @@ function ::destinationIsParameterVisible() {
   }
 
   !HmIP-DLP
-  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
+  ! Hide all parameters of the channel DOOR_LOCK_TRANSCEIVER except LOCK_TARGET_LEVEL
   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
-    // TODO - refactoring necessary
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( oDP.HSSID().Find("LOCK_TARGET_LEVEL") == -1 ) {
+      showChannelParam = false;
+    }
   }
 
   return;

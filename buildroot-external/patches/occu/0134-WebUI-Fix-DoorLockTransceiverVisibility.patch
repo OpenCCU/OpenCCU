@@ -1,6 +1,6 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
-@@ -992,12 +992,11 @@
+@@ -991,12 +991,11 @@
    }
  
    !HmIP-DLP
