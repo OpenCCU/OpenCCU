@@ -1,0 +1,479 @@
+--- occu/WebUI/www/webui/js/lang/loadTextResource.js.orig
++++ occu/WebUI/www/webui/js/lang/loadTextResource.js
+@@ -105,6 +105,13 @@
+ 
+ function loadTextResource() {
+ 
++  // Ensure we only trigger language resource loading once.
++  if (window.__openCCU_langTextDeferred) {
++    return window.__openCCU_langTextDeferred.promise();
++  }
++
++  window.__openCCU_langTextDeferred = jQuery.Deferred();
++
+   var arResource = [
+     "translate.lang.js",
+     "translate.lang.extension.js",
+@@ -121,21 +128,54 @@
+   ];
+   var url = "/webui/js/lang/" + getLang() + "/";
+ 
+-  jQuery.each(arResource, function(index, res){
+-    var request = jQuery.ajax({
+-      url: url + res,
+-      type:  "GET",
+-      async: false,
+-      contentType: "application/x-www-form-urlencoded;charset=ISO-8859-1"
++  /*
++   * Avoid synchronous XHR on the main thread.
++   *
++   * If we are still in the document parsing phase, we can preserve the original
++   * deterministic execution order by writing <script> tags into the parser stream.
++   * However, document.write() must NEVER be used after the document has finished
++   * loading, as it can implicitly call document.open() and wipe the DOM.
++   */
++  if ((document.readyState === "loading") && (typeof document.write === "function")) {
++    jQuery.each(arResource, function(index, res) {
++      document.write('<script type="text/javascript" charset="ISO-8859-1" src="' +
++                     url + res + '"><\/script>');
+     });
+ 
+-    request.done(function(result) {
+-    });
++    // Resolve only after all preceding translation scripts have been parsed/executed.
++    window.__openCCU_langTextResolve = function() {
++      window.__openCCU_langTextDeferred.resolve();
++      delete window.__openCCU_langTextResolve;
++    };
++    document.write('<script type="text/javascript">' +
++                   'window.__openCCU_langTextResolve && window.__openCCU_langTextResolve();' +
++                   '<\/script>');
++    return window.__openCCU_langTextDeferred.promise();
++  }
++
++  // Fallback: load sequentially via dynamic script injection (asynchronous).
++  var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
++  var idx = 0;
++
++  var loadNext = function() {
++    if (idx >= arResource.length) {
++      window.__openCCU_langTextDeferred.resolve();
++      return;
++    }
++
++    var s = document.createElement("script");
++    s.type = "text/javascript";
++    s.charset = "ISO-8859-1";
++    s.src = url + arResource[idx++];
+ 
+-    request.fail(function( jqXHR, textStatus ) {
+-    });
++    s.onload = function() { loadNext(); };
++    s.onerror = function() { loadNext(); };
++
++    head.appendChild(s);
++  };
+ 
+-  });
++  loadNext();
++  return window.__openCCU_langTextDeferred.promise();
+ };
+ 
+-loadTextResource();
+\ No newline at end of file
++loadTextResource();
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -9145,7 +9145,8 @@
+ 
+ 
+       jQuery(".Layer0").hide();
+-      HeaderBar.load();
++
++      var __afterHeaderLoaded = function() {
+ 
+       if (!forceUpdate) {
+         jQuery("#AlarmServiceMsg").show();
+@@ -9284,6 +9285,15 @@
+         }
+       }, 5);
+     }
++
++      };
++
++      try {
++        HeaderBar.load(__afterHeaderLoaded);
++      } catch (e) {
++        __afterHeaderLoaded();
++      }
++
+   },
+   
+   /**
+@@ -25219,23 +25229,39 @@
+ {
+ 
+   // This causes problems with Mac & Safari
+-  this.load_ = function()
++  // NOTE: This function is now asynchronous. If callers depend on the header
++  // being present immediately, they must wait for the callback.
++  this.load_ = function(callback)
+   {
+-    new Ajax.Updater("header", "/ise/htm/header.htm", {
++    var cb = (typeof(callback) === "function") ? callback : null;
++
++    return new Ajax.Updater("header", "/ise/htm/header.htm", {
+       evalScripts: true,
+-      asynchronous: false
++      asynchronous: true,
++      onComplete: function() { if (cb) { cb(); } },
++      onException:function() { if (cb) { cb(); } }
+     });
+   };
+ 
+-  this.load = function() {
+-    jQuery.ajax({
+-    url: "/ise/htm/header.htm",
+-    dataType: "html",
+-    async: false,
+-    context: document.body
+-    }).done(function(response) {
++  this.load = function(callback) {
++    var cb = (typeof(callback) === "function") ? callback : null;
++
++    var request = jQuery.ajax({
++      url: "/ise/htm/header.htm",
++      dataType: "html",
++      context: document.body
++    });
++
++    request.done(function(response) {
+       jQuery("#header").html(response);
++      if (cb) { cb(); }
+     });
++
++    request.fail(function() {
++      if (cb) { cb(); }
++    });
++
++    return request;
+   };
+ 
+ }();/**
+@@ -32798,7 +32824,7 @@
+         if (this.id == -1) {
+           opts = {
+             postBody: ReGa.encode(pb), 
+-            asynchronous: false,
++            asynchronous: true,
+             onComplete: function(resp) {
+               newName = resp.responseText.replace(/[\r\n\t]/g, "");
+               iseRooms.CreateRoomRetId(newName, t.baseId);
+@@ -32816,7 +32842,7 @@
+         if (this.id == -1) {
+           opts = {
+             postBody: ReGa.encode(pb), 
+-            asynchronous: false,
++            asynchronous: true,
+             onComplete: function(resp) {
+               newName = resp.responseText.replace(/[\r\n\t]/g, "");
+               iseFunctions.CreateFunctionRetId(newName, t.baseId);
+@@ -51862,7 +51888,7 @@
+   }
+ };
+ 
+-MD_getHelp = function(min, max, brightness, activeBright, ready, isHmIP)
++MD_getHelp = function(min, max, brightness, activeBright, ready, isHmIP, callback)
+ {
+   // liest die Hilfedatei für den MotionSensor ein
+ //  var language = $F('language') ;
+@@ -51884,36 +51910,35 @@
+   new Ajax.Request(path ,
+   {
+     method:    'get',
+-    asynchronous: false,
+     onSuccess: function(success) {
+       help_txt = eval(success.responseText);
++      if (callback) { callback(help_txt); }
+     },
+ 
+     onFailure: function(failure) {
+       Ajax_failure(path, failure.statusText);
+     }
+   });
+-  return help_txt;
+ };
+ 
+ MD_link_help = function()
+ {
+   // Hilfetext für die Art der Verweildauer des Motion-Detectors
+-  var help_txt = MD_getHelp();
+-  
+-  MessageBox.show(help_txt[0]['title_kind_of'], help_txt[0]['help_kind_of'] ,"" ,450 , 260);
++  MD_getHelp(undefined, undefined, undefined, undefined, undefined, undefined, function(help_txt) {
++    MessageBox.show(help_txt[0]['title_kind_of'], help_txt[0]['help_kind_of'] ,"" ,450 , 260);
++  });
+ };
+ 
+ MD_catchBright_help = function(min, max, brightness, activeBright, ready, condition, sensorAddress) {
+   var isHmIP = (sensorAddress.split(":")[0].length > 10) ? true : false;
+   //Hilfetext für die Helligkeitsschwelle des Motion-Detectors
+-  var help_txt = MD_getHelp(min, max, brightness, activeBright, ready, isHmIP);
+-
+-  if (condition == "LT_LO") {
+-    MessageBox.show(help_txt[0]['title_brightness'], help_txt[0]['help_brightness_active_LT_LO'], "", 475, (isHmIP) ? 350 : 185);
+-  } else {
+-    MessageBox.show(help_txt[0]['title_brightness'], help_txt[0]['help_brightness_active_GE_LO'], "", 475, (isHmIP) ? 350 : 185);
+-  }
++  MD_getHelp(min, max, brightness, activeBright, ready, isHmIP, function(help_txt) {
++    if (condition == "LT_LO") {
++      MessageBox.show(help_txt[0]['title_brightness'], help_txt[0]['help_brightness_active_LT_LO'], "", 475, (isHmIP) ? 350 : 185);
++    } else {
++      MessageBox.show(help_txt[0]['title_brightness'], help_txt[0]['help_brightness_active_GE_LO'], "", 475, (isHmIP) ? 350 : 185);
++    }
++  });
+ };
+ 
+ MD_minInterval = function(id)
+@@ -53046,8 +53071,6 @@
+       new Ajax.Request(fbib, 
+         {
+         method:   'get', 
+-        
+-        asynchronous: false,
+ 
+         onSuccess:  function(success) {
+                 eval(success.responseText);
+@@ -53499,7 +53522,26 @@
+   return result;
+ };
+ 
+-getLangInfo = function(sender, actor)
++window.__openCCU_langInfoPending = false;
++window.__openCCU_langInfoCallbacks = window.__openCCU_langInfoCallbacks || [];
++
++OpenCCU_isLocalizedReady = function()
++{
++  return typeof localized !== "undefined" && localized != null && typeof localized[0] !== "undefined";
++};
++
++OpenCCU_whenLocalizedReady = function(callback)
++{
++  if (typeof callback !== "function") return;
++
++  if (OpenCCU_isLocalizedReady()) {
++    callback();
++  } else {
++    window.__openCCU_langInfoCallbacks.push(callback);
++  }
++};
++
++getLangInfo = function(sender, actor, callback)
+ {
+   var language = getLang();
+ 
+@@ -53511,44 +53553,76 @@
+ 
+   l_generic = false;
+ 
++  if (typeof callback === "function") {
++    window.__openCCU_langInfoCallbacks.push(callback);
++  }
++
++  if (window.__openCCU_langInfoPending === true) return;
++
++  window.__openCCU_langInfoPending = true;
++
+   // die entsprechenden Uebersetzungstabellen der Easymodes einlesen
++  // All four requests run in parallel; the eval() runs once all have completed.
++  var pending = 4;
++  var onDone = function() {
++    if (--pending === 0) {
++      try {
++        if (l_generic !== false) { generic = l_generic.concat(g_generic); } else { generic = g_generic; }
++         var dummy = "\"dummy\" : \"dummy\"}]" ;
++        localized = eval(set_description.concat(set_pname).concat(generic).concat(dummy));
++      } finally {
++        window.__openCCU_langInfoPending = false;
++
++        while (window.__openCCU_langInfoCallbacks.length > 0) {
++          try {
++            window.__openCCU_langInfoCallbacks.shift()();
++          } catch (e) {
++            if (window.console && typeof console.error === "function") console.error("OpenCCU localization callback error:", e);
++          }
++        }
++      }
++    }
++  };
++
+   new Ajax.Request(path_1,
+     {
+     method:    'get',
+-    asynchronous: false,
+     onSuccess: function(success) {
+             set_description = "[{".concat(success.responseText);
+-            
++            onDone();
+           },
+ 
+     onFailure: function(failure) {
+             Ajax_failure(path_1, failure.statusText);
++            onDone();
+           }
+     });
+-  
++
+   new Ajax.Request(path_2,
+     {
+     method:    'get',
+-    asynchronous: false,
+     onSuccess: function(success) {
+             set_pname = success.responseText;
++            onDone();
+           },
+ 
+     onFailure: function(failure) {
+             Ajax_failure(path_2, failure.statusText);
++            onDone();
+           }
+     });
+ 
+   new Ajax.Request(local_generic,
+     {
+     method:    'get',
+-    asynchronous: false,
+     onSuccess: function(success) {
+             l_generic = success.responseText;
++            onDone();
+           },
+ 
+     onFailure: function(failure) {
+             Ajax_failure(local_generic, failure.statusText);
++            onDone();
+           }
+ 
+     });
+@@ -53556,19 +53630,16 @@
+   new Ajax.Request(global_generic,
+     {
+     method:    'get',
+-    asynchronous: false,
+     onSuccess: function(success) {
+             g_generic = success.responseText;
+-            if (l_generic != false) {generic = l_generic.concat(g_generic);} else generic = g_generic;
++            onDone();
+           },
+ 
+     onFailure: function(failure) {
+             Ajax_failure(global_generic, failure.statusText);
++            onDone();
+           }
+     });
+-    
+-     var dummy = "\"dummy\" : \"dummy\"}]" ; 
+-    localized = eval(set_description.concat(set_pname).concat(generic).concat(dummy));
+ };
+ 
+ getLangInfo_Special = function(file)
+@@ -53583,9 +53654,10 @@
+     new Ajax.Request(path,
+       {
+         method: 'get',
+-        asynchronous: false,
+         onSuccess: function (success) {
+           set_Special = success.responseText;
++          //localized = eval(set_Special);
++          jQuery.extend(true, localized, eval(set_Special));
+         },
+ 
+         onFailure: function (failure) {
+@@ -53593,59 +53665,57 @@
+ 
+         }
+       });
+-
+-    //localized = eval(set_Special);
+-    jQuery.extend(true, localized, eval(set_Special));
+   }
+ };
+ 
+ 
+ 
+-translate_newProfile = function()
++translate_newProfile = function(callback)
+ {
+-  var language = getLang();
+-  var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
+-
+-  // die entsprechenden Optionen einlesen
+-  new Ajax.Request(path,
+-    {
+-    method:    'get',
+-    asynchronous: false,
+-    onSuccess: function(success) {
+-            set_newprofile = eval(success.responseText);
+-          },
++  OpenCCU_whenLocalizedReady(function() {
++    var language = getLang();
++    var path = '/config/easymodes/etc/localization/' + language + '/NEWPROFILE.txt';
+ 
+-    onFailure: function(failure) {
+-            Ajax_failure(path, failure.statusText);
+-          }
+-    });
+-  
+-  set_newprofile[0]  = Object.extend(set_newprofile[0], localized[0]);
+-  
+-  $('id_header').innerHTML = TrimPath.processDOMTemplate('title_SaveNewProfile', set_newprofile[0]);
+-  $('id_body').innerHTML = TrimPath.processDOMTemplate('id_body_textarea', set_newprofile[0]);
+-  $('id_footer').innerHTML = TrimPath.processDOMTemplate('id_footer_textarea', set_newprofile[0]);
++    // die entsprechenden Optionen einlesen
++    new Ajax.Request(path,
++      {
++      method:    'get',
++      onSuccess: function(success) {
++              set_newprofile = eval(success.responseText);
++              set_newprofile[0]  = Object.extend(set_newprofile[0], localized[0]);
++              $('id_header').innerHTML = TrimPath.processDOMTemplate('title_SaveNewProfile', set_newprofile[0]);
++              $('id_body').innerHTML = TrimPath.processDOMTemplate('id_body_textarea', set_newprofile[0]);
++              $('id_footer').innerHTML = TrimPath.processDOMTemplate('id_footer_textarea', set_newprofile[0]);
++              if (typeof callback === "function") callback();
++            },
++
++      onFailure: function(failure) {
++              Ajax_failure(path, failure.statusText);
++              if (typeof callback === "function") callback();
++            }
++      });
++  });
+ };
+ 
+ 
+ translate_map = function(div, textarea)
+ {
+-  if ( isNaN(localized)) {
++  OpenCCU_whenLocalizedReady(function() {
+     $(div).innerHTML = TrimPath.processDOMTemplate(textarea, localized[0]);
+-  }
++  });
+ };
+ 
+ translate = function(id, group)
+ {
+-  var isUser = id.split('.')[1];
+-  if (isNaN(localized)) {
++  OpenCCU_whenLocalizedReady(function() {
++    var isUser = id.split('.')[1];
+     if (isNaN(isUser)) {   // wenn kein Userprofil
+       $('param_' + id).id = group + '_param_' + id;
+       $('profile_' + id).id = group + '_profile_' + id;
+-      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.   
++      // hier werden die Platzhalter der EasyModes durch die übersetzten Texte ersetzt.
+       $(group + '_param_' + id).innerHTML = TrimPath.processDOMTemplate(group + '_profile_' + id, localized[0]);
+     } else translate_usrprofile(id, group);
+-  }
++  });
+ };
+ 
+ translate_usrprofile = function(userid, group)
