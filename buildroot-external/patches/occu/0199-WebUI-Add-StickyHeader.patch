@@ -1,0 +1,298 @@
+--- occu/WebUI/www/rega/pages/tabs/admin/systemvars.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/systemvars.htm
+@@ -68,6 +68,7 @@
+   <col style="width:200px;" />
+   <col style="width:100px;" />
+ </colgroup>
++<thead>
+ <tr>
+   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+   <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thName}</div></th>
+@@ -140,6 +141,7 @@
+   </td>
+   <td class="CLASS05202">
+   <td class="CLASS05205"></td>
++  </thead>
+ <% 
+   string sysvar = "";
+   if (oUser.UserTempViewIDs().Count() == 0)
+--- occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/admin/views/programlist.htm
+@@ -64,6 +64,7 @@
+     <col />
+     <col style="width:250px;" />
+   </colgroup>
++    <thead>
+     <tr>
+       <%string sCssName="Sort"; if(firstSort||(system.GetSessionVar("sessionLS")=="name")){sCssName="SortSelected";} %>
+       <td class="thCell CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></td>
+@@ -72,7 +73,6 @@
+       <td class="thCell CLASS04900" >${thActivity}</td>
+       <td class="thCell CLASS04900" >${thAction}</td>
+     </tr>
+-  <tbody>
+     <tr>
+       <td class="CLASS03304">
+         <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+@@ -94,6 +94,7 @@
+       <td class="CLASS03304"></td>
+       <td class="CLASS03304"></td>
+     </tr>
++  </thead><tbody>
+     <%
+       object oPrograms = dom.GetObject( ID_PROGRAMS );
+       if(oPrograms)
+--- occu/WebUI/www/rega/pages/tabs/control/devices.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/devices.htm
+@@ -25,11 +25,11 @@
+                   <col style="width:80%;"/>
+                   <col style="width:20%;"/>
+                 </colgroup>
++                <thead>
+                 <tr>
+                   <th>${thName}</th>
+                   <th>${thPicture}</th>
+                 </tr>
+-                <tbody>
+                 <tr>
+                   <td class="CLASS03501">
+                     <div id="btnFilterDevName" class="FilterBtn">${thFilter}</div>
+@@ -41,6 +41,7 @@
+                   </td>
+                   <td class="CLASS03304"></td>
+                 </tr>
++                </thead><tbody>
+                 <%
+                   string sEnumDeviceIds = "";
+                   object obj = dom.GetObject(ID_DEVICES);
+--- occu/WebUI/www/rega/pages/tabs/control/functions.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/functions.htm
+@@ -21,10 +21,10 @@
+           <td style="vertical-align: top; border: 0px;">
+             <div id="divFL" class="CLASS04201">
+               <table id="tblFunctionNames" class="StatViewTbl CLASS04006 j_translate" cellpadding="0" cellspacing="0" style="width: 100%;">
++                <thead>
+                 <tr>
+                   <th>${thFunc}</th>
+                 </tr>
+-                <tbody>
+                 <tr>
+                   <td class="CLASS03501">
+                     <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
+@@ -35,6 +35,8 @@
+                     </div>
+                   </td>
+                 </tr>
++                </thead>
++                <tbody>
+                 <%
+                   string sEnumFunctionIds = "";
+                   object obj = dom.GetObject(ID_FUNCTIONS);
+--- occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/hdevichannels.htm
+@@ -48,6 +48,7 @@
+      <col style="width:100px;" />
+      <col />
+   </colgroup>
++  <thead>  
+   <tr>
+   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thChannel}</div></th>
+@@ -130,6 +131,7 @@
+   <td class="CLASS03501">
+   </td>
+   </tr>
++  </thead>
+    <%
+ 
+     object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
+--- occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/hfuncchannels.htm
+@@ -57,7 +57,7 @@
+      <col style="width:100px;" />
+      <col />
+   </colgroup>
+-  
++  <thead>  
+   <tr>
+   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
+@@ -109,6 +109,7 @@
+   <td class="CLASS03801">
+   </td>
+   </tr>
++  </thead>
+   <!-- script type="text/javascript">translatePage("#tblHFuncChannels");</script-->
+    <%
+ 
+--- occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/hroomchannels.htm
+@@ -57,6 +57,7 @@
+      <col style="width:100px;" />
+      <col />
+   </colgroup>
++  <thead>  
+   <tr>
+   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
+@@ -111,6 +112,7 @@
+   <td class='CLASS03601'>
+   </td>
+   </tr>
++  </thead>
+     <script type="text/javascript">translatePage("#tblHRoomChannels");</script>
+   
+   <%
+--- occu/WebUI/www/rega/pages/tabs/control/programs.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/programs.htm
+@@ -60,22 +60,21 @@
+         <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
+         <th class="tHeaderCell CLASS03303" ><div><span>${thAction}</span><img src="/ise/img/help.png" style="cursor: pointer; width:24px; height:24px; vertical-align:middle;" onclick="MessageBox.show(translateKey('HelpTitle'), translateKey('actionStatusControlLblStartHelp'), '', 400, 250);"></div></th>
+       </tr>
+-    </thead>
+-      <tbody>
+-        <tr>
+-          <td class="CLASS03706">
+-            <div id="btnFilterName" class="FilterBtn CLASS03707" >${thFilter}</div>
+-            <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+-                <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03708" NAME="ftName"/>
+-                <div id="ftSetNameBtn" class='FilterSetButton CLASS03709' onclick="setSFilter(fltPR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+-                <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide()">${filterClose}</div>
+-            </div>
+-          </td>
+-          <td class="CLASS03706"></td>
+-          <td class="CLASS03706"></td>
+-          <td class="CLASS03706"></td>
+-          <td class="CLASS03706"></td>
+-        </tr>
++      <tr>
++        <td class="CLASS03706">
++          <div id="btnFilterName" class="FilterBtn CLASS03707" >${thFilter}</div>
++          <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
++              <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03708" NAME="ftName"/>
++              <div id="ftSetNameBtn" class='FilterSetButton CLASS03709' onclick="setSFilter(fltPR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
++              <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide()">${filterClose}</div>
++          </div>
++        </td>
++        <td class="CLASS03706"></td>
++        <td class="CLASS03706"></td>
++        <td class="CLASS03706"></td>
++        <td class="CLASS03706"></td>
++      </tr>
++     </thead><tbody>
+         <%
+           object oPrograms = dom.GetObject( ID_PROGRAMS );
+           if(oPrograms)
+--- occu/WebUI/www/rega/pages/tabs/control/rooms.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/rooms.htm
+@@ -21,10 +21,10 @@
+           <td style="vertical-align: top; border: 0px">
+             <div id="divRL" class="CLASS04201">
+             <table id="tblRoomNames" class="StatViewTbl CLASS04006 j_translate"  cellpadding="0" cellspacing="0" width="100%">
++              <thead>
+               <tr>
+                 <th>${thRoom}</th>
+               </tr>
+-              <tbody>
+               <tr>
+                 <td class="CLASS03501">
+                   <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
+@@ -35,6 +35,7 @@
+                   </div>
+                 </td>
+               </tr>
++              </thead><tbody>
+               <%
+                 string sEnumRoomIds = "";
+                 object obj = dom.GetObject(ID_ROOMS);
+--- occu/WebUI/www/rega/pages/tabs/control/sysvars.htm.orig
++++ occu/WebUI/www/rega/pages/tabs/control/sysvars.htm
+@@ -47,6 +47,7 @@
+       <col />
+       <col />
+     </colgroup>
++    <thead>
+       <tr>
+         <%string sCssName="Sort"; if(firstSort||(system.GetSessionVar("sessionLS")=="name")){sCssName="SortSelected";} %>
+         <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></th>
+@@ -54,7 +55,6 @@
+         <th class="tHeaderCell CLASS03303" >${thLastChange}</th>
+         <th class="tHeaderCell CLASS03303" >${thState}</th>
+       </tr>
+-      <tbody>
+ <tr>
+    <td class="CLASS03304">
+       <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+@@ -68,7 +68,7 @@
+   <td class="CLASS03304"></td>
+   <td class="CLASS03304"></td>
+ </tr>
+-      
++</thead><tbody>
+         <%
+           if(oUser)
+           {
+--- occu/WebUI/www/webui/style.css.orig
++++ occu/WebUI/www/webui/style.css
+@@ -109,7 +109,7 @@
+   margin:0;
+   padding:0;
+   color: $_(textColorB); /* black */
+-  background-color: $_(background); /* #183473 */
++  #background-color: $_(background); /* #183473 */
+ }
+ 
+ p {
+@@ -211,6 +211,7 @@
+     outline: none;
+     /* Stretch to max available space */
+     height: calc(100% - 168px); /* FIX: header + menubar + footer: 72px + 41px + 55px = 168px */
++    margin: 10px;
+ }
+ 
+ #prgcontent
+@@ -3108,9 +3109,9 @@
+ }
+ #DeviceListTable {
+   height:auto;
+-  margin:10px;
+-  border:1px black solid;
+-  padding:0;
++  #margin:10px;
++  #border:1px black solid;
++  #padding:0;
+   empty-cells:show;
+   width:100%;
+ }
+@@ -4889,6 +4890,12 @@
+ 	text-align:center;
+ }
+ 
++thead {
++	position: sticky;
++	top: 0px;
++	z-index: 2;
++}
++
+ /* rega\pages\msg\autoLoginConfig.htm */
+ 
+ .CLASS01400 {
+@@ -9065,7 +9072,7 @@
+ /* config\ic_deviceparameters.cgi */
+ 
+ .CLASS22000 {
+-  margin: 10px;
++  #margin: 10px;
+   width: 100%;
+ }
+ 
+--- occu/WebUI/www/webui/webui.js.orig
++++ occu/WebUI/www/webui/webui.js
+@@ -32293,6 +32293,7 @@
+     
+     this.sub.style.top = newY + "px";
+     this.sub.style.left = newX + "px";
++    this.sub.style.position="fixed";
+ 
+     jQuery("#btnFilterFuncSub").draggable();
+     jQuery("#btnFilterRoomSub").draggable();
