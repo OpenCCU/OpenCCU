@@ -1,7 +1,7 @@
 --- occu/WebUI/www/rega/esp/functions.fn.orig
 +++ occu/WebUI/www/rega/esp/functions.fn
 @@ -992,12 +992,11 @@
-   }
+   ! }
  
    !HmIP-DLP
 -  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
