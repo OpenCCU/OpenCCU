@@ -58,6 +58,7 @@ function ::WriteDPText()
           sRet = sRet.Replace("\r\n", "<br/>");
           sRet = sRet.Replace("\r", "<br/>");
           sRet = sRet.Replace("\n", "<br/>");
+          sRet = sRet.Replace("'", "\\'");
         }
         if( to.ValueUnit() != "" )
         {
@@ -778,11 +779,11 @@ function ::conditionIsParameterVisible() {
     }
   }
 
-  if (oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
-    if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
-      showChannelParam = false;
-    }
-  }
+  ! if ((oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") && (oCC.Label().Find("HmIPW-WGTC") != -1)) {
+  !  if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
+  !    showChannelParam = false;
+  !  }
+  ! }
 
   if ( sInterface == hmIPVirtualDevIdentifier ) {
     excludeParams = "BOOST_TIME,CONTROL_DIFFERENTIAL_TEMPERATURE,LEVEL_STATUS,OPERATING_VOLTAGE,PARTY_,PARTY_MODE,PROCESS,QUICK_VETO_TIME,";
@@ -980,23 +981,22 @@ function ::destinationIsParameterVisible() {
     }
   }
 
-  if (oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) {
-    if (
-    (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
-    || (oDP.HSSID().Find("DURATION_VALUE") != -1)
-    || (oDP.HSSID().Find("DURATION_UNIT") != -1)
-    ) {
-      showChannelParam = false;
-    }
-  }
+  ! if ((oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) && (oCC.Label().Find("HmIPW-WGTC") != -1)) {
+  !  if (
+  !  (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
+  !  (oDP.HSSID().Find("DURATION_VALUE") != -1)
+  !  || (oDP.HSSID().Find("DURATION_UNIT") != -1)
+  !  ) {
+  !    showChannelParam = false;
+  !  }
+  ! }
 
   !HmIP-DLP
-  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
+  ! Hide all parameters of the channel DOOR_LOCK_TRANSCEIVER except LOCK_TARGET_LEVEL
   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
-    // TODO - refactoring necessary
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( oDP.HSSID().Find("LOCK_TARGET_LEVEL") == -1 ) {
+      showChannelParam = false;
+    }
   }
 
   return;

@@ -42,7 +42,7 @@ Use this app if:
 | `openccu_ip` | Yes | `""` | Static dedicated LAN IPv4 address for the OpenCCU app macvlan attachment. |
 | `openccu_mac` | No | auto-derived | Static MAC address for the OpenCCU app macvlan attachment. If empty, the helper first reuses the OpenCCU container's existing macvlan MAC when available, otherwise it derives one from the parent interface by incrementing the last octet and trying higher values when needed. |
 | `check_interval` | No | `15` | Polling interval in seconds (`10..3600`). If left empty, the helper uses `15`. |
-| `openccu_slug` | No | `openccu` | Slug of the OpenCCU app if different from default naming. |
+| `openccu_slug` | No | `openccu` | Slug of the OpenCCU app if different from default naming. Container auto-detection supports Supervisor naming variants like `addon_*_<slug>` and `app_*_<slug>`. |
 | `network_name` | No | `ccu` | Name of the macvlan Docker network to create/manage for OpenCCU. |
 | `parent_interface` | No | auto-detected | Parent NIC for macvlan (example: `enp0s18`). |
 | `subnet` | No | auto-detected | Subnet used for macvlan network creation. |
@@ -61,7 +61,7 @@ Use this app if:
 
 At each cycle, the app:
 
-1. Searches for the OpenCCU HA-App by slug.
+1. Searches for the OpenCCU HA-App by slug (supports both `addon_*_<slug>` and `app_*_<slug>` container names).
 2. Ensures the macvlan network exists with the expected parent/subnet/gateway.
 3. Ensures OpenCCU is connected to that network with the configured IP and MAC address.
 4. Ensures routes inside the OpenCCU container:
