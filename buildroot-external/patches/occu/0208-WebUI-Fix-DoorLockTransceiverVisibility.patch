@@ -1,0 +1,19 @@
+--- occu/WebUI/www/rega/esp/functions.fn.orig
++++ occu/WebUI/www/rega/esp/functions.fn
+@@ -992,12 +992,11 @@
+   ! }
+ 
+   !HmIP-DLP
+-  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
++  ! Hide all parameters of the channel DOOR_LOCK_TRANSCEIVER except LOCK_TARGET_LEVEL
+   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
+-    // TODO - refactoring necessary
+-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
++    if ( oDP.HSSID().Find("LOCK_TARGET_LEVEL") == -1 ) {
++      showChannelParam = false;
++    }
+   }
+ 
+   return;

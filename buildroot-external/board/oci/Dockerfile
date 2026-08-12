@@ -20,7 +20,7 @@ LABEL maintainer="OpenCCU OpenSource Team" \
       io.hass.type=addon
 
 HEALTHCHECK --interval=60s --timeout=30s --start-period=240s --retries=3 \
-  CMD /bin/sh -c 'test -e /var/status/startupFinished || exit 2; test -e /usr/local/HMLGW || /usr/bin/curl --silent -o /dev/null --fail http://localhost/login.htm || exit 1'
+  CMD ["/bin/sh", "-c", "test -e /var/status/startupFinished || exit 2; test -e /usr/local/HMLGW || /usr/bin/curl --silent -o /dev/null --fail http://localhost/login.htm || exit 1"]
 
 STOPSIGNAL SIGTERM
 
