@@ -34,9 +34,14 @@ function validSid(sid) {
   return typeof(sid) === 'string' && sid.length > 0 && sid.length <= 256 && /^[A-Za-z0-9@._-]+$/.test(sid);
 }
 
+function isHttps(req) {
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
+  return req.secure === true || forwardedProto === 'https';
+}
+
 function sidCookie(sid, ingressPath, clear = false) {
   const path = ingressPath && ingressPath.startsWith('/') ? ingressPath : '/';
-  return `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax${clear ? '; Max-Age=0' : ''}`;
+  return `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax; Secure${clear ? '; Max-Age=0' : ''}`;
 }
 
 const apiProxy = createProxyMiddleware({
@@ -114,22 +119,25 @@ app.use((req, res, next) => {
   const ingressPath = req.headers['x-ingress-path'] || '/';
   const isLogout = req.path === '/logout.htm';
 
-  // Logging out must also discard the SID remembered for this ingress instance.
+  // keep logout cleanup behavior regardless of transport
   if(isLogout) {
     res.append('Set-Cookie', sidCookie('', ingressPath, true));
     return next();
   }
 
-  // Remember every valid SID seen in WebUI requests. The HttpOnly cookie is
-  // scoped to the ingress path, so other add-ons cannot receive it.
+  // only restore/persist SIDs over client-facing HTTPS
+  if(!isHttps(req)) return next();
+
+  const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
   if(validSid(req.query.sid)) {
-    res.append('Set-Cookie', sidCookie(req.query.sid, ingressPath));
+    // no proxy-visible user identity is available, so keep the initial SID sticky
+    // and ignore transitions to different query SIDs.
+    if(!validSid(rememberedSid) || rememberedSid === req.query.sid) {
+      res.append('Set-Cookie', sidCookie(req.query.sid, ingressPath));
+    }
     return next();
   }
 
-  // A newly opened ingress panel starts at '/'. Restore the existing OpenCCU
-  // session once; an expired SID is handled normally by the WebUI login page.
-  const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
   if((req.path === '/' || req.path === '/index.htm') && validSid(rememberedSid)) {
     const querySeparator = req.originalUrl.includes('?') ? '&' : '?';
     return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
