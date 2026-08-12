@@ -44,7 +44,8 @@ else
 fi
 
 # load devicetree
-fdt addr ${fdt_addr}
+setenv fdt_org ${fdt_addr}
+fdt addr ${fdt_org}
 fdt get value bootargs /chosen bootargs
 
 # set bootargs
@@ -53,7 +54,12 @@ setenv bootargs "dwc_otg.lpm_enable=0 sdhci_bcm2708.enable_llm=0 console=${conso
 # load kernel
 load ${devtype} ${devnum}:${kernelfs} ${kernel_addr_r} ${kernel_img}
 
+# Relocate the FDT below the firmware-provided one, otherwise it ends up just
+# below 512 MiB and fragments the CMA alloc-range (first 768 MiB on BCM2711)
+setenv fdt_high ${fdt_org}
+
 # boot kernel
+echo "Starting kernel"
 ${kernel_bootcmd} ${kernel_addr_r} ${initrd_addr_r} ${fdt_addr}
 
 echo "Boot failed, resetting..."
