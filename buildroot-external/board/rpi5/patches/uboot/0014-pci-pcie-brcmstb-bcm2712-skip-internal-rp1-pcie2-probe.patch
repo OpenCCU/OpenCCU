@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: OpenCCU <contact@openccu.local>
+Date: Wed, 12 Aug 2026 21:40:00 +0000
+Subject: [PATCH] pci: pcie-brcmstb: bcm2712 skip internal RP1 PCIe probe by
+ default
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Raspberry Pi 5, probing the internal RP1 PCIe host (pcie2) in U-Boot can
+leave RP1 in a state where Linux later fails to claim BAR resources and the
+onboard Ethernet does not appear.
+
+Keep RP1-side PCIe probing disabled by default for BCM2712 while preserving
+external NVMe PCIe probing. Existing `u-boot,no-probe` handling remains
+supported and can still disable other nodes explicitly.
+
+---
+ drivers/pci/pcie_brcmstb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/pci/pcie_brcmstb.c b/drivers/pci/pcie_brcmstb.c
+index cd2d395947a..e1469f8f0ae 100644
+--- a/drivers/pci/pcie_brcmstb.c
++++ b/drivers/pci/pcie_brcmstb.c
+@@ -682,6 +682,12 @@ static int brcm_pcie_of_to_plat(struct udevice *dev)
+ 
+ 	pcie->ssc = ofnode_read_bool(dn, "brcm,enable-ssc");
+ 	pcie->no_probe = ofnode_read_bool(dn, "u-boot,no-probe");
++	if (pcie->soc_base == BCM2712 &&
++	    !pcie->no_probe &&
++	    dev_read_addr(dev) == 0x1000120000ULL) {
++		printf("PCIe BRCM: BCM2712 internal RP1 host detected, skipping probe\n");
++		pcie->no_probe = true;
++	}
+ 
+ 	ret = ofnode_read_u32(dn, "max-link-speed", &max_link_speed);
+ 	if (ret < 0 || max_link_speed > 4)
+-- 
+2.34.1
+
