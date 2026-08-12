@@ -16,6 +16,34 @@ const express = require('express');
 const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
 const ipaddr = require('ipaddr.js');
 
+const SID_COOKIE = 'openccu_ingress_sid';
+
+function parseCookies(header) {
+  return Object.fromEntries((header || '').split(';').flatMap(cookie => {
+    const separator = cookie.indexOf('=');
+    if(separator < 0) return [];
+    try {
+      return [[cookie.slice(0, separator).trim(), decodeURIComponent(cookie.slice(separator + 1).trim())]];
+    } catch(error) {
+      return [];
+    }
+  }));
+}
+
+function validSid(sid) {
+  return typeof(sid) === 'string' && sid.length > 0 && sid.length <= 256 && /^[A-Za-z0-9@._-]+$/.test(sid);
+}
+
+function isHttps(req) {
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
+  return req.secure === true || forwardedProto === 'https';
+}
+
+function sidCookie(sid, ingressPath, clear = false) {
+  const path = ingressPath && ingressPath.startsWith('/') ? ingressPath : '/';
+  return `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax; Secure${clear ? '; Max-Age=0' : ''}`;
+}
+
 const apiProxy = createProxyMiddleware({
   target: 'http://127.0.0.1:80',
   pathFilter: '/',
@@ -87,5 +115,34 @@ app.use((req, res, next) => {
     // abort request with "403 Forbidden"
     res.status(403).end();
   }
+}, (req, res, next) => {
+  const ingressPath = req.headers['x-ingress-path'] || '/';
+  const isLogout = req.path === '/logout.htm';
+
+  // keep logout cleanup behavior regardless of transport
+  if(isLogout) {
+    res.append('Set-Cookie', sidCookie('', ingressPath, true));
+    return next();
+  }
+
+  // only restore/persist SIDs over client-facing HTTPS
+  if(!isHttps(req)) return next();
+
+  const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
+  if(validSid(req.query.sid)) {
+    // no proxy-visible user identity is available, so keep the initial SID sticky
+    // and ignore transitions to different query SIDs.
+    if(!validSid(rememberedSid) || rememberedSid === req.query.sid) {
+      res.append('Set-Cookie', sidCookie(req.query.sid, ingressPath));
+    }
+    return next();
+  }
+
+  if((req.path === '/' || req.path === '/index.htm') && validSid(rememberedSid)) {
+    const querySeparator = req.originalUrl.includes('?') ? '&' : '?';
+    return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
+  }
+
+  next();
 }, apiProxy);
 app.listen(8099);
