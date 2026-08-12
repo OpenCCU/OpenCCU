@@ -51,9 +51,6 @@ dtparam=pwr_led_trigger=timer,act_led_trigger=mmc0
 # special device tree options for Raspberry Pi 5 and Compute Module 5
 [pi5]
 dtparam=act_led_activelow=off
-# Keep RP1/internal PCIe (pcie2) unprobed in U-Boot to avoid Linux RP1 BAR
-# resource conflicts on some NVMe boot setups. Use extraconfig.txt for
-# optional external PCIe settings (for example dtparam=pciex1).
 
 # reset to apply to all platforms
 [all]
