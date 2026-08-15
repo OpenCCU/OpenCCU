@@ -16,6 +16,46 @@ const express = require('express');
 const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
 const ipaddr = require('ipaddr.js');
 
+const SID_COOKIE = 'openccu_ingress_sid';
+
+function parseCookies(header) {
+  return Object.fromEntries((header || '').split(';').flatMap(cookie => {
+    const separator = cookie.indexOf('=');
+    if(separator < 0) return [];
+    try {
+      return [[cookie.slice(0, separator).trim(), decodeURIComponent(cookie.slice(separator + 1).trim())]];
+    } catch(error) {
+      return [];
+    }
+  }));
+}
+
+function validSid(sid) {
+  return typeof(sid) === 'string' && sid.length > 0 && sid.length <= 256 && /^[A-Za-z0-9@._-]+$/.test(sid);
+}
+
+function sidCookie(sid, ingressPath, clear = false) {
+  const path = ingressPath && ingressPath.startsWith('/') ? ingressPath : '/';
+  return `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax${clear ? '; Max-Age=0' : ''}`;
+}
+
+function clearSidCookie(res, ingressPath) {
+  res.append('Set-Cookie', sidCookie('', ingressPath, true));
+}
+
+function isIngressIndexPath(path) {
+  return path === '/' || path.endsWith('/index.htm');
+}
+
+function removeSidFromUrl(url) {
+  const [path, queryString] = String(url || '').split('?', 2);
+  if(typeof(queryString) === 'undefined') return path || '/';
+  const params = new URLSearchParams(queryString);
+  params.delete('sid');
+  const query = params.toString();
+  return query.length > 0 ? `${path}?${query}` : path;
+}
+
 const apiProxy = createProxyMiddleware({
   target: 'http://127.0.0.1:80',
   pathFilter: '/',
@@ -25,6 +65,21 @@ const apiProxy = createProxyMiddleware({
   timeout: 1200000, // max 20 min
   on: {
     proxyRes: responseInterceptor(async (responseBody, proxyRes, req, res) => {
+      const ingressPath = req.headers['x-ingress-path'] || '/';
+      const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
+      const querySid = req.query.sid;
+
+      if(proxyRes.statusCode === 500 &&
+         isIngressIndexPath(req.path) &&
+         validSid(querySid) &&
+         validSid(rememberedSid) &&
+         querySid === rememberedSid) {
+        clearSidCookie(res, ingressPath);
+        res.statusCode = 302;
+        res.setHeader('location', `${ingressPath}${removeSidFromUrl(req.originalUrl)}`);
+        return '';
+      }
+
       // modify Location: response header if present
       if(typeof(proxyRes.headers.location) !== 'undefined') {
         // replace any absolute http/https path with a relative one
@@ -87,5 +142,28 @@ app.use((req, res, next) => {
     // abort request with "403 Forbidden"
     res.status(403).end();
   }
+}, (req, res, next) => {
+  const ingressPath = req.headers['x-ingress-path'] || '/';
+  const isLogout = req.path === '/logout.htm';
+
+  if(isLogout) {
+    clearSidCookie(res, ingressPath);
+    return next();
+  }
+
+  const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
+  if(validSid(req.query.sid)) {
+    if(!validSid(rememberedSid) || rememberedSid === req.query.sid) {
+      res.append('Set-Cookie', sidCookie(req.query.sid, ingressPath));
+    }
+    return next();
+  }
+
+  if(isIngressIndexPath(req.path) && validSid(rememberedSid)) {
+    const querySeparator = req.originalUrl.includes('?') ? '&' : '?';
+    return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
+  }
+
+  next();
 }, apiProxy);
 app.listen(8099);
