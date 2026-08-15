@@ -5,17 +5,22 @@
 // Home-Assistent UI so that the Ingress-based HA UI is able to embed
 // the WebUI.
 //
-// Copyright (c) 2021-2024 Jens Maus <mail@jens-maus.de>
+// Copyright (c) 2021-2026 Jens Maus <mail@jens-maus.de>
 // Apache 2.0 License applies
 //
 // v1.0: initial version
 // v1.1: adapted to http-proxy-middleware v3
+// v1.2: implement session sid cookie storage
 //
 
 const express = require('express');
 const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
 const ipaddr = require('ipaddr.js');
 
+// increase default listener limit
+require('events').EventEmitter.defaultMaxListeners = 40;
+
+const REQUEST_TIMEOUT = 20 * 60 * 1000; // 20 min
 const SID_COOKIE = 'openccu_ingress_sid';
 
 function parseCookies(header) {
@@ -36,8 +41,24 @@ function validSid(sid) {
 
 function sidCookie(sid, ingressPath, clear = false) {
   const path = ingressPath && ingressPath.startsWith('/') ? ingressPath : '/';
-  const cookie = `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax`;
-  return cookie;
+  return `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax${clear ? '; Max-Age=0' : ''}`;
+}
+
+function clearSidCookie(res, ingressPath) {
+  res.append('Set-Cookie', sidCookie('', ingressPath, true));
+}
+
+function isIngressIndexPath(path) {
+  return path.endsWith('/index.htm');
+}
+
+function removeSidFromUrl(url) {
+  const [path, queryString] = String(url || '').split('?', 2);
+  if(typeof(queryString) === 'undefined') return path || '/';
+  const params = new URLSearchParams(queryString);
+  params.delete('sid');
+  const query = params.toString();
+  return query.length > 0 ? `${path}?${query}` : path;
 }
 
 const apiProxy = createProxyMiddleware({
@@ -46,9 +67,25 @@ const apiProxy = createProxyMiddleware({
   changeOrigin: true, // for vhosted sites
   //logger: console,
   selfHandleResponse: true,
-  timeout: 1200000, // max 20 min
+  // Use upstream proxyTimeout here; incoming client-facing timeouts are set once on the server below.
+  proxyTimeout: REQUEST_TIMEOUT,
   on: {
     proxyRes: responseInterceptor(async (responseBody, proxyRes, req, res) => {
+      const ingressPath = req.headers['x-ingress-path'] || '/';
+      const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
+      const querySid = req.query.sid;
+
+      if(proxyRes.statusCode === 500 &&
+         isIngressIndexPath(req.path) &&
+         validSid(querySid) &&
+         validSid(rememberedSid) &&
+         querySid === rememberedSid) {
+        clearSidCookie(res, ingressPath);
+        res.statusCode = 302;
+        res.setHeader('location', `${ingressPath}${removeSidFromUrl(req.originalUrl)}`);
+        return '';
+      }
+
       // modify Location: response header if present
       if(typeof(proxyRes.headers.location) !== 'undefined') {
         // replace any absolute http/https path with a relative one
@@ -115,34 +152,36 @@ app.use((req, res, next) => {
   const ingressPath = req.headers['x-ingress-path'] || '/';
   const isLogout = req.path === '/logout.htm';
 
-  console.log(req.path);
-
-  // keep logout cleanup behavior regardless of transport
   if(isLogout) {
-    console.log("LOGOUT");
-    res.append('Set-Cookie', sidCookie('', ingressPath, true));
+    clearSidCookie(res, ingressPath);
     return next();
   }
 
   const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
   if(validSid(req.query.sid)) {
-    console.log("SID");
-    console.log(req.query.sid);
-    console.log(rememberedSid);
-    // no proxy-visible user identity is available, so keep the initial SID sticky
-    // and ignore transitions to different query SIDs.
     if(!validSid(rememberedSid) || rememberedSid === req.query.sid) {
-      console.log("SET-COOKIE");
       res.append('Set-Cookie', sidCookie(req.query.sid, ingressPath));
     }
     return next();
   }
 
-  if(req.path.endsWith('/index.htm') && validSid(rememberedSid)) {
-    const querySeparator = req.originalUrl.includes('?') ? '&' : '?';
-    return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${decodeURIComponent(rememberedSid)}`);
+  if(isIngressIndexPath(req.path) && validSid(rememberedSid)) {
+    const originalUrlWithoutSid = removeSidFromUrl(req.originalUrl);
+    const querySeparator = originalUrlWithoutSid.includes('?') ? '&' : '?';
+    return res.redirect(302, `${ingressPath}${originalUrlWithoutSid}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
   }
 
   next();
 }, apiProxy);
-app.listen(8099);
+
+// listen on port 8099
+const server = app.listen(8099, (err) => {
+  if(err) {
+    console.error(`ERROR: could not start ha-proxy: ${err}`);
+  } else {
+    console.log('Serving proxy requests for http://127.0.0.1:80 on port 8099.');
+  }
+});
+
+server.setTimeout(REQUEST_TIMEOUT);
+server.requestTimeout = REQUEST_TIMEOUT;
