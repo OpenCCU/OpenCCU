@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 0.7.0
+- implement session id (sid) cookie-base reuse to access the openccu webui with the same session id rathern than generating a new one on each access.
+- update HA app container dependencies
+- Bump http-proxy-middleware dependency to 4.2.0
+
 ## 0.6.1
 - Bump http-proxy-middleware dependency to 4.1.1
 

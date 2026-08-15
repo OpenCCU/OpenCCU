@@ -6,7 +6,7 @@ COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
 RUN npm ci --omit=dev
 
-FROM ghcr.io/hassio-addons/base:20.1.1
+FROM ghcr.io/hassio-addons/base:21.0.1
 
 # set workdir to /app
 WORKDIR /app
