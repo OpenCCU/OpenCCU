@@ -34,14 +34,10 @@ function validSid(sid) {
   return typeof(sid) === 'string' && sid.length > 0 && sid.length <= 256 && /^[A-Za-z0-9@._-]+$/.test(sid);
 }
 
-function isHttps(req) {
-  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
-  return req.secure === true || forwardedProto === 'https';
-}
-
 function sidCookie(sid, ingressPath, clear = false) {
   const path = ingressPath && ingressPath.startsWith('/') ? ingressPath : '/';
-  return `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax; Secure${clear ? '; Max-Age=0' : ''}`;
+  const cookie = `${SID_COOKIE}=${clear ? '' : encodeURIComponent(sid)}; Path=${path}; HttpOnly; SameSite=Lax`;
+  return cookie;
 }
 
 const apiProxy = createProxyMiddleware({
@@ -119,28 +115,32 @@ app.use((req, res, next) => {
   const ingressPath = req.headers['x-ingress-path'] || '/';
   const isLogout = req.path === '/logout.htm';
 
+  console.log(req.path);
+
   // keep logout cleanup behavior regardless of transport
   if(isLogout) {
+    console.log("LOGOUT");
     res.append('Set-Cookie', sidCookie('', ingressPath, true));
     return next();
   }
 
-  // only restore/persist SIDs over client-facing HTTPS
-  if(!isHttps(req)) return next();
-
   const rememberedSid = parseCookies(req.headers.cookie)[SID_COOKIE];
   if(validSid(req.query.sid)) {
+    console.log("SID");
+    console.log(req.query.sid);
+    console.log(rememberedSid);
     // no proxy-visible user identity is available, so keep the initial SID sticky
     // and ignore transitions to different query SIDs.
     if(!validSid(rememberedSid) || rememberedSid === req.query.sid) {
+      console.log("SET-COOKIE");
       res.append('Set-Cookie', sidCookie(req.query.sid, ingressPath));
     }
     return next();
   }
 
-  if((req.path === '/' || req.path === '/index.htm') && validSid(rememberedSid)) {
+  if(req.path.endsWith('/index.htm') && validSid(rememberedSid)) {
     const querySeparator = req.originalUrl.includes('?') ? '&' : '?';
-    return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
+    return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${decodeURIComponent(rememberedSid)}`);
   }
 
   next();
