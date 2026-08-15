@@ -160,8 +160,9 @@ app.use((req, res, next) => {
   }
 
   if(isIngressIndexPath(req.path) && validSid(rememberedSid)) {
-    const querySeparator = req.originalUrl.includes('?') ? '&' : '?';
-    return res.redirect(302, `${ingressPath}${req.originalUrl}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
+    const originalUrlWithoutSid = removeSidFromUrl(req.originalUrl);
+    const querySeparator = originalUrlWithoutSid.includes('?') ? '&' : '?';
+    return res.redirect(302, `${ingressPath}${originalUrlWithoutSid}${querySeparator}sid=${encodeURIComponent(rememberedSid)}`);
   }
 
   next();
