@@ -6,6 +6,10 @@ name: Release Build (HA Proxy-Addon)
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-24.04

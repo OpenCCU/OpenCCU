@@ -33,6 +33,11 @@ start() {
 		if [[ -d /etc/config/addons/mh ]] && [[ ! -f /etc/config/addons/mh/client.key ]]; then
 			rm -rf /etc/config/addons/mh
 		fi
+		# remove crontab entries if present
+		if grep -E -q "/mh/(cloudmaticcheck|loopupd)\.sh" /usr/local/crontabs/root 2>/dev/null; then
+			grep -E -v "/mh/(cloudmaticcheck|loopupd)\.sh" /usr/local/crontabs/root | sort | uniq >/tmp/crontab.$$
+			mv -f /tmp/crontab.$$ /usr/local/crontabs/root
+		fi
 		echo "disabled"
 	else
 		# CloudMatic (meine-homematic.de) startup
