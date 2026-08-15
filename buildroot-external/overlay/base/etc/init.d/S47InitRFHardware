@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC2034,SC3010,SC3028,SC3015 source=/dev/null
+# shellcheck shell=dash disable=SC2169,SC2034,SC3010,SC3028,SC3014,SC3015 source=/dev/null
 #
 # Startup script checking for RF capabale hardware
 #
@@ -372,6 +372,10 @@ query_rf_parameters() {
     echo -n "${HM_HMIP_SERIAL}" >/var/board_serial
   elif [[ -n "${HM_HMRF_SERIAL}" ]]; then
     echo -n "${HM_HMRF_SERIAL}" >/var/board_serial
+  elif [[ "${HM_HOST}" == "oci" ]]; then
+    # in a docker/HA environment we have to use the hostname as a
+    # fake serial since the mac address changes on every boot
+    echo -n "$(hostname)" | sed 's/-openccu//g' >/var/board_serial
   else
     # fallback to put the mac in /var/board_serial
     MAC=$(cat /sys/class/net/"$(ip route show default | awk '/default/ {print $5}')"/address)

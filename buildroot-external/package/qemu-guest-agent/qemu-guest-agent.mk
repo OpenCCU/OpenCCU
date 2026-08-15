@@ -90,7 +90,6 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--disable-bzip2 \
 			--disable-seccomp \
 			--disable-coroutine-pool \
-			--disable-glusterfs \
 			--disable-tpm \
 			--disable-numa \
 			--disable-capstone \
