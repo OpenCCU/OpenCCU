@@ -4,7 +4,7 @@
  * for portability. It works by using recursion and a node tree for breaking
  * down the elements of an XML document.  </P>
  *
- * @version     V1.12
+ * @version     V1.13
  *
  * @author      Frank Vanden Berghen
  * based on original implementation by Martyn C Brown
@@ -596,7 +596,7 @@ void XMLNode::setNameConst(LPCTSTR lpszName)
 {
 	if(!lpszName)
 		return;
-	char *cTemp;
+	LPTSTR cTemp;
 	asprintf(&cTemp, "%s", lpszName);
 	setName(cTemp);
 }

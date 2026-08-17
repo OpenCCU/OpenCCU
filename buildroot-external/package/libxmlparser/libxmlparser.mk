@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-LIBXMLPARSER_VERSION = 1.12
+LIBXMLPARSER_VERSION = 1.13
 LIBXMLPARSER_SITE = $(BR2_EXTERNAL_EQ3_PATH)/package/libxmlparser
 LIBXMLPARSER_SITE_METHOD = local
 LIBXMLPARSER_LICENSE = LGPL-2.1
