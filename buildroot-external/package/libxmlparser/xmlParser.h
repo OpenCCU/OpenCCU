@@ -245,7 +245,7 @@ private:
     int ParseClearTag(void *pXML, void *pClear);
     int ParseXMLElement(void *pXML);
     bool addToOrder(int index, int type);
-    static int CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFormat);
+    static size_t CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFormat);
     static void *enumContent(XMLNodeData *pEntry,int i, XMLElementType *nodeType);
     static int nElement(XMLNodeData *pEntry);
     static void removeOrderElement(XMLNodeData *d, XMLElementType t, int index);
