@@ -1508,7 +1508,7 @@ int XMLNode::nElement(XMLNodeData *pEntry)
     return pEntry->nChild+pEntry->nText+pEntry->nClear+pEntry->nAttribute;
 }
 
-static inline void charmemset(LPTSTR dest,TCHAR c,int l) { while (l--) *(dest++)=c; }
+static inline void charmemset(LPTSTR dest,TCHAR c,size_t l) { while (l--) *(dest++)=c; }
 // private:
 // Creates an user friendly XML string from a given element with
 // appropriate white space and carriage returns.
@@ -1540,7 +1540,7 @@ size_t XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFo
 
         if (lpszMarker)
         {
-            if (cb) charmemset(lpszMarker, INDENTCHAR, (int)(sizeof(TCHAR)*cb));
+            if (cb) charmemset(lpszMarker, INDENTCHAR, sizeof(TCHAR)*cb);
             nResult = cb;
             lpszMarker[nResult++]=_T('<');
             if (pEntry->isDeclaration) lpszMarker[nResult++]=_T('?');
@@ -1634,7 +1634,7 @@ size_t XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFo
                 {
                     if (lpszMarker)
                     {
-                        charmemset(&lpszMarker[nResult],INDENTCHAR,(int)(sizeof(TCHAR)*(nFormat + 1)));
+                        charmemset(&lpszMarker[nResult],INDENTCHAR,sizeof(TCHAR)*(nFormat + 1));
                         toXMLString(&lpszMarker[nResult+nFormat+1],(LPTSTR)pChild);
                         lpszMarker[nResult+nFormat+1+cb]=_T('\n');
                     }
@@ -1658,7 +1658,7 @@ size_t XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFo
                 {
                     if (lpszMarker)
                     {
-                        charmemset(&lpszMarker[nResult], INDENTCHAR, (int)(sizeof(TCHAR)*(nFormat + 1)));
+                        charmemset(&lpszMarker[nResult], INDENTCHAR, sizeof(TCHAR)*(nFormat + 1));
                         memcpy(&lpszMarker[nResult+nFormat+1], ((XMLClear*)pChild)->lpszOpenTag, cb*sizeof(TCHAR));
                     }
                     nResult+=cb+nFormat+1;
@@ -1717,7 +1717,7 @@ size_t XMLNode::CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFo
                 {
                     if (nFormat)
                     {
-                        charmemset(&lpszMarker[nResult], INDENTCHAR,(int)(sizeof(TCHAR)*nFormat));
+                        charmemset(&lpszMarker[nResult], INDENTCHAR,sizeof(TCHAR)*nFormat);
                         nResult+=nFormat;
                     }
                 }
