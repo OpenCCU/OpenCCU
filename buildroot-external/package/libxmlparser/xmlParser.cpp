@@ -204,9 +204,9 @@ LPTSTR toXMLStringFast(LPTSTR *dest,int *destSz, LPCTSTR source)
 {
     size_t l=lengthXMLString(source)+1;
     if (*destSz < 0 || l>(size_t)*destSz) {
+        if (l > (size_t)INT_MAX) return NULL;
         LPTSTR tmp=(LPTSTR)realloc(*dest,l*sizeof(TCHAR));
         if (!tmp) return NULL;
-        if (l > (size_t)INT_MAX) return NULL;
         *destSz=(int)l; *dest=tmp;
     }
     return toXMLString(*dest,source);
