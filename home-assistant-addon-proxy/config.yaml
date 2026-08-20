@@ -18,7 +18,13 @@ init: false
 timeout: 30
 options:
   webui-url: http://openccu
+  remember_ingress_users: false
+  remember_ingress_credentials: false
+  ingress_keepalive_interval: 250
 schema:
   webui-url: str?
+  remember_ingress_users: bool
+  remember_ingress_credentials: bool
+  ingress_keepalive_interval: int(1,599)
 environment:
   HM_HAPROXY_SRC: 172.30.32.2/32
