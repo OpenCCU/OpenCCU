@@ -219,14 +219,14 @@ function loginRuntime(req) {
   return `<script>(()=>{const endpoint=${JSON.stringify(`${ingressPath}/__openccu_ingress_credentials`)};const index=${JSON.stringify(`${ingressPath}/index.htm`)};const key=${JSON.stringify(`openccu-ingress-login:${namespace}`)};const original=window.FormSubmit;window.FormSubmit=async function(){const u=document.getElementById('UserNameShow');const p=document.getElementById('Password');if(u&&p&&u.value){try{await fetch(endpoint,{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u.value,password:p.value})});}catch(e){}}return original.apply(this,arguments);};if(sessionStorage.getItem(key)!=='1'){fetch(endpoint,{credentials:'same-origin',cache:'no-store'}).then(r=>r.json()).then(c=>{if(!c.ok)return;sessionStorage.setItem(key,'1');window.location.replace(index);}).catch(()=>{});}})();</script>`;
 }
 
-function performLoginAndGetSid(username, password) {
+function performSessionRpc(method, params, errorContext) {
   return new Promise(resolve => {
     if(!UPSTREAM_BASE) return resolve(null);
 
     const target = new URL('api/homematic.cgi', UPSTREAM_BASE);
     const payload = Buffer.from(JSON.stringify({
-      method: 'Session.login',
-      params: { username, password },
+      method,
+      params,
       jsonrpc: '1.1',
       id: 0,
     }), 'utf8');
@@ -249,19 +249,51 @@ function performLoginAndGetSid(username, password) {
         if(response.statusCode !== 200 || length > 65536) return resolve(null);
         try {
           const result = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-          resolve(validSid(result && result.result) ? result.result : null);
-        } catch(error) {
-          resolve(null);
-        }
+          if(result && result.error == null) return resolve(result.result);
+        } catch(error) {}
+        resolve(null);
       });
     });
     request.on('timeout', () => request.destroy(new Error('timeout')));
     request.on('error', error => {
-      console.error(`OpenCCU ingress re-login failed: ${error.message}`);
+      console.error(`${errorContext}: ${error.message}`);
       resolve(null);
     });
     request.end(payload);
   });
+}
+
+async function performLoginAndGetSid(username, password) {
+  const result = await performSessionRpc(
+    'Session.login',
+    { username, password },
+    'OpenCCU ingress re-login failed'
+  );
+  return validSid(result) ? result : null;
+}
+
+async function probeStoredSid(sid) {
+  if(!validSid(sid)) return false;
+  const result = await performSessionRpc(
+    'Session.renew',
+    { _session_id_: sid },
+    'OpenCCU ingress session probe failed'
+  );
+  return result === true || validSid(result);
+}
+
+async function logoutStoredSid(sid) {
+  if(!validSid(sid)) return false;
+  const result = await performSessionRpc(
+    'Session.logout',
+    { _session_id_: sid },
+    'OpenCCU ingress session logout failed'
+  );
+  if(result !== true) {
+    console.warn('OpenCCU ingress session logout did not confirm success.');
+    return false;
+  }
+  return true;
 }
 
 function readJsonBody(req, limit = 16384) {
@@ -449,11 +481,17 @@ app.use((req, res, next) => {
         return res.end(JSON.stringify({ available: false }));
       }
 
+      const oldSid = validSid(record.sid) ? record.sid : null;
+      if(oldSid && await probeStoredSid(oldSid)) {
+        return res.end(JSON.stringify({ ok: true }));
+      }
+
       const newSid = await performLoginAndGetSid(creds.username, creds.password);
-      if (!newSid) {
+      if(!newSid) {
         return res.end(JSON.stringify({ available: false }));
       }
 
+      if(oldSid && oldSid !== newSid) await logoutStoredSid(oldSid);
       record.sid = newSid;
       writeSessionRecord(file, record);
 
