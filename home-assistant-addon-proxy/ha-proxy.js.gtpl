@@ -30,7 +30,17 @@ const REQUEST_TIMEOUT = 20 * 60 * 1000; // 20 min
 const SID_COOKIE = 'openccu_ingress_sid';
 const SESSION_DIRECTORY = process.env.HM_INGRESS_SESSION_DIR || '/data/ingress-sessions';
 const CREDENTIAL_KEY_FILE = path.join(SESSION_DIRECTORY, '.credentials.key');
-const UPSTREAM_URL = '{{ index . "webui-url" }}';
+const UPSTREAM_URL = {{ printf "%q" (index . "webui-url") }};
+const UPSTREAM_BASE = (() => {
+  try {
+    if(!/^https?:\/\/[^\s"'`]+$/i.test(UPSTREAM_URL)) throw new Error('unsupported or unsafe URL');
+    return new URL(UPSTREAM_URL.endsWith('/') ? UPSTREAM_URL : `${UPSTREAM_URL}/`);
+  } catch(error) {
+    console.error(`ERROR: invalid webui-url option: ${UPSTREAM_URL} (${error.message})`);
+    return null;
+  }
+})();
+
 const pendingCredentials = new Map();
 
 function addonOptions() {
@@ -105,12 +115,33 @@ function writeSessionRecord(file, record) {
 
 function credentialKey() {
   fs.mkdirSync(SESSION_DIRECTORY, { recursive: true, mode: 0o700 });
+
   try {
-    const key = fs.readFileSync(CREDENTIAL_KEY_FILE);
-    if(key.length === 32) return key;
-  } catch(error) {}
+    const existing = fs.readFileSync(CREDENTIAL_KEY_FILE);
+    if(existing.length === 32) return existing;
+    console.warn('Invalid credential key length, regenerating...');
+  } catch(error) {
+    if(error.code !== 'ENOENT') console.warn(`Unable to read credential key: ${error.message}`);
+  }
+
   const key = crypto.randomBytes(32);
-  fs.writeFileSync(CREDENTIAL_KEY_FILE, key, { mode: 0o600, flag: 'wx' });
+  try {
+    fs.writeFileSync(CREDENTIAL_KEY_FILE, key, { mode: 0o600, flag: 'wx' });
+    return key;
+  } catch(error) {
+    if(error.code !== 'EEXIST') throw error;
+  }
+
+  // Another process may have created/replaced the key in the meantime.
+  try {
+    const existing = fs.readFileSync(CREDENTIAL_KEY_FILE);
+    if(existing.length === 32) return existing;
+  } catch(error) {
+    if(error.code !== 'ENOENT') throw error;
+  }
+
+  // An existing malformed key is replaced atomically enough for this local store.
+  fs.writeFileSync(CREDENTIAL_KEY_FILE, key, { mode: 0o600 });
   return key;
 }
 
@@ -153,10 +184,14 @@ function writeUserSid(req, sid) {
     const record = readSessionRecord(file);
     record.sid = sid;
     const pending = pendingCredentials.get(file);
-    if(REMEMBER_INGRESS_CREDENTIALS && pending && pending.expires > Date.now()) {
-      record.credentials = encryptCredentials(pending.credentials);
+    if (pending) {
       pendingCredentials.delete(file);
+
+      if (REMEMBER_INGRESS_CREDENTIALS && pending.expires > Date.now()) {
+        record.credentials = encryptCredentials(pending.credentials);
+      }
     }
+
     writeSessionRecord(file, record);
   } catch(error) {
     console.error(`Unable to store per-user ingress session: ${error.message}`);
@@ -189,7 +224,52 @@ function invalidateUserSid(req) {
 function loginRuntime(req) {
   const ingressPath = req.headers['x-ingress-path'] || '';
   const namespace = path.basename(sessionFile(req) || 'anonymous', '.json');
-  return `<script>(()=>{const endpoint=${JSON.stringify(`${ingressPath}/__openccu_ingress_credentials`)};const key=${JSON.stringify(`openccu-ingress-login:${namespace}`)};const original=window.FormSubmit;window.FormSubmit=async function(){const u=document.getElementById('UserNameShow');const p=document.getElementById('Password');if(u&&p&&u.value){try{await fetch(endpoint,{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u.value,password:p.value})});}catch(e){}}return original.apply(this,arguments);};if(sessionStorage.getItem(key)!=='1'){fetch(endpoint,{credentials:'same-origin',cache:'no-store'}).then(r=>r.json()).then(c=>{if(!c.available)return;sessionStorage.setItem(key,'1');document.getElementById('UserNameShow').value=c.username;document.getElementById('Password').value=c.password;window.FormSubmit();}).catch(()=>{});}})();</script>`;
+  return `<script>(()=>{const endpoint=${JSON.stringify(`${ingressPath}/__openccu_ingress_credentials`)};const index=${JSON.stringify(`${ingressPath}/index.htm`)};const key=${JSON.stringify(`openccu-ingress-login:${namespace}`)};const original=window.FormSubmit;window.FormSubmit=async function(){const u=document.getElementById('UserNameShow');const p=document.getElementById('Password');if(u&&p&&u.value){try{await fetch(endpoint,{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u.value,password:p.value})});}catch(e){}}return original.apply(this,arguments);};if(sessionStorage.getItem(key)!=='1'){fetch(endpoint,{credentials:'same-origin',cache:'no-store'}).then(r=>r.json()).then(c=>{if(!c.ok)return;sessionStorage.setItem(key,'1');window.location.replace(index);}).catch(()=>{});}})();</script>`;
+}
+
+function performLoginAndGetSid(username, password) {
+  return new Promise(resolve => {
+    if(!UPSTREAM_BASE) return resolve(null);
+
+    const target = new URL('api/homematic.cgi', UPSTREAM_BASE);
+    const payload = Buffer.from(JSON.stringify({
+      method: 'Session.login',
+      params: { username, password },
+      jsonrpc: '1.1',
+      id: 0,
+    }), 'utf8');
+    const client = target.protocol === 'https:' ? https : http;
+    const request = client.request(target, {
+      method: 'POST',
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': payload.length,
+      },
+    }, response => {
+      const chunks = [];
+      let length = 0;
+      response.on('data', chunk => {
+        length += chunk.length;
+        if(length <= 65536) chunks.push(chunk);
+      });
+      response.on('end', () => {
+        if(response.statusCode !== 200 || length > 65536) return resolve(null);
+        try {
+          const result = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+          resolve(validSid(result && result.result) ? result.result : null);
+        } catch(error) {
+          resolve(null);
+        }
+      });
+    });
+    request.on('timeout', () => request.destroy(new Error('timeout')));
+    request.on('error', error => {
+      console.error(`OpenCCU ingress re-login failed: ${error.message}`);
+      resolve(null);
+    });
+    request.end(payload);
+  });
 }
 
 function readJsonBody(req, limit = 16384) {
@@ -215,6 +295,8 @@ function rememberedSid(req) {
 }
 
 function keepStoredSessionsAlive() {
+  if(!UPSTREAM_BASE) return;
+
   let files;
   try {
     files = fs.readdirSync(SESSION_DIRECTORY).filter(file => file.endsWith('.json'));
@@ -237,7 +319,7 @@ function keepStoredSessionsAlive() {
       continue;
     }
 
-    const target = new URL('esp/system.htm', UPSTREAM_URL.endsWith('/') ? UPSTREAM_URL : `${UPSTREAM_URL}/`);
+    const target = new URL('esp/system.htm', UPSTREAM_BASE);
     target.searchParams.set('sid', sid);
     target.searchParams.set('action', 'keepAlive');
     const client = target.protocol === 'https:' ? https : http;
@@ -367,9 +449,23 @@ app.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     const file = sessionFile(req);
     if(!REMEMBER_INGRESS_CREDENTIALS || !file) return res.status(404).end('{"available":false}');
-    if(req.method === 'GET') {
-      const credentials = decryptCredentials(readSessionRecord(file));
-      return res.end(JSON.stringify(credentials ? { available: true, ...credentials } : { available: false }));
+    if (req.method === 'GET') {
+      const record = readSessionRecord(file);
+      const creds = decryptCredentials(record);
+
+      if (!creds) {
+        return res.end(JSON.stringify({ available: false }));
+      }
+
+      const newSid = await performLoginAndGetSid(creds.username, creds.password);
+      if (!newSid) {
+        return res.end(JSON.stringify({ available: false }));
+      }
+
+      record.sid = newSid;
+      writeSessionRecord(file, record);
+
+      return res.end(JSON.stringify({ ok: true }));
     }
     if(req.method === 'POST') {
       try {
