@@ -287,7 +287,8 @@ async function probeStoredSid(sid) {
     { _session_id_: sid },
     'OpenCCU ingress session probe failed'
   );
-  return Number.isInteger(result) && result >= 0;
+  const count = typeof(result) === 'string' && /^\d+$/.test(result) ? Number(result) : result;
+  return Number.isInteger(count) && count >= 0;
 }
 
 async function logoutStoredSid(sid) {
@@ -359,6 +360,8 @@ function keepStoredSessionsAlive() {
       response.resume();
       if([302, 401, 403, 500].includes(response.statusCode)) {
         const record = readSessionRecord(file);
+        // A newer SID may have been stored while this keep-alive request was in flight.
+        if(record.sid !== sid) return;
         delete record.sid;
         try {
           if(REMEMBER_INGRESS_CREDENTIALS && record.credentials) writeSessionRecord(file, record);
