@@ -275,11 +275,11 @@ async function performLoginAndGetSid(username, password) {
 async function probeStoredSid(sid) {
   if(!validSid(sid)) return false;
   const result = await performSessionRpc(
-    'Session.renew',
+    'Device.getNewDeviceCount',
     { _session_id_: sid },
     'OpenCCU ingress session probe failed'
   );
-  return result === true || validSid(result);
+  return Number.isInteger(result) && result >= 0;
 }
 
 async function logoutStoredSid(sid) {
