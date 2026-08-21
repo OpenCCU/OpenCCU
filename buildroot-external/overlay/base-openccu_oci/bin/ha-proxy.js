@@ -33,6 +33,7 @@ const CREDENTIAL_KEY_FILE = path.join(SESSION_DIRECTORY, '.credentials.key');
 const UPSTREAM_URL = 'http://127.0.0.1:80';
 const UPSTREAM_BASE = new URL(`${UPSTREAM_URL}/`);
 const pendingCredentials = new Map();
+const sessionFileLocks = new Set();
 
 function addonOptions() {
   for(const optionsFile of ['/data/options.json', '/usr/local/options.json']) {
@@ -87,6 +88,18 @@ function sessionFile(req) {
   if(typeof(userId) !== 'string' || userId.length === 0) return null;
   const digest = crypto.createHash('sha256').update(userId).digest('hex');
   return path.join(SESSION_DIRECTORY, `${digest}.json`);
+}
+
+function withSessionFileLock(file, callback) {
+  if(sessionFileLocks.has(file)) {
+    throw new Error(`Concurrent session-file mutation detected for ${path.basename(file)}`);
+  }
+  sessionFileLocks.add(file);
+  try {
+    return callback();
+  } finally {
+    sessionFileLocks.delete(file);
+  }
 }
 
 function readSessionRecord(file) {
@@ -173,18 +186,20 @@ function writeUserSid(req, sid) {
   const file = sessionFile(req);
   if(!file || !validSid(sid)) return;
   try {
-    const record = readSessionRecord(file);
-    record.sid = sid;
-    const pending = pendingCredentials.get(file);
-    if (pending) {
-      pendingCredentials.delete(file);
+    withSessionFileLock(file, () => {
+      const record = readSessionRecord(file);
+      record.sid = sid;
+      const pending = pendingCredentials.get(file);
+      if (pending) {
+        pendingCredentials.delete(file);
 
-      if (REMEMBER_INGRESS_CREDENTIALS && pending.expires > Date.now()) {
-        record.credentials = encryptCredentials(pending.credentials);
+        if (REMEMBER_INGRESS_CREDENTIALS && pending.expires > Date.now()) {
+          record.credentials = encryptCredentials(pending.credentials);
+        }
       }
-    }
 
-    writeSessionRecord(file, record);
+      writeSessionRecord(file, record);
+    });
   } catch(error) {
     console.error(`Unable to store per-user ingress session: ${error.message}`);
   }
@@ -351,14 +366,18 @@ function keepStoredSessionsAlive() {
     const request = client.get(target, { timeout: 10000 }, response => {
       response.resume();
       if([302, 401, 403, 500].includes(response.statusCode)) {
-        const record = readSessionRecord(file);
-        // A newer SID may have been stored while this keep-alive request was in flight.
-        if(record.sid !== sid) return;
-        delete record.sid;
         try {
-          if(REMEMBER_INGRESS_CREDENTIALS && record.credentials) writeSessionRecord(file, record);
-          else fs.rmSync(file, { force: true });
-        } catch(error) {}
+          withSessionFileLock(file, () => {
+            const record = readSessionRecord(file);
+            // A newer SID may have been stored while this keep-alive request was in flight.
+            if(record.sid !== sid) return;
+            delete record.sid;
+            if(REMEMBER_INGRESS_CREDENTIALS && record.credentials) writeSessionRecord(file, record);
+            else fs.rmSync(file, { force: true });
+          });
+        } catch(error) {
+          console.error(`Unable to invalidate stale ingress session: ${error.message}`);
+        }
       }
     });
     request.on('timeout', () => request.destroy(new Error('timeout')));
