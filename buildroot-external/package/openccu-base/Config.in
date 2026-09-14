@@ -27,16 +27,16 @@ config BR2_PACKAGE_OPENCCU_BASE_REGAHSS
 	bool "ReGaHss"
 	default y
 	help
-	  Install the ReGaHss logic layer (/bin/ReGaHss) and the
-	  tclrega Tcl extension (/lib/tclrega.so) that scripts load
-	  to talk to it.
+	  Install the ReGaHss logic layer (/bin/ReGaHss), its init
+	  script (/etc/init.d/S70ReGaHss) and the tclrega Tcl
+	  extension (/lib/tclrega.so) that scripts load to talk to
+	  it.
 
 	  Without it, the image carries the interface processes
 	  (rfd, multimacd, hs485d, HMServer) and their tools only,
 	  e.g. for a system that is driven entirely over XML-RPC.
-	  The S70ReGaHss init script and the ReGaHss check in
-	  monitrc skip themselves when /bin/ReGaHss is not
-	  installed.
+	  The ReGaHss check in monitrc skips itself when
+	  /bin/ReGaHss is not installed.
 
 config BR2_PACKAGE_OPENCCU_BASE_WEBUI
 	bool "WebUI"
@@ -49,7 +49,8 @@ config BR2_PACKAGE_OPENCCU_BASE_WEBUI
 	  addons use to publish their own pages from
 	  /etc/config/addons/www. The WebUI is still generated and
 	  patched during the build, so the device types in /firmware
-	  and /opt are unchanged.
+	  and /opt are unchanged, and the license information
+	  (/www/rega/licenseinfo.htm) is generated in both cases.
 
 endif
 

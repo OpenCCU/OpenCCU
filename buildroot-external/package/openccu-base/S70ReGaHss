@@ -28,10 +28,6 @@ if [[ ! -f "/bin/${REGA_BIN_FILE}" ]]; then
   REGA_BIN_FILE="ReGaHss"
 fi
 
-# skip this startup if ReGaHss is not installed
-# (BR2_PACKAGE_OPENCCU_BASE_REGAHSS disabled)
-[[ ! -x "/bin/${REGA_BIN_FILE}" ]] && exit 0
-
 init() {
   for i in ${CREATE_DIRS}; do
     [[ ! -d ${i} ]] && mkdir -p "${i}"

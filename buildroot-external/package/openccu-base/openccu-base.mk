@@ -258,11 +258,6 @@ define OPENCCU_BASE_FINALIZE_TARGET
 
 	# make sure no /etc/ntp.conf is there anymore (chrony used)
 	rm -f $(TARGET_DIR)/etc/ntp.conf
-endef
-
-define OPENCCU_BASE_FINALIZE_TARGET_WEBUI
-	# fix permissions
-	chmod 755 $(TARGET_DIR)/www/config/fileupload.ccc
 
 	# extract license infos from JAR files
 	$(HOST_DIR)/bin/python3 $(OPENCCU_BASE_PKGDIR)/scripts/createLicenseForJar.py \
@@ -282,7 +277,9 @@ define OPENCCU_BASE_FINALIZE_TARGET_WEBUI
 		--jarfile=ESHBridge.jar \
 		--output=$(OPENCCU_BASE_BUILDDIR)/ESHBridge.jar-JARLICENSEINFO.txt
 
-	# create licenseinfo.htm
+	# create licenseinfo.htm, also without the WebUI, so every image
+	# carries the license information
+	$(INSTALL) -d -m 0755 $(TARGET_DIR)/www/rega
 	$(HOST_DIR)/bin/python3 $(OPENCCU_BASE_PKGDIR)/scripts/createLicenseHtml.py \
 		--build-dir=$(BUILD_DIR)/../ \
 		--jar-license-info=$(OPENCCU_BASE_BUILDDIR)/HMIPServer.jar-JARLICENSEINFO.txt \
@@ -290,6 +287,11 @@ define OPENCCU_BASE_FINALIZE_TARGET_WEBUI
 		--jar-license-info=$(OPENCCU_BASE_BUILDDIR)/hmip-copro-update.jar-JARLICENSEINFO.txt \
 		--jar-license-info=$(OPENCCU_BASE_BUILDDIR)/ESHBridge.jar-JARLICENSEINFO.txt \
 		--output=$(TARGET_DIR)/www/rega/licenseinfo.htm
+endef
+
+define OPENCCU_BASE_FINALIZE_TARGET_WEBUI
+	# fix permissions
+	chmod 755 $(TARGET_DIR)/www/config/fileupload.ccc
 endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE),y)
 ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
@@ -301,11 +303,19 @@ endif
 endif
 
 ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_REGAHSS),y)
+define OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS
+	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S70ReGaHss \
+		$(TARGET_DIR)/etc/init.d/S70ReGaHss
+endef
+endif
+
 define OPENCCU_BASE_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S50eq3configd \
 		$(TARGET_DIR)/etc/init.d/S50eq3configd
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S50ssdpd \
 		$(TARGET_DIR)/etc/init.d/S50ssdpd
+	$(OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS)
 endef
 
 define OPENCCU_BASE_USERS
