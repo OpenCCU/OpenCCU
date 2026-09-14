@@ -34,8 +34,9 @@ config BR2_PACKAGE_OPENCCU_BASE_REGAHSS
 	  Without it, the image carries the interface processes
 	  (rfd, multimacd, hs485d, HMServer) and their tools only,
 	  e.g. for a system that is driven entirely over XML-RPC.
-	  Init scripts and overlays that start or call ReGaHss are
-	  not affected by this option.
+	  The S70ReGaHss init script and the ReGaHss check in
+	  monitrc skip themselves when /bin/ReGaHss is not
+	  installed.
 
 config BR2_PACKAGE_OPENCCU_BASE_WEBUI
 	bool "WebUI"

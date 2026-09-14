@@ -331,7 +331,11 @@ check process ReGaHss with pidfile /var/run/ReGaHss.pid
       exec "/bin/triggerAlarm.tcl 'ReGaHss restarted' 'WatchDog: regahss-restart' true"
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'ReGaHss: high filedescriptor usage (>95%)' 'WatchDog: regahss-highfd' true"
-    depends on hmlangwDisabled
+    depends on regaHssEnabled, hmlangwDisabled
+
+check program regaHssEnabled with path "/usr/bin/test -x /bin/ReGaHss"
+    group homematic
+    if status != 0 for 1 cycles then unmonitor
 
 # cronjob daemon monitoring
 check process crond with pidfile /var/run/crond.pid
