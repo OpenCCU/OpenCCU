@@ -75,6 +75,32 @@ waitStartupComplete() {
   done
 }
 
+# Stop the RF-stack consumers (rfd, HMIPServer) that hold the eq3loop slave
+# devices. They must be stopped before the module can be unloaded; otherwise
+# rmmod fails "in use", the module stays half-wedged, and the HmIP stack dies
+# until the next reboot.
+stop_consumers() {
+  [[ -x /etc/init.d/S62HMServer ]] && /etc/init.d/S62HMServer stop
+  [[ -x /etc/init.d/S61rfd ]] && /etc/init.d/S61rfd stop
+}
+
+# Start the consumers again, in order, after multimacd has recreated the
+# mmd_* devices.
+start_consumers() {
+  [[ -x /etc/init.d/S61rfd ]] && /etc/init.d/S61rfd start
+  [[ -x /etc/init.d/S62HMServer ]] && /etc/init.d/S62HMServer start
+}
+
+# Assert a coprocessor/radio reset so the HmIP coprocessor app re-handshakes
+# after the stack was torn down (mirrors S47InitRFHardware's reset_rf_hardware).
+reset_radio() {
+  for rdev in /sys/class/raw-uart/*/reset_radio_module; do
+    [[ -e "${rdev}" ]] && echo 1 >"${rdev}" 2>/dev/null
+  done
+  # give the RF module some time to stabilize after the reset
+  sleep 2
+}
+
 start() {
   echo -n "Starting multimacd: "
 
@@ -128,22 +154,54 @@ stop() {
     start-stop-daemon -K -q -p ${PIDFILE}
     rm -f ${PIDFILE}
     echo "OK"
-
-    # make sure to unload eq3_char_loop which
-    # is necessary for docker-based environments
-    if [[ -c /dev/eq3loop ]]; then
-      sleep 2 # wait to settle
-      # load eq3_char_loop kernel module
-      rmmod eq3_char_loop 2>/dev/null
-    fi
   else
     echo "not started"
+  fi
+
+  # make sure to unload eq3_char_loop which is necessary for docker-based
+  # environments and for a clean RF-stack restart.
+  if [[ -c /dev/eq3loop ]]; then
+    # release the slave devices first: rfd and HMIPServer keep mmd_bidcos /
+    # mmd_hmip open, so without stopping them rmmod fails "in use" and the
+    # module stays half-wedged (HmIP dead until reboot).
+    stop_consumers
+    # backstop: kill anything still holding the slave nodes
+    fuser -k /dev/mmd_bidcos /dev/mmd_hmip >/dev/null 2>&1
+    # clear stale RXTX lock files so HMIPServer can reopen after a restart
+    rm -f /var/lock/LCK..mmd_bidcos /var/lock/LCK..mmd_hmip
+    sleep 1 # let holders settle
+
+    # unload, retrying briefly while consumers finish releasing the devices.
+    # Do not silently swallow a persistent failure -- log it.
+    i=0
+    while [[ ${i} -lt ${STEPS} ]] && [[ -c /dev/eq3loop ]]; do
+      rmmod eq3_char_loop 2>/dev/null && break
+      i=$((i + 1))
+      sleep 1
+    done
+    if [[ -c /dev/eq3loop ]]; then
+      echo "WARNING: could not unload eq3_char_loop (still in use)"
+    fi
   fi
 }
 
 restart() {
+  # remember whether we are the eq3loop coordinator before tearing down, so a
+  # plain (non-eq3loop) setup keeps the old simple stop/start semantics.
+  COORDINATE=0
+  [[ -c /dev/eq3loop ]] && COORDINATE=1
+
   stop
-  start
+
+  if [[ ${COORDINATE} -eq 1 ]]; then
+    # the module is unloaded and the slaves are released; reset the radio so
+    # the coprocessor re-handshakes, then bring the stack back up in order.
+    reset_radio
+    start
+    start_consumers
+  else
+    start
+  fi
 }
 
 case "$1" in
