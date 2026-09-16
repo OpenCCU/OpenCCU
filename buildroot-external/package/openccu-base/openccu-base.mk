@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = 3.89.9
-OPENCCU_BASE_COMPAT_VERSION = 3.89.9
+OPENCCU_BASE_VERSION = 3ed652a404d72cbe403e37c5b8b1f610451b02fb
+OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
 OPENCCU_BASE_LICENSE = HMSL-2.0, Apache-2.0 (WebUI), \
@@ -18,7 +18,7 @@ OPENCCU_BASE_ENABLE_ROOTFS_PATCHING ?= YES
 
 OPENCCU_BASE_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),,\
-	host-openjdk-bin host-pkgconf host-python3 host-python-html2text host-tcl \
+	host-pkgconf host-python3 host-python-html2text host-tcl \
 	libusb openssl tcl)
 
 OPENCCU_BASE_BUILD_OPTS = \
@@ -31,7 +31,6 @@ OPENCCU_BASE_CONF_OPTS = \
 	-DHAS_USB_SUPPORT=$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),OFF,ON) \
 	-DROOTFS_DIR=$(@D)/build/rootfs \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),,\
-	-DOPENCCU_JAVA_EXECUTABLE=$(HOST_OPENJDK_BIN_ROOT_DIR)/bin/java \
 	-DOPENCCU_PYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3 \
 	-DOPENCCU_TCLSH_EXECUTABLE=$(HOST_DIR)/bin/tclsh8.6)
 
