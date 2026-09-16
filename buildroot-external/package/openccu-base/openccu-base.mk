@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = 3.89.9
-OPENCCU_BASE_COMPAT_VERSION = 3.89.9
+OPENCCU_BASE_VERSION = 0ca89062add1a05be565a5afff67555145215568
+OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
 OPENCCU_BASE_LICENSE = HMSL-2.0, Apache-2.0 (WebUI), \
