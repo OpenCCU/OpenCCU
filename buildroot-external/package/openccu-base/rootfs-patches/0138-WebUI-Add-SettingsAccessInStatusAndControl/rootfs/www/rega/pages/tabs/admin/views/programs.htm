@@ -810,7 +810,7 @@
       jQuery.each(jElm, function (index, elm) {
         var text = jQuery(elm).find("option:selected").text();
         // create test element
-        var _test = jQuery("<span>").html(text).css({
+        var _test = jQuery("<span>").text(text).css({
           "font-size": jQuery(elm).css("font-size"), // ensures same size text
           "visibility": "hidden"               // prevents FOUC
         });

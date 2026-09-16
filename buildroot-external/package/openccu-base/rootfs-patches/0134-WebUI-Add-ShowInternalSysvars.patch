@@ -112,20 +112,29 @@
  <colgroup>
    <col />
    <col />
-@@ -141,15 +153,17 @@
+@@ -141,8 +153,10 @@
      string sTrId = "sv"#sysvar;
      Write("<tr id='"#sTrId#"'>");
      object sv = dom.GetObject(sysvar);
--    Write("<td style='text-align:center;' class='GrayBkg CLASS05206' >");
 +    string CellBkg = "GrayBkg";
 +    if (sv.Internal() == true) { CellBkg = "LightGrayBkg"; }
+     string sHtml;
+-    Write("<td style='text-align:center;' class='GrayBkg CLASS05206' >");
 +    Write("<td style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
-       Write(sv.Name());
+       sHtml = sv.Name();
+       sHtml = sHtml.Replace("&", "&amp;");
+       sHtml = sHtml.Replace("<", "&lt;");
+@@ -150,7 +164,7 @@
+       Write(sHtml);
      Write("</td>");
      
 -    Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
 +    Write("<td  style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
-       Write(sv.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>'));
+       sHtml = sv.DPInfo().Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
+       sHtml = sHtml.Replace("&", "&amp;");
+       sHtml = sHtml.Replace("<", "&lt;");
+@@ -158,7 +172,7 @@
+       Write(sHtml);
      Write("</td>");
      
 -    Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
@@ -133,7 +142,7 @@
        string s = "Unbekannt: " # sv.ValueSubType();
        if( sv.ValueSubType() == istPresent )
        {
-@@ -178,7 +192,7 @@
+@@ -187,7 +201,7 @@
        Write(s);
      Write("</td>");
      
@@ -142,13 +151,17 @@
        if (sv.ValueSubType() == istPresent) {
        }
        if (sv.ValueSubType() == istChar8859) {
-@@ -202,19 +216,21 @@
+@@ -231,7 +245,7 @@
      Write("</td>");
      
      
 -    Write("<td class='GrayBkg CLASS05206' >");
 +    Write("<td class='"#CellBkg#" CLASS05206' >");
-       Write(sv.ValueUnit());
+       sHtml = sv.ValueUnit();
+       sHtml = sHtml.Replace("&", "&amp;");
+       sHtml = sHtml.Replace("<", "&lt;");
+@@ -239,15 +253,17 @@
+       Write(sHtml);
      Write("</td>");
      
 -    Write("<td class='GrayBkg CLASS05206' >");
@@ -168,7 +181,7 @@
          Write("<td class='CLASS05210'>");
            string sClassName = "StdButton";
            string sOnclick = "DeleteSysVar("#sv.ID()#");";
-@@ -225,6 +241,22 @@
+@@ -258,6 +274,22 @@
            }
            Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnRemove}</div>");
          Write("</td>");
@@ -191,7 +204,7 @@
          Write("<td class='CLASS05211'>");
            string sChecked = "";
            if (sv.Visible()) {
-@@ -232,24 +264,29 @@
+@@ -265,24 +297,29 @@
            }
            Write("<input id='svvis"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpVisibility("#sv.ID()#", this)' />${lblVisible}");
          Write("</td>");
@@ -229,7 +242,7 @@
        string sJSTmp = "WebUI.enter(ProgramListPage, '"#sv.DPEnumUsagePrograms()#"');";
        Write( '<div class="StdButton" onclick="'#sJSTmp#'">${btnPrograms}</div>' );
      Write("</td>");
-@@ -305,7 +342,39 @@
+@@ -338,7 +375,39 @@
    new iseSubMenuControl("btnFilterVarType", "btnFilterVarTypeSub", "svOffset", {}, mouseOpts, false, true);  
    new iseSubMenuControl("btnFilterUnit", "btnFilterUnitSub", "svOffset", {}, mouseOpts, false, true);
    new iseSubMenuControl("btnFilterChn", "btnFilterChnSub", "svOffset", {}, mouseOpts, false, true);
@@ -270,7 +283,7 @@
    var s = "";
    
    s += "<table cellspacing='8'>";
-@@ -313,6 +382,7 @@
+@@ -346,6 +415,7 @@
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='newSysVar()'>${footerBtnNew}</div></td>";

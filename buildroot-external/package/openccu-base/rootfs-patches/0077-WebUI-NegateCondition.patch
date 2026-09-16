@@ -11,17 +11,21 @@
                    }
  
                    !SPHM-934
-@@ -83,11 +84,11 @@
-                     {
-                       if( iRV1 == 0 )
-                       {
--                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName0()#', ';
-+                        sRet = sRet#' '#oLV.ValueName0()#' ';
+@@ -87,7 +88,7 @@
+                         sVN0 = sVN0.Replace("&", "&amp;");
+                         sVN0 = sVN0.Replace("<", "&lt;");
+                         sVN0 = sVN0.Replace(">", "&gt;");
+-                        sRet = sRet#', ${ruleConditionLblWhen} '#sVN0#', ';
++                        sRet = sRet#' '#sVN0#' ';
                        }
                        if( iRV1 == 1 )
                        {
--                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName1()#', ';
-+                        sRet = sRet#' '#oLV.ValueName1()#' ';
+@@ -95,7 +96,7 @@
+                         sVN1 = sVN1.Replace("&", "&amp;");
+                         sVN1 = sVN1.Replace("<", "&lt;");
+                         sVN1 = sVN1.Replace(">", "&gt;");
+-                        sRet = sRet#', ${ruleConditionLblWhen} '#sVN1#', ';
++                        sRet = sRet#' '#sVN1#' ';
                        }
                      }
                    }
