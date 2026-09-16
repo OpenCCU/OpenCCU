@@ -34,7 +34,6 @@ rootfs=${output_parent}/$(basename "$2")
 mkdir -p "$rootfs"
 
 cmake=$(resolve_executable "${CMAKE:-cmake}")
-java=$(resolve_executable "${JAVA:-java}")
 python=$(resolve_executable "${PYTHON:-python3}")
 tclsh=$(resolve_executable "${TCLSH:-tclsh}")
 
@@ -62,7 +61,6 @@ CMAKE
 "$cmake" -S "$build_dir/source" -B "$build_dir/build" \
   -DOPENCCU_BASE_SOURCE="$openccu_base_source" \
   -DROOTFS_DIR="$rootfs" \
-  -DOPENCCU_JAVA_EXECUTABLE="$java" \
   -DOPENCCU_PYTHON_EXECUTABLE="$python" \
   -DOPENCCU_TCLSH_EXECUTABLE="$tclsh"
 "$cmake" --build "$build_dir/build" --target \
