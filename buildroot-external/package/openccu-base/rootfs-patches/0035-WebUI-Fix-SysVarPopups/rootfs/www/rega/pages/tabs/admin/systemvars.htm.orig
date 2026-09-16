@@ -141,12 +141,21 @@
     string sTrId = "sv"#sysvar;
     Write("<tr id='"#sTrId#"'>");
     object sv = dom.GetObject(sysvar);
+    string sHtml;
     Write("<td style='text-align:center;' class='GrayBkg CLASS05206' >");
-      Write(sv.Name());
+      sHtml = sv.Name();
+      sHtml = sHtml.Replace("&", "&amp;");
+      sHtml = sHtml.Replace("<", "&lt;");
+      sHtml = sHtml.Replace(">", "&gt;");
+      Write(sHtml);
     Write("</td>");
     
     Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
-      Write(sv.DPInfo());
+      sHtml = sv.DPInfo();
+      sHtml = sHtml.Replace("&", "&amp;");
+      sHtml = sHtml.Replace("<", "&lt;");
+      sHtml = sHtml.Replace(">", "&gt;");
+      Write(sHtml);
     Write("</td>");
     
     Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
@@ -184,26 +193,50 @@
       if (sv.ValueSubType() == istChar8859) {
       }
       if (sv.ValueSubType() == istAlarm) {
-        Write("${lblTrue} = " # sv.ValueName1()#"<br />");
-        Write("${lblFalse} = " # sv.ValueName0());
+        sHtml = sv.ValueName1();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblTrue} = " # sHtml#"<br />");
+        sHtml = sv.ValueName0();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblFalse} = " # sHtml);
       }
       if (sv.ValueSubType() == istGeneric) {
         Write("${lblMinValue}: " # sv.ValueMin()#"<br />");
         Write("${lblMaxValue}: " # sv.ValueMax());
       }
       if (sv.ValueSubType() == istEnum) {
-        Write(sv.ValueList());
+        sHtml = sv.ValueList();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write(sHtml);
       }
       if (sv.ValueSubType() == istBool) {
-        Write("${lblTrue} = " # sv.ValueName1()#"<br />");
-        Write("${lblFalse} = " # sv.ValueName0());
+        sHtml = sv.ValueName1();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblTrue} = " # sHtml#"<br />");
+        sHtml = sv.ValueName0();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblFalse} = " # sHtml);
       }
       
     Write("</td>");
     
     
     Write("<td class='GrayBkg CLASS05206' >");
-      Write(sv.ValueUnit());
+      sHtml = sv.ValueUnit();
+      sHtml = sHtml.Replace("&", "&amp;");
+      sHtml = sHtml.Replace("<", "&lt;");
+      sHtml = sHtml.Replace(">", "&gt;");
+      Write(sHtml);
     Write("</td>");
     
     Write("<td class='GrayBkg CLASS05206' >");
