@@ -31,6 +31,10 @@ PACKAGE_NAME="rpi-eeprom"
 PROJECT_URL="https://github.com/raspberrypi/rpi-eeprom"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
 CURRENT_ID=$(sed -nE 's/^RPI_EEPROM_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+BR_PACKAGE_NAME=${PACKAGE_NAME^^}
+BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
+CURRENT_RPI4_FIRMWARE_PATH=$(sed -nE "s#^[[:space:]]*${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+CURRENT_RPI5_FIRMWARE_PATH=$(sed -nE "s#^[[:space:]]*${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
 if [[ -z "${1}" ]]; then
   exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
@@ -52,11 +56,16 @@ if [[ -z "${RPI5_FIRMWARE_PATH}" ]]; then
   RPI5_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2712")
 fi
 
+if [[ -n "${CURRENT_RPI4_FIRMWARE_PATH}" && -n "${CURRENT_RPI5_FIRMWARE_PATH}" \
+  && "${RPI4_FIRMWARE_PATH}" == "${CURRENT_RPI4_FIRMWARE_PATH}" \
+  && "${RPI5_FIRMWARE_PATH}" == "${CURRENT_RPI5_FIRMWARE_PATH}" ]]; then
+  echo "${PACKAGE_NAME}: pieeprom firmware unchanged (rpi4=${RPI4_FIRMWARE_PATH}, rpi5=${RPI5_FIRMWARE_PATH}), skipping version/hash update"
+  exit 0
+fi
+
 ARCHIVE_HASH=$(sha256sum "${ARCHIVE_TMP}" | awk '{ print $1 }')
 if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update package info
-  BR_PACKAGE_NAME=${PACKAGE_NAME^^}
-  BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
   sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
   if [[ -n "${RPI4_FIRMWARE_PATH}" ]]; then
     sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/stable/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"

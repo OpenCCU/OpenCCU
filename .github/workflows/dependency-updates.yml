@@ -175,6 +175,20 @@ jobs:
           echo "package=${{ matrix.package }}" >>"${GITHUB_OUTPUT}"
           echo "previous_version=${previous_version}" >>"${GITHUB_OUTPUT}"
           echo "version=${version}" >>"${GITHUB_OUTPUT}"
+          if [[ "${{ matrix.package }}" == "rpi-eeprom" ]]; then
+            previous_rpi4_pieeprom=$(git --no-pager show "HEAD:${{ matrix.version_file }}" \
+              | sed -nE 's#^[[:space:]]*RPI_EEPROM_FIRMWARE_PATH = firmware-2711/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin)$#\2#p' \
+              | head -n1)
+            previous_rpi5_pieeprom=$(git --no-pager show "HEAD:${{ matrix.version_file }}" \
+              | sed -nE 's#^[[:space:]]*RPI_EEPROM_FIRMWARE_PATH = firmware-2712/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin)$#\2#p' \
+              | head -n1)
+            rpi4_pieeprom=$(sed -nE 's#^[[:space:]]*RPI_EEPROM_FIRMWARE_PATH = firmware-2711/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin)$#\2#p' '${{ matrix.version_file }}' | head -n1)
+            rpi5_pieeprom=$(sed -nE 's#^[[:space:]]*RPI_EEPROM_FIRMWARE_PATH = firmware-2712/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\.bin)$#\2#p' '${{ matrix.version_file }}' | head -n1)
+            echo "rpi4_pieeprom_previous=${previous_rpi4_pieeprom}" >>"${GITHUB_OUTPUT}"
+            echo "rpi5_pieeprom_previous=${previous_rpi5_pieeprom}" >>"${GITHUB_OUTPUT}"
+            echo "rpi4_pieeprom=${rpi4_pieeprom}" >>"${GITHUB_OUTPUT}"
+            echo "rpi5_pieeprom=${rpi5_pieeprom}" >>"${GITHUB_OUTPUT}"
+          fi
           echo "no_update=false" >>"${GITHUB_OUTPUT}"
 
       - name: Check package patch apply status
@@ -222,6 +236,12 @@ jobs:
           - Current version: `${{ steps.metadata.outputs.previous_version }}`
           - New version....: `${{ steps.metadata.outputs.version }}`
           EOF
+          if [[ "${{ steps.metadata.outputs.package }}" == "rpi-eeprom" ]]; then
+            cat >>"${body_file}" <<EOF
+          - RPi4 pieeprom..: \`${{ steps.metadata.outputs.rpi4_pieeprom_previous || 'n/a' }}\` → \`${{ steps.metadata.outputs.rpi4_pieeprom || 'n/a' }}\`
+          - RPi5 pieeprom..: \`${{ steps.metadata.outputs.rpi5_pieeprom_previous || 'n/a' }}\` → \`${{ steps.metadata.outputs.rpi5_pieeprom || 'n/a' }}\`
+          EOF
+          fi
           if [[ "${{ steps.patch_check.outputs.patch_warning }}" == "true" ]]; then
             cat >>"${body_file}" <<'EOF'
 
