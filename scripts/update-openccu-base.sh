@@ -66,6 +66,7 @@ if [[ -z "${BUILDROOT_TOPDIR}" ]]; then
 fi
 
 REPO_ROOT=$(pwd -P)
+mkdir -p "${REPO_ROOT}/build-rpi3/build"
 (
   cd "${BUILDROOT_TOPDIR}"
   BUILD_DIR="${REPO_ROOT}/build-rpi3/build" \
