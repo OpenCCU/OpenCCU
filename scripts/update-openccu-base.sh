@@ -69,13 +69,16 @@ REPO_ROOT=$(pwd -P)
 (
   cd "${BUILDROOT_TOPDIR}"
   BUILD_DIR="${REPO_ROOT}/build-rpi3/build" \
+  BR_NO_CHECK_HASH_FOR="${ARCHIVE_FILE}" \
   GIT=git \
+  TAR=tar \
   ./support/download/dl-wrapper \
     -q \
     -c "${ID}" \
     -d "${REPO_ROOT}/${DOWNLOAD_DIR}" \
     -D "${REPO_ROOT}/download" \
     -f "${ARCHIVE_FILE}" \
+    -H "${REPO_ROOT}/${PACKAGE_HASH}" \
     -n "${PACKAGE_NAME}-${ID}" \
     -N "${PACKAGE_NAME}" \
     -o "${REPO_ROOT}/${ARCHIVE_PATH}" \
