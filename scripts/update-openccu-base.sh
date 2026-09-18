@@ -7,6 +7,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
 PACKAGE_NAME="openccu-base"
+PACKAGE_DIR="buildroot-external/package/${PACKAGE_NAME}"
+PACKAGE_HASH="${PACKAGE_DIR}/${PACKAGE_NAME}.hash"
+DOWNLOAD_DIR="download/${PACKAGE_NAME}"
 CURRENT_ID=$(sed -nE 's/^OPENCCU_BASE_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
 function pin_type() {
@@ -49,3 +52,28 @@ if [[ -z "${1}" ]]; then
 fi
 
 sed -i "s/^OPENCCU_BASE_VERSION = .*/OPENCCU_BASE_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+
+make PRODUCT=rpi3 build-rpi3/.config >/dev/null
+make -C build-rpi3 "${PACKAGE_NAME}-source" >/dev/null
+
+ARCHIVE_FILE="${PACKAGE_NAME}-${ID}-git4.tar.gz"
+ARCHIVE_PATH="${DOWNLOAD_DIR}/${ARCHIVE_FILE}"
+ARCHIVE_HASH=$(sha256sum "${ARCHIVE_PATH}" | awk '{ print $1 }')
+LICENSES_MD_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/licenses.md" | awk '{ print $1 }')
+HMSL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/HMSL2.txt" | awk '{ print $1 }')
+GPL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/gpl-2.0.txt" | awk '{ print $1 }')
+LGPL21_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/lgpl-2.1.txt" | awk '{ print $1 }')
+
+if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" ]]; then
+  echo "Failed to retrieve one or more hashes for ${PACKAGE_NAME}" >&2
+  exit 1
+fi
+
+cat >"${PACKAGE_HASH}" <<EOF
+# Locally computed
+sha256  ${LICENSES_MD_HASH}  licenses/licenses.md
+sha256  ${HMSL2_HASH}  licenses/HMSL2.txt
+sha256  ${GPL2_HASH}  licenses/gpl-2.0.txt
+sha256  ${LGPL21_HASH}  licenses/lgpl-2.1.txt
+sha256  ${ARCHIVE_HASH}  ${ARCHIVE_FILE}
+EOF
