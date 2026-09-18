@@ -63,7 +63,7 @@ start() {
   # to ensure that others are killed first in case of low memory situations
   echo -900 >/proc/$$/oom_score_adj 2>/dev/null
 
-  if start-stop-daemon -S -q -b -m -p ${PIDFILE_ANGEL} --exec /usr/sbin/lighttpd-angel -- -f /etc/lighttpd/lighttpd.conf -D; then
+  if start-stop-daemon -d / -S -q -b -m -p ${PIDFILE_ANGEL} --exec /usr/sbin/lighttpd-angel -- -f /etc/lighttpd/lighttpd.conf -D; then
     echo "OK"
   else
     echo "ERROR"

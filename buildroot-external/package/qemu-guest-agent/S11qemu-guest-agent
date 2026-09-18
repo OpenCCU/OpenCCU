@@ -20,7 +20,7 @@ case "$1" in
 	start)
 		echo -n "Starting ${DAEMON}: "
 		# shellcheck disable=SC2086
-		if ! start-stop-daemon -S -q -x $EXEC -- --daemonize $ARGS -m "${METHOD}" -p "${METHOD_PATH}" -f "${PIDFILE}"; then
+		if ! start-stop-daemon -d / -S -q -x $EXEC -- --daemonize $ARGS -m "${METHOD}" -p "${METHOD_PATH}" -f "${PIDFILE}"; then
 			echo "FAILED"
 			exit 1
 		else

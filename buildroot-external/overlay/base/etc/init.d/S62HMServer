@@ -205,7 +205,7 @@ start() {
   echo -900 >/proc/$$/oom_score_adj 2>/dev/null
 
   # shellcheck disable=SC2086
-  start-stop-daemon -b -S -q -m -p "${PIDFILE}" --exec java -- -Dos.arch=${ARCH} ${JAVAOPT} -Dlog4j.configurationFile=file:///var/etc/log4j2.xml -Dfile.encoding=ISO-8859-1 -cp "${HM_SERVER}" ${HM_SERVER_CLASS} ${HM_SERVER_ARGS}
+  start-stop-daemon -d / -b -S -q -m -p "${PIDFILE}" --exec java -- -Dos.arch=${ARCH} ${JAVAOPT} -Dlog4j.configurationFile=file:///var/etc/log4j2.xml -Dfile.encoding=ISO-8859-1 -cp "${HM_SERVER}" ${HM_SERVER_CLASS} ${HM_SERVER_ARGS}
   echo -n "."
   waitStartupComplete
 }

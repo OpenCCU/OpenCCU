@@ -1,0 +1,15 @@
+--- tcl/unix/tclLoadDl.c.orig
++++ tcl/unix/tclLoadDl.c
+@@ -97,7 +97,11 @@ TclpDlopen(
+     } else {
+     	dlopenflags |= RTLD_NOW;
+     }
+-    handle = dlopen(native, dlopenflags);
++    handle = NULL;
++    if (native != NULL) {
++	handle = dlopen(native, dlopenflags);
++    }
++
+     if (handle == NULL) {
+ 	/*
+ 	 * Let the OS loader examine the binary search path for whatever

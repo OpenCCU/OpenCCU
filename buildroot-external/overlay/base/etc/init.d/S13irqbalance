@@ -19,7 +19,7 @@ case "$1" in
   start)
     printf "Starting irqbalance: "
     # shellcheck disable=SC2086
-    if ! start-stop-daemon -S -q -b -m -p ${PID} --exec $EXEC -- $ARGS; then
+    if ! start-stop-daemon -d / -S -q -b -m -p ${PID} --exec $EXEC -- $ARGS; then
       echo "FAILED"
       exit 1
     else

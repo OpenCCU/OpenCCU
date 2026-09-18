@@ -22,7 +22,7 @@ case $1 in
 		# Both seem to listen at 0x1a i2c address
 		if i2cget -y 1 0x1a 2>/dev/null >/dev/null; then
 
-			if start-stop-daemon -S -q -b -m -p "${PIDFILE}" --exec "/opt/argononed/${DAEMON}.sh" 2>/dev/null >/dev/null; then
+			if start-stop-daemon -d / -S -q -b -m -p "${PIDFILE}" --exec "/opt/argononed/${DAEMON}.sh" 2>/dev/null >/dev/null; then
 				echo "OK"
 			else
 				echo "FAIL"

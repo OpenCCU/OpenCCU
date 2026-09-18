@@ -16,7 +16,7 @@ start() {
 
   export HM_HAPROXY_SRC
   export NODE_PATH=/usr/lib/node_modules
-  if start-stop-daemon -S -q -m -b -p /var/run/ha-proxy.pid --exec /bin/ha-proxy.js; then
+  if start-stop-daemon -d / -S -q -m -b -p /var/run/ha-proxy.pid --exec /bin/ha-proxy.js; then
     sleep 1
     # check if ha-proxy could be started
     if start-stop-daemon -K -q -t -p /var/run/ha-proxy.pid 2>/dev/null; then

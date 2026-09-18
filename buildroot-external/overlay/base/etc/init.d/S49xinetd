@@ -12,7 +12,7 @@ case "$1" in
     start)
         echo -n "Starting xinetd: "
         # shellcheck disable=SC2086
-        start-stop-daemon --pidfile "$PIDFILE" --start --quiet --background --exec "$DAEMON" -- -pidfile "$PIDFILE" $XINETD_OPTS
+        start-stop-daemon -d / --pidfile "$PIDFILE" --start --quiet --background --exec "$DAEMON" -- -pidfile "$PIDFILE" $XINETD_OPTS
         echo "OK"
         ;;
     stop)

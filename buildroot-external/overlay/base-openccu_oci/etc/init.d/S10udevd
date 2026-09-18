@@ -33,7 +33,7 @@ start() {
 	printf "Starting %s: " "$DAEMON"
 	#[ -e /proc/sys/kernel/hotplug ] && printf '\000\000\000\000' > /proc/sys/kernel/hotplug
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon --start --background --make-pidfile \
+	start-stop-daemon -d / --start --background --make-pidfile \
 		--pidfile "$PIDFILE" --exec "/sbin/$DAEMON" \
 		-- $UDEVD_ARGS
 	status=$?

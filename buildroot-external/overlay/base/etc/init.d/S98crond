@@ -45,7 +45,7 @@ init() {
 start() {
   echo -n "Starting crond: "
   init
-  start-stop-daemon -S -q -b -m -p /var/run/crond.pid --exec /usr/sbin/crond -- -f -l 9
+  start-stop-daemon -d / -S -q -b -m -p /var/run/crond.pid --exec /usr/sbin/crond -- -f -l 9
   echo "OK"
 }
 

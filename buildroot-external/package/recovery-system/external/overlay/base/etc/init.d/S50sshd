@@ -32,7 +32,7 @@ start() {
   # fix permissions
   chmod 600 /etc/ssh/ssh_host_*_key
 
-  if start-stop-daemon -S -q -p "${PIDFILE}" --exec "${DAEMON}"; then
+  if start-stop-daemon -d / -S -q -p "${PIDFILE}" --exec "${DAEMON}"; then
     echo "OK"
   else
     echo "FAIL"

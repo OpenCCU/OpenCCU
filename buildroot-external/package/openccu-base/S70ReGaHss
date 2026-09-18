@@ -108,10 +108,10 @@ start() {
 
 	# start ReGaHss (normal or in debug mode)
 	if [[ "${REGA_BIN_VERSION}" == "DEBUG" ]]; then
-		start-stop-daemon -S -q -b -m -p ${PIDFILE} --exec /usr/bin/script -- -q -c "/bin/${REGA_BIN_FILE} -f /etc/rega.conf -l 0 -c 2>&1" /usr/local/tmp/${REGA_BIN_FILE}-$$.log
+		start-stop-daemon -d / -S -q -b -m -p ${PIDFILE} --exec /usr/bin/script -- -q -c "/bin/${REGA_BIN_FILE} -f /etc/rega.conf -l 0 -c 2>&1" /usr/local/tmp/${REGA_BIN_FILE}-$$.log
 		echo -n "DEBUG (/usr/local/tmp/${REGA_BIN_FILE}-$$.log), "
 	else
-		start-stop-daemon -S -q -b -m -p ${PIDFILE} --exec /bin/${REGA_BIN_FILE} -- -f /etc/rega.conf -l ${LOGLEVEL_REGA}
+		start-stop-daemon -d / -S -q -b -m -p ${PIDFILE} --exec /bin/${REGA_BIN_FILE} -- -f /etc/rega.conf -l ${LOGLEVEL_REGA}
 	fi
 
 	# wait until ReGaHss is started.
