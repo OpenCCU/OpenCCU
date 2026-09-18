@@ -11,6 +11,7 @@ PACKAGE_DIR="buildroot-external/package/${PACKAGE_NAME}"
 PACKAGE_HASH="${PACKAGE_DIR}/${PACKAGE_NAME}.hash"
 DOWNLOAD_DIR="download/${PACKAGE_NAME}"
 CURRENT_ID=$(sed -nE 's/^OPENCCU_BASE_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+PACKAGE_SITE=$(sed -nE 's/^OPENCCU_BASE_SITE = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 
 function pin_type() {
   local id="${1}"
@@ -53,11 +54,34 @@ fi
 
 sed -i "s/^OPENCCU_BASE_VERSION = .*/OPENCCU_BASE_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
 
-make PRODUCT=rpi3 build-rpi3/.config >/dev/null
-make -C build-rpi3 "${PACKAGE_NAME}-source" >/dev/null
-
 ARCHIVE_FILE="${PACKAGE_NAME}-${ID}-git4.tar.gz"
 ARCHIVE_PATH="${DOWNLOAD_DIR}/${ARCHIVE_FILE}"
+
+make PRODUCT=rpi3 build-rpi3/.config >/dev/null
+BUILDROOT_TOPDIR=$(make -C build-rpi3 printvars VARS=TOPDIR QUOTED_VARS=YES | sed -nE "s/^TOPDIR='(.*)'$/\1/p")
+
+if [[ -z "${BUILDROOT_TOPDIR}" ]]; then
+  echo "Failed to resolve Buildroot TOPDIR" >&2
+  exit 1
+fi
+
+REPO_ROOT=$(pwd -P)
+(
+  cd "${BUILDROOT_TOPDIR}"
+  BUILD_DIR="${REPO_ROOT}/build-rpi3/build" \
+  GIT=git \
+  ./support/download/dl-wrapper \
+    -q \
+    -c "${ID}" \
+    -d "${REPO_ROOT}/${DOWNLOAD_DIR}" \
+    -D "${REPO_ROOT}/download" \
+    -f "${ARCHIVE_FILE}" \
+    -n "${PACKAGE_NAME}-${ID}" \
+    -N "${PACKAGE_NAME}" \
+    -o "${REPO_ROOT}/${ARCHIVE_PATH}" \
+    -u "git+${PACKAGE_SITE}"
+)
+
 ARCHIVE_HASH=$(sha256sum "${ARCHIVE_PATH}" | awk '{ print $1 }')
 LICENSES_MD_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/licenses.md" | awk '{ print $1 }')
 HMSL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/HMSL2.txt" | awk '{ print $1 }')
