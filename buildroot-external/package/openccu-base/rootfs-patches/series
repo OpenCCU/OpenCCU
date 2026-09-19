@@ -73,7 +73,6 @@
 0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch
 0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch
 0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch
-0107-WebUI-Fix-rgbw.fn-CheckMetaDataIsNotNULL.patch
 0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
 0111-WebUI-Fix-Translation-Performance.patch

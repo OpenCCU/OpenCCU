@@ -699,7 +699,7 @@
      WriteLine("</tr>");
 --- a/www/rega/esp/controls/rgbw.fn
 +++ b/www/rega/esp/controls/rgbw.fn
-@@ -263,14 +263,14 @@
+@@ -266,14 +266,14 @@
          WriteLine("<tr>");
            WriteLine("<td style='text-align:left'><span>${lblColorTemperatureBR}</span></td>");
            WriteLine("<td class='CLASS02546' style='text-align:right'>");
@@ -717,7 +717,7 @@
            WriteLine("</td>");
          WriteLine("</tr>");
        WriteLine("</table>");
-@@ -288,4 +288,4 @@
+@@ -291,4 +291,4 @@
  
      WriteLine("ipm"#chnId#" = new iseVIR_LGWhiteLevelControl("#chnId#", opts);");
    WriteLine("</script>");
