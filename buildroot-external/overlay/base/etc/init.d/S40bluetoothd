@@ -42,7 +42,7 @@ case $1 in
           ${HCICONFIG} hci0 up
 
           # shellcheck disable=SC2086
-          start-stop-daemon --start --background ${SSD_OPTIONS}
+          start-stop-daemon -d / --start --background ${SSD_OPTIONS}
           echo "OK"
 
           exit 0

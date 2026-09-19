@@ -65,7 +65,7 @@ case "$1" in
     fi
 
     # start daemon
-    if start-stop-daemon -S -q -x ${DAEMON}; then
+    if start-stop-daemon -d / -S -q -x ${DAEMON}; then
       # use client to add ntp servers
       for server in ${NTPSERVERS}; do
         STATUS_CODE=$(${CLIENT} add server "${server}" 2>&1 | cut -d' ' -f1)

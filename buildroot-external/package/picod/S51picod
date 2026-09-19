@@ -22,7 +22,7 @@ case $1 in
 			i2cget -y 1 0x6b 0x09 0xff 2>/dev/null >/dev/null
 
 			# now start the daemon
-			if start-stop-daemon --start --background --pidfile "${PIDFILE}" --make-pidfile --quiet --exec "/opt/picod/${DAEMON}.sh"; then
+			if start-stop-daemon -d / --start --background --pidfile "${PIDFILE}" --make-pidfile --quiet --exec "/opt/picod/${DAEMON}.sh"; then
 				echo "OK"
 			else
 				echo "FAIL"

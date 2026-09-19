@@ -31,9 +31,6 @@ TRAPDOPTS='-Lsd -c /etc/snmp/snmptrapd-global.conf -p /var/run/snmptrapd.pid'
 
 ssd_oknodo="-o"
 
-# Cd to / before starting any daemons.
-cd /
-
 # Create compatibility link to old AgentX socket location
 if [ "$SNMPDCOMPAT" = "yes" ]; then
   ln -sfn /var/agentx/master /var/run/agentx
@@ -49,7 +46,7 @@ start() {
     if [ "$SNMPDRUN" = "yes" ] && [ -f /etc/config/snmp/snmpd-ccu3.conf ]; then
         printf "Starting SNMP daemon: "
         # shellcheck disable=SC2086
-        if start-stop-daemon -q -S -x /usr/sbin/snmpd -- ${SNMPDOPTS}; then
+        if start-stop-daemon -d / -q -S -x /usr/sbin/snmpd -- ${SNMPDOPTS}; then
           echo "OK"
         else
           echo "FAIL"
@@ -59,7 +56,7 @@ start() {
     if [ "$TRAPDRUN" = "yes" ] && [ -f /etc/config/snmp/snmptrapd.conf ]; then
         printf "Starting SNMP trap daemon: "
         # shellcheck disable=SC2086
-        if start-stop-daemon -q -S -x /usr/sbin/snmptrapd -- ${TRAPDOPTS}; then
+        if start-stop-daemon -d / -q -S -x /usr/sbin/snmptrapd -- ${TRAPDOPTS}; then
           echo "OK"
         else
           echo "FAIL"

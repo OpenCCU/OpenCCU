@@ -37,7 +37,7 @@ start() {
 	# to ensure that others are killed first in case of low memory situations
 	echo -900 >/proc/$$/oom_score_adj 2> /dev/null
 
-	start-stop-daemon -S -q -b -m -c eq3cfg:eq3cfg -p ${PIDFILE} --exec /bin/${DAEMON}
+	start-stop-daemon -d / -S -q -b -m -c eq3cfg:eq3cfg -p ${PIDFILE} --exec /bin/${DAEMON}
 	echo "OK"
 }
 stop() {

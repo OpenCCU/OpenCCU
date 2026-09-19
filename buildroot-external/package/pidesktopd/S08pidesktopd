@@ -24,7 +24,7 @@ case $1 in
 		# for a pcf8563 and 0x18 i2c address
 		if i2cget -y 1 0x18 2>/dev/null >/dev/null && [[ "${HM_RTC}" == "pcf8563" ]]; then
 
-			if start-stop-daemon -S -q -b -m -p ${PIDFILE} --exec ${EXEC} 2>/dev/null >/dev/null; then
+			if start-stop-daemon -d / -S -q -b -m -p ${PIDFILE} --exec ${EXEC} 2>/dev/null >/dev/null; then
 				echo "OK"
 			else
 				echo "FAIL"

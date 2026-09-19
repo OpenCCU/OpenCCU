@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = 3.89.9
-OPENCCU_BASE_COMPAT_VERSION = 3.89.9
+OPENCCU_BASE_VERSION = 3.89.11
+OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
 OPENCCU_BASE_LICENSE = HMSL-2.0, Apache-2.0 (WebUI), \
@@ -18,7 +18,7 @@ OPENCCU_BASE_ENABLE_ROOTFS_PATCHING ?= YES
 
 OPENCCU_BASE_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),,\
-	host-openjdk-bin host-pkgconf host-python3 host-python-html2text host-tcl \
+	host-pkgconf host-python3 host-python-html2text host-tcl \
 	libusb openssl tcl)
 
 OPENCCU_BASE_BUILD_OPTS = \
@@ -31,7 +31,6 @@ OPENCCU_BASE_CONF_OPTS = \
 	-DHAS_USB_SUPPORT=$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),OFF,ON) \
 	-DROOTFS_DIR=$(@D)/build/rootfs \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),,\
-	-DOPENCCU_JAVA_EXECUTABLE=$(HOST_OPENJDK_BIN_ROOT_DIR)/bin/java \
 	-DOPENCCU_PYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3 \
 	-DOPENCCU_TCLSH_EXECUTABLE=$(HOST_DIR)/bin/tclsh8.6)
 
@@ -122,22 +121,13 @@ define OPENCCU_BASE_INSTALL_TARGET_CMDS
 	for file in hm_autoconf hm_deldev hm_startup; do \
 		$(INSTALL) -m 0755 "$(@D)/build/rootfs/bin/$$file" "$(TARGET_DIR)/bin/$$file"; \
 	done
-	# collect some pre-compiled binaries from $(@D)/bin/$(OPENCCU_BASE_TARGET_PLATFORM)
-	for file in ReGaHss; do \
-		$(INSTALL) -m 0755 "$(@D)/bin/$(OPENCCU_BASE_TARGET_PLATFORM)/$$file" "$(TARGET_DIR)/bin/$$file"; \
-	done
-
 	# generate /lib
 	$(INSTALL) -d -m 0755 $(TARGET_DIR)/lib
 
 	# collect own compiled libraries from $(@D)/build/rootfs/lib
-	for lib in libLanDeviceUtils.so libUnifiedLanComm.so libXmlRpc.so libelvutils.so libeq3config.so libfirewall.tcl libhsscomm.so libxmlparser.so tclrega.so tclrpc.so; do \
+	for lib in libLanDeviceUtils.so libUnifiedLanComm.so libXmlRpc.so libelvutils.so libeq3config.so libfirewall.tcl libhsscomm.so libxmlparser.so tclrpc.so; do \
 		$(INSTALL) -m 0644 "$(@D)/build/rootfs/lib/$$lib" "$(TARGET_DIR)/lib/$$lib"; \
 	done
-
-	# collect own compiled WebUI from $(@D)/build/rootfs/www
-	$(INSTALL) -d -m 0755 $(TARGET_DIR)/www
-	cp -av "$(@D)/build/rootfs/www/." "$(TARGET_DIR)/www/"
 
 	# copy homematic tcl package to target dir
 	$(INSTALL) -d -m 0755 "$(TARGET_DIR)/usr/lib/tcl8.6/homematic"
@@ -156,10 +146,6 @@ define OPENCCU_BASE_INSTALL_TARGET_CMDS
 	# copy the complete staged /opt tree
 	$(INSTALL) -d -m 0755 "$(TARGET_DIR)/opt"
 	cp -av "$(@D)/build/rootfs/opt/." "$(TARGET_DIR)/opt/"
-
-	# patch XXX-WEBUI-VERSION-XXX and XXX-PRODUCT-XXX templates
-	grep -rl 'XXX-WEBUI-VERSION-XXX' $(TARGET_DIR)/www | xargs sed -i 's/XXX-WEBUI-VERSION-XXX/$(PRODUCT_VERSION)/g' || true
-	grep -rl 'XXX-PRODUCT-XXX' $(TARGET_DIR)/www | xargs sed -i 's/XXX-PRODUCT-XXX/$(PRODUCT)/g' || true
 endef
 else
 define OPENCCU_BASE_INSTALL_TARGET_CMDS
@@ -170,6 +156,39 @@ define OPENCCU_BASE_INSTALL_TARGET_CMDS
 		"$(@D)/build/rootfs/lib/libXmlRpc.so" \
 		"$(TARGET_DIR)/lib/libXmlRpc.so"
 endef
+endif
+
+ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_REGAHSS),y)
+define OPENCCU_BASE_INSTALL_REGAHSS
+	# collect the pre-compiled ReGaHss from $(@D)/bin/$(OPENCCU_BASE_TARGET_PLATFORM)
+	$(INSTALL) -D -m 0755 "$(@D)/bin/$(OPENCCU_BASE_TARGET_PLATFORM)/ReGaHss" \
+		"$(TARGET_DIR)/bin/ReGaHss"
+	# the Tcl extension scripts load to talk to ReGaHss
+	$(INSTALL) -D -m 0644 "$(@D)/build/rootfs/lib/tclrega.so" \
+		"$(TARGET_DIR)/lib/tclrega.so"
+endef
+OPENCCU_BASE_POST_INSTALL_TARGET_HOOKS += OPENCCU_BASE_INSTALL_REGAHSS
+endif
+
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_WEBUI),y)
+define OPENCCU_BASE_INSTALL_WEBUI
+	# collect own compiled WebUI from $(@D)/build/rootfs/www
+	$(INSTALL) -d -m 0755 $(TARGET_DIR)/www
+	cp -av "$(@D)/build/rootfs/www/." "$(TARGET_DIR)/www/"
+
+	# patch XXX-WEBUI-VERSION-XXX and XXX-PRODUCT-XXX templates
+	grep -rl 'XXX-WEBUI-VERSION-XXX' $(TARGET_DIR)/www | xargs sed -i 's/XXX-WEBUI-VERSION-XXX/$(PRODUCT_VERSION)/g' || true
+	grep -rl 'XXX-PRODUCT-XXX' $(TARGET_DIR)/www | xargs sed -i 's/XXX-PRODUCT-XXX/$(PRODUCT)/g' || true
+endef
+else
+define OPENCCU_BASE_INSTALL_WEBUI
+	# without the WebUI, only the link addons publish their pages through
+	$(INSTALL) -d -m 0755 $(TARGET_DIR)/www
+	ln -snf /etc/config/addons/www $(TARGET_DIR)/www/addons
+endef
+endif
+OPENCCU_BASE_POST_INSTALL_TARGET_HOOKS += OPENCCU_BASE_INSTALL_WEBUI
 endif
 
 define OPENCCU_BASE_FINALIZE_TARGET
@@ -220,9 +239,6 @@ define OPENCCU_BASE_FINALIZE_TARGET
 	# link /bin/tclsh to /usr/bin/tclsh
 	ln -snf /usr/bin/tclsh $(TARGET_DIR)/bin/tclsh
 
-	# fix permissions
-	chmod 755 $(TARGET_DIR)/www/config/fileupload.ccc
-
 	# remove obsolete init.d jobs
 	rm -f $(TARGET_DIR)/etc/init.d/S01logging
 	rm -f $(TARGET_DIR)/etc/init.d/S20urandom
@@ -260,7 +276,9 @@ define OPENCCU_BASE_FINALIZE_TARGET
 		--jarfile=ESHBridge.jar \
 		--output=$(OPENCCU_BASE_BUILDDIR)/ESHBridge.jar-JARLICENSEINFO.txt
 
-	# create licenseinfo.htm
+	# create licenseinfo.htm, also without the WebUI, so every image
+	# carries the license information
+	$(INSTALL) -d -m 0755 $(TARGET_DIR)/www/rega
 	$(HOST_DIR)/bin/python3 $(OPENCCU_BASE_PKGDIR)/scripts/createLicenseHtml.py \
 		--build-dir=$(BUILD_DIR)/../ \
 		--jar-license-info=$(OPENCCU_BASE_BUILDDIR)/HMIPServer.jar-JARLICENSEINFO.txt \
@@ -269,18 +287,34 @@ define OPENCCU_BASE_FINALIZE_TARGET
 		--jar-license-info=$(OPENCCU_BASE_BUILDDIR)/ESHBridge.jar-JARLICENSEINFO.txt \
 		--output=$(TARGET_DIR)/www/rega/licenseinfo.htm
 endef
+
+define OPENCCU_BASE_FINALIZE_TARGET_WEBUI
+	# fix permissions
+	chmod 755 $(TARGET_DIR)/www/config/fileupload.ccc
+endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE),y)
 ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
 TARGET_FINALIZE_HOOKS += OPENCCU_BASE_FINALIZE_TARGET
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_WEBUI),y)
+TARGET_FINALIZE_HOOKS += OPENCCU_BASE_FINALIZE_TARGET_WEBUI
+endif
 endif
 endif
 
 ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_REGAHSS),y)
+define OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS
+	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S70ReGaHss \
+		$(TARGET_DIR)/etc/init.d/S70ReGaHss
+endef
+endif
+
 define OPENCCU_BASE_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S50eq3configd \
 		$(TARGET_DIR)/etc/init.d/S50eq3configd
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S50ssdpd \
 		$(TARGET_DIR)/etc/init.d/S50ssdpd
+	$(OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS)
 endef
 
 define OPENCCU_BASE_USERS

@@ -324,9 +324,9 @@ query_rf_parameters() {
       if [[ -x /bin/hss_led ]]; then
         sleep 2
         if [[ "${HM_HOST}" =~ oci\|lxc ]]; then
-          start-stop-daemon -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
+          start-stop-daemon -d / -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
         else
-          start-stop-daemon -S -q -b -m -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
+          start-stop-daemon -d / -S -q -b -m -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
         fi
       fi
     fi

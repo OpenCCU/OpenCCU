@@ -229,8 +229,10 @@ proc action_put_page {} {
           putsVar "Uptime" $UPTIME
           if {$CPUSCALMHZ != ""} {
             putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz ($CPUSCALMHZ)"
-          } else {
+          } elseif {$CPUMHZ != "0"} {
             putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz"
+          } else {
+            putsVar "Load Average" "$LOADAVG"
           }
           putsVar "System Temperature" $TEMP
           putsVar "Memory, Swap Utilization" "$MEMUSE, $SWAPUSE"

@@ -6,7 +6,7 @@
 
 start() {
   echo -n "Starting ssdpd: "
-  if start-stop-daemon -S -q -b -m -p /var/run/ssdpd.pid --exec /bin/ssdpd; then
+  if start-stop-daemon -d / -S -q -b -m -p /var/run/ssdpd.pid --exec /bin/ssdpd; then
     echo "OK"
   else
     echo "FAIL"

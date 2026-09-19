@@ -20,7 +20,7 @@ case $1 in
 		if [[ -f /etc/config/strompi2 ]]; then
 
 			# now start the daemon
-			if start-stop-daemon --start --background --pidfile "${PIDFILE}" --make-pidfile --quiet --exec "/opt/strompi2d/strompi2d.sh"; then
+			if start-stop-daemon -d / --start --background --pidfile "${PIDFILE}" --make-pidfile --quiet --exec "/opt/strompi2d/strompi2d.sh"; then
 				sleep 1
 
 				# check if pid exists after start

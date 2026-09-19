@@ -21,7 +21,7 @@ start() {
     # to ensure that others are killed first in case of low memory situations
     echo -900 >/proc/$$/oom_score_adj 2>/dev/null
 
-    start-stop-daemon -S -q --exec /bin/hs485dLoader -- -l ${LOGLEVEL_HS485D} -dw /var/etc/hs485d.conf
+    start-stop-daemon -d / -S -q --exec /bin/hs485dLoader -- -l ${LOGLEVEL_HS485D} -dw /var/etc/hs485d.conf
     echo "OK"
   else
     echo "disabled"

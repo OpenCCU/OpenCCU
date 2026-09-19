@@ -32,13 +32,13 @@ case "${1}" in
 		/sbin/sysctl -q net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1 2>/dev/null
 
 		# shellcheck disable=SC2086
-		if ! start-stop-daemon -b -S -q -m -p "${TAILSCALED_PID}" -x /usr/bin/env -- PATH=/usr/sbin ${TAILSCALED_EXEC} ${TAILSCALED_ARGS} -port ${TAILSCALED_PORT}; then
+		if ! start-stop-daemon -d / -b -S -q -m -p "${TAILSCALED_PID}" -x /usr/bin/env -- PATH=/usr/sbin ${TAILSCALED_EXEC} ${TAILSCALED_ARGS} -port ${TAILSCALED_PORT}; then
 			echo "FAILED (${TAILSCALED_EXEC})"
 			exit 1
 		fi
 
 		# shellcheck disable=SC2086
-		if ! start-stop-daemon -b -S -q -m -p "${TAILSCALE_PID}" -x ${TAILSCALE_EXEC} -- web ${TAILSCALE_WEB_ARGS}; then
+		if ! start-stop-daemon -d / -b -S -q -m -p "${TAILSCALE_PID}" -x ${TAILSCALE_EXEC} -- web ${TAILSCALE_WEB_ARGS}; then
 			echo "FAILED (${TAILSCALE_EXEC})"
 		else
 			echo "OK"

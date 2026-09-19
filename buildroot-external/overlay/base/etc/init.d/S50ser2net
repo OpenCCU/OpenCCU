@@ -10,7 +10,7 @@ start() {
       exit 1
     fi
 
-    if start-stop-daemon -S -q --exec /usr/sbin/ser2net -- -c /usr/local/etc/ser2net.conf -P /var/run/ser2net.pid; then
+    if start-stop-daemon -d / -S -q --exec /usr/sbin/ser2net -- -c /usr/local/etc/ser2net.conf -P /var/run/ser2net.pid; then
       echo "OK"
     else
       echo "FAIL"

@@ -21,6 +21,39 @@ config BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY
 	bool
 	default y if BR2_PACKAGE_OPENCCU_BASE && (BR2_arm || BR2_i386)
 
+if BR2_PACKAGE_OPENCCU_BASE && !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY
+
+config BR2_PACKAGE_OPENCCU_BASE_REGAHSS
+	bool "ReGaHss"
+	default y
+	help
+	  Install the ReGaHss logic layer (/bin/ReGaHss), its init
+	  script (/etc/init.d/S70ReGaHss) and the tclrega Tcl
+	  extension (/lib/tclrega.so) that scripts load to talk to
+	  it.
+
+	  Without it, the image carries the interface processes
+	  (rfd, multimacd, hs485d, HMServer) and their tools only,
+	  e.g. for a system that is driven entirely over XML-RPC.
+	  The ReGaHss check in monitrc skips itself when
+	  /bin/ReGaHss is not installed.
+
+config BR2_PACKAGE_OPENCCU_BASE_WEBUI
+	bool "WebUI"
+	default y
+	depends on BR2_PACKAGE_OPENCCU_BASE_REGAHSS
+	help
+	  Install the CCU WebUI below /www.
+
+	  Without it, only the /www/addons link is installed, which
+	  addons use to publish their own pages from
+	  /etc/config/addons/www. The WebUI is still generated and
+	  patched during the build, so the device types in /firmware
+	  and /opt are unchanged, and the license information
+	  (/www/rega/licenseinfo.htm) is generated in both cases.
+
+endif
+
 comment "OpenCCU Base needs a glibc toolchain w/ C++, threads, dynamic library"
 	depends on BR2_aarch64 || BR2_arm || BR2_i386 || BR2_x86_64
 	depends on !BR2_USE_MMU || !BR2_TOOLCHAIN_USES_GLIBC || \
