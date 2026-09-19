@@ -1,4 +1,0 @@
-# make sure all rpi-rf-mod led nodes in /sys are generated with group permissions
-# that hss_led can access them accordingly
-SUBSYSTEM=="leds", ACTION=="add", KERNEL=="rpi_rf_mod:*", RUN+="/bin/chgrp -R hssled /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
-SUBSYSTEM=="leds", ACTION=="change", KERNEL=="rpi_rf_mod:*", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R hssled /sys%p", RUN+="/bin/chmod -R g=u /sys%p"

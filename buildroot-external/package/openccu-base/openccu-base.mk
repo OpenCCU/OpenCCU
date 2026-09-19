@@ -16,21 +16,24 @@ OPENCCU_BASE_ROOTFS_PATCH_DIR = \
 	$(OPENCCU_BASE_PKGDIR)/rootfs-patches
 OPENCCU_BASE_ENABLE_ROOTFS_PATCHING ?= YES
 
+OPENCCU_BASE_MINIMAL = $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY) $(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY))
+
 OPENCCU_BASE_DEPENDENCIES = \
-	$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),,\
+	$(if $(OPENCCU_BASE_MINIMAL),,\
 	host-pkgconf host-python3 host-python-html2text host-tcl \
 	libusb openssl tcl)
 
 OPENCCU_BASE_BUILD_OPTS = \
-	--target $(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),compat-libraries,package)
+	--target $(if $(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),hss_led,$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),compat-libraries,package))
 
 OPENCCU_BASE_CONF_OPTS = \
 	-DDEPLOY_TO_REPO=OFF \
-	-DBUILD_TCL_MODULES=$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),OFF,ON) \
-	-DBUILD_WEBUI_AND_DEVICETYPES=$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),OFF,ON) \
-	-DHAS_USB_SUPPORT=$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),OFF,ON) \
+	-DHSS_LED_ONLY=$(if $(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),ON,OFF) \
+	-DBUILD_TCL_MODULES=$(if $(OPENCCU_BASE_MINIMAL),OFF,ON) \
+	-DBUILD_WEBUI_AND_DEVICETYPES=$(if $(OPENCCU_BASE_MINIMAL),OFF,ON) \
+	-DHAS_USB_SUPPORT=$(if $(OPENCCU_BASE_MINIMAL),OFF,ON) \
 	-DROOTFS_DIR=$(@D)/build/rootfs \
-	$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),,\
+	$(if $(OPENCCU_BASE_MINIMAL),,\
 	-DOPENCCU_PYTHON_EXECUTABLE=$(HOST_DIR)/bin/python3 \
 	-DOPENCCU_TCLSH_EXECUTABLE=$(HOST_DIR)/bin/tclsh8.6)
 
@@ -77,7 +80,7 @@ define OPENCCU_BASE_PREPARE_ROOTFS_PATCH_INPUTS
 	$(INSTALL) -d -m 0755 "$(@D)/build/rootfs/firmware"
 	cp -a "$(@D)/firmware/." "$(@D)/build/rootfs/firmware/"
 endef
-ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifneq ($(OPENCCU_BASE_MINIMAL),y)
 OPENCCU_BASE_PRE_BUILD_HOOKS += OPENCCU_BASE_PREPARE_ROOTFS_PATCH_INPUTS
 endif
 
@@ -102,12 +105,12 @@ define OPENCCU_BASE_APPLY_ROOTFS_PATCHES
 	chmod 0755 "$(@D)/build/rootfs/www/config/fileupload.ccc"
 endef
 ifeq ($(OPENCCU_BASE_ENABLE_ROOTFS_PATCHING),YES)
-ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifneq ($(OPENCCU_BASE_MINIMAL),y)
 OPENCCU_BASE_POST_BUILD_HOOKS += OPENCCU_BASE_APPLY_ROOTFS_PATCHES
 endif
 endif
 
-ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifneq ($(OPENCCU_BASE_MINIMAL),y)
 define OPENCCU_BASE_INSTALL_TARGET_CMDS
 
 	# generate /bin
@@ -147,6 +150,10 @@ define OPENCCU_BASE_INSTALL_TARGET_CMDS
 	$(INSTALL) -d -m 0755 "$(TARGET_DIR)/opt"
 	cp -av "$(@D)/build/rootfs/opt/." "$(TARGET_DIR)/opt/"
 endef
+else ifeq ($(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),y)
+define OPENCCU_BASE_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0755 "$(@D)/build/rootfs/bin/hss_led" "$(TARGET_DIR)/bin/hss_led"
+endef
 else
 define OPENCCU_BASE_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 \
@@ -158,7 +165,7 @@ define OPENCCU_BASE_INSTALL_TARGET_CMDS
 endef
 endif
 
-ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifneq ($(OPENCCU_BASE_MINIMAL),y)
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_REGAHSS),y)
 define OPENCCU_BASE_INSTALL_REGAHSS
 	# collect the pre-compiled ReGaHss from $(@D)/bin/$(OPENCCU_BASE_TARGET_PLATFORM)
@@ -293,7 +300,7 @@ define OPENCCU_BASE_FINALIZE_TARGET_WEBUI
 	chmod 755 $(TARGET_DIR)/www/config/fileupload.ccc
 endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE),y)
-ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifneq ($(OPENCCU_BASE_MINIMAL),y)
 TARGET_FINALIZE_HOOKS += OPENCCU_BASE_FINALIZE_TARGET
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_WEBUI),y)
 TARGET_FINALIZE_HOOKS += OPENCCU_BASE_FINALIZE_TARGET_WEBUI
@@ -301,7 +308,7 @@ endif
 endif
 endif
 
-ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifneq ($(OPENCCU_BASE_MINIMAL),y)
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_REGAHSS),y)
 define OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S70ReGaHss \
@@ -317,6 +324,15 @@ define OPENCCU_BASE_INSTALL_INIT_SYSV
 	$(OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS)
 endef
 
+endif
+
+ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),y)
+define OPENCCU_BASE_USERS
+	-      -1 status -1 * - - -      status access group
+	hssled -1 hssled -1 * - - status hss_led user
+endef
+else
 define OPENCCU_BASE_USERS
 	-      -1 hm     -1 * - - -      homematic access group
 	-      -1 status -1 * - - -      status access group
@@ -324,6 +340,16 @@ define OPENCCU_BASE_USERS
 	eq3cfg -1 eq3cfg -1 * - - -      eq3configd user
 	ssdp   -1 ssdp   -1 * - - -      ssdpd user
 endef
+endif
+
+define OPENCCU_BASE_INSTALL_LED_SERVICE
+	ln -sf hss_led $(TARGET_DIR)/bin/hss_ledctl
+	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S01hss_led \
+		$(TARGET_DIR)/etc/init.d/S01hss_led
+	$(INSTALL) -D -m 0644 $(OPENCCU_BASE_PKGDIR)/82-hss_led.rules \
+		$(TARGET_DIR)/lib/udev/rules.d/82-hss_led.rules
+endef
+OPENCCU_BASE_POST_INSTALL_TARGET_HOOKS += OPENCCU_BASE_INSTALL_LED_SERVICE
 endif
 
 $(eval $(cmake-package))

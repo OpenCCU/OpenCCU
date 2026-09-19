@@ -18,41 +18,16 @@ start() {
 
     if [[ -L /usr/local/.firmwareUpdate ]]; then
       # fast blink magenta
-      GREEN=none
-      RED=timer
-      BLUE=timer
       SPEED=100
     else
       # Everything startup up fine!
       # constant magenta
-      GREEN=none
-      RED=default-on
-      BLUE=default-on
       SPEED=
     fi
 
-    # setup the LEDs of the RPI-RF-MOD
-    if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-      echo ${GREEN} >/sys/class/leds/rpi_rf_mod:green/trigger
-      echo ${RED}   >/sys/class/leds/rpi_rf_mod:red/trigger
-      echo ${BLUE}  >/sys/class/leds/rpi_rf_mod:blue/trigger
+    # One group timer keeps magenta coherent.
+    /bin/hss_ledctl --led rpi-rf-mod system magenta "${SPEED:-0}"
 
-      # setup blink speed
-      if [[ -n "${SPEED}" ]]; then
-        if [[ "${GREEN}" == "timer" ]]; then
-          echo "${SPEED}" >/sys/class/leds/rpi_rf_mod:green/delay_on
-          echo "${SPEED}" >/sys/class/leds/rpi_rf_mod:green/delay_off
-        fi
-        if [[ "${RED}" == "timer" ]]; then
-          echo "${SPEED}" >/sys/class/leds/rpi_rf_mod:red/delay_on
-          echo "${SPEED}" >/sys/class/leds/rpi_rf_mod:red/delay_off
-        fi
-        if [[ "${BLUE}" == "timer" ]]; then
-          echo "${SPEED}" >/sys/class/leds/rpi_rf_mod:blue/delay_on
-          echo "${SPEED}" >/sys/class/leds/rpi_rf_mod:blue/delay_off
-        fi
-      fi
-    fi
   fi
 
   # start is finished lets set the LEDs
@@ -78,6 +53,7 @@ restart() {
 }
 
 stop() {
+  /bin/hss_ledctl --led rpi-rf-mod system magenta
   echo -n "Setup onboard LEDs: "
 
   # source all data from /var/hm_mode

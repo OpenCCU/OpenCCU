@@ -15,12 +15,10 @@ start() {
   # possible we check for a rx8130 and the set the LEDs
   # accordingly.
   if [[ "${HM_RTC}" == "rx8130" ]] &&
-     [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
+     { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
 
     # setup the LEDs to show a constant yellow light
-    echo default-on >/sys/class/leds/rpi_rf_mod:green/trigger
-    echo default-on >/sys/class/leds/rpi_rf_mod:red/trigger
-    echo none >/sys/class/leds/rpi_rf_mod:blue/trigger
+    /bin/hss_ledctl --led rpi-rf-mod system yellow
 
   fi
 
