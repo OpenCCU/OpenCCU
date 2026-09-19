@@ -214,7 +214,7 @@ query_rf_parameters() {
     fi
 
     # setup the LEDs to show a slowly blinking magenta light
-    /bin/rpi-rf-mod-led system magenta 499
+    /bin/hss_ledctl --led rpi-rf-mod system magenta 499
   fi
 
   #####################################

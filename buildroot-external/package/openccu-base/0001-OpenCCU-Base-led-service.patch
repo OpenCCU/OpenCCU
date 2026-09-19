@@ -1,39 +1,68 @@
-Subject: [PATCH] hss_led: use the central status LED service
+Subject: [PATCH] hss_led: integrate LED control and provide hss_ledctl
 
-Base: 5b47e37cf4da97275de26da8469881383de452cd
-Requires the accompanying OpenCCU service integration.
+Base: OpenCCU-Base 3.89.11 (3ed652a404d72cbe403e37c5b8b1f610451b02fb)
 
-Upstream: Not submitted (requires the OpenCCU LED service integration)
+Run the LED controller and status calculation in one process. Provide
+hss_ledctl as its client invocation, explicit LED-class target selection,
+and a minimal recovery build of the same controller.
 
+Upstream: Not submitted (experimental OpenCCU integration)
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dd46e499..b07dc236 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -66,6 +66,12 @@ function(openccu_stage_target target_name dest_subdir)
+   endif()
+ endfunction()
+ 
++option(HSS_LED_ONLY "Build only the LED controller and CLI for recovery" OFF)
++if(HSS_LED_ONLY)
++  add_subdirectory(src/hss_led)
++  return()
++endif()
++
+ add_subdirectory(src/libelvutils)
+ add_subdirectory(src/libxmlparser)
+ add_subdirectory(src/libXmlRpc)
 diff --git a/src/hss_led/CMakeLists.txt b/src/hss_led/CMakeLists.txt
-index d5c1e3a..8447403 100644
+index d5c1e3a7..3bdfa5a6 100644
 --- a/src/hss_led/CMakeLists.txt
 +++ b/src/hss_led/CMakeLists.txt
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,14 @@
++if(HSS_LED_ONLY)
++  add_executable(hss_led LedOnlyMain.cpp LedController.cpp)
++  target_compile_features(hss_led PRIVATE cxx_std_11)
++  target_compile_options(hss_led PRIVATE -Wall -Wextra)
++  target_compile_definitions(hss_led PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64)
++  target_link_libraries(hss_led PRIVATE pthread)
++else()
  add_executable(hss_led
    hss_led.cpp
    led.cpp
-+  RgbLed.cpp
++  LedController.cpp
    UdpCannel.cpp
    MessageParser.cpp
    AlarmMessage.cpp
-@@ -23,3 +24,12 @@ target_include_directories(hss_led PRIVATE
+@@ -22,4 +30,15 @@ target_include_directories(hss_led PRIVATE
+   "${CMAKE_SOURCE_DIR}/src/libXmlRpc/src"
  )
  target_link_libraries(hss_led PRIVATE XmlRpc elvutils xmlparser pthread)
++endif()
  openccu_stage_target(hss_led bin)
 +
-+option(HSS_LED_BUILD_TESTS "Build LED service protocol regression tests" OFF)
++option(HSS_LED_BUILD_TESTS "Build LED controller regression tests" OFF)
 +if(HSS_LED_BUILD_TESTS)
-+  add_executable(hss_rgb_led_test tests/RgbLedTest.cpp RgbLed.cpp)
-+  target_compile_features(hss_rgb_led_test PRIVATE cxx_std_11)
-+  target_compile_options(hss_rgb_led_test PRIVATE -Wall -Wextra -Werror)
-+  target_include_directories(hss_rgb_led_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-+  target_link_libraries(hss_rgb_led_test PRIVATE pthread)
++  add_executable(hss_led_state_test tests/LedControllerTest.cpp)
++  target_compile_features(hss_led_state_test PRIVATE cxx_std_11)
++  target_compile_options(hss_led_state_test PRIVATE -Wall -Wextra -Werror)
++  target_compile_definitions(hss_led_state_test PRIVATE LED_TEST_BUILD)
++  target_link_libraries(hss_led_state_test PRIVATE pthread)
++  add_test(NAME hss_led_state COMMAND hss_led_state_test)
 +endif()
 diff --git a/src/hss_led/InfoLed.cpp b/src/hss_led/InfoLed.cpp
-index 2ff66a5..3b1fab7 100644
+index 2ff66a53..5b10f61b 100644
 --- a/src/hss_led/InfoLed.cpp
 +++ b/src/hss_led/InfoLed.cpp
 @@ -19,9 +19,6 @@
@@ -46,20 +75,23 @@ index 2ff66a5..3b1fab7 100644
    rpiRfModFound(false),
    fullCCUFound(false),
    #else
-@@ -41,9 +38,9 @@ InfoLed::InfoLed():
-   // identify if we have a RPI-RF-MOD
-   if(system("lsmod | grep -q rx8130") == 0)
-   {
+@@ -38,15 +35,6 @@ InfoLed::InfoLed():
+   rflgwInfoLed()
+ {
+   #if defined(PLATFORM_CCU3)
+-  // identify if we have a RPI-RF-MOD
+-  if(system("lsmod | grep -q rx8130") == 0)
+-  {
 -    redLed.LedOn();
 -    greenLed.LedOn();
 -    blueLed.LedOff();
-+    // The DT overlay also exists with an HM-MOD-RPI-PCB. Keep the radio
-+    // detection guard; an RGB sysfs node alone is not proof of RPI-RF-MOD.
-+    // Boot scripts own the initial color through the LED service.
-     rpiRfModFound = true;
-   }
- 
-@@ -121,17 +118,11 @@ void InfoLed::updateLedState() {
+-    rpiRfModFound = true;
+-  }
+-
+   // identify if we running on a production image or on
+   // a full CCU
+   struct stat buffer;
+@@ -121,20 +109,18 @@ void InfoLed::updateLedState() {
    //bool updateState = this->update.isInfoPending();
  
    // get old LED states
@@ -79,7 +111,14 @@ index 2ff66a5..3b1fab7 100644
      return;
    }
  
-@@ -253,17 +244,25 @@ void InfoLed::updateLedState() {
++  // RTC modules can appear after early startup (including HB-RF-USB).
++  rpiRfModFound = access("/sys/module/dummy_rx8130", F_OK) == 0 ||
++                  access("/sys/module/rtc_rx8130", F_OK) == 0;
++
+   // calculate new LED states
+   led::LedState newStateRed = led::UNKNOWN;
+   led::LedState newStateGreen = led::UNKNOWN;
+@@ -253,17 +239,25 @@ void InfoLed::updateLedState() {
    }
  
    // set LEDs of a RPI-RF-MOD
@@ -116,7 +155,7 @@ index 2ff66a5..3b1fab7 100644
  
    // set LAN Gateway LED regularly
 diff --git a/src/hss_led/InfoLed.h b/src/hss_led/InfoLed.h
-index 6289914..f320983 100644
+index 62899148..f3209833 100644
 --- a/src/hss_led/InfoLed.h
 +++ b/src/hss_led/InfoLed.h
 @@ -12,6 +12,7 @@
@@ -138,9 +177,712 @@ index 6289914..f320983 100644
  	Network net;
  	bool rpiRfModFound;
  	bool fullCCUFound;
+diff --git a/src/hss_led/LedController.cpp b/src/hss_led/LedController.cpp
+new file mode 100644
+index 00000000..e6a4de0c
+--- /dev/null
++++ b/src/hss_led/LedController.cpp
+@@ -0,0 +1,651 @@
++// SPDX-License-Identifier: Apache-2.0
++// One controller for radio status and explicitly selected LED-class devices.
++#include "LedProtocol.h"
++#include "LedController.h"
++#include <atomic>
++#include <mutex>
++#include <algorithm>
++#include <cstdint>
++#include <cstdlib>
++#include <fcntl.h>
++#include <fstream>
++#include <dirent.h>
++#include <map>
++#include <grp.h>
++#include <iostream>
++#include <pwd.h>
++#include <signal.h>
++#include <sstream>
++#include <stdexcept>
++#include <sys/file.h>
++#include <sys/signalfd.h>
++#include <sys/stat.h>
++#include <sys/timerfd.h>
++#include <vector>
++
++static std::string runtime = "/run/hss_led";
++static std::string sysfs = "/sys/class/leds";
++static std::string startup = "/var/status/startupFinished";
++static std::string disabled = "/etc/config/disableLED";
++static const char* colors[] = {"off", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
++static std::atomic<bool> statusEnabled(false);
++static const unsigned maxDelay = 86400000;
++static uid_t administrator = 0;
++
++static uint64_t nowMs() {
++  timespec t = {};
++  if (clock_gettime(CLOCK_MONOTONIC, &t)) throw std::runtime_error("clock_gettime");
++  return uint64_t(t.tv_sec) * 1000 + t.tv_nsec / 1000000;
++}
++static bool exists(const std::string& p) { return access(p.c_str(), F_OK) == 0; }
++static std::string readText(const std::string& p) {
++  std::ifstream f(p);
++  std::ostringstream s;
++  s << f.rdbuf();
++  return s.str();
++}
++static bool number(const std::string& s, unsigned& n, unsigned maximum) {
++  if (s.empty() || s.size() > 16) return false;
++  n = 0;
++  for (char c : s) {
++    if (c < '0' || c > '9' || n > maximum / 10 ||
++        (n == maximum / 10 && unsigned(c - '0') > maximum % 10)) return false;
++    n = n * 10 + unsigned(c - '0');
++  }
++  return true;
++}
++static std::vector<std::string> words(const std::string& s) {
++  std::istringstream in(s);
++  std::vector<std::string> v;
++  std::string w;
++  while (in >> w) v.push_back(w);
++  return v;
++}
++static unsigned color(const std::string& name) {
++  for (unsigned i = 0; i < 8; ++i) if (name == colors[i]) return i;
++  throw std::runtime_error("unknown color");
++}
++struct Pattern {
++  unsigned a = 0, b = 0, da = 0, db = 0;
++  bool operator==(const Pattern& p) const { return a == p.a && b == p.b && da == p.da && db == p.db; }
++  bool alternating() const { return da && a != b; }
++  std::string wire() const {
++    return std::to_string(a) + " " + std::to_string(b) + " " + std::to_string(da) + " " + std::to_string(db);
++  }
++};
++// Only the controller thread owns State and sysfs. Status calculation publishes
++// the latest pattern through this bounded in-process mailbox; no self-IPC.
++struct ReportMailbox {
++  std::mutex mutex;
++  Pattern pattern;
++  bool pending = false;
++  void publish(const Pattern& p) {
++    std::lock_guard<std::mutex> lock(mutex);
++    pattern = p;
++    pending = true;
++  }
++  bool take(Pattern& p) {
++    std::lock_guard<std::mutex> lock(mutex);
++    if (!pending) return false;
++    p = pattern;
++    pending = false;
++    return true;
++  }
++};
++static ReportMailbox reports;
++
++void LedController::report(unsigned first, unsigned second, unsigned period) {
++  if (first > 7 || second > 7 || period > maxDelay) return;
++  Pattern p;
++  p.a = first; p.b = period ? second : first; p.da = p.db = period;
++  reports.publish(p);
++}
++bool LedController::statusActive() { return statusEnabled.load(); }
++
++static bool parsePattern(const std::vector<std::string>& v, size_t offset, Pattern& p) {
++  return v.size() >= offset + 4 && number(v[offset], p.a, 7) && number(v[offset+1], p.b, 7) &&
++      number(v[offset+2], p.da, maxDelay) && number(v[offset+3], p.db, maxDelay) &&
++      ((!p.da && !p.db && p.a == p.b) || (p.da && p.db));
++}
++static bool writeValue(const std::string& path, const std::string& value) {
++  int fd = open(path.c_str(), O_WRONLY | O_CLOEXEC | O_TRUNC);
++  if (fd < 0) return false;
++  std::string line = value + "\n";
++  ssize_t n;
++  do { n = write(fd, line.data(), line.size()); } while (n < 0 && errno == EINTR);
++  bool ok = n == static_cast<ssize_t>(line.size());
++  if (close(fd)) ok = false;
++  return ok;
++}
++
++// Explicit scalar LED targets use the kernel LED-class API. They are never
++// included in automatic CCU status output. RPI-RF-MOD components are reserved
++// for the RGB owner, so a second command cannot fight that owner's timer.
++static bool ledName(const std::string& name) {
++  if (name.empty() || name.size() > 255 || name == "." || name == "..") return false;
++  for (unsigned char c : name)
++    if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
++          (c >= '0' && c <= '9') || c == ':' || c == '_' || c == '-' || c == '.')) return false;
++  return true;
++}
++static bool radioNode(const std::string& name) { return name.compare(0, 11, "rpi_rf_mod:") == 0; }
++static std::string selectedTrigger(const std::string& path) {
++  for (const auto& item : words(readText(path + "/trigger")))
++    if (item.size() > 2 && item.front() == '[' && item.back() == ']')
++      return item.substr(1, item.size() - 2);
++#ifdef LED_TEST_BUILD
++  auto items = words(readText(path + "/trigger"));
++  if (items.size() == 1) return items[0];
++#endif
++  return "";
++}
++static bool hasTrigger(const std::string& path, const std::string& trigger) {
++  for (const auto& item : words(readText(path + "/trigger")))
++    if (item == trigger || item == "[" + trigger + "]") return true;
++  return false;
++}
++static bool scalarMaximum(const std::string& path, unsigned& maximum) {
++  auto v = words(readText(path + "/max_brightness"));
++  return !exists(path + "/multi_index") && v.size() == 1 &&
++      number(v[0], maximum, UINT32_MAX) && maximum && exists(path + "/brightness");
++}
++class BoardLeds {
++  struct Pending {
++    unsigned on = 0, off = 0;
++    uint64_t deadline = 0;
++    dev_t device = 0;
++    ino_t inode = 0;
++    bool pending = false;
++    std::string error;
++  };
++  // Only timer setup needs retries: udev grants permissions on delay_on/off
++  // after selecting timer. Never sleep here or recreate the trigger on retry.
++  std::map<std::string, Pending> changes;
++  static bool identity(const std::string& path, Pending& p) {
++    struct stat st = {};
++    if (stat((path + "/brightness").c_str(), &st)) return false;
++    p.device = st.st_dev; p.inode = st.st_ino;
++    return true;
++  }
++public:
++  void tick(uint64_t now) {
++    for (auto& item : changes) {
++      Pending& p = item.second;
++      if (!p.pending) continue;
++      std::string path = sysfs + "/" + item.first;
++      Pending current;
++      if (!identity(path, current) || current.device != p.device || current.inode != p.inode ||
++          selectedTrigger(path) != "timer") {
++        p.error = "device-or-trigger-changed"; p.pending = false;
++      } else if (writeValue(path + "/delay_on", std::to_string(p.on)) &&
++                 writeValue(path + "/delay_off", std::to_string(p.off))) {
++        p.pending = false; p.error.clear();
++      } else if (now >= p.deadline) {
++        p.error = "timer-attributes-not-writable"; p.pending = false;
++      }
++    }
++  }
++  std::string list() const {
++    DIR* directory = opendir(sysfs.c_str());
++    if (!directory) return "ERR cannot enumerate LED class";
++    std::vector<std::string> names;
++    while (dirent* entry = readdir(directory)) {
++      std::string name(entry->d_name);
++      if (ledName(name) && name != "rpi-rf-mod" && !radioNode(name)) names.push_back(name);
++    }
++    closedir(directory);
++    std::sort(names.begin(), names.end());
++    std::string result = "OK\nrpi-rf-mod\trgb/legacy (use --led rpi-rf-mod status for availability)\n";
++    for (const auto& name : names) {
++      unsigned maximum;
++      if (!scalarMaximum(sysfs + "/" + name, maximum)) continue;
++      result += name + "\tscalar max_brightness=" + std::to_string(maximum) + "\n";
++      if (result.size() >= 60000) return "ERR LED list exceeds reply limit";
++    }
++    return result;
++  }
++  std::string dispatch(const std::vector<std::string>& v, uid_t uid) {
++    // Wire format: 1 led NAME OP [ARG...]. Names are class basenames only.
++    if (v.size() < 4 || v[0] != "1" || v[1] != "led" || !ledName(v[2])) return "ERR invalid LED request";
++    if (radioNode(v[2]) || v[2] == "rpi-rf-mod") return "ERR use --led rpi-rf-mod for the radio LED";
++    std::string path = sysfs + "/" + v[2];
++    unsigned maximum;
++    if (!scalarMaximum(path, maximum)) return "ERR scalar LED unavailable or unsupported";
++    const std::string& op = v[3];
++    if (op == "status" && v.size() == 4) {
++      auto entry = changes.find(v[2]);
++      auto brightness = words(readText(path + "/brightness"));
++      std::string result = "OK led=" + v[2] + " brightness=" +
++          (brightness.size() == 1 ? brightness[0] : "unknown") + " max_brightness=" + std::to_string(maximum) +
++          " trigger=" + selectedTrigger(path) + " pending=" +
++          std::to_string(entry != changes.end() && entry->second.pending);
++      if (entry != changes.end() && !entry->second.error.empty()) result += " error=" + entry->second.error;
++      return result;
++    }
++    if (uid != administrator) return "ERR permission denied";
++    unsigned value = 0, on = 0, off = 0;
++    std::string trigger;
++    if ((op == "on" || op == "off") && v.size() == 4) value = op == "on" ? maximum : 0;
++    else if (op == "brightness" && v.size() == 5 && number(v[4], value, maximum)) {}
++    else if (op == "blink" && v.size() == 6 && number(v[4], on, maxDelay) && on &&
++             number(v[5], off, maxDelay) && off) trigger = "timer";
++    else if (op == "trigger" && v.size() == 5 && ledName(v[4])) trigger = v[4];
++    else return "ERR invalid LED command";
++    if (!trigger.empty() && !hasTrigger(path, trigger)) return "ERR trigger unavailable";
++    // Validate before cancelling any earlier timer setup.
++    auto entry = changes.find(v[2]);
++    if (entry == changes.end() && changes.size() >= 64) {
++      for (auto it = changes.begin(); it != changes.end();) {
++        if (!it->second.pending) it = changes.erase(it); else ++it;
++      }
++      if (changes.size() >= 64) return "ERR too many pending LED commands";
++    }
++    Pending next;
++    if (!identity(path, next)) return "ERR LED disappeared";
++    changes[v[2]] = next;
++    auto fail = [&]() {
++      changes[v[2]].error = "sysfs-write-failed";
++      return std::string("ERR cannot write LED attributes");
++    };
++    if (on) {
++      if (!writeValue(path + "/brightness", std::to_string(maximum)) ||
++          !writeValue(path + "/trigger", "timer")) return fail();
++      next.on = on; next.off = off; next.deadline = nowMs() + 5000; next.pending = true;
++      changes[v[2]] = next;
++      tick(nowMs());
++    } else if (!trigger.empty()) {
++      if (!writeValue(path + "/trigger", trigger)) return fail();
++    } else {
++      if (exists(path + "/trigger") && !writeValue(path + "/trigger", "none")) return fail();
++      if (!writeValue(path + "/brightness", std::to_string(value))) return fail();
++    }
++    return "OK accepted";
++  }
++};
++
++// Use elapsed monotonic time, not the number of timer events, so missed
++// intervals are skipped and unequal phase durations do not accumulate drift.
++static unsigned phaseAt(const Pattern& p, uint64_t elapsed, uint64_t& delay) {
++  if (!p.alternating()) { delay = 0; return p.a; }
++  uint64_t cycle = uint64_t(p.da) + p.db;
++  uint64_t phase = elapsed % cycle;
++  delay = phase < p.da ? p.da - phase : cycle - phase;
++  return phase < p.da ? p.a : p.b;
++}
++
++class Backend {
++  std::string signature;
++  std::string rgb;
++  unsigned maximum = 0;
++  unsigned order[3] = {};
++  unsigned levels[3] = {};
++  bool timer = false;
++  std::string component(unsigned i) const { return sysfs + "/rpi_rf_mod:" + colors[1U << i]; }
++  bool scalar(const std::string& path, unsigned& value) {
++    auto v = words(readText(path));
++    return v.size() == 1 && number(v[0], value, 65535) && value;
++  }
++public:
++  std::string name = "missing";
++  // Device identity changes on unload/reload, even when its sysfs name stays
++  // the same. Do not fall back to read-only component LEDs of a broken group.
++  bool discover() {
++    std::string next;
++    rgb = sysfs + "/rpi_rf_mod:rgb:status";
++    bool multi = exists(rgb + "/multi_index");
++    std::vector<std::string> paths;
++    if (multi) paths.push_back(rgb + "/multi_index");
++    else for (unsigned i = 0; i < 3; ++i) paths.push_back(component(i) + "/brightness");
++    for (const auto& path : paths) {
++      struct stat st = {};
++      if (stat(path.c_str(), &st)) { next = "missing"; break; }
++      next += std::to_string(st.st_dev) + ":" + std::to_string(st.st_ino) + ";";
++    }
++    if (signature == next && name != "error") return false;
++    signature = next;
++    name = "error";
++    if (next == "missing") { name = "missing"; return true; }
++    if (multi) {
++      auto index = words(readText(rgb + "/multi_index"));
++      unsigned seen = 0;
++      if (index.size() != 3 || !scalar(rgb + "/max_brightness", maximum)) return true;
++      for (unsigned i = 0; i < 3; ++i) {
++        unsigned bit = index[i] == "red" ? 1 : index[i] == "green" ? 2 : index[i] == "blue" ? 4 : 0;
++        if (!bit || (seen & bit)) return true;
++        seen |= bit; order[i] = bit;
++      }
++      auto triggers = words(readText(rgb + "/trigger"));
++      timer = std::find(triggers.begin(), triggers.end(), "timer") != triggers.end() ||
++          std::find(triggers.begin(), triggers.end(), "[timer]") != triggers.end();
++      name = "rgb";
++    } else {
++      for (unsigned i = 0; i < 3; ++i)
++        if (!exists(component(i) + "/trigger") || !scalar(component(i) + "/max_brightness", levels[i])) return true;
++      name = "legacy";
++    }
++    return true;
++  }
++  bool kernelBlink(const Pattern& p) const { return name == "rgb" && timer && p.alternating() && p.a && !p.b; }
++  bool setColor(unsigned mask) {
++    if (name == "rgb") {
++      std::string values;
++      for (unsigned i = 0; i < 3; ++i) values += (i ? " " : "") + std::to_string(mask & order[i] ? maximum : 0);
++      return writeValue(rgb + "/multi_intensity", values);
++    }
++    if (name != "legacy") return false;
++    // Old GPIO nodes still require separate writes. Remove unwanted channels
++    // first, then enable new channels, using a single common phase clock.
++    for (unsigned on = 0; on < 2; ++on)
++      for (unsigned i = 0; i < 3; ++i)
++        if (!!(mask & (1U << i)) == !!on &&
++            !writeValue(component(i) + "/brightness", std::to_string(on ? levels[i] : 0))) return false;
++    return true;
++  }
++  bool apply(const Pattern& p, unsigned mask) {
++    if (name == "rgb") {
++      if (kernelBlink(p)) {
++        if (!setColor(mask)) return false;
++        auto triggers = words(readText(rgb + "/trigger"));
++        bool selected = std::find(triggers.begin(), triggers.end(), "[timer]") != triggers.end();
++#ifdef LED_TEST_BUILD
++        selected = selected || readText(rgb + "/trigger") == "timer\n";
++#endif
++        if (!selected && (!writeValue(rgb + "/brightness", std::to_string(maximum)) ||
++                          !writeValue(rgb + "/trigger", "timer"))) return false;
++        return writeValue(rgb + "/delay_on", std::to_string(p.da)) &&
++               writeValue(rgb + "/delay_off", std::to_string(p.db));
++      }
++      if (!writeValue(rgb + "/trigger", "none") || !writeValue(rgb + "/brightness", "0") ||
++          !setColor(mask) || !writeValue(rgb + "/brightness", std::to_string(mask || p.alternating() ? maximum : 0))) return false;
++      return true;
++    }
++    if (name != "legacy") return false;
++    for (unsigned i = 0; i < 3; ++i) if (!writeValue(component(i) + "/trigger", "none")) return false;
++    return setColor(mask);
++  }
++};
++
++struct State {
++  bool automatic = false, overrideActive = false;
++  Pattern system, report, manual;
++  State() { system.a = system.b = 3; report.a = report.b = 4; }
++  std::string wire() const {
++    return "1 " + std::to_string(automatic) + " " + std::to_string(overrideActive) + " " +
++        system.wire() + " " + report.wire() + " " + manual.wire();
++  }
++  bool load(const std::string& s) {
++    auto v = words(s);
++    unsigned a, o;
++    if (v.size() != 15 || v[0] != "1" || !number(v[1], a, 1) || !number(v[2], o, 1) ||
++        !parsePattern(v, 3, system) || !parsePattern(v, 7, report) || !parsePattern(v, 11, manual)) return false;
++    automatic = a; overrideActive = o; return true;
++  }
++  Pattern effective() const {
++    if (exists(disabled)) return Pattern();
++    // Removal of startupFinished is a safety net for an interrupted shutdown
++    // script: late reports must not restore the normal/override pattern.
++    if (automatic && !exists(startup)) return system;
++    return overrideActive ? manual : automatic ? report : system;
++  }
++};
++
++static bool save(const State& state) {
++  std::string path = runtime + "/state.tmp";
++  int fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NOFOLLOW, 0600);
++  if (fd < 0) return false;
++  std::string data = state.wire() + "\n";
++  ssize_t n;
++  do { n = write(fd, data.data(), data.size()); } while (n < 0 && errno == EINTR);
++  bool ok = n == static_cast<ssize_t>(data.size());
++  if (close(fd)) ok = false;
++  if (ok && rename(path.c_str(), (runtime + "/state").c_str()) == 0) return true;
++  unlink(path.c_str());
++  return false;
++}
++
++static std::string dispatch(State& state, const std::string& message, uid_t uid, uid_t reporter,
++                            const Backend& backend, bool dirty) {
++  auto v = words(message);
++  if (message.size() >= 512 || message.find('\0') != std::string::npos || v.size() < 2 || v[0] != "1")
++    return "ERR invalid request";
++  State changed = state;
++  bool valid = false;
++  if (v[1] == "status" && v.size() == 2) {
++    return "OK owner=" + std::string(state.overrideActive ? "override" : state.automatic ? "auto" : "system") +
++        " backend=" + backend.name + " pending=" + std::to_string(dirty) + " pattern=" + state.effective().wire();
++  }
++  if ((uid == administrator || uid == reporter) && v[1] == "report" && v.size() == 6) {
++    valid = parsePattern(v, 2, changed.report);
++  } else if (uid == administrator) {
++    if (v[1] == "system" && v.size() == 6) {
++      valid = parsePattern(v, 2, changed.system);
++      changed.automatic = false; changed.overrideActive = false;
++    } else if (v[1] == "override" && v.size() == 6) {
++      valid = parsePattern(v, 2, changed.manual); changed.overrideActive = true;
++    } else if (v[1] == "release" && v.size() == 2) {
++      changed.overrideActive = false; valid = true;
++    } else if (v[1] == "auto" && v.size() == 2) {
++      changed.automatic = true; changed.overrideActive = false; valid = true;
++    }
++  } else return "ERR permission denied";
++  if (!valid) return "ERR invalid request";
++  if (changed.wire() != state.wire() && !save(changed)) return "ERR cannot save runtime state";
++  state = changed;
++  return "OK accepted";
++}
++
++struct Connection { int fd; uid_t uid; uint64_t deadline; };
++static int serve(void (*startStatus)()) {
++  if (mkdir(runtime.c_str(), 0755) && errno != EEXIST) throw std::runtime_error("cannot create runtime directory");
++  struct stat st = {};
++  if (lstat(runtime.c_str(), &st) || !S_ISDIR(st.st_mode) || st.st_uid != geteuid() || (st.st_mode & 0022))
++    throw std::runtime_error("unsafe runtime directory");
++  int lock = open((runtime + "/lock").c_str(), O_RDWR | O_CREAT | O_CLOEXEC | O_NOFOLLOW, 0600);
++  if (lock < 0 || flock(lock, LOCK_EX | LOCK_NB)) throw std::runtime_error("LED service already running or lock unavailable");
++  sigset_t signals;
++  sigemptyset(&signals); sigaddset(&signals, SIGTERM); sigaddset(&signals, SIGINT); sigaddset(&signals, SIGHUP);
++  if (sigprocmask(SIG_BLOCK, &signals, nullptr)) throw std::runtime_error("sigprocmask");
++  int signalFd = signalfd(-1, &signals, SFD_CLOEXEC | SFD_NONBLOCK);
++  int timerFd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);
++  int listener = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC | SOCK_NONBLOCK, 0);
++  if (signalFd < 0 || timerFd < 0 || listener < 0) throw std::runtime_error("cannot create event descriptors");
++  std::string sock = runtime + "/control";
++  sockaddr_un address = {};
++  address.sun_family = AF_UNIX;
++  if (sock.size() >= sizeof(address.sun_path)) throw std::runtime_error("socket path too long");
++  std::memcpy(address.sun_path, sock.c_str(), sock.size() + 1);
++  unlink(sock.c_str());
++  // The containing directory is not writable by clients. Only root and the
++  // status group can connect, and report requests also verify SO_PEERCRED.
++  mode_t oldMask = umask(0077);
++  int bound = bind(listener, reinterpret_cast<sockaddr*>(&address), sizeof(address));
++  umask(oldMask);
++  if (bound) throw std::runtime_error("bind");
++#ifndef LED_TEST_BUILD
++  if (group* g = getgrnam("status")) {
++    if (chown(sock.c_str(), geteuid(), g->gr_gid)) throw std::runtime_error("socket group");
++  }
++#endif
++  if (chmod(sock.c_str(), 0660) || listen(listener, 16)) throw std::runtime_error("listen/permissions");
++  uid_t reporter = static_cast<uid_t>(-1);
++  if (passwd* p = getpwnam("hssled")) reporter = p->pw_uid;
++  State state, restored;
++  if (restored.load(readText(runtime + "/state"))) state = restored;
++  Backend backend;
++  BoardLeds board;
++  Pattern active;
++  bool first = true, dirty = true;
++  unsigned lastColor = 8;
++  uint64_t epoch = nowMs(), maintenance = 0;
++  std::vector<Connection> clients;
++  // Signals are blocked before spawning the status thread. The controller
++  // alone consumes them, including while a status query is blocked.
++  if (startStatus) startStatus();
++  while (true) {
++    uint64_t now = nowMs();
++    if (now >= maintenance) {
++      if (backend.discover()) dirty = true;
++      board.tick(now);
++      maintenance = now + 250;
++    }
++    Pattern report;
++    if (reports.take(report)) {
++      State changed = state;
++      changed.report = report;
++      if (changed.wire() != state.wire() && !save(changed))
++        std::cerr << "hss_led: cannot save automatic LED status\n";
++      state = changed;
++    }
++    statusEnabled.store(exists(startup));
++    Pattern desired = state.effective();
++    if (first || !(active == desired)) {
++      active = desired; epoch = now; first = false; dirty = true;
++    }
++    uint64_t next = maintenance;
++    unsigned mask = active.a;
++    if (active.alternating() && !backend.kernelBlink(active)) {
++      uint64_t delay;
++      mask = phaseAt(active, now - epoch, delay);
++      next = std::min(next, now + delay);
++    }
++    if (dirty) {
++      dirty = !backend.apply(active, mask);
++      if (!dirty) lastColor = mask;
++    } else if (mask != lastColor && !backend.kernelBlink(active)) {
++      dirty = !backend.setColor(mask);
++      if (!dirty) lastColor = mask;
++    }
++    itimerspec timer = {};
++    next = std::max(next, now + 1);
++    timer.it_value.tv_sec = next / 1000;
++    timer.it_value.tv_nsec = (next % 1000) * 1000000;
++    if (timerfd_settime(timerFd, TFD_TIMER_ABSTIME, &timer, nullptr)) throw std::runtime_error("timerfd_settime");
++    std::vector<pollfd> fds = {{listener, POLLIN, 0}, {timerFd, POLLIN, 0}, {signalFd, POLLIN, 0}};
++    for (const auto& c : clients) fds.push_back({c.fd, POLLIN, 0});
++    int ready = poll(fds.data(), fds.size(), -1);
++    if (ready < 0) { if (errno == EINTR) continue; throw std::runtime_error("poll"); }
++    if (fds[2].revents) break;
++    if (fds[1].revents) {
++      uint64_t ticks;
++      const ssize_t count = read(timerFd, &ticks, sizeof(ticks));
++      if (count < 0 && errno != EAGAIN && errno != EINTR) throw std::runtime_error("timer read");
++    }
++    // Existing clients first, before adding newly accepted descriptors.
++    for (size_t i = clients.size(); i-- > 0;) {
++      const auto c = clients[i];
++      if (!fds[i+3].revents && nowMs() < c.deadline) continue;
++      char buffer[512];
++      ssize_t count = recv(c.fd, buffer, sizeof(buffer), MSG_DONTWAIT | MSG_TRUNC);
++      std::string reply = "ERR invalid request";
++      if (count > 0 && count < static_cast<ssize_t>(sizeof(buffer))) {
++        std::string message(buffer, static_cast<size_t>(count));
++        auto v = words(message);
++        if (message.find('\0') == std::string::npos && v.size() >= 2 && v[0] == "1" && v[1] == "led")
++          reply = board.dispatch(v, c.uid);
++        else if (message == "1 list") reply = board.list();
++        else reply = dispatch(state, message, c.uid, reporter, backend, dirty);
++      }
++      (void)send(c.fd, reply.data(), reply.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
++      close(c.fd); clients.erase(clients.begin() + i);
++    }
++    if (fds[0].revents & POLLIN) {
++      // Bound acceptance per iteration so a busy client cannot starve timers.
++      for (unsigned n = 0; n < 16; ++n) {
++        int fd = accept4(listener, nullptr, nullptr, SOCK_CLOEXEC | SOCK_NONBLOCK);
++        if (fd < 0) break;
++        ucred peer = {}; socklen_t length = sizeof(peer);
++        if (clients.size() >= 32 || getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &peer, &length)) close(fd);
++        else clients.push_back({fd, peer.uid, nowMs() + 1000});
++      }
++    }
++  }
++  for (const auto& c : clients) close(c.fd);
++  // Preserve the final color/kernel blink during shutdown and for restart.
++  // No more userspace phase changes occur after the daemon exits.
++  unlink(sock.c_str()); close(listener); close(timerFd); close(signalFd); close(lock);
++  return 0;
++}
++
++static const char usage[] =
++    "Usage: hss_ledctl --led rpi-rf-mod [system|override] COLOR [MS]\n"
++    "       hss_ledctl --led rpi-rf-mod [system|override] alternate COLOR1 COLOR2 MS1 [MS2]\n"
++    "       hss_ledctl --led rpi-rf-mod release|auto|off|stop|status\n"
++    "       hss_ledctl --led NAME on|off|status\n"
++    "       hss_ledctl --led NAME brightness LEVEL\n"
++    "       hss_ledctl --led NAME blink ON_MS [OFF_MS]\n"
++    "       hss_ledctl --led NAME trigger TRIGGER\n"
++    "       hss_ledctl list\n";
++static std::string makeRequest(std::vector<std::string> v) {
++  if (v.empty()) throw std::runtime_error(usage);
++  if (v[0] == "--led") {
++    if (v.size() < 3 || !ledName(v[1])) throw std::runtime_error("invalid LED target");
++    std::string target = v[1];
++    v.erase(v.begin(), v.begin() + 2);
++    if (target != "rpi-rf-mod") {
++      if (radioNode(target)) throw std::runtime_error("use --led rpi-rf-mod for the radio LED");
++      unsigned a, b;
++      bool valid = (v.size() == 1 && (v[0] == "on" || v[0] == "off" || v[0] == "status")) ||
++          (v.size() == 2 && v[0] == "brightness" && number(v[1], a, UINT32_MAX)) ||
++          (v.size() == 2 && v[0] == "trigger" && ledName(v[1]));
++      if ((v.size() == 2 || v.size() == 3) && v[0] == "blink" &&
++          number(v[1], a, maxDelay) && a && number(v.size() == 3 ? v[2] : v[1], b, maxDelay) && b) {
++        if (v.size() == 2) v.push_back(v[1]);
++        valid = true;
++      }
++      if (!valid) throw std::runtime_error("invalid scalar LED command (see --help)");
++      std::string message = "1 led " + target;
++      for (const auto& word : v) message += " " + word;
++      return message;
++    }
++  } else if (v.size() == 1 && v[0] == "list") return "1 list";
++  else throw std::runtime_error("missing --led NAME (see --help)");
++  std::string operation = "override";
++  if (v[0] == "system" || v[0] == "override") { operation = v[0]; v.erase(v.begin()); }
++  std::string message;
++  if (v.size() == 1 && (v[0] == "status" || v[0] == "release" || v[0] == "auto")) message = "1 " + v[0];
++  else {
++    Pattern p;
++    if (v.size() == 1 && v[0] == "stop") v[0] = "off";
++    if (v.size() >= 4 && v.size() <= 5 && v[0] == "alternate") {
++      p.a = color(v[1]); p.b = color(v[2]);
++      if (!number(v[3], p.da, maxDelay) || !p.da ||
++          !number(v.size() == 5 ? v[4] : v[3], p.db, maxDelay) || !p.db) throw std::runtime_error("invalid phase duration");
++    } else if (v.size() == 1 || v.size() == 2) {
++      p.a = p.b = color(v[0]);
++      if (v.size() == 2) {
++        if (!number(v[1], p.da, maxDelay)) throw std::runtime_error("invalid blink duration");
++        if (p.da && p.a) { p.b = 0; p.db = p.da; }
++        else p.da = 0;
++      }
++    } else throw std::runtime_error("invalid arguments");
++    message = "1 " + operation + " " + p.wire();
++  }
++  return message;
++}
++static int client(int argc, char** argv) {
++  if (argc == 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
++    std::cout << usage;
++    return 0;
++  }
++  std::string message = makeRequest(std::vector<std::string>(argv + 1, argv + argc));
++  std::string reply;
++  if (!LedProtocol::request(runtime + "/control", message, reply, 2000)) {
++    std::cerr << (reply.empty() ? "LED service unavailable" : reply) << '\n';
++    return 1;
++  }
++  auto v = words(message);
++  if (message == "1 status" || message == "1 list" ||
++      (v.size() == 4 && v[1] == "led" && v[3] == "status")) std::cout << reply << '\n';
++  return 0;
++}
++void LedController::configureTestPaths() {
++#ifdef LED_TEST_BUILD
++  administrator = geteuid();
++  if (const char* p = std::getenv("LED_TEST_RUNTIME")) runtime = p;
++  if (const char* p = std::getenv("LED_TEST_SYSFS")) sysfs = p;
++  if (const char* p = std::getenv("LED_TEST_STARTUP")) startup = p;
++  if (const char* p = std::getenv("LED_TEST_DISABLED")) disabled = p;
++#endif
++}
++int LedController::run(void (*startStatus)()) { return serve(startStatus); }
++int LedController::client(int argc, char** argv) { return ::client(argc, argv); }
+diff --git a/src/hss_led/LedController.h b/src/hss_led/LedController.h
+new file mode 100644
+index 00000000..a181a71e
+--- /dev/null
++++ b/src/hss_led/LedController.h
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: Apache-2.0
++#ifndef HSS_LED_CONTROLLER_H
++#define HSS_LED_CONTROLLER_H
++namespace LedController {
++// run owns sysfs, timers and the control socket until termination. The optional
++// callback starts the process-lifetime CCU status thread after signal setup.
++int run(void (*startStatus)() = nullptr);
++int client(int argc, char** argv);
++void report(unsigned first, unsigned second, unsigned periodMs);
++bool statusActive();
++void configureTestPaths(); // environment overrides exist only in test builds
++}
++#endif
+diff --git a/src/hss_led/LedOnlyMain.cpp b/src/hss_led/LedOnlyMain.cpp
+new file mode 100644
+index 00000000..904c5a8f
+--- /dev/null
++++ b/src/hss_led/LedOnlyMain.cpp
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: Apache-2.0
++#include "LedController.h"
++#include <iostream>
++#include <string>
++int main(int argc, char** argv) {
++  try {
++    LedController::configureTestPaths();
++    std::string program(argv[0]);
++    program = program.substr(program.find_last_of('/') + 1);
++    if (program == "hss_ledctl") return LedController::client(argc, argv);
++    if (argc > 1 && std::string(argv[1]) == "--led-control")
++      return LedController::client(argc - 1, argv + 1);
++    if (argc == 1 || (argc == 2 && std::string(argv[1]) == "--led-only"))
++      return LedController::run();
++    std::cerr << "Usage: hss_led [--led-only | --led-control COMMAND...]\n";
++    return 2;
++  } catch (const std::exception& e) {
++    std::cerr << "hss_led: " << e.what() << '\n';
++    return 2;
++  }
++}
 diff --git a/src/hss_led/LedProtocol.h b/src/hss_led/LedProtocol.h
 new file mode 100644
-index 0000000..34fe74f
+index 00000000..6f43a781
 --- /dev/null
 +++ b/src/hss_led/LedProtocol.h
 @@ -0,0 +1,42 @@
@@ -156,7 +898,7 @@ index 0000000..34fe74f
 +#include <unistd.h>
 +
 +namespace LedProtocol {
-+static const char socketPath[] = "/run/rpi-rf-mod-led/control";
++static const char socketPath[] = "/run/hss_led/control";
 +// One request and one acknowledgement per connection. Bounded waits keep a
 +// missing or wedged daemon from blocking hss_led's status checks indefinitely.
 +inline bool request(const std::string& path, const std::string& message,
@@ -173,7 +915,7 @@ index 0000000..34fe74f
 +    pollfd event = {fd, POLLIN, 0};
 +    int ready = poll(&event, 1, timeout);
 +    if (ready > 0 && (event.revents & POLLIN)) {
-+      char buffer[1024];
++      char buffer[65536];
 +      ssize_t n = recv(fd, buffer, sizeof(buffer), MSG_TRUNC);
 +      if (n > 0 && n < static_cast<ssize_t>(sizeof(buffer))) {
 +        reply.assign(buffer, static_cast<size_t>(n));
@@ -186,112 +928,599 @@ index 0000000..34fe74f
 +}
 +}
 +#endif
-diff --git a/src/hss_led/RgbLed.cpp b/src/hss_led/RgbLed.cpp
-new file mode 100644
-index 0000000..1e8d8c9
---- /dev/null
-+++ b/src/hss_led/RgbLed.cpp
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: Apache-2.0
-+#include "RgbLed.h"
-+#include <cstdio>
-+
-+void RgbLed::set(unsigned first, unsigned second, unsigned periodMs) {
-+  if (first > 7 || second > 7 || periodMs > 86400000) return;
-+  if (!periodMs) second = first;
-+  const std::string command = "1 report " + std::to_string(first) + " " +
-+      std::to_string(second) + " " + std::to_string(periodMs) + " " + std::to_string(periodMs);
-+  std::string reply;
-+  // Repeat even unchanged reports: a replacement service always receives the
-+  // latest status. Its pattern comparison keeps an existing phase clock intact.
-+  if (!LedProtocol::request(socketPath, command, reply)) {
-+    const std::time_t now = std::time(nullptr);
-+    if (!lastError || now - lastError >= 30) {
-+      std::fprintf(stderr, "hss_led: LED service unavailable or rejected status: %s\n", reply.c_str());
-+      lastError = now;
-+    }
-+  }
-+}
+diff --git a/src/hss_led/Network.cpp b/src/hss_led/Network.cpp
+index f740ce45..c913d559 100644
+--- a/src/hss_led/Network.cpp
++++ b/src/hss_led/Network.cpp
+@@ -8,6 +8,7 @@
+ 
+ 
+ #include "Network.h"
++#include "StatusCommand.h"
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <Logger.h>
+@@ -56,7 +57,7 @@ bool Network::isInfoPending() {
+ 	// run the /bin/checkInternet script every X'th interval
+ 	if (--checkInternetInterval <= 0) {
+ 		if (stat("/bin/checkInternet", &buffer) == 0
+-				&& system("/bin/checkInternet") != 0) {
++				&& runStatusCommand("/bin/checkInternet") != 0) {
+ 			LOG(Logger::LOG_DEBUG,
+ 					"Network::CheckNetState(): checkInternet failed");
+ 		}
 diff --git a/src/hss_led/RgbLed.h b/src/hss_led/RgbLed.h
 new file mode 100644
-index 0000000..03c4fa8
+index 00000000..88585b87
 --- /dev/null
 +++ b/src/hss_led/RgbLed.h
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,13 @@
 +// SPDX-License-Identifier: Apache-2.0
 +#ifndef HSS_RGB_LED_H
 +#define HSS_RGB_LED_H
-+#include <string>
-+#include <ctime>
-+#include "LedProtocol.h"
-+
-+// hss_led determines status; the LED service alone owns sysfs and its timers.
-+// Never fall back to direct writes when the daemon is restarting/unavailable.
++#include "LedController.h"
++// CCU status calculation and output live in one process. The controller
++// consumes the most recent report without blocking the status thread.
 +class RgbLed {
 +public:
-+  explicit RgbLed(const std::string& socket = LedProtocol::socketPath) :
-+      socketPath(socket), lastError(0) {}
-+  void set(unsigned first, unsigned second, unsigned periodMs);
-+private:
-+  std::string socketPath;
-+  std::time_t lastError;
++  void set(unsigned first, unsigned second, unsigned periodMs) {
++    LedController::report(first, second, periodMs);
++  }
 +};
 +#endif
-diff --git a/src/hss_led/tests/RgbLedTest.cpp b/src/hss_led/tests/RgbLedTest.cpp
+diff --git a/src/hss_led/StatusCommand.h b/src/hss_led/StatusCommand.h
 new file mode 100644
-index 0000000..4d202ca
+index 00000000..b0396bd3
 --- /dev/null
-+++ b/src/hss_led/tests/RgbLedTest.cpp
-@@ -0,0 +1,52 @@
++++ b/src/hss_led/StatusCommand.h
+@@ -0,0 +1,33 @@
 +// SPDX-License-Identifier: Apache-2.0
-+#include "RgbLed.h"
++#ifndef HSS_STATUS_COMMAND_H
++#define HSS_STATUS_COMMAND_H
++#include <cerrno>
++#include <csignal>
++#include <spawn.h>
++#include <sys/wait.h>
++extern char** environ;
++
++// system() changes process-wide SIGINT/SIGQUIT dispositions, interfering with
++// the controller's signalfd. Spawn with an empty child signal mask instead;
++// helper programs must not inherit the daemon's blocked termination signals.
++inline int runStatusCommand(const char* command) {
++  posix_spawnattr_t attr;
++  int error = posix_spawnattr_init(&attr);
++  if (error) { errno = error; return -1; }
++  sigset_t mask;
++  sigemptyset(&mask);
++  error = posix_spawnattr_setsigmask(&attr, &mask);
++  if (!error) error = posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETSIGMASK);
++  pid_t child = -1;
++  char* args[] = {const_cast<char*>("sh"), const_cast<char*>("-c"),
++                  const_cast<char*>(command), nullptr};
++  if (!error) error = posix_spawn(&child, "/bin/sh", nullptr, &attr, args, environ);
++  posix_spawnattr_destroy(&attr);
++  if (error) { errno = error; return -1; }
++  int status;
++  while (waitpid(child, &status, 0) < 0) {
++    if (errno != EINTR) return -1;
++  }
++  return status;
++}
++#endif
+diff --git a/src/hss_led/UdpCannel.cpp b/src/hss_led/UdpCannel.cpp
+index f7508c34..c91f5530 100644
+--- a/src/hss_led/UdpCannel.cpp
++++ b/src/hss_led/UdpCannel.cpp
+@@ -14,7 +14,7 @@
+ #include <unistd.h>
+ 
+ 
+-UdpCannel::UdpCannel():sockfd(0) {
++UdpCannel::UdpCannel():sockfd(-1) {
+ 	// TODO Automatisch generierter Konstruktorstub
+ 
+ }
+@@ -25,7 +25,7 @@ UdpCannel::~UdpCannel() {
+ }
+ 
+ bool UdpCannel::RefreshConnection() {
+-	if (sockfd > 0)
++	if (sockfd >= 0)
+ 		CloseSocket();
+ 
+ 	OpenSocket();
+@@ -35,7 +35,7 @@ bool UdpCannel::RefreshConnection() {
+ }
+ 
+ int UdpCannel::OpenSocket() {
+-	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
++	if ((sockfd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0)) == -1) {
+ 		LOG(Logger::LOG_ERROR, "UDP_CHANNEL: failed to create UDP-Socket.");
+ 	}
+ 
+@@ -87,7 +87,7 @@ ssize_t UdpCannel::ReceiveMessage(std::string& recv_buf) {
+ }
+ 
+ void UdpCannel::CloseSocket() {
+-	if (sockfd > 0)
++	if (sockfd >= 0)
+ 		close(sockfd);
+-	sockfd = 0;
++	sockfd = -1;
+ }
+diff --git a/src/hss_led/hss_led.cpp b/src/hss_led/hss_led.cpp
+index 0ab90bdb..6e344402 100644
+--- a/src/hss_led/hss_led.cpp
++++ b/src/hss_led/hss_led.cpp
+@@ -6,136 +6,81 @@
+ * in the file HMSL.txt in the source distribution.
+ */
+ 
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <iostream>
+-#include <string>
+-#include <string.h>
+-#include <Logger.h>
+-#include <SyslogLogger.h>
+-#include <ConsoleLogger.h>
+-#include "led.h"
+ #include "InfoLed.h"
+-#if !defined(PLATFORM_CCU3)
+-#include "InternetLed.h"
+-#endif
+-#include "utils.h"
+-#include "MessageParser.h"
+-
+ #include "UdpCannel.h"
+-#include "defines.h"
+-
+-#define VERSION "2.3 (" __DATE__ ")"
+-
+-//sigterm_handler / Aufruf von Systemfunktion signal(...)
+-
+-//-------------------------------------------------------
+-
+-void PrintUsage();
+-bool run = true;
+-int main(int argc, char **argv)
+-{
+-	int ret = 0;
+-	int receivedSize = 0;
+-		UdpCannel udp;
+-		std::string msg;
+-
+-		MessageParser parser;
+-		InfoLed infoLed;
+-	//Zeitmessung z("Start von hss_led");
+-
+-	logger = 0; //Variable in <Logger.h>
+-	Logger::LogLevel loglevel = Logger::LOG_INFO;
+-
+-	for (int i=1; i<argc; i++)
+-	{
+-		if (strcmp(argv[i], "-c") == 0)
+-		{
+-			if (logger) delete logger;
+-			logger = new ConsoleLogger();
+-			continue;
+-		}
+-		else if (strcmp(argv[i], "-l") == 0 && argc > i+1)
+-		{
+-			int level = atoi(argv[i+1]);
+-			if      (level < 0) level = 0;
+-			else if (level > 6) level = 6;
+-			loglevel = (Logger::LogLevel) level;
+-			++i;
+-			continue;
+-		}
+-		else if (strcmp(argv[i],"-h") == 0 && argc > i+1)
+-		{
+-
+-			++i;
+-			continue;
+-		}
+-		else
+-		{
+-			PrintUsage();
+-			ret = -1;
+-			return ret;
+-		}
+-	}
+-
+-	//LOG(Logger::LOG_DEBUG, "%s", z.Str().c_str());
+-
+-	if (! logger) logger = new SyslogLogger();
+-
+-	logger->SetLevel(loglevel);
+-
+-	LOG(Logger::LOG_INFO, "hss_led: Programm initialisiert.");
+-	udp.OpenSocket();
+-	udp.BindServer();
+-  #if !defined(PLATFORM_CCU3)
+-	led power("power");
+-	power.LedOn();
+-  #endif
+-
+-  #if !defined(PLATFORM_CCU3)
+-	InternetLed internetLed;
+-  #endif
+-
+-	while(run)
+-	{
+-		receivedSize = udp.ReceiveMessage(msg);
+-		if(receivedSize > 0)
+-		{
+-			//LOG(Logger::LOG_INFO,"%s",msg.c_str());
+-			if(!infoLed.checkMessage(msg))
+-			{
+-				LOG(Logger::LOG_ERROR,"UDP Nachricht konnte nicht gelesen werden");
+-			}
+-		}
+-		infoLed.updateLedState();
+-
+-    #if !defined(PLATFORM_CCU3)
+-		internetLed.updateLedState();
+-    #endif
+-	}
+-
+-
+-	if (logger)
+-	{
+-		delete logger;
+-		       logger = 0;
+-	}
+-
+-	return ret;
++#include "LedController.h"
++#include <ConsoleLogger.h>
++#include <SyslogLogger.h>
 +#include <cstdlib>
 +#include <iostream>
-+#include <stdexcept>
++#include <string>
 +#include <thread>
-+#include <vector>
++#include <chrono>
++#include <unistd.h>
 +
-+static void require(bool ok) { if (!ok) throw std::runtime_error("LED protocol test failed"); }
++static void monitorStatus() {
++  // S06 has initialized the user configuration at the former hss_led start
++  // point. Do not cache rfd/LAN-gateway settings earlier than that.
++  while (access("/var/status/hssLedReady", F_OK) != 0)
++    std::this_thread::sleep_for(std::chrono::milliseconds(100));
++  if (access("/usr/local/HMLGW", F_OK) == 0) return;
++  InfoLed info;
++  UdpCannel udp;
++  std::string message;
++  while (true) {
++    if (udp.RefreshConnection()) break;
++    std::this_thread::sleep_for(std::chrono::seconds(1));
++  }
++  while (true) {
++    if (udp.ReceiveMessage(message) > 0 && !info.checkMessage(message))
++      LOG(Logger::LOG_ERROR, "Cannot parse LED status message");
++    if (LedController::statusActive()) info.updateLedState();
++  }
+ }
+-//----------------------------------------------------------------------
+-void PrintUsage()
+-{
+-	std::cout << "hss_led " VERSION << std::endl;
+-	std::cout << "-c: Log-Meldungen auf Konsole ausgeben."   << std::endl;
+-	std::cout << "-l: Setze Log-Level: 0..6\n" <<
+-						"    (0=Alles,\n" <<
+-						"     1=Debug, \n" <<
+-						"     2=Info, \n" <<
+-						"     3=Notizen, \n" <<
+-						"     4=Warnungen, \n" <<
+-						"     5=Fehler, \n" <<
+-						"     6=Fatale Fehler)" << std::endl;
+-
++static void startStatus() {
++  std::thread([] {
++    try { monitorStatus(); }
++    catch (const std::exception& e) {
++      std::cerr << "hss_led status: " << e.what() << '\n';
++      std::_Exit(1); // let the supervisor restart the complete owner
++    }
++  }).detach();
++}
++int main(int argc, char** argv) {
++  try {
++    LedController::configureTestPaths();
++    std::string program(argv[0]);
++    program = program.substr(program.find_last_of('/') + 1);
++    // Clients never construct InfoLed, bind UDP or start another controller.
++    if (program == "hss_ledctl") return LedController::client(argc, argv);
++    if (argc > 1 && std::string(argv[1]) == "--led-control")
++      return LedController::client(argc - 1, argv + 1);
++    bool ledOnly = access("/usr/local/HMLGW", F_OK) == 0;
++    bool console = false;
++    int level = 6;
++    for (int i = 1; i < argc; ++i) {
++      std::string arg(argv[i]);
++      if (arg == "--led-only") ledOnly = true;
++      else if (arg == "-c") console = true;
++      else if (arg == "-l" && i + 1 < argc) {
++        std::string value(argv[++i]);
++        if (value.size() != 1 || value[0] < '0' || value[0] > '6') return 2;
++        level = value[0] - '0';
++      } else {
++        std::cout << "Usage: hss_led [-c] [-l 0..6] [--led-only]\n"
++                     "       hss_led --led-control COMMAND...\n";
++        return arg == "--help" || arg == "-h" ? 0 : 2;
++      }
++    }
++    logger = console ? static_cast<Logger*>(new ConsoleLogger()) : new SyslogLogger();
++    logger->SetLevel(static_cast<Logger::LogLevel>(level));
++    int result = LedController::run(ledOnly ? nullptr : startStatus);
++    // The status thread may be blocked in a library query. State changes were
++    // persisted before acknowledgment and run() has closed its descriptors.
++    // Terminate the process without destructing shared globals under that thread.
++    std::_Exit(result);
++  } catch (const std::exception& e) {
++    std::cerr << "hss_led: " << e.what() << '\n';
++    std::_Exit(2);
++  }
+ }
+-
+diff --git a/src/hss_led/tests/LedControllerTest.cpp b/src/hss_led/tests/LedControllerTest.cpp
+new file mode 100644
+index 00000000..de252342
+--- /dev/null
++++ b/src/hss_led/tests/LedControllerTest.cpp
+@@ -0,0 +1,233 @@
++// SPDX-License-Identifier: Apache-2.0
++// Exercise the actual parser/state/backend code without creating sockets.
++// Build: c++ -std=c++11 -Wall -Wextra -Werror tests.cpp -o led-state-test
++#include "../LedController.cpp"
++#include "../RgbLed.h"
++#include "../StatusCommand.h"
++
++static unsigned checks = 0;
++static void check(bool ok) {
++  ++checks;
++  if (!ok) throw std::runtime_error("check " + std::to_string(checks) + " failed");
++}
++static void put(const std::string& path, const std::string& value) {
++  std::ofstream f(path);
++  f << value << '\n';
++  check(bool(f));
++}
++static void directory(const std::string& path) { check(!mkdir(path.c_str(), 0755)); }
 +int main() {
-+  char temp[] = "/tmp/hss-led-protocol-XXXXXX";
++  char temp[] = "/tmp/led-state-test-XXXXXX";
 +  const char* dir = mkdtemp(temp);
 +  if (!dir) return 1;
-+  std::string path = std::string(dir) + "/control";
-+  int listener = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC, 0);
-+  if (listener < 0 && errno == EPERM) {
-+    std::cerr << "SKIP: execution environment prohibits Unix sockets\n";
-+    rmdir(dir);
-+    return 77;
-+  }
-+  sockaddr_un addr = {}; addr.sun_family = AF_UNIX;
-+  std::memcpy(addr.sun_path, path.c_str(), path.size()+1);
-+  require(listener >= 0 && !bind(listener, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) && !listen(listener, 4));
-+  std::vector<std::string> received;
-+  std::thread server([&]() {
-+    for (unsigned i = 0; i < 4; ++i) {
-+      pollfd event = {listener, POLLIN, 0};
-+      if (poll(&event, 1, 2000) <= 0) return;
-+      int fd = accept(listener, nullptr, nullptr);
-+      if (fd < 0) return;
-+      char buf[256];
-+      ssize_t n = recv(fd, buf, sizeof(buf), 0);
-+      if (n > 0) received.emplace_back(buf, n);
-+      const char response[] = "OK accepted";
-+      const ssize_t sent = send(fd, response, sizeof(response)-1, MSG_NOSIGNAL);
-+      (void)sent;
-+      close(fd);
++  try {
++    runtime = std::string(dir) + "/run"; directory(runtime);
++    sysfs = std::string(dir) + "/leds"; directory(sysfs);
++    startup = std::string(dir) + "/started";
++    disabled = std::string(dir) + "/disabled";
++    sigset_t blocked, previous;
++    sigemptyset(&blocked); sigaddset(&blocked, SIGTERM);
++    check(!pthread_sigmask(SIG_BLOCK, &blocked, &previous));
++    int child = runStatusCommand("exit 7");
++    check(child >= 0 && WIFEXITED(child) && WEXITSTATUS(child) == 7);
++    child = runStatusCommand("kill -TERM $$; exit 1");
++    check(child >= 0 && WIFSIGNALED(child) && WTERMSIG(child) == SIGTERM);
++    check(!pthread_sigmask(SIG_SETMASK, &previous, nullptr));
++    RgbLed producer;
++    producer.set(4, 1, 499);
++    Pattern received;
++    check(reports.take(received) && received.wire() == "4 1 499 499");
++    check(!reports.take(received));
++    producer.set(1, 0, 0);
++    producer.set(2, 0, 0);
++    check(reports.take(received) && received.wire() == "2 2 0 0");
++    producer.set(8, 0, 10);
++    check(!reports.take(received));
++    Pattern p;
++    p.a = 4; p.b = 1; p.da = 250; p.db = 750;
++    uint64_t delay = 0;
++    check(phaseAt(p, 0, delay) == 4 && delay == 250);
++    check(phaseAt(p, 249, delay) == 4 && delay == 1);
++    check(phaseAt(p, 250, delay) == 1 && delay == 750);
++    check(phaseAt(p, 999, delay) == 1 && delay == 1);
++    check(phaseAt(p, 1000, delay) == 4 && delay == 250);
++    check(phaseAt(p, 1000000350ULL, delay) == 1 && delay == 650);
++    check(makeRequest({"--led", "rpi-rf-mod", "alternate", "blue", "red", "250", "750"}) == "1 override 4 1 250 750");
++    check(makeRequest({"--led", "rpi-rf-mod", "system", "magenta", "100"}) == "1 system 5 0 100 100");
++    check(makeRequest({"--led", "rpi-rf-mod", "blue"}) == "1 override 4 4 0 0");
++    check(makeRequest({"--led", "rpi-rf-mod", "off", "100"}) == "1 override 0 0 0 0");
++    check(makeRequest({"--led", "rpi-rf-mod", "release"}) == "1 release");
++    check(makeRequest({"--led", "rpi-rf-mod", "alternate", "green", "yellow", "000499"}) == "1 override 2 3 499 499");
++    for (auto args : std::vector<std::vector<std::string>>{{}, {"invalid"}, {"blue", "-1"},
++         {"blue", "99999999999999999"}, {"alternate", "red", "blue", "0"},
++         {"alternate", "red", "blue", "10", "0"}, {"blue", "10", "20"}, {"system"}}) {
++      bool rejected = false;
++      args.insert(args.begin(), {"--led", "rpi-rf-mod"});
++      try { (void)makeRequest(args); } catch (const std::runtime_error&) { rejected = true; }
++      check(rejected);
 +    }
-+  });
-+  RgbLed client(path);
-+  client.set(4, 0, 0);
-+  client.set(4, 1, 499);
-+  client.set(4, 1, 499); // unchanged statuses must also reach a restarted daemon
-+  client.set(5, 0, 100);
-+  server.join();
-+  require(received == std::vector<std::string>({"1 report 4 4 0 0", "1 report 4 1 499 499",
-+                                               "1 report 4 1 499 499", "1 report 5 0 100 100"}));
-+  close(listener); unlink(path.c_str()); rmdir(dir);
-+  // A missing service must not create sysfs files or block indefinitely.
-+  client.set(4, 0, 0);
-+  std::cout << "LED client protocol: PASS\n";
++    for (auto args : std::vector<std::vector<std::string>>{
++         {"blue"}, {"status"}, {"release"}, {"auto"}, {"off"},
++         {"alternate", "blue", "red", "250"}, {"system", "yellow"}, {"list", "extra"}}) {
++      bool rejected = false;
++      try { (void)makeRequest(args); }
++      catch (const std::runtime_error& e) { rejected = std::string(e.what()).find("missing --led") != std::string::npos; }
++      check(rejected);
++    }
++    State state;
++    Backend backend;
++    check(backend.discover() && backend.name == "missing");
++    auto command = [&](const std::string& msg, uid_t uid = 0) {
++      return dispatch(state, msg, uid, 1234, backend, false);
++    };
++    check(command("1 report 4 4 0 0", 1234) == "OK accepted");
++    check(state.effective().a == 3);
++    put(startup, "");
++    check(command("1 auto") == "OK accepted" && state.effective().a == 4);
++    check(command("1 override 2 3 250 750") == "OK accepted" && state.effective().a == 2);
++    check(command("1 report 1 1 0 0", 1234) == "OK accepted" && state.effective().a == 2);
++    State restored;
++    check(restored.load(readText(runtime + "/state")) && restored.wire() == state.wire());
++    check(command("1 release") == "OK accepted" && state.effective().a == 1);
++    check(command("1 override 4 1 499 499") == "OK accepted");
++    unlink(startup.c_str());
++    check(state.effective().a == 3);
++    check(command("1 system 3 3 0 0") == "OK accepted" && !state.overrideActive && !state.automatic);
++    check(command("1 report 4 4 0 0", 1234) == "OK accepted" && state.effective().a == 3);
++    put(disabled, ""); check(state.effective().a == 0); unlink(disabled.c_str());
++    std::string before = state.wire();
++    for (const auto& msg : {"1 override 9 0 10 10", "1 report 1 2 0 0", "1 auto extra", "2 release", "1 system 1 2 0 1"})
++      check(command(msg).compare(0, 3, "ERR") == 0 && state.wire() == before);
++    check(command(std::string("1 auto\0", 7)).compare(0, 3, "ERR") == 0);
++    check(command("1 override 1 1 0 0", 1234) == "ERR permission denied");
++    check(command("1 report 1 1 0 0", 5678) == "ERR permission denied");
++    check(command("1 status", 5678).compare(0, 2, "OK") == 0);
++    std::string savedRuntime = runtime;
++    runtime += "/absent";
++    check(command("1 override 7 7 0 0") == "ERR cannot save runtime state" && state.wire() == before);
++    runtime = savedRuntime;
++    std::string rgb = sysfs + "/rpi_rf_mod:rgb:status";
++    directory(rgb);
++    for (auto a : {"trigger", "brightness", "multi_intensity", "delay_on", "delay_off"}) put(rgb + "/" + a, "0");
++    put(rgb + "/trigger", "[none] timer"); put(rgb + "/multi_index", "blue red green"); put(rgb + "/max_brightness", "255");
++    check(backend.discover() && backend.name == "rgb");
++    for (unsigned mask = 0; mask < 8; ++mask) {
++      Pattern solid; solid.a = solid.b = mask;
++      check(backend.apply(solid, mask));
++      check(readText(rgb + "/multi_intensity") == std::to_string(mask & 4 ? 255 : 0) + " " +
++          std::to_string(mask & 1 ? 255 : 0) + " " + std::to_string(mask & 2 ? 255 : 0) + "\n");
++    }
++    Pattern blink; blink.a = 5; blink.da = blink.db = 100;
++    check(backend.kernelBlink(blink) && backend.apply(blink, 5));
++    check(readText(rgb + "/trigger") == "timer\n" && readText(rgb + "/delay_on") == "100\n");
++    // A timer attribute may not be writable until udev handles TRIGGER.
++    // Retrying must preserve the active trigger and its current off phase.
++    unlink((rgb + "/delay_on").c_str());
++    check(!backend.apply(blink, 5));
++    put(rgb + "/brightness", "0");
++    put(rgb + "/delay_on", "0");
++    check(backend.apply(blink, 5));
++    check(readText(rgb + "/brightness") == "0\n");
++    check(backend.apply(p, p.a) && backend.setColor(p.b));
++    check(readText(rgb + "/multi_intensity") == "0 255 0\n");
++    check(readText(rgb + "/brightness") == "255\n");
++    for (auto a : {"trigger", "brightness", "multi_intensity", "delay_on", "delay_off", "multi_index", "max_brightness"})
++      unlink((rgb + "/" + a).c_str());
++    rmdir(rgb.c_str()); check(backend.discover() && backend.name == "missing");
++    for (auto c : {"red", "green", "blue"}) {
++      std::string path = sysfs + "/rpi_rf_mod:" + c;
++      directory(path); put(path + "/trigger", "none"); put(path + "/brightness", "0"); put(path + "/max_brightness", "1");
++    }
++    check(backend.discover() && backend.name == "legacy");
++    check(backend.apply(p, 2)); check(backend.setColor(3));
++    check(readText(sysfs + "/rpi_rf_mod:red/brightness") == "1\n" &&
++          readText(sysfs + "/rpi_rf_mod:green/brightness") == "1\n" &&
++          readText(sysfs + "/rpi_rf_mod:blue/brightness") == "0\n");
++    directory(rgb); put(rgb + "/multi_index", "red red blue"); put(rgb + "/max_brightness", "255");
++    check(backend.discover() && backend.name == "error" && !backend.apply(p, 7));
++    check(!restored.load("1 0 0 broken"));
++    check(makeRequest({"--led", "rpi-rf-mod", "alternate", "blue", "red", "250"}) == "1 override 4 1 250 250");
++    check(makeRequest({"--led", "ACT", "blink", "120"}) == "1 led ACT blink 120 120");
++    check(makeRequest({"--led", "blue:status", "blink", "100", "900"}) == "1 led blue:status blink 100 900");
++    check(makeRequest({"--led", "green:", "trigger", "heartbeat"}) == "1 led green: trigger heartbeat");
++    check(makeRequest({"list"}) == "1 list");
++    for (auto args : std::vector<std::vector<std::string>>{
++         {"--led"}, {"--led", "ACT"}, {"--led", "../ACT", "on"},
++         {"--led", "/sys/class/leds/ACT", "on"}, {"--led", "ACT x", "on"},
++         {"--led", "rpi_rf_mod:red", "on"}, {"--led", "ACT", "green"},
++         {"--led", "ACT", "blink", "0"}, {"--led", "ACT", "blink", "10", "0"},
++         {"--led", "ACT", "brightness", "4294967296"}, {"--led", "ACT", "trigger", "x y"}}) {
++      bool rejected = false;
++      try { (void)makeRequest(args); } catch (const std::runtime_error&) { rejected = true; }
++      check(rejected);
++    }
++    BoardLeds board;
++    auto boardCommand = [&](const std::string& msg, uid_t uid = 0) { return board.dispatch(words(msg), uid); };
++    for (auto name : {"ACT", "green:", "blue:status"}) {
++      std::string path = sysfs + "/" + name;
++      directory(path); put(path + "/brightness", "1"); put(path + "/max_brightness", "255");
++      put(path + "/trigger", "none timer [heartbeat]");
++      const std::string command = std::string("1 led ") + name;
++      check(boardCommand(command + " status", 5678).find("trigger=heartbeat") != std::string::npos);
++      check(boardCommand(command + " on", 5678) == "ERR permission denied");
++      check(boardCommand(command + " brightness 256") == "ERR invalid LED command");
++      check(boardCommand(command + " trigger missing") == "ERR trigger unavailable");
++      check(readText(path + "/trigger") == "none timer [heartbeat]\n");
++      check(boardCommand(command + " off") == "OK accepted");
++      check(readText(path + "/brightness") == "0\n" && readText(path + "/trigger") == "none\n");
++      check(boardCommand(command + " on") == "OK accepted" && readText(path + "/brightness") == "255\n");
++      check(boardCommand(command + " brightness 42") == "OK accepted" && readText(path + "/brightness") == "42\n");
++      put(path + "/trigger", "[none] timer heartbeat");
++      check(boardCommand(command + " blink 100 900") == "OK accepted");
++      check(boardCommand(command + " status").find("pending=1") != std::string::npos);
++      put(path + "/brightness", "0");
++      put(path + "/delay_on", "0"); put(path + "/delay_off", "0");
++      board.tick(nowMs());
++      check(boardCommand(command + " status").find("pending=0") != std::string::npos);
++      check(readText(path + "/delay_on") == "100\n" && readText(path + "/delay_off") == "900\n");
++      check(readText(path + "/brightness") == "0\n");
++      put(path + "/trigger", "none [timer] heartbeat");
++      check(boardCommand(command + " trigger heartbeat") == "OK accepted");
++      check(readText(path + "/trigger") == "heartbeat\n");
++    }
++    check(board.list().find("ACT\tscalar max_brightness=255") != std::string::npos);
++    check(board.list().find("blue:status\tscalar") != std::string::npos);
++    check(board.list().find("rpi_rf_mod:") == std::string::npos);
++    check(boardCommand("1 led ../ACT on") == "ERR invalid LED request");
++    check(boardCommand("1 led rpi_rf_mod:red on").compare(0, 3, "ERR") == 0);
++    check(boardCommand("1 led absent on") == "ERR scalar LED unavailable or unsupported");
++    std::string act = sysfs + "/ACT";
++    put(act + "/multi_index", "red green blue");
++    check(boardCommand("1 led ACT on") == "ERR scalar LED unavailable or unsupported");
++    unlink((act + "/multi_index").c_str());
++    // Permission retry times out without disrupting other LEDs or RGB state.
++    put(act + "/trigger", "[none] timer heartbeat"); unlink((act + "/delay_off").c_str());
++    check(boardCommand("1 led ACT blink 20 30") == "OK accepted");
++    board.tick(nowMs() + 6000);
++    check(boardCommand("1 led ACT status").find("error=timer-attributes-not-writable") != std::string::npos);
++    // An explicit replacement cancels pending writes from an earlier command.
++    check(boardCommand("1 led ACT blink 10 20") == "OK accepted");
++    check(boardCommand("1 led ACT off") == "OK accepted");
++    put(act + "/delay_off", "888");
++    board.tick(nowMs());
++    check(readText(act + "/delay_off") == "888\n" && readText(act + "/brightness") == "0\n");
++    // Do not reapply a pending command when a device or external trigger changes.
++    put(act + "/trigger", "[none] timer heartbeat"); unlink((act + "/delay_off").c_str());
++    check(boardCommand("1 led ACT blink 10 20") == "OK accepted");
++    put(act + "/trigger", "none timer [heartbeat]");
++    board.tick(nowMs());
++    check(boardCommand("1 led ACT status").find("error=device-or-trigger-changed") != std::string::npos);
++    put(act + "/trigger", "[none] timer heartbeat");
++    check(boardCommand("1 led ACT blink 10 20") == "OK accepted");
++    check(!rename((act + "/brightness").c_str(), (act + "/old-brightness").c_str()));
++    put(act + "/brightness", "0"); board.tick(nowMs());
++    check(boardCommand("1 led ACT status").find("error=device-or-trigger-changed") != std::string::npos);
++    check(state.wire() == before);
++    std::cout << "PASS: " << checks << " state/protocol/phase/backend assertions\n";
++    // The temporary fixture is printed so the test runner can remove it.
++    std::cout << "fixture=" << dir << '\n';
++    return 0;
++  } catch (const std::exception& e) {
++    std::cerr << e.what() << " (fixture " << dir << ")\n"; return 1;
++  }
++}
+diff --git a/src/hss_led/tests/StatusProducer.cpp b/src/hss_led/tests/StatusProducer.cpp
+new file mode 100644
+index 00000000..706b9c5b
+--- /dev/null
++++ b/src/hss_led/tests/StatusProducer.cpp
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: Apache-2.0
++// Integration fixture: a real controller with an intentionally stalled producer.
++#include "../LedController.h"
++#include <chrono>
++#include <cstdlib>
++#include <thread>
++static void startStatus() {
++  std::thread([] {
++    LedController::report(4, 1, 70);
++    std::this_thread::sleep_for(std::chrono::seconds(30));
++  }).detach();
++}
++int main() {
++  LedController::configureTestPaths();
++  std::_Exit(LedController::run(startStatus));
 +}

@@ -23,26 +23,18 @@ check program hw-watchdogEnabled with path "/usr/bin/test -c /dev/watchdog"
     group system
     if status != 0 for 1 cycles then unmonitor
 
-# Central LED service; its state journal survives process restarts in /run.
-check process rpi-rf-mod-ledd with pidfile /var/run/rpi-rf-mod-ledd.pid
-    group system
-    start = "/etc/init.d/S01rpi-rf-mod-ledd start"
-    stop = "/etc/init.d/S01rpi-rf-mod-ledd stop"
-    restart = "/etc/init.d/S01rpi-rf-mod-ledd restart"
-    if not exist for 1 cycles then restart
-
 # hss_led service monitoring
 check process hss_led with pidfile /var/run/hss_led.pid
     group homematic
-    start = "/sbin/start-stop-daemon -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6"
-    stop = "/sbin/start-stop-daemon -K -q -p /var/run/hss_led.pid"
+    start = "/etc/init.d/S01hss_led start"
+    stop = "/etc/init.d/S01hss_led stop"
+    restart = "/etc/init.d/S01hss_led restart"
     #if failed port 8182 type udp for 5 cycles then restart
     if not exist for 1 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'hss_led restarted' 'WatchDog: hssled-restart' true"
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'hss_led: high filedescriptor usage (>95%)' 'WatchDog: hssled-highfd' true"
-    depends on hmlangwDisabled
 
 # syslog/klog daemons monitoring
 check process klogd with pidfile /var/run/klogd.pid

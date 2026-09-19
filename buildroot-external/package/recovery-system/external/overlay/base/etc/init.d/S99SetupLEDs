@@ -26,7 +26,7 @@ start() {
     fi
 
     # One group timer keeps magenta coherent.
-    /bin/rpi-rf-mod-led system magenta "${SPEED:-0}"
+    /bin/hss_ledctl --led rpi-rf-mod system magenta "${SPEED:-0}"
 
   fi
 
@@ -53,7 +53,7 @@ restart() {
 }
 
 stop() {
-  /bin/rpi-rf-mod-led system magenta
+  /bin/hss_ledctl --led rpi-rf-mod system magenta
   echo -n "Setup onboard LEDs: "
 
   # source all data from /var/hm_mode

@@ -1643,7 +1643,7 @@ touch /tmp/.runningFirmwareUpdate
 # fast blink magenta on RPI-RF-MOD or HB-RF-USB/HB-RF-USB-2
 if [[ "${HM_RTC}" == "rx8130" ]] || lsusb | grep -q 0403:6f70 || lsusb | grep -q 10c4:8c07; then
   if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
-    /bin/rpi-rf-mod-led system magenta 100
+    /bin/hss_ledctl --led rpi-rf-mod system magenta 100
   fi
 fi
 
