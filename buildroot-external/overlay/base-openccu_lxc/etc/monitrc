@@ -8,11 +8,11 @@ set httpd unixsocket /var/run/monit.sock
     allow localhost
 
 # Central LED service; its state journal survives process restarts in /run.
-check process rpi-rf-mod-ledd with pidfile /run/rpi-rf-mod-led.pid
+check process rpi-rf-mod-ledd with pidfile /var/run/rpi-rf-mod-ledd.pid
     group system
-    start = "/etc/init.d/S01led-service start"
-    stop = "/etc/init.d/S01led-service stop"
-    restart = "/etc/init.d/S01led-service restart"
+    start = "/etc/init.d/S01rpi-rf-mod-ledd start"
+    stop = "/etc/init.d/S01rpi-rf-mod-ledd stop"
+    restart = "/etc/init.d/S01rpi-rf-mod-ledd restart"
     if not exist for 1 cycles then restart
 
 # hss_led service monitoring

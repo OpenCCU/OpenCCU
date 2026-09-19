@@ -2,6 +2,8 @@ Subject: [PATCH] leds: add optional RPI-RF-MOD multicolor adapter driver
 
 Upstream: Not submitted (experimental OpenCCU integration)
 
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
 diff --git a/kernel/Makefile b/kernel/Makefile
 index 6bcb524..7655bcf 100644
 --- a/kernel/Makefile

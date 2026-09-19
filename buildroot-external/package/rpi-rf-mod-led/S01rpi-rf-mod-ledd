@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+DAEMON="rpi-rf-mod-ledd"
+PIDFILE="/var/run/$DAEMON.pid"
+case "$1" in
+	start)
+		start-stop-daemon -S -q -o -b -m -p "$PIDFILE" --exec "/usr/sbin/$DAEMON" || exit 1
+		# Do not let S02InitRTC race the creation of the control socket.
+		n=0
+		until /bin/rpi-rf-mod-led status >/dev/null 2>&1; do
+			n=$((n + 1))
+			[ "$n" -lt 50 ] || { echo "LED service did not become ready" >&2; exit 1; }
+			sleep 0.1
+		done
+		;;
+	stop)
+		start-stop-daemon -K -q -o -p "$PIDFILE" --exec "/usr/sbin/$DAEMON"
+		;;
+	restart|reload)
+		"$0" stop
+		n=0
+		while /bin/rpi-rf-mod-led status >/dev/null 2>&1; do
+			n=$((n + 1))
+			[ "$n" -lt 50 ] || exit 1
+			sleep 0.1
+		done
+		"$0" start
+		;;
+	*) echo "Usage: $0 {start|stop|restart}" >&2; exit 2 ;;
+esac

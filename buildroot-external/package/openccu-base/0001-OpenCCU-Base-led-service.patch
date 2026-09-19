@@ -3,6 +3,10 @@ Subject: [PATCH] hss_led: use the central status LED service
 Base: 5b47e37cf4da97275de26da8469881383de452cd
 Requires the accompanying OpenCCU service integration.
 
+Upstream: Not submitted (requires the OpenCCU LED service integration)
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
 diff --git a/src/hss_led/CMakeLists.txt b/src/hss_led/CMakeLists.txt
 index d5c1e3a..8447403 100644
 --- a/src/hss_led/CMakeLists.txt

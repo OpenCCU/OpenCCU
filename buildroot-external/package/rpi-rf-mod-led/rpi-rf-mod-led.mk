@@ -19,7 +19,7 @@ define RPI_RF_MOD_LED_INSTALL_TARGET_CMDS
 endef
 
 define RPI_RF_MOD_LED_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 0755 $(RPI_RF_MOD_LED_PKGDIR)/S01led-service $(TARGET_DIR)/etc/init.d/S01led-service
+	$(INSTALL) -D -m 0755 $(RPI_RF_MOD_LED_PKGDIR)/S01rpi-rf-mod-ledd $(TARGET_DIR)/etc/init.d/S01rpi-rf-mod-ledd
 endef
 
 define RPI_RF_MOD_LED_USERS
