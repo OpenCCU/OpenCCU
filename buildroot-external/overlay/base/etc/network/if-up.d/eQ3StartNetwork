@@ -12,12 +12,10 @@ umask 0002
 
 # signal that we are about to setup the network
 # connection using a slow blinking blue LED
-if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-  echo none >/sys/class/leds/rpi_rf_mod:green/trigger
-  echo none >/sys/class/leds/rpi_rf_mod:red/trigger
-  echo timer >/sys/class/leds/rpi_rf_mod:blue/trigger
-  echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_on
-  echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_off
+if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
+  if [[ ! -e /var/status/startupFinished ]]; then
+    /bin/rpi-rf-mod-led system blue 499
+  fi
 fi
 
 # we exit if if-up.d is called for "lo"

@@ -1,0 +1,33 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Select the RGB driver when the host provides it. Keep legacy hosts working.
+set -eu
+case "${1:-}" in
+  load)
+    [ "$#" -eq 4 ] || exit 2
+    # A host-owned existing driver must not be unloaded behind its back.
+    if [ -d /sys/module/rpi_rf_mod_rgb ] || [ -d /sys/module/rpi_rf_mod_led ]; then
+      exit 0
+    fi
+    if modprobe -q rpi_rf_mod_rgb red_gpio_pin="$2" green_gpio_pin="$3" blue_gpio_pin="$4"; then
+      exit 0
+    fi
+    echo "RPI-RF-MOD: using legacy LED driver (multicolor unavailable)" >&2
+    modprobe -q rpi_rf_mod_led red_gpio_pin="$2" green_gpio_pin="$3" blue_gpio_pin="$4"
+    ;;
+  unbind-group)
+    # Keep the local DT group from occupying the canonical RGB name when an
+    # external adapter is selected. Restore on reboot (like the GPIO binding).
+    dev=/sys/bus/platform/devices/multi-led
+    if [ -L "$dev/driver" ] &&
+       [ "$(basename "$(readlink -f "$dev/driver")")" = leds_group_multicolor ]; then
+      echo openccu-remote-led >"$dev/driver_override"
+      echo multi-led >"$dev/driver/unbind"
+    fi
+    ;;
+  unload)
+    if [ -d /sys/module/rpi_rf_mod_rgb ]; then rmmod rpi_rf_mod_rgb; fi
+    if [ -d /sys/module/rpi_rf_mod_led ]; then rmmod rpi_rf_mod_led; fi
+    ;;
+  *) exit 2 ;;
+esac

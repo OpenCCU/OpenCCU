@@ -5,6 +5,7 @@ menu "Kernel Module Support"
 endmenu
 
 menu "Software Support"
+  source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/rpi-rf-mod-led/Config.in"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/package/hm-platform/Config.in"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/detect_radio_module/Config.in"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/wiringpi-rpi/Config.in"
@@ -13,4 +14,3 @@ endmenu
 
 # External packages
 source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/Config.ext.in"
-

@@ -13,6 +13,20 @@
 / {
     compatible = "asus,rk3288-tinker", "rockchip,rk3288";
 
+    // One trigger drives all three GPIO LEDs. Numeric color IDs keep this
+    // overlay compatible with the package's direct dtc (no C preprocessor).
+    fragment@20 {
+        target-path = "/";
+        __overlay__ {
+            multi-led {
+                compatible = "leds-group-multicolor";
+                label = "rpi_rf_mod:rgb:status";
+                color = <8>; // LED_COLOR_ID_RGB
+                leds = <&rpi_rf_mod_red>, <&rpi_rf_mod_green>, <&rpi_rf_mod_blue>;
+            };
+        };
+    };
+
     // fragment to ensure we have the correct gpio pin
     // setup for the RPI-RF-MOD and HM-MOD-RPI-PCB
     fragment@0 {
@@ -42,20 +56,23 @@
         __overlay__ {
             pinctrl-names = "default";
             pinctrl-0 = <&rpi_rf_mod_pins>, <&hm_mod_rpi_pcb_pins>;
-            rpi-rf-mod-red {
+            rpi_rf_mod_red: rpi-rf-mod-red {
                 label = "rpi_rf_mod:red";
+                color = <1>; // LED_COLOR_ID_RED
                 gpios = <&gpio7 7 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
-            rpi-rf-mod-green {
+            rpi_rf_mod_green: rpi-rf-mod-green {
                 label = "rpi_rf_mod:green";
+                color = <2>; // LED_COLOR_ID_GREEN
                 gpios = <&gpio6 3 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
-            rpi-rf-mod-blue {
+            rpi_rf_mod_blue: rpi-rf-mod-blue {
                 label = "rpi_rf_mod:blue";
+                color = <3>; // LED_COLOR_ID_BLUE
                 gpios = <&gpio6 4 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";

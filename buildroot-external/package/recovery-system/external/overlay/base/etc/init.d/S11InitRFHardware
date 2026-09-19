@@ -191,6 +191,8 @@ query_rf_parameters() {
     GREEN_GPIO_PIN=$(cat "/sys/class/raw-uart/${HBRF_DEVNODE}/green_gpio_pin")
     BLUE_GPIO_PIN=$(cat "/sys/class/raw-uart/${HBRF_DEVNODE}/blue_gpio_pin")
 
+    /bin/rpi-rf-mod-led-driver unbind-group
+
     # make sure to unbind the gpio-leds driver first
     if [[ -e /sys/class/leds/rpi_rf_mod:blue ]]; then
       if [[ -e /sys/bus/platform/drivers/leds-gpio/gpio-leds ]]; then
@@ -203,7 +205,7 @@ query_rf_parameters() {
     fi
 
     # load the rpi_rf_mod_led kernel module
-    modprobe rpi_rf_mod_led red_gpio_pin="${RED_GPIO_PIN}" green_gpio_pin="${GREEN_GPIO_PIN}" blue_gpio_pin="${BLUE_GPIO_PIN}"
+    /bin/rpi-rf-mod-led-driver load "${RED_GPIO_PIN}" "${GREEN_GPIO_PIN}" "${BLUE_GPIO_PIN}"
 
     # rebind the gpio-leds so that numeration of the rpi-rf-mod leds are correct
     if [[ -n "${GPIO_LEDS}" ]] &&
@@ -212,13 +214,7 @@ query_rf_parameters() {
     fi
 
     # setup the LEDs to show a slowly blinking magenta light
-    echo none >/sys/class/leds/rpi_rf_mod:green/trigger
-    echo timer >/sys/class/leds/rpi_rf_mod:red/trigger
-    echo timer >/sys/class/leds/rpi_rf_mod:blue/trigger
-    echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_on
-    echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_off
-    echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_on
-    echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_off
+    /bin/rpi-rf-mod-led system magenta 499
   fi
 
   #####################################

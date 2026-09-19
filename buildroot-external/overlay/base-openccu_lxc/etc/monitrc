@@ -7,6 +7,14 @@ set idfile /usr/local/etc/monit.id
 set httpd unixsocket /var/run/monit.sock
     allow localhost
 
+# Central LED service; its state journal survives process restarts in /run.
+check process rpi-rf-mod-ledd with pidfile /run/rpi-rf-mod-led.pid
+    group system
+    start = "/etc/init.d/S01led-service start"
+    stop = "/etc/init.d/S01led-service stop"
+    restart = "/etc/init.d/S01led-service restart"
+    if not exist for 1 cycles then restart
+
 # hss_led service monitoring
 check process hss_led with pidfile /var/run/hss_led.pid
     group homematic

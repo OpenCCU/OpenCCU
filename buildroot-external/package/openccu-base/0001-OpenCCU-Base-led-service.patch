@@ -1,0 +1,293 @@
+Subject: [PATCH] hss_led: use the central status LED service
+
+Base: 5b47e37cf4da97275de26da8469881383de452cd
+Requires the accompanying OpenCCU service integration.
+
+diff --git a/src/hss_led/CMakeLists.txt b/src/hss_led/CMakeLists.txt
+index d5c1e3a..8447403 100644
+--- a/src/hss_led/CMakeLists.txt
++++ b/src/hss_led/CMakeLists.txt
+@@ -1,6 +1,7 @@
+ add_executable(hss_led
+   hss_led.cpp
+   led.cpp
++  RgbLed.cpp
+   UdpCannel.cpp
+   MessageParser.cpp
+   AlarmMessage.cpp
+@@ -23,3 +24,12 @@ target_include_directories(hss_led PRIVATE
+ )
+ target_link_libraries(hss_led PRIVATE XmlRpc elvutils xmlparser pthread)
+ openccu_stage_target(hss_led bin)
++
++option(HSS_LED_BUILD_TESTS "Build LED service protocol regression tests" OFF)
++if(HSS_LED_BUILD_TESTS)
++  add_executable(hss_rgb_led_test tests/RgbLedTest.cpp RgbLed.cpp)
++  target_compile_features(hss_rgb_led_test PRIVATE cxx_std_11)
++  target_compile_options(hss_rgb_led_test PRIVATE -Wall -Wextra -Werror)
++  target_include_directories(hss_rgb_led_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
++  target_link_libraries(hss_rgb_led_test PRIVATE pthread)
++endif()
+diff --git a/src/hss_led/InfoLed.cpp b/src/hss_led/InfoLed.cpp
+index 2ff66a5..3b1fab7 100644
+--- a/src/hss_led/InfoLed.cpp
++++ b/src/hss_led/InfoLed.cpp
+@@ -19,9 +19,6 @@
+ 
+ InfoLed::InfoLed():
+   #if defined(PLATFORM_CCU3)
+-  redLed("rpi_rf_mod:red"),
+-  greenLed("rpi_rf_mod:green"),
+-  blueLed("rpi_rf_mod:blue"),
+   rpiRfModFound(false),
+   fullCCUFound(false),
+   #else
+@@ -41,9 +38,9 @@ InfoLed::InfoLed():
+   // identify if we have a RPI-RF-MOD
+   if(system("lsmod | grep -q rx8130") == 0)
+   {
+-    redLed.LedOn();
+-    greenLed.LedOn();
+-    blueLed.LedOff();
++    // The DT overlay also exists with an HM-MOD-RPI-PCB. Keep the radio
++    // detection guard; an RGB sysfs node alone is not proof of RPI-RF-MOD.
++    // Boot scripts own the initial color through the LED service.
+     rpiRfModFound = true;
+   }
+ 
+@@ -121,17 +118,11 @@ void InfoLed::updateLedState() {
+   //bool updateState = this->update.isInfoPending();
+ 
+   // get old LED states
+-	led::LedState oldStateRed = this->redLed.getLedState();
+-	led::LedState oldStateGreen = this->greenLed.getLedState();
+-	led::LedState oldStateBlue = this->blueLed.getLedState();
+   led::LedState oldStateLGW = this->rflgwInfoLed.getLedState();
+ 
+-  // check that a file /var/status/startupFinished exists and if not
+-  // we skip setting the leds. However, make sure that at least we continue
+-  // if the blue LED is only on signaling that we are done
++  // Boot/shutdown scripts own the LED outside normal operation.
+   struct stat buffer;
+-  if((stat("/var/status/startupFinished", &buffer) == -1) &&
+-     !(oldStateRed == led::LED_OFF && oldStateGreen == led::LED_OFF && oldStateBlue == led::LED_ON)) {
++  if(stat("/var/status/startupFinished", &buffer) == -1) {
+     return;
+   }
+ 
+@@ -253,17 +244,25 @@ void InfoLed::updateLedState() {
+   }
+ 
+   // set LEDs of a RPI-RF-MOD
+-  if(rpiRfModFound == true &&
+-     ((newStateRed != oldStateRed || newStateGreen != oldStateGreen || newStateBlue != oldStateBlue) &&
+-      (newStateRed != led::UNKNOWN && newStateGreen != led::UNKNOWN && newStateBlue != led::UNKNOWN)))
++  if(rpiRfModFound)
+   {
+-     this->redLed.LedOff();
+-     this->greenLed.LedOff();
+-     this->blueLed.LedOff();
+-
+-     this->redLed.switchLed(newStateRed, newStateRedStart);
+-     this->greenLed.switchLed(newStateGreen, newStateGreenStart);
+-     this->blueLed.switchLed(newStateBlue, newStateBlueStart);
++    if(newStateRed != led::UNKNOWN && newStateGreen != led::UNKNOWN && newStateBlue != led::UNKNOWN)
++    {
++      unsigned first = 0, second = 0, period = 0;
++      const led::LedState states[] = {newStateRed, newStateGreen, newStateBlue};
++      const int starts[] = {newStateRedStart, newStateGreenStart, newStateBlueStart};
++      for(unsigned i = 0; i < 3; ++i)
++      {
++        if(states[i] == led::LED_ON) { first |= 1U << i; second |= 1U << i; }
++        else if(states[i] == led::LED_SLOW || states[i] == led::LED_FAST)
++        {
++          period = states[i] == led::LED_SLOW ? 499 : 100;
++          if(starts[i]) second |= 1U << i;
++          else first |= 1U << i;
++        }
++      }
++      rgbLed.set(first, second, period);
++    }
+   }
+ 
+   // set LAN Gateway LED regularly
+diff --git a/src/hss_led/InfoLed.h b/src/hss_led/InfoLed.h
+index 6289914..f320983 100644
+--- a/src/hss_led/InfoLed.h
++++ b/src/hss_led/InfoLed.h
+@@ -12,6 +12,7 @@
+ #include <string>
+ #include <cstdint>
+ #include "led.h"
++#include "RgbLed.h"
+ #include "ServiceMessage.h"
+ #include "AlarmMessage.h"
+ #include "MessageParser.h"
+@@ -32,9 +33,7 @@ public:
+ 
+ private:
+   #if defined(PLATFORM_CCU3)
+-	led redLed;
+-	led greenLed;
+-	led blueLed;
++	RgbLed rgbLed;
+ 	Network net;
+ 	bool rpiRfModFound;
+ 	bool fullCCUFound;
+diff --git a/src/hss_led/LedProtocol.h b/src/hss_led/LedProtocol.h
+new file mode 100644
+index 0000000..34fe74f
+--- /dev/null
++++ b/src/hss_led/LedProtocol.h
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: Apache-2.0
++#ifndef OPENCCU_LED_PROTOCOL_H
++#define OPENCCU_LED_PROTOCOL_H
++#include <cerrno>
++#include <cstring>
++#include <poll.h>
++#include <string>
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <unistd.h>
++
++namespace LedProtocol {
++static const char socketPath[] = "/run/rpi-rf-mod-led/control";
++// One request and one acknowledgement per connection. Bounded waits keep a
++// missing or wedged daemon from blocking hss_led's status checks indefinitely.
++inline bool request(const std::string& path, const std::string& message,
++                    std::string& reply, int timeout = 500) {
++  sockaddr_un address = {};
++  address.sun_family = AF_UNIX;
++  if (path.size() >= sizeof(address.sun_path)) return false;
++  std::memcpy(address.sun_path, path.c_str(), path.size() + 1);
++  int fd = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC | SOCK_NONBLOCK, 0);
++  if (fd < 0) return false;
++  bool ok = false;
++  if (connect(fd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == 0 &&
++      send(fd, message.data(), message.size(), MSG_NOSIGNAL) == static_cast<ssize_t>(message.size())) {
++    pollfd event = {fd, POLLIN, 0};
++    int ready = poll(&event, 1, timeout);
++    if (ready > 0 && (event.revents & POLLIN)) {
++      char buffer[1024];
++      ssize_t n = recv(fd, buffer, sizeof(buffer), MSG_TRUNC);
++      if (n > 0 && n < static_cast<ssize_t>(sizeof(buffer))) {
++        reply.assign(buffer, static_cast<size_t>(n));
++        ok = reply.compare(0, 2, "OK") == 0;
++      }
++    }
++  }
++  close(fd);
++  return ok;
++}
++}
++#endif
+diff --git a/src/hss_led/RgbLed.cpp b/src/hss_led/RgbLed.cpp
+new file mode 100644
+index 0000000..1e8d8c9
+--- /dev/null
++++ b/src/hss_led/RgbLed.cpp
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: Apache-2.0
++#include "RgbLed.h"
++#include <cstdio>
++
++void RgbLed::set(unsigned first, unsigned second, unsigned periodMs) {
++  if (first > 7 || second > 7 || periodMs > 86400000) return;
++  if (!periodMs) second = first;
++  const std::string command = "1 report " + std::to_string(first) + " " +
++      std::to_string(second) + " " + std::to_string(periodMs) + " " + std::to_string(periodMs);
++  std::string reply;
++  // Repeat even unchanged reports: a replacement service always receives the
++  // latest status. Its pattern comparison keeps an existing phase clock intact.
++  if (!LedProtocol::request(socketPath, command, reply)) {
++    const std::time_t now = std::time(nullptr);
++    if (!lastError || now - lastError >= 30) {
++      std::fprintf(stderr, "hss_led: LED service unavailable or rejected status: %s\n", reply.c_str());
++      lastError = now;
++    }
++  }
++}
+diff --git a/src/hss_led/RgbLed.h b/src/hss_led/RgbLed.h
+new file mode 100644
+index 0000000..03c4fa8
+--- /dev/null
++++ b/src/hss_led/RgbLed.h
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: Apache-2.0
++#ifndef HSS_RGB_LED_H
++#define HSS_RGB_LED_H
++#include <string>
++#include <ctime>
++#include "LedProtocol.h"
++
++// hss_led determines status; the LED service alone owns sysfs and its timers.
++// Never fall back to direct writes when the daemon is restarting/unavailable.
++class RgbLed {
++public:
++  explicit RgbLed(const std::string& socket = LedProtocol::socketPath) :
++      socketPath(socket), lastError(0) {}
++  void set(unsigned first, unsigned second, unsigned periodMs);
++private:
++  std::string socketPath;
++  std::time_t lastError;
++};
++#endif
+diff --git a/src/hss_led/tests/RgbLedTest.cpp b/src/hss_led/tests/RgbLedTest.cpp
+new file mode 100644
+index 0000000..4d202ca
+--- /dev/null
++++ b/src/hss_led/tests/RgbLedTest.cpp
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: Apache-2.0
++#include "RgbLed.h"
++#include <cstdlib>
++#include <iostream>
++#include <stdexcept>
++#include <thread>
++#include <vector>
++
++static void require(bool ok) { if (!ok) throw std::runtime_error("LED protocol test failed"); }
++int main() {
++  char temp[] = "/tmp/hss-led-protocol-XXXXXX";
++  const char* dir = mkdtemp(temp);
++  if (!dir) return 1;
++  std::string path = std::string(dir) + "/control";
++  int listener = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC, 0);
++  if (listener < 0 && errno == EPERM) {
++    std::cerr << "SKIP: execution environment prohibits Unix sockets\n";
++    rmdir(dir);
++    return 77;
++  }
++  sockaddr_un addr = {}; addr.sun_family = AF_UNIX;
++  std::memcpy(addr.sun_path, path.c_str(), path.size()+1);
++  require(listener >= 0 && !bind(listener, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) && !listen(listener, 4));
++  std::vector<std::string> received;
++  std::thread server([&]() {
++    for (unsigned i = 0; i < 4; ++i) {
++      pollfd event = {listener, POLLIN, 0};
++      if (poll(&event, 1, 2000) <= 0) return;
++      int fd = accept(listener, nullptr, nullptr);
++      if (fd < 0) return;
++      char buf[256];
++      ssize_t n = recv(fd, buf, sizeof(buf), 0);
++      if (n > 0) received.emplace_back(buf, n);
++      const char response[] = "OK accepted";
++      const ssize_t sent = send(fd, response, sizeof(response)-1, MSG_NOSIGNAL);
++      (void)sent;
++      close(fd);
++    }
++  });
++  RgbLed client(path);
++  client.set(4, 0, 0);
++  client.set(4, 1, 499);
++  client.set(4, 1, 499); // unchanged statuses must also reach a restarted daemon
++  client.set(5, 0, 100);
++  server.join();
++  require(received == std::vector<std::string>({"1 report 4 4 0 0", "1 report 4 1 499 499",
++                                               "1 report 4 1 499 499", "1 report 5 0 100 100"}));
++  close(listener); unlink(path.c_str()); rmdir(dir);
++  // A missing service must not create sysfs files or block indefinitely.
++  client.set(4, 0, 0);
++  std::cout << "LED client protocol: PASS\n";
++}

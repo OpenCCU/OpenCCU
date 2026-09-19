@@ -1,0 +1,7 @@
+config BR2_PACKAGE_RPI_RF_MOD_LED
+	bool "rpi-rf-mod-led"
+	depends on BR2_INSTALL_LIBSTDCPP
+	default y
+	help
+	  Central RPI-RF-MOD status LED service and command-line client.
+	  Supports multicolor LEDs and legacy component LEDs on container hosts.

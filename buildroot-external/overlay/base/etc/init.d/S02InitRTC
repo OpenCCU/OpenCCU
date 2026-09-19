@@ -25,8 +25,9 @@ init_rtc_device() {
     # check if the HOST is a oci or lxc host and if so make sure
     # to load the rpi_rf_mod_led kernel module early if not present already
     if [[ "${HM_HOST}" =~ oci\|lxc ]] &&
+       [[ ! -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] &&
        [[ ! -e /sys/class/leds/rpi_rf_mod:green/trigger ]] &&
-       ! grep -Eq "^rpi_rf_mod_led " /proc/modules; then
+       ! grep -Eq "^rpi_rf_mod_(led|rgb) " /proc/modules; then
 
       # retrieve pin numbers from raw-uart kernel device
       if [[ -e /sys/class/raw-uart/raw-uart/red_gpio_pin ]]; then
@@ -35,17 +36,15 @@ init_rtc_device() {
         BLUE_PIN=$(cat /sys/class/raw-uart/raw-uart/blue_gpio_pin)
 
         # load rpi_rf_mod_led with retrieved led gpio pins
-        modprobe -q rpi_rf_mod_led red_gpio_pin="${RED_PIN}" green_gpio_pin="${GREEN_PIN}" blue_gpio_pin="${BLUE_PIN}"
+        /bin/rpi-rf-mod-led-driver load "${RED_PIN}" "${GREEN_PIN}" "${BLUE_PIN}"
       else
         echo -n "WARN: no RPI-RF-MOD led pin info, "
       fi
     fi
 
     # show a constant yellow light
-    if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-      echo default-on >/sys/class/leds/rpi_rf_mod:green/trigger
-      echo default-on >/sys/class/leds/rpi_rf_mod:red/trigger
-      echo none >/sys/class/leds/rpi_rf_mod:blue/trigger
+    if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
+      /bin/rpi-rf-mod-led system yellow
     fi
 
     # in addition, we load the dummy_rx8130 kernel module so
@@ -144,9 +143,9 @@ stop() {
   # make sure to unload rpi_rf_mod_led which
   # is necessary for docker/lxc-based environments
   if [[ "${HM_HOST}" =~ oci\|lxc ]] &&
-     [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]] &&
-     grep -Eq "^rpi_rf_mod_led " /proc/modules; then
-    rmmod rpi_rf_mod_led 2>/dev/null
+     { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; } &&
+     grep -Eq "^rpi_rf_mod_(led|rgb) " /proc/modules; then
+    /bin/rpi-rf-mod-led-driver unload 2>/dev/null
   fi
 
   echo "OK"

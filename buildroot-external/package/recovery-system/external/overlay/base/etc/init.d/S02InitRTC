@@ -22,14 +22,8 @@ init_rtc_device() {
     # we found a RX8130, thus we assume the RPI-RF-MOD to
     # be present, thus we setup the LED GPIOs to show a
     # slowly blinking magenta light
-    if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-      echo none >/sys/class/leds/rpi_rf_mod:green/trigger
-      echo timer >/sys/class/leds/rpi_rf_mod:red/trigger
-      echo timer >/sys/class/leds/rpi_rf_mod:blue/trigger
-      echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_on
-      echo 499 >/sys/class/leds/rpi_rf_mod:red/delay_off
-      echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_on
-      echo 499 >/sys/class/leds/rpi_rf_mod:blue/delay_off
+    if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
+      /bin/rpi-rf-mod-led system magenta 499
     fi
 
     # in addition, we load the dummy_rx8130 kernel module so

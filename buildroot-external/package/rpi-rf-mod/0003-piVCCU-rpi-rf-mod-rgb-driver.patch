@@ -1,0 +1,163 @@
+Subject: [PATCH] leds: add optional RPI-RF-MOD multicolor adapter driver
+
+Upstream: Not submitted (experimental OpenCCU integration)
+
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 6bcb524..7655bcf 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -8,2 +8,3 @@ obj-m += fake_hmrf.o
+ obj-m += rpi_rf_mod_led.o
++obj-m += rpi_rf_mod_rgb.o
+ obj-m += dummy_rx8130.o
+diff --git a/kernel/rpi_rf_mod_rgb.c b/kernel/rpi_rf_mod_rgb.c
+new file mode 100644
+index 0000000..e3012c4
+--- /dev/null
++++ b/kernel/rpi_rf_mod_rgb.c
+@@ -0,0 +1,145 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* RGB status LED for RPI-RF-MOD on dynamically discovered GPIO adapters.
++ * Keep rpi_rf_mod_led available for hosts without LEDS_CLASS_MULTICOLOR.
++ */
++#include <linux/module.h>
++#include <linux/errno.h>
++#include <linux/sched.h>
++#include "stack_protector.include"
++
++#if IS_ENABLED(CONFIG_LEDS_CLASS_MULTICOLOR)
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
++#include <linux/led-class-multicolor.h>
++
++/* Read-only: a live pin reassignment would race the LED core's worker. */
++static int red_gpio_pin = -1;
++static int green_gpio_pin = -1;
++static int blue_gpio_pin = -1;
++module_param(red_gpio_pin, int, 0444);
++module_param(green_gpio_pin, int, 0444);
++module_param(blue_gpio_pin, int, 0444);
++MODULE_PARM_DESC(red_gpio_pin, "GPIO number of the red LED");
++MODULE_PARM_DESC(green_gpio_pin, "GPIO number of the green LED");
++MODULE_PARM_DESC(blue_gpio_pin, "GPIO number of the blue LED");
++
++static struct device *rgb_device;
++static struct gpio_desc *rgb_gpios[3];
++static int rgb_pins[3];
++static struct mc_subled rgb_colors[3] = {
++  { .color_index = LED_COLOR_ID_RED, .intensity = 1 },
++  { .color_index = LED_COLOR_ID_GREEN, .intensity = 1 },
++  { .color_index = LED_COLOR_ID_BLUE, .intensity = 0 },
++};
++
++static int rgb_set(struct led_classdev *cdev, enum led_brightness brightness)
++{
++  struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
++  unsigned long values = 0;
++  unsigned int i;
++
++  led_mc_calc_color_components(mc, brightness);
++  for (i = 0; i < ARRAY_SIZE(rgb_gpios); ++i)
++    if (mc->subled_info[i].brightness)
++      values |= BIT(i);
++
++  /* The GPIO core uses set_multiple where supported (HB-RF-USB/ETH).
++   * Use the sleeping API because this is not restricted to SoC GPIOs.
++   */
++  return gpiod_set_array_value_cansleep(ARRAY_SIZE(rgb_gpios), rgb_gpios,
++                                      NULL, &values);
++}
++
++static struct led_classdev_mc rgb_led = {
++  .led_cdev = {
++    .name = "rpi_rf_mod:rgb:status",
++    .max_brightness = 1,
++    .brightness = 1,
++    .brightness_set_blocking = rgb_set,
++    .flags = LED_CORE_SUSPENDRESUME,
++  },
++  .num_colors = ARRAY_SIZE(rgb_colors),
++  .subled_info = rgb_colors,
++};
++
++static int __init rgb_init(void)
++{
++  unsigned int i, requested = 0;
++  int ret;
++
++  rgb_pins[0] = red_gpio_pin;
++  rgb_pins[1] = green_gpio_pin;
++  rgb_pins[2] = blue_gpio_pin;
++  for (i = 0; i < ARRAY_SIZE(rgb_pins); ++i)
++    if (!gpio_is_valid(rgb_pins[i]))
++      return -EINVAL;
++  if (red_gpio_pin == green_gpio_pin || red_gpio_pin == blue_gpio_pin ||
++      green_gpio_pin == blue_gpio_pin)
++    return -EINVAL;
++
++  rgb_device = root_device_register("rpi_rf_mod_rgb");
++  if (IS_ERR(rgb_device))
++    return PTR_ERR(rgb_device);
++
++  for (i = 0; i < ARRAY_SIZE(rgb_pins); ++i) {
++    ret = gpio_request(rgb_pins[i], "rpi_rf_mod_rgb");
++    if (ret)
++      goto fail;
++    requested++;
++    rgb_gpios[i] = gpio_to_desc(rgb_pins[i]);
++    if (!rgb_gpios[i]) {
++      ret = -ENODEV;
++      goto fail;
++    }
++    ret = gpiod_direction_output(rgb_gpios[i], 0);
++    if (ret)
++      goto fail;
++  }
++
++  ret = rgb_set(&rgb_led.led_cdev, 1);
++  if (ret)
++    goto fail;
++  ret = led_classdev_multicolor_register(rgb_device, &rgb_led);
++  if (!ret)
++    return 0;
++fail:
++  while (requested) {
++    --requested;
++    if (rgb_gpios[requested])
++      gpiod_set_value_cansleep(rgb_gpios[requested], 0);
++    gpio_free(rgb_pins[requested]);
++  }
++  root_device_unregister(rgb_device);
++  return ret;
++}
++
++static void __exit rgb_exit(void)
++{
++  unsigned int i;
++  /* Unregister drains LED timers/work before releasing GPIOs. */
++  led_classdev_multicolor_unregister(&rgb_led);
++  for (i = 0; i < ARRAY_SIZE(rgb_pins); ++i)
++    gpio_free(rgb_pins[i]);
++  root_device_unregister(rgb_device);
++}
++
++#else
++/* DKMS enumerates every .c file as a module. Produce a load-rejecting stub
++ * instead of a missing .ko on old/non-multicolor host kernels. */
++static int __init rgb_init(void)
++{
++  return -ENODEV;
++}
++
++static void __exit rgb_exit(void)
++{
++}
++#endif
++
++module_init(rgb_init);
++module_exit(rgb_exit);
++MODULE_DESCRIPTION("RPI-RF-MOD multicolor status LED");
++MODULE_LICENSE("GPL");
++MODULE_VERSION("1.0");

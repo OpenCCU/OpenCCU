@@ -288,6 +288,8 @@ query_rf_parameters() {
     GREEN_GPIO_PIN=$(cat "/sys/class/raw-uart/${HBRF_DEVNODE}/green_gpio_pin")
     BLUE_GPIO_PIN=$(cat "/sys/class/raw-uart/${HBRF_DEVNODE}/blue_gpio_pin")
 
+    /bin/rpi-rf-mod-led-driver unbind-group
+
     # make sure to unbind the gpio-leds driver first
     if [[ -e /sys/class/leds/rpi_rf_mod:blue ]]; then
       if [[ -e /sys/bus/platform/drivers/leds-gpio/gpio-leds ]]; then
@@ -300,8 +302,8 @@ query_rf_parameters() {
     fi
 
     # load the rpi_rf_mod_led kernel module
-    if ! grep -Eq "^rpi_rf_mod_led " /proc/modules; then
-      modprobe -q rpi_rf_mod_led red_gpio_pin="${RED_GPIO_PIN}" green_gpio_pin="${GREEN_GPIO_PIN}" blue_gpio_pin="${BLUE_GPIO_PIN}"
+    if ! grep -Eq "^rpi_rf_mod_(led|rgb) " /proc/modules; then
+      /bin/rpi-rf-mod-led-driver load "${RED_GPIO_PIN}" "${GREEN_GPIO_PIN}" "${BLUE_GPIO_PIN}"
     fi
 
     # rebind the gpio-leds so that numeration of the rpi-rf-mod leds are correct
@@ -451,8 +453,8 @@ stop() {
     fi
 
     # unload rpi_rf_mod_led kernel module
-    if grep -Eq "^rpi_rf_mod_led " /proc/modules; then
-      rmmod rpi_rf_mod_led 2>/dev/null
+    if grep -Eq "^rpi_rf_mod_(led|rgb) " /proc/modules; then
+      /bin/rpi-rf-mod-led-driver unload 2>/dev/null
     fi
   fi
 
