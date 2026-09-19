@@ -297,7 +297,7 @@ proc action_put_page {} {
                     }
                   }
                 }
-                if { [info exists sw_info(Operations)] || [info exists sw_indo(Config-Url)] } then {
+                if { [info exists sw_info(Operations)] || [info exists sw_info(Config-Url)] } then {
                   table_row {
                     table_data {colspan="3"} {
                       division {class="popupControls CLASS21411"} {
