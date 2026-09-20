@@ -193,8 +193,23 @@
      "Belgium" : "Belgium",
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -9353,3 +9353,30 @@
- .CodeMirror-gutter-wrapper {
+@@ -9342,7 +9342,8 @@
+   border:solid 1px $_(black);
+ }
+ 
+-.CodeMirror {
++.CodeMirror,
++.cm-editor {
+   border-top: 1px solid black;
+   border-bottom: 1px solid black;
+   text-align: left;
+@@ -9350,6 +9351,34 @@
+   resize: vertical;
+ }
+ 
+-.CodeMirror-gutter-wrapper {
++.CodeMirror-gutter-wrapper,
++.cm-gutters {
    font-family: monospace;
  }
 +

@@ -150,6 +150,24 @@
      "lblBreak" : "Pause",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
+@@ -16832,7 +16832,7 @@
+     this.m_layer.appendChild(this.m_frame.getElement());
+     Layer.add(this.m_layer);
+ 
+-    this.m_input = CodeMirror.fromTextArea(document.getElementById('code'), {
++    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
+       mode: "text/x-rega",
+       autofocus: true,
+       matchBrackets: true,
+@@ -16884,7 +16884,7 @@
+     });
+     this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
+ 
+-    this.m_output = CodeMirror.fromTextArea(document.getElementById('output'), {
++    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
+       mode: "default",
+       readOnly: true,
+       lineWrapping: true,
 @@ -25588,8 +25588,6 @@
  StartPage = Singleton.create(Page, {
    MAINMENU_ID: "MAINMENU_STARTPAGE",
@@ -201,6 +219,15 @@
        $("body").appendChild(script);
        homematic.com.callback = callback;
    },
+@@ -32327,7 +32314,7 @@
+ 
+     if (this.draggable) {
+       jQuery("#messagebox").draggable({
+-        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line"
++        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
+       });
+     }
+ 
 @@ -37113,22 +37100,6 @@
    dlg.resetHeight();
  };
