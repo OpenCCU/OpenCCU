@@ -34,6 +34,19 @@ Kernel timer triggers are used for supported RGB color/off blinking; other
 patterns share a userspace timer. Separate legacy GPIO/USB writes are not
 physically atomic.
 
+The normal binary defaults to `Logger::LOG_INFO` when called directly.
+`S01hss_led` explicitly passes `-l 6` to retain OpenCCU's existing fatal-only
+CCU logging policy; the minimal recovery binary accepts the same option.
+Missing daemon/client executables cause service startup to fail with a diagnostic.
+
+The root-run driver helper records modules it loads in `/run/rpi-rf-mod-led-driver`.
+Unload preserves pre-existing modules and retains its marker if removal fails.
+A changed module directory invalidates an old ownership marker. Calls in the same
+runtime directory are serialized; concurrent calls fail rather than modifying
+another call's state. A helper killed with SIGKILL can leave its `lock` directory:
+remove that directory only after verifying no helper is running, or reboot.
+This local bookkeeping does not provide cross-container reference counting.
+
 ## Recovery and permissions
 
 Recovery enables `BR2_PACKAGE_OPENCCU_BASE_LED_ONLY=y` in the existing Base package.

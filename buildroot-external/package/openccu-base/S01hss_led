@@ -7,7 +7,14 @@ PIDFILE="/var/run/$DAEMON.pid"
 RUNTIME="/var/run/hss_led"
 
 start() {
-	[ -x "/bin/$DAEMON" ] || return 0
+	if [ ! -x "/bin/$DAEMON" ]; then
+		echo "$DAEMON is missing or not executable" >&2
+		return 1
+	fi
+	if [ ! -x /bin/hss_ledctl ]; then
+		echo "hss_ledctl is missing or not executable" >&2
+		return 1
+	fi
 	HM_HOST=""
 	[ ! -r /var/hm_mode ] || . /var/hm_mode
 	run_user=hssled
@@ -25,8 +32,9 @@ start() {
 			chmod -R g=u "$led"
 		done
 	fi
+	# Keep the existing OpenCCU logging policy explicit.
 	start-stop-daemon -S -q -o -b -m -d / -c "$run_user" \
-		-p "$PIDFILE" --exec "/bin/$DAEMON" || return 1
+		-p "$PIDFILE" --exec "/bin/$DAEMON" -- -l 6 || return 1
 	n=0
 	until /bin/hss_ledctl --led rpi-rf-mod status >/dev/null 2>&1; do
 		n=$((n + 1))

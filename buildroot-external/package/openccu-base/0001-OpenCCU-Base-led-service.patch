@@ -1,6 +1,6 @@
 Subject: [PATCH] hss_led: integrate LED control and provide hss_ledctl
 
-Base: OpenCCU-Base 3.89.11 (3ed652a404d72cbe403e37c5b8b1f610451b02fb)
+Base: OpenCCU-Base 587230316a97e380516b0ac4d21a497c187657cd
 
 Run the LED controller and status calculation in one process. Provide
 hss_ledctl as its client invocation, explicit LED-class target selection,
@@ -855,10 +855,10 @@ index 00000000..a181a71e
 +#endif
 diff --git a/src/hss_led/LedOnlyMain.cpp b/src/hss_led/LedOnlyMain.cpp
 new file mode 100644
-index 00000000..904c5a8f
+index 00000000..5d54a64a
 --- /dev/null
 +++ b/src/hss_led/LedOnlyMain.cpp
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,30 @@
 +// SPDX-License-Identifier: Apache-2.0
 +#include "LedController.h"
 +#include <iostream>
@@ -871,10 +871,19 @@ index 00000000..904c5a8f
 +    if (program == "hss_ledctl") return LedController::client(argc, argv);
 +    if (argc > 1 && std::string(argv[1]) == "--led-control")
 +      return LedController::client(argc - 1, argv + 1);
-+    if (argc == 1 || (argc == 2 && std::string(argv[1]) == "--led-only"))
-+      return LedController::run();
-+    std::cerr << "Usage: hss_led [--led-only | --led-control COMMAND...]\n";
-+    return 2;
++    for (int i = 1; i < argc; ++i) {
++      std::string arg(argv[i]);
++      if (arg == "--led-only") continue;
++      // Accept the shared init script's logging option. Recovery has no CCU
++      // status logger; controller failures still go to stderr.
++      if (arg == "-l" && i + 1 < argc) {
++        std::string level(argv[++i]);
++        if (level.size() == 1 && level[0] >= '0' && level[0] <= '6') continue;
++      }
++      std::cerr << "Usage: hss_led [-l 0..6] [--led-only | --led-control COMMAND...]\n";
++      return 2;
++    }
++    return LedController::run();
 +  } catch (const std::exception& e) {
 +    std::cerr << "hss_led: " << e.what() << '\n';
 +    return 2;
@@ -1049,7 +1058,7 @@ index f7508c34..c91f5530 100644
 +	sockfd = -1;
  }
 diff --git a/src/hss_led/hss_led.cpp b/src/hss_led/hss_led.cpp
-index 0ab90bdb..6e344402 100644
+index 0ab90bdb..80e143e6 100644
 --- a/src/hss_led/hss_led.cpp
 +++ b/src/hss_led/hss_led.cpp
 @@ -6,136 +6,81 @@
@@ -1235,7 +1244,7 @@ index 0ab90bdb..6e344402 100644
 +      return LedController::client(argc - 1, argv + 1);
 +    bool ledOnly = access("/usr/local/HMLGW", F_OK) == 0;
 +    bool console = false;
-+    int level = 6;
++    int level = static_cast<int>(Logger::LOG_INFO);
 +    for (int i = 1; i < argc; ++i) {
 +      std::string arg(argv[i]);
 +      if (arg == "--led-only") ledOnly = true;
