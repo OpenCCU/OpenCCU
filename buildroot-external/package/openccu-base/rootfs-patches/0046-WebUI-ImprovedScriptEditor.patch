@@ -746,11 +746,12 @@
  }
  
  .CLASS22101 {
-@@ -9211,3 +9147,14 @@
+@@ -9211,3 +9147,16 @@
    border:solid 1px $_(black);
  }
  
-+.CodeMirror {
++.CodeMirror,
++.cm-editor {
 +  border-top: 1px solid black;
 +  border-bottom: 1px solid black;
 +  text-align: left;
@@ -758,7 +759,8 @@
 +  resize: vertical;
 +}
 +
-+.CodeMirror-gutter-wrapper {
++.CodeMirror-gutter-wrapper,
++.cm-gutters {
 +  font-family: monospace;
 +}
 --- a/www/webui/webui.js
@@ -885,7 +887,7 @@
 +    this.m_layer.appendChild(this.m_frame.getElement());
 +    Layer.add(this.m_layer);
 +
-+    this.m_input = CodeMirror.fromTextArea(document.getElementById('code'), {
++    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
 +      mode: "text/x-rega",
 +      autofocus: true,
 +      matchBrackets: true,
@@ -937,7 +939,7 @@
 +    });
 +    this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
 +
-+    this.m_output = CodeMirror.fromTextArea(document.getElementById('output'), {
++    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
 +      mode: "default",
 +      readOnly: true,
 +      lineWrapping: true,
@@ -1036,7 +1038,7 @@
      if (this.draggable) {
 -      jQuery("#messagebox").draggable();
 +      jQuery("#messagebox").draggable({
-+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line"
++        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
 +      });
      }
  

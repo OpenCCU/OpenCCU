@@ -16832,7 +16832,7 @@ HMScriptExecutor = Class.create({
     this.m_layer.appendChild(this.m_frame.getElement());
     Layer.add(this.m_layer);
 
-    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
+    this.m_input = CodeMirror.fromTextArea(document.getElementById('code'), {
       mode: "text/x-rega",
       autofocus: true,
       matchBrackets: true,
@@ -16884,7 +16884,7 @@ HMScriptExecutor = Class.create({
     });
     this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
 
-    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
+    this.m_output = CodeMirror.fromTextArea(document.getElementById('output'), {
       mode: "default",
       readOnly: true,
       lineWrapping: true,
@@ -25588,6 +25588,8 @@ var preURL = (WEBUI_VERSION.split(".")[0] < 3) ? "" : "ccu3-";
 StartPage = Singleton.create(Page, {
   MAINMENU_ID: "MAINMENU_STARTPAGE",
   downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
+  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
+  fieldTestActive: "/etc/config/fieldTestActive",
   downloadURL : "",
   prevDownloadURL : "",
   devList: [],
@@ -25631,7 +25633,11 @@ StartPage = Singleton.create(Page, {
 
     this.serial = homematic("CCU.getSerial");
 
-    this.downloadURL = this.downloadURLServer;
+    if (homematic('CCU.existsFile', {'file': this.fieldTestActive})) {
+      this.downloadURL = this.fieldTestURLServer;
+    } else {
+      this.downloadURL = this.downloadURLServer;
+    }
 
     if (this.prevDownloadURL != this.downloadURL) {
       this.devList = [];
@@ -29827,6 +29833,7 @@ homematic.com =
     this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
     this.m_product = "HM-RASPBERRYMATIC";
     this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
+    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
 
     this.serial = homematic("CCU.getSerial");
     this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
@@ -29894,13 +29901,19 @@ homematic.com =
   },
 
   getListOfAvailableFirmware: function(callback) {
+      var fieldTestActive = "/etc/config/fieldTestActive";
+
       // The server should return a string like "homematic.com.setDeviceFirmwareVersions([{"type":"HM-MOD-Re-8","version":"1.0.0"},{"type":"HM-MOD-Re-8","version":"1.0.0"}])"
       var script = document.createElement("script");
       script.id = "homematic_com_script_fw";
       script.type = "text/javascript";
       // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
 
-      script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
+      if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
+        script.src = this.m_fieldTestURLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU"+getProduct()+"&version="+WEBUI_VERSION+"&serial=" + this.serial + "&ts=" + Date.now();
+      } else {
+        script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
+      }
       $("body").appendChild(script);
       homematic.com.callback = callback;
   },
@@ -32314,7 +32327,7 @@ iseMessageBox.prototype =
 
     if (this.draggable) {
       jQuery("#messagebox").draggable({
-        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line"
       });
     }
 
@@ -37099,6 +37112,22 @@ setColorWebUI = function() {
   dlg.run();
   dlg.resetHeight();
 };
+
+function activateDeviceBetaFw() {
+  var showBetaDevFw = jQuery("#inputShowBetaFw").is(":checked"),
+    fieldTestActive = "/etc/config/fieldTestActive";
+
+  if (showBetaDevFw) {
+    if (! homematic('CCU.existsFile', {'file': fieldTestActive})) {
+      homematic("CCU.createFile", {'file': fieldTestActive});
+    }
+  } else {
+    if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
+      homematic("CCU.removeFieldTestActive");
+    }
+  }
+};
+
 
 /**
  *
