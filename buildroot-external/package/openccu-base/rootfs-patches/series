@@ -68,11 +68,9 @@
 0097-WebUI-SetSysvarValueByUser.patch
 0099-WebUI-Add-DeviceRenameAllChannels.patch
 0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch
-0101-WebUI-Fix-JSON-describe.patch
 0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch
 0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch
 0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch
-0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch
 0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
 0111-WebUI-Fix-Translation-Performance.patch
@@ -100,7 +98,6 @@
 0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch
 0140-WebUI-Add-ChannelPicsInControl.patch
 0141-WebUI-Add-LoggedOnUserInformation.patch
-0142-WebUI-Fix-StartpageGuestTranslate.patch
 0143-WebUI-Fix-Translation.patch
 0144-WebUI-ControlForMaintenanceChannel.patch
 0145-WebUI-NaturalSorting.patch

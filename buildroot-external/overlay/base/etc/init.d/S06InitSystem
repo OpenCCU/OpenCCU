@@ -10,6 +10,8 @@ init_system() {
 
   # check if we have booted in LAN gateway mode
   if [[ -e /usr/local/HMLGW ]]; then
+    # Serialized by set | grep into /var/hm_mode below.
+    # shellcheck disable=SC2034
     HM_MODE="HM-LGW"
   fi
 
@@ -113,14 +115,9 @@ start() {
   # make sure the system is properly initialized
   init_system
 
-  # start hss_led if it exists and we are not in HMLGW mode
-  if [[ "${HM_MODE}" != "HM-LGW" ]] && [[ -x /bin/hss_led ]]; then
-    if [[ ! "${HM_HOST}" =~ oci\|lxc ]]; then
-      start-stop-daemon -d / -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
-    else
-      start-stop-daemon -d / -S -q -b -m -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6
-    fi
-  fi
+  # hss_led is already running from S00hss_led. Enable its CCU status
+  # monitor only after the user configuration is ready.
+  touch /var/status/hssLedReady
 
   # call rc.postinit after init of system is finished
   if [[ ! -e /etc/config/safemode ]]; then
@@ -139,9 +136,7 @@ start() {
 stop() {
   echo -n "Cleaning up System: "
 
-  if [[ -f /var/run/hss_led.pid ]]; then
-    start-stop-daemon -K -q -p /var/run/hss_led.pid
-  fi
+  # S00hss_led stops the controller after the shutdown LED commands.
 
   echo "OK"
 }

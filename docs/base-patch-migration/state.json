@@ -1,0 +1,46 @@
+{
+  "completed": [
+    {
+      "base_merge_commit": "81eb8370d4b5855ad4e179827fb168028af8d825",
+      "base_pr": 38,
+      "cleanup_pr": 4205,
+      "patch": "0110-WebUI-Fix-cp_software-Typo.patch"
+    },
+    {
+      "base_merge_commit": "b3064f381dd192e3a2dbb16a7204b4d407180759",
+      "base_pr": 39,
+      "cleanup_pr": 4206,
+      "patch": "0107-WebUI-Fix-rgbw.fn-CheckMetaDataIsNotNULL.patch"
+    },
+    {
+      "base_merge_commit": "587230316a97e380516b0ac4d21a497c187657cd",
+      "base_pr": 40,
+      "cleanup_pr": 4208,
+      "patch": "0112-WebUI-Fix-Typo-hmipChannelConfigDialogs.patch"
+    },
+    {
+      "base_merge_commit": "8fbd62ed8790b5e8ad9a9d771cf2ea1818112b25",
+      "base_pr": 41,
+      "cleanup_pr": 4210,
+      "patch": "0142-WebUI-Fix-StartpageGuestTranslate.patch"
+    },
+    {
+      "base_merge_commit": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
+      "base_pr": 42,
+      "cleanup_pr": 4213,
+      "patch": "0101-WebUI-Fix-JSON-describe.patch"
+    }
+  ],
+  "in_progress": {
+    "base_merge_commit": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
+    "base_pr": 43,
+    "cleanup_pr": 4215,
+    "patch": "0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch",
+    "phase": "cleanup-prepared; merge pending"
+  },
+  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
+  "schema": 1,
+  "verified_at_openccu_commit": "e4a2a9bbaa7b18b507e84083d4fa6cd7e078779a",
+  "verified_base_pin": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
+  "verified_source_sha256": "3180f4e81106e4a95bd123bb6a8e6d6daeec558d0d1e8dda24c7e05692cb4d9d"
+}

@@ -34,13 +34,11 @@ start() {
   # to set the LED to blue or disable it completely.
   if [[ "${HM_MODE}" == "HM-LGW" ]]; then
     if [[ "${HM_HMIP_DEV}" == "RPI-RF-MOD" ]] || [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]]; then
-      if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-        echo none >/sys/class/leds/rpi_rf_mod:green/trigger
-        echo none >/sys/class/leds/rpi_rf_mod:red/trigger
+      if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
         if [[ -e /etc/config/disableLED ]]; then
-          echo none >/sys/class/leds/rpi_rf_mod:blue/trigger
+          /bin/hss_ledctl --led rpi-rf-mod system off
         else
-          echo default-on >/sys/class/leds/rpi_rf_mod:blue/trigger
+          /bin/hss_ledctl --led rpi-rf-mod system blue
         fi
       fi
     fi
@@ -57,6 +55,9 @@ start() {
   
   # signal that the system startup is finished
   touch /var/status/startupFinished
+  if [[ "${HM_MODE}" != "HM-LGW" ]]; then
+    /bin/hss_ledctl --led rpi-rf-mod auto
+  fi
 
   # reload lighttpd to let it enable the RemoteAPI ports
   /etc/init.d/S50lighttpd reload >/dev/null
@@ -78,6 +79,7 @@ stop() {
   # remove startupFinished and restart lighttpd
   # to let it block external APIs again
   rm -f /var/status/startupFinished
+  /bin/hss_ledctl --led rpi-rf-mod system yellow
 
   # reload lighttpd to let it disable the RemoteAPI ports
   /etc/init.d/S50lighttpd reload >/dev/null
@@ -86,10 +88,8 @@ stop() {
   # to set the LED to yellow again to signal shutdown
   if [[ "${HM_MODE}" == "HM-LGW" ]]; then
     if [[ "${HM_HMIP_DEV}" == "RPI-RF-MOD" ]] || [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]]; then
-      if [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; then
-        echo default-on >/sys/class/leds/rpi_rf_mod:green/trigger
-        echo default-on >/sys/class/leds/rpi_rf_mod:red/trigger
-        echo none >/sys/class/leds/rpi_rf_mod:blue/trigger
+      if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
+        /bin/hss_ledctl --led rpi-rf-mod system yellow
       fi
     fi
   fi

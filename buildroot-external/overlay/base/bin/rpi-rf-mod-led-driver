@@ -1,0 +1,68 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Select the RGB driver when the host provides it. Keep legacy hosts working.
+set -eu
+
+# This state belongs to the root-run module helper, not the hssled user.
+# Serialize this lifecycle's calls; never infer ownership from presence alone.
+state=/run/rpi-rf-mod-led-driver
+lock_state() {
+  umask 077
+  mkdir -p "$state"
+  if ! mkdir "$state/lock" 2>/dev/null; then
+    echo "RPI-RF-MOD: LED driver lifecycle is locked" >&2
+    exit 1
+  fi
+  trap 'rmdir "$state/lock"' 0
+  trap 'exit 1' HUP INT TERM
+}
+
+record_module() {
+  # Detect a later external unload/reload before acting on an old marker.
+  identity=$(stat -c '%d:%i' "/sys/module/$1")
+  printf '%s\n' "$identity" >"$state/$1"
+}
+
+case "${1:-}" in
+  load)
+    [ "$#" -eq 4 ] || exit 2
+    lock_state
+    # A host-owned existing driver must not be unloaded behind its back.
+    if [ -d /sys/module/rpi_rf_mod_rgb ] || [ -d /sys/module/rpi_rf_mod_led ]; then
+      exit 0
+    fi
+    rm -f "$state/rpi_rf_mod_rgb" "$state/rpi_rf_mod_led"
+    if modprobe -q rpi_rf_mod_rgb red_gpio_pin="$2" green_gpio_pin="$3" blue_gpio_pin="$4"; then
+      record_module rpi_rf_mod_rgb
+      exit 0
+    fi
+    echo "RPI-RF-MOD: using legacy LED driver (multicolor unavailable)" >&2
+    modprobe -q rpi_rf_mod_led red_gpio_pin="$2" green_gpio_pin="$3" blue_gpio_pin="$4"
+    record_module rpi_rf_mod_led
+    ;;
+  unbind-group)
+    # Keep the local DT group from occupying the canonical RGB name when an
+    # external adapter is selected. Restore on reboot (like the GPIO binding).
+    dev=/sys/bus/platform/devices/multi-led
+    if [ -L "$dev/driver" ] &&
+       [ "$(basename "$(readlink -f "$dev/driver")")" = leds_group_multicolor ]; then
+      echo openccu-remote-led >"$dev/driver_override"
+      echo multi-led >"$dev/driver/unbind"
+    fi
+    ;;
+  unload)
+    lock_state
+    for module in rpi_rf_mod_rgb rpi_rf_mod_led; do
+      [ -f "$state/$module" ] || continue
+      if [ -d "/sys/module/$module" ]; then
+        identity=$(stat -c '%d:%i' "/sys/module/$module")
+        if [ "$(cat "$state/$module")" = "$identity" ]; then
+          # With set -e a failed rmmod retains the marker for a later retry.
+          rmmod "$module"
+        fi
+      fi
+      rm -f "$state/$module"
+    done
+    ;;
+  *) exit 2 ;;
+esac
