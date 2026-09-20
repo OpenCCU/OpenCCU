@@ -37,6 +37,17 @@ Kernel timer triggers are used for supported RGB color/off blinking; other
 patterns share a userspace timer. Separate legacy GPIO/USB writes are not
 physically atomic.
 
+`S00hss_led` runs before `S10udevd`, but sysfs LED nodes are created by kernel
+drivers, not by udev. LEDs whose drivers have already probed can therefore be
+available at service startup; the init script grants access to those nodes.
+The controller checks for missing or replaced radio LED nodes every 250 ms and
+retains the requested pattern while hardware is absent. Later devices receive
+permissions through the udev rules, including the coldplug `add` events replayed
+by `S10udevd`; failed writes are retried. No daemon restart is needed when a
+driver or its permissions becomes available. The startup readiness check only
+waits for the control socket, not for an LED device. Starting the service earlier
+does not itself load a driver or guarantee visible LED output before udev.
+
 The normal binary defaults to `Logger::LOG_INFO` when called directly.
 `S00hss_led` explicitly passes `-l 6` to retain OpenCCU's existing fatal-only
 CCU logging policy; the minimal recovery binary accepts the same option.

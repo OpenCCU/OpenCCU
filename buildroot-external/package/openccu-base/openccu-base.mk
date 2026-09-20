@@ -343,7 +343,6 @@ endef
 endif
 
 define OPENCCU_BASE_INSTALL_LED_SERVICE
-	rm -f $(TARGET_DIR)/etc/init.d/S01hss_led
 	ln -sf hss_led $(TARGET_DIR)/bin/hss_ledctl
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S00hss_led \
 		$(TARGET_DIR)/etc/init.d/S00hss_led
