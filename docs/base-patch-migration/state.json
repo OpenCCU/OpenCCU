@@ -41,6 +41,6 @@
   "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
   "schema": 1,
   "verified_at_openccu_commit": "e4a2a9bbaa7b18b507e84083d4fa6cd7e078779a",
-  "verified_base_pin": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
-  "verified_source_sha256": "c378dce97d417e825e780f0f91dbc67e90ba661a2c05b08e3f92a1a1c610334c"
+  "verified_base_pin": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
+  "verified_source_sha256": "3180f4e81106e4a95bd123bb6a8e6d6daeec558d0d1e8dda24c7e05692cb4d9d"
 }
