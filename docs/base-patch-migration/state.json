@@ -25,7 +25,13 @@
       "patch": "0142-WebUI-Fix-StartpageGuestTranslate.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
+    "base_pr": 42,
+    "cleanup_pr": null,
+    "patch": "0101-WebUI-Fix-JSON-describe.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
   "schema": 1,
   "verified_at_openccu_commit": "0a66b3ec086a261ebae2297b8ccbf9bfaae7eda6",

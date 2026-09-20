@@ -862,15 +862,6 @@
     {
       "added": 1,
       "files": [
-        "www/api/methods/system/describe.tcl"
-      ],
-      "patch": "0101-WebUI-Fix-JSON-describe.patch",
-      "removed": 1,
-      "sha256": "902c79344a265dd2fbca68ea741272fa8c6a218709cc588d2b14d62c57b7d071"
-    },
-    {
-      "added": 1,
-      "files": [
         "www/webui/webui.js"
       ],
       "patch": "0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch",
@@ -1895,5 +1886,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "afcf0f267adc064ba2931e518721b5be2d6ec7bf65a2c15f7bef49529ee4f363"
+  "series_sha256": "d5018ad05cac201e57edd7c34582ff4ac8b55fd6be04e37a4b4fb39b976abe4b"
 }
