@@ -67,9 +67,9 @@ jobs:
             version_regex: '^NEOSERVER_VERSION = (.*)$'
           - slug: codemirror
             script: scripts/update-codemirror.sh
-            package: codemirror
-            version_file: buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror/lib/codemirror.js
-            version_regex: '^  CodeMirror\.version = "([^"]+)";$'
+            package: codemirror6
+            version_file: buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror6/VERSION
+            version_regex: '^CODEMIRROR6_VERSION = (.*)$'
           - slug: picod
             script: scripts/update-picod.sh
             package: picod

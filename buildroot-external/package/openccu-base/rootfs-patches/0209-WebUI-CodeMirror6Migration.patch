@@ -1,0 +1,86 @@
+--- a/www/rega/pages/index.htm
++++ b/www/rega/pages/index.htm
+@@ -209,30 +209,8 @@
+       } catch (e) {}
+     </script>
+ 
+-    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/lib/codemirror.css">
+-    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/hint/show-hint.css">
+-    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/fold/foldgutter.css">
+-    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/display/fullscreen.css">
+-    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/dialog/dialog.css">
+-    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/search/matchesonscrollbar.css">
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/lib/codemirror.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/mode/clike/clike.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/edit/matchbrackets.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/edit/closebrackets.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/hint/show-hint.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/hint/anyword-hint.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/foldcode.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/foldgutter.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/brace-fold.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/indent-fold.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/comment-fold.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/display/fullscreen.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/dialog/dialog.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/searchcursor.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/search.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/scroll/annotatescrollbar.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/matchesonscrollbar.js"></script>
+-    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/jump-to-line.js"></script>
++    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror6/codemirror6.bundle.css">
++    <script type="text/javascript" src="/webui/js/extern/codemirror6/codemirror6.bundle.js"></script>
+ 
+   </head>
+   <body id="body" onload="WebUI.start();" >
+--- a/www/webui/style.css
++++ b/www/webui/style.css
+@@ -9342,7 +9342,8 @@
+   border:solid 1px $_(black);
+ }
+ 
+-.CodeMirror {
++.CodeMirror,
++.cm-editor {
+   border-top: 1px solid black;
+   border-bottom: 1px solid black;
+   text-align: left;
+@@ -9350,7 +9351,8 @@
+   resize: vertical;
+ }
+ 
+-.CodeMirror-gutter-wrapper {
++.CodeMirror-gutter-wrapper,
++.cm-gutters {
+   font-family: monospace;
+ }
+ 
+--- a/www/webui/webui.js
++++ b/www/webui/webui.js
+@@ -16832,7 +16832,7 @@
+     this.m_layer.appendChild(this.m_frame.getElement());
+     Layer.add(this.m_layer);
+ 
+-    this.m_input = CodeMirror.fromTextArea(document.getElementById('code'), {
++    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
+       mode: "text/x-rega",
+       autofocus: true,
+       matchBrackets: true,
+@@ -16884,7 +16884,7 @@
+     });
+     this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
+ 
+-    this.m_output = CodeMirror.fromTextArea(document.getElementById('output'), {
++    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
+       mode: "default",
+       readOnly: true,
+       lineWrapping: true,
+@@ -32314,7 +32314,7 @@
+ 
+     if (this.draggable) {
+       jQuery("#messagebox").draggable({
+-        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line"
++        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
+       });
+     }
+ 

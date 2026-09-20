@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html lang="de">
+  <head>
+    <!-- Required meta tags for bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1024">
+
+    <!-- R1.00.0379.0102 eQ-3 -->
+    <% Call("/esp/system.fn::CheckUserFavorite()"); %>
+    <meta http-equiv="Content-Language" content="de">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+    <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />
+    <link rel="shortcut icon" href="/ise/img/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/ise/img/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="OpenCCU" />
+    <link rel="manifest" href="/webui/site.webmanifest" />
+
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/nfs_datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/jquery.powertip.css" />
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/jquery.jqplot.css" />
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/msdropdown/dd.css" />
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/spectrum.css" />
+
+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
+
+
+    <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.powertip.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.form.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/scriptaculous.js?load=builder,effects,dragdrop,slider"></script>
+    <script type="text/javascript" src="/webui/js/extern/wz_jsgraphics.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/template.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/nfs_datepicker.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/sliderControl.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.dd.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.barRenderer.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.dateAxisRenderer.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.categoryAxisRenderer.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.canvasAxisTickRenderer.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.cursor.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.enhancedLegendRenderer.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.highlighter.min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqplot.markerRenderer.js"></script>
+    <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
+    <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/knockout.js"></script>
+    <script type="text/javascript" src="/webui/js/common/viewmodels.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/json2min.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/spectrum.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/iro.js"></script>
+
+
+
+
+    <link href="/webui/css/extern/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="/webui/css/extern/smoothness/jquery.ui.timepicker.css?v=0.3.2" rel="stylesheet" type="text/css" />
+    <script src="/webui/js/extern/jquery-ui.min.js"></script>
+    <script src="/webui/js/extern/jquery.ui.timepicker.js"></script>
+
+
+    <!--[if IE 9]><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" /><![endif]-->
+    <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/webui/js/extern/excanvas.js"></script><![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/main.min.css" />
+    <link rel="stylesheet" type="text/css" href="/webui/css/extern/hmBootstrap.css" />
+    <link id="idCss" rel="stylesheet" type="text/css" href="/webui/style.cgi" />
+
+    <script type="text/javascript">
+
+      /*########################################################################*/
+      /*# Konstanten                                                           #*/
+      /*########################################################################*/
+
+      PLATFORM = "Central";
+      WEBUI_VERSION = "XXX-WEBUI-VERSION-XXX";
+      PRODUCT = "XXX-PRODUCT-XXX";
+
+      /**
+       * Flags
+       **/
+      iufNone       = <% Write( iufNone ); %>;
+      iufVisible    = <% Write( iufVisible ); %>;
+      iufInternal   = <% Write( iufInternal ); %>;
+      iufReadyState = <% Write( iufReadyState ); %>;
+      iufOperated   = <% Write( iufOperated ); %>;
+      iufVirtualChn = <% Write( iufVirtualChn ); %>;
+      iufReadable   = <% Write( iufReadable ); %>;
+      iufWriteable  = <% Write( iufWriteable ); %>;
+      iufEventable  = <% Write( iufEventable ); %>;
+      iufAll        = <% Write( iufAll ); %>;
+
+      /**
+       * User Privilege Level. Gibt die Nutzerrechte des angemeldeten Nutzers an.
+       **/
+      ul = <% Write( oUser.UserLevel()); %>;
+      userId = <% Write(oUser.ID()); %>;
+
+      /**
+       * Privilegstufen.
+       **/
+      UPL_NONE  = 0;
+      UPL_GUEST = 1;
+      UPL_USER  = 2;
+      UPL_ADMIN = 8;
+
+      /*########################################################################*/
+      /*# Globale Variablen                                                    #*/
+      /*########################################################################*/
+
+      forceUpdate = false;
+      preventInterfaceCheck = (jQuery.url().param('preventInterfaceCheck') == "true") ? true : false;
+      urlParamInterfaces = jQuery.url().param('showInterfaces');
+      urlDebug = jQuery.url().param('debug');
+      showDummyLicense = jQuery.url().param('showDummyLicense');
+      createNewProgram = false;
+      showAPITools = jQuery.url().param('showAPITools');
+      showRFAddress = (jQuery.url().param('showRFAddress') == "true") ? true : false;
+      invisibleServiceMessages = 0;
+      //measureLoadingConfigData = true;
+
+      /**
+       * jg_250
+       * JS-Graphics-Objekt für die Anzeige der vergrößerten Bilder von HomeMatic
+       * Geräten, Kanalgruppen und Kanälen.
+       **/
+      var jg_250;
+
+      var mainMenu;
+
+
+      <%
+        object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
+        string sUserFullName = oUser.UserFirstName()#' '#oUser.UserLastName();
+        if( sUserFullName == ' ' ){ sUserFullName = oUser.Name(); }
+        string sUserLevel = "lblGuest";
+        if (oUser.UserLevel() == iulAdmin) { sUserLevel = "lblAdmin"; }
+        elseif (oUser.UserLevel() == iulUser) { sUserLevel = "lblUser" ; }
+        string sUserEasyMode = "lblUIModeExpert";
+        if (oUser.UserEasyLinkMode()) { sUserEasyMode = "lblUIModeEasy"; }
+        WriteLine('var userName = "' # sUserFullName # ' (" + translateKey("' # sUserLevel # '") + ") | " + translateKey("lblEasyModeActiveShort") + " " + translateKey("' # sUserEasyMode # '");');
+        WriteLine('var userLink = "CreatePopup(ID_USER_ACCOUNT_CONFIG_ADMIN, '#oUser.ID()#')"');
+      %>
+
+
+
+      /*########################################################################*/
+      /*# Funktionen                                                           #*/
+      /*########################################################################*/
+
+      /**
+       * Ermittelt die Privilegstufe des momentan angemeldeten Benutzers.
+       **/
+      function getUPL ()
+      {
+        <%
+          integer sessionUPL   = 0;
+          string sUser = system.GetSessionVarStr(sessionId);
+
+          if ("" != sUser)
+          {
+            string sUPL = sUser.StrValueByIndex(";", 1);
+            sessionUPL  = sUPL.ToInteger();
+          }
+          Write("return " # sessionUPL # ";");
+        %>
+      }
+
+      /**
+       * Prüft, ob der Benutzer eine bestimmte Privilegstufe besitzt
+       **/
+      function hasUPL(upl)
+      {
+        return (upl <= getUPL());
+      }
+
+      function getSessionId()
+      {
+        return "<%Write(sessionId);%>";
+      }
+     </script>
+
+     <script type="text/javascript">
+      document.onkeypress = Backspace;
+      function Backspace(event) {
+        if (event.keyCode == 8) {
+          if (document.activeElement.tagName == "INPUT" || "textarea") {
+            return true;
+          } else {
+            alert(unescape(translateKey('dialogBackspacePrevent') ));
+            return false;
+          }
+        }
+      }
+      try {
+        history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function (event) {
+          history.pushState(null, document.title, location.href);
+          alert(unescape(translateKey('dialogBackspacePrevent')));
+        });
+      } catch (e) {}
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/hint/show-hint.css">
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/fold/foldgutter.css">
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/display/fullscreen.css">
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/dialog/dialog.css">
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror/addon/search/matchesonscrollbar.css">
+    <script type="text/javascript" src="/webui/js/extern/codemirror/lib/codemirror.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/mode/clike/clike.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/edit/matchbrackets.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/edit/closebrackets.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/hint/show-hint.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/hint/anyword-hint.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/foldcode.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/foldgutter.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/brace-fold.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/indent-fold.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/fold/comment-fold.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/display/fullscreen.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/dialog/dialog.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/searchcursor.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/search.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/scroll/annotatescrollbar.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/matchesonscrollbar.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/codemirror/addon/search/jump-to-line.js"></script>
+
+  </head>
+  <body id="body" onload="WebUI.start();" >
+    <div id="webuiloader_wrapper">
+      <div id="webuiloader_background">
+        <div id="webuiloader">
+          <div id="webuiloader_icon"><img src="/ise/img/occu-logo_small_gray.png" /></div>
+          <!-- div id="webuiloader_caption">HomeMatic WebUI wird geladen...</div-->
+          <div id="webuiloader_caption"></div>
+          <script type="text/javascript">jQuery("#webuiloader_caption").html(translateKey("loadWebUI"));</script>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="/webui/webui.js" ></script>
+  </body>
+</html>
