@@ -24,8 +24,14 @@ result_dir=
 while (($#)); do
   [[ $# -ge 2 ]] || die "missing option value: $1"
   case $1 in
-    --skip-patch) skip_patch=$2 ;;
-    --result-dir) result_dir=$2 ;;
+    --skip-patch)
+      [[ -n $2 ]] || die "invalid option value: $1"
+      skip_patch=$2
+      ;;
+    --result-dir)
+      [[ -n $2 ]] || die "invalid option value: $1"
+      result_dir=$2
+      ;;
     *) die "unknown option: $1" ;;
   esac
   shift 2

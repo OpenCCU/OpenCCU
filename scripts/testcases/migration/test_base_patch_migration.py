@@ -7,10 +7,12 @@ import io
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 SCRIPT = Path(__file__).resolve().parents[2] / 'base-patch-migration.py'
@@ -110,24 +112,60 @@ class MigrationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'duplicate'):
             migration.extract(archive, self.root / 'source', commit)
 
-    def report(self, folder, state):
+    def report(self, folder, state, inventory_data=None, skip=None, checks=None):
         folder.mkdir()
         migration.write_json(folder / 'manifest.json', state)
         migration.write_json(folder / 'report.json', {
+            'schema': 1, 'commit': 'a' * 40, 'archive_sha256': 'b' * 64,
+            'inventory': inventory_data or migration.inventory(self.repo), 'skip': skip,
+            'stage_identity': {'archive': 'b' * 64, 'driver': 'c' * 64,
+                               'toolchain': 'container@sha256:test',
+                               'executables': {'PYTHON': ['/usr/bin/python3', 'd' * 64]}},
+            'driver_sha256': 'e' * 64,
+            'checks': checks or {'validate.sh': 'f' * 64},
             'manifest_sha256': migration.digest(folder / 'manifest.json')})
         return folder / 'report.json'
 
     def test_compare_and_tamper_detection(self):
         a = self.report(self.root / 'a', {'file': {'mode': 0o644}})
-        b = self.report(self.root / 'b', {'file': {'mode': 0o644}})
+        b = self.report(self.root / 'b', {'file': {'mode': 0o644}}, skip=NAME)
         with contextlib.redirect_stdout(io.StringIO()):
             migration.compare(a, b)
         migration.write_json(b.parent / 'manifest.json', {'file': {'mode': 0o755}})
         with self.assertRaisesRegex(ValueError, 'manifest changed'):
             migration.compare(a, b)
-        migration.write_json(b, {'manifest_sha256': migration.digest(b.parent / 'manifest.json')})
+        report = json.loads(b.read_text())
+        report['manifest_sha256'] = migration.digest(b.parent / 'manifest.json')
+        migration.write_json(b, report)
         with self.assertRaisesRegex(ValueError, 'differing'):
             migration.compare(a, b)
+
+    def test_compare_rejects_incompatible_metadata(self):
+        a = self.report(self.root / 'a', {'file': {'mode': 0o644}})
+        b = self.report(self.root / 'b', {'file': {'mode': 0o644}}, skip=NAME,
+                        checks={'validate.sh': '0' * 64})
+        with self.assertRaisesRegex(ValueError, 'checks differ'):
+            migration.compare(a, b)
+
+    def test_compare_rejects_invalid_transition(self):
+        a = self.report(self.root / 'a', {'file': {'mode': 0o644}})
+        changed = json.loads(json.dumps(migration.inventory(self.repo)))
+        changed['patches'][0]['sha256'] = '1' * 64
+        b = self.report(self.root / 'b', {'file': {'mode': 0o644}}, changed)
+        with self.assertRaisesRegex(ValueError, 'remove exactly one'):
+            migration.compare(a, b)
+
+    def test_validate_patches_rejects_empty_option_values(self):
+        script = self.patches / 'validate_patches.sh'
+        shutil.copyfile(Path(__file__).resolve().parents[3] / migration.PACKAGE /
+                        'rootfs-patches' / 'validate_patches.sh', script)
+        script.chmod(0o755)
+        for option in ('--skip-patch', '--result-dir'):
+            with self.subTest(option=option):
+                result = subprocess.run(['bash', script, self.root, option, ''],
+                                        text=True, capture_output=True)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('invalid option value: ' + option, result.stderr)
 
     def test_manifest_records_modes_and_links(self):
         folder = self.root / 'tree'
@@ -184,12 +222,18 @@ class MigrationTest(unittest.TestCase):
             'html_url': 'https://github.com/OpenCCU/OpenCCU-Base/pull/40',
             'base': {'ref': 'main', 'repo': {'full_name': 'OpenCCU/OpenCCU-Base'}}})
         return argparse.Namespace(patch='0001', merge_receipt=receipt, base_repo=base,
-                                  archive=archive), old, new
+                                  buildroot=self.root, archive=archive, cache=None), old, new
+
+    def run_cleanup(self, args, canonical=None):
+        generated = canonical or args.archive
+        with patch.object(migration, 'canonical_archive',
+                          return_value=(generated, self.root / 'archive.log')):
+            return migration.cleanup(self.repo, args)
 
     def test_cleanup_success(self):
         args, old, new = self.cleanup_fixture()
         with contextlib.redirect_stdout(io.StringIO()):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
         self.assertEqual(migration.pin(self.repo), new)
         self.assertFalse((self.patches / NAME).exists())
         self.assertFalse((self.patches / NAME[:-6]).exists())
@@ -203,7 +247,7 @@ class MigrationTest(unittest.TestCase):
         data['merged'] = False
         migration.write_json(args.merge_receipt, data)
         with self.assertRaisesRegex(ValueError, 'not merged'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
         self.assertEqual(migration.git(self.repo, 'status', '--porcelain'), '')
 
     def test_cleanup_wrong_repo(self):
@@ -212,13 +256,13 @@ class MigrationTest(unittest.TestCase):
         data['base']['repo']['full_name'] = 'another/repo'
         migration.write_json(args.merge_receipt, data)
         with self.assertRaisesRegex(ValueError, 'unexpected'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
 
     def test_cleanup_dirty_worktree(self):
         args, old, new = self.cleanup_fixture()
         (self.patches / NAME).write_text('changed')
         with self.assertRaisesRegex(ValueError, 'clean worktree'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
 
     def test_cleanup_wrong_archive_contents(self):
         args, old, new = self.cleanup_fixture()
@@ -226,7 +270,7 @@ class MigrationTest(unittest.TestCase):
             tar.add(args.base_repo / 'licenses/test.txt',
                     arcname=f'openccu-base-{new}/licenses/test.txt')
         with self.assertRaisesRegex(ValueError, 'do not match'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
         self.assertEqual(migration.pin(self.repo), old)
         self.assertEqual(migration.git(self.repo, 'status', '--porcelain'), '')
 
@@ -235,13 +279,13 @@ class MigrationTest(unittest.TestCase):
         migration.write_json(self.repo / migration.STATE, {'in_progress': {'patch': 'other'}})
         self.commit(self.repo)
         with self.assertRaisesRegex(ValueError, 'preceding migration'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
 
     def test_cleanup_protected_branch(self):
         args, old, new = self.cleanup_fixture()
         migration.git(self.repo, 'branch', '-M', 'main')
         with self.assertRaisesRegex(ValueError, 'dedicated cleanup branch'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
 
     def test_cleanup_preserves_ignored_workspace_file(self):
         args, old, new = self.cleanup_fixture()
@@ -250,7 +294,7 @@ class MigrationTest(unittest.TestCase):
         extra = self.patches / NAME[:-6] / 'notes.private'
         extra.write_text('keep me')
         with self.assertRaisesRegex(ValueError, 'untracked file'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
         self.assertEqual(extra.read_text(), 'keep me')
         self.assertEqual(migration.pin(self.repo), old)
 
@@ -260,7 +304,7 @@ class MigrationTest(unittest.TestCase):
                              {'completed': [{'patch': NAME}], 'in_progress': None})
         self.commit(self.repo)
         with self.assertRaisesRegex(ValueError, 'already recorded'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
 
     def test_cleanup_rejects_unrelated_pr(self):
         args, old, new = self.cleanup_fixture()
@@ -268,7 +312,18 @@ class MigrationTest(unittest.TestCase):
         data['body'] = 'A different change'
         migration.write_json(args.merge_receipt, data)
         with self.assertRaisesRegex(ValueError, 'does not name'):
-            migration.cleanup(self.repo, args)
+            self.run_cleanup(args)
+
+    def test_cleanup_rejects_noncanonical_archive(self):
+        args, old, new = self.cleanup_fixture()
+        canonical = self.root / 'canonical.tar.gz'
+        shutil.copyfile(args.archive, canonical)
+        with canonical.open('ab') as stream:
+            stream.write(b'not-the-buildroot-archive')
+        with self.assertRaisesRegex(ValueError, 'not the canonical'):
+            self.run_cleanup(args, canonical)
+        self.assertEqual(migration.pin(self.repo), old)
+        self.assertEqual(migration.git(self.repo, 'status', '--porcelain'), '')
 
 
 if __name__ == '__main__':

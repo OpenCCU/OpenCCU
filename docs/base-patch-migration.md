@@ -122,12 +122,15 @@ On a clean, dedicated OpenCCU cleanup branch:
 python3 scripts/base-patch-migration.py prepare-cleanup PATCH_NUMBER \
   --merge-receipt /path/to/base-pr.json \
   --base-repo /path/to/OpenCCU-Base \
+  --buildroot /path/to/buildroot \
   --archive /path/to/merge-commit.tar.gz
 ```
 
-This checks the Base repository/branch, merge state, patch name, ancestry,
-archive contents against the actual Git commit, unchanged license hashes and
-clean worktree. It removes only the selected patch and its tracked workspace,
+This independently regenerates the canonical Buildroot `git4` archive and
+requires `--archive` to have exactly the same SHA256. It then checks the Base
+repository/branch, merge state, patch name, ancestry, archive contents against
+the actual Git commit, unchanged license hashes and clean worktree. It removes
+only the selected patch and its tracked workspace,
 updates pin/hash/series/index and records an in-progress cleanup in the state.
 Deleted patch files remain recoverable from Git. It refuses a second active
 migration. Its success means **prepared, not validated**.
@@ -153,11 +156,14 @@ and regenerate/check its patch; investigate any unrelated changes.
    document, the small state file and `status`; load only the selected index
    entry. Always recheck live HEADs before writes.
 
-The previous baseline report is reusable only for the same source archive,
-patch contents/order, preparation scripts and toolchain. Otherwise regenerate
-it. Without an immutable toolchain identity, reuse it only within the same
-unchanged working environment. Do not infer validity merely from the patch
-count or branch name.
+Comparison accepts only two report transitions: an unchanged patch inventory
+where the candidate skips one baseline patch, or a cleanup inventory that
+removes exactly that one patch. In both cases the validation driver, checks,
+patch contents/order (apart from that removal), preparation scripts and
+toolchain must match. The candidate archive may differ because it contains the
+native Base change. Without an immutable toolchain identity, reuse reports only
+within the same unchanged working environment. Do not infer validity merely
+from the patch count or branch name.
 
 ## Tests
 

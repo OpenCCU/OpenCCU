@@ -291,46 +291,136 @@ def validate(repo, args):
             'stage_reused': reused, 'report': str(work / 'report.json'), 'log': str(log)})
 
 
+def read_report(report):
+    """Read a complete validation receipt and its bound result manifest."""
+    data = json.loads(report.read_text())
+    require(data.get('schema') == 1, f'unsupported report schema: {report}')
+    for key, pattern in [('commit', SHA), ('archive_sha256', re.compile(r'[0-9a-f]{64}')),
+                         ('driver_sha256', re.compile(r'[0-9a-f]{64}')),
+                         ('manifest_sha256', re.compile(r'[0-9a-f]{64}'))]:
+        require(isinstance(data.get(key), str) and pattern.fullmatch(data[key]),
+                f'invalid report {key}: {report}')
+    require(data.get('skip') is None or isinstance(data.get('skip'), str),
+            f'invalid report skip: {report}')
+    inventory_data = data.get('inventory')
+    require(isinstance(inventory_data, dict) and inventory_data.get('schema') == 1
+            and isinstance(inventory_data.get('series_sha256'), str)
+            and re.fullmatch(r'[0-9a-f]{64}', inventory_data['series_sha256'])
+            and isinstance(inventory_data.get('patches'), list),
+            f'invalid report inventory: {report}')
+    patch_names = []
+    for entry in inventory_data['patches']:
+        require(isinstance(entry, dict) and PATCH.fullmatch(entry.get('patch', ''))
+                and isinstance(entry.get('sha256'), str)
+                and re.fullmatch(r'[0-9a-f]{64}', entry['sha256'])
+                and isinstance(entry.get('files'), list)
+                and all(isinstance(path, str) for path in entry['files'])
+                and isinstance(entry.get('added'), int) and isinstance(entry.get('removed'), int),
+                f'invalid report patch entry: {report}')
+        patch_names.append(entry['patch'])
+    require(len(patch_names) == len(set(patch_names)), f'duplicate report patch: {report}')
+    identity = data.get('stage_identity')
+    require(isinstance(identity, dict) and set(identity) == {'archive', 'driver', 'toolchain', 'executables'}
+            and all(isinstance(identity.get(key), str)
+                    and re.fullmatch(r'[0-9a-f]{64}', identity[key])
+                    for key in ('archive', 'driver'))
+            and (identity['toolchain'] is None or isinstance(identity['toolchain'], str))
+            and isinstance(identity['executables'], dict),
+            f'invalid report staging identity: {report}')
+    require(all(isinstance(name, str) and isinstance(value, list) and len(value) == 2
+                and isinstance(value[0], str) and isinstance(value[1], str)
+                and re.fullmatch(r'[0-9a-f]{64}', value[1])
+                for name, value in identity['executables'].items()),
+            f'invalid report executables: {report}')
+    checks = data.get('checks')
+    require(isinstance(checks, dict) and checks
+            and all(isinstance(name, str) and isinstance(value, str)
+                    and re.fullmatch(r'[0-9a-f]{64}', value) for name, value in checks.items()),
+            f'invalid report checks: {report}')
+    path = report.parent / 'manifest.json'
+    require(digest(path) == data['manifest_sha256'], f'manifest changed: {path}')
+    return data, json.loads(path.read_text())
+
+
+def compare_transition(baseline, candidate):
+    """Allow only a candidate skip or the ensuing one-patch cleanup transition."""
+    require(baseline['skip'] is None, 'baseline report must not skip a patch')
+    require(baseline['driver_sha256'] == candidate['driver_sha256'],
+            'validation driver differs')
+    require(baseline['checks'] == candidate['checks'], 'validation checks differ')
+    left_identity = dict(baseline['stage_identity'])
+    right_identity = dict(candidate['stage_identity'])
+    left_identity.pop('archive')
+    right_identity.pop('archive')
+    require(left_identity == right_identity, 'preparation or toolchain identity differs')
+    original = baseline['inventory']['patches']
+    changed = candidate['inventory']['patches']
+    original_names = [entry['patch'] for entry in original]
+    changed_names = [entry['patch'] for entry in changed]
+    if candidate['skip'] is not None:
+        require(candidate['inventory'] == baseline['inventory'],
+                'candidate skip requires identical patch contents and order')
+        require(candidate['skip'] in original_names,
+                'candidate skip is not in the baseline inventory')
+        return {'kind': 'candidate-skip', 'patch': candidate['skip']}
+    removed = [name for name in original_names if name not in changed_names]
+    require(len(removed) == 1 and changed_names == [name for name in original_names if name != removed[0]],
+            'cleanup comparison must remove exactly one patch from the series')
+    require(changed == [entry for entry in original if entry['patch'] != removed[0]],
+            'cleanup comparison changed a patch besides the removed patch')
+    return {'kind': 'cleanup-removal', 'patch': removed[0]}
+
+
 def compare(left, right):
-    states = []
-    for report in (left, right):
-        data = json.loads(report.read_text())
-        path = report.parent / 'manifest.json'
-        require(digest(path) == data['manifest_sha256'], f'manifest changed: {path}')
-        states.append(json.loads(path.read_text()))
+    baseline, left_state = read_report(left)
+    candidate, right_state = read_report(right)
+    transition = compare_transition(baseline, candidate)
+    states = [left_state, right_state]
     differences = sorted(k for k in states[0].keys() | states[1].keys()
                          if states[0].get(k) != states[1].get(k))
     require(not differences, f'{len(differences)} differing entries; first 10: {differences[:10]}')
-    output({'result': 'IDENTICAL', 'entries': len(states[0])})
+    output({'result': 'IDENTICAL', 'entries': len(states[0]), 'transition': transition})
 
 
-def archive(repo, args):
-    require(SHA.fullmatch(args.commit), 'use a full commit SHA')
+def check_buildroot(repo, buildroot):
+    """Check that Buildroot can create the git4 archive OpenCCU will consume."""
     expected_version = re.search(r'^BUILDROOT_VERSION=(\S+)$',
                                  (repo / 'Makefile').read_text(), re.M)
     actual_version = re.search(r'^export BR2_VERSION := (\S+)$',
-                               (args.buildroot / 'Makefile').read_text(), re.M)
+                               (buildroot / 'Makefile').read_text(), re.M)
     require(expected_version and actual_version
             and expected_version[1] == actual_version[1], 'Buildroot version mismatch')
     require(re.search(r'^BR_FMT_VERSION_git\s*=\s*-git4\s*$',
-                      (args.buildroot / 'package/pkg-download.mk').read_text(), re.M),
+                      (buildroot / 'package/pkg-download.mk').read_text(), re.M),
             'unsupported Buildroot Git archive format')
-    require(git(args.base_repo, 'rev-parse', args.commit + '^{commit}') == args.commit,
+    require((buildroot / 'support/download/dl-wrapper').is_file(),
+            'Buildroot download wrapper not found')
+
+
+def canonical_archive(repo, base_repo, buildroot, commit, cache):
+    """Create the exact git4 archive format expected by the package hash file."""
+    require(SHA.fullmatch(commit), 'use a full commit SHA')
+    check_buildroot(repo, buildroot)
+    require(git(base_repo, 'rev-parse', commit + '^{commit}') == commit,
             'Base commit is not available locally')
-    cache = cache_directory(repo, args.cache)
-    work = Path(tempfile.mkdtemp(prefix='archive-', dir=cache))
+    work = Path(tempfile.mkdtemp(prefix='archive-', dir=cache_directory(repo, cache)))
     download = work / 'download'
-    name = f'openccu-base-{args.commit}-git4.tar.gz'
+    name = f'openccu-base-{commit}-git4.tar.gz'
     env = os.environ.copy()
     env.update(BUILD_DIR=str(work / 'build'), BR_NO_CHECK_HASH_FOR=name, GIT='git', TAR='tar')
     (work / 'build').mkdir()
-    run([args.buildroot.resolve() / 'support/download/dl-wrapper', '-q', '-c', args.commit,
+    run([buildroot.resolve() / 'support/download/dl-wrapper', '-q', '-c', commit,
          '-d', download, '-D', work, '-f', name, '-H', repo / PACKAGE / 'openccu-base.hash',
-         '-n', f'openccu-base-{args.commit}', '-N', 'openccu-base', '-o', work / name,
-         '-u', 'git+' + args.base_repo.resolve().as_uri()], work / 'archive.log', env,
-        args.buildroot.resolve())
-    output({'archive': str(work / name), 'sha256': digest(work / name),
-            'commit': args.commit, 'log': str(work / 'archive.log')})
+         '-n', f'openccu-base-{commit}', '-N', 'openccu-base', '-o', work / name,
+         '-u', 'git+' + base_repo.resolve().as_uri()], work / 'archive.log', env,
+        buildroot.resolve())
+    return work / name, work / 'archive.log'
+
+
+def archive(repo, args):
+    generated, log = canonical_archive(repo, args.base_repo, args.buildroot, args.commit, args.cache)
+    output({'archive': str(generated), 'sha256': digest(generated),
+            'commit': args.commit, 'log': str(log)})
 
 
 def merged_base(receipt):
@@ -359,10 +449,14 @@ def cleanup(repo, args):
     require(git(args.base_repo, 'merge-base', old, new) == old,
             'merge commit must descend from the current pin')
     require(selected['patch'] in receipt.get('body', ''), 'Base PR does not name the selected patch')
+    generated, _ = canonical_archive(repo, args.base_repo, args.buildroot, new, args.cache)
+    archive_hash = digest(generated)
+    require(digest(args.archive) == archive_hash,
+            'provided archive is not the canonical Buildroot git4 archive')
     # Validate archive structure and license hashes before touching tracked files.
     with tempfile.TemporaryDirectory(prefix='openccu-cleanup-') as temp:
         source = Path(temp) / 'source'
-        extract(args.archive, source, new)
+        extract(generated, source, new)
         verify_source_git(source, args.base_repo, new)
         for name, value in hashes(repo).items():
             if name.startswith('licenses/'):
@@ -376,7 +470,6 @@ def cleanup(repo, args):
     tracked = set(git(repo, 'ls-files').splitlines())
     require(all(p.relative_to(repo).as_posix() in tracked for p in paths if p.is_file()),
             'untracked file in patch workspace')
-    archive_hash = digest(args.archive)
     mk = repo / PACKAGE / 'openccu-base.mk'
     hashfile = repo / PACKAGE / 'openccu-base.hash'
     oldname = f'openccu-base-{old}-git4.tar.gz'
@@ -434,7 +527,9 @@ def main():
     prepare.add_argument('patch')
     prepare.add_argument('--merge-receipt', required=True, type=Path)
     prepare.add_argument('--base-repo', required=True, type=Path)
+    prepare.add_argument('--buildroot', required=True, type=Path)
     prepare.add_argument('--archive', required=True, type=Path)
+    prepare.add_argument('--cache')
     args = parser.parse_args()
     repo = args.repo.resolve()
     if args.command in ('status', 'index', 'inspect', 'candidates'):
