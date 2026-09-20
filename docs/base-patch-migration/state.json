@@ -23,18 +23,18 @@
       "base_pr": 41,
       "cleanup_pr": 4210,
       "patch": "0142-WebUI-Fix-StartpageGuestTranslate.patch"
+    },
+    {
+      "base_merge_commit": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
+      "base_pr": 42,
+      "cleanup_pr": 4213,
+      "patch": "0101-WebUI-Fix-JSON-describe.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
-    "base_pr": 42,
-    "cleanup_pr": 4213,
-    "patch": "0101-WebUI-Fix-JSON-describe.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
   "schema": 1,
-  "verified_at_openccu_commit": "0a66b3ec086a261ebae2297b8ccbf9bfaae7eda6",
-  "verified_base_pin": "8fbd62ed8790b5e8ad9a9d771cf2ea1818112b25",
-  "verified_source_sha256": "fd45e4188765199fae8830fa1d709758af7dcb83b2ee1d951c7d3b624edaed74"
+  "verified_at_openccu_commit": "e4a2a9bbaa7b18b507e84083d4fa6cd7e078779a",
+  "verified_base_pin": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
+  "verified_source_sha256": "c378dce97d417e825e780f0f91dbc67e90ba661a2c05b08e3f92a1a1c610334c"
 }
