@@ -228,7 +228,7 @@ index 00000000..013cc3e3
 +#endif
 diff --git a/src/hss_led/LedController.cpp b/src/hss_led/LedController.cpp
 new file mode 100644
-index 00000000..4e1fe094
+index 00000000..c61a3cb4
 --- /dev/null
 +++ b/src/hss_led/LedController.cpp
 @@ -0,0 +1,686 @@
@@ -584,7 +584,7 @@ index 00000000..4e1fe094
 +  bool apply(const Pattern& p, unsigned mask) {
 +    if (name == "rgb") {
 +      if (kernelBlink(p)) {
-+        if (!setColor(mask)) return false;
++        if (!setColor(p.a)) return false;
 +        auto triggers = words(readText(rgb + "/trigger"));
 +        bool selected = std::find(triggers.begin(), triggers.end(), "[timer]") != triggers.end();
 +#ifdef LED_TEST_BUILD
@@ -1366,10 +1366,10 @@ index 0ab90bdb..773dab8d 100644
 -
 diff --git a/src/hss_led/tests/LedControllerTest.cpp b/src/hss_led/tests/LedControllerTest.cpp
 new file mode 100644
-index 00000000..25047c09
+index 00000000..cb3e6bec
 --- /dev/null
 +++ b/src/hss_led/tests/LedControllerTest.cpp
-@@ -0,0 +1,247 @@
+@@ -0,0 +1,250 @@
 +// SPDX-License-Identifier: Apache-2.0
 +// Exercise the actual parser/state/backend code without creating sockets.
 +// Build: c++ -std=c++11 -Wall -Wextra -Werror tests.cpp -o led-state-test
@@ -1508,11 +1508,14 @@ index 00000000..25047c09
 +    check(readText(rgb + "/trigger") == "timer\n" && readText(rgb + "/delay_on") == "100\n");
 +    // A timer attribute may not be writable until udev handles TRIGGER.
 +    // Retrying must preserve the active trigger and its current off phase.
++    // The backend must use the configured on-color even with an off-phase mask.
 +    unlink((rgb + "/delay_on").c_str());
-+    check(!backend.apply(blink, 5));
++    check(!backend.apply(blink, 0));
 +    put(rgb + "/brightness", "0");
 +    put(rgb + "/delay_on", "0");
-+    check(backend.apply(blink, 5));
++    check(backend.apply(blink, 0));
++    check(readText(rgb + "/multi_intensity") == "255 255 0\n");
++    check(readText(rgb + "/trigger") == "timer\n");
 +    check(readText(rgb + "/brightness") == "0\n");
 +    check(backend.apply(p, p.a) && backend.setColor(p.b));
 +    check(readText(rgb + "/multi_intensity") == "0 255 0\n");

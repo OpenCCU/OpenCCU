@@ -158,14 +158,16 @@ else:
         script = self.root / "init"
         daemon = self.root / "hss_led"
         client = self.root / "hss_ledctl"
+        runtime = self.root / "hss-led-runtime"
         script.write_text(INIT.read_text().replace("/bin/$DAEMON", str(daemon))
-                          .replace("/bin/hss_ledctl", str(client)))
+                          .replace("/bin/hss_ledctl", str(client))
+                          .replace('RUNTIME="/var/run/hss_led"', f'RUNTIME="{runtime}"'))
         for missing in ("hss_led", "hss_ledctl"):
             with self.subTest(missing=missing):
                 result = subprocess.run(["/bin/sh", str(script), "start"], text=True, capture_output=True)
                 self.assertEqual(result.returncode, 1)
                 self.assertIn(missing + " is missing or not executable", result.stderr)
-                self.assertFalse(self.state.exists())
+                self.assertFalse(runtime.exists())
             daemon.write_text("#!/bin/sh\nexit 0\n")
             daemon.chmod(0o755)
 
