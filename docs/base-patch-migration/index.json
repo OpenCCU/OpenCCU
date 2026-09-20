@@ -1250,15 +1250,6 @@
       "sha256": "327019918e08c0ab448b2b62de1b4e54041eb31071f858f8441f5bb654928cf8"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/pages/tabs/guest/startpageguest.htm"
-      ],
-      "patch": "0142-WebUI-Fix-StartpageGuestTranslate.patch",
-      "removed": 0,
-      "sha256": "d22c452f20388e8592257986b4c498ce0f3f26acebc79da60a4508db20a682bf"
-    },
-    {
       "added": 58,
       "files": [
         "www/rega/esp/controls/weather_sensor.fn",
@@ -1904,5 +1895,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "5a29c791c98df6a1f6e4c8f6b6ef560a651a9e708477b2d3170a426030799a51"
+  "series_sha256": "afcf0f267adc064ba2931e518721b5be2d6ec7bf65a2c15f7bef49529ee4f363"
 }

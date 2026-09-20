@@ -1,28 +1,34 @@
 {
+  "completed": [
+    {
+      "base_merge_commit": "81eb8370d4b5855ad4e179827fb168028af8d825",
+      "base_pr": 38,
+      "cleanup_pr": 4205,
+      "patch": "0110-WebUI-Fix-cp_software-Typo.patch"
+    },
+    {
+      "base_merge_commit": "b3064f381dd192e3a2dbb16a7204b4d407180759",
+      "base_pr": 39,
+      "cleanup_pr": 4206,
+      "patch": "0107-WebUI-Fix-rgbw.fn-CheckMetaDataIsNotNULL.patch"
+    },
+    {
+      "base_merge_commit": "587230316a97e380516b0ac4d21a497c187657cd",
+      "base_pr": 40,
+      "cleanup_pr": 4208,
+      "patch": "0112-WebUI-Fix-Typo-hmipChannelConfigDialogs.patch"
+    }
+  ],
+  "in_progress": {
+    "base_merge_commit": "8fbd62ed8790b5e8ad9a9d771cf2ea1818112b25",
+    "base_pr": 41,
+    "cleanup_pr": null,
+    "patch": "0142-WebUI-Fix-StartpageGuestTranslate.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
+  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
   "schema": 1,
   "verified_at_openccu_commit": "ed67549a30c41315f570f70a8909b04dfd519d94",
   "verified_base_pin": "587230316a97e380516b0ac4d21a497c187657cd",
-  "verified_source_sha256": "163abd29713dbe194feb1ac07a1dd6366bc0e629e53ba7923908d57d009f0b43",
-  "completed": [
-    {
-      "patch": "0110-WebUI-Fix-cp_software-Typo.patch",
-      "base_pr": 38,
-      "base_merge_commit": "81eb8370d4b5855ad4e179827fb168028af8d825",
-      "cleanup_pr": 4205
-    },
-    {
-      "patch": "0107-WebUI-Fix-rgbw.fn-CheckMetaDataIsNotNULL.patch",
-      "base_pr": 39,
-      "base_merge_commit": "b3064f381dd192e3a2dbb16a7204b4d407180759",
-      "cleanup_pr": 4206
-    },
-    {
-      "patch": "0112-WebUI-Fix-Typo-hmipChannelConfigDialogs.patch",
-      "base_pr": 40,
-      "base_merge_commit": "587230316a97e380516b0ac4d21a497c187657cd",
-      "cleanup_pr": 4208
-    }
-  ],
-  "in_progress": null,
-  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected."
+  "verified_source_sha256": "163abd29713dbe194feb1ac07a1dd6366bc0e629e53ba7923908d57d009f0b43"
 }
