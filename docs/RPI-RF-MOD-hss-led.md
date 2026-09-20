@@ -3,8 +3,8 @@
 This cumulative follow-up patch applies to OpenCCU PR #4204 at
 `7a8af61fd9f4730c5693bc64af633686462a12e2`.
 It replaces the experimental `rpi-rf-mod-ledd` with the existing `hss_led` service.
-The embedded Base patch targets the PR's unchanged OpenCCU-Base version 3.89.11
-(`3ed652a404d72cbe403e37c5b8b1f610451b02fb`).
+The embedded Base patch targets OpenCCU-Base
+`587230316a97e380516b0ac4d21a497c187657cd`.
 
 ## Architecture and lifecycle
 
@@ -15,14 +15,17 @@ The embedded Base patch targets the PR's unchanged OpenCCU-Base version 3.89.11
   A slow status/RPC query cannot block LED timers or manual control.
 - `/bin/hss_ledctl` is a symlink to `/bin/hss_led`. This invocation only sends
   a command to the running service. `hss_led --led-control COMMAND...` is equivalent.
-- `S01hss_led` starts the controller before `S02InitRTC` and waits for its socket.
+- `S00hss_led` starts before the S01 host/gadget scripts and waits for its socket.
+  It reads `PLATFORM` directly from `/VERSION` to choose native/container execution;
+  it does not depend on `/var/hm_mode`. Filesystem mounting and linker-cache setup
+  still run in `rcS` first. Hardware output begins when the LED driver is available.
   `S06InitSystem` creates `/var/status/hssLedReady` at the former hss_led start
   point. Only then does the monitor read CCU configuration and receive UDP status
   messages. Automatic LED output still starts with the existing `auto` command
   in `S99SetupLEDs`.
 - Radio detection is refreshed in the monitor; the HB-RF path no longer restarts
   hss_led when the driver appears. The controller discovers replaced sysfs nodes.
-- Shutdown scripts retain control until `S01hss_led` stops. The controller handles
+- Shutdown scripts retain control until `S00hss_led` stops. The controller handles
   termination even if a status query is stalled. It closes its descriptors and
   ends the process without waiting for that thread; no shared globals are
   destroyed while the status thread might still access them.
@@ -35,7 +38,7 @@ patterns share a userspace timer. Separate legacy GPIO/USB writes are not
 physically atomic.
 
 The normal binary defaults to `Logger::LOG_INFO` when called directly.
-`S01hss_led` explicitly passes `-l 6` to retain OpenCCU's existing fatal-only
+`S00hss_led` explicitly passes `-l 6` to retain OpenCCU's existing fatal-only
 CCU logging policy; the minimal recovery binary accepts the same option.
 Missing daemon/client executables cause service startup to fail with a diagnostic.
 
@@ -92,14 +95,21 @@ and reboot; this patch does not perform a live migration of running daemons.
 
 ## Commands on the device
 
+Both normal and recovery builds provide `hss_led -h` / `--help`, with program
+version, build date/time and the supported options. `hss_ledctl -h` additionally
+explains targets, commands, colors and durations. Both commands also accept
+`-V` / `--version`. Help/version exit successfully without starting the daemon
+or connecting to its control socket. Build timestamps use the compiler's
+`__DATE__` / `__TIME__` macros, as supported by reproducible toolchains.
+
 ```sh
-hss_ledctl --led rpi-rf-mod alternate blue red 499
+hss_ledctl --led rpi-rf-mod alternate blue red slow
 hss_ledctl --led rpi-rf-mod alternate green yellow 250 750
-hss_ledctl --led rpi-rf-mod magenta 100
+hss_ledctl --led rpi-rf-mod magenta fast
 hss_ledctl --led rpi-rf-mod green
 hss_ledctl --led rpi-rf-mod release
 hss_ledctl --led rpi-rf-mod status
-/etc/init.d/S01hss_led restart
+/etc/init.d/S00hss_led restart
 ```
 
 Color/alternate commands return after acknowledgment and keep running in hss_led.
@@ -117,16 +127,16 @@ saved pattern at its first phase; it does not preserve the exact phase timestamp
 ## Explicit board LED targets
 
 Every target-specific command requires `--led NAME`, including `status`,
-`release` and `auto`. There is no implicit default. Only `list` and `--help`
-(or `-h`) work without target selection. `--led rpi-rf-mod` selects the radio
+`release` and `auto`. There is no implicit default. Only `list`, `--help`
+(or `-h`) and `--version` (or `-V`) work without target selection. `--led rpi-rf-mod` selects the radio
 LED's RGB/legacy backend. To address a separate LED, use its exact basename
 from `/sys/class/leds`, as shown by `list`:
 
 ```sh
 hss_ledctl --help
 hss_ledctl list
-hss_ledctl --led rpi-rf-mod alternate blue red 499
-hss_ledctl --led ACT blink 100 900
+hss_ledctl --led rpi-rf-mod alternate blue red slow
+hss_ledctl --led ACT blink fast 900
 hss_ledctl --led ACT trigger heartbeat
 hss_ledctl --led 'green:' on
 hss_ledctl --led 'blue:status' off
@@ -142,7 +152,11 @@ controllable; a hardwired power indicator is not.
 
 Scalar targets accept `on`, `off`, `brightness LEVEL`, `blink ON_MS [OFF_MS]`,
 `trigger NAME` and `status`. Brightness is checked against `max_brightness`.
-The optional OFF_MS defaults to ON_MS; durations must be 1..86400000 ms.
+All MS arguments accept a numeric value or `slow` (500 ms) / `fast` (100 ms),
+including both phases of `alternate` and `blink`. Numeric and named durations
+can be mixed. The optional OFF_MS defaults to ON_MS; durations must be
+1..86400000 ms for these commands. Radio `COLOR 0` remains a steady color.
+Automatic CCU status patterns use the same 500/100 ms constants.
 Blink uses the kernel `timer` trigger and requires it to be available; no
 software timer or extra process is created for board LEDs. Other triggers must
 be offered by that LED. `on`/`off`/`brightness` switch its trigger to `none`.
@@ -194,7 +208,7 @@ The Base CMake option `HSS_LED_BUILD_TESTS=ON` adds `hss_led_state_test` and the
 CTest entry `hss_led_state`, for both normal and LED-only builds.
 
 Checked while preparing this patch: native normal and LED-only builds, controller
-unit tests (237 assertions), Buildroot normal/recovery configuration and package selection,
+unit tests (248 assertions), Buildroot normal/recovery configuration and package selection,
 package lint, shell syntax, and application of both outer and embedded patches.
 
 Not verified here: real Unix-socket process tests (the execution environment

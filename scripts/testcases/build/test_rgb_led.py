@@ -16,7 +16,7 @@ PATCH = ROOT / "buildroot-external/package/openccu-base/0001-OpenCCU-Base-led-se
 
 def extract_sources(destination):
     """Use the actual new Base sources embedded in the package patch."""
-    expected = {"LedController.cpp", "LedController.h", "LedProtocol.h",
+    expected = {"LedCli.h", "LedController.cpp", "LedController.h", "LedProtocol.h",
                 "LedOnlyMain.cpp", "RgbLed.h", "StatusCommand.h", "tests/LedControllerTest.cpp",
                 "tests/StatusProducer.cpp"}
     found = set()
@@ -55,6 +55,38 @@ class ControllerStateTest(unittest.TestCase):
                 if line.startswith("fixture=/tmp/led-state-test-"):
                     shutil.rmtree(line[len("fixture="):])
 
+
+
+class CliHelpTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="hss-help-test-")
+        cls.addClassCleanup(cls.temp.cleanup)
+        source = pathlib.Path(cls.temp.name)
+        extract_sources(source)
+        cls.binary = source / "hss_led"
+        cls.client = source / "hss_ledctl"
+        cls.client.symlink_to(cls.binary.name)
+        subprocess.run([os.environ.get("CXX", "g++"), "-std=c++11", "-pthread",
+                        "-Wall", "-Wextra", "-Werror", "-DLED_TEST_BUILD",
+                        str(source / "LedController.cpp"), str(source / "LedOnlyMain.cpp"),
+                        "-o", str(cls.binary)], check=True)
+
+    def test_help_and_version_work_without_daemon_or_socket(self):
+        for binary in (self.binary, self.client):
+            for flag in ("-h", "--help", "-V", "--version"):
+                with self.subTest(program=binary.name, flag=flag):
+                    result = subprocess.run([str(binary), flag], check=True, capture_output=True, text=True)
+                    self.assertRegex(result.stdout, binary.name + r" \d+\.\d+ \(built .+ \d{2}:\d{2}:\d{2}\)")
+                    self.assertEqual(result.stderr, "")
+                    if flag in ("-h", "--help"):
+                        self.assertIn("Usage:", result.stdout)
+                        if binary == self.client:
+                            self.assertIn("slow (=500)", result.stdout)
+                            self.assertIn("fast (=100)", result.stdout)
+                            self.assertIn("--led NAME", result.stdout)
+                    else:
+                        self.assertNotIn("Usage:", result.stdout)
 
 
 class LedServiceTest(unittest.TestCase):

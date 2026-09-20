@@ -18,7 +18,7 @@ start() {
 
     if [[ -L /usr/local/.firmwareUpdate ]]; then
       # fast blink magenta
-      SPEED=100
+      SPEED=fast
     else
       # Everything startup up fine!
       # constant magenta

@@ -23,7 +23,7 @@ init_rtc_device() {
     # be present, thus we setup the LED GPIOs to show a
     # slowly blinking magenta light
     if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
-      /bin/hss_ledctl --led rpi-rf-mod system magenta 499
+      /bin/hss_ledctl --led rpi-rf-mod system magenta slow
     fi
 
     # in addition, we load the dummy_rx8130 kernel module so

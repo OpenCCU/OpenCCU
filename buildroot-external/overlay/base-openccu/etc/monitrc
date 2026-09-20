@@ -26,9 +26,9 @@ check program hw-watchdogEnabled with path "/usr/bin/test -c /dev/watchdog"
 # hss_led service monitoring
 check process hss_led with pidfile /var/run/hss_led.pid
     group homematic
-    start = "/etc/init.d/S01hss_led start"
-    stop = "/etc/init.d/S01hss_led stop"
-    restart = "/etc/init.d/S01hss_led restart"
+    start = "/etc/init.d/S00hss_led start"
+    stop = "/etc/init.d/S00hss_led stop"
+    restart = "/etc/init.d/S00hss_led restart"
     #if failed port 8182 type udp for 5 cycles then restart
     if not exist for 1 cycles then restart
     if 1 restart within 1 cycles then

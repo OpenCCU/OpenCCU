@@ -115,7 +115,7 @@ start() {
   # make sure the system is properly initialized
   init_system
 
-  # hss_led is already running from S01hss_led. Enable its CCU status
+  # hss_led is already running from S00hss_led. Enable its CCU status
   # monitor only after the user configuration is ready.
   touch /var/status/hssLedReady
 
@@ -136,7 +136,7 @@ start() {
 stop() {
   echo -n "Cleaning up System: "
 
-  # S01hss_led stops the controller after the shutdown LED commands.
+  # S00hss_led stops the controller after the shutdown LED commands.
 
   echo "OK"
 }

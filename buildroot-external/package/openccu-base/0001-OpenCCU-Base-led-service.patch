@@ -62,10 +62,18 @@ index d5c1e3a7..3bdfa5a6 100644
 +  add_test(NAME hss_led_state COMMAND hss_led_state_test)
 +endif()
 diff --git a/src/hss_led/InfoLed.cpp b/src/hss_led/InfoLed.cpp
-index 2ff66a53..5b10f61b 100644
+index 2ff66a53..0923239f 100644
 --- a/src/hss_led/InfoLed.cpp
 +++ b/src/hss_led/InfoLed.cpp
-@@ -19,9 +19,6 @@
+@@ -8,6 +8,7 @@
+ 
+ 
+ #include "InfoLed.h"
++#include "LedCli.h"
+ #include <utils.h>
+ #include <unistd.h>
+ #include <stdio.h>
+@@ -19,9 +20,6 @@
  
  InfoLed::InfoLed():
    #if defined(PLATFORM_CCU3)
@@ -75,7 +83,7 @@ index 2ff66a53..5b10f61b 100644
    rpiRfModFound(false),
    fullCCUFound(false),
    #else
-@@ -38,15 +35,6 @@ InfoLed::InfoLed():
+@@ -38,15 +36,6 @@ InfoLed::InfoLed():
    rflgwInfoLed()
  {
    #if defined(PLATFORM_CCU3)
@@ -91,7 +99,7 @@ index 2ff66a53..5b10f61b 100644
    // identify if we running on a production image or on
    // a full CCU
    struct stat buffer;
-@@ -121,20 +109,18 @@ void InfoLed::updateLedState() {
+@@ -121,20 +110,18 @@ void InfoLed::updateLedState() {
    //bool updateState = this->update.isInfoPending();
  
    // get old LED states
@@ -118,7 +126,7 @@ index 2ff66a53..5b10f61b 100644
    // calculate new LED states
    led::LedState newStateRed = led::UNKNOWN;
    led::LedState newStateGreen = led::UNKNOWN;
-@@ -253,17 +239,25 @@ void InfoLed::updateLedState() {
+@@ -253,17 +240,25 @@ void InfoLed::updateLedState() {
    }
  
    // set LEDs of a RPI-RF-MOD
@@ -144,7 +152,7 @@ index 2ff66a53..5b10f61b 100644
 +        if(states[i] == led::LED_ON) { first |= 1U << i; second |= 1U << i; }
 +        else if(states[i] == led::LED_SLOW || states[i] == led::LED_FAST)
 +        {
-+          period = states[i] == led::LED_SLOW ? 499 : 100;
++          period = states[i] == led::LED_SLOW ? LedCli::slowMs : LedCli::fastMs;
 +          if(starts[i]) second |= 1U << i;
 +          else first |= 1U << i;
 +        }
@@ -177,16 +185,58 @@ index 62899148..f3209833 100644
  	Network net;
  	bool rpiRfModFound;
  	bool fullCCUFound;
+diff --git a/src/hss_led/LedCli.h b/src/hss_led/LedCli.h
+new file mode 100644
+index 00000000..013cc3e3
+--- /dev/null
++++ b/src/hss_led/LedCli.h
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: Apache-2.0
++#ifndef OPENCCU_LED_CLI_H
++#define OPENCCU_LED_CLI_H
++#include <ostream>
++
++namespace LedCli {
++static const unsigned slowMs = 500;
++static const unsigned fastMs = 100;
++
++inline void version(std::ostream& out, const char* program, bool recovery = false) {
++  out << program << " 2.3 (built " << __DATE__ << " " << __TIME__ << ")";
++  if (recovery) out << " [recovery]";
++  out << '\n';
++}
++
++inline void daemonHelp(std::ostream& out, bool recovery = false) {
++  version(out, "hss_led", recovery);
++  out << (recovery ? "LED controller for recovery.\n" : "CCU status monitor and LED controller.\n")
++      << "\nUsage: hss_led [OPTIONS]\n"
++         "       hss_led --led-control COMMAND...\n\n"
++         "  -h, --help       Show this help and exit.\n"
++         "  -V, --version    Show version and build timestamp, then exit.\n"
++         "  --led-only       Run LED control without the CCU status monitor.\n";
++  if (!recovery) out << "  -c               Log to the console instead of syslog.\n";
++  out << "  -l LEVEL         Logging level from 0 to 6:\n"
++         "                   0=all, 1=debug, 2=info, 3=notice,\n"
++         "                   4=warning, 5=error, 6=fatal.\n";
++  out << (recovery ? "                   Accepted for shared init scripts; recovery errors use stderr.\n"
++                   : "                   Default: 2 (info).\n");
++  out << "  --led-control    Run a client command instead of starting a daemon.\n\n"
++         "The daemon stays in the foreground; the init script backgrounds it.\n"
++         "Use hss_ledctl --help for LED targets, colors and blink commands.\n";
++}
++}
++#endif
 diff --git a/src/hss_led/LedController.cpp b/src/hss_led/LedController.cpp
 new file mode 100644
-index 00000000..e6a4de0c
+index 00000000..4e1fe094
 --- /dev/null
 +++ b/src/hss_led/LedController.cpp
-@@ -0,0 +1,651 @@
+@@ -0,0 +1,686 @@
 +// SPDX-License-Identifier: Apache-2.0
 +// One controller for radio status and explicitly selected LED-class devices.
 +#include "LedProtocol.h"
 +#include "LedController.h"
++#include "LedCli.h"
 +#include <atomic>
 +#include <mutex>
 +#include <algorithm>
@@ -238,6 +288,11 @@ index 00000000..e6a4de0c
 +    n = n * 10 + unsigned(c - '0');
 +  }
 +  return true;
++}
++static bool duration(const std::string& s, unsigned& value) {
++  if (s == "slow") { value = LedCli::slowMs; return true; }
++  if (s == "fast") { value = LedCli::fastMs; return true; }
++  return number(s, value, maxDelay);
 +}
 +static std::vector<std::string> words(const std::string& s) {
 +  std::istringstream in(s);
@@ -759,7 +814,29 @@ index 00000000..e6a4de0c
 +    "       hss_ledctl --led NAME brightness LEVEL\n"
 +    "       hss_ledctl --led NAME blink ON_MS [OFF_MS]\n"
 +    "       hss_ledctl --led NAME trigger TRIGGER\n"
-+    "       hss_ledctl list\n";
++    "       hss_ledctl list\n"
++    "       hss_ledctl -h|--help|-V|--version\n\n"
++    "Targets: --led NAME is required except for list/help/version.\n"
++    "  rpi-rf-mod: the radio module's RGB or legacy LED group.\n"
++    "  Other NAME: an individual LED-class device shown by list.\n\n"
++    "Radio colors: off, red, green, yellow, blue, magenta, cyan, white.\n"
++    "  COLOR [MS]: steady color, or color/off blinking when MS > 0.\n"
++    "  alternate: switch between two colors; MS2 defaults to MS1.\n"
++    "  override (default): manual pattern; release returns to system/auto.\n"
++    "  system: set a boot/shutdown pattern and leave automatic mode.\n"
++    "  auto: use CCU status and clear manual overrides.\n"
++    "  off/stop: turn the LED off; these do not stop the daemon.\n\n"
++    "Individual LEDs: on/off, brightness LEVEL, blink ON_MS [OFF_MS],\n"
++    "  trigger NAME, status. Blink requires the kernel timer trigger.\n\n"
++    "Every MS argument accepts milliseconds, slow (=500), or fast (=100).\n"
++    "  Maximum: 86400000 ms. Alternate/blink require positive durations.\n"
++    "  COLOR 0 selects a steady color; unequal phase durations are allowed.\n\n"
++    "Commands return after acceptance; status shows pending hardware updates.\n"
++    "Control changes require root. The hss_led daemon must be running.\n\n"
++    "Examples:\n"
++    "  hss_ledctl --led rpi-rf-mod alternate blue red slow\n"
++    "  hss_ledctl --led rpi-rf-mod magenta fast\n"
++    "  hss_ledctl --led ACT blink fast slow\n";
 +static std::string makeRequest(std::vector<std::string> v) {
 +  if (v.empty()) throw std::runtime_error(usage);
 +  if (v[0] == "--led") {
@@ -773,8 +850,10 @@ index 00000000..e6a4de0c
 +          (v.size() == 2 && v[0] == "brightness" && number(v[1], a, UINT32_MAX)) ||
 +          (v.size() == 2 && v[0] == "trigger" && ledName(v[1]));
 +      if ((v.size() == 2 || v.size() == 3) && v[0] == "blink" &&
-+          number(v[1], a, maxDelay) && a && number(v.size() == 3 ? v[2] : v[1], b, maxDelay) && b) {
-+        if (v.size() == 2) v.push_back(v[1]);
++          duration(v[1], a) && a && duration(v.size() == 3 ? v[2] : v[1], b) && b) {
++        v[1] = std::to_string(a);
++        if (v.size() == 2) v.push_back(std::to_string(b));
++        else v[2] = std::to_string(b);
 +        valid = true;
 +      }
 +      if (!valid) throw std::runtime_error("invalid scalar LED command (see --help)");
@@ -793,12 +872,12 @@ index 00000000..e6a4de0c
 +    if (v.size() == 1 && v[0] == "stop") v[0] = "off";
 +    if (v.size() >= 4 && v.size() <= 5 && v[0] == "alternate") {
 +      p.a = color(v[1]); p.b = color(v[2]);
-+      if (!number(v[3], p.da, maxDelay) || !p.da ||
-+          !number(v.size() == 5 ? v[4] : v[3], p.db, maxDelay) || !p.db) throw std::runtime_error("invalid phase duration");
++      if (!duration(v[3], p.da) || !p.da ||
++          !duration(v.size() == 5 ? v[4] : v[3], p.db) || !p.db) throw std::runtime_error("invalid phase duration");
 +    } else if (v.size() == 1 || v.size() == 2) {
 +      p.a = p.b = color(v[0]);
 +      if (v.size() == 2) {
-+        if (!number(v[1], p.da, maxDelay)) throw std::runtime_error("invalid blink duration");
++        if (!duration(v[1], p.da)) throw std::runtime_error("invalid blink duration");
 +        if (p.da && p.a) { p.b = 0; p.db = p.da; }
 +        else p.da = 0;
 +      }
@@ -809,7 +888,12 @@ index 00000000..e6a4de0c
 +}
 +static int client(int argc, char** argv) {
 +  if (argc == 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
-+    std::cout << usage;
++    LedCli::version(std::cout, "hss_ledctl");
++    std::cout << "Control the hss_led daemon.\n\n" << usage;
++    return 0;
++  }
++  if (argc == 2 && (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-V")) {
++    LedCli::version(std::cout, "hss_ledctl");
 +    return 0;
 +  }
 +  std::string message = makeRequest(std::vector<std::string>(argv + 1, argv + argc));
@@ -855,12 +939,13 @@ index 00000000..a181a71e
 +#endif
 diff --git a/src/hss_led/LedOnlyMain.cpp b/src/hss_led/LedOnlyMain.cpp
 new file mode 100644
-index 00000000..5d54a64a
+index 00000000..4557a1b4
 --- /dev/null
 +++ b/src/hss_led/LedOnlyMain.cpp
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,33 @@
 +// SPDX-License-Identifier: Apache-2.0
 +#include "LedController.h"
++#include "LedCli.h"
 +#include <iostream>
 +#include <string>
 +int main(int argc, char** argv) {
@@ -873,6 +958,8 @@ index 00000000..5d54a64a
 +      return LedController::client(argc - 1, argv + 1);
 +    for (int i = 1; i < argc; ++i) {
 +      std::string arg(argv[i]);
++      if (arg == "--help" || arg == "-h") { LedCli::daemonHelp(std::cout, true); return 0; }
++      if (arg == "--version" || arg == "-V") { LedCli::version(std::cout, "hss_led", true); return 0; }
 +      if (arg == "--led-only") continue;
 +      // Accept the shared init script's logging option. Recovery has no CCU
 +      // status logger; controller failures still go to stderr.
@@ -880,7 +967,7 @@ index 00000000..5d54a64a
 +        std::string level(argv[++i]);
 +        if (level.size() == 1 && level[0] >= '0' && level[0] <= '6') continue;
 +      }
-+      std::cerr << "Usage: hss_led [-l 0..6] [--led-only | --led-control COMMAND...]\n";
++      std::cerr << "Invalid arguments; use hss_led --help.\n";
 +      return 2;
 +    }
 +    return LedController::run();
@@ -1058,10 +1145,10 @@ index f7508c34..c91f5530 100644
 +	sockfd = -1;
  }
 diff --git a/src/hss_led/hss_led.cpp b/src/hss_led/hss_led.cpp
-index 0ab90bdb..80e143e6 100644
+index 0ab90bdb..773dab8d 100644
 --- a/src/hss_led/hss_led.cpp
 +++ b/src/hss_led/hss_led.cpp
-@@ -6,136 +6,81 @@
+@@ -6,136 +6,86 @@
  * in the file HMSL.txt in the source distribution.
  */
  
@@ -1182,6 +1269,7 @@ index 0ab90bdb..80e143e6 100644
 -
 -	return ret;
 +#include "LedController.h"
++#include "LedCli.h"
 +#include <ConsoleLogger.h>
 +#include <SyslogLogger.h>
 +#include <cstdlib>
@@ -1247,16 +1335,20 @@ index 0ab90bdb..80e143e6 100644
 +    int level = static_cast<int>(Logger::LOG_INFO);
 +    for (int i = 1; i < argc; ++i) {
 +      std::string arg(argv[i]);
++      if (arg == "--help" || arg == "-h") { LedCli::daemonHelp(std::cout); return 0; }
++      if (arg == "--version" || arg == "-V") { LedCli::version(std::cout, "hss_led"); return 0; }
 +      if (arg == "--led-only") ledOnly = true;
 +      else if (arg == "-c") console = true;
 +      else if (arg == "-l" && i + 1 < argc) {
 +        std::string value(argv[++i]);
-+        if (value.size() != 1 || value[0] < '0' || value[0] > '6') return 2;
++        if (value.size() != 1 || value[0] < '0' || value[0] > '6') {
++          std::cerr << "Invalid log level; use -l 0..6.\n";
++          return 2;
++        }
 +        level = value[0] - '0';
 +      } else {
-+        std::cout << "Usage: hss_led [-c] [-l 0..6] [--led-only]\n"
-+                     "       hss_led --led-control COMMAND...\n";
-+        return arg == "--help" || arg == "-h" ? 0 : 2;
++        std::cerr << "Invalid arguments; use hss_led --help.\n";
++        return 2;
 +      }
 +    }
 +    logger = console ? static_cast<Logger*>(new ConsoleLogger()) : new SyslogLogger();
@@ -1274,10 +1366,10 @@ index 0ab90bdb..80e143e6 100644
 -
 diff --git a/src/hss_led/tests/LedControllerTest.cpp b/src/hss_led/tests/LedControllerTest.cpp
 new file mode 100644
-index 00000000..de252342
+index 00000000..25047c09
 --- /dev/null
 +++ b/src/hss_led/tests/LedControllerTest.cpp
-@@ -0,0 +1,233 @@
+@@ -0,0 +1,247 @@
 +// SPDX-License-Identifier: Apache-2.0
 +// Exercise the actual parser/state/backend code without creating sockets.
 +// Build: c++ -std=c++11 -Wall -Wextra -Werror tests.cpp -o led-state-test
@@ -1352,6 +1444,20 @@ index 00000000..de252342
 +      bool rejected = false;
 +      try { (void)makeRequest(args); }
 +      catch (const std::runtime_error& e) { rejected = std::string(e.what()).find("missing --led") != std::string::npos; }
++      check(rejected);
++    }
++    check(makeRequest({"--led", "rpi-rf-mod", "blue", "slow"}) == "1 override 4 0 500 500");
++    check(makeRequest({"--led", "rpi-rf-mod", "system", "magenta", "fast"}) == "1 system 5 0 100 100");
++    check(makeRequest({"--led", "rpi-rf-mod", "alternate", "blue", "red", "slow", "fast"}) == "1 override 4 1 500 100");
++    check(makeRequest({"--led", "rpi-rf-mod", "alternate", "green", "yellow", "fast", "750"}) == "1 override 2 3 100 750");
++    check(makeRequest({"--led", "ACT", "blink", "slow"}) == "1 led ACT blink 500 500");
++    check(makeRequest({"--led", "ACT", "blink", "fast", "slow"}) == "1 led ACT blink 100 500");
++    check(makeRequest({"--led", "ACT", "blink", "250", "fast"}) == "1 led ACT blink 250 100");
++    for (auto args : std::vector<std::vector<std::string>>{
++         {"--led", "rpi-rf-mod", "blue", "Slow"}, {"--led", "ACT", "blink", "quick"},
++         {"--led", "ACT", "brightness", "slow"}, {"--led", "rpi-rf-mod", "alternate", "blue", "red", "fast", "0"}}) {
++      bool rejected = false;
++      try { (void)makeRequest(args); } catch (const std::runtime_error&) { rejected = true; }
 +      check(rejected);
 +    }
 +    State state;

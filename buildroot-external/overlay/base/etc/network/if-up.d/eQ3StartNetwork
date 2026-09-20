@@ -14,7 +14,7 @@ umask 0002
 # connection using a slow blinking blue LED
 if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
   if [[ ! -e /var/status/startupFinished ]]; then
-    /bin/hss_ledctl --led rpi-rf-mod system blue 499
+    /bin/hss_ledctl --led rpi-rf-mod system blue slow
   fi
 fi
 

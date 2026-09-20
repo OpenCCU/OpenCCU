@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Check driver ownership and init failures without touching real modules/sysfs."""
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -10,7 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[3]
 HELPERS = [ROOT / "buildroot-external/overlay/base/bin/rpi-rf-mod-led-driver",
            ROOT / "buildroot-external/package/recovery-system/external/overlay/base/bin/rpi-rf-mod-led-driver"]
-INIT = ROOT / "buildroot-external/package/openccu-base/S01hss_led"
+INIT = ROOT / "buildroot-external/package/openccu-base/S00hss_led"
 
 
 class LedLifecycleTest(unittest.TestCase):
@@ -118,6 +119,40 @@ else:
         self.assertIn("locked", result.stderr)
         self.assertTrue((self.state / "lock").is_dir())
         self.assertEqual(self.log.read_text(), "")
+
+    def test_early_start_uses_version_platform_without_host_initialization(self):
+        script = self.root / "init"
+        daemon = self.root / "hss_led"
+        client = self.root / "hss_ledctl"
+        version = self.root / "VERSION"
+        runtime = self.root / "runtime"
+        for program in (daemon, client):
+            program.write_text("#!/bin/sh\nexit 0\n")
+            program.chmod(0o755)
+        for name in ("start-stop-daemon", "chown", "chmod"):
+            mock = self.bin / name
+            mock.write_text("#!" + sys.executable + "\nimport json, os, sys\n"
+                            "with open(os.environ['MOCK_LOG'], 'a') as f:\n"
+                            "    f.write(json.dumps(sys.argv) + '\\n')\n")
+            mock.chmod(0o755)
+        script.write_text(INIT.read_text().replace("/bin/$DAEMON", str(daemon))
+                          .replace("/bin/hss_ledctl", str(client)).replace("/VERSION", str(version))
+                          .replace("/var/run/hss_led", str(runtime))
+                          .replace("/sys/class/leds/*", str(self.root / "no-leds/*")))
+        for platform, user in (("rpi3", "hssled"), ("tinkerboard2", "hssled"),
+                               ("oci_amd64", "root"), ("lxc", "root")):
+            with self.subTest(platform=platform):
+                version.write_text('PLATFORM="' + platform + '"\n')
+                self.log.write_text("")
+                subprocess.run(["/bin/sh", str(script), "start"], env=self.env, check=True,
+                               capture_output=True, text=True)
+                calls = [json.loads(line) for line in self.log.read_text().splitlines()]
+                command = next(args for args in calls if Path(args[0]).name == "start-stop-daemon")
+                self.assertEqual(command[command.index("-c") + 1], user)
+                self.assertEqual(command[-3:], ["--", "-l", "6"])
+        self.assertEqual(INIT.name, "S00hss_led")
+        for later in ("S01InitHost", "S01USBGadgetMode", "S02InitRTC"):
+            self.assertLess(INIT.name, later)
 
     def test_missing_daemon_and_missing_client_are_errors(self):
         script = self.root / "init"

@@ -15,10 +15,11 @@ start() {
 		echo "hss_ledctl is missing or not executable" >&2
 		return 1
 	fi
-	HM_HOST=""
-	[ ! -r /var/hm_mode ] || . /var/hm_mode
+	# /VERSION is available before S01InitHost creates /var/hm_mode.
+	PLATFORM=""
+	[ ! -r /VERSION ] || . /VERSION
 	run_user=hssled
-	case "$HM_HOST" in oci*|lxc*) run_user=root ;; esac
+	case "$PLATFORM" in oci*|lxc*) run_user=root ;; esac
 	mkdir -p "$RUNTIME" || return 1
 	chown -R "$run_user:status" "$RUNTIME" || return 1
 	chmod 0755 "$RUNTIME" || return 1
