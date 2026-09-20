@@ -99,6 +99,11 @@ jobs:
         with:
           ignore: '**/node_modules/** **/codemirror/README.md'
 
+      - name: Check Base migration tooling
+        run: |
+          python3 -m unittest discover -s scripts/testcases/migration -v
+          python3 scripts/base-patch-migration.py index
+
       - name: Check Package consistency
         run: |
           pip install flake8
