@@ -126,34 +126,53 @@ class MigrationTest(unittest.TestCase):
             'manifest_sha256': migration.digest(folder / 'manifest.json')})
         return folder / 'report.json'
 
+    def result_state(self, mode=0o644):
+        return {'file': {'type': 'file', 'mode': mode, 'value': '0' * 64}}
+
+    def replace_manifest(self, report, state):
+        migration.write_json(report.parent / 'manifest.json', state)
+        receipt = json.loads(report.read_text())
+        receipt['manifest_sha256'] = migration.digest(report.parent / 'manifest.json')
+        migration.write_json(report, receipt)
+
     def test_compare_and_tamper_detection(self):
-        a = self.report(self.root / 'a', {'file': {'mode': 0o644}})
-        b = self.report(self.root / 'b', {'file': {'mode': 0o644}}, skip=NAME)
+        a = self.report(self.root / 'a', self.result_state())
+        b = self.report(self.root / 'b', self.result_state(), skip=NAME)
         with contextlib.redirect_stdout(io.StringIO()):
             migration.compare(a, b)
-        migration.write_json(b.parent / 'manifest.json', {'file': {'mode': 0o755}})
+        migration.write_json(b.parent / 'manifest.json', self.result_state(0o755))
         with self.assertRaisesRegex(ValueError, 'manifest changed'):
             migration.compare(a, b)
-        report = json.loads(b.read_text())
-        report['manifest_sha256'] = migration.digest(b.parent / 'manifest.json')
-        migration.write_json(b, report)
+        self.replace_manifest(b, self.result_state(0o755))
         with self.assertRaisesRegex(ValueError, 'differing'):
             migration.compare(a, b)
 
     def test_compare_rejects_incompatible_metadata(self):
-        a = self.report(self.root / 'a', {'file': {'mode': 0o644}})
-        b = self.report(self.root / 'b', {'file': {'mode': 0o644}}, skip=NAME,
+        a = self.report(self.root / 'a', self.result_state())
+        b = self.report(self.root / 'b', self.result_state(), skip=NAME,
                         checks={'validate.sh': '0' * 64})
         with self.assertRaisesRegex(ValueError, 'checks differ'):
             migration.compare(a, b)
 
     def test_compare_rejects_invalid_transition(self):
-        a = self.report(self.root / 'a', {'file': {'mode': 0o644}})
+        a = self.report(self.root / 'a', self.result_state())
         changed = json.loads(json.dumps(migration.inventory(self.repo)))
         changed['patches'][0]['sha256'] = '1' * 64
-        b = self.report(self.root / 'b', {'file': {'mode': 0o644}}, changed)
+        b = self.report(self.root / 'b', self.result_state(), changed)
         with self.assertRaisesRegex(ValueError, 'remove exactly one'):
             migration.compare(a, b)
+
+    def test_compare_rejects_malformed_manifest(self):
+        a = self.report(self.root / 'a', self.result_state())
+        b = self.report(self.root / 'b', self.result_state(), skip=NAME)
+        for state, message in [([], 'object'),
+                               ({'file': {'type': 'file', 'mode': '0644', 'value': '0' * 64}},
+                                'entry'),
+                               ({'../file': self.result_state()['file']}, 'path')]:
+            with self.subTest(state=state):
+                self.replace_manifest(b, state)
+                with self.assertRaisesRegex(ValueError, 'invalid manifest ' + message):
+                    migration.compare(a, b)
 
     def test_validate_patches_rejects_empty_option_values(self):
         script = self.patches / 'validate_patches.sh'

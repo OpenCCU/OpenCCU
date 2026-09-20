@@ -177,6 +177,30 @@ def manifest(root):
     return result
 
 
+def validate_manifest(data, report):
+    """Validate the serialized filesystem-manifest schema used by comparisons."""
+    require(isinstance(data, dict), f'invalid manifest object: {report}')
+    for relative, entry in data.items():
+        path = PurePosixPath(relative) if isinstance(relative, str) else None
+        require(isinstance(relative, str) and '\0' not in relative and relative not in ('', '.')
+                and not path.is_absolute() and '..' not in path.parts
+                and path.as_posix() == relative,
+                f'invalid manifest path: {report}')
+        require(isinstance(entry, dict) and set(entry) == {'type', 'mode', 'value'}
+                and entry['type'] in ('file', 'dir', 'link')
+                and type(entry['mode']) is int and 0 <= entry['mode'] <= 0o7777,
+                f'invalid manifest entry: {report}')
+        if entry['type'] == 'file':
+            require(isinstance(entry['value'], str)
+                    and re.fullmatch(r'[0-9a-f]{64}', entry['value']),
+                    f'invalid manifest file value: {report}')
+        elif entry['type'] == 'dir':
+            require(entry['value'] is None, f'invalid manifest directory value: {report}')
+        else:
+            require(isinstance(entry['value'], str), f'invalid manifest link value: {report}')
+    return data
+
+
 def verify_source_git(source, base_repo, commit):
     """Bind archive contents to the merge commit, not merely its directory name."""
     tree = subprocess.check_output(['git', '-C', str(base_repo), 'ls-tree', '-rz', commit])
@@ -339,7 +363,7 @@ def read_report(report):
             f'invalid report checks: {report}')
     path = report.parent / 'manifest.json'
     require(digest(path) == data['manifest_sha256'], f'manifest changed: {path}')
-    return data, json.loads(path.read_text())
+    return data, validate_manifest(json.loads(path.read_text()), path)
 
 
 def compare_transition(baseline, candidate):
