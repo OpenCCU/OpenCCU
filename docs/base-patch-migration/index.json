@@ -1513,18 +1513,6 @@
       "sha256": "20d15417b4250d03b8e2c81b8c401caa7e1014479131719e8b3fae7a90977130"
     },
     {
-      "added": 6,
-      "files": [
-        "www/api/methods/session/create.tcl",
-        "www/api/methods/session/login.tcl",
-        "www/api/methods/session/renew.tcl",
-        "www/tcl/eq3/session.tcl"
-      ],
-      "patch": "0167-WebUI-Fix-InternalTclURLs.patch",
-      "removed": 6,
-      "sha256": "44cf6ab83d17b931eb0ec6fb8d4f8849acb2281daa44717b0ea0be6dcba04984"
-    },
-    {
       "added": 23,
       "files": [
         "www/api/methods/system/saveobjectmodel.tcl",
@@ -1845,28 +1833,8 @@
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
       "sha256": "e202b4567cb92ec5fb49931d7c3232db2679ab3094c106b7f3a9faa5f08795e3"
-    },
-    {
-      "added": 12,
-      "files": [
-        "www/pda/fav.cgi",
-        "www/pda/favlist.cgi",
-        "www/tcl/eq3/rega.tcl"
-      ],
-      "patch": "0207-WebUI-Fix-ReGaScriptInjection.patch",
-      "removed": 2,
-      "sha256": "82133da06d3f706f4e7ba6d4efe6c03055dd09c7de7daa9be9cb4c560157e234"
-    },
-    {
-      "added": 4,
-      "files": [
-        "www/rega/esp/functions.fn"
-      ],
-      "patch": "0208-WebUI-Fix-DoorLockTransceiverVisibility.patch",
-      "removed": 5,
-      "sha256": "2a6a75594590c9d7a406cb22802986c9743268c845c686382c78b953174d4fab"
     }
   ],
   "schema": 1,
-  "series_sha256": "3f4da5f2c9f3acd5598354863b29c445186acc3a56407777a04ac3c7f7123e75"
+  "series_sha256": "3ff9233509e7f542ab3e87ea51dd8154ca82f7d33378a409fc2d87d22bda61e8"
 }

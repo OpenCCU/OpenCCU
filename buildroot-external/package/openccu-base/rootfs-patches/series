@@ -121,7 +121,6 @@
 0164-WebUI-Add-HMIPServerLogConfiguration.patch
 0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch
 0166-WebUI-Fix-PowermeterControl.patch
-0167-WebUI-Fix-InternalTclURLs.patch
 0168-WebUI-Add-ImprovedLogout.patch
 0170-WebUI-RegexSearchInDeviceLists.patch
 0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch
@@ -151,5 +150,3 @@
 0201-WebUI-Fix-SystemFnSyntax.patch
 0203-WebUI-NoExpectCGI.patch
 0205-WebUI-Remove-FieldTestBetaFw.patch
-0207-WebUI-Fix-ReGaScriptInjection.patch
-0208-WebUI-Fix-DoorLockTransceiverVisibility.patch
