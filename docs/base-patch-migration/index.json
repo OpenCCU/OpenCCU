@@ -1513,18 +1513,6 @@
       "sha256": "20d15417b4250d03b8e2c81b8c401caa7e1014479131719e8b3fae7a90977130"
     },
     {
-      "added": 6,
-      "files": [
-        "www/api/methods/session/create.tcl",
-        "www/api/methods/session/login.tcl",
-        "www/api/methods/session/renew.tcl",
-        "www/tcl/eq3/session.tcl"
-      ],
-      "patch": "0167-WebUI-Fix-InternalTclURLs.patch",
-      "removed": 6,
-      "sha256": "44cf6ab83d17b931eb0ec6fb8d4f8849acb2281daa44717b0ea0be6dcba04984"
-    },
-    {
       "added": 23,
       "files": [
         "www/api/methods/system/saveobjectmodel.tcl",
@@ -1868,5 +1856,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3f4da5f2c9f3acd5598354863b29c445186acc3a56407777a04ac3c7f7123e75"
+  "series_sha256": "5100ad959b79eb87705836d65c0ea69e9bc1d0a702b4da2031684c565e2bbf8d"
 }

@@ -35,18 +35,24 @@
       "base_pr": 43,
       "cleanup_pr": 4215,
       "patch": "0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch"
+    },
+    {
+      "base_merge_commit": "e3a292b0012b331e45be97e36ae2f8a8f5797b58",
+      "base_pr": 44,
+      "cleanup_pr": 4218,
+      "patch": "0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "e3a292b0012b331e45be97e36ae2f8a8f5797b58",
-    "base_pr": 44,
-    "cleanup_pr": 4218,
-    "patch": "0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch",
+    "base_merge_commit": "ce20f9d0e4c631e5c2e25784b195caecc1085951",
+    "base_pr": 45,
+    "cleanup_pr": 4221,
+    "patch": "0167-WebUI-Fix-InternalTclURLs.patch",
     "phase": "cleanup-prepared; merge pending"
   },
   "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
   "schema": 1,
-  "verified_at_openccu_commit": "e4a2a9bbaa7b18b507e84083d4fa6cd7e078779a",
-  "verified_base_pin": "e3a292b0012b331e45be97e36ae2f8a8f5797b58",
-  "verified_source_sha256": "0d8523bc923c960db542917bd821b8e4816aa091d83b376aec49fb56235ba5d6"
+  "verified_at_openccu_commit": "768844a6d9fdee75fa8f06a1089f9e26c8164fbd",
+  "verified_base_pin": "ce20f9d0e4c631e5c2e25784b195caecc1085951",
+  "verified_source_sha256": "5d00ee23e6c59c85d8acb685b297402f326cfedfbb6433daad6a41d800a18194"
 }
