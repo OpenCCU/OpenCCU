@@ -1,3 +1,5 @@
+source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/multilib32/Config.in"
+
 menu "Kernel Module Support"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/generic_raw_uart/Config.in"
 endmenu
