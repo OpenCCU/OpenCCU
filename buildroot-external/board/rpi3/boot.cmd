@@ -27,6 +27,9 @@ fi
 gpio input ${gpio_button}
 if test $? -eq 0 -o -e ${devtype} ${devnum}:${userfs} /.recoveryMode -o ! -e ${devtype} ${devnum}:${rootfs} ${kernel_img}; then
   echo "==== STARTING RECOVERY SYSTEM ===="
+  # Keep the relocated recovery initrd well below the top of RAM so the
+  # 512 MiB Pi Zero 2 W still has enough headroom after GPU/firmware reservations.
+  setenv initrd_high "0x18000000"
   # load the initrd file
   load ${devtype} ${devnum}:${bootfs} ${load_addr} ${recoveryfs_initrd}
   setenv rootfs_str "/dev/ram0"
