@@ -1833,17 +1833,8 @@
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
       "sha256": "e202b4567cb92ec5fb49931d7c3232db2679ab3094c106b7f3a9faa5f08795e3"
-    },
-    {
-      "added": 4,
-      "files": [
-        "www/rega/esp/functions.fn"
-      ],
-      "patch": "0208-WebUI-Fix-DoorLockTransceiverVisibility.patch",
-      "removed": 5,
-      "sha256": "2a6a75594590c9d7a406cb22802986c9743268c845c686382c78b953174d4fab"
     }
   ],
   "schema": 1,
-  "series_sha256": "6a99c63aa488ad87ed91d8d55a239a5ed5f7d6be9f447aac37e26bb1b7d9ef1b"
+  "series_sha256": "3ff9233509e7f542ab3e87ea51dd8154ca82f7d33378a409fc2d87d22bda61e8"
 }
