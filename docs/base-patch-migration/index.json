@@ -1835,17 +1835,6 @@
       "sha256": "e202b4567cb92ec5fb49931d7c3232db2679ab3094c106b7f3a9faa5f08795e3"
     },
     {
-      "added": 12,
-      "files": [
-        "www/pda/fav.cgi",
-        "www/pda/favlist.cgi",
-        "www/tcl/eq3/rega.tcl"
-      ],
-      "patch": "0207-WebUI-Fix-ReGaScriptInjection.patch",
-      "removed": 2,
-      "sha256": "82133da06d3f706f4e7ba6d4efe6c03055dd09c7de7daa9be9cb4c560157e234"
-    },
-    {
       "added": 4,
       "files": [
         "www/rega/esp/functions.fn"
@@ -1856,5 +1845,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "5100ad959b79eb87705836d65c0ea69e9bc1d0a702b4da2031684c565e2bbf8d"
+  "series_sha256": "6a99c63aa488ad87ed91d8d55a239a5ed5f7d6be9f447aac37e26bb1b7d9ef1b"
 }
