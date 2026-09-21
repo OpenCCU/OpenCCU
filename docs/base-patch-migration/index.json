@@ -1831,15 +1831,6 @@
       "sha256": "7cacbe5740bcd99ff525c8b08c290b90d0fcdb5f77f1a16f73477d57e5c44317"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/esp/side.inc"
-      ],
-      "patch": "0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch",
-      "removed": 3,
-      "sha256": "d0fd9d97dcc32645e84f122cc61af624aaf00ca9eb8a6c9ad609ba21ad3cf93e"
-    },
-    {
       "added": 8,
       "files": [
         "opt/HMServer/pages/StorageSettingsDialog.ftl",
@@ -1877,5 +1868,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "a1e79a05d9934ec404b83de4c19d01b3eca828911b2ff981dbca2e7898052cb8"
+  "series_sha256": "3f4da5f2c9f3acd5598354863b29c445186acc3a56407777a04ac3c7f7123e75"
 }

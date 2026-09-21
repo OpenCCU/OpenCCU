@@ -150,7 +150,6 @@
 0200-WebUI-Fix-EventStalling.patch
 0201-WebUI-Fix-SystemFnSyntax.patch
 0203-WebUI-NoExpectCGI.patch
-0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch
 0205-WebUI-Remove-FieldTestBetaFw.patch
 0207-WebUI-Fix-ReGaScriptInjection.patch
 0208-WebUI-Fix-DoorLockTransceiverVisibility.patch
