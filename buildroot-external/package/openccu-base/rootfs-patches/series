@@ -16,7 +16,6 @@
 0031-WebUI-Fix-FileUpload.patch
 0032-WebUI-Show-Gateway-DC.patch
 0033-WebUI-Fix-DeviceParameters.patch
-0034-WebUI-Addon-Config.patch
 0035-WebUI-Fix-SysVarPopups.patch
 0036-WebUI-ImprovedFavIcons.patch
 0037-WebUI-DevConfig.patch
@@ -120,19 +119,16 @@
 0163-WebUI-ImprovedFileUploadButton.patch
 0164-WebUI-Add-HMIPServerLogConfiguration.patch
 0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch
-0166-WebUI-Fix-PowermeterControl.patch
 0168-WebUI-Add-ImprovedLogout.patch
 0170-WebUI-RegexSearchInDeviceLists.patch
 0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch
 0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch
 0173-WebUI-SendPOSTRequest.patch
 0175-WebUI-Add-AllLogfileDownload.patch
-0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch
 0177-WebUI-Fix-EmptyHmIPWKPPIN.patch
 0178-WebUI-Fix-ValidateSaveSysvarInput.patch
 0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch
 0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch
-0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0184-WebUI-Fix-EM8LockedChannelBehviour.patch
 0185-WebUI-Fix-CPPopupCentering.patch

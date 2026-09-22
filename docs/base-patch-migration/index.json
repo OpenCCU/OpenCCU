@@ -239,15 +239,6 @@
       "sha256": "1003bd39fecb40aea8f4125d88e0dc8968ec9f725d0810a610b002ba2cfe5954"
     },
     {
-      "added": 14,
-      "files": [
-        "usr/lib/tcl8.2/homematic/homematic.tcl"
-      ],
-      "patch": "0034-WebUI-Addon-Config.patch",
-      "removed": 1,
-      "sha256": "542cb1274cf6de1f980e9e2e1b289ea20901794a669751793977e58642b645df"
-    },
-    {
       "added": 11,
       "files": [
         "www/rega/esp/system.fn",
@@ -432,7 +423,7 @@
       "sha256": "94dffa883ac41eadb82135eacca74494339ad69770075fc86b29d5f31a42d662"
     },
     {
-      "added": 325,
+      "added": 305,
       "files": [
         "www/rega/pages/index.htm",
         "www/rega/pages/msg/editScript.htm",
@@ -441,7 +432,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "fe074aa8e3d420f278d17fd07038412035039fc88f44b7b4151d770f04dd9ec7"
+      "sha256": "37d2da28ff003f7509256f8a6477c2b62d97575945506fed8d9217e0a4a6107e"
     },
     {
       "added": 751,
@@ -1472,7 +1463,7 @@
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
-      "sha256": "6d357471f3cb7c2eda14b536125ddedbe6662a2b69b70f2573c7d24049f11219"
+      "sha256": "64b34d7b95f2a4fd33a4ed8f70366de7412bf8fa1626b670dee08520d694be32"
     },
     {
       "added": 68,
@@ -1502,15 +1493,6 @@
       "patch": "0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch",
       "removed": 7,
       "sha256": "0e54c65fc9efd5f406dee70b6c1a24dccd7ded0cc3c620d96c7e468857df21bc"
-    },
-    {
-      "added": 27,
-      "files": [
-        "www/rega/esp/controls/powermeter.fn"
-      ],
-      "patch": "0166-WebUI-Fix-PowermeterControl.patch",
-      "removed": 19,
-      "sha256": "20d15417b4250d03b8e2c81b8c401caa7e1014479131719e8b3fae7a90977130"
     },
     {
       "added": 23,
@@ -1577,15 +1559,6 @@
       "sha256": "187722253f5cac8954d9f9df258b6e672a5b10a405c4b886a9e206b8b373b41c"
     },
     {
-      "added": 2,
-      "files": [
-        "www/rega/esp/controls/heating_control.fn"
-      ],
-      "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch",
-      "removed": 2,
-      "sha256": "bdf7ff57c3c89c5760005d4931fbcb500056bdbbc30d8bedcb57cf0f940e336b"
-    },
-    {
       "added": 1,
       "files": [
         "www/config/easymodes/etc/uiElements.tcl"
@@ -1621,15 +1594,6 @@
       "patch": "0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch",
       "removed": 5,
       "sha256": "484df25a8dbbbba902f58758ef551895c407576da33e0d38d327f3b8917aa924"
-    },
-    {
-      "added": 12,
-      "files": [
-        "www/rega/esp/controls/dimmer.fn"
-      ],
-      "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch",
-      "removed": 6,
-      "sha256": "597f743b0675682ac0646e63d00a2594818550e0428e947d9d3c91b88869039d"
     },
     {
       "added": 110,
@@ -1836,5 +1800,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3ff9233509e7f542ab3e87ea51dd8154ca82f7d33378a409fc2d87d22bda61e8"
+  "series_sha256": "9ecf7fb86364aa50c66048db2b6beac0088476d4d1adc9899a43b6d4221bf27c"
 }

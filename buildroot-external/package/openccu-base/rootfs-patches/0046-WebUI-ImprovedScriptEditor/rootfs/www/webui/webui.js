@@ -16580,7 +16580,7 @@ HMScriptExecutor = Class.create({
     this.m_layer.appendChild(this.m_frame.getElement());
     Layer.add(this.m_layer);
 
-    this.m_input = CodeMirror.fromTextArea(document.getElementById('code'), {
+    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
       mode: "text/x-rega",
       autofocus: true,
       matchBrackets: true,
@@ -16632,7 +16632,7 @@ HMScriptExecutor = Class.create({
     });
     this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
 
-    this.m_output = CodeMirror.fromTextArea(document.getElementById('output'), {
+    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
       mode: "default",
       readOnly: true,
       lineWrapping: true,
@@ -32087,7 +32087,7 @@ iseMessageBox.prototype =
 
     if (this.draggable) {
       jQuery("#messagebox").draggable({
-        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line"
+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
       });
     }
 

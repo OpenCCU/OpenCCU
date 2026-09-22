@@ -1,0 +1,36 @@
+.CodeMirror,
+.cm-editor {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  text-align: left;
+  font-family: monospace;
+  background: #fff;
+  color: #000;
+}
+
+.cm-gutters {
+  font-family: monospace;
+  background: #fff;
+  color: #000;
+}
+
+.cm-scroller,
+.cm-content {
+  background: #fff;
+  color: #000;
+}
+
+.cm-content,
+.cm-line {
+  line-height: 14px;
+}
+
+.cm6-fullscreen {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999;
+  background: #fff;
+}
