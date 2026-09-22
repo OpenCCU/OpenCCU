@@ -59,18 +59,24 @@
       "base_pr": 47,
       "cleanup_pr": 4223,
       "patch": "0208-WebUI-Fix-DoorLockTransceiverVisibility.patch"
+    },
+    {
+      "base_merge_commit": "2cb6594c1c7be30776e25b733fa05426186425be",
+      "base_pr": 48,
+      "cleanup_pr": 4227,
+      "patch": "0034-WebUI-Addon-Config.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "2cb6594c1c7be30776e25b733fa05426186425be",
-    "base_pr": 48,
+    "base_merge_commit": "59e46830783d5517be449301ebf682d29b86e58e",
+    "base_pr": 49,
     "cleanup_pr": null,
-    "patch": "0034-WebUI-Addon-Config.patch",
-    "phase": "cleanup-prepared; merge pending"
+    "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
+  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR.",
   "schema": 1,
-  "verified_at_openccu_commit": "81e559b0bce37691299644b6f6390870c1aaef52",
+  "verified_at_openccu_commit": "2c35d6ed585a04c264261687112da3c1dce1c7c2",
   "verified_base_pin": "2cb6594c1c7be30776e25b733fa05426186425be",
   "verified_source_sha256": "7f3dad53a40479137217512a3c9b4f12ea12539bdd590ca24465dcfa8bc80380"
 }

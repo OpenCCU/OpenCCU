@@ -131,7 +131,6 @@
 0178-WebUI-Fix-ValidateSaveSysvarInput.patch
 0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch
 0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch
-0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0184-WebUI-Fix-EM8LockedChannelBehviour.patch
 0185-WebUI-Fix-CPPopupCentering.patch

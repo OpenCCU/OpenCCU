@@ -1614,15 +1614,6 @@
       "sha256": "484df25a8dbbbba902f58758ef551895c407576da33e0d38d327f3b8917aa924"
     },
     {
-      "added": 12,
-      "files": [
-        "www/rega/esp/controls/dimmer.fn"
-      ],
-      "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch",
-      "removed": 6,
-      "sha256": "597f743b0675682ac0646e63d00a2594818550e0428e947d9d3c91b88869039d"
-    },
-    {
       "added": 110,
       "files": [
         "www/webui/js/lang/de/translate.lang.extension.js",
@@ -1827,5 +1818,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "2fcbd448b294e5424647897973067daefe120e1918609812631b279980f6faed"
+  "series_sha256": "790a5abcdf76fab4efabcc29d5cecb5af2f60fec8f10710404c370ca24ea1bbf"
 }
