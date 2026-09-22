@@ -74,7 +74,7 @@
     "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR.",
+  "next_action": "Verify patch 0182 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
   "verified_at_openccu_commit": "2c35d6ed585a04c264261687112da3c1dce1c7c2",
   "verified_base_pin": "2cb6594c1c7be30776e25b733fa05426186425be",
