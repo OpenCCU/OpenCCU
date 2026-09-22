@@ -29,18 +29,60 @@
       "base_pr": 42,
       "cleanup_pr": 4213,
       "patch": "0101-WebUI-Fix-JSON-describe.patch"
+    },
+    {
+      "base_merge_commit": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
+      "base_pr": 43,
+      "cleanup_pr": 4215,
+      "patch": "0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch"
+    },
+    {
+      "base_merge_commit": "e3a292b0012b331e45be97e36ae2f8a8f5797b58",
+      "base_pr": 44,
+      "cleanup_pr": 4218,
+      "patch": "0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch"
+    },
+    {
+      "base_merge_commit": "ce20f9d0e4c631e5c2e25784b195caecc1085951",
+      "base_pr": 45,
+      "cleanup_pr": 4221,
+      "patch": "0167-WebUI-Fix-InternalTclURLs.patch"
+    },
+    {
+      "base_merge_commit": "f806cfb018124c2e68eed14746560243345ac35d",
+      "base_pr": 46,
+      "cleanup_pr": 4222,
+      "patch": "0207-WebUI-Fix-ReGaScriptInjection.patch"
+    },
+    {
+      "base_merge_commit": "fb13b8a36634734a813f313926980078abd57d2c",
+      "base_pr": 47,
+      "cleanup_pr": 4223,
+      "patch": "0208-WebUI-Fix-DoorLockTransceiverVisibility.patch"
+    },
+    {
+      "base_merge_commit": "2cb6594c1c7be30776e25b733fa05426186425be",
+      "base_pr": 48,
+      "cleanup_pr": 4227,
+      "patch": "0034-WebUI-Addon-Config.patch"
+    },
+    {
+      "base_merge_commit": "59e46830783d5517be449301ebf682d29b86e58e",
+      "base_pr": 49,
+      "cleanup_pr": 4228,
+      "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
-    "base_pr": 43,
-    "cleanup_pr": 4215,
-    "patch": "0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch",
+    "base_merge_commit": "41a8796a2869699f008f229c382e493186dd7c04",
+    "base_pr": 50,
+    "cleanup_pr": null,
+    "patch": "0166-WebUI-Fix-PowermeterControl.patch",
     "phase": "cleanup-prepared; merge pending"
   },
-  "next_action": "Select one independent candidate from index.json, verify against current Base sources and remaining patches, then prepare its Base PR. No next patch has been selected.",
+  "next_action": "Verify patch 0166 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "e4a2a9bbaa7b18b507e84083d4fa6cd7e078779a",
-  "verified_base_pin": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
-  "verified_source_sha256": "3180f4e81106e4a95bd123bb6a8e6d6daeec558d0d1e8dda24c7e05692cb4d9d"
+  "verified_at_openccu_commit": "b93f82bd2feae567e2baa84d8426c65a4dc5cd09",
+  "verified_base_pin": "59e46830783d5517be449301ebf682d29b86e58e",
+  "verified_source_sha256": "f05ffb127e28cd3766818ff17de4dc33e147c0047daf0e17a18249f1027efc33"
 }

@@ -239,15 +239,6 @@
       "sha256": "1003bd39fecb40aea8f4125d88e0dc8968ec9f725d0810a610b002ba2cfe5954"
     },
     {
-      "added": 14,
-      "files": [
-        "usr/lib/tcl8.2/homematic/homematic.tcl"
-      ],
-      "patch": "0034-WebUI-Addon-Config.patch",
-      "removed": 1,
-      "sha256": "542cb1274cf6de1f980e9e2e1b289ea20901794a669751793977e58642b645df"
-    },
-    {
       "added": 11,
       "files": [
         "www/rega/esp/system.fn",
@@ -1504,27 +1495,6 @@
       "sha256": "0e54c65fc9efd5f406dee70b6c1a24dccd7ded0cc3c620d96c7e468857df21bc"
     },
     {
-      "added": 27,
-      "files": [
-        "www/rega/esp/controls/powermeter.fn"
-      ],
-      "patch": "0166-WebUI-Fix-PowermeterControl.patch",
-      "removed": 19,
-      "sha256": "20d15417b4250d03b8e2c81b8c401caa7e1014479131719e8b3fae7a90977130"
-    },
-    {
-      "added": 6,
-      "files": [
-        "www/api/methods/session/create.tcl",
-        "www/api/methods/session/login.tcl",
-        "www/api/methods/session/renew.tcl",
-        "www/tcl/eq3/session.tcl"
-      ],
-      "patch": "0167-WebUI-Fix-InternalTclURLs.patch",
-      "removed": 6,
-      "sha256": "44cf6ab83d17b931eb0ec6fb8d4f8849acb2281daa44717b0ea0be6dcba04984"
-    },
-    {
       "added": 23,
       "files": [
         "www/api/methods/system/saveobjectmodel.tcl",
@@ -1633,15 +1603,6 @@
       "patch": "0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch",
       "removed": 5,
       "sha256": "484df25a8dbbbba902f58758ef551895c407576da33e0d38d327f3b8917aa924"
-    },
-    {
-      "added": 12,
-      "files": [
-        "www/rega/esp/controls/dimmer.fn"
-      ],
-      "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch",
-      "removed": 6,
-      "sha256": "597f743b0675682ac0646e63d00a2594818550e0428e947d9d3c91b88869039d"
     },
     {
       "added": 110,
@@ -1831,15 +1792,6 @@
       "sha256": "7cacbe5740bcd99ff525c8b08c290b90d0fcdb5f77f1a16f73477d57e5c44317"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/esp/side.inc"
-      ],
-      "patch": "0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch",
-      "removed": 3,
-      "sha256": "d0fd9d97dcc32645e84f122cc61af624aaf00ca9eb8a6c9ad609ba21ad3cf93e"
-    },
-    {
       "added": 8,
       "files": [
         "opt/HMServer/pages/StorageSettingsDialog.ftl",
@@ -1854,28 +1806,8 @@
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
       "sha256": "e202b4567cb92ec5fb49931d7c3232db2679ab3094c106b7f3a9faa5f08795e3"
-    },
-    {
-      "added": 12,
-      "files": [
-        "www/pda/fav.cgi",
-        "www/pda/favlist.cgi",
-        "www/tcl/eq3/rega.tcl"
-      ],
-      "patch": "0207-WebUI-Fix-ReGaScriptInjection.patch",
-      "removed": 2,
-      "sha256": "82133da06d3f706f4e7ba6d4efe6c03055dd09c7de7daa9be9cb4c560157e234"
-    },
-    {
-      "added": 4,
-      "files": [
-        "www/rega/esp/functions.fn"
-      ],
-      "patch": "0208-WebUI-Fix-DoorLockTransceiverVisibility.patch",
-      "removed": 5,
-      "sha256": "2a6a75594590c9d7a406cb22802986c9743268c845c686382c78b953174d4fab"
     }
   ],
   "schema": 1,
-  "series_sha256": "a1e79a05d9934ec404b83de4c19d01b3eca828911b2ff981dbca2e7898052cb8"
+  "series_sha256": "84cf3ad0047e2e35f645a2f7b62fcc36f46e9b25092b2972bf07c64c2f13c104"
 }
