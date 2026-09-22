@@ -4,10 +4,17 @@
   border-bottom: 1px solid black;
   text-align: left;
   font-family: monospace;
+  background: #fff;
 }
 
 .cm-gutters {
   font-family: monospace;
+  background: #fff;
+}
+
+.cm-scroller,
+.cm-content {
+  background: #fff;
 }
 
 .cm6-fullscreen {

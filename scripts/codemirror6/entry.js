@@ -8,7 +8,7 @@ import {
   indentMore,
   indentWithTab
 } from "@codemirror/commands";
-import {bracketMatching, foldCode, foldGutter, foldKeymap, indentUnit} from "@codemirror/language";
+import {bracketMatching, foldCode, foldGutter, foldKeymap, indentUnit, syntaxHighlighting, defaultHighlightStyle} from "@codemirror/language";
 import {closeBrackets, closeBracketsKeymap, autocompletion, startCompletion, completeAnyWord} from "@codemirror/autocomplete";
 import {search, searchKeymap, openSearchPanel} from "@codemirror/search";
 import {lineNumbers, highlightActiveLineGutter} from "@codemirror/view";
@@ -196,6 +196,7 @@ function fromTextArea(textarea, options = {}) {
     bracketMatching(),
     closeBrackets(),
     autocompletion({override: [completeAnyWord]}),
+    syntaxHighlighting(defaultHighlightStyle),
     EditorView.lineWrapping,
     indentUnit.of(" ".repeat(options.indentUnit || 2)),
     EditorState.tabSize.of(options.tabSize || 2),
