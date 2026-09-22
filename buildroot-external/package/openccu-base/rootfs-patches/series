@@ -125,7 +125,6 @@
 0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch
 0173-WebUI-SendPOSTRequest.patch
 0175-WebUI-Add-AllLogfileDownload.patch
-0178-WebUI-Fix-ValidateSaveSysvarInput.patch
 0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch
 0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch

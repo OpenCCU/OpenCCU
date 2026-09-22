@@ -83,18 +83,24 @@
       "base_pr": 51,
       "cleanup_pr": 4230,
       "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch"
+    },
+    {
+      "base_merge_commit": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
+      "base_pr": 52,
+      "cleanup_pr": 4231,
+      "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
-    "base_pr": 52,
-    "cleanup_pr": 4231,
-    "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch",
+    "base_merge_commit": "d9ebce227ad4e756d3ff23c467dd7127df571125",
+    "base_pr": 53,
+    "cleanup_pr": null,
+    "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0177 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0178 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "0a063de8766dd47999579fb40ec9b6f9d970da8c",
-  "verified_base_pin": "47852670b376000b91a5cfb7906dca84e2469aa4",
-  "verified_source_sha256": "c6019f58bdf05f157287be0a1858e5566e38cf94bfcf25d8e4c5810107ca69d7"
+  "verified_at_openccu_commit": "02292f6d30e17012815f5062586bae994f261d8e",
+  "verified_base_pin": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
+  "verified_source_sha256": "f0e827eb23d9c2fe262c865556b3f06abe53172943a0750331fabf1de48735dc"
 }

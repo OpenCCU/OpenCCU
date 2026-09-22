@@ -1559,15 +1559,6 @@
       "sha256": "187722253f5cac8954d9f9df258b6e672a5b10a405c4b886a9e206b8b373b41c"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/pages/tabs/admin/msg/newSysVar.htm"
-      ],
-      "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch",
-      "removed": 0,
-      "sha256": "7cc5bef032b3252931af599000c742daff4d533c76efd5ab82f68b6545da1e53"
-    },
-    {
       "added": 7,
       "files": [
         "www/config/cp_network.cgi"
@@ -1791,5 +1782,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3a939594e62c8f4fa908961c33f218b4103498bb275719cd7751817c73c7713d"
+  "series_sha256": "15c5f856083941a63c1f51edff03b2b77e86b75e691755330853c55a7104b9fe"
 }
