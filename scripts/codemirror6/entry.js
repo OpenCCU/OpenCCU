@@ -8,7 +8,7 @@ import {
   indentMore,
   indentWithTab
 } from "@codemirror/commands";
-import {bracketMatching, foldCode, foldGutter, foldKeymap, indentUnit, syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from "@codemirror/language";
+import {bracketMatching, foldCode, foldGutter, foldKeymap, foldService, indentUnit, syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from "@codemirror/language";
 import {closeBrackets, closeBracketsKeymap, autocompletion, startCompletion, completeAnyWord} from "@codemirror/autocomplete";
 import {search, searchKeymap, openSearchPanel} from "@codemirror/search";
 import {lineNumbers, highlightActiveLineGutter} from "@codemirror/view";
@@ -155,6 +155,57 @@ const REGA_HIGHLIGHT_STYLE = HighlightStyle.define([
   {tag: tags.comment, color: "#a50"}
 ]);
 
+function foldReGaBraces(state, lineStart, lineEnd) {
+  const doc = state.doc;
+  const stack = [];
+  let stringDelimiter = null;
+
+  for (let pos = 0; pos < doc.length; ++pos) {
+    const ch = doc.sliceString(pos, pos + 1);
+
+    if (stringDelimiter) {
+      if (stringDelimiter === "\"\"\"" && doc.sliceString(pos, pos + 3) === stringDelimiter) {
+        stringDelimiter = null;
+        pos += 2;
+      } else if (stringDelimiter === "\"" && ch === "\\\\") {
+        ++pos;
+      } else if (stringDelimiter === "\"" && ch === stringDelimiter) {
+        stringDelimiter = null;
+      }
+      continue;
+    }
+
+    if (ch === "!" && doc.sliceString(pos + 1, pos + 2) === " ") {
+      const line = doc.lineAt(pos);
+      pos = line.to;
+      continue;
+    }
+    if (doc.sliceString(pos, pos + 3) === "\"\"\"") {
+      stringDelimiter = "\"\"\"";
+      pos += 2;
+      continue;
+    }
+    if (ch === "\"") {
+      stringDelimiter = ch;
+      continue;
+    }
+    if (ch === "{") {
+      stack.push(pos);
+      continue;
+    }
+    if (ch !== "}" || stack.length === 0) {
+      continue;
+    }
+
+    const open = stack.pop();
+    if (open >= lineStart && open < lineEnd && doc.lineAt(open).number !== doc.lineAt(pos).number) {
+      return {from: open + 1, to: pos};
+    }
+  }
+
+  return null;
+}
+
 function keyName(name) {
   return name.replace(/-/g, "-");
 }
@@ -236,7 +287,7 @@ function fromTextArea(textarea, options = {}) {
     extensions.push(EditorState.readOnly.of(true), EditorView.editable.of(false));
   }
   if (options.mode === "text/x-rega") {
-    extensions.push(REGA_LANGUAGE);
+    extensions.push(REGA_LANGUAGE, foldService.of(foldReGaBraces));
   }
 
   let adapter = null;
