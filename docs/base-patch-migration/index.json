@@ -1495,15 +1495,6 @@
       "sha256": "0e54c65fc9efd5f406dee70b6c1a24dccd7ded0cc3c620d96c7e468857df21bc"
     },
     {
-      "added": 27,
-      "files": [
-        "www/rega/esp/controls/powermeter.fn"
-      ],
-      "patch": "0166-WebUI-Fix-PowermeterControl.patch",
-      "removed": 19,
-      "sha256": "20d15417b4250d03b8e2c81b8c401caa7e1014479131719e8b3fae7a90977130"
-    },
-    {
       "added": 23,
       "files": [
         "www/api/methods/system/saveobjectmodel.tcl",
@@ -1818,5 +1809,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "790a5abcdf76fab4efabcc29d5cecb5af2f60fec8f10710404c370ca24ea1bbf"
+  "series_sha256": "84cf3ad0047e2e35f645a2f7b62fcc36f46e9b25092b2972bf07c64c2f13c104"
 }
