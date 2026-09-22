@@ -423,7 +423,7 @@
       "sha256": "94dffa883ac41eadb82135eacca74494339ad69770075fc86b29d5f31a42d662"
     },
     {
-      "added": 325,
+      "added": 305,
       "files": [
         "www/rega/pages/index.htm",
         "www/rega/pages/msg/editScript.htm",
@@ -432,7 +432,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "fe074aa8e3d420f278d17fd07038412035039fc88f44b7b4151d770f04dd9ec7"
+      "sha256": "37d2da28ff003f7509256f8a6477c2b62d97575945506fed8d9217e0a4a6107e"
     },
     {
       "added": 751,
@@ -1463,7 +1463,7 @@
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
-      "sha256": "6d357471f3cb7c2eda14b536125ddedbe6662a2b69b70f2573c7d24049f11219"
+      "sha256": "64b34d7b95f2a4fd33a4ed8f70366de7412bf8fa1626b670dee08520d694be32"
     },
     {
       "added": 68,
