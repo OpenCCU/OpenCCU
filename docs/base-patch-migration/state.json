@@ -88,7 +88,7 @@
   "in_progress": {
     "base_merge_commit": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
     "base_pr": 52,
-    "cleanup_pr": null,
+    "cleanup_pr": 4231,
     "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
