@@ -71,18 +71,24 @@
       "base_pr": 49,
       "cleanup_pr": 4228,
       "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch"
+    },
+    {
+      "base_merge_commit": "41a8796a2869699f008f229c382e493186dd7c04",
+      "base_pr": 50,
+      "cleanup_pr": 4229,
+      "patch": "0166-WebUI-Fix-PowermeterControl.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "41a8796a2869699f008f229c382e493186dd7c04",
-    "base_pr": 50,
+    "base_merge_commit": "47852670b376000b91a5cfb7906dca84e2469aa4",
+    "base_pr": 51,
     "cleanup_pr": null,
-    "patch": "0166-WebUI-Fix-PowermeterControl.patch",
+    "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch",
     "phase": "cleanup-prepared; merge pending"
   },
-  "next_action": "Verify patch 0166 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0176 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "b93f82bd2feae567e2baa84d8426c65a4dc5cd09",
-  "verified_base_pin": "59e46830783d5517be449301ebf682d29b86e58e",
-  "verified_source_sha256": "f05ffb127e28cd3766818ff17de4dc33e147c0047daf0e17a18249f1027efc33"
+  "verified_at_openccu_commit": "60d22a2e0a0a1017ef375b9774a6f77ab174ef51",
+  "verified_base_pin": "41a8796a2869699f008f229c382e493186dd7c04",
+  "verified_source_sha256": "20f0151c5823a42b9c7481c693a5d942e6933d6ad7e3dd259736066544fbe3db"
 }

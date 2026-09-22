@@ -1559,15 +1559,6 @@
       "sha256": "187722253f5cac8954d9f9df258b6e672a5b10a405c4b886a9e206b8b373b41c"
     },
     {
-      "added": 2,
-      "files": [
-        "www/rega/esp/controls/heating_control.fn"
-      ],
-      "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch",
-      "removed": 2,
-      "sha256": "bdf7ff57c3c89c5760005d4931fbcb500056bdbbc30d8bedcb57cf0f940e336b"
-    },
-    {
       "added": 1,
       "files": [
         "www/config/easymodes/etc/uiElements.tcl"
@@ -1809,5 +1800,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "84cf3ad0047e2e35f645a2f7b62fcc36f46e9b25092b2972bf07c64c2f13c104"
+  "series_sha256": "9ecf7fb86364aa50c66048db2b6beac0088476d4d1adc9899a43b6d4221bf27c"
 }
