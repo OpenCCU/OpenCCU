@@ -20,6 +20,11 @@
   color: #000;
 }
 
+.cm-content,
+.cm-line {
+  line-height: 15px;
+}
+
 .cm6-fullscreen {
   position: fixed !important;
   top: 0;

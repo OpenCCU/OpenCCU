@@ -16,13 +16,24 @@ import {StreamLanguage} from "@codemirror/language";
 import {clike} from "@codemirror/legacy-modes/mode/clike";
 import {tags} from "@lezer/highlight";
 
+function wordSet(value) {
+  const words = Array.isArray(value) ? value.join(" ") : value;
+  const out = {};
+  for (const word of words.split(/\s+/)) {
+    if (word) {
+      out[word] = true;
+    }
+  }
+  return out;
+}
+
 const REGA_LANGUAGE = StreamLanguage.define(clike({
   name: "clike",
-  keywords: "if while foreach return quit else elseif break continue Call Write WriteLine WriteURL WriteXML WriteHTML Debug Dump",
-  types: "var boolean integer real string time object idarray xml",
-  blockKeywords: "if while foreach else elseif",
-  defKeywords: "system dom root devices channels datapoints structure scheduler xmlrpc interfaces tcap web",
-  atoms: [
+  keywords: wordSet("if while foreach return quit else elseif break continue Call Write WriteLine WriteURL WriteXML WriteHTML Debug Dump"),
+  types: wordSet("var boolean integer real string time object idarray xml"),
+  blockKeywords: wordSet("if while foreach else elseif"),
+  defKeywords: wordSet("system dom root devices channels datapoints structure scheduler xmlrpc interfaces tcap web"),
+  atoms: wordSet([
     "null true false currenttime localtime on off up down higher lower",
     "M_E M_LOG2E M_LOG10E M_LN2 M_LN10 M_PI M_PI_2 M_PI_4 M_1_PI M_2_PI",
     "M_2_SQRTPI M_SQRT2 M_SQRT1_2",
@@ -86,7 +97,7 @@ const REGA_LANGUAGE = StreamLanguage.define(clike({
     "iufNone iufVisible iufInternal iufReadyState iufOperated iufVirtualChn",
     "iufReadable iufWriteable iufEventable iufAll",
     "soAsc soDesc stAlpha stNatural"
-  ].join(" "),
+  ]),
   multiLineStrings: true,
   indentStatements: false,
   indentSwitch: false,
