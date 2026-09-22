@@ -1561,15 +1561,6 @@
     {
       "added": 1,
       "files": [
-        "www/config/easymodes/etc/uiElements.tcl"
-      ],
-      "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch",
-      "removed": 1,
-      "sha256": "eb2544031f4ec95ea7916c8bac428eca3a286ea873ea39d443e50630cddace73"
-    },
-    {
-      "added": 1,
-      "files": [
         "www/rega/pages/tabs/admin/msg/newSysVar.htm"
       ],
       "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch",
@@ -1800,5 +1791,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "9ecf7fb86364aa50c66048db2b6beac0088476d4d1adc9899a43b6d4221bf27c"
+  "series_sha256": "3a939594e62c8f4fa908961c33f218b4103498bb275719cd7751817c73c7713d"
 }

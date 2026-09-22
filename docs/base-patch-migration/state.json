@@ -77,18 +77,24 @@
       "base_pr": 50,
       "cleanup_pr": 4229,
       "patch": "0166-WebUI-Fix-PowermeterControl.patch"
+    },
+    {
+      "base_merge_commit": "47852670b376000b91a5cfb7906dca84e2469aa4",
+      "base_pr": 51,
+      "cleanup_pr": 4230,
+      "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "47852670b376000b91a5cfb7906dca84e2469aa4",
-    "base_pr": 51,
+    "base_merge_commit": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
+    "base_pr": 52,
     "cleanup_pr": null,
-    "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch",
-    "phase": "cleanup-prepared; merge pending"
+    "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0176 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0177 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "60d22a2e0a0a1017ef375b9774a6f77ab174ef51",
-  "verified_base_pin": "41a8796a2869699f008f229c382e493186dd7c04",
-  "verified_source_sha256": "20f0151c5823a42b9c7481c693a5d942e6933d6ad7e3dd259736066544fbe3db"
+  "verified_at_openccu_commit": "0a063de8766dd47999579fb40ec9b6f9d970da8c",
+  "verified_base_pin": "47852670b376000b91a5cfb7906dca84e2469aa4",
+  "verified_source_sha256": "c6019f58bdf05f157287be0a1858e5566e38cf94bfcf25d8e4c5810107ca69d7"
 }
