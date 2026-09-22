@@ -8,12 +8,13 @@ import {
   indentMore,
   indentWithTab
 } from "@codemirror/commands";
-import {bracketMatching, foldCode, foldGutter, foldKeymap, indentUnit, syntaxHighlighting, defaultHighlightStyle} from "@codemirror/language";
+import {bracketMatching, foldCode, foldGutter, foldKeymap, indentUnit, syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from "@codemirror/language";
 import {closeBrackets, closeBracketsKeymap, autocompletion, startCompletion, completeAnyWord} from "@codemirror/autocomplete";
 import {search, searchKeymap, openSearchPanel} from "@codemirror/search";
 import {lineNumbers, highlightActiveLineGutter} from "@codemirror/view";
 import {StreamLanguage} from "@codemirror/language";
 import {clike} from "@codemirror/legacy-modes/mode/clike";
+import {tags} from "@lezer/highlight";
 
 const REGA_LANGUAGE = StreamLanguage.define(clike({
   name: "clike",
@@ -135,6 +136,13 @@ const REGA_LANGUAGE = StreamLanguage.define(clike({
 }));
 
 const FULLSCREEN_CLASS = "cm6-fullscreen";
+const REGA_HIGHLIGHT_STYLE = HighlightStyle.define([
+  {tag: tags.keyword, color: "#708"},
+  {tag: tags.atom, color: "#219"},
+  {tag: tags.typeName, color: "#085"},
+  {tag: tags.string, color: "#a11"},
+  {tag: tags.comment, color: "#a50"}
+]);
 
 function keyName(name) {
   return name.replace(/-/g, "-");
@@ -197,6 +205,7 @@ function fromTextArea(textarea, options = {}) {
     closeBrackets(),
     autocompletion({override: [completeAnyWord]}),
     syntaxHighlighting(defaultHighlightStyle),
+    syntaxHighlighting(REGA_HIGHLIGHT_STYLE),
     EditorView.lineWrapping,
     indentUnit.of(" ".repeat(options.indentUnit || 2)),
     EditorState.tabSize.of(options.tabSize || 2),

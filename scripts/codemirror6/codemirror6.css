@@ -5,16 +5,19 @@
   text-align: left;
   font-family: monospace;
   background: #fff;
+  color: #000;
 }
 
 .cm-gutters {
   font-family: monospace;
   background: #fff;
+  color: #000;
 }
 
 .cm-scroller,
 .cm-content {
   background: #fff;
+  color: #000;
 }
 
 .cm6-fullscreen {
