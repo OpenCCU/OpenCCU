@@ -239,15 +239,6 @@
       "sha256": "1003bd39fecb40aea8f4125d88e0dc8968ec9f725d0810a610b002ba2cfe5954"
     },
     {
-      "added": 14,
-      "files": [
-        "usr/lib/tcl8.2/homematic/homematic.tcl"
-      ],
-      "patch": "0034-WebUI-Addon-Config.patch",
-      "removed": 1,
-      "sha256": "542cb1274cf6de1f980e9e2e1b289ea20901794a669751793977e58642b645df"
-    },
-    {
       "added": 11,
       "files": [
         "www/rega/esp/system.fn",
@@ -1836,5 +1827,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3ff9233509e7f542ab3e87ea51dd8154ca82f7d33378a409fc2d87d22bda61e8"
+  "series_sha256": "2fcbd448b294e5424647897973067daefe120e1918609812631b279980f6faed"
 }
