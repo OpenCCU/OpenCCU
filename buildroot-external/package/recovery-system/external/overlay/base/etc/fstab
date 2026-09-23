@@ -6,7 +6,6 @@ proc            /proc          proc     defaults                                
 devpts          /dev/pts       devpts   defaults,gid=5,mode=620,ptmxmode=0666         0      0
 tmpfs           /dev/shm       tmpfs    mode=1777,noexec,nosuid,nodev                 0      0
 tmpfs           /tmp           tmpfs    mode=1777,nosuid,nodev                        0      0
-tmpfs           /run           tmpfs    defaults,noatime,mode=0755,nosuid,nodev       0      0
 sysfs           /sys           sysfs    defaults                                      0      0
 tmpfs           /var           tmpfs    defaults,noatime,noexec,nosuid,nodev,size=50% 0      0
 tmpfs           /media         tmpfs    defaults,noatime,noexec,nosuid,nodev          0      0

@@ -13,8 +13,10 @@ umask 0002
 # mount all filesystems
 /bin/mount -a
 
-# create /var/run and /var/cache
-/bin/mkdir -p /var/run /var/cache
+# /run points to /var/run. Prepare it before psplash and all init scripts.
+/bin/mkdir -p /var/run /var/cache || exit 1
+/bin/chown 0:0 /var/run || exit 1
+/bin/chmod 0755 /var/run || exit 1
 
 # create ld.so.cache file
 /sbin/ldconfig -C /var/cache/ld.so.cache
