@@ -10,11 +10,14 @@ PIDFILE="/var/run/${DAEMON}.pid"
 start() {
 	echo -n "Starting ${DAEMON}: "
 
-	# adjust the oom score (which is inherited by start-stop-daemon)
-	# to ensure that others are killed first in case of low memory situations
-	echo -900 >/proc/$$/oom_score_adj 2> /dev/null
+	run_user=root
+	if [ ! -e /etc/recovery-system ]; then
+		run_user=ssdp:ssdp
+		# The daemon inherits this preference from start-stop-daemon.
+		echo -900 >/proc/$$/oom_score_adj 2> /dev/null
+	fi
 
-	if start-stop-daemon -d / -S -q -b -m -c ssdp:ssdp -p ${PIDFILE} --exec /bin/${DAEMON}; then
+	if start-stop-daemon -d / -S -q -b -m -c "$run_user" -p ${PIDFILE} --exec /bin/${DAEMON}; then
 		echo "OK"
 	else
 		echo "FAIL"

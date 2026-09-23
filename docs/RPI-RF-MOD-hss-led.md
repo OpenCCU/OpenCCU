@@ -63,11 +63,19 @@ This local bookkeeping does not provide cross-container reference counting.
 
 ## Recovery and permissions
 
-Recovery enables `BR2_PACKAGE_OPENCCU_BASE_LED_ONLY=y` in the existing Base package.
-The CMake option `HSS_LED_ONLY=ON` builds the same controller into a small `hss_led`
-with no CCU status thread or XML-RPC dependencies. No WebUI, Java processing,
-CCU rootfs patch stack or other Base services are built or installed in this mode.
-The recovery `hm-platform` package still provides its existing utilities.
+Recovery enables `BR2_PACKAGE_OPENCCU_BASE_RECOVERY=y` in the existing Base package.
+The CMake option `RECOVERY_ONLY=ON` builds the same controller into a small `hss_led`
+with no CCU status thread or XML-RPC dependencies. The same build compiles `ssdpd`,
+`eq3configd`, `eq3configcmd`, `crypttool` and their libraries from source. No WebUI,
+Java processing or CCU rootfs patch stack is built or installed in this mode.
+The former `hm-platform` package is removed; the recovery web interface lives in
+the recovery system's base overlay.
+
+Both systems install the same `S50eq3configd` and `S50ssdpd` scripts. The recovery
+image carries `/etc/recovery-system`: with this marker, the scripts preserve the
+existing root execution policy and do not initialize or change permissions of
+persistent configuration files. The main system retains its dedicated service
+users and configuration initialization.
 
 Native systems and recovery run hss_led as the `hssled` user. The init script
 prepares its runtime directory and existing LED-node permissions; the packaged
@@ -99,10 +107,11 @@ make tinkerboard2-release
 ```
 
 The normal configuration must keep `BR2_PACKAGE_OPENCCU_BASE=y` and leave
-`BR2_PACKAGE_OPENCCU_BASE_LED_ONLY` disabled. The nested recovery build selects
-LED-only mode itself. The Base install hook removes stale experimental daemon
-and init-script files from a reused target directory. Deploy the rebuilt image
-and reboot; this patch does not perform a live migration of running daemons.
+`BR2_PACKAGE_OPENCCU_BASE_RECOVERY` disabled. The nested recovery build selects
+recovery mode itself. Rebuild recovery from a clean output directory when changing
+package selection: Buildroot does not remove old package files from a reused
+target directory. The recovery version bump creates a new nested output directory.
+Deploy the rebuilt image and reboot; this does not migrate running daemons.
 
 ## Commands on the device
 

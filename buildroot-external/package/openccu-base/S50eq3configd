@@ -14,6 +14,10 @@ init () {
 	echo "BidCoS-Address=$(cat /var/rf_address)" >/var/ids
 	echo "SerialNumber=$(cat /var/board_serial)" >>/var/ids
 
+	# Recovery mounts the existing user configuration read-only.
+	# Do not create files or change persistent ownership/permissions.
+	[ ! -e /etc/recovery-system ] || return 0
+
 	# in case we have a BidCos-RF device (no empty /var/rf_address)
 	# and there is no already existing /etc/config/ids we have to
 	# copy it over
@@ -33,11 +37,14 @@ start() {
 	echo -n "Starting ${DAEMON}: "
 	init
 
-	# adjust the oom score (which is inherited by start-stop-daemon)
-	# to ensure that others are killed first in case of low memory situations
-	echo -900 >/proc/$$/oom_score_adj 2> /dev/null
+	run_user=root
+	if [ ! -e /etc/recovery-system ]; then
+		run_user=eq3cfg:eq3cfg
+		# The daemon inherits this preference from start-stop-daemon.
+		echo -900 >/proc/$$/oom_score_adj 2> /dev/null
+	fi
 
-	start-stop-daemon -d / -S -q -b -m -c eq3cfg:eq3cfg -p ${PIDFILE} --exec /bin/${DAEMON}
+	start-stop-daemon -d / -S -q -b -m -c "$run_user" -p ${PIDFILE} --exec /bin/${DAEMON}
 	echo "OK"
 }
 stop() {

@@ -1,6 +1,6 @@
 Subject: [PATCH] hss_led: integrate LED control and provide hss_ledctl
 
-Base: OpenCCU-Base 587230316a97e380516b0ac4d21a497c187657cd
+Base: OpenCCU-Base 5810a47faabc0b0190bccd0368444e8b4da4a716
 
 Run the LED controller and status calculation in one process. Provide
 hss_ledctl as its client invocation, explicit LED-class target selection,
@@ -10,28 +10,25 @@ Upstream: Not submitted (experimental OpenCCU integration)
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index dd46e499..b07dc236 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -66,6 +66,12 @@ function(openccu_stage_target target_name dest_subdir)
-   endif()
- endfunction()
+@@ -79,8 +79,9 @@
+ add_subdirectory(src/crypttool)
  
-+option(HSS_LED_ONLY "Build only the LED controller and CLI for recovery" OFF)
-+if(HSS_LED_ONLY)
+ if(RECOVERY_ONLY)
 +  add_subdirectory(src/hss_led)
-+  return()
-+endif()
-+
- add_subdirectory(src/libelvutils)
- add_subdirectory(src/libxmlparser)
- add_subdirectory(src/libXmlRpc)
+   add_custom_target(recovery
+-    DEPENDS eq3configcmd eq3configd ssdpd crypttool
++    DEPENDS eq3configcmd eq3configd ssdpd crypttool hss_led
+   )
+   return()
+ endif()
 diff --git a/src/hss_led/CMakeLists.txt b/src/hss_led/CMakeLists.txt
 index d5c1e3a7..3bdfa5a6 100644
 --- a/src/hss_led/CMakeLists.txt
 +++ b/src/hss_led/CMakeLists.txt
 @@ -1,6 +1,14 @@
-+if(HSS_LED_ONLY)
++if(RECOVERY_ONLY)
 +  add_executable(hss_led LedOnlyMain.cpp LedController.cpp)
 +  target_compile_features(hss_led PRIVATE cxx_std_11)
 +  target_compile_options(hss_led PRIVATE -Wall -Wextra)

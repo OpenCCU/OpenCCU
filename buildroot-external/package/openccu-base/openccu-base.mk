@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = d678401394f4e8c25abae5a0fa7c629f6647811a
+OPENCCU_BASE_VERSION = 5810a47faabc0b0190bccd0368444e8b4da4a716
 OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
@@ -16,19 +16,20 @@ OPENCCU_BASE_ROOTFS_PATCH_DIR = \
 	$(OPENCCU_BASE_PKGDIR)/rootfs-patches
 OPENCCU_BASE_ENABLE_ROOTFS_PATCHING ?= YES
 
-OPENCCU_BASE_MINIMAL = $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY) $(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY))
+OPENCCU_BASE_MINIMAL = $(if $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY) $(BR2_PACKAGE_OPENCCU_BASE_RECOVERY)),y)
 
 OPENCCU_BASE_DEPENDENCIES = \
+	$(if $(BR2_PACKAGE_OPENCCU_BASE_RECOVERY),openssl) \
 	$(if $(OPENCCU_BASE_MINIMAL),,\
 	host-pkgconf host-python3 host-python-html2text host-tcl \
 	libusb openssl tcl)
 
 OPENCCU_BASE_BUILD_OPTS = \
-	--target $(if $(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),hss_led,$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),compat-libraries,package))
+	--target $(if $(BR2_PACKAGE_OPENCCU_BASE_RECOVERY),recovery,$(if $(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),compat-libraries,package))
 
 OPENCCU_BASE_CONF_OPTS = \
 	-DDEPLOY_TO_REPO=OFF \
-	-DHSS_LED_ONLY=$(if $(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),ON,OFF) \
+	-DRECOVERY_ONLY=$(if $(BR2_PACKAGE_OPENCCU_BASE_RECOVERY),ON,OFF) \
 	-DBUILD_TCL_MODULES=$(if $(OPENCCU_BASE_MINIMAL),OFF,ON) \
 	-DBUILD_WEBUI_AND_DEVICETYPES=$(if $(OPENCCU_BASE_MINIMAL),OFF,ON) \
 	-DHAS_USB_SUPPORT=$(if $(OPENCCU_BASE_MINIMAL),OFF,ON) \
@@ -150,9 +151,14 @@ define OPENCCU_BASE_INSTALL_TARGET_CMDS
 	$(INSTALL) -d -m 0755 "$(TARGET_DIR)/opt"
 	cp -av "$(@D)/build/rootfs/opt/." "$(TARGET_DIR)/opt/"
 endef
-else ifeq ($(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),y)
+else ifeq ($(BR2_PACKAGE_OPENCCU_BASE_RECOVERY),y)
 define OPENCCU_BASE_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 "$(@D)/build/rootfs/bin/hss_led" "$(TARGET_DIR)/bin/hss_led"
+	for file in ssdpd eq3configd eq3configcmd crypttool hss_led; do \
+		$(INSTALL) -D -m 0755 "$(@D)/build/rootfs/bin/$$file" "$(TARGET_DIR)/bin/$$file"; \
+	done
+	for lib in libeq3config.so libLanDeviceUtils.so libUnifiedLanComm.so libelvutils.so; do \
+		$(INSTALL) -D -m 0644 "$(@D)/build/rootfs/lib/$$lib" "$(TARGET_DIR)/lib/$$lib"; \
+	done
 endef
 else
 define OPENCCU_BASE_INSTALL_TARGET_CMDS
@@ -308,7 +314,7 @@ endif
 endif
 endif
 
-ifneq ($(OPENCCU_BASE_MINIMAL),y)
+ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_REGAHSS),y)
 define OPENCCU_BASE_INSTALL_INIT_SYSV_REGAHSS
 	$(INSTALL) -D -m 0755 $(OPENCCU_BASE_PKGDIR)/S70ReGaHss \
@@ -327,7 +333,7 @@ endef
 endif
 
 ifneq ($(BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY),y)
-ifeq ($(BR2_PACKAGE_OPENCCU_BASE_LED_ONLY),y)
+ifeq ($(BR2_PACKAGE_OPENCCU_BASE_RECOVERY),y)
 define OPENCCU_BASE_USERS
 	-      -1 status -1 * - - -      status access group
 	hssled -1 hssled -1 * - - status hss_led user
