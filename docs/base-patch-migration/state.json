@@ -100,7 +100,7 @@
   "in_progress": {
     "base_merge_commit": "3efc877da639476319f68065fe9223531ed09e3d",
     "base_pr": 54,
-    "cleanup_pr": null,
+    "cleanup_pr": 4233,
     "patch": "0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
