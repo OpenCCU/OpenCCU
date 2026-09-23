@@ -1,8 +1,6 @@
-diff --git a/www/config/cp_network.cgi b/www/config/cp_network.cgi
-index f2a00df..870453b 100644
 --- a/www/config/cp_network.cgi
 +++ b/www/config/cp_network.cgi
-@@ -207,8 +207,9 @@ proc action_put_page {} {
+@@ -207,8 +207,9 @@
    set dhcp ""
    set dns1 ""
    set dns2 ""
@@ -13,7 +11,7 @@ index f2a00df..870453b 100644
    
    http_head
    
-@@ -333,6 +334,42 @@ proc action_put_page {} {
+@@ -333,6 +334,42 @@
  
          }
        }
@@ -56,7 +54,7 @@ index f2a00df..870453b 100644
        table_row {class="CLASS21119"} {
          table_data {class="CLASS21116"} {
            #puts "Zertifikat<br />erstellen"
-@@ -455,6 +492,7 @@ proc action_put_page {} {
+@@ -455,6 +492,7 @@
          pb += "&gw="+document.getElementById("text_gw").value;
          pb += "&dns1="+document.getElementById("text_dns1").value;
          pb += "&dns2="+document.getElementById("text_dns2").value;
@@ -64,7 +62,7 @@ index f2a00df..870453b 100644
          
          var opts = {
            postBody: pb,
-@@ -605,9 +643,9 @@ proc action_save_settings {} {
+@@ -605,9 +643,9 @@
      import dhcp
      import dns1
      import dns2
@@ -76,7 +74,7 @@ index f2a00df..870453b 100644
        puts "Success"
        # puts "\${dialogSettingsNetworkMessageSaveSettingsSucceed}"
        return
-@@ -641,8 +679,8 @@ proc set_property {s_var id value} {
+@@ -641,8 +679,8 @@
    return 0
  }
  
@@ -87,7 +85,7 @@ index f2a00df..870453b 100644
    set ifconfig_result [exec /sbin/ifconfig eth0]
    if {! [regexp -line {inet addr:([\d.]+).*Mask:([\d.]+)[^\d.]*$} $ifconfig_result dummy ip mask]} {return 0}
    set fd -1
-@@ -666,8 +704,8 @@ proc get_current_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var d
+@@ -666,8 +704,8 @@
    return 1
  }
  
@@ -98,7 +96,7 @@ index f2a00df..870453b 100644
    set fd -1
    catch {set fd [open "/etc/config/netconfig" r]}
    if { $fd <0 } { return 0 }
-@@ -683,10 +721,14 @@ proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var
+@@ -683,10 +721,14 @@
    if {! [get_property $netconfig "${current_prefix}GATEWAY" gw] } {return 0}
    get_property $netconfig "${current_prefix}NAMESERVER1" dns1
    get_property $netconfig "${current_prefix}NAMESERVER2" dns2
@@ -114,7 +112,7 @@ index f2a00df..870453b 100644
    set fd -1
    catch {set fd [open "/etc/config/netconfig" r]}
    if { $fd <0 } { return 0 }
-@@ -714,6 +756,18 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2} {
+@@ -714,6 +756,18 @@
    puts -nonewline $fd $netconfig
    close $fd
  
@@ -133,16 +131,14 @@ index f2a00df..870453b 100644
    return 1
  }
  
-@@ -730,4 +784,3 @@ cgi_eval {
+@@ -730,4 +784,3 @@
    if {[session_requestisvalid 8] > 0} then action_$action
  }
  
 -
-diff --git a/www/webui/js/lang/de/translate.lang.js b/www/webui/js/lang/de/translate.lang.js
-index 1cdcec7..f1e2918 100644
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -608,6 +608,7 @@ jQuery.extend(true,langJSON, {
+@@ -608,6 +608,7 @@
      "commentSettingsDialogNetwork" : "***********************************************",
      "dialogSettingsNetworkTitle" : HMIdentifier.de.CCUShortName + " - Netzwerkeinstellungen",
      "dialogSettingsNetworkTDIPSettings" : "IP-Einstellungen",
@@ -150,7 +146,7 @@ index 1cdcec7..f1e2918 100644
      "dialogSettingsNetworkTDCreateCertificate" : "Zertifikat<br/>erstellen",
      "dialogSettingsNetworkIPSettingsLblHostname" : "Hostname: ",
      "dialogSettingsNetworkIPSettingsLblUseIPAdd" : "Folgende IP-Adresse verwenden: ",
-@@ -620,6 +621,10 @@ jQuery.extend(true,langJSON, {
+@@ -620,6 +621,10 @@
      "dialogSettingsNetworkHintIPSettingsP1" : "Legen Sie die grundlegenden IP-Einstellungen Ihrer " + HMIdentifier.de.CCUFullNameText + " fest.",
      "dialogSettingsNetworkHintIPSettingsP2" : "%DCber den Hostnamen k%F6nnen Sie Ihrer " + HMIdentifier.de.CCUFullNameText + " einen Namen geben.",
      "dialogSettingsNetworkHintIPSettingsP3" : "Die " + HMIdentifier.de.CCUFullNameText + " bezieht ihre IP-Adresse und alle damit verbundenen Einstellungen von einem DHCP-Server. Falls sich in Ihrem Netzwerk kein solcher Server befindet, oder Sie aus anderen Gr%FCnden eigene Einstellungen verwenden m%F6chten, k%F6nnen Sie hier manuell eine IP-Adresse konfigurieren.",
@@ -161,11 +157,9 @@ index 1cdcec7..f1e2918 100644
      "dialogSettingsNetworkCertificateLblStep2" : "Schritt 1: Zertifikat ausw%E4hlen",
      "dialogSettingsNetworkCertificateLblStep3" : "Schritt 2: Zertifikat auf Zentrale laden",
      "dialogSettingsNetworkCertificateLblUpload" : "Hochladen",
-diff --git a/www/webui/js/lang/en/translate.lang.js b/www/webui/js/lang/en/translate.lang.js
-index 8093226..9cc14e8 100644
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -608,6 +608,7 @@ jQuery.extend(true,langJSON, {
+@@ -608,6 +608,7 @@
      "commentSettingsDialogNetwork" : "***********************************************",
      "dialogSettingsNetworkTitle" : HMIdentifier.en.CCUShortName + " network settings",
      "dialogSettingsNetworkTDIPSettings" : "IP settings",
@@ -173,7 +167,7 @@ index 8093226..9cc14e8 100644
      "dialogSettingsNetworkTDCreateCertificate" : "Create certificate",
      "dialogSettingsNetworkIPSettingsLblHostname" : "Host name: ",
      "dialogSettingsNetworkIPSettingsLblUseIPAdd" : "Use the following IP address: ",
-@@ -620,6 +621,10 @@ jQuery.extend(true,langJSON, {
+@@ -620,6 +621,10 @@
      "dialogSettingsNetworkHintIPSettingsP1" : "Please define the basic IP settings of your " + HMIdentifier.en.CCUFullNameText + ".",
      "dialogSettingsNetworkHintIPSettingsP2" : "You can assign a name to your " + HMIdentifier.en.CCUFullNameText + " via the host name.",
      "dialogSettingsNetworkHintIPSettingsP3" : "The " + HMIdentifier.en.CCUFullNameText + " gets the IP address and all corresponding settings from a DHCP server. If your network does not have a DHCP server or if you would like to use your own settings, you can manually configure an own IP address here.",
