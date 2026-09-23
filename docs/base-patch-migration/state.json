@@ -89,18 +89,24 @@
       "base_pr": 52,
       "cleanup_pr": 4231,
       "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch"
+    },
+    {
+      "base_merge_commit": "d9ebce227ad4e756d3ff23c467dd7127df571125",
+      "base_pr": 53,
+      "cleanup_pr": 4232,
+      "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "d9ebce227ad4e756d3ff23c467dd7127df571125",
-    "base_pr": 53,
-    "cleanup_pr": 4232,
-    "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch",
+    "base_merge_commit": "3efc877da639476319f68065fe9223531ed09e3d",
+    "base_pr": 54,
+    "cleanup_pr": null,
+    "patch": "0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0178 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0180 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "02292f6d30e17012815f5062586bae994f261d8e",
-  "verified_base_pin": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
-  "verified_source_sha256": "f0e827eb23d9c2fe262c865556b3f06abe53172943a0750331fabf1de48735dc"
+  "verified_at_openccu_commit": "126896e319b84f52c29f54c4065efb03cc6df613",
+  "verified_base_pin": "d9ebce227ad4e756d3ff23c467dd7127df571125",
+  "verified_source_sha256": "7b04d87b03d8f955101619cb58387a021ab594b35acea9d6cbdc6ecf7446cd22"
 }

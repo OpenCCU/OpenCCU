@@ -1559,15 +1559,6 @@
       "sha256": "187722253f5cac8954d9f9df258b6e672a5b10a405c4b886a9e206b8b373b41c"
     },
     {
-      "added": 7,
-      "files": [
-        "www/config/cp_network.cgi"
-      ],
-      "patch": "0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch",
-      "removed": 5,
-      "sha256": "22848525ee994919a7d11a520b29f00b9a9a838f1cb0335541399920a53455f0"
-    },
-    {
       "added": 4,
       "files": [
         "www/rega/pages/index.htm",
@@ -1782,5 +1773,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "15c5f856083941a63c1f51edff03b2b77e86b75e691755330853c55a7104b9fe"
+  "series_sha256": "1889d19c04b5f615c2f469054e8c824ea5dba703dab55d9ca1e16488fc718457"
 }
