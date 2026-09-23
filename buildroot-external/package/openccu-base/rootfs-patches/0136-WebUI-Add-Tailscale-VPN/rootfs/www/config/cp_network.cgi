@@ -148,43 +148,45 @@ proc read_var { filename varname} {
 }
 
 proc action_cert_upload {} {
-  global env sid filename
-  cd /usr/local/tmp/
+  global env sid
+  cd /tmp/
   
   http_head
-  set fp [open "$filename" r]
-  gets $fp line
-  close $fp
-  #puts $line;
-  if { [string first "-----BEGIN " $line] != -1 } {
-    catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
-    file rename -force -- $filename "/etc/config/server.pem"
+  import_file -client cert_file
+  file rename -force -- [lindex $cert_file 0] "/var/server.pem"
+  
+  set filename [open "/var/server.pem" r]
+  
+  set beginPrivateKeyFound 0
+  set beginCertificateFound 0
+
+  while { [gets $filename line] >= 0 } {
+    if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
+      set beginPrivateKeyFound 1
+    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] == 1 } {
+      set beginCertificateFound 1
+    }
+  }
+  close $filename
+  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
+    file copy -force -- "/var/server.pem" "/etc/config/server.pem"
+    file delete "/var/server.pem"
     
     cgi_javascript {
       puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
       puts {
-        var dlgPopup = parent.top.dlgPopup;
-        if (dlgPopup === undefined) {
-          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
-        }
-        dlgPopup.hide();
-        dlgPopup.setWidth(600);
-        dlgPopup.LoadFromFile(url, "action=cert_update_go");
+        parent.top.dlgPopup.hide();
+        parent.top.dlgPopup.setWidth(600);
+        parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_go");
       }
     }
   } else {
-    file delete -force -- $filename
-
     cgi_javascript {
       puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
       puts {
-        var dlgPopup = parent.top.dlgPopup;
-        if (dlgPopup === undefined) {
-          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
-        }
-        dlgPopup.hide();
-        dlgPopup.setWidth(600);
-        dlgPopup.LoadFromFile(url, "action=cert_update_failed");
+        parent.top.dlgPopup.hide();
+        parent.top.dlgPopup.setWidth(600);
+        parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_failed");
       }
     }
   }
@@ -216,8 +218,7 @@ proc action_put_page {} {
     puts "\${dialogSettingsNetworkTitle}"
   }
   division {class="CLASS21114 j_translate"} {
-    division {style="height:80vh;width:100%;overflow:auto;"} {
-    table {class="popupTable"} {border=1} {width="100%"} {height="100%"} {
+    table {class="popupTable"} {border=1} {width="100%"} {
       table_row {class="CLASS21115"} {
         table_data {class="CLASS21116"} {
           #puts "IP-<br/>Einstellungen"
@@ -234,7 +235,6 @@ proc action_put_page {} {
                 cgi_text hostname=$hostname {id="text_hostname"}
               }
             }
-            if {[get_platform] != "oci"} {
             table_row {
               set checked ""
               if {! $dhcp} { set checked "checked=true" }
@@ -325,7 +325,6 @@ proc action_put_page {} {
               }
 
             }
-            }
           }
         }
         table_data {class="CLASS21113"} {align="left"} {
@@ -390,7 +389,8 @@ proc action_put_page {} {
             table_row {
               table_data {width="20"} {}
               table_data {colspan="2"} {
-                form "/config/fileupload.ccc?sid=$sid&action=cert_upload&url=$env(SCRIPT_NAME)" name=cert_form {target=cert_upload_iframe} enctype=multipart/form-data method=post {
+                form "$env(SCRIPT_NAME)?sid=$sid" name=cert_form {target=cert_upload_iframe} enctype=multipart/form-data method=post {
+                  export action=cert_upload
                   file_button cert_file size=30 maxlength=1000000
                 }
                 puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
@@ -458,7 +458,6 @@ proc action_put_page {} {
         }
       }
     }
-    }
   }
   division {class="popupControls"} {
     table {
@@ -487,23 +486,14 @@ proc action_put_page {} {
       OnOK = function() {
         var pb = "action=save_settings";
         pb += "&hostname="+document.getElementById("text_hostname").value;
-        if(document.getElementById("radio_manual") !== null) {
         pb += "&dhcp="+(document.getElementById("radio_manual").checked?"0":"1");
         pb += "&ip="+document.getElementById("text_ip").value;
         pb += "&mask="+document.getElementById("text_mask").value;
         pb += "&gw="+document.getElementById("text_gw").value;
         pb += "&dns1="+document.getElementById("text_dns1").value;
         pb += "&dns2="+document.getElementById("text_dns2").value;
-        } else {
-        pb += "&dhcp=1";
-        pb += "&ip=0.0.0.0";
-        pb += "&mask=0.0.0.0";
-        pb += "&gw=0.0.0.0";
-        pb += "&dns1=0.0.0.0";
-        pb += "&dns2=0.0.0.0";
-        }
-        
         pb += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
+        
         var opts = {
           postBody: pb,
           sendXML: false,
@@ -603,9 +593,7 @@ proc action_put_page {} {
         },timeDelay);
       };
     }
-    if {[get_platform] != "oci"} {
     puts "enable_disable();"
-    }
     puts "translatePage('#messagebox');"
     puts "dlgPopup.readaptSize();"
   }
@@ -726,11 +714,13 @@ proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var
   if {! [get_property $netconfig "HOSTNAME" hostname] } {return 0}
   if {! [get_property $netconfig "MODE" mode] } {return 0}
   set dhcp [expr {"$mode"=="DHCP"}]
-  if {! [get_property $netconfig "IP" ip] } {return 0}
-  if {! [get_property $netconfig "NETMASK" mask] } {return 0}
-  if {! [get_property $netconfig "GATEWAY" gw] } {return 0}
-  get_property $netconfig "NAMESERVER1" dns1
-  get_property $netconfig "NAMESERVER2" dns2
+  set current_prefix ""
+  if {$dhcp} { set current_prefix "CURRENT_" }
+  if {! [get_property $netconfig "${current_prefix}IP" ip] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}NETMASK" mask] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}GATEWAY" gw] } {return 0}
+  get_property $netconfig "${current_prefix}NAMESERVER1" dns1
+  get_property $netconfig "${current_prefix}NAMESERVER2" dns2
 
   # check for vpn enable status
   set vpn [file exists "/etc/config/tailscaleEnabled"]
@@ -752,12 +742,13 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
     set_property netconfig "MODE" "MANUAL"
   }
   set_property netconfig "HOSTNAME" $hostname
-  set_property netconfig "IP" $ip
-  set_property netconfig "NETMASK" $mask
-  set_property netconfig "GATEWAY" $gw
-
-  set_property netconfig "NAMESERVER1" $dns1
-  set_property netconfig "NAMESERVER2" $dns2
+  if {! $dhcp} {
+    set_property netconfig "IP" $ip
+    set_property netconfig "NETMASK" $mask
+    set_property netconfig "GATEWAY" $gw
+    set_property netconfig "NAMESERVER1" $dns1
+    set_property netconfig "NAMESERVER2" $dns2
+  }
 
   catch {set fd [open "/etc/config/netconfig" w]}
   if { $fd <0 } { return 0 }
@@ -783,16 +774,13 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  #catch {
-  #  import debug
-  #  cgi_debug -on
-  #}
+  catch {
+    import debug
+    cgi_debug -on
+  }
   set action "put_page"
-  set filename ""
 
   catch { import action }
-  catch { import filename }
   if {[session_requestisvalid 8] > 0} then action_$action
 }
-
 
