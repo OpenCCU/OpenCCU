@@ -1157,8 +1157,8 @@
         "www/webui/js/lang/en/translate.lang.js"
       ],
       "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
-      "removed": 9,
-      "sha256": "5b3b15389ffa9a84935b64eb52ef02feebed098e0f5736bd926b193df7b27add"
+      "removed": 8,
+      "sha256": "ccf09e9d9cef25e72dc181e47d12eb2fcb9354b60c2292c2487868ec9ffd6104"
     },
     {
       "added": 26,
