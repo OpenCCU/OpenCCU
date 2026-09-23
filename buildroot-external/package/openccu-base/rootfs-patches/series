@@ -125,7 +125,6 @@
 0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch
 0173-WebUI-SendPOSTRequest.patch
 0175-WebUI-Add-AllLogfileDownload.patch
-0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0184-WebUI-Fix-EM8LockedChannelBehviour.patch
 0185-WebUI-Fix-CPPopupCentering.patch
