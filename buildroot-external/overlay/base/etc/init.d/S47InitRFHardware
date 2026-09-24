@@ -170,11 +170,11 @@ query_rf_parameters() {
 
         # check if this is a factory reset and if so we go and factory reset
         # the rf module
-        if [[ -r /usr/local/.doCoproFactoryReset ]] &&
-           [ -f /opt/HmIP/hmip-copro-update.jar ]; then
-          if [[ "${RF_HARDWARE}" == "RPI-RF-MOD" ]] ||
-             [[ "${RF_HARDWARE}" == "HMIP-RFUSB" ]] ||
-             [[ "${RF_HARDWARE}" == "HMIP-RFUSB-TK" ]]; then
+        if [[ -r /usr/local/.doCoproFactoryReset ]]; then
+          if { [[ "${RF_HARDWARE}" == "RPI-RF-MOD" ]] ||
+               [[ "${RF_HARDWARE}" == "HMIP-RFUSB" ]] ||
+               [[ "${RF_HARDWARE}" == "HMIP-RFUSB-TK" ]]; } &&
+             [ -f /opt/HmIP/hmip-copro-update.jar ]; then
             ARCH=$(uname -m)
             JAVAOPT=
 
