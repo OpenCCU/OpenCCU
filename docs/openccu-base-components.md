@@ -29,6 +29,8 @@ Only selected programs and their required libraries are installed, including
 when a previous staging directory contains other outputs.
 `HSS_LED_STATUS_MONITOR` independently controls the CCU status thread and its
 XML-RPC dependencies. Disabling it retains the LED controller and CLI.
+The LED source patch declares `hss_ledctl` as a runtime alias of `hss_led`;
+CMake stages and installs the relative symlink, including in recovery builds.
 
 ## Applications and runtime data
 

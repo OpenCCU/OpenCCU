@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = 2b54166fdaf248905a8d719cf19783ff9adfaa77
+OPENCCU_BASE_VERSION = 963ab46c42299ac93cde0524159f3efda45d89c2
 OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
@@ -249,7 +249,6 @@ endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_HSS_LED),y)
 
 define OPENCCU_BASE_INSTALL_LED_SERVICE
-	ln -sf hss_led $(TARGET_DIR)/bin/hss_ledctl
 	$(INSTALL) -D -m 0644 $(OPENCCU_BASE_PKGDIR)/82-hss_led.rules \
 		$(TARGET_DIR)/lib/udev/rules.d/82-hss_led.rules
 endef

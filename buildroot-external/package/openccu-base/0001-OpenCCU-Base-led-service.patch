@@ -1,6 +1,6 @@
 Subject: [PATCH] hss_led: integrate LED control and provide hss_ledctl
 
-Base: OpenCCU-Base 2b54166fdaf248905a8d719cf19783ff9adfaa77
+Base: OpenCCU-Base 963ab46c42299ac93cde0524159f3efda45d89c2
 
 Run the LED controller and status calculation in one process. Provide
 hss_ledctl as its client invocation, explicit LED-class target selection,
@@ -29,11 +29,12 @@ index d5c1e3a7..3bdfa5a6 100644
    UdpCannel.cpp
    MessageParser.cpp
    AlarmMessage.cpp
-@@ -22,4 +31,15 @@ target_include_directories(hss_led PRIVATE
+@@ -22,4 +31,16 @@ target_include_directories(hss_led PRIVATE
    "${CMAKE_SOURCE_DIR}/src/libXmlRpc/src"
  )
  target_link_libraries(hss_led PRIVATE XmlRpc elvutils xmlparser pthread)
 +endif()
++set_property(TARGET hss_led PROPERTY OPENCCU_RUNTIME_ALIASES hss_ledctl)
  openccu_stage_target(hss_led bin)
 +
 +option(HSS_LED_BUILD_TESTS "Build LED controller regression tests" OFF)
