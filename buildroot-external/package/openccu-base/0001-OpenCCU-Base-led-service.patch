@@ -1,6 +1,6 @@
 Subject: [PATCH] hss_led: integrate LED control and provide hss_ledctl
 
-Base: OpenCCU-Base 963ab46c42299ac93cde0524159f3efda45d89c2
+Base: OpenCCU-Base 283d3e5cd3b870683ddfb925f21f8d8d3b56b6ef
 
 Run the LED controller and status calculation in one process. Provide
 hss_ledctl as its client invocation, explicit LED-class target selection,
