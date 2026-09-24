@@ -63,19 +63,19 @@ This local bookkeeping does not provide cross-container reference counting.
 
 ## Recovery and permissions
 
-Recovery enables `BR2_PACKAGE_OPENCCU_BASE_RECOVERY=y` in the existing Base package.
-The CMake option `RECOVERY_ONLY=ON` builds the same controller into a small `hss_led`
-with no CCU status thread or XML-RPC dependencies. The same build compiles `ssdpd`,
-`eq3configd`, `eq3configcmd`, `crypttool` and their libraries from source. No WebUI,
-Java processing or CCU rootfs patch stack is built or installed in this mode.
-The former `hm-platform` package is removed; the recovery web interface lives in
-the recovery system's base overlay.
+Recovery selects `HSS_LED`, `SSDPD`, `EQ3CONFIGD`, `EQ3CONFIGCMD` and `CRYPTTOOL`
+under `BR2_PACKAGE_OPENCCU_BASE`, and disables the other components explicitly.
+`BR2_PACKAGE_OPENCCU_BASE_HSS_LED_STATUS_MONITOR=n` maps to the CMake option
+`HSS_LED_STATUS_MONITOR=OFF`: the same controller is built without the CCU status
+thread or XML-RPC dependencies. There is no special recovery build mode.
+Required native libraries follow the selected targets automatically.
 
-Both systems install the same `S50eq3configd` and `S50ssdpd` scripts. The recovery
-image carries `/etc/recovery-system`: with this marker, the scripts preserve the
-existing root execution policy and do not initialize or change permissions of
-persistent configuration files. The main system retains its dedicated service
-users and configuration initialization.
+The former `hm-platform` package is removed; the recovery web interface lives in
+the recovery system's base overlay. Both systems use the same service scripts.
+The selected `SERVICE_USERS` and `SYSTEM_INTEGRATION` settings are written to
+`/etc/default/openccu-base`. Recovery disables both: eq3configd and ssdpd retain
+root execution, and service startup does not initialize persistent configuration
+or change its ownership or permissions.
 
 Native systems and recovery run hss_led as the `hssled` user. The init script
 prepares its runtime directory and existing LED-node permissions; the packaged
@@ -106,12 +106,13 @@ make -C build-tinkerboard2 openccu-base-dirclean recovery-system-dirclean
 make tinkerboard2-release
 ```
 
-The normal configuration must keep `BR2_PACKAGE_OPENCCU_BASE=y` and leave
-`BR2_PACKAGE_OPENCCU_BASE_RECOVERY` disabled. The nested recovery build selects
-recovery mode itself. Rebuild recovery from a clean output directory when changing
-package selection: Buildroot does not remove old package files from a reused
-target directory. The recovery version bump creates a new nested output directory.
-Deploy the rebuilt image and reboot; this does not migrate running daemons.
+All Base components, including the WebUI, are enabled by default in the normal
+64-bit configuration. The nested recovery configuration lists its own selection.
+Rebuild from a clean output directory when changing package selections: Buildroot
+does not uninstall old package files from a reused target directory. Deploy the
+rebuilt image and reboot; this does not migrate running daemons.
+
+See [Base component selection](openccu-base-components.md) for the package options.
 
 ## Commands on the device
 

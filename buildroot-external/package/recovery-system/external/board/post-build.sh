@@ -28,3 +28,7 @@ fi
 
 # remove unnecessary stuff from TARGET_DIR
 rm -f "${TARGET_DIR}/etc/init.d/S35iptables"
+
+# Apply the same per-component service selection as the main image.
+"$(dirname "$0")/../../../openccu-base/scripts/finalize-components.sh" \
+  "${TARGET_DIR}" "${BR2_CONFIG}"

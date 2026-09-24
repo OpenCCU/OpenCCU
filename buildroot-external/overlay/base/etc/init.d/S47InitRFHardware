@@ -170,7 +170,8 @@ query_rf_parameters() {
 
         # check if this is a factory reset and if so we go and factory reset
         # the rf module
-        if [[ -r /usr/local/.doCoproFactoryReset ]]; then
+        if [[ -r /usr/local/.doCoproFactoryReset ]] &&
+           [ -f /opt/HmIP/hmip-copro-update.jar ]; then
           if [[ "${RF_HARDWARE}" == "RPI-RF-MOD" ]] ||
              [[ "${RF_HARDWARE}" == "HMIP-RFUSB" ]] ||
              [[ "${RF_HARDWARE}" == "HMIP-RFUSB-TK" ]]; then
@@ -414,12 +415,12 @@ stop() {
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
   if [[ -n "${HM_HMRF_DEVNODE}" ]]; then
-    /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMRF_DEVNODE}" -bl -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMRF_DEVNODE}" -bl -l 1
   fi
 
   if [[ -n "${HM_HMIP_DEVNODE}" ]] &&
      [[ "${HM_HMIP_DEVNODE}" != "${HM_HMRF_DEVNODE}" ]]; then
-    /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMIP_DEVNODE}" -bl -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMIP_DEVNODE}" -bl -l 1
   fi
 
   # for the docker/OCI based platforms it might be a good

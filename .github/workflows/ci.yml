@@ -105,7 +105,10 @@ jobs:
           python3 scripts/base-patch-migration.py index
 
       - name: Check shared recovery services
-        run: python3 scripts/testcases/build/test_recovery_services.py -v
+        run: |
+          pip install kconfiglib
+          python3 scripts/testcases/build/test_recovery_services.py -v
+          python3 scripts/testcases/build/test_component_selection.py -v
 
       - name: Check Package consistency
         run: |

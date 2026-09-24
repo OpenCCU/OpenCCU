@@ -1,6 +1,6 @@
 Subject: [PATCH] hss_led: integrate LED control and provide hss_ledctl
 
-Base: OpenCCU-Base 5810a47faabc0b0190bccd0368444e8b4da4a716
+Base: OpenCCU-Base 2b54166fdaf248905a8d719cf19783ff9adfaa77
 
 Run the LED controller and status calculation in one process. Provide
 hss_ledctl as its client invocation, explicit LED-class target selection,
@@ -9,26 +9,13 @@ and a minimal recovery build of the same controller.
 Upstream: Not submitted (experimental OpenCCU integration)
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -79,8 +79,9 @@
- add_subdirectory(src/crypttool)
- 
- if(RECOVERY_ONLY)
-+  add_subdirectory(src/hss_led)
-   add_custom_target(recovery
--    DEPENDS eq3configcmd eq3configd ssdpd crypttool
-+    DEPENDS eq3configcmd eq3configd ssdpd crypttool hss_led
-   )
-   return()
- endif()
 diff --git a/src/hss_led/CMakeLists.txt b/src/hss_led/CMakeLists.txt
 index d5c1e3a7..3bdfa5a6 100644
 --- a/src/hss_led/CMakeLists.txt
 +++ b/src/hss_led/CMakeLists.txt
-@@ -1,6 +1,14 @@
-+if(RECOVERY_ONLY)
+@@ -1,6 +1,15 @@
++option(HSS_LED_STATUS_MONITOR "Include the CCU status monitor" ON)
++if(NOT HSS_LED_STATUS_MONITOR)
 +  add_executable(hss_led LedOnlyMain.cpp LedController.cpp)
 +  target_compile_features(hss_led PRIVATE cxx_std_11)
 +  target_compile_options(hss_led PRIVATE -Wall -Wextra)
@@ -42,7 +29,7 @@ index d5c1e3a7..3bdfa5a6 100644
    UdpCannel.cpp
    MessageParser.cpp
    AlarmMessage.cpp
-@@ -22,4 +30,15 @@ target_include_directories(hss_led PRIVATE
+@@ -22,4 +31,15 @@ target_include_directories(hss_led PRIVATE
    "${CMAKE_SOURCE_DIR}/src/libXmlRpc/src"
  )
  target_link_libraries(hss_led PRIVATE XmlRpc elvutils xmlparser pthread)

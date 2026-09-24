@@ -15,7 +15,7 @@ class RecoveryServicesTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="recovery-services-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        for name in ("etc/config", "var/run", "bin"):
+        for name in ("etc/config", "etc/default", "var/run", "bin"):
             (self.root / name).mkdir(parents=True)
         (self.root / "var/rf_address").write_text("123456")
         (self.root / "var/board_serial").write_text("TEST123456")
@@ -29,9 +29,10 @@ class RecoveryServicesTest(unittest.TestCase):
                         PATH=str(self.root / "bin") + ":" + os.environ["PATH"])
 
     def run_init(self, name, recovery):
-        marker = self.root / "etc/recovery-system"
-        if recovery:
-            marker.touch()
+        policy = self.root / "etc/default/openccu-base"
+        value = "no" if recovery else "yes"
+        policy.write_text(f"OPENCCU_BASE_SERVICE_USERS={value}\n"
+                          f"OPENCCU_BASE_CONFIG_INIT={value}\n")
         script = (PACKAGE / name).read_text()
         script = script.replace("/etc/", str(self.root / "etc") + "/")
         script = script.replace("/var/", str(self.root / "var") + "/")

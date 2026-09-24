@@ -1,5 +1,6 @@
 menu "eQ-3 HomeMatic Services"
   source "$BR2_EXTERNAL_MULTILIB32_PATH/../../../package/openccu-base/Config.in"
+  source "$BR2_EXTERNAL_MULTILIB32_PATH/../../../package/java-azul/Config.in"
 endmenu
 
 # External packages

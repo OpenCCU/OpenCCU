@@ -28,10 +28,10 @@ updateRFGateway() {
   if grep -qm1 "^Type = \(HMLGW2\|Lan Interface\)" /etc/config/rfd.conf 2>/dev/null; then
     echo -n "."
     echo "Updating RF Lan Gateway Coprocessor Firmware" | logger -p user.info
-    /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -lgw -u -rfdconf /etc/config/rfd.conf -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -lgw -u -rfdconf /etc/config/rfd.conf -l 1
     echo -n "."
     echo "Updating RF Lan Gateway Firmware" | logger -p user.info
-    /usr/bin/timeout 120 /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/rfd.conf -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/rfd.conf -l 1
     update_performed=1
   fi
 }
@@ -40,7 +40,7 @@ updateWiredGateway() {
   if grep -qm1 "^Type = HMWLGW" /etc/config/hs485d.conf 2>/dev/null; then
     echo -n "."
     echo "Updating Wired Lan Gateway Firmware" | logger -p user.info
-    /usr/bin/timeout 120 /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/hs485d.conf -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-lgw-firmware -m /firmware/fwmap -c /etc/config/hs485d.conf -l 1
     update_performed=1
   fi
 }

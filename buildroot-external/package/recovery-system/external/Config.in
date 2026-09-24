@@ -6,6 +6,7 @@ endmenu
 
 menu "Software Support"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/openccu-base/Config.in"
+  source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/java-azul/Config.in"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/detect_radio_module/Config.in"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/wiringpi-rpi/Config.in"
   source "$BR2_EXTERNAL_RECOVERY_SYSTEM_PATH/../../../package/qemu-guest-agent/Config.in"

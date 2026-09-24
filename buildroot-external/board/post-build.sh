@@ -24,3 +24,7 @@ rm -f "${TARGET_DIR}/etc/init.d/S35iptables"
 # link VERSION in /boot on rootfs
 mkdir -p "${TARGET_DIR}/boot"
 ln -sf ../VERSION "${TARGET_DIR}/boot/VERSION"
+
+# Apply component selection after the board overlays have been copied.
+"$(dirname "$0")/../package/openccu-base/scripts/finalize-components.sh" \
+  "${TARGET_DIR}" "${BR2_CONFIG}"
