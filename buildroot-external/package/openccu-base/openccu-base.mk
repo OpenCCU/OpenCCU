@@ -129,11 +129,6 @@ endif
 
 define OPENCCU_BASE_INSTALL_SELECTED_CONFIG
 	$(foreach f,$(OPENCCU_BASE_CONFIG_FILES),$(INSTALL) -D -m 0644 "$(@D)/etc/config_templates/$(f)" "$(TARGET_DIR)/etc/config_templates/$(f)"$(sep))
-	$(INSTALL) -d -m 0755 "$(TARGET_DIR)/etc/default"
-	printf '%s\n' \
-		'OPENCCU_BASE_SERVICE_USERS=$(if $(BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS),yes,no)' \
-		'OPENCCU_BASE_CONFIG_INIT=$(if $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),yes,no)' \
-		>"$(TARGET_DIR)/etc/default/openccu-base"
 endef
 
 define OPENCCU_BASE_FINALIZE_TARGET
@@ -231,6 +226,12 @@ OPENCCU_BASE_INIT_SCRIPTS = \
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS),y)
 define OPENCCU_BASE_INSTALL_INIT_SYSV
 	$(foreach f,$(OPENCCU_BASE_INIT_SCRIPTS),$(INSTALL) -D -m 0755 "$(OPENCCU_BASE_PKGDIR)/$(f)" "$(TARGET_DIR)/etc/init.d/$(f)"$(sep))
+	for script in $(filter S50eq3configd S50ssdpd,$(OPENCCU_BASE_INIT_SCRIPTS)); do \
+		sed -i \
+			-e 's/^OPENCCU_BASE_SERVICE_USERS=yes$$/OPENCCU_BASE_SERVICE_USERS=$(if $(BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS),yes,no)/' \
+			-e 's/^OPENCCU_BASE_CONFIG_INIT=yes$$/OPENCCU_BASE_CONFIG_INIT=$(if $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),yes,no)/' \
+			"$(TARGET_DIR)/etc/init.d/$$script"; \
+	done
 endef
 endif
 

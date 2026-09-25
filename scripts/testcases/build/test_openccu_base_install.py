@@ -8,9 +8,52 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
 PACKAGE = ROOT / "buildroot-external/package/openccu-base/openccu-base.mk"
+MAIN_OVERLAY = ROOT / "buildroot-external/overlay/base/etc"
 
 
 class OpenCCUBaseInstallTest(unittest.TestCase):
+    def test_service_policy_and_main_default_overlay_link(self):
+        for recovery in (False, True):
+            with self.subTest(recovery=recovery), tempfile.TemporaryDirectory(
+                    prefix="openccu-base-policy-") as tmp:
+                root = Path(tmp)
+                target = root / "target"
+                (target / "etc").mkdir(parents=True)
+                value = "no" if recovery else "yes"
+                makefile = root / "Makefile"
+                makefile.write_text(
+                    f"TARGET_DIR := {target}\n"
+                    f"OPENCCU_BASE_PKGDIR := {PACKAGE.parent}\n"
+                    "INSTALL := install\n"
+                    "sep := ;\n"
+                    "BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD := y\n"
+                    "BR2_PACKAGE_OPENCCU_BASE_SSDPD := y\n"
+                    "BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS := y\n"
+                    f"BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS := {'' if recovery else 'y'}\n"
+                    f"BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION := {'' if recovery else 'y'}\n"
+                    "cmake-package =\n"
+                    f"include {PACKAGE}\n"
+                    ".PHONY: install\n"
+                    "install:\n"
+                    "\t$(OPENCCU_BASE_INSTALL_SELECTED_CONFIG)\n"
+                    "\t$(OPENCCU_BASE_INSTALL_INIT_SYSV)\n")
+                result = subprocess.run(["make", "-f", str(makefile), "install"], cwd=root,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                for name in ("S50eq3configd", "S50ssdpd"):
+                    installed = target / "etc/init.d" / name
+                    script = installed.read_text()
+                    self.assertIn(f"OPENCCU_BASE_SERVICE_USERS={value}\n", script)
+                    self.assertIn(f"OPENCCU_BASE_CONFIG_INIT={value}\n", script)
+                    self.assertEqual(installed.stat().st_mode & 0o777, 0o755)
+                self.assertFalse((target / "etc/default").exists())
+                if not recovery:
+                    subprocess.run(["rsync", "-a", str(MAIN_OVERLAY) + "/",
+                                    str(target / "etc") + "/"],
+                                   check=True, capture_output=True, text=True)
+                    self.assertEqual((target / "etc/default").readlink(),
+                                     Path("config/default"))
+
     def test_runtime_installs_from_buildroot_build_directory(self):
         cmake = shutil.which("cmake")
         self.assertIsNotNone(cmake, "CMake is required to test Buildroot installation")

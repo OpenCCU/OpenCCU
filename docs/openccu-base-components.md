@@ -60,8 +60,9 @@ may not be readable by the dedicated service account.
 
 `SYSTEM_INTEGRATION` enables main-system filesystem setup, license-page creation
 and persistent configuration initialization at service startup. Recovery disables
-this option and `SERVICE_USERS`, while keeping `INIT_SCRIPTS` enabled. The common
-init scripts read the resulting policy from `/etc/default/openccu-base`.
+this option and `SERVICE_USERS`, while keeping `INIT_SCRIPTS` enabled. The
+package writes both policy values into `S50eq3configd` and `S50ssdpd` when
+installing them.
 
 Recovery calls the common board post-build script after applying its overlay.
 It links `/run` to `/var/run`, retaining the recovery version and init services

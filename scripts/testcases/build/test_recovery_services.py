@@ -15,7 +15,7 @@ class RecoveryServicesTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="recovery-services-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        for name in ("etc/config", "etc/default", "var/run", "bin"):
+        for name in ("etc/config", "var/run", "bin"):
             (self.root / name).mkdir(parents=True)
         (self.root / "var/rf_address").write_text("123456")
         (self.root / "var/board_serial").write_text("TEST123456")
@@ -29,11 +29,29 @@ class RecoveryServicesTest(unittest.TestCase):
                         PATH=str(self.root / "bin") + ":" + os.environ["PATH"])
 
     def run_init(self, name, recovery, service_users=None, config_init=None):
-        policy = self.root / "etc/default/openccu-base"
         value = "no" if recovery else "yes"
-        policy.write_text(f"OPENCCU_BASE_SERVICE_USERS={service_users or value}\n"
-                          f"OPENCCU_BASE_CONFIG_INIT={config_init or value}\n")
-        script = (PACKAGE / name).read_text()
+        makefile = self.root / "Makefile"
+        makefile.write_text(
+            f"TARGET_DIR := {self.root}\n"
+            f"OPENCCU_BASE_PKGDIR := {PACKAGE}\n"
+            "INSTALL := install\n"
+            "sep := ;\n"
+            "BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD := y\n"
+            "BR2_PACKAGE_OPENCCU_BASE_SSDPD := y\n"
+            "BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS := y\n"
+            f"BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS := "
+            f"{'y' if (service_users or value) == 'yes' else ''}\n"
+            f"BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION := "
+            f"{'y' if (config_init or value) == 'yes' else ''}\n"
+            "cmake-package =\n"
+            f"include {PACKAGE / 'openccu-base.mk'}\n"
+            ".PHONY: install\n"
+            "install:\n"
+            "\t$(OPENCCU_BASE_INSTALL_INIT_SYSV)\n")
+        result = subprocess.run(["make", "-f", str(makefile), "install"], cwd=self.root,
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        script = (self.root / "etc/init.d" / name).read_text()
         script = script.replace("/etc/", str(self.root / "etc") + "/")
         script = script.replace("/var/", str(self.root / "var") + "/")
         script = script.replace("/proc/$$/oom_score_adj", str(self.root / "oom"))
