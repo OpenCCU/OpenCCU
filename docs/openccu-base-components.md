@@ -54,7 +54,9 @@ WebUI/Tcl asset generation or rootfs patching.
 `INIT_SCRIPTS` controls service startup files. User/group definitions follow the
 selected services. `SERVICE_USERS` controls dedicated eq3configd/ssdpd accounts;
 without it these services run as root. The LED controller retains its own user
-and status group whenever selected.
+and status group whenever selected. `eq3configd` also runs as root when
+configuration initialization is disabled, because the existing encryption key
+may not be readable by the dedicated service account.
 
 `SYSTEM_INTEGRATION` enables main-system filesystem setup, license-page creation
 and persistent configuration initialization at service startup. Recovery disables

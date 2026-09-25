@@ -45,7 +45,7 @@ start() {
 	init
 
 	run_user=root
-	if [ "$OPENCCU_BASE_SERVICE_USERS" = yes ]; then
+	if [ "$OPENCCU_BASE_SERVICE_USERS" = yes ] && [ "$OPENCCU_BASE_CONFIG_INIT" = yes ]; then
 		run_user=eq3cfg:eq3cfg
 	fi
 	if [ "$OPENCCU_BASE_CONFIG_INIT" = yes ]; then

@@ -28,11 +28,11 @@ class RecoveryServicesTest(unittest.TestCase):
         self.env = dict(os.environ, CALL_LOG=str(self.log),
                         PATH=str(self.root / "bin") + ":" + os.environ["PATH"])
 
-    def run_init(self, name, recovery):
+    def run_init(self, name, recovery, service_users=None, config_init=None):
         policy = self.root / "etc/default/openccu-base"
         value = "no" if recovery else "yes"
-        policy.write_text(f"OPENCCU_BASE_SERVICE_USERS={value}\n"
-                          f"OPENCCU_BASE_CONFIG_INIT={value}\n")
+        policy.write_text(f"OPENCCU_BASE_SERVICE_USERS={service_users or value}\n"
+                          f"OPENCCU_BASE_CONFIG_INIT={config_init or value}\n")
         script = (PACKAGE / name).read_text()
         script = script.replace("/etc/", str(self.root / "etc") + "/")
         script = script.replace("/var/", str(self.root / "var") + "/")
@@ -71,6 +71,28 @@ class RecoveryServicesTest(unittest.TestCase):
         self.assertIn("eq3cfg ", self.log.read_text())
         self.assertIn("-c eq3cfg:eq3cfg ", self.log.read_text())
         self.assertEqual((self.root / "oom").read_text(), "-900\n")
+
+    def test_eq3configd_without_initialization_runs_as_root_despite_service_user(self):
+        config = self.root / "etc/config/crypttool.cfg"
+        config.write_text("current key\n")
+        config.chmod(0o600)
+        before = config.stat()
+        self.run_init("S50eq3configd", False, config_init="no")
+        after = config.stat()
+        self.assertEqual(config.read_text(), "current key\n")
+        self.assertEqual((before.st_mode, before.st_uid, before.st_gid, before.st_mtime_ns),
+                         (after.st_mode, after.st_uid, after.st_gid, after.st_mtime_ns))
+        self.assertIn("-c root ", self.log.read_text())
+        self.assertNotIn("eq3cfg", self.log.read_text())
+        self.assertFalse((self.root / "oom").exists())
+
+    def test_eq3configd_without_service_user_still_initializes_config(self):
+        self.run_init("S50eq3configd", False, service_users="no")
+        self.assertTrue((self.root / "etc/config/ids").exists())
+        self.assertEqual((self.root / "etc/config/crypttool.cfg").stat().st_mode & 0o777,
+                         0o640)
+        self.assertIn("-c root ", self.log.read_text())
+        self.assertNotIn("eq3cfg", self.log.read_text())
 
     def test_ssdp_recovery_user(self):
         self.run_init("S50ssdpd", True)
