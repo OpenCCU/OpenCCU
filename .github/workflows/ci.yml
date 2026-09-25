@@ -108,6 +108,7 @@ jobs:
         run: |
           pip install kconfiglib
           python3 scripts/testcases/build/test_recovery_services.py -v
+          python3 scripts/testcases/build/test_openccu_base_install.py -v
           python3 scripts/testcases/build/test_gateway_update.py -v
           python3 scripts/testcases/build/test_component_selection.py -v
           python3 scripts/testcases/build/test_rf_factory_reset.py -v

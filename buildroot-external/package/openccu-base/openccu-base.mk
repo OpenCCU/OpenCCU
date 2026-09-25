@@ -100,7 +100,7 @@ endif
 # transitive internal libraries, never a wildcard over a possibly stale rootfs.
 define OPENCCU_BASE_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) DESTDIR="$(TARGET_DIR)" $(BR2_CMAKE) \
-		--install "$(@D)/build" --prefix / --component runtime
+		--install "$(OPENCCU_BASE_BUILDDIR)" --prefix / --component runtime
 	$(OPENCCU_BASE_INSTALL_SELECTED_ASSETS)
 	$(OPENCCU_BASE_INSTALL_SELECTED_CONFIG)
 endef
