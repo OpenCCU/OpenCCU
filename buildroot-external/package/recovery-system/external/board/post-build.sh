@@ -7,14 +7,6 @@
 # Stop on error
 set -e
 
-# Share the runtime path layout with the main system.
-"$(dirname "$0")/../../../../board/finalize-run.sh" "${TARGET_DIR}"
-
-# make sure VERSION exists in root of recoveryfs
-echo "VERSION=${BR2_RECOVERY_SYSTEM_VERSION}" >"${TARGET_DIR}/VERSION"
-echo "PRODUCT=${PRODUCT}" >>"${TARGET_DIR}/VERSION"
-echo "PLATFORM=${PRODUCT_PLATFORM}" >>"${TARGET_DIR}/VERSION"
-
 # Define parameters with default values
 DHCP_VENDOR_ID=eQ3-CCU3
  
@@ -26,12 +18,7 @@ if [ -r "${TARGET_DIR}/etc/product" ]; then
   sed -i "s/eQ3-CCU3/${DHCP_VENDOR_ID}/g" "${TARGET_DIR}/etc/network/interfaces"
 fi
 
-# rename some stuff buildroot introduced but we need differently
-[ -e "${TARGET_DIR}/etc/init.d/S10udevd" ] && mv -f "${TARGET_DIR}/etc/init.d/S10udevd" "${TARGET_DIR}/etc/init.d/S00udevd"
-
-# remove unnecessary stuff from TARGET_DIR
-rm -f "${TARGET_DIR}/etc/init.d/S35iptables"
-
-# Apply the same per-component service selection as the main image.
-"$(dirname "$0")/../../../openccu-base/scripts/finalize-components.sh" \
-  "${TARGET_DIR}" "${BR2_CONFIG}"
+# Run the shared rootfs setup with the recovery version. Keep its cron service
+# and omit the main system's /boot/VERSION link.
+RECOVERY_POST_BUILD=yes PRODUCT_VERSION="${BR2_RECOVERY_SYSTEM_VERSION}" \
+  "$(dirname "$0")/../../../../board/post-build.sh"
