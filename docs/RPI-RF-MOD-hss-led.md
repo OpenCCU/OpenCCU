@@ -72,8 +72,8 @@ Required native libraries follow the selected targets automatically.
 
 The former `hm-platform` package is removed; the recovery web interface lives in
 the recovery system's base overlay. Both systems use the same service scripts.
-The selected `SERVICE_USERS` and `SYSTEM_INTEGRATION` settings are written to
-`/etc/default/openccu-base`. Recovery disables both: eq3configd and ssdpd retain
+The selected `SERVICE_USERS` and `SYSTEM_INTEGRATION` settings are embedded in
+the installed init scripts. Recovery disables both: eq3configd and ssdpd retain
 root execution, and service startup does not initialize persistent configuration
 or change its ownership or permissions.
 
