@@ -148,11 +148,6 @@ define OPENCCU_BASE_FINALIZE_TARGET
 	rm -f $(TARGET_DIR)/etc/shadow
 	ln -snf config/shadow $(TARGET_DIR)/etc/
 
-	# relink /run to /var/run
-	rm -rf $(TARGET_DIR)/run $(TARGET_DIR)/var/run
-	mkdir -p $(TARGET_DIR)/var/run
-	ln -snf var/run $(TARGET_DIR)/
-
 	# relink resolv.conf to /var/etc
 	rm -f $(TARGET_DIR)/etc/resolv.conf
 	ln -snf ../var/etc/resolv.conf $(TARGET_DIR)/etc/

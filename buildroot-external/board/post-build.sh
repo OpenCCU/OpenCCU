@@ -6,6 +6,9 @@
 # Stop on error
 set -e
 
+# Keep runtime paths shared after Buildroot has copied the board overlays.
+"$(dirname "$0")/finalize-run.sh" "${TARGET_DIR}"
+
 # create VERSION file
 echo "VERSION=${PRODUCT_VERSION}" >"${TARGET_DIR}/VERSION"
 echo "PRODUCT=${PRODUCT}" >>"${TARGET_DIR}/VERSION"

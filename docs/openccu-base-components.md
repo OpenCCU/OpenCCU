@@ -63,6 +63,10 @@ and persistent configuration initialization at service startup. Recovery disable
 this option and `SERVICE_USERS`, while keeping `INIT_SCRIPTS` enabled. The common
 init scripts read the resulting policy from `/etc/default/openccu-base`.
 
+Both image post-build scripts link `/run` to `/var/run` after applying the
+overlays. This keeps the runtime paths shared without enabling main-system
+integration in recovery.
+
 After board overlays are applied, the post-build script removes startup files
 and Monit entries for deselected services. Optional LED and radio maintenance
 calls are guarded when their tools are absent. Shared interface-list generation

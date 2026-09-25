@@ -7,6 +7,9 @@
 # Stop on error
 set -e
 
+# Share the runtime path layout with the main system.
+"$(dirname "$0")/../../../../board/finalize-run.sh" "${TARGET_DIR}"
+
 # make sure VERSION exists in root of recoveryfs
 echo "VERSION=${BR2_RECOVERY_SYSTEM_VERSION}" >"${TARGET_DIR}/VERSION"
 echo "PRODUCT=${PRODUCT}" >>"${TARGET_DIR}/VERSION"
