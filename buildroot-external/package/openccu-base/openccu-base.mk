@@ -212,6 +212,18 @@ define OPENCCU_BASE_LICENSE_INFO
 		--build-dir="$(BUILD_DIR)/../" "$$@" --output="$(TARGET_DIR)/www/rega/licenseinfo.htm"
 endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),y)
+# Buildroot keeps target/ across builds, even when an older package version
+# created /etc/default as a directory. Move its contents to the location of
+# the main overlay's /etc/default -> config/default link before overlays run.
+define OPENCCU_BASE_MIGRATE_DEFAULTS
+	set -e; if [ -d "$(TARGET_DIR)/etc/default" ] && [ ! -L "$(TARGET_DIR)/etc/default" ]; then \
+		rm -f "$(TARGET_DIR)/etc/default/openccu-base"; \
+		mkdir -p "$(TARGET_DIR)/usr/local/etc/config/default"; \
+		cp -a "$(TARGET_DIR)/etc/default/." "$(TARGET_DIR)/usr/local/etc/config/default/"; \
+		rm -rf "$(TARGET_DIR)/etc/default"; \
+	fi
+endef
+TARGET_FINALIZE_HOOKS += OPENCCU_BASE_MIGRATE_DEFAULTS
 TARGET_FINALIZE_HOOKS += OPENCCU_BASE_FINALIZE_TARGET
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_WEBUI),y)
 TARGET_FINALIZE_HOOKS += OPENCCU_BASE_LICENSE_INFO

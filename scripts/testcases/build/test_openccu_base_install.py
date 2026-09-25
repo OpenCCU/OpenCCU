@@ -12,6 +12,42 @@ MAIN_OVERLAY = ROOT / "buildroot-external/overlay/base/etc"
 
 
 class OpenCCUBaseInstallTest(unittest.TestCase):
+    def test_existing_default_directory_is_migrated_before_overlay(self):
+        with tempfile.TemporaryDirectory(prefix="openccu-base-upgrade-") as tmp:
+            root = Path(tmp)
+            target = root / "target"
+            old_defaults = target / "etc/default"
+            old_defaults.mkdir(parents=True)
+            (old_defaults / "openccu-base").write_text("obsolete policy\n")
+            (old_defaults / "another-service").write_text("keep setting\n")
+            persistent_defaults = target / "usr/local/etc/config/default"
+            persistent_defaults.mkdir(parents=True)
+            (persistent_defaults / "existing").write_text("existing setting\n")
+            (target / "etc/config").symlink_to("../usr/local/etc/config")
+            makefile = root / "Makefile"
+            makefile.write_text(
+                f"TARGET_DIR := {target}\n"
+                "BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION := y\n"
+                "cmake-package =\n"
+                f"include {PACKAGE}\n"
+                ".PHONY: finalize\n"
+                "finalize:\n"
+                "\t$(OPENCCU_BASE_MIGRATE_DEFAULTS)\n")
+            for _ in range(2):
+                result = subprocess.run(["make", "-f", str(makefile), "finalize"],
+                                        cwd=root, capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                subprocess.run(["rsync", "-a", str(MAIN_OVERLAY) + "/",
+                                str(target / "etc") + "/"],
+                               check=True, capture_output=True, text=True)
+                self.assertEqual((target / "etc/default").readlink(),
+                                 Path("config/default"))
+                self.assertFalse((target / "etc/default/openccu-base").exists())
+                self.assertEqual((target / "etc/default/another-service").read_text(),
+                                 "keep setting\n")
+                self.assertEqual((target / "etc/default/existing").read_text(),
+                                 "existing setting\n")
+
     def test_service_policy_and_main_default_overlay_link(self):
         for recovery in (False, True):
             with self.subTest(recovery=recovery), tempfile.TemporaryDirectory(
