@@ -80,7 +80,10 @@ class OpenCCUBaseInstallTest(unittest.TestCase):
                     installed = target / "etc/init.d" / name
                     script = installed.read_text()
                     self.assertIn(f"OPENCCU_BASE_SERVICE_USERS={value}\n", script)
-                    self.assertIn(f"OPENCCU_BASE_CONFIG_INIT={value}\n", script)
+                    if name == "S50eq3configd":
+                        self.assertIn(f"OPENCCU_BASE_CONFIG_INIT={value}\n", script)
+                    else:
+                        self.assertNotIn("OPENCCU_BASE_CONFIG_INIT", script)
                     self.assertEqual(installed.stat().st_mode & 0o777, 0o755)
                 self.assertFalse((target / "etc/default").exists())
                 if not recovery:
