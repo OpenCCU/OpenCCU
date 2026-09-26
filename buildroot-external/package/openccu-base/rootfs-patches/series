@@ -111,8 +111,6 @@
 0154-WebUI-DynamicResizing.patch
 0155-WebUI-Add-HmIP-RFUSB-Support.patch
 0156-WebUI-ImprovedConfirmDeletePopup.patch
-0157-WebUI-Fix-WrongJSONQuotes.patch
-0158-WebUI-Fix-SysProtocolCharEncoding.patch
 0159-WebUI-Fix-JSONRpcResponses.patch
 0161-WebUI-Add-ShowRFGatewayInDeviceList.patch
 0162-WebUI-Fix-MissingHmipChannelParameters.patch
@@ -125,7 +123,6 @@
 0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch
 0173-WebUI-SendPOSTRequest.patch
 0175-WebUI-Add-AllLogfileDownload.patch
-0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0184-WebUI-Fix-EM8LockedChannelBehviour.patch
 0185-WebUI-Fix-CPPopupCentering.patch

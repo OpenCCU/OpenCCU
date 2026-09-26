@@ -1275,8 +1275,8 @@
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
 -    this.m_product ="HM-CCU" + this.m_ccuProduct;
 +    this.m_product = "HM-RASPBERRYMATIC";
-     this.m_URLServer = (isHTTPS) ? "https://"+this.preURL+"update.homematic.com:8443" : "http://"+this.preURL+"update.homematic.com";
-     this.m_fieldTestURLServer = (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com" : "http://fieldtest-ccu3-update.homematic.com";
+     this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
+     this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
  
 @@ -29278,7 +29278,7 @@
      var script = document.createElement("script");

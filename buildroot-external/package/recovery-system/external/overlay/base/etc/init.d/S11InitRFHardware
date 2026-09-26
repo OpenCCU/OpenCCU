@@ -214,7 +214,7 @@ query_rf_parameters() {
     fi
 
     # setup the LEDs to show a slowly blinking magenta light
-    /bin/hss_ledctl --led rpi-rf-mod system magenta slow
+    [ ! -x /bin/hss_ledctl ] || /bin/hss_ledctl --led rpi-rf-mod system magenta slow
   fi
 
   #####################################
@@ -302,12 +302,12 @@ stop() {
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
   if [[ -n "${HM_HMRF_DEVNODE}" ]]; then
-    /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMRF_DEVNODE}" -bl -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMRF_DEVNODE}" -bl -l 1
   fi
 
   if [[ -n "${HM_HMIP_DEVNODE}" ]] &&
      [[ "${HM_HMIP_DEVNODE}" != "${HM_HMRF_DEVNODE}" ]]; then
-    /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMIP_DEVNODE}" -bl -l 1
+    [ ! -x /bin/eq3configcmd ] || /usr/bin/timeout 120 /bin/eq3configcmd update-coprocessor -p "${HM_HMIP_DEVNODE}" -bl -l 1
   fi
 }
 

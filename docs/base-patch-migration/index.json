@@ -30,7 +30,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "4128a27479a77bcd259bf417b8a0ecd308ecb178075fe0267a49c8cd73f33026"
+      "sha256": "d854c60a9a4ba417c6700530678ffabe572ba2f727a8f2009f067446e32ee766"
     },
     {
       "added": 147,
@@ -1391,32 +1391,6 @@
       "sha256": "c9d41d32927372f55706888130f0040032ddfda18362119f82d3a9418dd0e6df"
     },
     {
-      "added": 27,
-      "files": [
-        "www/api/methods/sysvar/createbool.tcl",
-        "www/api/methods/sysvar/createenum.tcl",
-        "www/api/methods/sysvar/createfloat.tcl",
-        "www/api/methods/sysvar/get.tcl",
-        "www/api/methods/sysvar/getvalue.tcl",
-        "www/api/methods/sysvar/getvaluebyname.tcl",
-        "www/api/methods/sysvar/setbool.tcl",
-        "www/api/methods/sysvar/setenum.tcl",
-        "www/api/methods/sysvar/setfloat.tcl"
-      ],
-      "patch": "0157-WebUI-Fix-WrongJSONQuotes.patch",
-      "removed": 15,
-      "sha256": "42c56b0114782c7ec7ad1dd3e7aeccf5bb1f1cf17704f83bb6dd47e01fa51418"
-    },
-    {
-      "added": 1,
-      "files": [
-        "www/rega/esp/functions.fn"
-      ],
-      "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch",
-      "removed": 0,
-      "sha256": "d5cec4ab0126c86b8ea7d9432d651ddc6d14501b03a1b59dcd53200c72938a9d"
-    },
-    {
       "added": 19,
       "files": [
         "www/api/eq3/jsonrpc.tcl",
@@ -1557,16 +1531,6 @@
       "patch": "0175-WebUI-Add-AllLogfileDownload.patch",
       "removed": 7,
       "sha256": "187722253f5cac8954d9f9df258b6e672a5b10a405c4b886a9e206b8b373b41c"
-    },
-    {
-      "added": 4,
-      "files": [
-        "www/rega/pages/index.htm",
-        "www/webui/webui.js"
-      ],
-      "patch": "0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch",
-      "removed": 5,
-      "sha256": "484df25a8dbbbba902f58758ef551895c407576da33e0d38d327f3b8917aa924"
     },
     {
       "added": 110,
@@ -1773,5 +1737,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1889d19c04b5f615c2f469054e8c824ea5dba703dab55d9ca1e16488fc718457"
+  "series_sha256": "1f43a44a019421b3e1772ff7b21407265affe808fa757030267db8032f3d396f"
 }

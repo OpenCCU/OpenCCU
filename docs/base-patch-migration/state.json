@@ -95,18 +95,36 @@
       "base_pr": 53,
       "cleanup_pr": 4232,
       "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch"
+    },
+    {
+      "base_merge_commit": "3efc877da639476319f68065fe9223531ed09e3d",
+      "base_pr": 54,
+      "cleanup_pr": 4233,
+      "patch": "0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch"
+    },
+    {
+      "base_merge_commit": "d678401394f4e8c25abae5a0fa7c629f6647811a",
+      "base_pr": 55,
+      "cleanup_pr": 4234,
+      "patch": "0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch"
+    },
+    {
+      "base_merge_commit": "caec7573d289a4b36f322862f22b110903dddf45",
+      "base_pr": 57,
+      "cleanup_pr": 4243,
+      "patch": "0157-WebUI-Fix-WrongJSONQuotes.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "3efc877da639476319f68065fe9223531ed09e3d",
-    "base_pr": 54,
-    "cleanup_pr": 4233,
-    "patch": "0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch",
+    "base_merge_commit": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
+    "base_pr": 58,
+    "cleanup_pr": null,
+    "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0180 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0158 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "126896e319b84f52c29f54c4065efb03cc6df613",
-  "verified_base_pin": "d9ebce227ad4e756d3ff23c467dd7127df571125",
-  "verified_source_sha256": "7b04d87b03d8f955101619cb58387a021ab594b35acea9d6cbdc6ecf7446cd22"
+  "verified_at_openccu_commit": "64e0a61e75ab54a291c84725424e6faf8f86d6e7",
+  "verified_base_pin": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
+  "verified_source_sha256": "de04814ba34ae496c8dd0775abc5e32b0ce395462a8a63cf25a6016310a8b675"
 }

@@ -36,9 +36,9 @@ start() {
     if [[ "${HM_HMIP_DEV}" == "RPI-RF-MOD" ]] || [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]]; then
       if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
         if [[ -e /etc/config/disableLED ]]; then
-          /bin/hss_ledctl --led rpi-rf-mod system off
+          [ ! -x /bin/hss_ledctl ] || /bin/hss_ledctl --led rpi-rf-mod system off
         else
-          /bin/hss_ledctl --led rpi-rf-mod system blue
+          [ ! -x /bin/hss_ledctl ] || /bin/hss_ledctl --led rpi-rf-mod system blue
         fi
       fi
     fi
@@ -56,7 +56,7 @@ start() {
   # signal that the system startup is finished
   touch /var/status/startupFinished
   if [[ "${HM_MODE}" != "HM-LGW" ]]; then
-    /bin/hss_ledctl --led rpi-rf-mod auto
+    [ ! -x /bin/hss_ledctl ] || /bin/hss_ledctl --led rpi-rf-mod auto
   fi
 
   # reload lighttpd to let it enable the RemoteAPI ports
@@ -79,7 +79,7 @@ stop() {
   # remove startupFinished and restart lighttpd
   # to let it block external APIs again
   rm -f /var/status/startupFinished
-  /bin/hss_ledctl --led rpi-rf-mod system yellow
+  [ ! -x /bin/hss_ledctl ] || /bin/hss_ledctl --led rpi-rf-mod system yellow
 
   # reload lighttpd to let it disable the RemoteAPI ports
   /etc/init.d/S50lighttpd reload >/dev/null
@@ -89,7 +89,7 @@ stop() {
   if [[ "${HM_MODE}" == "HM-LGW" ]]; then
     if [[ "${HM_HMIP_DEV}" == "RPI-RF-MOD" ]] || [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]]; then
       if { [[ -e /sys/class/leds/rpi_rf_mod:rgb:status/multi_index ]] || [[ -e /sys/class/leds/rpi_rf_mod:green/trigger ]]; }; then
-        /bin/hss_ledctl --led rpi-rf-mod system yellow
+        [ ! -x /bin/hss_ledctl ] || /bin/hss_ledctl --led rpi-rf-mod system yellow
       fi
     fi
   fi
