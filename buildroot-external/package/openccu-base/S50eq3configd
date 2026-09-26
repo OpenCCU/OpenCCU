@@ -48,7 +48,7 @@ start() {
 	fi
 
 	# adjust the oom score (which is inherited by start-stop-daemon)
-  # to ensure that others are killed first in case of low memory situations
+	# to ensure that others are killed first in case of low memory situations
 	echo -900 >/proc/$$/oom_score_adj 2> /dev/null
 
 	start-stop-daemon -d / -S -q -b -m -c "$run_user" -p ${PIDFILE} --exec /bin/${DAEMON}
