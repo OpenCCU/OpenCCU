@@ -78,7 +78,7 @@ class OpenCCUBaseInstallTest(unittest.TestCase):
                                          "install", "users"], cwd=root,
                                         capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertIn("eq3cfg -1 eq3cfg", result.stdout)
+                self.assertIn("eq3cfg -1 eq3cfg 995", result.stdout)
                 self.assertIn("ssdp -1 ssdp", result.stdout)
                 for name in ("S50eq3configd", "S50ssdpd"):
                     installed = target / "etc/init.d" / name

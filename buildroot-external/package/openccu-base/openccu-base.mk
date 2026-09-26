@@ -242,11 +242,13 @@ define OPENCCU_BASE_INSTALL_INIT_SYSV
 endef
 endif
 
+# Recovery reads the main system's root:eq3cfg crypttool.cfg; both independently
+# built images must assign the same numeric GID to the group.
 define OPENCCU_BASE_USERS
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),- -1 hm -1 * - - - homematic access group)
 	$(if $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_HSS_LED) $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION)),- -1 status -1 * - - - status access group)
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_HSS_LED),hssled -1 hssled -1 * - - status hss_led user)
-	$(if $(BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD),eq3cfg -1 eq3cfg -1 * - - - eq3configd user)
+	$(if $(BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD),eq3cfg -1 eq3cfg 995 * - - - eq3configd user)
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_SSDPD),ssdp -1 ssdp -1 * - - - ssdpd user)
 endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_HSS_LED),y)

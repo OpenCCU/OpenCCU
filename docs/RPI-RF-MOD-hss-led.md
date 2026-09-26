@@ -74,8 +74,10 @@ The former `hm-platform` package is removed; the recovery web interface lives in
 the recovery system's base overlay. Both systems use the same service scripts.
 The selected `SYSTEM_INTEGRATION` setting is embedded in the installed
 `eq3configd` init script. Recovery disables configuration initialization:
-`eq3configd` runs as root to read existing configuration without changing
-its ownership or permissions, while `ssdpd` runs as its dedicated user.
+`eq3configd` normally runs as `eq3cfg`, using the same group ID as the main
+system. For an existing key that this account cannot yet read, recovery
+temporarily runs it as root without changing persistent permissions. `ssdpd`
+runs as its dedicated user.
 
 Native systems and recovery run hss_led as the `hssled` user. The init script
 prepares its runtime directory and existing LED-node permissions; the packaged

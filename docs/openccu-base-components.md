@@ -52,11 +52,13 @@ WebUI/Tcl asset generation or rootfs patching.
 ## Services and system integration
 
 `INIT_SCRIPTS` controls service startup files. User/group definitions follow the
-selected services. `ssdpd` runs as `ssdp` in both images, while `eq3configd`
-runs as `eq3cfg` only when persistent configuration initialization is enabled.
-Recovery retains root execution for `eq3configd` because the existing encryption
-key may not be readable by an account created in a separate image. The LED
-controller retains its own user and status group whenever selected.
+selected services. `ssdpd` runs as `ssdp` in both images. `eq3configd` normally
+runs as `eq3cfg` in both; group ID 995 is shared by the separately built images
+so it can read `root:eq3cfg` encryption keys. When an existing key is still
+unreadable by the recovery account, recovery temporarily starts `eq3configd`
+as root without changing the key. The main system assigns the fixed group to
+the key during its next normal boot. The LED controller retains its own user
+and status group whenever selected.
 
 `SYSTEM_INTEGRATION` enables main-system filesystem setup, license-page creation
 and persistent configuration initialization at service startup. Recovery disables

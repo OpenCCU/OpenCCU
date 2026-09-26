@@ -39,9 +39,14 @@ start() {
 	echo -n "Starting ${DAEMON}: "
 	init
 
-	run_user=root
-	if [ "$OPENCCU_BASE_CONFIG_INIT" = yes ]; then
-		run_user=eq3cfg:eq3cfg
+	run_user=eq3cfg:eq3cfg
+	# A recovery boot may precede the first normal boot with the fixed
+	# eq3cfg GID. Leave an older, unreadable key unchanged and retain
+	# root execution for this case only.
+	if [ "$OPENCCU_BASE_CONFIG_INIT" != yes ] &&
+	   [ -e /etc/config/crypttool.cfg ] &&
+	   ! su -s /bin/sh -c 'test -r /etc/config/crypttool.cfg' eq3cfg; then
+		run_user=root
 	fi
 
 	# adjust the oom score (which is inherited by start-stop-daemon)

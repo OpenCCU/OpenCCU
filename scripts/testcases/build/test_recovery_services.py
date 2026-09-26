@@ -25,8 +25,13 @@ class RecoveryServicesTest(unittest.TestCase):
             mock = self.root / "bin" / name
             mock.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >>"$CALL_LOG"\n')
             mock.chmod(0o755)
+        su = self.root / "bin/su"
+        su.write_text('#!/bin/sh\nprintf "su %s\\n" "$*" >>"$CALL_LOG"\n'
+                      '[ "$KEY_READABLE" = yes ]\n')
+        su.chmod(0o755)
         self.env = dict(os.environ, CALL_LOG=str(self.log),
-                        PATH=str(self.root / "bin") + ":" + os.environ["PATH"])
+                        PATH=str(self.root / "bin") + ":" + os.environ["PATH"],
+                        KEY_READABLE="yes")
 
     def run_init(self, name, recovery, config_init=None):
         value = "no" if recovery else "yes"
@@ -63,8 +68,8 @@ class RecoveryServicesTest(unittest.TestCase):
         self.assertEqual(list((self.root / "etc/config").iterdir()), [])
         self.assertEqual((self.root / "var/ids").read_text(),
                          "BidCoS-Address=123456\nSerialNumber=TEST123456\n")
-        self.assertIn("-c root ", self.log.read_text())
-        self.assertNotIn("eq3cfg", self.log.read_text())
+        self.assertIn("-c eq3cfg:eq3cfg ", self.log.read_text())
+        self.assertNotIn("su ", self.log.read_text())
         self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
     def test_recovery_preserves_existing_keys_and_permissions(self):
@@ -72,12 +77,26 @@ class RecoveryServicesTest(unittest.TestCase):
         config.write_text("existing secret\n")
         config.chmod(0o600)
         before = config.stat()
+        self.env["KEY_READABLE"] = "no"
         self.run_init("S50eq3configd", True)
         after = config.stat()
         self.assertEqual(config.read_text(), "existing secret\n")
         self.assertEqual((before.st_mode, before.st_uid, before.st_gid, before.st_mtime_ns),
                          (after.st_mode, after.st_uid, after.st_gid, after.st_mtime_ns))
-        self.assertNotIn("eq3cfg", self.log.read_text())
+        self.assertIn("-c root ", self.log.read_text())
+        self.assertIn("su -s /bin/sh -c test -r", self.log.read_text())
+
+    def test_recovery_uses_eq3cfg_for_readable_existing_key(self):
+        config = self.root / "etc/config/crypttool.cfg"
+        config.write_text("existing secret\n")
+        config.chmod(0o640)
+        before = config.stat()
+        self.run_init("S50eq3configd", True)
+        after = config.stat()
+        self.assertEqual((before.st_mode, before.st_uid, before.st_gid, before.st_mtime_ns),
+                         (after.st_mode, after.st_uid, after.st_gid, after.st_mtime_ns))
+        self.assertIn("-c eq3cfg:eq3cfg ", self.log.read_text())
+        self.assertIn("su -s /bin/sh -c test -r", self.log.read_text())
 
     def test_normal_system_initializes_configuration(self):
         self.run_init("S50eq3configd", False)
@@ -88,18 +107,19 @@ class RecoveryServicesTest(unittest.TestCase):
         self.assertIn("-c eq3cfg:eq3cfg ", self.log.read_text())
         self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
-    def test_eq3configd_without_initialization_runs_as_root(self):
+    def test_eq3configd_without_initialization_falls_back_for_unreadable_key(self):
         config = self.root / "etc/config/crypttool.cfg"
         config.write_text("current key\n")
         config.chmod(0o600)
         before = config.stat()
+        self.env["KEY_READABLE"] = "no"
         self.run_init("S50eq3configd", False, config_init="no")
         after = config.stat()
         self.assertEqual(config.read_text(), "current key\n")
         self.assertEqual((before.st_mode, before.st_uid, before.st_gid, before.st_mtime_ns),
                          (after.st_mode, after.st_uid, after.st_gid, after.st_mtime_ns))
         self.assertIn("-c root ", self.log.read_text())
-        self.assertNotIn("eq3cfg", self.log.read_text())
+        self.assertNotIn("-c eq3cfg:eq3cfg ", self.log.read_text())
         self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
     def test_ssdp_uses_service_user_in_both_images(self):
