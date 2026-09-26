@@ -9,29 +9,13 @@ and a minimal recovery build of the same controller.
 Upstream: Not submitted (experimental OpenCCU integration)
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3d87e931..9b74c6a3 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -82,6 +82,12 @@
-
- endfunction()
-
-+option(HSS_LED_ONLY "Build only the LED controller and CLI for recovery" OFF)
-+if(HSS_LED_ONLY)
-+  add_subdirectory(src/hss_led)
-+  return()
-+endif()
-+
- include(cmake/Components.cmake)
-
- message(STATUS "OpenCCU platform           : ${TARGET_PLATFORM}")
 diff --git a/src/hss_led/CMakeLists.txt b/src/hss_led/CMakeLists.txt
 index d5c1e3a7..3bdfa5a6 100644
 --- a/src/hss_led/CMakeLists.txt
 +++ b/src/hss_led/CMakeLists.txt
-@@ -1,6 +1,14 @@
-+if(HSS_LED_ONLY)
+@@ -1,6 +1,15 @@
++option(HSS_LED_STATUS_MONITOR "Include the CCU status monitor" ON)
++if(NOT HSS_LED_STATUS_MONITOR)
 +  add_executable(hss_led LedOnlyMain.cpp LedController.cpp)
 +  target_compile_features(hss_led PRIVATE cxx_std_11)
 +  target_compile_options(hss_led PRIVATE -Wall -Wextra)
@@ -45,11 +29,12 @@ index d5c1e3a7..3bdfa5a6 100644
    UdpCannel.cpp
    MessageParser.cpp
    AlarmMessage.cpp
-@@ -22,4 +30,15 @@ target_include_directories(hss_led PRIVATE
+@@ -22,4 +31,16 @@ target_include_directories(hss_led PRIVATE
    "${CMAKE_SOURCE_DIR}/src/libXmlRpc/src"
  )
  target_link_libraries(hss_led PRIVATE XmlRpc elvutils xmlparser pthread)
 +endif()
++set_property(TARGET hss_led PROPERTY OPENCCU_RUNTIME_ALIASES hss_ledctl)
  openccu_stage_target(hss_led bin)
 +
 +option(HSS_LED_BUILD_TESTS "Build LED controller regression tests" OFF)

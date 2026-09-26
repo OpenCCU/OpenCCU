@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RECOVERY_SYSTEM_VER = 1.24.2
+RECOVERY_SYSTEM_VER = 1.25.0
 # MULTILIB32_VERSION includes Buildroot, Base and the multilib configuration.
 # Invalidate the outer recovery stamp as well when these inputs change.
 RECOVERY_SYSTEM_VERSION = $(RECOVERY_SYSTEM_VER)-$(MULTILIB32_VERSION)

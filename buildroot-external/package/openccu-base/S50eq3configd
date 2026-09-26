@@ -1,8 +1,10 @@
 #!/bin/sh
-# shellcheck shell=dash disable=SC2169,SC3010
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
 #
 # Starts eq3configd.
 #
+
+OPENCCU_BASE_CONFIG_INIT=yes
 
 DAEMON="eq3configd"
 PIDFILE="/var/run/${DAEMON}.pid"
@@ -13,6 +15,10 @@ init () {
 	# SerialNumber to /var/ids
 	echo "BidCoS-Address=$(cat /var/rf_address)" >/var/ids
 	echo "SerialNumber=$(cat /var/board_serial)" >>/var/ids
+
+	# Recovery mounts the existing user configuration read-only.
+	# Do not create files or change persistent ownership/permissions.
+	[ "$OPENCCU_BASE_CONFIG_INIT" = yes ] || return 0
 
 	# in case we have a BidCos-RF device (no empty /var/rf_address)
 	# and there is no already existing /etc/config/ids we have to
@@ -33,11 +39,21 @@ start() {
 	echo -n "Starting ${DAEMON}: "
 	init
 
+	run_user=eq3cfg:eq3cfg
+	# A recovery boot may precede the first normal boot with the fixed
+	# eq3cfg GID. Leave an older, unreadable key unchanged and retain
+	# root execution for this case only.
+	if [ "$OPENCCU_BASE_CONFIG_INIT" != yes ] &&
+		[ -e /etc/config/crypttool.cfg ] &&
+		! su -s /bin/sh -c 'test -r /etc/config/crypttool.cfg' eq3cfg; then
+		run_user=root
+	fi
+
 	# adjust the oom score (which is inherited by start-stop-daemon)
 	# to ensure that others are killed first in case of low memory situations
 	echo -900 >/proc/$$/oom_score_adj 2> /dev/null
 
-	start-stop-daemon -d / -S -q -b -m -c eq3cfg:eq3cfg -p ${PIDFILE} --exec /bin/${DAEMON}
+	start-stop-daemon -d / -S -q -b -m -c "$run_user" -p ${PIDFILE} --exec /bin/${DAEMON}
 	echo "OK"
 }
 stop() {

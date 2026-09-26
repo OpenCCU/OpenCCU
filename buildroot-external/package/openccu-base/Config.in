@@ -7,59 +7,188 @@ config BR2_PACKAGE_OPENCCU_BASE
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS
-	select BR2_PACKAGE_LIBUSB if !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY && !BR2_PACKAGE_OPENCCU_BASE_LED_ONLY
-	select BR2_PACKAGE_OPENSSL if !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY && !BR2_PACKAGE_OPENCCU_BASE_LED_ONLY
-	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL if !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY && !BR2_PACKAGE_OPENCCU_BASE_LED_ONLY
-	select BR2_PACKAGE_TCL if !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY && !BR2_PACKAGE_OPENCCU_BASE_LED_ONLY
+	select BR2_PACKAGE_JAVA_AZUL if BR2_PACKAGE_OPENCCU_BASE_HMSERVER || BR2_PACKAGE_OPENCCU_BASE_HMIP_TOOLS
+	select BR2_PACKAGE_LIBUSB if BR2_PACKAGE_OPENCCU_BASE_RFD
+	select BR2_PACKAGE_OPENSSL if BR2_PACKAGE_OPENCCU_BASE_NEEDS_CRYPTO
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL if BR2_PACKAGE_OPENCCU_BASE_NEEDS_CRYPTO
+	select BR2_PACKAGE_TCL if BR2_PACKAGE_OPENCCU_BASE_NEEDS_TCL
 	help
-	  OpenCCU base services and runtime assets from OpenCCU-Base,
-	  including BidCos-RF, HmIP, HM Wired, HMServer and the WebUI.
-	  On 32-bit targets, only libxmlparser and libXmlRpc are built.
-	  This keeps compatibility with legacy Homematic binaries.
-
-config BR2_PACKAGE_OPENCCU_BASE_LED_ONLY
-	bool "Build only hss_led for recovery"
-	depends on BR2_PACKAGE_OPENCCU_BASE
-	help
-	  Build the shared LED controller and command-line interface
-	  without the CCU status monitor or other Base services.
+	  Select individual OpenCCU Base programs and runtime assets.
+	  Required internal libraries are built and installed
+	  automatically.
+	  The default selection provides the complete CCU
+	  environment.
 
 config BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY
 	bool
-	default y if BR2_PACKAGE_OPENCCU_BASE && !BR2_PACKAGE_OPENCCU_BASE_LED_ONLY && (BR2_arm || BR2_i386)
+	default y if BR2_PACKAGE_OPENCCU_BASE && (BR2_arm || BR2_i386)
 
-if BR2_PACKAGE_OPENCCU_BASE && !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY && !BR2_PACKAGE_OPENCCU_BASE_LED_ONLY
+if BR2_PACKAGE_OPENCCU_BASE && !BR2_PACKAGE_OPENCCU_BASE_COMPAT_LIBS_ONLY
+
+config BR2_PACKAGE_OPENCCU_BASE_SETINTERFACECLOCK
+	bool "SetInterfaceClock"
+	default y
+	help
+	  Set the interface clock.
+
+config BR2_PACKAGE_OPENCCU_BASE_CRYPTTOOL
+	bool "crypttool"
+	default y
+	help
+	  Sign and verify backups and manage security keys.
+
+config BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGCMD
+	bool "eq3configcmd"
+	default y
+	help
+	  Configuration and radio maintenance command-line tools.
+
+config BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD
+	bool "eq3configd"
+	default y
+	help
+	  Network configuration daemon.
+
+config BR2_PACKAGE_OPENCCU_BASE_SSDPD
+	bool "ssdpd"
+	default y
+	help
+	  Network discovery daemon.
+
+config BR2_PACKAGE_OPENCCU_BASE_MULTIMACD
+	bool "multimacd"
+	default y
+	help
+	  BidCos/HmIP radio transport daemon.
+
+config BR2_PACKAGE_OPENCCU_BASE_RFD
+	bool "rfd"
+	default y
+	help
+	  BidCos-RF interface daemon.
+
+config BR2_PACKAGE_OPENCCU_BASE_HS485DLOADER
+	bool "hs485dLoader"
+	default y
+	help
+	  Launcher for the BidCos-Wired interface daemon.
+
+config BR2_PACKAGE_OPENCCU_BASE_HS485D
+	bool "hs485d"
+	default y
+	select BR2_PACKAGE_OPENCCU_BASE_HS485DLOADER
+	help
+	  BidCos-Wired interface daemon.
+
+config BR2_PACKAGE_OPENCCU_BASE_HSS_LED
+	bool "hss_led / hss_ledctl"
+	default y
+	help
+	  LED controller and command-line interface.
+
+config BR2_PACKAGE_OPENCCU_BASE_HSS_LED_STATUS_MONITOR
+	bool "hss_led CCU status monitor"
+	default y
+	depends on BR2_PACKAGE_OPENCCU_BASE_HSS_LED
+	help
+	  Include the CCU status thread and its XML-RPC dependencies.
+
+config BR2_PACKAGE_OPENCCU_BASE_TCLREGA
+	bool "tclrega"
+	default y
+	help
+	  Tcl extension for the ReGaHss logic engine.
+
+config BR2_PACKAGE_OPENCCU_BASE_TCLRPC
+	bool "tclrpc"
+	default y
+	help
+	  Tcl XML-RPC extension.
+
+config BR2_PACKAGE_OPENCCU_BASE_TCL_HOMEMATIC
+	bool "Homematic Tcl package"
+	default y
+	help
+	  Install the generated Homematic Tcl helpers.
 
 config BR2_PACKAGE_OPENCCU_BASE_REGAHSS
 	bool "ReGaHss"
 	default y
+	select BR2_PACKAGE_OPENCCU_BASE_TCLREGA
 	help
-	  Install the ReGaHss logic layer (/bin/ReGaHss), its init
-	  script (/etc/init.d/S70ReGaHss) and the tclrega Tcl
-	  extension (/lib/tclrega.so) that scripts load to talk to
-	  it.
-
-	  Without it, the image carries the interface processes
-	  (rfd, multimacd, hs485d, HMServer) and their tools only,
-	  e.g. for a system that is driven entirely over XML-RPC.
-	  The ReGaHss check in monitrc skips itself when
-	  /bin/ReGaHss is not installed.
+	  Install the prebuilt logic engine and its Tcl interface.
 
 config BR2_PACKAGE_OPENCCU_BASE_WEBUI
 	bool "WebUI"
 	default y
 	depends on BR2_PACKAGE_OPENCCU_BASE_REGAHSS
+	select BR2_PACKAGE_OPENCCU_BASE_TCLRPC
+	select BR2_PACKAGE_OPENCCU_BASE_TCL_HOMEMATIC
+	select BR2_PACKAGE_OPENCCU_BASE_DEVICETYPES
 	help
-	  Install the CCU WebUI below /www.
+	  Install the CCU WebUI. Requires the logic engine and Tcl
+	  helpers.
 
-	  Without it, only the /www/addons link is installed, which
-	  addons use to publish their own pages from
-	  /etc/config/addons/www. The WebUI is still generated and
-	  patched during the build, so the device types in /firmware
-	  and /opt are unchanged, and the license information
-	  (/www/rega/licenseinfo.htm) is generated in both cases.
+config BR2_PACKAGE_OPENCCU_BASE_HMSERVER
+	bool "HMServer / HMIPServer"
+	default y
+	help
+	  Install the prebuilt Java server applications.
+
+config BR2_PACKAGE_OPENCCU_BASE_HMIP_TOOLS
+	bool "HmIP maintenance tools"
+	default y
+	help
+	  Install the prebuilt HmIP coprocessor updater and runtime
+	  data.
+
+config BR2_PACKAGE_OPENCCU_BASE_DEVICETYPES
+	bool "Device descriptions"
+	default y
+	help
+	  Install generated BidCos-RF and Wired device descriptions.
+
+config BR2_PACKAGE_OPENCCU_BASE_FIRMWARE
+	bool "Device firmware"
+	default y
+	help
+	  Install the device and radio firmware payloads.
+
+config BR2_PACKAGE_OPENCCU_BASE_HM_SCRIPTS
+	bool "Homematic maintenance scripts"
+	default y
+	help
+	  Install hm_autoconf, hm_deldev and hm_startup.
+
+config BR2_PACKAGE_OPENCCU_BASE_CONFIG_TEMPLATES
+	bool "Service configuration templates"
+	default y
+	help
+	  Install templates for the selected programs.
+
+config BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS
+	bool "Service init scripts"
+	default y
+	help
+	  Install init scripts for the selected daemons.
+
+config BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION
+	bool "Main-system filesystem integration"
+	default y
+	help
+	  Set up the main CCU filesystem links and initialize
+	  persistent configuration on service start. Disable for
+	  a maintenance image.
 
 endif
+
+config BR2_PACKAGE_OPENCCU_BASE_NEEDS_CRYPTO
+	bool
+	default y if BR2_PACKAGE_OPENCCU_BASE_SETINTERFACECLOCK || BR2_PACKAGE_OPENCCU_BASE_CRYPTTOOL || BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGCMD || BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD || BR2_PACKAGE_OPENCCU_BASE_MULTIMACD || BR2_PACKAGE_OPENCCU_BASE_RFD || BR2_PACKAGE_OPENCCU_BASE_HS485D || BR2_PACKAGE_OPENCCU_BASE_HS485DLOADER || BR2_PACKAGE_OPENCCU_BASE_HSS_LED_STATUS_MONITOR
+
+config BR2_PACKAGE_OPENCCU_BASE_NEEDS_TCL
+	bool
+	default y if BR2_PACKAGE_OPENCCU_BASE_TCLREGA || BR2_PACKAGE_OPENCCU_BASE_TCLRPC || BR2_PACKAGE_OPENCCU_BASE_TCL_HOMEMATIC || BR2_PACKAGE_OPENCCU_BASE_HM_SCRIPTS || BR2_PACKAGE_OPENCCU_BASE_WEBUI
 
 comment "OpenCCU Base needs a glibc toolchain w/ C++, threads, dynamic library"
 	depends on BR2_aarch64 || BR2_arm || BR2_i386 || BR2_x86_64

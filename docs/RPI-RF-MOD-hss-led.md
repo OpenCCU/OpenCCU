@@ -63,11 +63,21 @@ This local bookkeeping does not provide cross-container reference counting.
 
 ## Recovery and permissions
 
-Recovery enables `BR2_PACKAGE_OPENCCU_BASE_LED_ONLY=y` in the existing Base package.
-The CMake option `HSS_LED_ONLY=ON` builds the same controller into a small `hss_led`
-with no CCU status thread or XML-RPC dependencies. No WebUI, Java processing,
-CCU rootfs patch stack or other Base services are built or installed in this mode.
-The recovery `hm-platform` package still provides its existing utilities.
+Recovery selects `HSS_LED`, `SSDPD`, `EQ3CONFIGD`, `EQ3CONFIGCMD` and `CRYPTTOOL`
+under `BR2_PACKAGE_OPENCCU_BASE`, and disables the other components explicitly.
+`BR2_PACKAGE_OPENCCU_BASE_HSS_LED_STATUS_MONITOR=n` maps to the CMake option
+`HSS_LED_STATUS_MONITOR=OFF`: the same controller is built without the CCU status
+thread or XML-RPC dependencies. There is no special recovery build mode.
+Required native libraries follow the selected targets automatically.
+
+The former `hm-platform` package is removed; the recovery web interface lives in
+the recovery system's base overlay. Both systems use the same service scripts.
+The selected `SYSTEM_INTEGRATION` setting is embedded in the installed
+`eq3configd` init script. Recovery disables configuration initialization:
+`eq3configd` normally runs as `eq3cfg`, using the same group ID as the main
+system. For an existing key that this account cannot yet read, recovery
+temporarily runs it as root without changing persistent permissions. `ssdpd`
+runs as its dedicated user.
 
 Native systems and recovery run hss_led as the `hssled` user. The init script
 prepares its runtime directory and existing LED-node permissions; the packaged
@@ -98,11 +108,13 @@ make -C build-tinkerboard2 openccu-base-dirclean recovery-system-dirclean
 make tinkerboard2-release
 ```
 
-The normal configuration must keep `BR2_PACKAGE_OPENCCU_BASE=y` and leave
-`BR2_PACKAGE_OPENCCU_BASE_LED_ONLY` disabled. The nested recovery build selects
-LED-only mode itself. The Base install hook removes stale experimental daemon
-and init-script files from a reused target directory. Deploy the rebuilt image
-and reboot; this patch does not perform a live migration of running daemons.
+All Base components, including the WebUI, are enabled by default in the normal
+64-bit configuration. The nested recovery configuration lists its own selection.
+Rebuild from a clean output directory when changing package selections: Buildroot
+does not uninstall old package files from a reused target directory. Deploy the
+rebuilt image and reboot; this does not migrate running daemons.
+
+See [Base component selection](openccu-base-components.md) for the package options.
 
 ## Commands on the device
 

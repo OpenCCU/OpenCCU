@@ -14,8 +14,9 @@ update_rf_hardware() {
 
     # check if user has a HM-MOD-RPI-PCB installed (GPIO) and
     # perform a firmware update if necessary
-    if [[ "${HM_HMRF_DEV}" == "HM-MOD-RPI-PCB" ]] ||
-       [[ "${HM_HMIP_DEV}" == "HM-MOD-RPI-PCB" ]]; then
+    if [ -x /bin/eq3configcmd ] && [ -d /firmware/HM-MOD-UART ] &&
+       { [[ "${HM_HMRF_DEV}" == "HM-MOD-RPI-PCB" ]] ||
+         [[ "${HM_HMIP_DEV}" == "HM-MOD-RPI-PCB" ]]; }; then
 
       echo -n "HM-MOD-RPI-PCB: "
 
@@ -101,8 +102,9 @@ update_rf_hardware() {
 
     # check if user has a RPI-RF-MOD installed (GPIO) and
     # perform a firmware update if necessary
-    if [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]] ||
-       [[ "${HM_HMIP_DEV}" == "RPI-RF-MOD" ]]; then
+    if [ -f /opt/HmIP/hmip-copro-update.jar ] && [ -d /firmware/RPI-RF-MOD ] &&
+       { [[ "${HM_HMRF_DEV}" == "RPI-RF-MOD" ]] ||
+         [[ "${HM_HMIP_DEV}" == "RPI-RF-MOD" ]]; }; then
 
       if [[ ${FOUND} -eq 1 ]]; then
         echo -n "; "
@@ -179,9 +181,10 @@ update_rf_hardware() {
 
     # check if user has a HMIP-RFUSB (eQ3) installed (USB)
     # for which we supply recent firmware updates
-    elif [[ "${HM_HMRF_DEV}" == "HMIP-RFUSB" ]] ||
-         [[ "${HM_HMIP_DEV}" == "HMIP-RFUSB" ]] ||
-         lsusb 2>/dev/null | grep -q 1b1f:c020; then
+    elif [ -f /opt/HmIP/hmip-copro-update.jar ] && [ -d /firmware/HmIP-RFUSB ] &&
+         { [[ "${HM_HMRF_DEV}" == "HMIP-RFUSB" ]] ||
+           [[ "${HM_HMIP_DEV}" == "HMIP-RFUSB" ]] ||
+           lsusb 2>/dev/null | grep -q 1b1f:c020; }; then
 
       if [[ ${FOUND} -eq 1 ]]; then
         echo -n "; "
