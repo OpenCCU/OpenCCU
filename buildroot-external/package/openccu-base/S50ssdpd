@@ -1,12 +1,10 @@
 #!/bin/sh
-# shellcheck source=/dev/null
-# shellcheck shell=dash disable=SC2169
+# shellcheck shell=dash disable=SC2169 source=/dev/null
 #
 # Starts ssdpd
 #
 
 OPENCCU_BASE_SERVICE_USERS=yes
-OPENCCU_BASE_CONFIG_INIT=yes
 
 DAEMON="ssdpd"
 PIDFILE="/var/run/${DAEMON}.pid"
@@ -18,10 +16,10 @@ start() {
 	if [ "$OPENCCU_BASE_SERVICE_USERS" = yes ]; then
 		run_user=ssdp:ssdp
 	fi
-	if [ "$OPENCCU_BASE_CONFIG_INIT" = yes ]; then
-		# The daemon inherits this preference from start-stop-daemon.
-		echo -900 >/proc/$$/oom_score_adj 2> /dev/null
-	fi
+
+	# adjust the oom score (which is inherited by start-stop-daemon)
+  # to ensure that others are killed first in case of low memory situations
+	echo -900 >/proc/$$/oom_score_adj 2> /dev/null
 
 	if start-stop-daemon -d / -S -q -b -m -c "$run_user" -p ${PIDFILE} --exec /bin/${DAEMON}; then
 		echo "OK"
