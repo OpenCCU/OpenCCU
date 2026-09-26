@@ -67,7 +67,7 @@ class RecoveryServicesTest(unittest.TestCase):
                          "BidCoS-Address=123456\nSerialNumber=TEST123456\n")
         self.assertIn("-c root ", self.log.read_text())
         self.assertNotIn("eq3cfg", self.log.read_text())
-        self.assertFalse((self.root / "oom").exists())
+        self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
     def test_recovery_preserves_existing_keys_and_permissions(self):
         config = self.root / "etc/config/crypttool.cfg"
@@ -102,7 +102,7 @@ class RecoveryServicesTest(unittest.TestCase):
                          (after.st_mode, after.st_uid, after.st_gid, after.st_mtime_ns))
         self.assertIn("-c root ", self.log.read_text())
         self.assertNotIn("eq3cfg", self.log.read_text())
-        self.assertFalse((self.root / "oom").exists())
+        self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
     def test_eq3configd_without_service_user_still_initializes_config(self):
         self.run_init("S50eq3configd", False, service_users="no")
@@ -115,7 +115,7 @@ class RecoveryServicesTest(unittest.TestCase):
     def test_ssdp_recovery_user(self):
         self.run_init("S50ssdpd", True)
         self.assertIn("-c root ", self.log.read_text())
-        self.assertFalse((self.root / "oom").exists())
+        self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
     def test_ssdp_normal_user(self):
         self.run_init("S50ssdpd", False)
