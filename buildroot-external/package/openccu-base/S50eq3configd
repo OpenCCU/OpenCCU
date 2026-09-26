@@ -44,8 +44,8 @@ start() {
 	# eq3cfg GID. Leave an older, unreadable key unchanged and retain
 	# root execution for this case only.
 	if [ "$OPENCCU_BASE_CONFIG_INIT" != yes ] &&
-	   [ -e /etc/config/crypttool.cfg ] &&
-	   ! su -s /bin/sh -c 'test -r /etc/config/crypttool.cfg' eq3cfg; then
+		[ -e /etc/config/crypttool.cfg ] &&
+		! su -s /bin/sh -c 'test -r /etc/config/crypttool.cfg' eq3cfg; then
 		run_user=root
 	fi
 
