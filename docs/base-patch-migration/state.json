@@ -107,18 +107,24 @@
       "base_pr": 55,
       "cleanup_pr": 4234,
       "patch": "0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch"
+    },
+    {
+      "base_merge_commit": "caec7573d289a4b36f322862f22b110903dddf45",
+      "base_pr": 57,
+      "cleanup_pr": 4243,
+      "patch": "0157-WebUI-Fix-WrongJSONQuotes.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "caec7573d289a4b36f322862f22b110903dddf45",
-    "base_pr": 57,
+    "base_merge_commit": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
+    "base_pr": 58,
     "cleanup_pr": null,
-    "patch": "0157-WebUI-Fix-WrongJSONQuotes.patch",
+    "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0157 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0158 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "144ea652a66e76bfc22b8eacbe847128e04e2fb6",
-  "verified_base_pin": "caec7573d289a4b36f322862f22b110903dddf45",
-  "verified_source_sha256": "6f024fac2acbe44d34c42579fe641e02e6fa55d54567bdf9ab5dcd70a32ef721"
+  "verified_at_openccu_commit": "64e0a61e75ab54a291c84725424e6faf8f86d6e7",
+  "verified_base_pin": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
+  "verified_source_sha256": "62f01dbc4b6b2d7d51663e7226e006e873b8f48bf922d1a1828c2207a8f381f8"
 }

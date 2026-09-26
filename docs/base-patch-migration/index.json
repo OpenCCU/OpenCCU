@@ -1391,15 +1391,6 @@
       "sha256": "c9d41d32927372f55706888130f0040032ddfda18362119f82d3a9418dd0e6df"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/esp/functions.fn"
-      ],
-      "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch",
-      "removed": 0,
-      "sha256": "d5cec4ab0126c86b8ea7d9432d651ddc6d14501b03a1b59dcd53200c72938a9d"
-    },
-    {
       "added": 19,
       "files": [
         "www/api/eq3/jsonrpc.tcl",
@@ -1746,5 +1737,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1932a95b65ac021be4d005ed1afda0fa5456c52760427579a69644a1287d607d"
+  "series_sha256": "1f43a44a019421b3e1772ff7b21407265affe808fa757030267db8032f3d396f"
 }
