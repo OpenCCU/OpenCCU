@@ -172,13 +172,6 @@ config BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS
 	help
 	  Install init scripts for the selected daemons.
 
-config BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS
-	bool "Dedicated network service users"
-	default y
-	help
-	  Run eq3configd and ssdpd under their dedicated users.
-	  Disable to retain root execution in a maintenance image.
-
 config BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION
 	bool "Main-system filesystem integration"
 	default y

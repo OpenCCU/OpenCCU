@@ -4,7 +4,6 @@
 # Starts eq3configd.
 #
 
-OPENCCU_BASE_SERVICE_USERS=yes
 OPENCCU_BASE_CONFIG_INIT=yes
 
 DAEMON="eq3configd"
@@ -33,9 +32,7 @@ init () {
 		touch /etc/config/crypttool.cfg
 	fi
 	chmod 0640 /etc/config/crypttool.cfg
-	if [ "$OPENCCU_BASE_SERVICE_USERS" = yes ]; then
-		chgrp eq3cfg /etc/config/crypttool.cfg
-	fi
+	chgrp eq3cfg /etc/config/crypttool.cfg
 }
 
 start() {
@@ -43,7 +40,7 @@ start() {
 	init
 
 	run_user=root
-	if [ "$OPENCCU_BASE_SERVICE_USERS" = yes ] && [ "$OPENCCU_BASE_CONFIG_INIT" = yes ]; then
+	if [ "$OPENCCU_BASE_CONFIG_INIT" = yes ]; then
 		run_user=eq3cfg:eq3cfg
 	fi
 

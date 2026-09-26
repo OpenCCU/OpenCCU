@@ -65,21 +65,25 @@ class OpenCCUBaseInstallTest(unittest.TestCase):
                     "BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD := y\n"
                     "BR2_PACKAGE_OPENCCU_BASE_SSDPD := y\n"
                     "BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS := y\n"
-                    f"BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS := {'' if recovery else 'y'}\n"
                     f"BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION := {'' if recovery else 'y'}\n"
                     "cmake-package =\n"
                     f"include {PACKAGE}\n"
-                    ".PHONY: install\n"
+                    ".PHONY: install users\n"
                     "install:\n"
                     "\t$(OPENCCU_BASE_INSTALL_SELECTED_CONFIG)\n"
-                    "\t$(OPENCCU_BASE_INSTALL_INIT_SYSV)\n")
-                result = subprocess.run(["make", "-f", str(makefile), "install"], cwd=root,
+                    "\t$(OPENCCU_BASE_INSTALL_INIT_SYSV)\n"
+                    "users:\n"
+                    "\t@printf '%s\\n' '$(strip $(OPENCCU_BASE_USERS))'\n")
+                result = subprocess.run(["make", "-s", "-f", str(makefile),
+                                         "install", "users"], cwd=root,
                                         capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("eq3cfg -1 eq3cfg", result.stdout)
+                self.assertIn("ssdp -1 ssdp", result.stdout)
                 for name in ("S50eq3configd", "S50ssdpd"):
                     installed = target / "etc/init.d" / name
                     script = installed.read_text()
-                    self.assertIn(f"OPENCCU_BASE_SERVICE_USERS={value}\n", script)
+                    self.assertNotIn("OPENCCU_BASE_SERVICE_USERS", script)
                     if name == "S50eq3configd":
                         self.assertIn(f"OPENCCU_BASE_CONFIG_INIT={value}\n", script)
                     else:

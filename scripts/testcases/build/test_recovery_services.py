@@ -28,7 +28,7 @@ class RecoveryServicesTest(unittest.TestCase):
         self.env = dict(os.environ, CALL_LOG=str(self.log),
                         PATH=str(self.root / "bin") + ":" + os.environ["PATH"])
 
-    def run_init(self, name, recovery, service_users=None, config_init=None):
+    def run_init(self, name, recovery, config_init=None):
         value = "no" if recovery else "yes"
         makefile = self.root / "Makefile"
         makefile.write_text(
@@ -39,8 +39,6 @@ class RecoveryServicesTest(unittest.TestCase):
             "BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD := y\n"
             "BR2_PACKAGE_OPENCCU_BASE_SSDPD := y\n"
             "BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS := y\n"
-            f"BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS := "
-            f"{'y' if (service_users or value) == 'yes' else ''}\n"
             f"BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION := "
             f"{'y' if (config_init or value) == 'yes' else ''}\n"
             "cmake-package =\n"
@@ -90,7 +88,7 @@ class RecoveryServicesTest(unittest.TestCase):
         self.assertIn("-c eq3cfg:eq3cfg ", self.log.read_text())
         self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
-    def test_eq3configd_without_initialization_runs_as_root_despite_service_user(self):
+    def test_eq3configd_without_initialization_runs_as_root(self):
         config = self.root / "etc/config/crypttool.cfg"
         config.write_text("current key\n")
         config.chmod(0o600)
@@ -104,23 +102,13 @@ class RecoveryServicesTest(unittest.TestCase):
         self.assertNotIn("eq3cfg", self.log.read_text())
         self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
-    def test_eq3configd_without_service_user_still_initializes_config(self):
-        self.run_init("S50eq3configd", False, service_users="no")
-        self.assertTrue((self.root / "etc/config/ids").exists())
-        self.assertEqual((self.root / "etc/config/crypttool.cfg").stat().st_mode & 0o777,
-                         0o640)
-        self.assertIn("-c root ", self.log.read_text())
-        self.assertNotIn("eq3cfg", self.log.read_text())
-
-    def test_ssdp_recovery_user(self):
-        self.run_init("S50ssdpd", True)
-        self.assertIn("-c root ", self.log.read_text())
-        self.assertEqual((self.root / "oom").read_text(), "-900\n")
-
-    def test_ssdp_normal_user(self):
-        self.run_init("S50ssdpd", False)
-        self.assertIn("-c ssdp:ssdp ", self.log.read_text())
-        self.assertEqual((self.root / "oom").read_text(), "-900\n")
+    def test_ssdp_uses_service_user_in_both_images(self):
+        for recovery in (False, True):
+            with self.subTest(recovery=recovery):
+                self.log.write_text("")
+                self.run_init("S50ssdpd", recovery)
+                self.assertIn("-c ssdp:ssdp ", self.log.read_text())
+                self.assertEqual((self.root / "oom").read_text(), "-900\n")
 
 
 if __name__ == "__main__":

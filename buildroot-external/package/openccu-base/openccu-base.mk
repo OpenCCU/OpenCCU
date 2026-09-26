@@ -238,10 +238,6 @@ OPENCCU_BASE_INIT_SCRIPTS = \
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_INIT_SCRIPTS),y)
 define OPENCCU_BASE_INSTALL_INIT_SYSV
 	$(foreach f,$(OPENCCU_BASE_INIT_SCRIPTS),$(INSTALL) -D -m 0755 "$(OPENCCU_BASE_PKGDIR)/$(f)" "$(TARGET_DIR)/etc/init.d/$(f)"$(sep))
-	for script in $(filter S50eq3configd S50ssdpd,$(OPENCCU_BASE_INIT_SCRIPTS)); do \
-		sed -i 's/^OPENCCU_BASE_SERVICE_USERS=yes$$/OPENCCU_BASE_SERVICE_USERS=$(if $(BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS),yes,no)/' \
-			"$(TARGET_DIR)/etc/init.d/$$script"; \
-	done
 	$(if $(filter S50eq3configd,$(OPENCCU_BASE_INIT_SCRIPTS)),sed -i 's/^OPENCCU_BASE_CONFIG_INIT=yes$$/OPENCCU_BASE_CONFIG_INIT=$(if $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),yes,no)/' "$(TARGET_DIR)/etc/init.d/S50eq3configd")
 endef
 endif
@@ -250,8 +246,8 @@ define OPENCCU_BASE_USERS
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),- -1 hm -1 * - - - homematic access group)
 	$(if $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_HSS_LED) $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION)),- -1 status -1 * - - - status access group)
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_HSS_LED),hssled -1 hssled -1 * - - status hss_led user)
-	$(if $(and $(BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS),$(BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD)),eq3cfg -1 eq3cfg -1 * - - - eq3configd user)
-	$(if $(and $(BR2_PACKAGE_OPENCCU_BASE_SERVICE_USERS),$(BR2_PACKAGE_OPENCCU_BASE_SSDPD)),ssdp -1 ssdp -1 * - - - ssdpd user)
+	$(if $(BR2_PACKAGE_OPENCCU_BASE_EQ3CONFIGD),eq3cfg -1 eq3cfg -1 * - - - eq3configd user)
+	$(if $(BR2_PACKAGE_OPENCCU_BASE_SSDPD),ssdp -1 ssdp -1 * - - - ssdpd user)
 endef
 ifeq ($(BR2_PACKAGE_OPENCCU_BASE_HSS_LED),y)
 

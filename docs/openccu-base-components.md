@@ -52,17 +52,16 @@ WebUI/Tcl asset generation or rootfs patching.
 ## Services and system integration
 
 `INIT_SCRIPTS` controls service startup files. User/group definitions follow the
-selected services. `SERVICE_USERS` controls dedicated eq3configd/ssdpd accounts;
-without it these services run as root. The LED controller retains its own user
-and status group whenever selected. `eq3configd` also runs as root when
-configuration initialization is disabled, because the existing encryption key
-may not be readable by the dedicated service account.
+selected services. `ssdpd` runs as `ssdp` in both images, while `eq3configd`
+runs as `eq3cfg` only when persistent configuration initialization is enabled.
+Recovery retains root execution for `eq3configd` because the existing encryption
+key may not be readable by an account created in a separate image. The LED
+controller retains its own user and status group whenever selected.
 
 `SYSTEM_INTEGRATION` enables main-system filesystem setup, license-page creation
 and persistent configuration initialization at service startup. Recovery disables
-this option and `SERVICE_USERS`, while keeping `INIT_SCRIPTS` enabled. The
-package writes both policy values into `S50eq3configd` and `S50ssdpd` when
-installing them.
+this option while keeping `INIT_SCRIPTS` enabled. The package writes the
+configuration policy into `S50eq3configd` when installing it.
 
 Recovery calls the common board post-build script after applying its overlay.
 It links `/run` to `/var/run`, retaining the recovery version and init services
