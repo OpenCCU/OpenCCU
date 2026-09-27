@@ -119,16 +119,16 @@
       "base_pr": 58,
       "cleanup_pr": 4247,
       "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch"
+    },
+    {
+      "base_merge_commit": "85f79d1fe6afd13db054cd24506ab85ac5715246",
+      "base_pr": 61,
+      "cleanup_pr": 4251,
+      "patch": "0010-WebUI-Disable-TimeModuleWarn.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "85f79d1fe6afd13db054cd24506ab85ac5715246",
-    "base_pr": 61,
-    "cleanup_pr": null,
-    "patch": "0010-WebUI-Disable-TimeModuleWarn.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
-  "next_action": "Verify patch 0010 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "in_progress": null,
+  "next_action": "Select the next candidate after verifying the patch 0010 cleanup merge.",
   "schema": 1,
   "verified_at_openccu_commit": "ae73ca02888d8cf0c4d5f4d8fb8436e50e56046b",
   "verified_base_pin": "85f79d1fe6afd13db054cd24506ab85ac5715246",
