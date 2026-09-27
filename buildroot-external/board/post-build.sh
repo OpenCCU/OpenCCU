@@ -51,6 +51,20 @@ if [ "${RECOVERY_POST_BUILD:-no}" != yes ]; then
 fi
 rm -f "${TARGET_DIR}/etc/init.d/S35iptables"
 
+# remove the init scripts of optional packages the configuration does not
+# select: the overlays ship one for every daemon a product may build
+for initscript_pkg in \
+  S40bluetoothd:BR2_PACKAGE_BLUEZ5_UTILS \
+  S49xinetd:BR2_PACKAGE_XINETD \
+  S50ser2net:BR2_PACKAGE_SER2NET \
+  S51nut:BR2_PACKAGE_NUT \
+  S59snmpd:BR2_PACKAGE_NETSNMP \
+  S60openvpn:BR2_PACKAGE_OPENVPN; do
+  if ! grep -q "^${initscript_pkg#*:}=y$" "${BR2_CONFIG}"; then
+    rm -f "${TARGET_DIR}/etc/init.d/${initscript_pkg%%:*}"
+  fi
+done
+
 # Only the main system exposes VERSION under /boot.
 if [ "${RECOVERY_POST_BUILD:-no}" != yes ]; then
   mkdir -p "${TARGET_DIR}/boot"
