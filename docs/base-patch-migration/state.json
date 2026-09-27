@@ -131,18 +131,24 @@
       "base_pr": 62,
       "cleanup_pr": 4252,
       "patch": "0014-WebUI-Fix-ControlPanelSorting.patch"
+    },
+    {
+      "base_merge_commit": "661be9e8829a2404a89f0b64c72f7283cb72dbc4",
+      "base_pr": 63,
+      "cleanup_pr": 4253,
+      "patch": "0003-rftypes-Fix.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "661be9e8829a2404a89f0b64c72f7283cb72dbc4",
-    "base_pr": 63,
+    "base_merge_commit": "3fcb25433bb7de366bf438a4beaf890b67614fce",
+    "base_pr": 64,
     "cleanup_pr": null,
-    "patch": "0003-rftypes-Fix.patch",
+    "patch": "0013-WebUI-SecKeyChangesDisplay.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0003 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "a1c505ff097c06ee22e11058b199806f619ead53",
+  "verified_at_openccu_commit": "bc11643550c7ebbdf4823ac5fc69ac2f4229a663",
   "verified_base_pin": "661be9e8829a2404a89f0b64c72f7283cb72dbc4",
   "verified_source_sha256": "0da3b9411d932ba3e59c5b414d68ec0a14ed79f7ef40d7edb1dcc8381192b812"
 }

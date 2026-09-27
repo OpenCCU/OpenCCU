@@ -100,17 +100,6 @@
       "sha256": "2bee5243cbb38ba91a00c3ef74ee04b91e6f013db9261aa30b6061b8acdc6828"
     },
     {
-      "added": 11,
-      "files": [
-        "www/config/cp_security.cgi",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js"
-      ],
-      "patch": "0013-WebUI-SecKeyChangesDisplay.patch",
-      "removed": 0,
-      "sha256": "3560b8cb8a80aa4cddfc653371a26b3d6b9260a6aa8d5f9fd00e5e8ff54c9248"
-    },
-    {
       "added": 43,
       "files": [
         "www/rega/esp/programs.fn",
@@ -1710,5 +1699,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "b4918d86671b2ad06519df95cbe9d9b51b15e3fab37dc7a9056386f55704807f"
+  "series_sha256": "510550bf0d4169fda3115d72827e931f34ecc45ac8b0af7d8e95952b852b2db6"
 }
