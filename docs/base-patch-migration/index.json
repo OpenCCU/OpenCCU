@@ -50,15 +50,6 @@
       "sha256": "fcb98df9bd111bf2fd3a437ef2d2b3892fc8425af0e43e4ace8e13585d7833c9"
     },
     {
-      "added": 1,
-      "files": [
-        "firmware/rftypes/rf_cfm_tw.xml"
-      ],
-      "patch": "0003-rftypes-Fix.patch",
-      "removed": 1,
-      "sha256": "b357b26b5083713282ef314cadab2736d733b805e6f0005349610caadea7e504"
-    },
-    {
       "added": 4,
       "files": [
         "www/api/methods/ccu/restartReGa.tcl",
@@ -1719,5 +1710,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "c116b9c7c25332e4904973bdb8339f6dfd5bffcbc11cde47ad33973d92d78542"
+  "series_sha256": "b4918d86671b2ad06519df95cbe9d9b51b15e3fab37dc7a9056386f55704807f"
 }
