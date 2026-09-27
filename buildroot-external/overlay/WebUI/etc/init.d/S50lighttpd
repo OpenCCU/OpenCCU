@@ -13,6 +13,11 @@ PIDFILE_ANGEL=/var/run/lighttpd-angel.pid
 [[ "${HM_MODE}" != "NORMAL" ]] && exit 0
 
 check_certificate() {
+  # leave a certificate alone that something else manages (an ACME
+  # client, a certificate from a local CA): whoever installs it writes
+  # the marker /etc/config/server.pem.managed beside it and renews it
+  [[ -f /etc/config/server.pem.managed ]] && return 0
+
   # check if a valid/non-expired SSL cert exists and if
   # not we regenerate it.
   if ! /usr/bin/openssl x509 -checkend 86400 -noout -in /etc/config/server.pem 2>/dev/null >/dev/null; then
