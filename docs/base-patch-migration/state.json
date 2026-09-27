@@ -125,16 +125,16 @@
       "base_pr": 61,
       "cleanup_pr": 4251,
       "patch": "0010-WebUI-Disable-TimeModuleWarn.patch"
+    },
+    {
+      "base_merge_commit": "1c2f055666510096ba689df2ef6767951db9c436",
+      "base_pr": 62,
+      "cleanup_pr": 4252,
+      "patch": "0014-WebUI-Fix-ControlPanelSorting.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "1c2f055666510096ba689df2ef6767951db9c436",
-    "base_pr": 62,
-    "cleanup_pr": null,
-    "patch": "0014-WebUI-Fix-ControlPanelSorting.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
-  "next_action": "Verify patch 0014 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "in_progress": null,
+  "next_action": "Select the next candidate after verifying the patch 0014 cleanup merge.",
   "schema": 1,
   "verified_at_openccu_commit": "352ec51e9e423e2c29daf50eee8e2c4561adcba5",
   "verified_base_pin": "1c2f055666510096ba689df2ef6767951db9c436",
