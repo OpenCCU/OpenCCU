@@ -2,7 +2,6 @@
 """Build and test the real LED daemon/client against isolated fake sysfs."""
 import os
 import pathlib
-import re
 import shutil
 import socket
 import subprocess
@@ -11,33 +10,23 @@ import time
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-PATCH = ROOT / "buildroot-external/package/openccu-base/0001-OpenCCU-Base-led-service.patch"
+BASE_SOURCE = pathlib.Path(os.environ.get("OPENCCU_BASE_SOURCE_DIR", ROOT / "download/openccu-base/git"))
 
 
 def extract_sources(destination):
-    """Use the actual new Base sources embedded in the package patch."""
+    """Use the pinned OpenCCU-Base sources prepared by Buildroot."""
+    source = BASE_SOURCE / "src/hss_led"
     expected = {"LedCli.h", "LedController.cpp", "LedController.h", "LedProtocol.h",
                 "LedOnlyMain.cpp", "RgbLed.h", "StatusCommand.h", "tests/LedControllerTest.cpp",
                 "tests/StatusProducer.cpp"}
-    found = set()
-    for block in re.split(r"(?m)^diff --git ", PATCH.read_text()):
-        lines = block.splitlines()
-        prefix = "+++ b/src/hss_led/"
-        name = next((line[len(prefix):] for line in lines if line.startswith(prefix)), None)
-        if name not in expected:
-            continue
-        if "new file mode 100644" not in lines:
-            raise AssertionError("Expected new source in Base patch: " + name)
-        body = next(i for i, line in enumerate(lines) if line.startswith("@@ ")) + 1
-        data = lines[body:]
-        if any(not line.startswith("+") for line in data):
-            raise AssertionError("Unexpected new-file patch body: " + name)
+    for name in expected:
+        original = source / name
+        if not original.is_file():
+            raise AssertionError("Missing OpenCCU-Base source " + str(original) +
+                                 "; set OPENCCU_BASE_SOURCE_DIR to the pinned source tree")
         path = destination / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("\n".join(line[1:] for line in data) + "\n")
-        found.add(name)
-    if found != expected:
-        raise AssertionError("Missing Base sources: " + str(expected - found))
+        shutil.copyfile(original, path)
 
 
 class ControllerStateTest(unittest.TestCase):

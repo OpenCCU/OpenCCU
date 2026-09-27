@@ -1,10 +1,10 @@
 # LED control with hss_led and hss_ledctl
 
-This cumulative follow-up patch applies to OpenCCU PR #4204 at
-`7a8af61fd9f4730c5693bc64af633686462a12e2`.
-It replaces the experimental `rpi-rf-mod-ledd` with the existing `hss_led` service.
-The embedded Base patch targets OpenCCU-Base
-`587230316a97e380516b0ac4d21a497c187657cd`.
+The LED controller and `hss_ledctl` implementation are part of
+[OpenCCU-Base PR #59](https://github.com/OpenCCU/OpenCCU-Base/pull/59),
+pinned by OpenCCU at `48cdf839b04b7b2820163c784f11a655478d3e3e`.
+They replace the experimental `rpi-rf-mod-ledd` with the existing `hss_led`
+service.
 
 ## Architecture and lifecycle
 
@@ -86,19 +86,10 @@ are retried without repeatedly recreating the timer attributes before udev can
 change their permissions. Containers retain the previous root execution policy;
 the host must expose usable LED sysfs nodes.
 
-## Applying and rebuilding
+## Rebuilding
 
-Apply this follow-up on the PR branch, including its previous lint fixes:
-
-```sh
-git apply --check --whitespace=nowarn /path/0003-PR4204-hss-ledctl-and-board-leds.patch
-git apply --whitespace=nowarn /path/0003-PR4204-hss-ledctl-and-board-leds.patch
-```
-
-Do not use `--whitespace=fix`: context spaces inside the embedded patch must
-remain unchanged. This revision replaces the previously supplied `0002` integration patch and
-the earlier `0003` revision with optional radio target selection. Do not stack
-it on either patch. Start from the PR commit quoted above.
+Use an OpenCCU revision with the updated Base pin. The LED sources are provided
+by OpenCCU-Base; no local source patch is needed.
 
 For an existing Tinkerboard2 build:
 
@@ -214,14 +205,16 @@ sysfs device/trigger. Check `status` after a blink command during testing.
 
 ## Validation
 
-The patch includes unit and process tests using fake sysfs files:
+OpenCCU includes a test runner for the Base sources using fake sysfs files. Run
+it against the pinned, extracted OpenCCU-Base source tree:
 
 ```sh
-python3 scripts/testcases/build/test_rgb_led.py -v
+OPENCCU_BASE_SOURCE_DIR="$PWD/build-rpi3/build/openccu-base-48cdf839b04b7b2820163c784f11a655478d3e3e" \
+  python3 scripts/testcases/build/test_rgb_led.py -v
 ```
 
-The Python runner extracts the actual new sources from the embedded Base patch;
-it does not contain a second controller implementation. The socket tests cover
+The Python runner compiles the actual Base sources; it does not contain a
+second controller implementation. The socket tests cover
 CLI/background operation, overrides, legacy LEDs, hardware replacement, restart,
 a stalled in-process status producer, independent board LEDs, and delayed
 board timer permissions. They explicitly skip when Unix sockets
@@ -230,11 +223,5 @@ are prohibited. The state/backend tests still run in that environment.
 The Base CMake option `HSS_LED_BUILD_TESTS=ON` adds `hss_led_state_test` and the
 CTest entry `hss_led_state`, for both normal and LED-only builds.
 
-Checked while preparing this patch: native normal and LED-only builds, controller
-unit tests (248 assertions), Buildroot normal/recovery configuration and package selection,
-package lint, shell syntax, and application of both outer and embedded patches.
-
-Not verified here: real Unix-socket process tests (the execution environment
-returns EPERM), a complete firmware/recovery cross-build, and real GPIO/HB-RF-USB
-hardware. In particular, verify early boot, udev permission timing and shutdown
-on the target device before merging.
+Real GPIO/HB-RF-USB hardware, early boot, udev permission timing and shutdown
+still require validation on the target device.
