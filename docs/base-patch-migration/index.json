@@ -120,15 +120,6 @@
       "sha256": "3560b8cb8a80aa4cddfc653371a26b3d6b9260a6aa8d5f9fd00e5e8ff54c9248"
     },
     {
-      "added": 5,
-      "files": [
-        "www/config/control_panel.cgi"
-      ],
-      "patch": "0014-WebUI-Fix-ControlPanelSorting.patch",
-      "removed": 2,
-      "sha256": "83a2bd31595e0ec5da7b35c95bc54fabaf0eb398aedd89573150c91b7bb8582f"
-    },
-    {
       "added": 43,
       "files": [
         "www/rega/esp/programs.fn",
@@ -1728,5 +1719,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "080f5e175de7b98cb3a9ac709490c5ba71df6e39309f742881b2f9c55d24fad7"
+  "series_sha256": "c116b9c7c25332e4904973bdb8339f6dfd5bffcbc11cde47ad33973d92d78542"
 }
