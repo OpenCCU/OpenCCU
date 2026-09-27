@@ -4,7 +4,6 @@
 0004-WebUI-UseMonitRestarts.patch
 0007-WebUI-Enhanced-FirmwareUpdate.patch
 0008-WebUI-Disable-ReGa.patch
-0010-WebUI-Disable-TimeModuleWarn.patch
 0012-WebUI-RecoveryButton.patch
 0013-WebUI-SecKeyChangesDisplay.patch
 0014-WebUI-Fix-ControlPanelSorting.patch

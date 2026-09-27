@@ -96,15 +96,6 @@
       "sha256": "73f1c3a22f10059b365de9629ae62bac1243e6413a45b9c55d86f050174d41af"
     },
     {
-      "added": 0,
-      "files": [
-        "www/rega/pages/tabs/admin/msg/timemodule.htm"
-      ],
-      "patch": "0010-WebUI-Disable-TimeModuleWarn.patch",
-      "removed": 2,
-      "sha256": "e7b5ac9a87110f607b7bb65eee616dab90038f08b2f07e366eb4048f06c98c1a"
-    },
-    {
       "added": 77,
       "files": [
         "www/api/methods.conf",
@@ -1737,5 +1728,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1f43a44a019421b3e1772ff7b21407265affe808fa757030267db8032f3d396f"
+  "series_sha256": "080f5e175de7b98cb3a9ac709490c5ba71df6e39309f742881b2f9c55d24fad7"
 }

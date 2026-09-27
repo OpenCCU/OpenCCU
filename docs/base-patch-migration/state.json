@@ -113,18 +113,24 @@
       "base_pr": 57,
       "cleanup_pr": 4243,
       "patch": "0157-WebUI-Fix-WrongJSONQuotes.patch"
+    },
+    {
+      "base_merge_commit": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
+      "base_pr": 58,
+      "cleanup_pr": 4247,
+      "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
-    "base_pr": 58,
+    "base_merge_commit": "85f79d1fe6afd13db054cd24506ab85ac5715246",
+    "base_pr": 61,
     "cleanup_pr": null,
-    "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch",
+    "patch": "0010-WebUI-Disable-TimeModuleWarn.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
-  "next_action": "Verify patch 0158 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
+  "next_action": "Verify patch 0010 cleanup merge, refresh the verified checkpoint, pin, and hash, clear in_progress, then select the next candidate.",
   "schema": 1,
-  "verified_at_openccu_commit": "64e0a61e75ab54a291c84725424e6faf8f86d6e7",
-  "verified_base_pin": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
-  "verified_source_sha256": "de04814ba34ae496c8dd0775abc5e32b0ce395462a8a63cf25a6016310a8b675"
+  "verified_at_openccu_commit": "ae73ca02888d8cf0c4d5f4d8fb8436e50e56046b",
+  "verified_base_pin": "85f79d1fe6afd13db054cd24506ab85ac5715246",
+  "verified_source_sha256": "96d210b592f6da4b270cd2d6aefe1e6d356f41e53a285c61dc42ac6a2ed3a428"
 }
