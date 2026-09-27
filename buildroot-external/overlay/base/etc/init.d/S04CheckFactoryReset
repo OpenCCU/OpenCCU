@@ -42,8 +42,13 @@ check_factory_reset() {
         ;;
     esac
 
-    # we create a clean ext4 partition now
-    /sbin/mkfs.ext4 -F -L userfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${DEVNAME}"
+    # we create a clean ext4 partition now; when that fails (e.g. the
+    # partition is still in use) nothing was cleared: mount it back and
+    # keep .doFactoryReset for the next boot
+    if ! /sbin/mkfs.ext4 -F -L userfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${DEVNAME}"; then
+      mount /usr/local
+      return 2
+    fi
     /sbin/tune2fs -c 0 -i 0 "${DEVNAME}"
     /sbin/e2fsck -pDf "${DEVNAME}"
 
@@ -72,11 +77,12 @@ check_factory_reset() {
 start() {
   echo -n "Checking for Factory Reset: "
 
-  if check_factory_reset; then
-    echo "cleared, OK"
-  else
-    echo "not required"
-  fi
+  check_factory_reset
+  case $? in
+    0) echo "cleared, OK" ;;
+    1) echo "not required" ;;
+    *) echo "mkfs failed, ERROR" ;;
+  esac
 }
 
 restart() {
