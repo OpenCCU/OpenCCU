@@ -1346,14 +1346,13 @@
         "www/api/eq3/jsonrpc.tcl",
         "www/api/methods/ccu/restartReGa.tcl",
         "www/api/methods/ccu/restartsshdaemon.tcl",
-        "www/api/methods/ccu/restsshdaemon.tcl",
         "www/api/methods/ccu/setssh.tcl",
         "www/api/methods/ccu/setstickyunreach.tcl",
         "www/api/methods/user/setregaversion.tcl"
       ],
       "patch": "0159-WebUI-Fix-JSONRpcResponses.patch",
       "removed": 9,
-      "sha256": "3de376b725942cc3a6814b75fab74acbe26c14bbfa53091d61c1da39493cfed3"
+      "sha256": "ec51413be5522c447c550622dd934aaca717fa6f5e02729533c197ce82ba4636"
     },
     {
       "added": 165,

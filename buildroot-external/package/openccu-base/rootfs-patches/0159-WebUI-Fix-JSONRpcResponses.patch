@@ -57,7 +57,7 @@
 +catch {exec /usr/bin/monit restart ReGaHss}
 +
 +jsonrpc_response ""
---- a/www/api/methods/ccu/restsshdaemon.tcl
+--- a/www/api/methods/ccu/restartsshdaemon.tcl
 +++ b/www/api/methods/ccu/restartsshdaemon.tcl
 @@ -7,4 +7,6 @@
  # Rückgabewert: kein
