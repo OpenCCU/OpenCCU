@@ -161,18 +161,18 @@
       "base_pr": 67,
       "cleanup_pr": 4260,
       "patch": "0159-WebUI-Fix-JSONRpcResponses.patch"
+    },
+    {
+      "base_merge_commit": "00f9b9e6459cbfcfa9f2325909d669bc6ba290e5",
+      "base_pr": 68,
+      "cleanup_pr": 4261,
+      "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "00f9b9e6459cbfcfa9f2325909d669bc6ba290e5",
-    "base_pr": 68,
-    "cleanup_pr": 4261,
-    "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "291eb487855cdc2eb49774e92e7078d20ee68c22",
-  "verified_base_pin": "982f3df9cc7ccd647d5eca286845ecf17bb18c04",
-  "verified_source_sha256": "38f2b88edf4158e9e0d7a2198ae7abca3478387f072a032897c7cd2c46c73597"
+  "verified_at_openccu_commit": "9c366a2c5e309fdb583d4404d2775bbecc00bf64",
+  "verified_base_pin": "00f9b9e6459cbfcfa9f2325909d669bc6ba290e5",
+  "verified_source_sha256": "03fad9c5db178b7895616ab9cdf704923aca76f772acd1522e93871b9f707ad9"
 }
