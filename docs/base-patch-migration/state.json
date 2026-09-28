@@ -209,18 +209,18 @@
       "base_pr": 76,
       "cleanup_pr": 4269,
       "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch"
+    },
+    {
+      "base_merge_commit": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
+      "base_pr": 77,
+      "cleanup_pr": 4270,
+      "patch": "0021-WebUI-Remove-Logo.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
-    "base_pr": 77,
-    "cleanup_pr": 4270,
-    "patch": "0021-WebUI-Remove-Logo.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "b89d209fb5f3edb24b6b920103f4a0bddb1a73cc",
-  "verified_base_pin": "1898cab4e8faf80d430ba6849c08e85d70fcd87f",
-  "verified_source_sha256": "00ed2e310ab242ad14c5f6f936ac1758b57d1991ca1cf2a8609d8eb3b12960c6"
+  "verified_at_openccu_commit": "26e9d1ff9afcddcd58490525fa846725f098f3c8",
+  "verified_base_pin": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
+  "verified_source_sha256": "d5c8c472e3d810bd2a110d264e83ec09959c931f142d5badcbbd8fb7970dee40"
 }
