@@ -149,18 +149,18 @@
       "base_pr": 65,
       "cleanup_pr": 4257,
       "patch": "0004-WebUI-UseMonitRestarts.patch"
+    },
+    {
+      "base_merge_commit": "1f82c7b1f785d5f3fc7b3fd5c24ddd6588b8e8da",
+      "base_pr": 66,
+      "cleanup_pr": 4259,
+      "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "1f82c7b1f785d5f3fc7b3fd5c24ddd6588b8e8da",
-    "base_pr": 66,
-    "cleanup_pr": 4259,
-    "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "fa9b53154df8705e0ed5b473b228c8e606b24989",
-  "verified_base_pin": "38a4f5453eade273b8a15019bb3247f5c5a61d50",
-  "verified_source_sha256": "25e1f7d5f19f42431f8709f3eb5f2b41773e49592673feaa5d4c2900f60ec71c"
+  "verified_at_openccu_commit": "bc49a69b4d38b19a0ce7f7d3db86ed731e91c351",
+  "verified_base_pin": "1f82c7b1f785d5f3fc7b3fd5c24ddd6588b8e8da",
+  "verified_source_sha256": "c5480d2a806ccb2c0e1855a62635ab69f254173751219e3543b000f8124c2b93"
 }
