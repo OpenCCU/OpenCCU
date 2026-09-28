@@ -133,15 +133,6 @@
       "sha256": "4be2baa85735dcc738ef3b2c02c25405ceb3acd1f845db9565e7cfcabed0c83d"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/esp/datapointconfigurator.fn"
-      ],
-      "patch": "0027-WebUI-Fix-EmptyTableCUxDDevices.patch",
-      "removed": 1,
-      "sha256": "a3fdba3e3cac2a4787cf3450300e0dcdae97cf66dd75f20589a4f29a4575e7d8"
-    },
-    {
       "added": 51,
       "files": [
         "www/rega/pages/msg/sysVarsArray.htm",
@@ -1627,5 +1618,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "9b8bff170a0986f38c7c6a308e1c6b40bb24108b8f53f9b9ef31e80c15e0353d"
+  "series_sha256": "e9e4d265967078af14fc88fac8446f1fd5117f0e3d2d0bf297c06b9dbcde5079"
 }

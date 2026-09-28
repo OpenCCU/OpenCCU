@@ -187,7 +187,13 @@
       "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "80c9bc3e213944e0627c18134c5ef2a5cd962a0b",
+    "base_pr": 72,
+    "cleanup_pr": null,
+    "patch": "0027-WebUI-Fix-EmptyTableCUxDDevices.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "e97b0954b567cd39eddf62465e685c2aab5480af",
