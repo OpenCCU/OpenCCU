@@ -203,18 +203,18 @@
       "base_pr": 75,
       "cleanup_pr": 4268,
       "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch"
+    },
+    {
+      "base_merge_commit": "1898cab4e8faf80d430ba6849c08e85d70fcd87f",
+      "base_pr": 76,
+      "cleanup_pr": 4269,
+      "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "1898cab4e8faf80d430ba6849c08e85d70fcd87f",
-    "base_pr": 76,
-    "cleanup_pr": 4269,
-    "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "c996558b316411c453e912f1555d36ae935e8001",
-  "verified_base_pin": "1b7a9156fd24a3d79760a279425de9d0c7c99910",
-  "verified_source_sha256": "3d73e0af54d12eb50b1f7f7ab6000dcc8913a2af02fb27c627df509befbb7e22"
+  "verified_at_openccu_commit": "b89d209fb5f3edb24b6b920103f4a0bddb1a73cc",
+  "verified_base_pin": "1898cab4e8faf80d430ba6849c08e85d70fcd87f",
+  "verified_source_sha256": "00ed2e310ab242ad14c5f6f936ac1758b57d1991ca1cf2a8609d8eb3b12960c6"
 }
