@@ -197,18 +197,18 @@
       "base_pr": 73,
       "cleanup_pr": 4266,
       "patch": "0033-WebUI-Fix-DeviceParameters.patch"
+    },
+    {
+      "base_merge_commit": "1b7a9156fd24a3d79760a279425de9d0c7c99910",
+      "base_pr": 75,
+      "cleanup_pr": 4268,
+      "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "1b7a9156fd24a3d79760a279425de9d0c7c99910",
-    "base_pr": 75,
-    "cleanup_pr": 4268,
-    "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "82b466ee7a8eaa13f53a21a3f281b4d0bd11ba68",
-  "verified_base_pin": "932ce52b380bd65aea17f297d01b178adf636394",
-  "verified_source_sha256": "8e783116e83b6047a81c4a23c7a76b5e59d2aecb78447dc47450921cedf2535d"
+  "verified_at_openccu_commit": "c996558b316411c453e912f1555d36ae935e8001",
+  "verified_base_pin": "1b7a9156fd24a3d79760a279425de9d0c7c99910",
+  "verified_source_sha256": "3d73e0af54d12eb50b1f7f7ab6000dcc8913a2af02fb27c627df509befbb7e22"
 }
