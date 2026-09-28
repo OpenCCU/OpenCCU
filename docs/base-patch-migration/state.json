@@ -184,7 +184,7 @@
   "in_progress": {
     "base_merge_commit": "9dfbdcdce48108ec2e842cc016433bb0deb68b6a",
     "base_pr": 71,
-    "cleanup_pr": null,
+    "cleanup_pr": 4264,
     "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
