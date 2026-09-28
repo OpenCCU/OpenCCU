@@ -1348,15 +1348,6 @@
       "sha256": "d6b5bdc130e5af53a4e795b11bb2277972ffee916989687d02ded7e31dda1d0d"
     },
     {
-      "added": 1,
-      "files": [
-        "www/config/cp_software.cgi"
-      ],
-      "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch",
-      "removed": 1,
-      "sha256": "faf8134fe191b7fe316a2e8ebefb8e7efbbb2bb7782ee5846cd77ecdf4905e3e"
-    },
-    {
       "added": 43,
       "files": [
         "www/config/ic_common.tcl",
@@ -1572,5 +1563,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "4e3ef3a15bafe55732094a2e094e294ecc6371f474dda4e3a341067eab05ce74"
+  "series_sha256": "921c6afa641094cfba1567ab2d5f18c881cdcd81d4acdc1e905306a808477670"
 }

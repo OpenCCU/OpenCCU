@@ -104,7 +104,6 @@
 0168-WebUI-Add-ImprovedLogout.patch
 0170-WebUI-RegexSearchInDeviceLists.patch
 0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch
-0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch
 0173-WebUI-SendPOSTRequest.patch
 0175-WebUI-Add-AllLogfileDownload.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
