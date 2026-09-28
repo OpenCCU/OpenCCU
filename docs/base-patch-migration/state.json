@@ -172,7 +172,7 @@
   "in_progress": {
     "base_merge_commit": "79d51dc26e5a87a81b5ab1c264029a37683a0237",
     "base_pr": 69,
-    "cleanup_pr": null,
+    "cleanup_pr": 4262,
     "patch": "0037-WebUI-DevConfig.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
