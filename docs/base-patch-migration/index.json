@@ -33,7 +33,7 @@
       "sha256": "d854c60a9a4ba417c6700530678ffabe572ba2f727a8f2009f067446e32ee766"
     },
     {
-      "added": 147,
+      "added": 165,
       "files": [
         "www/rega/login.htm",
         "www/rega/logout.htm",
@@ -47,7 +47,7 @@
       ],
       "patch": "0002-WebUI-Bootstrap.patch",
       "removed": 1,
-      "sha256": "fcb98df9bd111bf2fd3a437ef2d2b3892fc8425af0e43e4ace8e13585d7833c9"
+      "sha256": "a5d2e7ceec22e640b907784f1f7b3ffa0eb0ff88f24986f1570808510e2a068c"
     },
     {
       "added": 172,
@@ -1341,18 +1341,19 @@
       "sha256": "c9d41d32927372f55706888130f0040032ddfda18362119f82d3a9418dd0e6df"
     },
     {
-      "added": 19,
+      "added": 21,
       "files": [
         "www/api/eq3/jsonrpc.tcl",
         "www/api/methods/ccu/restartReGa.tcl",
         "www/api/methods/ccu/restartsshdaemon.tcl",
+        "www/api/methods/ccu/restsshdaemon.tcl",
         "www/api/methods/ccu/setssh.tcl",
         "www/api/methods/ccu/setstickyunreach.tcl",
         "www/api/methods/user/setregaversion.tcl"
       ],
       "patch": "0159-WebUI-Fix-JSONRpcResponses.patch",
-      "removed": 7,
-      "sha256": "ec51413be5522c447c550622dd934aaca717fa6f5e02729533c197ce82ba4636"
+      "removed": 9,
+      "sha256": "3de376b725942cc3a6814b75fab74acbe26c14bbfa53091d61c1da39493cfed3"
     },
     {
       "added": 165,
