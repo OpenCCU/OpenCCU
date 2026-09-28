@@ -191,18 +191,18 @@
       "base_pr": 72,
       "cleanup_pr": 4265,
       "patch": "0027-WebUI-Fix-EmptyTableCUxDDevices.patch"
+    },
+    {
+      "base_merge_commit": "932ce52b380bd65aea17f297d01b178adf636394",
+      "base_pr": 73,
+      "cleanup_pr": 4266,
+      "patch": "0033-WebUI-Fix-DeviceParameters.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "932ce52b380bd65aea17f297d01b178adf636394",
-    "base_pr": 73,
-    "cleanup_pr": 4266,
-    "patch": "0033-WebUI-Fix-DeviceParameters.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "c2774d597df604260ad5e0b6a7d18be826323233",
-  "verified_base_pin": "80c9bc3e213944e0627c18134c5ef2a5cd962a0b",
-  "verified_source_sha256": "4d46a637a763460d56d07bb133b490c54c3561563fc788d6eb659557366b118b"
+  "verified_at_openccu_commit": "82b466ee7a8eaa13f53a21a3f281b4d0bd11ba68",
+  "verified_base_pin": "932ce52b380bd65aea17f297d01b178adf636394",
+  "verified_source_sha256": "8e783116e83b6047a81c4a23c7a76b5e59d2aecb78447dc47450921cedf2535d"
 }
