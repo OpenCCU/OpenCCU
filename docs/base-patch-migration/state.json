@@ -211,7 +211,13 @@
       "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
+    "base_pr": 77,
+    "cleanup_pr": null,
+    "patch": "0021-WebUI-Remove-Logo.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "b89d209fb5f3edb24b6b920103f4a0bddb1a73cc",

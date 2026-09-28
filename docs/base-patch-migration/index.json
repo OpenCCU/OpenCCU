@@ -101,16 +101,6 @@
       "sha256": "ff54c26300bc354f4252169743e85efbbfc73b8c4834796ec5d5511ead83a25b"
     },
     {
-      "added": 2,
-      "files": [
-        "www/rega/login.htm",
-        "www/rega/logout.htm"
-      ],
-      "patch": "0021-WebUI-Remove-Logo.patch",
-      "removed": 2,
-      "sha256": "d194cb5c8a83e411f34b5e0c693f45b0d6ada9cdea076fc357f9389c5ad76482"
-    },
-    {
       "added": 15,
       "files": [
         "www/config/cp_maintenance.cgi",
@@ -1591,5 +1581,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "8c53ff51f17e32a9ddbed4715b35ef996e20f8fef512e9688420867de06dc11b"
+  "series_sha256": "960d04c3a5e5c0566bb5a9aadfe31e61fb5a3279601ae05778224b19b826f9c6"
 }
