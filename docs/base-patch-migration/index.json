@@ -171,15 +171,6 @@
       "sha256": "9a46f4356372d3c62bf34fe088101b78757e333ae68519073b71e39023b0cfaf"
     },
     {
-      "added": 1,
-      "files": [
-        "www/config/ic_deviceparameters.cgi"
-      ],
-      "patch": "0033-WebUI-Fix-DeviceParameters.patch",
-      "removed": 1,
-      "sha256": "1003bd39fecb40aea8f4125d88e0dc8968ec9f725d0810a610b002ba2cfe5954"
-    },
-    {
       "added": 11,
       "files": [
         "www/rega/esp/system.fn",
@@ -1618,5 +1609,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "e9e4d265967078af14fc88fac8446f1fd5117f0e3d2d0bf297c06b9dbcde5079"
+  "series_sha256": "fcd0951e975afa645419bf87457e3bdcb2794cb612a805ceab095fae29502672"
 }

@@ -193,7 +193,13 @@
       "patch": "0027-WebUI-Fix-EmptyTableCUxDDevices.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "932ce52b380bd65aea17f297d01b178adf636394",
+    "base_pr": 73,
+    "cleanup_pr": null,
+    "patch": "0033-WebUI-Fix-DeviceParameters.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "c2774d597df604260ad5e0b6a7d18be826323233",
