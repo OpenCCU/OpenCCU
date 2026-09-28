@@ -215,18 +215,18 @@
       "base_pr": 77,
       "cleanup_pr": 4270,
       "patch": "0021-WebUI-Remove-Logo.patch"
+    },
+    {
+      "base_merge_commit": "3499f6515521f8ae82d309462a809f71ef233547",
+      "base_pr": 78,
+      "cleanup_pr": 4271,
+      "patch": "0063-WebUI-DownloadAddonsInNewTab.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "3499f6515521f8ae82d309462a809f71ef233547",
-    "base_pr": 78,
-    "cleanup_pr": 4271,
-    "patch": "0063-WebUI-DownloadAddonsInNewTab.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "26e9d1ff9afcddcd58490525fa846725f098f3c8",
-  "verified_base_pin": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
-  "verified_source_sha256": "d5c8c472e3d810bd2a110d264e83ec09959c931f142d5badcbbd8fb7970dee40"
+  "verified_at_openccu_commit": "03b7727973f4ac0ef6ca5afdbba8902857773387",
+  "verified_base_pin": "3499f6515521f8ae82d309462a809f71ef233547",
+  "verified_source_sha256": "43bd8249390a6462304efc7b44f6cbb2d54bcc0d1c927c814e38fc1f465f33d5"
 }
