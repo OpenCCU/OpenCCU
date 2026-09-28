@@ -214,7 +214,7 @@
   "in_progress": {
     "base_merge_commit": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
     "base_pr": 77,
-    "cleanup_pr": null,
+    "cleanup_pr": 4270,
     "patch": "0021-WebUI-Remove-Logo.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
