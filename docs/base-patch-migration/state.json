@@ -169,7 +169,13 @@
       "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "79d51dc26e5a87a81b5ab1c264029a37683a0237",
+    "base_pr": 69,
+    "cleanup_pr": null,
+    "patch": "0037-WebUI-DevConfig.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "9c366a2c5e309fdb583d4404d2775bbecc00bf64",

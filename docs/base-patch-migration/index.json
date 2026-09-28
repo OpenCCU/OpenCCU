@@ -217,15 +217,6 @@
       "sha256": "91da4ac74be2e1fa3acebc22f7fe6f8c31b8d8e1bcae3e0458a1b65d30dc614c"
     },
     {
-      "added": 139,
-      "files": [
-        "www/tools/devconfig.cgi"
-      ],
-      "patch": "0037-WebUI-DevConfig.patch",
-      "removed": 23,
-      "sha256": "dfc7bfc70bea983d07d354e566cc5c068bab93e78bad56a6de0355f144018af9"
-    },
-    {
       "added": 277,
       "files": [
         "www/api/methods.conf",
@@ -1654,5 +1645,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "93743fc062d8bbc12a5ed1db288d3c124fe71bb5367df8e2943553031f8112b9"
+  "series_sha256": "f6f3d932c6ec9b8542bfbb800c824ceb0dfd28d762b47b7bf89a6731e1160176"
 }
