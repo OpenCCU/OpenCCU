@@ -105,7 +105,6 @@
 0154-WebUI-DynamicResizing.patch
 0155-WebUI-Add-HmIP-RFUSB-Support.patch
 0156-WebUI-ImprovedConfirmDeletePopup.patch
-0159-WebUI-Fix-JSONRpcResponses.patch
 0161-WebUI-Add-ShowRFGatewayInDeviceList.patch
 0162-WebUI-Fix-MissingHmipChannelParameters.patch
 0163-WebUI-ImprovedFileUploadButton.patch

@@ -157,7 +157,13 @@
       "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "982f3df9cc7ccd647d5eca286845ecf17bb18c04",
+    "base_pr": 67,
+    "cleanup_pr": null,
+    "patch": "0159-WebUI-Fix-JSONRpcResponses.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "bc49a69b4d38b19a0ce7f7d3db86ed731e91c351",

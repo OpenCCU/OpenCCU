@@ -1332,20 +1332,6 @@
       "sha256": "c9d41d32927372f55706888130f0040032ddfda18362119f82d3a9418dd0e6df"
     },
     {
-      "added": 21,
-      "files": [
-        "www/api/eq3/jsonrpc.tcl",
-        "www/api/methods/ccu/restartReGa.tcl",
-        "www/api/methods/ccu/restartsshdaemon.tcl",
-        "www/api/methods/ccu/setssh.tcl",
-        "www/api/methods/ccu/setstickyunreach.tcl",
-        "www/api/methods/user/setregaversion.tcl"
-      ],
-      "patch": "0159-WebUI-Fix-JSONRpcResponses.patch",
-      "removed": 9,
-      "sha256": "d0919c1b67842795d58586acb8d9dc59af32ff464eb5513da06cdb5f55a2cc3d"
-    },
-    {
       "added": 165,
       "files": [
         "www/config/ic_deviceparameters.cgi",
@@ -1678,5 +1664,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3d9874becee3c99f6fade4624f6afbd92e4bca843f3b83dee26c907782157d43"
+  "series_sha256": "f8510104f096a35b016aa85d32d05aafa75db87451ee4b70c83d0a8b641600a8"
 }
