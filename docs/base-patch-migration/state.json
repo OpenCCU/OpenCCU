@@ -202,7 +202,7 @@
   "in_progress": {
     "base_merge_commit": "1b7a9156fd24a3d79760a279425de9d0c7c99910",
     "base_pr": 75,
-    "cleanup_pr": null,
+    "cleanup_pr": 4268,
     "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
