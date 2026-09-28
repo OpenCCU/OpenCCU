@@ -154,7 +154,7 @@
   "in_progress": {
     "base_merge_commit": "1f82c7b1f785d5f3fc7b3fd5c24ddd6588b8e8da",
     "base_pr": 66,
-    "cleanup_pr": null,
+    "cleanup_pr": 4259,
     "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
