@@ -747,15 +747,6 @@
       "sha256": "1c4e78a4169ddf3e8983948810948258f32fc958b08fd89a21407344d9c54831"
     },
     {
-      "added": 2,
-      "files": [
-        "www/config/ic_selchannel.cgi"
-      ],
-      "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch",
-      "removed": 1,
-      "sha256": "ad9a4812035114d604889fd1bd56a1c5ad7571878ccfbed125d9c5feac915db2"
-    },
-    {
       "added": 1,
       "files": [
         "www/webui/webui.js"
@@ -1600,5 +1591,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "a4fdd2760b2a901e2d8122df9fda00a8df467006dbc8c19f18f290a4dbff7b3f"
+  "series_sha256": "8c53ff51f17e32a9ddbed4715b35ef996e20f8fef512e9688420867de06dc11b"
 }

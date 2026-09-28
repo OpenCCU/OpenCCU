@@ -205,7 +205,13 @@
       "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "1898cab4e8faf80d430ba6849c08e85d70fcd87f",
+    "base_pr": 76,
+    "cleanup_pr": null,
+    "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "c996558b316411c453e912f1555d36ae935e8001",
