@@ -49,7 +49,7 @@
 --- a/www/api/methods/ccu/restartReGa.tcl
 +++ b/www/api/methods/ccu/restartReGa.tcl
 @@ -7,4 +7,6 @@
- # Rückgabewert: kein
+ # RÃ¼ckgabewert: kein
  ##
  
 -catch {exec /usr/bin/monit restart ReGaHss}
@@ -60,7 +60,7 @@
 --- a/www/api/methods/ccu/restartsshdaemon.tcl
 +++ b/www/api/methods/ccu/restartsshdaemon.tcl
 @@ -7,4 +7,6 @@
- # Rückgabewert: kein
+ # RÃ¼ckgabewert: kein
  ##
  
 -catch {exec /usr/bin/monit restart sshd}

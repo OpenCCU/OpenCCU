@@ -4,7 +4,7 @@
 #
 # Parameter: kein
 #
-# Rückgabewert: kein
+# RÃ¼ckgabewert: kein
 ##
 
 catch {exec /usr/bin/monit restart ReGaHss}
