@@ -179,18 +179,18 @@
       "base_pr": 70,
       "cleanup_pr": 4263,
       "patch": "0064-WebUI-Fix-URLPlugin.patch"
+    },
+    {
+      "base_merge_commit": "9dfbdcdce48108ec2e842cc016433bb0deb68b6a",
+      "base_pr": 71,
+      "cleanup_pr": 4264,
+      "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "9dfbdcdce48108ec2e842cc016433bb0deb68b6a",
-    "base_pr": 71,
-    "cleanup_pr": 4264,
-    "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "00067793d97e017f87cb622dba5cf2b2136b3e9f",
-  "verified_base_pin": "8de440529b0d09e9493ce8cfe0137270a4820c67",
-  "verified_source_sha256": "e8e351fe2538e596e8e5e8b4f9989c2d81cd5a4febb97ac58f02e5d0ec60e775"
+  "verified_at_openccu_commit": "e97b0954b567cd39eddf62465e685c2aab5480af",
+  "verified_base_pin": "9dfbdcdce48108ec2e842cc016433bb0deb68b6a",
+  "verified_source_sha256": "e5e58cbefa2104ac562ee8d0011b2c628a54a80d343ec18d3a8bda9602a0f984"
 }
