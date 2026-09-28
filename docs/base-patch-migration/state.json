@@ -163,7 +163,13 @@
       "patch": "0159-WebUI-Fix-JSONRpcResponses.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "00f9b9e6459cbfcfa9f2325909d669bc6ba290e5",
+    "base_pr": 68,
+    "cleanup_pr": null,
+    "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "291eb487855cdc2eb49774e92e7078d20ee68c22",

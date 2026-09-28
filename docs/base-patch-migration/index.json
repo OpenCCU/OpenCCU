@@ -1547,16 +1547,6 @@
       "sha256": "8404fa38f1807a4cf2b6aee643e859e8df7220ea5e29aa5d82b8aa2846f0f2ba"
     },
     {
-      "added": 105,
-      "files": [
-        "www/webui/js/lang/de/translate.lang.channelDescription.js",
-        "www/webui/js/lang/en/translate.lang.channelDescription.js"
-      ],
-      "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch",
-      "removed": 3,
-      "sha256": "31d2aef56e93420ae1755f158edd93280cd942fda34a3db71cc8328616ec7fdd"
-    },
-    {
       "added": 27,
       "files": [
         "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER.tcl",
@@ -1664,5 +1654,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "f8510104f096a35b016aa85d32d05aafa75db87451ee4b70c83d0a8b641600a8"
+  "series_sha256": "93743fc062d8bbc12a5ed1db288d3c124fe71bb5367df8e2943553031f8112b9"
 }
