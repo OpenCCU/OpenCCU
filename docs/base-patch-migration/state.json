@@ -160,7 +160,7 @@
   "in_progress": {
     "base_merge_commit": "982f3df9cc7ccd647d5eca286845ecf17bb18c04",
     "base_pr": 67,
-    "cleanup_pr": null,
+    "cleanup_pr": 4260,
     "patch": "0159-WebUI-Fix-JSONRpcResponses.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
