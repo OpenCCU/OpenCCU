@@ -220,7 +220,7 @@
   "in_progress": {
     "base_merge_commit": "3499f6515521f8ae82d309462a809f71ef233547",
     "base_pr": 78,
-    "cleanup_pr": null,
+    "cleanup_pr": 4271,
     "patch": "0063-WebUI-DownloadAddonsInNewTab.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
