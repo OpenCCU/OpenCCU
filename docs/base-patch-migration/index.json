@@ -1324,15 +1324,6 @@
       "sha256": "f4856df65e98352989b5e1f21cd1c5610989825399f6112a6e7d4c5299bc7fdf"
     },
     {
-      "added": 1,
-      "files": [
-        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl"
-      ],
-      "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch",
-      "removed": 0,
-      "sha256": "1a75304732ce852b74b10497c2943f1cdfd9622945807137f0050c9f3992b53f"
-    },
-    {
       "added": 74,
       "files": [
         "opt/HMServer/pages/AvailableFirmware.ftl",
@@ -1636,5 +1627,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "a39a466d7259f23f4c127b329c6de2c7bd61f48176bdd7068cd2f04e2f09c248"
+  "series_sha256": "9b8bff170a0986f38c7c6a308e1c6b40bb24108b8f53f9b9ef31e80c15e0353d"
 }

@@ -104,7 +104,6 @@
 0155-WebUI-Add-HmIP-RFUSB-Support.patch
 0156-WebUI-ImprovedConfirmDeletePopup.patch
 0161-WebUI-Add-ShowRFGatewayInDeviceList.patch
-0162-WebUI-Fix-MissingHmipChannelParameters.patch
 0163-WebUI-ImprovedFileUploadButton.patch
 0164-WebUI-Add-HMIPServerLogConfiguration.patch
 0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch

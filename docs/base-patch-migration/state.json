@@ -181,7 +181,13 @@
       "patch": "0064-WebUI-Fix-URLPlugin.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "9dfbdcdce48108ec2e842cc016433bb0deb68b6a",
+    "base_pr": 71,
+    "cleanup_pr": null,
+    "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "00067793d97e017f87cb622dba5cf2b2136b3e9f",
