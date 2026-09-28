@@ -48,18 +48,24 @@
  }
 --- a/www/api/methods/ccu/restartReGa.tcl
 +++ b/www/api/methods/ccu/restartReGa.tcl
-@@ -8,3 +8,5 @@
+@@ -7,4 +7,6 @@
+ # Rückgabewert: kein
  ##
  
- catch {exec /usr/bin/monit restart ReGaHss}
+-catch {exec /usr/bin/monit restart ReGaHss}
+\ No newline at end of file
++catch {exec /usr/bin/monit restart ReGaHss}
 +
 +jsonrpc_response ""
---- a/www/api/methods/ccu/restartsshdaemon.tcl
+--- a/www/api/methods/ccu/restsshdaemon.tcl
 +++ b/www/api/methods/ccu/restartsshdaemon.tcl
-@@ -8,3 +8,5 @@
+@@ -7,4 +7,6 @@
+ # Rückgabewert: kein
  ##
  
- catch {exec /usr/bin/monit restart sshd}
+-catch {exec /usr/bin/monit restart sshd}
+\ No newline at end of file
++catch {exec /usr/bin/monit restart sshd}
 +
 +jsonrpc_response ""
 --- a/www/api/methods/ccu/setssh.tcl
