@@ -905,15 +905,6 @@
       "sha256": "ba32060343083abf7039ccfd18d81dd10147d3681cfd4f0c93e85af8c6b51de3"
     },
     {
-      "added": 14,
-      "files": [
-        "www/config/easymodes/js/CC.js"
-      ],
-      "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch",
-      "removed": 14,
-      "sha256": "500ea41be97f85e7a98ef4e3fba6c8fae11fbbcc63d0ce605280e6b2e8df202c"
-    },
-    {
       "added": 3,
       "files": [
         "www/config/backup.tcl",
@@ -1687,5 +1678,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1a28089ef1e25546670657d9c99fe236054a1e475971f7ed1f6bc91bdb4468e9"
+  "series_sha256": "3d9874becee3c99f6fade4624f6afbd92e4bca843f3b83dee26c907782157d43"
 }

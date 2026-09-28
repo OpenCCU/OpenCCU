@@ -71,7 +71,6 @@
 0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch
 0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch
 0116-WebUI-Chrome-88-Sort-Header-Cell.patch
-0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch
 0118-WebUI-Fix-ISO8601-DateUses.patch
 0119-WebUI-Fix-ProofAndSetValue.patch
 0120-WebUI-ImprovedPasswordFields.patch

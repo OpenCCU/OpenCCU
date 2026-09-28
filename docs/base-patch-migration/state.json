@@ -151,7 +151,13 @@
       "patch": "0004-WebUI-UseMonitRestarts.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "1f82c7b1f785d5f3fc7b3fd5c24ddd6588b8e8da",
+    "base_pr": 66,
+    "cleanup_pr": null,
+    "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "fa9b53154df8705e0ed5b473b228c8e606b24989",
