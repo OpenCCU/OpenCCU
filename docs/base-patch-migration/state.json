@@ -166,7 +166,7 @@
   "in_progress": {
     "base_merge_commit": "00f9b9e6459cbfcfa9f2325909d669bc6ba290e5",
     "base_pr": 68,
-    "cleanup_pr": null,
+    "cleanup_pr": 4261,
     "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
