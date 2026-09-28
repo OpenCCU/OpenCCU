@@ -477,15 +477,6 @@
       "sha256": "79ed7e549c57bc1a12307a6baeb826365e6367bd56f3755641a0c1a7eb7492dd"
     },
     {
-      "added": 267,
-      "files": [
-        "www/webui/js/extern/jqueryURLPlugin.js"
-      ],
-      "patch": "0064-WebUI-Fix-URLPlugin.patch",
-      "removed": 271,
-      "sha256": "d3718c91dc1210a67276fb8c3f0d276ea97392742c13d25f47526ecd8e3353e1"
-    },
-    {
       "added": 12,
       "files": [
         "www/api/methods/device/haslinksorprograms.tcl",
@@ -1645,5 +1636,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "f6f3d932c6ec9b8542bfbb800c824ceb0dfd28d762b47b7bf89a6731e1160176"
+  "series_sha256": "a39a466d7259f23f4c127b329c6de2c7bd61f48176bdd7068cd2f04e2f09c248"
 }
