@@ -26,7 +26,6 @@
 0060-WebUI-Fix-SessionLogoutSave.patch
 0061-WebUI-MenuSortedIcons.patch
 0062-WebUI-FavoriteSorting.patch
-0063-WebUI-DownloadAddonsInNewTab.patch
 0065-WebUI-Fix-CountUsageStalling.patch
 0066-WebUI-Fix-ListSorting.patch
 0067-WebUI-Fix-BrokenLinkPeerList.patch

@@ -217,7 +217,13 @@
       "patch": "0021-WebUI-Remove-Logo.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "3499f6515521f8ae82d309462a809f71ef233547",
+    "base_pr": 78,
+    "cleanup_pr": null,
+    "patch": "0063-WebUI-DownloadAddonsInNewTab.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "26e9d1ff9afcddcd58490525fa846725f098f3c8",

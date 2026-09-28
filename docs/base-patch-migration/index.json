@@ -431,15 +431,6 @@
       "sha256": "b8bb2d695f3fa480f6e3aa8cd2f2a9c057331620170fac067d278673046ea188"
     },
     {
-      "added": 1,
-      "files": [
-        "www/config/cp_software.cgi"
-      ],
-      "patch": "0063-WebUI-DownloadAddonsInNewTab.patch",
-      "removed": 1,
-      "sha256": "79ed7e549c57bc1a12307a6baeb826365e6367bd56f3755641a0c1a7eb7492dd"
-    },
-    {
       "added": 12,
       "files": [
         "www/api/methods/device/haslinksorprograms.tcl",
@@ -1581,5 +1572,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "960d04c3a5e5c0566bb5a9aadfe31e61fb5a3279601ae05778224b19b826f9c6"
+  "series_sha256": "4e3ef3a15bafe55732094a2e094e294ecc6371f474dda4e3a341067eab05ce74"
 }
