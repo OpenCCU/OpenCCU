@@ -50,18 +50,6 @@
       "sha256": "fcb98df9bd111bf2fd3a437ef2d2b3892fc8425af0e43e4ace8e13585d7833c9"
     },
     {
-      "added": 4,
-      "files": [
-        "www/api/methods/ccu/restartReGa.tcl",
-        "www/api/methods/ccu/restartsshdaemon.tcl",
-        "www/api/methods/user/restartlighttpd.tcl",
-        "www/config/cp_maintenance.cgi"
-      ],
-      "patch": "0004-WebUI-UseMonitRestarts.patch",
-      "removed": 8,
-      "sha256": "4e849aadf54421f69195078bdd3171d6ddfa4960e15e54823bd5ab53b73ac5f8"
-    },
-    {
       "added": 172,
       "files": [
         "www/api/backup/version.cgi",
@@ -1699,5 +1687,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "510550bf0d4169fda3115d72827e931f34ecc45ac8b0af7d8e95952b852b2db6"
+  "series_sha256": "1a28089ef1e25546670657d9c99fe236054a1e475971f7ed1f6bc91bdb4468e9"
 }

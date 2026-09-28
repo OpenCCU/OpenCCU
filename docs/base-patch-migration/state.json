@@ -137,18 +137,24 @@
       "base_pr": 63,
       "cleanup_pr": 4253,
       "patch": "0003-rftypes-Fix.patch"
+    },
+    {
+      "base_merge_commit": "3fcb25433bb7de366bf438a4beaf890b67614fce",
+      "base_pr": 64,
+      "cleanup_pr": 4254,
+      "patch": "0013-WebUI-SecKeyChangesDisplay.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "3fcb25433bb7de366bf438a4beaf890b67614fce",
-    "base_pr": 64,
+    "base_merge_commit": "38a4f5453eade273b8a15019bb3247f5c5a61d50",
+    "base_pr": 65,
     "cleanup_pr": null,
-    "patch": "0013-WebUI-SecKeyChangesDisplay.patch",
+    "patch": "0004-WebUI-UseMonitRestarts.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "bc11643550c7ebbdf4823ac5fc69ac2f4229a663",
-  "verified_base_pin": "661be9e8829a2404a89f0b64c72f7283cb72dbc4",
-  "verified_source_sha256": "0da3b9411d932ba3e59c5b414d68ec0a14ed79f7ef40d7edb1dcc8381192b812"
+  "verified_at_openccu_commit": "7e1cfb85b2d914bb88e0df1de37a72aaff854af3",
+  "verified_base_pin": "3fcb25433bb7de366bf438a4beaf890b67614fce",
+  "verified_source_sha256": "0672e746783890364922e0ce89ffbc9ba0e7942d536d3e558ea7b249fa2b9a29"
 }
