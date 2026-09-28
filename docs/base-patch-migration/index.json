@@ -33,7 +33,7 @@
       "sha256": "d854c60a9a4ba417c6700530678ffabe572ba2f727a8f2009f067446e32ee766"
     },
     {
-      "added": 147,
+      "added": 165,
       "files": [
         "www/rega/login.htm",
         "www/rega/logout.htm",
@@ -47,7 +47,7 @@
       ],
       "patch": "0002-WebUI-Bootstrap.patch",
       "removed": 1,
-      "sha256": "fcb98df9bd111bf2fd3a437ef2d2b3892fc8425af0e43e4ace8e13585d7833c9"
+      "sha256": "a5d2e7ceec22e640b907784f1f7b3ffa0eb0ff88f24986f1570808510e2a068c"
     },
     {
       "added": 4,
