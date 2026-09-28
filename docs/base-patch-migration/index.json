@@ -406,15 +406,6 @@
     {
       "added": 3,
       "files": [
-        "www/rega/esp/programs.fn"
-      ],
-      "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch",
-      "removed": 1,
-      "sha256": "90c3485d10017b69b023b7f35a1483c91acb5a70164b4b36d9e25fad1a64002f"
-    },
-    {
-      "added": 3,
-      "files": [
         "www/webui/webui.js"
       ],
       "patch": "0060-WebUI-Fix-SessionLogoutSave.patch",
@@ -1609,5 +1600,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "fcd0951e975afa645419bf87457e3bdcb2794cb612a805ceab095fae29502672"
+  "series_sha256": "a4fdd2760b2a901e2d8122df9fda00a8df467006dbc8c19f18f290a4dbff7b3f"
 }
