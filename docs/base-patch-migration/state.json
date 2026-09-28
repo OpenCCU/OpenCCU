@@ -226,7 +226,7 @@
   "in_progress": {
     "base_merge_commit": "163ace412280cc3ad0be321637202de401cc35c0",
     "base_pr": 79,
-    "cleanup_pr": null,
+    "cleanup_pr": 4272,
     "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
