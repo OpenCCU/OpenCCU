@@ -196,7 +196,7 @@
   "in_progress": {
     "base_merge_commit": "932ce52b380bd65aea17f297d01b178adf636394",
     "base_pr": 73,
-    "cleanup_pr": null,
+    "cleanup_pr": 4266,
     "patch": "0033-WebUI-Fix-DeviceParameters.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
