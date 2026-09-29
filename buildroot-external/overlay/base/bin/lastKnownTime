@@ -1,0 +1,70 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169,SC3010 source=/dev/null
+#
+# Helper script to save/restore a "last known" system time to/from the
+# persistent userfs. This makes sure that systems without a (valid) RTC
+# never start with a system time in the past (e.g. 1970-01-01) in case no
+# NTP server can be reached at boot time (e.g. router still booting after
+# a power outage). Such an invalid time can cause trouble for time
+# dependent services like the HmIP security counter handling of HMIPServer
+# (cf. https://github.com/OpenCCU/OpenCCU/issues/4274)
+#
+# Usage: lastKnownTime {save|restore}
+#
+#   save    - store the current system time (only if plausible)
+#   restore - set the system time to the last known time (or at least the
+#             firmware build date) if the current time is older. Returns 0
+#             if the time was restored, 1 otherwise.
+#
+
+TIMEFILE=/usr/local/etc/lastKnownTime
+
+# get the firmware build date (in seconds since epoch) as the
+# minimum plausible system time
+build_time() {
+  BUILDTIME=0
+  if [[ -r /VERSION ]]; then
+    BUILDDATE=$(sed -n 's/^VERSION=[0-9]*\.[0-9]*\.[0-9]*\.\([0-9]\{8\}\).*$/\1/p' /VERSION)
+    if [[ -n "${BUILDDATE}" ]]; then
+      BUILDTIME=$(date -u -D %Y%m%d -d "${BUILDDATE}" +%s 2>/dev/null || echo 0)
+    fi
+    if [[ "${BUILDTIME}" -eq 0 ]]; then
+      BUILDTIME=$(stat -c %Y /VERSION 2>/dev/null || echo 0)
+    fi
+  fi
+  echo "${BUILDTIME}"
+}
+
+save() {
+  # only save the time if it is plausible at all
+  [[ "$(date +%s)" -ge "$(build_time)" ]] || return 1
+  [[ -d "$(dirname "${TIMEFILE}")" ]] || return 1
+
+  # we only use the modification time of the file
+  touch "${TIMEFILE}"
+}
+
+restore() {
+  MINTIME=$(build_time)
+  if [[ -f "${TIMEFILE}" ]]; then
+    LASTTIME=$(stat -c %Y "${TIMEFILE}" 2>/dev/null || echo 0)
+    [[ "${LASTTIME}" -gt "${MINTIME}" ]] && MINTIME=${LASTTIME}
+  fi
+
+  # only ever move the system time forward
+  [[ "$(date +%s)" -lt "${MINTIME}" ]] || return 1
+  date -u -s "@${MINTIME}" >/dev/null 2>&1
+}
+
+case "$1" in
+  save)
+    save
+  ;;
+  restore)
+    restore
+  ;;
+  *)
+    echo "Usage: $0 {save|restore}" >&2
+    exit 1
+  ;;
+esac

@@ -18,6 +18,7 @@ HM_SERVER_ARGS="/var/etc/crRFD.conf /var/etc/HMServer.conf"
 HM_SERVER_DEVNODE=/dev/mmd_hmip
 LOGLEVEL_HMIP=error
 PIDFILE=/var/run/HMIPServer.pid
+NTPSYNC_TIMEOUT=180
 
 init() {
   export JAVA_HOME=/opt/java/
@@ -156,7 +157,26 @@ waitStartupComplete() {
   done
 }
 
+# The HmIP security counter handling of HMIPServer depends on a valid
+# system time. If HMIPServer is started with a system time in the past (e.g.
+# no RTC and NTP not reachable yet after a power outage) the security counter
+# can be set to a wrong value so that all HmIP devices become unreachable
+# (cf. https://github.com/OpenCCU/OpenCCU/issues/4274). Thus, if the system
+# time could not be taken from a valid RTC (cf. S02InitRTC) we wait (with
+# timeout) for a NTP time sync during system startup.
+waitTimeSync() {
+  if [[ -n "${HM_HMIP_DEV}" ]] &&
+     [[ -e /var/status/timeRestored ]] &&
+     [[ ! -e /var/status/startupFinished ]] &&
+     [[ ! -e /etc/config/NoNTPSyncWait ]] &&
+     [[ -x /etc/init.d/S46chronyd ]]; then
+    /etc/init.d/S46chronyd waitsync ${NTPSYNC_TIMEOUT}
+  fi
+}
+
 start() {
+  waitTimeSync
+
   echo -n "Starting HMIPServer: "
   init
 

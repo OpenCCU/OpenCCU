@@ -4,7 +4,9 @@
 NAME=chrony
 DAEMON=/usr/sbin/chronyd
 CLIENT=/usr/bin/chronyc
+PIDFILE=/var/run/chrony/chronyd.pid
 CFG_TEMPLATE_DIR=/etc/config_templates
+SOURCES_FILE=/var/etc/chrony.d/ntpservers.sources
 
 # Gracefully exit if the package has been removed.
 test -x $DAEMON || exit 0
@@ -42,68 +44,140 @@ init() {
   # can be saved later on
   mkdir -p /var/lib/${NAME}
   chown chrony:chrony /var/lib/${NAME}
+
+  # make sure the sourcedir for chronyd exists
+  mkdir -p "$(dirname ${SOURCES_FILE})"
+}
+
+start() {
+  init
+  echo -n "Starting $NAME: "
+
+  # call ntpdate to perform a single sync to the servers
+  SYNCED=0
+  # shellcheck disable=SC2086
+  if /usr/bin/ntpdate -b -s -u ${NTPSERVERS} 2>/dev/null; then
+    SYNCED=1
+  else
+    # use default NTP servers because the user selected
+    # ones didn't work out
+    echo -n "using default NTPs, "
+    USER_NTPSERVERS=${NTPSERVERS}
+    . "${CFG_TEMPLATE_DIR}/ntpclient"
+
+    # shellcheck disable=SC2086
+    if /usr/bin/ntpdate -b -s -u ${NTPSERVERS} 2>/dev/null; then
+      SYNCED=1
+    else
+      # no NTP server is reachable (yet), e.g. because the router or
+      # DNS isn't ready after a power outage. Nevertheless we start
+      # chronyd with all known NTP servers so that the time gets synced
+      # as soon as one of them becomes reachable.
+      echo -n "could not sync to '${NTPSERVERS}', "
+      NTPSERVERS="${USER_NTPSERVERS} ${NTPSERVERS}"
+    fi
+  fi
+
+  # the system time is valid now
+  if [[ ${SYNCED} -eq 1 ]]; then
+    rm -f /var/status/timeRestored
+    /bin/lastKnownTime save
+  fi
+
+  # write all (unique) NTP servers to the sourcedir of chronyd. In
+  # contrast to "chronyc add server" this also works if the server names
+  # can't be resolved yet because chronyd will retry resolving them itself.
+  # shellcheck disable=SC2086
+  echo ${NTPSERVERS} | tr ' ' '\n' | awk 'NF && !seen[$0]++ { print "server " $0 " iburst" }' >"${SOURCES_FILE}"
+  if [[ ! -s "${SOURCES_FILE}" ]]; then
+    echo "no NTP servers, FAIL"
+    return 1
+  fi
+
+  # start daemon
+  if ! start-stop-daemon -d / -S -q -x ${DAEMON}; then
+    echo "FAIL"
+    return 1
+  fi
+  touch /var/status/hasNTP
+
+  if [[ ${SYNCED} -eq 1 ]]; then
+    echo "OK"
+  else
+    echo "not synced yet, OK"
+  fi
+}
+
+stop() {
+  echo -n "Stopping $NAME: "
+  if start-stop-daemon -K -q -p ${PIDFILE}; then
+    echo "OK"
+  else
+    echo "FAIL"
+  fi
+  rm -f /var/status/hasNTP
+}
+
+# wait (max. $1 seconds) until the system time is synced via NTP
+waitsync() {
+  TIMEOUT=${1:-120}
+  echo -n "Waiting for NTP time sync: "
+
+  START=$(cut -d. -f1 /proc/uptime)
+  LASTTRY=${START}
+  while true; do
+    # check if chronyd is running and synchronized (with a remaining
+    # correction of less than a second)
+    if start-stop-daemon -K -t -q -p ${PIDFILE} &&
+       ${CLIENT} -n waitsync 1 1.0 >/dev/null 2>&1; then
+      rm -f /var/status/timeRestored
+      /bin/lastKnownTime save
+      echo "OK"
+      return 0
+    fi
+
+    NOW=$(cut -d. -f1 /proc/uptime)
+    if [[ $((NOW - START)) -ge ${TIMEOUT} ]]; then
+      echo "timeout, FAIL"
+      return 1
+    fi
+
+    # retry a full time sync every 30 seconds (restarting chronyd) in case
+    # the network wasn't ready before (e.g. router still booting)
+    if [[ $((NOW - LASTTRY)) -ge 30 ]]; then
+      stop >/dev/null 2>&1
+      sleep 1
+      start >/dev/null 2>&1
+      if [[ ${SYNCED} -eq 1 ]]; then
+        echo "OK"
+        return 0
+      fi
+      LASTTRY=$(cut -d. -f1 /proc/uptime)
+    fi
+
+    echo -n "."
+    sleep 2
+  done
 }
 
 case "$1" in
   start)
-    init
-    echo -n "Starting $NAME: "
-
-    # call ntpdate to perform a single sync to the servers
-    # shellcheck disable=SC2086
-    if ! /usr/bin/ntpdate -b -s -u ${NTPSERVERS} 2>/dev/null; then
-      # use default NTP servers because the user selected
-      # ones didn't work out
-      echo -n "using default NTPs, "
-      . "${CFG_TEMPLATE_DIR}/ntpclient"
-
-      # shellcheck disable=SC2086
-      if ! /usr/bin/ntpdate -b -s -u ${NTPSERVERS} 2>/dev/null; then
-        echo "could not sync to '${NTPSERVERS}', FAIL"
-        exit 0
-      fi
-    fi
-
-    # start daemon
-    if start-stop-daemon -d / -S -q -x ${DAEMON}; then
-      # use client to add ntp servers
-      for server in ${NTPSERVERS}; do
-        STATUS_CODE=$(${CLIENT} add server "${server}" 2>&1 | cut -d' ' -f1)
-        if [[ "${STATUS_CODE}" == "200" ]] ||    # "OK"
-           [[ "${STATUS_CODE}" == "511" ]]; then # "Source already present"
-          touch /var/status/hasNTP
-        else
-          echo -n "WARN: could not add '${server}' (${STATUS_CODE}), "
-        fi
-      done
-    fi
-
-    if [[ -e /var/status/hasNTP ]]; then
-      ${CLIENT} burst 2/10 >/dev/null 2>&1
-      echo "OK"
-    else
-      echo "FAIL"
-
-      # make sure chronyd is stopped
-      start-stop-daemon -K -q -p /var/run/chrony/chronyd.pid
-    fi
+    start
     ;;
   stop)
-    echo -n "Stopping $NAME: "
-    if start-stop-daemon -K -q -p /var/run/chrony/chronyd.pid; then
-      echo "OK"
-    else
-      echo "FAIL"
-    fi
-    rm -f /var/status/hasNTP
+    stop
     ;;
   restart|reload)
-    $0 stop
+    stop
     sleep 1
-    $0 start
+    start
+    ;;
+  waitsync)
+    waitsync "$2"
+    exit $?
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart|reload}" >&2
+    echo "Usage: $0 {start|stop|restart|reload|waitsync [timeout]}" >&2
     exit 1
     ;;
 esac

@@ -128,14 +128,35 @@ start() {
   set | grep '^HM_' >/var/hm_mode
 
   if [[ -n "${HM_RTC}" ]]; then
-    echo "${HM_RTC}, OK"
+    echo -n "${HM_RTC}, "
   else
-    echo "no hardware found"
+    echo -n "no hardware found, "
+  fi
+
+  # if there is no (valid) RTC the system time might be way off (e.g.
+  # 1970-01-01). Thus, we make sure the system time is at least set to the
+  # last known time (or the firmware build date) and signal (via
+  # /var/status/timeRestored) that the system time is not trustworthy until
+  # a NTP time sync happened (cf. S46chronyd, S62HMServer)
+  if /bin/lastKnownTime restore; then
+    # make sure /var/status exists with correct permissions
+    if [[ ! -d /var/status ]]; then
+      mkdir -p /var/status
+      chown root:status /var/status
+      chmod 2775 /var/status
+    fi
+    touch /var/status/timeRestored
+    echo "time restored ($(date '+%Y-%m-%d %H:%M:%S')), OK"
+  else
+    echo "OK"
   fi
 }
 
 stop() {
   echo -n "Cleaning up RTC Clock: "
+
+  # save the current system time as the last known time
+  /bin/lastKnownTime save
 
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
