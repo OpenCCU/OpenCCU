@@ -227,18 +227,18 @@
       "base_pr": 79,
       "cleanup_pr": 4272,
       "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch"
+    },
+    {
+      "base_merge_commit": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
+      "base_pr": 80,
+      "cleanup_pr": 4273,
+      "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
-    "base_pr": 80,
-    "cleanup_pr": 4273,
-    "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "8e9fdb425d208c21ab12636006a8d3e1a2342f15",
-  "verified_base_pin": "163ace412280cc3ad0be321637202de401cc35c0",
-  "verified_source_sha256": "79ec9b82da111f72aa6579029bd58f92cd72dd39fefcf4581382d6904d19bcbb"
+  "verified_at_openccu_commit": "f795bc0418e10ca244cbe8ca7893e835d9523152",
+  "verified_base_pin": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
+  "verified_source_sha256": "8aa1f3c3263c6b98c47d58ddf29e7d75eeb01fa3beca6a2e13b5da706886e0ba"
 }
