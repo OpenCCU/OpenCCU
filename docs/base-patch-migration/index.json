@@ -929,15 +929,6 @@
       "sha256": "f48b3fdaeef418c7efd81bb182fb8b57361103cca9fe0996928f5105f87f28d5"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/js/lang/en/translate.lang.extension.js"
-      ],
-      "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch",
-      "removed": 1,
-      "sha256": "eee5889beb9c26db45f4300993ef51c20fd36558d51390279041682f1d3865de"
-    },
-    {
       "added": 123,
       "files": [
         "www/api/methods.conf",
@@ -1554,5 +1545,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "411fd711dc23c28b23dde4cd0d5d64e64c1d4ffe576d1bc70ea679f4f00fd20c"
+  "series_sha256": "2f357d868cd4e0a0858c31a8c215245cf01e25a48b5f7207052201df36d73b88"
 }
