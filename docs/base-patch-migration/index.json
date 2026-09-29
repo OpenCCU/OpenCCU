@@ -1059,15 +1059,6 @@
       "sha256": "8c65e0cda73df0659cabb30e36118bb3241fc5d85af5e061d5a001a77e87e899"
     },
     {
-      "added": 3,
-      "files": [
-        "www/rega/esp/datapointconfigurator.fn"
-      ],
-      "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch",
-      "removed": 3,
-      "sha256": "6abf0375a50658c0ad1ba46827048c4a9070584a278871764bb2e079c0af297e"
-    },
-    {
       "added": 62,
       "files": [
         "www/rega/pages/tabs/control/hdevichannels.htm",
@@ -1563,5 +1554,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "921c6afa641094cfba1567ab2d5f18c881cdcd81d4acdc1e905306a808477670"
+  "series_sha256": "411fd711dc23c28b23dde4cd0d5d64e64c1d4ffe576d1bc70ea679f4f00fd20c"
 }

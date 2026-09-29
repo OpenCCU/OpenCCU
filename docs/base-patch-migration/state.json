@@ -229,7 +229,13 @@
       "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
+    "base_pr": 80,
+    "cleanup_pr": null,
+    "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "8e9fdb425d208c21ab12636006a8d3e1a2342f15",
