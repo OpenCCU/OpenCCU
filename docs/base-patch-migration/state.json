@@ -221,18 +221,18 @@
       "base_pr": 78,
       "cleanup_pr": 4271,
       "patch": "0063-WebUI-DownloadAddonsInNewTab.patch"
+    },
+    {
+      "base_merge_commit": "163ace412280cc3ad0be321637202de401cc35c0",
+      "base_pr": 79,
+      "cleanup_pr": 4272,
+      "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "163ace412280cc3ad0be321637202de401cc35c0",
-    "base_pr": 79,
-    "cleanup_pr": 4272,
-    "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "03b7727973f4ac0ef6ca5afdbba8902857773387",
-  "verified_base_pin": "3499f6515521f8ae82d309462a809f71ef233547",
-  "verified_source_sha256": "43bd8249390a6462304efc7b44f6cbb2d54bcc0d1c927c814e38fc1f465f33d5"
+  "verified_at_openccu_commit": "8e9fdb425d208c21ab12636006a8d3e1a2342f15",
+  "verified_base_pin": "163ace412280cc3ad0be321637202de401cc35c0",
+  "verified_source_sha256": "79ec9b82da111f72aa6579029bd58f92cd72dd39fefcf4581382d6904d19bcbb"
 }
