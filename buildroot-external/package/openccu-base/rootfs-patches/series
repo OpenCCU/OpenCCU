@@ -108,7 +108,6 @@
 0197-WebUI-Fix-MissingRouterOption.patch
 0198-WebUI-Fix-StringTableValue.patch
 0199-WebUI-ImprovedSystemProtocol.patch
-0200-WebUI-Fix-EventStalling.patch
 0201-WebUI-Fix-SystemFnSyntax.patch
 0203-WebUI-NoExpectCGI.patch
 0205-WebUI-Remove-FieldTestBetaFw.patch
