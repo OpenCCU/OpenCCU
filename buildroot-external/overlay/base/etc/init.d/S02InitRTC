@@ -134,10 +134,11 @@ start() {
   fi
 
   # if there is no (valid) RTC the system time might be way off (e.g.
-  # 1970-01-01). Thus, we make sure the system time is at least set to the
-  # last known time (or the firmware build time) and signal (via
-  # /var/status/timeRestored) that the system time is not trustworthy until
-  # a NTP time sync happened (cf. S46chronyd, S62HMServer)
+  # 1970-01-01 or a bogus RTC time far in the future). Thus, in such cases
+  # we set the system time to the last known time (or the firmware build
+  # time) and signal (via /var/status/timeRestored) that the system time is
+  # not trustworthy until a NTP time sync happened (cf. S46chronyd,
+  # S62HMServer)
   if /bin/lastKnownTime restore; then
     # make sure /var/status exists with correct permissions
     if [[ ! -d /var/status ]]; then
