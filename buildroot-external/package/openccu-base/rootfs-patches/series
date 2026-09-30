@@ -38,8 +38,6 @@
 0075-WebUI-Fix-HTMLinUserFavorites.patch
 0076-WebUI-Fix-SuperCharScriptUse.patch
 0077-WebUI-NegateCondition.patch
-0082-WebUI-Fix-SetVisibilityScriptError.patch
-0083-WebUI-Fix-DeviceTestScriptError.patch
 0084-WebUI-Fix-InvalidObjectCrashes.patch
 0085-WebUI-AddonPopupScrollable.patch
 0086-WebUI-Fix-500Errors.patch
@@ -54,7 +52,6 @@
 0096-WebUI-AdditionalSoftwareSortedList.patch
 0097-WebUI-SetSysvarValueByUser.patch
 0099-WebUI-Add-DeviceRenameAllChannels.patch
-0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch
 0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch
 0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch
 0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch
@@ -62,7 +59,6 @@
 0111-WebUI-Fix-Translation-Performance.patch
 0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch
 0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch
-0116-WebUI-Chrome-88-Sort-Header-Cell.patch
 0118-WebUI-Fix-ISO8601-DateUses.patch
 0119-WebUI-Fix-ProofAndSetValue.patch
 0120-WebUI-ImprovedPasswordFields.patch
@@ -71,7 +67,6 @@
 0124-WebUI-Fix-ShowMultipleSpacesInSysVar.patch
 0125-WebUI-ChannelHighlights.patch
 0127-WebUI-SortFirmwareOverview.patch
-0128-WebUI-Fix-UpdateAccessPointButton.patch
 0131-WebUI-ShowAddonUpdatesOnStartpage.patch
 0132-WebUI-Fix-UnitDisplay.patch
 0133-WebUI-Fix-InternalIDExposure.patch

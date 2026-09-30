@@ -227,18 +227,48 @@
       "base_pr": 79,
       "cleanup_pr": 4272,
       "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch"
+    },
+    {
+      "base_merge_commit": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
+      "base_pr": 80,
+      "cleanup_pr": 4273,
+      "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch"
+    },
+    {
+      "base_merge_commit": "a7c8217c79ec7977538db0e8ccda018020334a42",
+      "base_pr": 81,
+      "cleanup_pr": 4275,
+      "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch"
+    },
+    {
+      "base_merge_commit": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
+      "base_pr": 82,
+      "cleanup_pr": 4277,
+      "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch"
+    },
+    {
+      "base_merge_commit": "c827595eb3ee55528fdefd17dcc31d29ecc0fee1",
+      "base_pr": 83,
+      "cleanup_pr": 4281,
+      "patch": "0083-WebUI-Fix-DeviceTestScriptError.patch"
+    },
+    {
+      "base_merge_commit": "092ffdf0f37005dc8e4ef4fa7609ee7c10329229",
+      "base_pr": 84,
+      "cleanup_pr": 4282,
+      "patch": "0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
-    "base_pr": 80,
-    "cleanup_pr": 4273,
-    "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch",
+    "base_merge_commit": "40894ac084e4fbae7fa79298fc310acee4fc91c1",
+    "base_pr": 85,
+    "cleanup_pr": 4284,
+    "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "8e9fdb425d208c21ab12636006a8d3e1a2342f15",
-  "verified_base_pin": "163ace412280cc3ad0be321637202de401cc35c0",
-  "verified_source_sha256": "79ec9b82da111f72aa6579029bd58f92cd72dd39fefcf4581382d6904d19bcbb"
+  "verified_at_openccu_commit": "15ad50b426158973bcea32dc67892f9cd66c415d",
+  "verified_base_pin": "092ffdf0f37005dc8e4ef4fa7609ee7c10329229",
+  "verified_source_sha256": "7b4f41cd84ec5aacb2592256a783a648b3f311dc86b65e3f5855d076878c710f"
 }

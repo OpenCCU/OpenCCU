@@ -562,24 +562,6 @@
       "sha256": "76b80b6c4b4dfcf8aa836266f856fb8ac6fe54273d6e569e2577ec774570ea1d"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch",
-      "removed": 1,
-      "sha256": "9f5fa95c41d4da68f7a2c2052c119db9d1ae1e534fea548f441d74e72ae8748e"
-    },
-    {
-      "added": 1,
-      "files": [
-        "www/rega/esp/system.fn"
-      ],
-      "patch": "0083-WebUI-Fix-DeviceTestScriptError.patch",
-      "removed": 1,
-      "sha256": "5b3e5c9cb4f8d9aaf4b0a191ab990573baf172c93ede92e38b7644bd11fb262e"
-    },
-    {
       "added": 9,
       "files": [
         "www/rega/pages/tabs/admin/views/roomchannels.htm",
@@ -728,15 +710,6 @@
       "sha256": "1c4e78a4169ddf3e8983948810948258f32fc958b08fd89a21407344d9c54831"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch",
-      "removed": 1,
-      "sha256": "f3d85b68847c126a4ab626b22ce56e7e50ece7fac86f4f22e4237b7f3caefc85"
-    },
-    {
       "added": 47,
       "files": [
         "www/api/methods/device/get.tcl",
@@ -823,15 +796,6 @@
       "sha256": "372fa1f1a8eb5f7ab4795319105d99274218d520608ccd0c745f6a1317a561b5"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/style.css"
-      ],
-      "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch",
-      "removed": 0,
-      "sha256": "ba32060343083abf7039ccfd18d81dd10147d3681cfd4f0c93e85af8c6b51de3"
-    },
-    {
       "added": 3,
       "files": [
         "www/config/backup.tcl",
@@ -908,7 +872,7 @@
       ],
       "patch": "0124-WebUI-Fix-ShowMultipleSpacesInSysVar.patch",
       "removed": 0,
-      "sha256": "8e6b92241995861577cd563ad2ec6523a25d56750a894d18f6510fbd3d11f8e6"
+      "sha256": "c2a4e6a7786b1860ed76fe67f96b59945503b21d47b1835ae48e7d7828cd7b42"
     },
     {
       "added": 76,
@@ -927,15 +891,6 @@
       "patch": "0127-WebUI-SortFirmwareOverview.patch",
       "removed": 0,
       "sha256": "f48b3fdaeef418c7efd81bb182fb8b57361103cca9fe0996928f5105f87f28d5"
-    },
-    {
-      "added": 1,
-      "files": [
-        "www/webui/js/lang/en/translate.lang.extension.js"
-      ],
-      "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch",
-      "removed": 1,
-      "sha256": "eee5889beb9c26db45f4300993ef51c20fd36558d51390279041682f1d3865de"
     },
     {
       "added": 123,
@@ -1554,5 +1509,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "411fd711dc23c28b23dde4cd0d5d64e64c1d4ffe576d1bc70ea679f4f00fd20c"
+  "series_sha256": "d91c12d09af54ecfda9020b2f6e2723c6b02e85b7516645ff175c56b6e067b57"
 }
