@@ -274,7 +274,7 @@
   "in_progress": {
     "base_merge_commit": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
     "base_pr": 87,
-    "cleanup_pr": null,
+    "cleanup_pr": 4288,
     "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
