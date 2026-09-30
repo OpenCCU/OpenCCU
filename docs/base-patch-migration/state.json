@@ -239,18 +239,18 @@
       "base_pr": 81,
       "cleanup_pr": 4275,
       "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch"
+    },
+    {
+      "base_merge_commit": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
+      "base_pr": 82,
+      "cleanup_pr": 4277,
+      "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
-    "base_pr": 82,
-    "cleanup_pr": 4277,
-    "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "dec0513f896e3e0618c450fe8a53b590047c071d",
-  "verified_base_pin": "a7c8217c79ec7977538db0e8ccda018020334a42",
-  "verified_source_sha256": "162899126842866d46ad97fc794eb53f8827c841ab6fd3591db1001f110c27fd"
+  "verified_at_openccu_commit": "2396923033e90ba84b7c0fc4d50463da3c4bf136",
+  "verified_base_pin": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
+  "verified_source_sha256": "318ac74a18ffb5a6657c5fe960c4005d68cddb5839f01004af812be98b957fc6"
 }
