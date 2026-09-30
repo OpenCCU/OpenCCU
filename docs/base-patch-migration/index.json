@@ -562,15 +562,6 @@
       "sha256": "76b80b6c4b4dfcf8aa836266f856fb8ac6fe54273d6e569e2577ec774570ea1d"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch",
-      "removed": 1,
-      "sha256": "2ba9f7274e6832e221c0c92d4ed90f341ce32c13c665c27205222e52fb1b4c20"
-    },
-    {
       "added": 9,
       "files": [
         "www/rega/pages/tabs/admin/views/roomchannels.htm",
@@ -1518,5 +1509,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "f0840d4d98f4cadb02cf71af3c26c8b79ad675134e37096ecce93c450f248eab"
+  "series_sha256": "d91c12d09af54ecfda9020b2f6e2723c6b02e85b7516645ff175c56b6e067b57"
 }

@@ -259,7 +259,13 @@
       "patch": "0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "40894ac084e4fbae7fa79298fc310acee4fc91c1",
+    "base_pr": 85,
+    "cleanup_pr": null,
+    "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "15ad50b426158973bcea32dc67892f9cd66c415d",
