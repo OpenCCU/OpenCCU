@@ -859,15 +859,6 @@
     {
       "added": 1,
       "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0123-WebUI-Fix-ChannelActionDuration.patch",
-      "removed": 1,
-      "sha256": "8ea5811a8fcac3277735c9f19f83b163eff5d477c363b6750bc7333d69631a1b"
-    },
-    {
-      "added": 1,
-      "files": [
         "www/webui/style.css"
       ],
       "patch": "0124-WebUI-Fix-ShowMultipleSpacesInSysVar.patch",
@@ -1509,5 +1500,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "d91c12d09af54ecfda9020b2f6e2723c6b02e85b7516645ff175c56b6e067b57"
+  "series_sha256": "3c4c29bfc909adf3d3658c306733fe6e7d17ab8a5db823e1b393bc27e8324e08"
 }

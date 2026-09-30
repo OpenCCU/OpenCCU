@@ -265,7 +265,13 @@
       "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "afa0cd9bf8ff007ed563323ac3971f2fffb66c5b",
+    "base_pr": 86,
+    "cleanup_pr": null,
+    "patch": "0123-WebUI-Fix-ChannelActionDuration.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "34d2133d4ba912ea8f26ee18556227ced6a8fc36",
