@@ -233,18 +233,18 @@
       "base_pr": 80,
       "cleanup_pr": 4273,
       "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch"
+    },
+    {
+      "base_merge_commit": "a7c8217c79ec7977538db0e8ccda018020334a42",
+      "base_pr": 81,
+      "cleanup_pr": 4275,
+      "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "a7c8217c79ec7977538db0e8ccda018020334a42",
-    "base_pr": 81,
-    "cleanup_pr": 4275,
-    "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "f795bc0418e10ca244cbe8ca7893e835d9523152",
-  "verified_base_pin": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
-  "verified_source_sha256": "8aa1f3c3263c6b98c47d58ddf29e7d75eeb01fa3beca6a2e13b5da706886e0ba"
+  "verified_at_openccu_commit": "dec0513f896e3e0618c450fe8a53b590047c071d",
+  "verified_base_pin": "a7c8217c79ec7977538db0e8ccda018020334a42",
+  "verified_source_sha256": "162899126842866d46ad97fc794eb53f8827c841ab6fd3591db1001f110c27fd"
 }
