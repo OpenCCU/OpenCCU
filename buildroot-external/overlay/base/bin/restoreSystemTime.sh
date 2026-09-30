@@ -34,18 +34,16 @@ if [[ -f "${TIMEFILE}" ]]; then
   [[ "${LASTTIME}" -gt "${MINTIME}" ]] && MINTIME=${LASTTIME}
 fi
 
+# keep the current system time if it is plausible, i.e. not older than
+# MINTIME (e.g. 1970-01-01 due to no/invalid RTC) and not implausibly far
+# in the future (e.g. RTC with a bogus time). Without any reference time
+# there is no upper bound. Otherwise the time is set to MINTIME, which is
+# also the safe direction for a time in the future, because it would
+# permanently increase the time based HmIP security counter
+# (cf. https://github.com/OpenCCU/OpenCCU/issues/4274)
 NOW=$(date +%s)
-if [[ "${NOW}" -lt "${MINTIME}" ]]; then
-  # system time is in the past (e.g. 1970-01-01 due to no/invalid RTC)
-  :
-elif [[ "${MINTIME}" -gt 0 ]] &&
-     [[ "${NOW}" -gt $((MINTIME + MAXAHEAD)) ]]; then
-  # system time is implausibly far in the future (e.g. RTC with a bogus
-  # time). Moving it back is the safe direction for the time based HmIP
-  # security counter, because a time in the future would permanently
-  # increase the counter (cf. https://github.com/OpenCCU/OpenCCU/issues/4274)
-  :
-else
+if [[ "${NOW}" -ge "${MINTIME}" ]] &&
+   { [[ "${MINTIME}" -eq 0 ]] || [[ "${NOW}" -le $((MINTIME + MAXAHEAD)) ]]; }; then
   exit 1
 fi
 
