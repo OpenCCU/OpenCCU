@@ -13,26 +13,17 @@
 #
 #   save    - store the current system time (only if plausible)
 #   restore - set the system time to the last known time (or at least the
-#             firmware build date) if the current time is older. Returns 0
+#             firmware build time) if the current time is older. Returns 0
 #             if the time was restored, 1 otherwise.
 #
 
 TIMEFILE=/usr/local/etc/lastKnownTime
 
-# get the firmware build date (in seconds since epoch) as the
-# minimum plausible system time
+# get the firmware build time (in seconds since epoch) as the minimum
+# plausible system time. For this we use the modification time of /VERSION
+# which is generated at build time and located on the read-only rootfs.
 build_time() {
-  BUILDTIME=0
-  if [[ -r /VERSION ]]; then
-    BUILDDATE=$(sed -n 's/^VERSION=[0-9]*\.[0-9]*\.[0-9]*\.\([0-9]\{8\}\).*$/\1/p' /VERSION)
-    if [[ -n "${BUILDDATE}" ]]; then
-      BUILDTIME=$(date -u -D %Y%m%d -d "${BUILDDATE}" +%s 2>/dev/null || echo 0)
-    fi
-    if [[ "${BUILDTIME}" -eq 0 ]]; then
-      BUILDTIME=$(stat -c %Y /VERSION 2>/dev/null || echo 0)
-    fi
-  fi
-  echo "${BUILDTIME}"
+  stat -c %Y /VERSION 2>/dev/null || echo 0
 }
 
 save() {
