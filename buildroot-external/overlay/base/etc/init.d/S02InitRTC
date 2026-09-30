@@ -138,8 +138,11 @@ start() {
   # we set the system time to the last known time (or the firmware build
   # time) and signal (via /var/status/systemTimeRestored) that the system
   # time is not trustworthy until a NTP time sync happened (cf. S46chronyd,
-  # S62HMServer)
-  if /bin/restoreSystemTime.sh; then
+  # S62HMServer). In OCI/LXC containers the system time is provided by the
+  # host and must not be changed from within the container (which would
+  # change the host time in case of a privileged container).
+  if [[ ! "${HM_HOST}" =~ oci\|lxc ]] &&
+     /bin/restoreSystemTime.sh; then
     # make sure /var/status exists with correct permissions
     if [[ ! -d /var/status ]]; then
       mkdir -p /var/status
@@ -156,11 +159,14 @@ start() {
 stop() {
   echo -n "Cleaning up RTC Clock: "
 
-  # save the current system time as the last known time
-  /bin/saveSystemTime.sh
-
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
+
+  # save the current system time as the last known time (not required in
+  # OCI/LXC containers where the system time is provided by the host)
+  if [[ ! "${HM_HOST}" =~ oci\|lxc ]]; then
+    /bin/saveSystemTime.sh
+  fi
 
   # make sure to unload rpi_rf_mod_led which
   # is necessary for docker/lxc-based environments
