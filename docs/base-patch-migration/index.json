@@ -787,15 +787,6 @@
       "sha256": "e80c846d418ae69c349016e4ca8990a79cf85baef057e6e26b9e0f2f8bcf467f"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch",
-      "removed": 1,
-      "sha256": "372fa1f1a8eb5f7ab4795319105d99274218d520608ccd0c745f6a1317a561b5"
-    },
-    {
       "added": 3,
       "files": [
         "www/config/backup.tcl",
@@ -1500,5 +1491,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3c4c29bfc909adf3d3658c306733fe6e7d17ab8a5db823e1b393bc27e8324e08"
+  "series_sha256": "e9017b890fcb0410ee32a3be173f2b9fe9879836b5a8c1a6211c12f9942cf28d"
 }
