@@ -245,18 +245,18 @@
       "base_pr": 82,
       "cleanup_pr": 4277,
       "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch"
+    },
+    {
+      "base_merge_commit": "c827595eb3ee55528fdefd17dcc31d29ecc0fee1",
+      "base_pr": 83,
+      "cleanup_pr": 4281,
+      "patch": "0083-WebUI-Fix-DeviceTestScriptError.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "c827595eb3ee55528fdefd17dcc31d29ecc0fee1",
-    "base_pr": 83,
-    "cleanup_pr": 4281,
-    "patch": "0083-WebUI-Fix-DeviceTestScriptError.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "2396923033e90ba84b7c0fc4d50463da3c4bf136",
-  "verified_base_pin": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
-  "verified_source_sha256": "318ac74a18ffb5a6657c5fe960c4005d68cddb5839f01004af812be98b957fc6"
+  "verified_at_openccu_commit": "7736adbdbe91d3e64ee678af07e86800c1b8a865",
+  "verified_base_pin": "c827595eb3ee55528fdefd17dcc31d29ecc0fee1",
+  "verified_source_sha256": "9980789d2e26a5b70d937ffe8d01e49bdba36eddfbd662f039d85106d6c4c572"
 }
