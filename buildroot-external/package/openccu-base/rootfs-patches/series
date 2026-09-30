@@ -38,7 +38,6 @@
 0075-WebUI-Fix-HTMLinUserFavorites.patch
 0076-WebUI-Fix-SuperCharScriptUse.patch
 0077-WebUI-NegateCondition.patch
-0082-WebUI-Fix-SetVisibilityScriptError.patch
 0084-WebUI-Fix-InvalidObjectCrashes.patch
 0085-WebUI-AddonPopupScrollable.patch
 0086-WebUI-Fix-500Errors.patch
