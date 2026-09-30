@@ -277,7 +277,13 @@
       "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "c0909d88040e3772cca977614a6a9a4b99604fdb",
+    "base_pr": 88,
+    "cleanup_pr": null,
+    "patch": "0041-WebUI-ThirdPartyDevice-Sorting.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "6e4995f68fa6dd19b430687abbdf9a3b0de75283",
