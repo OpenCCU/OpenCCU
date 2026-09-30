@@ -12,27 +12,54 @@ PIDFILE_ANGEL=/var/run/lighttpd-angel.pid
 # skip this startup if not in normal mode
 [[ "${HM_MODE}" != "NORMAL" ]] && exit 0
 
+create_certificate() {
+  # a new self-signed certificate for this host; the one before is kept aside
+  [[ -f /etc/config/server.pem ]] && mv -f /etc/config/server.pem "/etc/config/server.pem_$(date +%Y%m%d)"
+  echo -n "creating new SSL cert... "
+  # name the address only when there is one: without a route (no DHCP
+  # lease yet at a first start) openssl refuses an empty "IP:", writes
+  # nothing, and lighttpd does not start. A certificate made without an
+  # address is made again once one exists, see check_certificate().
+  SAN="DNS:$(hostname)"
+  [[ -n "${IP}" ]] && SAN="${SAN},IP:${IP}"
+  # openssl's own complaint stays visible, so a refusal is not silent
+  /usr/bin/openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
+                                         -keyout /etc/config/server.pem \
+                                         -out /etc/config/server.pem \
+                                         -days 3650 \
+                                         -addext "subjectAltName = ${SAN}" \
+                                         -addext "keyUsage = keyCertSign,digitalSignature,keyEncipherment" \
+                                         -addext "extendedKeyUsage = serverAuth" \
+                                         -addext "nsCertType = server,sslCA" \
+                                         -subj "/C=DE/O=HomeMatic/OU=$(cat /var/board_serial)/CN=$(hostname)" >/dev/null
+}
+
+certificate_without_address() {
+  # our own self-signed certificate (the issuer as create_certificate()
+  # writes it) that names no address at all: the one a first start
+  # without a lease makes. A user's own certificate, or one that names an
+  # address, even an old one, is left alone: its fingerprint is what
+  # browsers have accepted.
+  /usr/bin/openssl x509 -noout -issuer -nameopt RFC2253 -in /etc/config/server.pem 2>/dev/null | grep -q ',O=HomeMatic,C=DE$' || return 1
+  ! /usr/bin/openssl x509 -noout -ext subjectAltName -in /etc/config/server.pem 2>/dev/null | grep -q 'IP Address:'
+}
+
 check_certificate() {
   # leave a certificate alone that something else manages (an ACME
   # client, a certificate from a local CA): whoever installs it writes
   # the marker /etc/config/server.pem.managed beside it and renews it
   [[ -f /etc/config/server.pem.managed ]] && return 0
 
+  # the address the certificate names; empty while there is no IPv4 route
+  IP=$(ip -4 route get 1 2>/dev/null | head -1 | cut -d' ' -f8 | tr -d '\n')
+
   # check if a valid/non-expired SSL cert exists and if
   # not we regenerate it.
   if ! /usr/bin/openssl x509 -checkend 86400 -noout -in /etc/config/server.pem 2>/dev/null >/dev/null; then
-    [[ -f /etc/config/server.pem ]] && mv -f /etc/config/server.pem "/etc/config/server.pem_$(date +%Y%m%d)"
-    echo -n "creating new SSL cert... "
-    IP=$(ip -4 route get 1 | head -1 | cut -d' ' -f8 | tr -d '\n')
-    /usr/bin/openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
-                                           -keyout /etc/config/server.pem \
-                                           -out /etc/config/server.pem \
-                                           -days 3650 \
-                                           -addext "subjectAltName = DNS:$(hostname),IP:${IP}" \
-                                           -addext "keyUsage = keyCertSign,digitalSignature,keyEncipherment" \
-                                           -addext "extendedKeyUsage = serverAuth" \
-                                           -addext "nsCertType = server,sslCA" \
-                                           -subj "/C=DE/O=HomeMatic/OU=$(cat /var/board_serial)/CN=$(hostname)" 2>/dev/null >/dev/null
+    create_certificate
+  elif [[ -n "${IP}" ]] && certificate_without_address; then
+    # made at a start without an address: make it again now that there is one
+    create_certificate
   fi
 }
 
