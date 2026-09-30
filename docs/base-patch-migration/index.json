@@ -1429,15 +1429,6 @@
       "sha256": "b3e8e934c9420af9bf38ef6df5d5aed88f12b07c6c52d069fe383797f6ed7893"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/esp/system.fn"
-      ],
-      "patch": "0200-WebUI-Fix-EventStalling.patch",
-      "removed": 1,
-      "sha256": "ca43a2ee8feeb7d744b2f5a57999d3c727c0e69c47cd89e98d613cd04cfd0197"
-    },
-    {
       "added": 4,
       "files": [
         "www/rega/esp/system.fn"
@@ -1473,5 +1464,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "82aaece8f8732090514aaf96d0facba2e09a86d9c24dc8dac8fb321a3b4dc9ea"
+  "series_sha256": "8fe98acfb161e1c61cd94ed11d09621fb58d8c620a1939a01f18d26dee83b177"
 }
