@@ -571,15 +571,6 @@
       "sha256": "9f5fa95c41d4da68f7a2c2052c119db9d1ae1e534fea548f441d74e72ae8748e"
     },
     {
-      "added": 1,
-      "files": [
-        "www/rega/esp/system.fn"
-      ],
-      "patch": "0083-WebUI-Fix-DeviceTestScriptError.patch",
-      "removed": 1,
-      "sha256": "5b3e5c9cb4f8d9aaf4b0a191ab990573baf172c93ede92e38b7644bd11fb262e"
-    },
-    {
       "added": 9,
       "files": [
         "www/rega/pages/tabs/admin/views/roomchannels.htm",
@@ -1536,5 +1527,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "bcf78942f802303ab614682182541e950a18536ff77b588b71c445169e5cec9f"
+  "series_sha256": "ed2d4a409bbf0b05e2e18952b4bedc76fae056c2216a4c78f1abcbae33455874"
 }
