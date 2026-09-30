@@ -114,23 +114,24 @@ stop() {
   rm -f /var/status/hasNTP
 }
 
-# wait (max. $1 seconds) until the system time is synced via NTP
+# wait (max. $1 seconds) until the system time is synced via NTP. Only
+# progress dots are printed so that the caller can embed them in its own
+# status output. Returns 0 if the time is synced, 1 on timeout.
 waitsync() {
   TIMEOUT=${1:-120}
-  echo -n "Waiting for NTP time sync: "
 
   START=$(cut -d. -f1 /proc/uptime)
   LASTTRY=${START}
   while true; do
+    echo -n "."
+
     # check if chronyd is running and synchronized
     if start-stop-daemon -K -t -q -p ${PIDFILE} && timesync 1; then
-      echo "OK"
       return 0
     fi
 
     NOW=$(cut -d. -f1 /proc/uptime)
     if [[ $((NOW - START)) -ge ${TIMEOUT} ]]; then
-      echo "timeout, FAIL"
       return 1
     fi
 
@@ -145,7 +146,6 @@ waitsync() {
       continue
     fi
 
-    echo -n "."
     sleep 2
   done
 }

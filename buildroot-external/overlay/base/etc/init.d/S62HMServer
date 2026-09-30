@@ -170,14 +170,18 @@ waitTimeSync() {
      [[ ! -e /var/status/startupFinished ]] &&
      [[ ! -e /etc/config/NoNTPSyncWait ]] &&
      [[ -x /etc/init.d/S46chronyd ]]; then
-    /etc/init.d/S46chronyd waitsync ${NTPSYNC_TIMEOUT}
+    echo -n "NTP sync"
+    if /etc/init.d/S46chronyd waitsync ${NTPSYNC_TIMEOUT}; then
+      echo -n "OK, "
+    else
+      echo -n "WARNING: timeout, "
+    fi
   fi
 }
 
 start() {
-  waitTimeSync
-
   echo -n "Starting HMIPServer: "
+  waitTimeSync
   init
 
   # get the architecture
