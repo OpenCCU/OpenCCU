@@ -13,7 +13,6 @@
 0038-WebUI-DeviceOverview-StatusColumn.patch
 0039-WebUI-Fix-Style-Glitches.patch
 0040-WebUI-AddonInstallNoReboot.patch
-0041-WebUI-ThirdPartyDevice-Sorting.patch
 0042-WebUI-HeatingControl-HumidityBatteryValveState.patch
 0043-WebUI-SysVarFavorites-SortByName.patch
 0044-WebUI-DisableDeviceServiceMsg.patch

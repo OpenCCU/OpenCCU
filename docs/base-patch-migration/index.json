@@ -277,15 +277,6 @@
       "sha256": "4bfc73bea08504dd76189da26993ec0b9d64a1e0bf244a45f19fd47e1927ef5d"
     },
     {
-      "added": 2,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0041-WebUI-ThirdPartyDevice-Sorting.patch",
-      "removed": 0,
-      "sha256": "2a198583f841b81689e056e013401f5852a042e0f9208e687fbc8a96b2004587"
-    },
-    {
       "added": 138,
       "files": [
         "www/rega/esp/controls/heating_control.fn",
@@ -1491,5 +1482,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "e9017b890fcb0410ee32a3be173f2b9fe9879836b5a8c1a6211c12f9942cf28d"
+  "series_sha256": "e5059c80c1fb3e3801af2fe25b17429cf38fa04470ed8e43a817c8fd2ae11eda"
 }
