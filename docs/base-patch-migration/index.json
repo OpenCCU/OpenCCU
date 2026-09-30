@@ -719,15 +719,6 @@
       "sha256": "1c4e78a4169ddf3e8983948810948258f32fc958b08fd89a21407344d9c54831"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch",
-      "removed": 1,
-      "sha256": "f3d85b68847c126a4ab626b22ce56e7e50ece7fac86f4f22e4237b7f3caefc85"
-    },
-    {
       "added": 47,
       "files": [
         "www/api/methods/device/get.tcl",
@@ -1527,5 +1518,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "ed2d4a409bbf0b05e2e18952b4bedc76fae056c2216a4c78f1abcbae33455874"
+  "series_sha256": "f0840d4d98f4cadb02cf71af3c26c8b79ad675134e37096ecce93c450f248eab"
 }

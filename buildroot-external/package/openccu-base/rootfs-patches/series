@@ -53,7 +53,6 @@
 0096-WebUI-AdditionalSoftwareSortedList.patch
 0097-WebUI-SetSysvarValueByUser.patch
 0099-WebUI-Add-DeviceRenameAllChannels.patch
-0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch
 0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch
 0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch
 0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch
