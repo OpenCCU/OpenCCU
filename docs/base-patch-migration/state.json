@@ -271,7 +271,13 @@
       "patch": "0123-WebUI-Fix-ChannelActionDuration.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
+    "base_pr": 87,
+    "cleanup_pr": null,
+    "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "52add2185e445c301c6339db3adfa873bf2c4a23",
