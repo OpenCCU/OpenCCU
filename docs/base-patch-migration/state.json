@@ -269,18 +269,18 @@
       "base_pr": 86,
       "cleanup_pr": 4285,
       "patch": "0123-WebUI-Fix-ChannelActionDuration.patch"
+    },
+    {
+      "base_merge_commit": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
+      "base_pr": 87,
+      "cleanup_pr": 4288,
+      "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
-    "base_pr": 87,
-    "cleanup_pr": 4288,
-    "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "52add2185e445c301c6339db3adfa873bf2c4a23",
-  "verified_base_pin": "afa0cd9bf8ff007ed563323ac3971f2fffb66c5b",
-  "verified_source_sha256": "bba7fe271906b6d8bdf28607bd34879fe0cc5189027e6c5f0a14d2e9c7e8a5b5"
+  "verified_at_openccu_commit": "6e4995f68fa6dd19b430687abbdf9a3b0de75283",
+  "verified_base_pin": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
+  "verified_source_sha256": "e34c1c63f2ff201c69cacd11c826000c34e005ddce91a5f3f49c5fca258b881e"
 }
