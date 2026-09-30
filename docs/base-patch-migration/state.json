@@ -275,18 +275,24 @@
       "base_pr": 87,
       "cleanup_pr": 4288,
       "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch"
+    },
+    {
+      "base_merge_commit": "c0909d88040e3772cca977614a6a9a4b99604fdb",
+      "base_pr": 88,
+      "cleanup_pr": 4290,
+      "patch": "0041-WebUI-ThirdPartyDevice-Sorting.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "c0909d88040e3772cca977614a6a9a4b99604fdb",
-    "base_pr": 88,
-    "cleanup_pr": 4290,
-    "patch": "0041-WebUI-ThirdPartyDevice-Sorting.patch",
+    "base_merge_commit": "21c987c27b2368e08b91f70228e74df2a2569624",
+    "base_pr": 89,
+    "cleanup_pr": 4291,
+    "patch": "0094-WebUI-userSysVarTblValuesWordWrap.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "6e4995f68fa6dd19b430687abbdf9a3b0de75283",
-  "verified_base_pin": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
-  "verified_source_sha256": "e34c1c63f2ff201c69cacd11c826000c34e005ddce91a5f3f49c5fca258b881e"
+  "verified_at_openccu_commit": "e183b6f2c08698fdb800ba59da73030cf2bab3b4",
+  "verified_base_pin": "c0909d88040e3772cca977614a6a9a4b99604fdb",
+  "verified_source_sha256": "afa26661ffa4c2ce340618d2494e30f56b5736ae504cce5cc2836ce3fca7e1b4"
 }

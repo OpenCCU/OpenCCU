@@ -646,15 +646,6 @@
       "sha256": "425d7d0bc24232b0506fa0757ec3fffc94365af691cf3203fda69ec3b1544773"
     },
     {
-      "added": 2,
-      "files": [
-        "www/webui/style.css"
-      ],
-      "patch": "0094-WebUI-userSysVarTblValuesWordWrap.patch",
-      "removed": 0,
-      "sha256": "f2a50366e99414688b270dc002572b0d27ccf509218f4d942ba92bfa93f0af7c"
-    },
-    {
       "added": 74,
       "files": [
         "www/rega/esp/system.fn",
@@ -1482,5 +1473,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "e5059c80c1fb3e3801af2fe25b17429cf38fa04470ed8e43a817c8fd2ae11eda"
+  "series_sha256": "82aaece8f8732090514aaf96d0facba2e09a86d9c24dc8dac8fb321a3b4dc9ea"
 }

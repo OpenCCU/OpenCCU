@@ -46,7 +46,6 @@
 0091-WebUI-Add-HM-OU-LED16-LedStatus.patch
 0092-WebUI-Fix-DeviceReplacement.patch
 0093-WebUI-AllowAdminUserChanges.patch
-0094-WebUI-userSysVarTblValuesWordWrap.patch
 0095-WebUI-userSysVarTblMoveUpDown.patch
 0096-WebUI-AdditionalSoftwareSortedList.patch
 0097-WebUI-SetSysvarValueByUser.patch
