@@ -100,7 +100,7 @@ start() {
   if timesync ${SYNC_TIMEOUT}; then
     echo "OK"
   else
-    echo "not synced yet, OK"
+    echo "not synced yet, WARNING"
   fi
 }
 
