@@ -568,7 +568,7 @@
       ],
       "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch",
       "removed": 1,
-      "sha256": "9f5fa95c41d4da68f7a2c2052c119db9d1ae1e534fea548f441d74e72ae8748e"
+      "sha256": "2ba9f7274e6832e221c0c92d4ed90f341ce32c13c665c27205222e52fb1b4c20"
     },
     {
       "added": 9,
