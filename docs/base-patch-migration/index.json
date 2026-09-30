@@ -823,15 +823,6 @@
       "sha256": "372fa1f1a8eb5f7ab4795319105d99274218d520608ccd0c745f6a1317a561b5"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/style.css"
-      ],
-      "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch",
-      "removed": 0,
-      "sha256": "ba32060343083abf7039ccfd18d81dd10147d3681cfd4f0c93e85af8c6b51de3"
-    },
-    {
       "added": 3,
       "files": [
         "www/config/backup.tcl",
@@ -1545,5 +1536,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "2f357d868cd4e0a0858c31a8c215245cf01e25a48b5f7207052201df36d73b88"
+  "series_sha256": "bcf78942f802303ab614682182541e950a18536ff77b588b71c445169e5cec9f"
 }

@@ -241,7 +241,13 @@
       "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
+    "base_pr": 82,
+    "cleanup_pr": null,
+    "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "dec0513f896e3e0618c450fe8a53b590047c071d",
