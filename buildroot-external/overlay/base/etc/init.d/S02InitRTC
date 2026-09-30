@@ -139,7 +139,7 @@ start() {
   # time) and signal (via /var/status/timeRestored) that the system time is
   # not trustworthy until a NTP time sync happened (cf. S46chronyd,
   # S62HMServer)
-  if /bin/lastKnownTime restore; then
+  if /bin/restoreSystemTime.sh; then
     # make sure /var/status exists with correct permissions
     if [[ ! -d /var/status ]]; then
       mkdir -p /var/status
@@ -157,7 +157,7 @@ stop() {
   echo -n "Cleaning up RTC Clock: "
 
   # save the current system time as the last known time
-  /bin/lastKnownTime save
+  /bin/saveSystemTime.sh
 
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode

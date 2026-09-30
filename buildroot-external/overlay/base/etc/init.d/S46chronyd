@@ -58,7 +58,7 @@ timesync() {
 
     # the system time is valid now
     rm -f /var/status/timeRestored
-    /bin/lastKnownTime save
+    /bin/saveSystemTime.sh
     return 0
   fi
   return 1
