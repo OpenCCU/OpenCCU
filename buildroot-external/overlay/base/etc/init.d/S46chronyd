@@ -57,7 +57,7 @@ timesync() {
     ${CLIENT} -n makestep >/dev/null 2>&1
 
     # the system time is valid now
-    rm -f /var/status/timeRestored
+    rm -f /var/status/systemTimeRestored
     /bin/saveSystemTime.sh
     return 0
   fi

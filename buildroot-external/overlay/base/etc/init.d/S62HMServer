@@ -166,7 +166,7 @@ waitStartupComplete() {
 # timeout) for a NTP time sync during system startup.
 waitTimeSync() {
   if [[ -n "${HM_HMIP_DEV}" ]] &&
-     [[ -e /var/status/timeRestored ]] &&
+     [[ -e /var/status/systemTimeRestored ]] &&
      [[ ! -e /var/status/startupFinished ]] &&
      [[ ! -e /etc/config/NoNTPSyncWait ]] &&
      [[ -x /etc/init.d/S46chronyd ]]; then
