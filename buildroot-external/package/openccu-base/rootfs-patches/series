@@ -32,7 +32,6 @@
 0071-WebUI-ProgramList-DeleteProgramHint.patch
 0072-WebUI-Fix-hm_autoconf.patch
 0073-WebUI-AstroDelays.patch
-0074-WebUI-Fix-KeyReturn.patch
 0075-WebUI-Fix-HTMLinUserFavorites.patch
 0077-WebUI-NegateCondition.patch
 0084-WebUI-Fix-InvalidObjectCrashes.patch
