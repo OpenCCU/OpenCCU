@@ -310,7 +310,7 @@
   "in_progress": {
     "base_merge_commit": "f32e2fd7978202b65a76e73e3933401a9498957e",
     "base_pr": 93,
-    "cleanup_pr": null,
+    "cleanup_pr": 4298,
     "patch": "0168-WebUI-Add-ImprovedLogout.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
