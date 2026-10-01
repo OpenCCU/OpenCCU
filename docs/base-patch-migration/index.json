@@ -500,15 +500,6 @@
       "sha256": "05d739e78b314d59e181e1429a3b8ac3bd026290564c4614c5f571e221805ff7"
     },
     {
-      "added": 0,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0074-WebUI-Fix-KeyReturn.patch",
-      "removed": 7,
-      "sha256": "d2a15e5e08df494bc1edb3cf2bb49946ac1e8e32958500796c27339be676afc3"
-    },
-    {
       "added": 8,
       "files": [
         "www/rega/esp/system.fn",
@@ -1423,5 +1414,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "bc2ff93fa6ca70f8547fe533e4e74ff3818d1176df8fbc1e5d88fafe5e0f4482"
+  "series_sha256": "7030f65c8509a6b0d0038f6f33ffde188ce86e74c6659e1eae52e9e59dfb9fe6"
 }

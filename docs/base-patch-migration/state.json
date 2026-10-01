@@ -319,7 +319,13 @@
       "patch": "0185-WebUI-Fix-CPPopupCentering.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "756cd5ebf4ef2de80613d040589da50ecb3b9070",
+    "base_pr": 95,
+    "cleanup_pr": null,
+    "patch": "0074-WebUI-Fix-KeyReturn.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "33315096ba107096674c8edf3058f5156dcf9062",
