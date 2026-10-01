@@ -385,15 +385,6 @@
       "sha256": "a83f1cd707d4ced28f6b2dbc81d6e025cd3e44f3e1f0798426f7a1a064d99457"
     },
     {
-      "added": 3,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0060-WebUI-Fix-SessionLogoutSave.patch",
-      "removed": 2,
-      "sha256": "128ff2b36baf1ebacee81bd4935e41d8ab1bc035482dbd7b1ff7601bb06dd201"
-    },
-    {
       "added": 357,
       "files": [
         "www/rega/pages/tabs/admin/linkprog.htm",
@@ -1454,5 +1445,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "b421e5904df2b7a882471f99f8364cc002d23a9b0f8ca7981c5768ef2dbbb9f1"
+  "series_sha256": "143668a62c742f004b100389192253f38bbbd59d58810b6d96ab2241eef07242"
 }
