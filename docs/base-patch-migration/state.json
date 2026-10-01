@@ -313,7 +313,13 @@
       "patch": "0168-WebUI-Add-ImprovedLogout.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "f9bdc53294ae14a4c8c85a5f187a28298c768a16",
+    "base_pr": 94,
+    "cleanup_pr": null,
+    "patch": "0185-WebUI-Fix-CPPopupCentering.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "4ecc67326d62e2fefacef7b14d57fb492ff64164",
