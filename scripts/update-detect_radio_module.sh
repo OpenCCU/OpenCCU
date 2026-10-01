@@ -6,9 +6,9 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_head_commit_for_path "alexreinert" "piVCCU" "detect_radio_module")}
+ID=${1:-$(resolve_latest_github_head_commit_for_path "OpenCCU" "piVCCU" "detect_radio_module")}
 PACKAGE_NAME="detect_radio_module"
-PROJECT_URL="https://github.com/alexreinert/piVCCU"
+PROJECT_URL="https://github.com/OpenCCU/piVCCU"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
 CURRENT_ID=$(sed -nE 's/^DETECT_RADIO_MODULE_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 

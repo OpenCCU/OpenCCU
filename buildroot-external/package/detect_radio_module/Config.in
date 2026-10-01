@@ -6,4 +6,4 @@ config BR2_PACKAGE_DETECT_RADIO_MODULE
 	  HMIP-RFUSB rf module from eQ3.
 
 	  Alexander Reinert <alex@areinert.de>
-	  https://github.com/alexreinert/piVCCU/tree/master/detect_radio_module
+	  https://github.com/OpenCCU/piVCCU/tree/master/detect_radio_module
