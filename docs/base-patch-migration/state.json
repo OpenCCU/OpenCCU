@@ -311,18 +311,18 @@
       "base_pr": 93,
       "cleanup_pr": 4298,
       "patch": "0168-WebUI-Add-ImprovedLogout.patch"
+    },
+    {
+      "base_merge_commit": "f9bdc53294ae14a4c8c85a5f187a28298c768a16",
+      "base_pr": 94,
+      "cleanup_pr": 4300,
+      "patch": "0185-WebUI-Fix-CPPopupCentering.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "f9bdc53294ae14a4c8c85a5f187a28298c768a16",
-    "base_pr": 94,
-    "cleanup_pr": 4300,
-    "patch": "0185-WebUI-Fix-CPPopupCentering.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "4ecc67326d62e2fefacef7b14d57fb492ff64164",
-  "verified_base_pin": "f32e2fd7978202b65a76e73e3933401a9498957e",
-  "verified_source_sha256": "21475df84e0734e09d319917449c3f443728f734935bbc3c5b2ceb8b58678226"
+  "verified_at_openccu_commit": "33315096ba107096674c8edf3058f5156dcf9062",
+  "verified_base_pin": "f9bdc53294ae14a4c8c85a5f187a28298c768a16",
+  "verified_source_sha256": "6f3380642304b38cf47a04c1b02fdf779e3649f29254b910b1fc3990157b5b8d"
 }
