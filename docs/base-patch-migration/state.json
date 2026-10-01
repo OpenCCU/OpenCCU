@@ -317,18 +317,18 @@
       "base_pr": 94,
       "cleanup_pr": 4300,
       "patch": "0185-WebUI-Fix-CPPopupCentering.patch"
+    },
+    {
+      "base_merge_commit": "756cd5ebf4ef2de80613d040589da50ecb3b9070",
+      "base_pr": 95,
+      "cleanup_pr": 4301,
+      "patch": "0074-WebUI-Fix-KeyReturn.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "756cd5ebf4ef2de80613d040589da50ecb3b9070",
-    "base_pr": 95,
-    "cleanup_pr": 4301,
-    "patch": "0074-WebUI-Fix-KeyReturn.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "33315096ba107096674c8edf3058f5156dcf9062",
-  "verified_base_pin": "f9bdc53294ae14a4c8c85a5f187a28298c768a16",
-  "verified_source_sha256": "6f3380642304b38cf47a04c1b02fdf779e3649f29254b910b1fc3990157b5b8d"
+  "verified_at_openccu_commit": "5603b7868b2f819aedc6a5d897238f13d0d7835b",
+  "verified_base_pin": "756cd5ebf4ef2de80613d040589da50ecb3b9070",
+  "verified_source_sha256": "b18eef7b2087b91faefee130165fd486407f8de752ca6be501db7d7473319e94"
 }
