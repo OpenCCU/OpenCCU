@@ -33739,9 +33739,9 @@ logout = function() {
   regaMonitor.stop();
   InterfaceMonitor.stop();
 
-  // logout and make sure we save the regadom
-  homematic('Session.logout', {}, function() {
-    homematic('system.saveObjectModel', {}, function() {
+  // save the regadom first, since Session.logout ends the session
+  homematic('system.saveObjectModel', {}, function() {
+    homematic('Session.logout', {}, function() {
       ProgressBar.hide();
       ProgressBar.StopKnightRiderLight();
       location.href = "/logout.htm?lang="+getLang();
