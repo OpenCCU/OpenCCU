@@ -304,7 +304,7 @@
   "in_progress": {
     "base_merge_commit": "71f46417dd8ce0d5fae8eb1554dd65a3eaf69c8e",
     "base_pr": 92,
-    "cleanup_pr": null,
+    "cleanup_pr": 4296,
     "patch": "0060-WebUI-Fix-SessionLogoutSave.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
