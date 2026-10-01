@@ -1214,7 +1214,7 @@
       ],
       "patch": "0168-WebUI-Add-ImprovedLogout.patch",
       "removed": 4,
-      "sha256": "77bc8fbaff1f64844e379fd6935f96eb9a97e5f2a32e391aa4c15732875d9a9d"
+      "sha256": "9a3ab970c62cb45d0f8f8d5b521f144d6438295daa413b0e0d0b8ec5d36f5da6"
     },
     {
       "added": 86,
