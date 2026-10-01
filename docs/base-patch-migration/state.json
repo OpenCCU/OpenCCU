@@ -287,18 +287,18 @@
       "base_pr": 89,
       "cleanup_pr": 4291,
       "patch": "0094-WebUI-userSysVarTblValuesWordWrap.patch"
+    },
+    {
+      "base_merge_commit": "4a4284910fa0aff927fe8bed968d76e9f2e3126e",
+      "base_pr": 90,
+      "cleanup_pr": 4293,
+      "patch": "0200-WebUI-Fix-EventStalling.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "4a4284910fa0aff927fe8bed968d76e9f2e3126e",
-    "base_pr": 90,
-    "cleanup_pr": 4293,
-    "patch": "0200-WebUI-Fix-EventStalling.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "3957d5a5436913fe10a0f6751c7bc5b7bc360b87",
-  "verified_base_pin": "21c987c27b2368e08b91f70228e74df2a2569624",
-  "verified_source_sha256": "0c7c2cb69ba4c7a1bed0f7d29543c34d815be84a920f3024d0bd5d479c57ad22"
+  "verified_at_openccu_commit": "e49a57c5be83eb7b17d747266a5c08bf374e08d7",
+  "verified_base_pin": "4a4284910fa0aff927fe8bed968d76e9f2e3126e",
+  "verified_source_sha256": "f0bb0443a0b93a5cd136793f3ba3defa7f46ac2d707cf8b60f3c9ff9113d5716"
 }
