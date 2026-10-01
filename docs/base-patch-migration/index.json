@@ -890,7 +890,7 @@
       ],
       "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
       "removed": 25,
-      "sha256": "469da6cb688c08105de3ab86505393d3d5d983934aa170309fcf6c43f323744a"
+      "sha256": "c78a358e0e3bfe5c63d6883e0b37edd08f27703a05eb54181a267b4709101ae4"
     },
     {
       "added": 836,
@@ -1381,15 +1381,6 @@
     {
       "added": 4,
       "files": [
-        "www/rega/esp/system.fn"
-      ],
-      "patch": "0201-WebUI-Fix-SystemFnSyntax.patch",
-      "removed": 3,
-      "sha256": "6aabcfc090fe1d1fe338d592b04155fd6bc858a639d5fc0b26e3c1037b4c49ad"
-    },
-    {
-      "added": 4,
-      "files": [
         "www/tcl/extern/cgi.tcl"
       ],
       "patch": "0203-WebUI-NoExpectCGI.patch",
@@ -1414,5 +1405,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "7030f65c8509a6b0d0038f6f33ffde188ce86e74c6659e1eae52e9e59dfb9fe6"
+  "series_sha256": "8cedff53b4a92a5ff5cc2b0881b36066df09d28ce567045e4e7f4cc4cc49add0"
 }
