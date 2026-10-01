@@ -528,16 +528,6 @@
       "sha256": "c650476f99359dad19c31879a088231503555a8bb5e9f5b845de82fbe7284417"
     },
     {
-      "added": 2,
-      "files": [
-        "www/rega/pages/msg/editScript.htm",
-        "www/webui/webui.js"
-      ],
-      "patch": "0076-WebUI-Fix-SuperCharScriptUse.patch",
-      "removed": 2,
-      "sha256": "e20d16dbc4bea89093a48655a17013d4ba129ad78452b8c4c2f895268ce52ad7"
-    },
-    {
       "added": 59,
       "files": [
         "www/rega/esp/programs.fn",
@@ -1464,5 +1454,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "8fe98acfb161e1c61cd94ed11d09621fb58d8c620a1939a01f18d26dee83b177"
+  "series_sha256": "b421e5904df2b7a882471f99f8364cc002d23a9b0f8ca7981c5768ef2dbbb9f1"
 }

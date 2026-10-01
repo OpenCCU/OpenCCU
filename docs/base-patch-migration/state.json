@@ -295,7 +295,13 @@
       "patch": "0200-WebUI-Fix-EventStalling.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "f99990bc8df1ab27527d010641675bea6b91e6bf",
+    "base_pr": 91,
+    "cleanup_pr": null,
+    "patch": "0076-WebUI-Fix-SuperCharScriptUse.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "e49a57c5be83eb7b17d747266a5c08bf374e08d7",
