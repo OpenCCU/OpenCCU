@@ -1205,18 +1205,6 @@
       "sha256": "0e54c65fc9efd5f406dee70b6c1a24dccd7ded0cc3c620d96c7e468857df21bc"
     },
     {
-      "added": 23,
-      "files": [
-        "www/api/methods/system/saveobjectmodel.tcl",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0168-WebUI-Add-ImprovedLogout.patch",
-      "removed": 4,
-      "sha256": "9a3ab970c62cb45d0f8f8d5b521f144d6438295daa413b0e0d0b8ec5d36f5da6"
-    },
-    {
       "added": 86,
       "files": [
         "www/webui/webui.js"
@@ -1445,5 +1433,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "143668a62c742f004b100389192253f38bbbd59d58810b6d96ab2241eef07242"
+  "series_sha256": "bc34eff7d6648129264b9135b635aed6d95362c8c4b1b089e81a14434e63e7e2"
 }

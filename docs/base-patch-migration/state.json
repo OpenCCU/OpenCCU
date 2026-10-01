@@ -307,7 +307,13 @@
       "patch": "0060-WebUI-Fix-SessionLogoutSave.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "f32e2fd7978202b65a76e73e3933401a9498957e",
+    "base_pr": 93,
+    "cleanup_pr": null,
+    "patch": "0168-WebUI-Add-ImprovedLogout.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "8077e111dda8bea11413e5f7b13a4181eb0e98f9",
