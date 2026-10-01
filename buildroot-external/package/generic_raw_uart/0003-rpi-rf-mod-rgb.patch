@@ -1,17 +1,46 @@
-Subject: [PATCH] leds: add optional RPI-RF-MOD multicolor adapter driver
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Thu, 1 Oct 2026 18:53:59 +0000
+Subject: [PATCH] leds: add optional RPI-RF-MOD multicolor status LED driver
 
-Upstream: Not submitted (experimental OpenCCU integration)
+Add rpi_rf_mod_rgb, an alternative to rpi_rf_mod_led which exposes the
+RGB status LED of a RPI-RF-MOD as a single LED class multicolor device
+("rpi_rf_mod:rgb:status") instead of three separate LEDs. Like
+rpi_rf_mod_led it takes the GPIO numbers of the red, green and blue LED
+as module parameters (red_gpio_pin/green_gpio_pin/blue_gpio_pin) and
+therefore works with dynamically discovered GPIO adapters such as
+HB-RF-USB, HB-RF-USB-2 and HB-RF-ETH. All three GPIOs are set at once
+via gpiod_set_array_value_cansleep() so that the GPIO core can use
+set_multiple where supported by the adapter.
+
+The module parameters are read-only, as a live pin reassignment would
+race with the LED core's worker. rpi_rf_mod_led is kept for hosts
+without LEDS_CLASS_MULTICOLOR. On such kernels rpi_rf_mod_rgb is built
+as a stub refusing to load (-ENODEV), because the DKMS package expects
+a module for every *.c file; users can then fall back to
+rpi_rf_mod_led.
+
+Upstream: https://github.com/OpenCCU/piVCCU/pull/3
 
 Signed-off-by: Jens Maus <mail@jens-maus.de>
+---
+ kernel/Makefile         |   1 +
+ kernel/rpi_rf_mod_rgb.c | 145 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 146 insertions(+)
+ create mode 100644 kernel/rpi_rf_mod_rgb.c
 
 diff --git a/kernel/Makefile b/kernel/Makefile
-index 6bcb524..7655bcf 100644
+index 6bcb524..ce59a28 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
-@@ -8,2 +8,3 @@ obj-m += fake_hmrf.o
+@@ -6,6 +6,7 @@ obj-m += dw_apb_raw_uart.o
+ obj-m += meson_raw_uart.o
+ obj-m += fake_hmrf.o
  obj-m += rpi_rf_mod_led.o
 +obj-m += rpi_rf_mod_rgb.o
  obj-m += dummy_rx8130.o
+ obj-m += led_trigger_timer.o
+ obj-m += hb_rf_usb.o
 diff --git a/kernel/rpi_rf_mod_rgb.c b/kernel/rpi_rf_mod_rgb.c
 new file mode 100644
 index 0000000..e3012c4

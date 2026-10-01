@@ -6,9 +6,9 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-ID=${1:-$(resolve_latest_github_head_commit_for_path "alexreinert" "piVCCU" "kernel")}
+ID=${1:-$(resolve_latest_github_head_commit_for_path "OpenCCU" "piVCCU" "kernel")}
 PACKAGE_NAME="generic_raw_uart"
-PROJECT_URL="https://github.com/alexreinert/piVCCU"
+PROJECT_URL="https://github.com/OpenCCU/piVCCU"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
 CURRENT_ID=$(sed -nE 's/^GENERIC_RAW_UART_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
 

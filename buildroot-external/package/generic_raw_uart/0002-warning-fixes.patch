@@ -1,12 +1,27 @@
-kernel/generic_raw_uart.c: modification to fix compiler warnings
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Thu, 1 Oct 2026 18:53:24 +0000
+Subject: [PATCH] generic_raw_uart: declare internal helper functions static
 
-Upstream: Not applicable
+generic_raw_uart_get_gpio_index(), generic_raw_uart_get_led_gpio_index()
+and generic_raw_uart_probe_rtc_device() are only used within
+generic_raw_uart.c and are neither exported nor declared in a header.
+Declare them static to fix the -Wmissing-prototypes warnings emitted
+by kernels >= 6.8 (where -Wmissing-prototypes is enabled by default)
+and to avoid polluting the global kernel symbol namespace.
+
+Upstream: https://github.com/OpenCCU/piVCCU/pull/2
 
 Signed-off-by: Jens Maus <mail@jens-maus.de>
+---
+ kernel/generic_raw_uart.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- ./kernel/generic_raw_uart.c.orig	2026-06-09 22:40:40.710190017 +0200
-+++ ./kernel/generic_raw_uart.c	2026-06-09 22:42:31.418858544 +0200
-@@ -933,7 +933,7 @@
+diff --git a/kernel/generic_raw_uart.c b/kernel/generic_raw_uart.c
+index 2d48e0a..4a62b31 100644
+--- a/kernel/generic_raw_uart.c
++++ b/kernel/generic_raw_uart.c
+@@ -933,7 +933,7 @@ static int generic_raw_uart_proc_open(struct inode *inode, struct file *file)
  }
  #endif /*PROC_DEBUG*/
  
@@ -15,7 +30,7 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
  {
    int res;
    struct gpio_desc *gpiod = gpiod_get_index(dev, con_id, idx, GPIOD_ASIS);
-@@ -948,7 +948,7 @@
+@@ -948,7 +948,7 @@ int generic_raw_uart_get_gpio_index(struct device *dev, char *con_id, unsigned i
    return res;
  }
  
@@ -24,7 +39,7 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
  {
    if (instance->driver->get_led_gpio_index == 0)
    {
-@@ -1084,7 +1084,7 @@
+@@ -1084,7 +1084,7 @@ static inline bool i2c_client_has_driver(struct i2c_client *client)
  }
  #endif
  

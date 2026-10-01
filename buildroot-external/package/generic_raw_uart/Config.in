@@ -4,4 +4,4 @@ config BR2_PACKAGE_GENERIC_RAW_UART
 	  Adds support for generic-raw-uart kernel module
 
 	  Alexander Reinert <alex@areinert.de>
-	  https://github.com/alexreinert/piVCCU/tree/master/kernel
+	  https://github.com/OpenCCU/piVCCU/tree/master/kernel

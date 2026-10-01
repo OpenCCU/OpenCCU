@@ -233,10 +233,10 @@ The `eq3configd` and `ssdpd` daemons, their init scripts and user definitions ar
 | Package | Purpose | Source |
 |---------|---------|--------|
 | `openccu-base` | Native services, libraries, firmware, HMServer, WebUI and device types | github:OpenCCU/OpenCCU-Base |
-| `generic_raw_uart` | Low-latency UART kernel module for RF modules (RPI-RF-MOD, HM-MOD-RPI-PCB, HmIP-RFUSB) | github:alexreinert/piVCCU |
+| `generic_raw_uart` | Low-latency UART kernel module for RF modules (RPI-RF-MOD, HM-MOD-RPI-PCB, HmIP-RFUSB) | github:OpenCCU/piVCCU (fork of alexreinert/piVCCU) |
 | `bcm2835_raw_uart` | Legacy BCM2835 raw UART kernel module (RPi-specific predecessor) | local |
 | `rpi-rf-mod` | Meta package: compiles the correct DTS overlay for the RF module per board; uses `host-dtc` | local |
-| `detect_radio_module` | Tool that detects attached HM/HmIP RF modules at runtime | github:alexreinert/piVCCU |
+| `detect_radio_module` | Tool that detects attached HM/HmIP RF modules at runtime | github:OpenCCU/piVCCU (fork of alexreinert/piVCCU) |
 | `eq3_char_loop` | eQ-3 char loopback kernel module; revision follows `openccu-base` | github:OpenCCU/OpenCCU-Base, src/eq3_char_loop |
 | `recovery-system` | Nested Buildroot build producing the recovery initramfs (see above) | local |
 | `multilib32` | Nested Buildroot build producing 32-bit userspace libraries for 64-bit targets | local |
