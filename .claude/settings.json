@@ -1,7 +1,7 @@
 {
   "attribution": {
-    "commit": "",
-    "pr": "",
+    "commit": false,
+    "pr": false,
     "sessionUrl": false
   }
 }
