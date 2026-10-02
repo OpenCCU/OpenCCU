@@ -65,6 +65,8 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   # update package hash
   sed -i "$ d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
   echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+  # report upstream version to the dependency update workflow
+  report_github_commit_update "bmc" "daemonize" "${CURRENT_ID}" "${ID}" "release-"
 else
   echo "Failed to retrieve archive hash for ${PACKAGE_NAME}" >&2
   exit 1

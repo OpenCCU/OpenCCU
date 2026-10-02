@@ -105,3 +105,9 @@ sha256  ${GPL2_HASH}  licenses/gpl-2.0.txt
 sha256  ${LGPL21_HASH}  licenses/lgpl-2.1.txt
 sha256  ${ARCHIVE_HASH}  ${ARCHIVE_FILE}
 EOF
+
+# report upstream version to the dependency update workflow. As OpenCCU-Base
+# is commonly pinned to development commits which still carry the version of
+# the last release, the commit is described relative to the last release tag
+# (e.g. "3.89.11-60-gbe2b31c").
+report_github_commit_update "OpenCCU" "OpenCCU-Base" "${CURRENT_ID}" "${ID}"
