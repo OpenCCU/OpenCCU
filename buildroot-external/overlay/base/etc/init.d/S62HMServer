@@ -179,10 +179,125 @@ waitTimeSync() {
   fi
 }
 
+# Protect the HmIP security counter against the 32 bit overflow in
+# HMIPServer (cf. https://github.com/OpenCCU/OpenCCU/issues/4274). At startup
+# HMIPServer sets the security counter of the RF module to
+#   calc = (now - firstConnect) / 300ms + 1 + securityCounterOffset
+# (if calc is greater than the current counter), but only sends the lower
+# 32 bits of it. Once calc exceeds 2^32 (e.g. because a start with an
+# invalid system time raised the offset) the counter jumps backwards and all
+# HmIP devices drop the frames of the CCU as replays. Thus, before HMIPServer
+# is started we lower the offset in the access point files so that calc
+# stays below 2^32:
+#  - prevention: calc = offset+1 is not above the current counter of the RF
+#    module, thus HMIPServer keeps that counter and recalculates the offset
+#    itself ("Store corrected security counter offset").
+#  - repair (one-shot via /etc/config/HmIPSecurityCounterRepair): for a
+#    system already in the wrapped state, calc is set slightly above the
+#    highest counter the devices most likely have seen (offset+1 + margin).
+checkSecurityCounter() {
+  [[ -n "${HM_HMIP_DEV}" ]] || return 0
+
+  LIMIT=$((4294967296 - 100000))  # 2^32 minus ~8h of time based increase
+  MARGIN=10000000                  # frames sent with an invalid system time
+  REPAIR=/etc/config/HmIPSecurityCounterRepair
+  NOWMS=$(($(date +%s) * 1000))
+
+  for AP in /etc/config/crRFD/data/*.ap; do
+    [[ -f "${AP}" ]] || continue
+
+    # parse the kryo serialized access point (cf. HMIPAccessPointSerializer):
+    # class name (varint, varint, string), int version, string id, string
+    # address, long firstConnect, string nwkExchangeState, long offset
+    # shellcheck disable=SC2046
+    set -- $(od -An -v -tu1 "${AP}")
+    POS=0; IDX=0; VER=0; FC=0; OFFPOS=0; OFFSET=0
+    for FIELD in v v s i s s l s l; do
+      IDX=$((IDX + 1))
+      [[ ${IDX} -eq 9 ]] && OFFPOS=${POS}
+      case "${FIELD}" in
+        v) N=1 ;;
+        i) N=4 ;;
+        l) N=8 ;;
+        s) # ASCII string (last char | 0x80) or length prefixed (null/0/1 char)
+          if [[ $# -gt 0 ]] && [[ $1 -ge 128 ]]; then
+            [[ $1 -ge 192 ]] && break
+            N=$(($1 - 128)); [[ ${N} -eq 0 ]] && N=1
+          else
+            N=1
+            while [[ ${N} -le $# ]] && eval "[[ \${${N}} -lt 128 ]]"; do N=$((N + 1)); done
+          fi
+          ;;
+      esac
+      [[ $# -ge ${N} ]] || break
+      VALUE=0
+      while [[ ${N} -gt 0 ]]; do
+        VALUE=$(((VALUE << 8) | $1)); shift; POS=$((POS + 1)); N=$((N - 1))
+      done
+      case "${IDX}" in
+        4) VER=${VALUE} ;;
+        7) FC=${VALUE} ;;
+        9) OFFSET=${VALUE} ;;
+      esac
+    done
+    if [[ ${IDX} -ne 9 ]] || [[ ${VER} -lt 3 ]] || [[ ${VER} -gt 99 ]] ||
+       [[ ${FC} -le 0 ]] || [[ ${OFFSET} -ge 4294967296 ]]; then
+      continue
+    fi
+
+    # predict the calculation of HMIPServer (firstConnect is set to at least
+    # 2014-07-01 and is only used if it is in the past)
+    [[ ${FC} -lt 1404165600000 ]] && FC=1404165600000
+    DIFF=1
+    [[ ${FC} -lt ${NOWMS} ]] && DIFF=$(((NOWMS - FC) / 300 + 1))
+    if [[ $((DIFF + OFFSET)) -lt ${LIMIT} ]]; then
+      # remember that this access point was ok with a valid system time
+      [[ ${DIFF} -gt 1 ]] && [[ ! -e "${AP}.checked" ]] && touch "${AP}.checked"
+      continue
+    fi
+
+    if [[ -e ${REPAIR} ]]; then
+      TARGET=$((OFFSET + MARGIN))
+    elif [[ -e "${AP}.checked" ]]; then
+      TARGET=$((OFFSET + 1))
+    else
+      # already in the wrapped state before this check existed. Devices may
+      # have been power cycled since then and work fine, thus don't touch it.
+      echo -n "WARNING: HmIP security counter wrapped, "
+      logger -t HMIPServer -p user.warn "security counter of ${AP##*/} already wrapped (offset ${OFFSET}), touch ${REPAIR} to repair"
+      continue
+    fi
+    [[ ${TARGET} -gt ${LIMIT} ]] && TARGET=${LIMIT}
+    NEWOFFSET=$((TARGET - DIFF))
+
+    # write the new offset as 8 byte big endian long
+    ESC=""; N=56; BYTES=""
+    while [[ ${N} -ge 0 ]]; do
+      B=$(((NEWOFFSET >> N) & 255))
+      ESC="${ESC}\\$(printf '%03o' "${B}")"; BYTES="${BYTES} ${B}"
+      N=$((N - 8))
+    done
+    cp -a "${AP}" "${AP}.bak"
+    cp -a "${AP}" "${AP}.new"
+    # shellcheck disable=SC2059
+    printf "${ESC}" | dd of="${AP}.new" bs=1 seek="${OFFPOS}" count=8 conv=notrunc 2>/dev/null
+    if [[ "$(od -An -v -tu1 -j "${OFFPOS}" -N 8 "${AP}.new" | xargs)" == "${BYTES# }" ]] &&
+       mv "${AP}.new" "${AP}"; then
+      echo -n "security counter offset fixed, "
+      logger -t HMIPServer -p user.warn "security counter offset of ${AP##*/} changed from ${OFFSET} to ${NEWOFFSET} (calc ${TARGET})"
+    else
+      rm -f "${AP}.new"
+      echo -n "ERROR: security counter fix failed, "
+    fi
+  done
+  rm -f ${REPAIR}
+}
+
 start() {
   echo -n "Starting HMIPServer: "
   waitTimeSync
   init
+  checkSecurityCounter
 
   # get the architecture
   ARCH=$(uname -m)
