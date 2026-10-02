@@ -379,7 +379,13 @@
       "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "ff216fde12b38abec4d7abb90acf27b39c99c2cd",
+    "base_pr": 106,
+    "cleanup_pr": null,
+    "patch": "0045-WebUI-GlobalSysVarUsage.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "21fb5a113c6f50ac93c18d37e1534e208c12b1ae",

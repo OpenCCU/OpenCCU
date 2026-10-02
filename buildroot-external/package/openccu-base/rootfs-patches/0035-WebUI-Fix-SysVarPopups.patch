@@ -11,7 +11,7 @@
          string s = "Unbekannt: " # sysvar.ValueSubType();
 --- a/www/rega/pages/msg/sysVarsArray.htm
 +++ b/www/rega/pages/msg/sysVarsArray.htm
-@@ -19,7 +19,7 @@
+@@ -16,7 +16,7 @@
            Write("tmp['id'] = '"#oSysVar.ID()#"';");
            Write("tmp['trid'] = 'svd"#oSysVar.ID()#"';");
            Write("tmp['name'] = '"#oSysVar.Name()#"';");
@@ -20,7 +20,7 @@
  
            ! "Set once when the system is starting for the first time by hm_autoconf - see create_sysvars
            ! The text of the description is then fix either german or english. Therefore we have to translate the value here
-@@ -55,7 +55,7 @@
+@@ -52,7 +52,7 @@
            { 
              Write("tmp['type'] = 'enum';");
              Write("tmp['typenames'] = translateKey('lblValueList');");
@@ -31,7 +31,7 @@
            { 
 --- a/www/rega/pages/msg/sysVarsArrayAll.htm
 +++ b/www/rega/pages/msg/sysVarsArrayAll.htm
-@@ -20,7 +20,7 @@
+@@ -17,7 +17,7 @@
            Write("tmp['trid'] = 'svd"#oSysVar.ID()#"';");
            Write("tmp['name'] = '"#oSysVar.Name()#"';");
  
@@ -40,7 +40,7 @@
  
            ! "Set once when the system is starting for the first time by hm_autoconf - see create_sysvars
            ! The text of the description is then fix either german or english. Therefore we have to translate the value here
-@@ -57,7 +57,7 @@
+@@ -54,7 +54,7 @@
            { 
              Write("tmp['type'] = 'enum';");
              Write("tmp['typenames'] = translateKey('lblValueList');");
@@ -82,7 +82,7 @@
        if( obj )
 --- a/www/rega/pages/tabs/control/sysvars.htm
 +++ b/www/rega/pages/tabs/control/sysvars.htm
-@@ -91,7 +91,7 @@
+@@ -87,7 +87,7 @@
                  string trId = "sysvar"#o.ID();
                  WriteLine( '<tr id="'#trId#'" class="CLASS03305">' );
                  WriteLine( '<td class="tBodyCell">' # o.Name() # '</td>' );

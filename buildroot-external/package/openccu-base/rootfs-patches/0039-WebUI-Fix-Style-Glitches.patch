@@ -1829,7 +1829,7 @@
        <tr>
 --- a/www/rega/pages/tabs/control/sysvars.htm
 +++ b/www/rega/pages/tabs/control/sysvars.htm
-@@ -46,14 +46,14 @@
+@@ -42,14 +42,14 @@
  <div id="prgcontent">
    <table id="sysvarsListTable" class="tTable tblList CLASS03301 hidden" border="0" cellpadding="0" cellspacing="0" >
      <colgroup>

@@ -11,9 +11,6 @@
       object oSysVar = dom.GetObject( s );
       if( oSysVar )
       {
-        object oChannel = dom.GetObject( oSysVar.Channel() );
-        if( !oChannel )
-        {
           integer iVST = oSysVar.ValueSubType();
           Write("var tmp = new Object();");
           Write("tmp['id'] = '"#oSysVar.ID()#"';");
@@ -73,7 +70,6 @@
           }
           Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
           Write("arSysVars[arSysVars.length] = tmp;");
-        }
       }
     }
   }

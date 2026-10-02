@@ -27,11 +27,7 @@
           object oTmp = dom.GetObject( sTmp );
           if( oTmp )
           {
-            object oChTmp = dom.GetObject( oTmp.Channel() );
-            if( !oChTmp )
-            {
-              oUser.UserTempViewIDs().Add( oTmp.ID() );
-            }
+            oUser.UserTempViewIDs().Add( oTmp.ID() );
           }
         }
       }
