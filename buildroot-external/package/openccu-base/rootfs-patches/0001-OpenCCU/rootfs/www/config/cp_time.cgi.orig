@@ -144,7 +144,7 @@ proc action_put_page {} {
   global env LOCATIONS TIMEZONES
   
   set iso8601_date [exec date -Iseconds]
-  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-]\d+)$} $iso8601_date dummy year month day hour minute second zone
+  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-].+)$} $iso8601_date dummy year month day hour minute second zone
   
   puts "<div id=\"dragTime\">"
 

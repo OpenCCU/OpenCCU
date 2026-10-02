@@ -63,7 +63,7 @@
       ],
       "patch": "0007-WebUI-Enhanced-FirmwareUpdate.patch",
       "removed": 102,
-      "sha256": "a7a5b7d7b6555481829bb63d616842d6ad5d7fac49d51dc5d321e20c009d8cf8"
+      "sha256": "84cbd11d2c413b9010f4d1f41ff8aea8dada11388e480dcb24075d8427aef7ca"
     },
     {
       "added": 0,
@@ -741,17 +741,6 @@
       "sha256": "e80c846d418ae69c349016e4ca8990a79cf85baef057e6e26b9e0f2f8bcf467f"
     },
     {
-      "added": 3,
-      "files": [
-        "www/config/backup.tcl",
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_time.cgi"
-      ],
-      "patch": "0118-WebUI-Fix-ISO8601-DateUses.patch",
-      "removed": 3,
-      "sha256": "639f42aef8e1e4ae119e8986d3a93f74af9cb990e5f2cb6213ccc47400cce22d"
-    },
-    {
       "added": 211,
       "files": [
         "www/config/easymodes/cc_rt_dev_master.tcl",
@@ -1405,5 +1394,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "8cedff53b4a92a5ff5cc2b0881b36066df09d28ce567045e4e7f4cc4cc49add0"
+  "series_sha256": "cb85353b95d2635cb7a16cf911300ce74801936fc85a600000a652f0c7f4dae9"
 }

@@ -1391,7 +1391,7 @@ proc action_apply_logging {} {
 proc action_download_logfile {} {
   set HOSTNAME [exec hostname]
   set iso8601_date [exec date -Iseconds]
-  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-]\d+)$} $iso8601_date dummy year month day hour minute second zone
+  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-].+)$} $iso8601_date dummy year month day hour minute second zone
   
   puts "Content-Type:application/x-download"
   puts "Content-Disposition:attachment;filename=[set HOSTNAME]-$year-$month-$day.log\n"
