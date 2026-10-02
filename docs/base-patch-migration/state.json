@@ -337,7 +337,13 @@
       "patch": "0118-WebUI-Fix-ISO8601-DateUses.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "f139f24c3f388bb3f999fa351a970e247eeb2d99",
+    "base_pr": 98,
+    "cleanup_pr": null,
+    "patch": "0198-WebUI-Fix-StringTableValue.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "920745586d71846d9f0e91ea1a79c61d600eb387",
