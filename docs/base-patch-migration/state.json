@@ -359,18 +359,24 @@
       "base_pr": 101,
       "cleanup_pr": 4315,
       "patch": "0187-WebUI-Fix-GroupEditingIfDevicesInInbox.patch"
+    },
+    {
+      "base_merge_commit": "eacd676afb4fb2192490614cb5c14829fc7bba0a",
+      "base_pr": 103,
+      "cleanup_pr": 4316,
+      "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "eacd676afb4fb2192490614cb5c14829fc7bba0a",
-    "base_pr": 103,
-    "cleanup_pr": 4316,
-    "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch",
+    "base_merge_commit": "e45050a62e251b976cee764d2dbd46284ea2d926",
+    "base_pr": 104,
+    "cleanup_pr": 4318,
+    "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "c00b3c08a1efb664d467a1dfa69b37a93169f541",
-  "verified_base_pin": "790e48ab62e486e085d554317e22cd5eec08f194",
-  "verified_source_sha256": "6067ee6e0e3331b454f681b863e6cbc350fbec0740309f5fc0da1bcd6baa5e12"
+  "verified_at_openccu_commit": "c59e274b10e5ca625009b59a8d7bac352f4433a4",
+  "verified_base_pin": "eacd676afb4fb2192490614cb5c14829fc7bba0a",
+  "verified_source_sha256": "57512cf26ef0a7239fd0b7d5bae7c45800fc04005c63f42a2767ecdbb68394d8"
 }

@@ -34,7 +34,6 @@
 0073-WebUI-AstroDelays.patch
 0075-WebUI-Fix-HTMLinUserFavorites.patch
 0077-WebUI-NegateCondition.patch
-0084-WebUI-Fix-InvalidObjectCrashes.patch
 0085-WebUI-AddonPopupScrollable.patch
 0086-WebUI-Fix-500Errors.patch
 0087-WebUI-Fix-DoubleSIDs.patch

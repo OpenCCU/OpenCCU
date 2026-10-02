@@ -525,16 +525,6 @@
       "sha256": "76b80b6c4b4dfcf8aa836266f856fb8ac6fe54273d6e569e2577ec774570ea1d"
     },
     {
-      "added": 9,
-      "files": [
-        "www/rega/pages/tabs/admin/views/roomchannels.htm",
-        "www/rega/pages/tabs/admin/views/rooms.htm"
-      ],
-      "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch",
-      "removed": 2,
-      "sha256": "fd30835e39bde942367ac68b5d23617267a9bba6233a73669e4012e4c38b5fb2"
-    },
-    {
       "added": 12,
       "files": [
         "www/config/cp_maintenance.cgi",
@@ -1348,5 +1338,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "0e52108b9ac000911797201b05d8584a28965d1aea11020332d32b5d066a39b4"
+  "series_sha256": "203c72c8cebf3d481749702d74a45a95ec226940b063d5bccae2bd4de70c7f9f"
 }
