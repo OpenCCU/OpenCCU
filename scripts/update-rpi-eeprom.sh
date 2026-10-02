@@ -129,8 +129,8 @@ if [[ -n "${ARCHIVE_HASH}" ]]; then
   report_update_version_label "$(rpi_eeprom_version_label "${RPI4_FIRMWARE_PATH}" "${RPI5_FIRMWARE_PATH}" "${CURRENT_RPI4_FIRMWARE_PATH}" "${CURRENT_RPI5_FIRMWARE_PATH}")"
   report_update_details "$(cat <<EOF
 - Changes........: ${PROJECT_URL}/compare/${CURRENT_ID:0:7}...${ID:0:7}
-- RPi4 pieeprom..: \`${CURRENT_RPI4_FIRMWARE_PATH:-n/a}\` → \`${RPI4_FIRMWARE_PATH:-n/a}\`
-- RPi5 pieeprom..: \`${CURRENT_RPI5_FIRMWARE_PATH:-n/a}\` → \`${RPI5_FIRMWARE_PATH:-n/a}\`
+- RPi4 pieeprom..: \`${CURRENT_RPI4_FIRMWARE_PATH:-n/a}\` → \`${RPI4_FIRMWARE_PATH:-${CURRENT_RPI4_FIRMWARE_PATH:-n/a}}\`
+- RPi5 pieeprom..: \`${CURRENT_RPI5_FIRMWARE_PATH:-n/a}\` → \`${RPI5_FIRMWARE_PATH:-${CURRENT_RPI5_FIRMWARE_PATH:-n/a}}\`
 EOF
 )"
 else
