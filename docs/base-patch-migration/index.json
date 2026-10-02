@@ -1239,16 +1239,6 @@
       "sha256": "dc506eeccddca4040869cb7f10f8f027adef5301b6e401fd7e1fe9770fcdb137"
     },
     {
-      "added": 6,
-      "files": [
-        "opt/HMServer/pages/GroupEditPage.ftl",
-        "www/webui/js/common/viewmodels.js"
-      ],
-      "patch": "0187-WebUI-Fix-GroupEditingIfDevicesInInbox.patch",
-      "removed": 2,
-      "sha256": "b9600cf14e470c9ee0febbdc603f6e352898e64ba44ebf4ba68d2a2538976212"
-    },
-    {
       "added": 9,
       "files": [
         "www/webui/webui.js"
@@ -1367,5 +1357,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "3a910511149df9b591a6a683d5c13926f2330fa32f68e0e27336c2522bf63293"
+  "series_sha256": "da0afdcbeac078f14d69bc2aa5ba0513388234c1735e92add16a21e9458a7ffe"
 }
