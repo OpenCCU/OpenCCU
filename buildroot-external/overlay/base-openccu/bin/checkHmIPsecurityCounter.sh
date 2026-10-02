@@ -35,25 +35,32 @@ LIMIT=$((WRAP - 100000))        # 2^32 minus ~8h of time based increase
 MARGIN=10000000                 # frames sent with an invalid system time
 MINFC=1404165600000             # 2014-07-01 (minimum firstConnect of HMIPServer)
 
-# parse the kryo serialized access point file $1 (cf. HMIPAccessPointSerializer):
-# class name (varint, varint, string), int version, string id, string address,
-# long firstConnect, string nwkExchangeState, long securityCounterOffset.
-# Sets VER, FC, OFFSET and OFFPOS (file position of the offset).
+# parse the kryo serialized access point file $1 (Kryo.writeClassAndObject()
+# and HMIPAccessPointSerializer): class name (varint 1, varint name id,
+# string), reference marker (varint 1), int version, string id, string
+# address, long firstConnect, string nwkExchangeState, long
+# securityCounterOffset. Sets VER, FC, OFFSET and OFFPOS (file position of
+# the offset).
 parseAP() {
   # shellcheck disable=SC2046
   set -- $(od -An -v -tu1 "$1")
-  POS=0; IDX=0; VER=0; FC=0; OFFPOS=0; OFFSET=0
-  for FIELD in v v s i s s l s l; do
+  POS=0; IDX=0; CLS=0; REF=0; VER=0; FC=0; OFFPOS=0; OFFSET=0
+  for FIELD in v v s v i s s l s l; do
     IDX=$((IDX + 1))
-    [[ ${IDX} -eq 9 ]] && OFFPOS=${POS}
+    [[ ${IDX} -eq 10 ]] && OFFPOS=${POS}
     case "${FIELD}" in
       v) N=1 ;;
       i) N=4 ;;
       l) N=8 ;;
-      s) # ASCII string (last char | 0x80) or length prefixed (null/0/1 char)
+      s) # ASCII string (2-63 chars, last char | 0x80) or string with UTF8
+         # length prefix (charCount+1, 6+7 bits) for null/0/1/>=64 chars
         if [[ $# -gt 0 ]] && [[ $1 -ge 128 ]]; then
-          [[ $1 -ge 192 ]] && return 1
-          N=$(($1 - 128)); [[ ${N} -eq 0 ]] && N=1
+          LEN=$(($1 & 63)); N=1
+          if [[ $(($1 & 64)) -ne 0 ]]; then
+            [[ $# -ge 2 ]] && [[ $2 -lt 128 ]] || return 1
+            LEN=$((LEN | ($2 << 6))); N=2
+          fi
+          [[ ${LEN} -gt 0 ]] && N=$((N + LEN - 1))
         else
           N=1
           while [[ ${N} -le $# ]] && eval "[[ \${${N}} -lt 128 ]]"; do N=$((N + 1)); done
@@ -66,12 +73,15 @@ parseAP() {
       VALUE=$(((VALUE << 8) | $1)); shift; POS=$((POS + 1)); N=$((N - 1))
     done
     case "${IDX}" in
-      4) VER=${VALUE} ;;
-      7) FC=${VALUE} ;;
-      9) OFFSET=${VALUE} ;;
+      1) CLS=${VALUE} ;;
+      4) REF=${VALUE} ;;
+      5) VER=${VALUE} ;;
+      8) FC=${VALUE} ;;
+      10) OFFSET=${VALUE} ;;
     esac
   done
-  [[ ${VER} -ge 3 ]] && [[ ${VER} -le 99 ]] && [[ ${FC} -gt 0 ]] && [[ ${OFFSET} -lt ${WRAP} ]]
+  [[ ${CLS} -eq 1 ]] && [[ ${REF} -eq 1 ]] && [[ ${VER} -ge 3 ]] && [[ ${VER} -le 99 ]] &&
+    [[ ${FC} -gt 0 ]] && [[ ${OFFSET} -lt ${WRAP} ]]
 }
 
 # predict the calculation of HMIPServer (firstConnect is set to at least
