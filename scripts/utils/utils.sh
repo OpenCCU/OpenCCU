@@ -157,3 +157,32 @@ function exit_if_version_unchanged() {
     exit 0
   fi
 }
+
+# Report a human readable version label for the update (e.g. a firmware
+# release date when the package itself is pinned to a commit SHA). Used by
+# the dependency update workflow for the PR title and commit message instead
+# of the plain package version. No-op outside of GitHub Actions.
+function report_update_version_label() {
+  local label=${1}
+
+  if [[ -n "${GITHUB_OUTPUT}" && -n "${label}" ]]; then
+    echo "version_label=${label}" >>"${GITHUB_OUTPUT}"
+  fi
+}
+
+# Report additional (markdown) details about the update which are appended
+# to the PR body by the dependency update workflow. No-op outside of GitHub
+# Actions.
+function report_update_details() {
+  local details=${1}
+  local delimiter
+
+  if [[ -n "${GITHUB_OUTPUT}" && -n "${details}" ]]; then
+    delimiter="EOF_$(date +%s%N)"
+    {
+      echo "details<<${delimiter}"
+      echo "${details}"
+      echo "${delimiter}"
+    } >>"${GITHUB_OUTPUT}"
+  fi
+}
