@@ -1340,15 +1340,6 @@
       "sha256": "c6aab4e4cbfdf19991edcebf7391073ae6e5e0fefd5f739b9c22158ff2daf061"
     },
     {
-      "added": 1,
-      "files": [
-        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl"
-      ],
-      "patch": "0197-WebUI-Fix-MissingRouterOption.patch",
-      "removed": 1,
-      "sha256": "5666f0e11de88b9dcb3e3e2a44344569157c6ab29e4a477de81677646fb2b2f0"
-    },
-    {
       "added": 13,
       "files": [
         "www/rega/pages/tabs/control/systemProtocol.htm",
@@ -1385,5 +1376,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "0671755eb83b9a71723febe779e89ad9c260c29cd8df9ea3d48d52241d9f70f7"
+  "series_sha256": "6dcfa2a5ea5c38d7066f627af6227639a371dd957f64945105e3053ef7ac1c7a"
 }

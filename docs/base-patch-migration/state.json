@@ -343,7 +343,13 @@
       "patch": "0198-WebUI-Fix-StringTableValue.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "b507f3ebd0ffd01a54de1b543bd9bfa20372486b",
+    "base_pr": 99,
+    "cleanup_pr": null,
+    "patch": "0197-WebUI-Fix-MissingRouterOption.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "ad7e893870681754b525064531e3f45e47c7e496",
