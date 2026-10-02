@@ -275,7 +275,7 @@ proc action_put_page {} {
       set scriptsList {}
       foreach s $scripts {
         array set sw_info ""
-        get_info $s sw_info
+        if { [catch { get_info $s sw_info }] } continue
         if { ![info exists sw_info(Name)] } continue
         lappend scriptsList [list $sw_info(Name) $s]
       }
