@@ -142,8 +142,13 @@ check() {
     elif [[ -e "${AP}.checked" ]]; then
       TARGET=$((OFFSET + 1))
     else
-      # already in the wrapped state before this check existed
-      echo -n "WARNING: HmIP security counter wrapped, "
+      # already in the wrapped state (or about to wrap) before this check
+      # existed
+      if [[ ${CALC} -lt ${WRAP} ]]; then
+        echo -n "WARNING: HmIP security counter at 32 bit limit, "
+      else
+        echo -n "WARNING: HmIP security counter wrapped, "
+      fi
       logger -t HMIPServer -p user.warn "security counter of ${AP##*/} already wrapped (offset ${OFFSET}), see checkHmIPsecurityCounter.sh"
       continue
     fi
@@ -155,7 +160,7 @@ check() {
     # at the next start, while skipping the change would wrap the counter.
     NEWOFFSET=$((TARGET - DIFF))
     if writeOffset "${AP}" "${NEWOFFSET}" "${OFFPOS}"; then
-      echo -n "security counter offset fixed, "
+      echo -n "WARNING: security counter offset fixed, "
       logger -t HMIPServer -p user.warn "security counter offset of ${AP##*/} changed from ${OFFSET} to ${NEWOFFSET} (calc ${TARGET})"
     else
       echo -n "ERROR: security counter fix failed, "
@@ -193,8 +198,13 @@ status() {
       echo "  state:        WARNING: 32 bit limit reached, offset is corrected at next HMIPServer start"
       echo "                (counter only increases with sent frames from now on)"
     else
-      echo "  calculation:  ${CALC} (sent as $((CALC % WRAP)))"
-      echo "  state:        ERROR: security counter already wrapped."
+      if [[ ${CALC} -lt ${WRAP} ]]; then
+        echo "  calculation:  ${CALC}"
+        echo "  state:        ERROR: security counter about to wrap (32 bit limit reached)."
+      else
+        echo "  calculation:  ${CALC} (sent as $((CALC % WRAP)))"
+        echo "  state:        ERROR: security counter already wrapped."
+      fi
       if [[ -e "${REPAIR}" ]]; then
         echo "                Repair requested, it is applied at the next system reboot."
       else
