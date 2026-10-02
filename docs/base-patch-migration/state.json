@@ -329,18 +329,24 @@
       "base_pr": 96,
       "cleanup_pr": 4303,
       "patch": "0201-WebUI-Fix-SystemFnSyntax.patch"
+    },
+    {
+      "base_merge_commit": "be2b31ce8112e559919c8c1f9a0d536ca3ef8772",
+      "base_pr": 97,
+      "cleanup_pr": 4306,
+      "patch": "0118-WebUI-Fix-ISO8601-DateUses.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "be2b31ce8112e559919c8c1f9a0d536ca3ef8772",
-    "base_pr": 97,
-    "cleanup_pr": 4306,
-    "patch": "0118-WebUI-Fix-ISO8601-DateUses.patch",
+    "base_merge_commit": "f139f24c3f388bb3f999fa351a970e247eeb2d99",
+    "base_pr": 98,
+    "cleanup_pr": 4307,
+    "patch": "0198-WebUI-Fix-StringTableValue.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "6aa44f53d2b09601359aaf3daa814239fbe3dfc8",
-  "verified_base_pin": "ee18da873c77ef2feb0b1e462dae482027d7ef13",
-  "verified_source_sha256": "a12d6983fdb347293694f00537a6eba7a23a16fa6d15ee43bb56c56d4a0d39a6"
+  "verified_at_openccu_commit": "920745586d71846d9f0e91ea1a79c61d600eb387",
+  "verified_base_pin": "be2b31ce8112e559919c8c1f9a0d536ca3ef8772",
+  "verified_source_sha256": "8faa7de4612409a6fe3515fef4eff0718801e4e817211583d2e445a369fb915f"
 }

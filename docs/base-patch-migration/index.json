@@ -1349,15 +1349,6 @@
       "sha256": "5666f0e11de88b9dcb3e3e2a44344569157c6ab29e4a477de81677646fb2b2f0"
     },
     {
-      "added": 1,
-      "files": [
-        "www/config/ic_common.tcl"
-      ],
-      "patch": "0198-WebUI-Fix-StringTableValue.patch",
-      "removed": 1,
-      "sha256": "16213ee8588c0c0cd7775f48eb7f4f6920c07184da10428df38e35618d845688"
-    },
-    {
       "added": 13,
       "files": [
         "www/rega/pages/tabs/control/systemProtocol.htm",
@@ -1394,5 +1385,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "cb85353b95d2635cb7a16cf911300ce74801936fc85a600000a652f0c7f4dae9"
+  "series_sha256": "0671755eb83b9a71723febe779e89ad9c260c29cd8df9ea3d48d52241d9f70f7"
 }
