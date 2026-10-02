@@ -376,7 +376,7 @@
   "in_progress": {
     "base_merge_commit": "d6e23888d300f133d65f3122b5e647f3699106ba",
     "base_pr": 105,
-    "cleanup_pr": null,
+    "cleanup_pr": 4320,
     "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
