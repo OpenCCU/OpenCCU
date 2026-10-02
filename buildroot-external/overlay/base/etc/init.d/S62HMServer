@@ -184,6 +184,12 @@ start() {
   waitTimeSync
   init
 
+  # protect the HmIP security counter against the 32 bit overflow in
+  # HMIPServer (cf. https://github.com/OpenCCU/OpenCCU/issues/4274)
+  if [[ -n "${HM_HMIP_DEV}" ]] && [[ -x /bin/checkHmIPsecurityCounter.sh ]]; then
+    /bin/checkHmIPsecurityCounter.sh check
+  fi
+
   # get the architecture
   ARCH=$(uname -m)
 
