@@ -1,23 +1,23 @@
 --- a/www/rega/pages/msg/sysVarsArray.htm
 +++ b/www/rega/pages/msg/sysVarsArray.htm
-@@ -70,6 +70,7 @@
+@@ -67,6 +67,7 @@
              Write("tmp['values'] = '';");
            }
            Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
 +          Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
            Write("arSysVars[arSysVars.length] = tmp;");
-         }
        }
+     }
 --- a/www/rega/pages/msg/sysVarsArrayAll.htm
 +++ b/www/rega/pages/msg/sysVarsArrayAll.htm
-@@ -72,6 +72,7 @@
+@@ -69,6 +69,7 @@
              Write("tmp['values'] = '';");
            }
            Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
 +          Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
            Write("arSysVars[arSysVars.length] = tmp;");
-         }
        }
+     }
 --- a/www/rega/pages/msg/sysVarsSelection.htm
 +++ b/www/rega/pages/msg/sysVarsSelection.htm
 @@ -67,12 +67,11 @@

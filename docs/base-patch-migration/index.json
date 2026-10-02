@@ -134,7 +134,7 @@
       ],
       "patch": "0029-WebUI-Fix-Variable-selection-and-filter.patch",
       "removed": 24,
-      "sha256": "b1b4512398af0f2d0b4aeebffe8c80a0a6b8e1f2861d9b7aa78b45151446f0f9"
+      "sha256": "f8220dd30d57ff66a0ab7e9a7d55cfe3c9ac5d73fe8e6d87e282ef7ee133a75f"
     },
     {
       "added": 370,
@@ -174,7 +174,7 @@
       ],
       "patch": "0035-WebUI-Fix-SysVarPopups.patch",
       "removed": 11,
-      "sha256": "57197a0c21d6dfc1d1ea23fe11a11290fb450c75c1c0e26c0031b3b955f3272d"
+      "sha256": "ac47ab6615ac0edc5673797a7f95f99ea6ffe2bf67e233b57b3861b5d2b96083"
     },
     {
       "added": 42,
@@ -263,7 +263,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 652,
-      "sha256": "5627e1eba4d3c5bee93d80b4b762298a0bc275a03121a483672a686d9d0936db"
+      "sha256": "4867b32ec223e0e21d6678c86936d82093ff3edef3c4a4440bc5c31185d86465"
     },
     {
       "added": 33,
@@ -314,17 +314,6 @@
       "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
       "removed": 3,
       "sha256": "3da7cee7493fbcc28fa670d1caa0f5065c9d32ae0bdf168a8bbe63943061eb8d"
-    },
-    {
-      "added": 1,
-      "files": [
-        "www/rega/pages/msg/sysVarsArray.htm",
-        "www/rega/pages/msg/sysVarsArrayAll.htm",
-        "www/rega/pages/tabs/control/sysvars.htm"
-      ],
-      "patch": "0045-WebUI-GlobalSysVarUsage.patch",
-      "removed": 13,
-      "sha256": "94dffa883ac41eadb82135eacca74494339ad69770075fc86b29d5f31a42d662"
     },
     {
       "added": 305,
@@ -1329,5 +1318,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1d62e1d580bfce664aa9e2bfd8d53d2ab44c51772540d55ea27cd3e8af4698cc"
+  "series_sha256": "2e1c46fdbbb27e153cc937adcf288177b4afd675f73cf4fc270fe370393b1cb9"
 }
