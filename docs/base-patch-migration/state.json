@@ -349,7 +349,13 @@
       "patch": "0197-WebUI-Fix-MissingRouterOption.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "b74e421d45ff041066d9dc71196fa6a156a4acd4",
+    "base_pr": 100,
+    "cleanup_pr": null,
+    "patch": "0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "93df30667fda364404c43db3bc3eec036c84329a",

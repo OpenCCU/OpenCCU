@@ -685,15 +685,6 @@
       "sha256": "6bc3368f37e9e41230818c1dbc0024cdbf734281f1358876a779c85d9056d989"
     },
     {
-      "added": 6,
-      "files": [
-        "www/config/cp_add_device.cgi"
-      ],
-      "patch": "0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch",
-      "removed": 2,
-      "sha256": "2231716b81895056474dd7ebbb71f35a2e43c55e2956a0f040ae92ca39af90e5"
-    },
-    {
       "added": 3,
       "files": [
         "www/webui/webui.js"
@@ -1376,5 +1367,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "6dcfa2a5ea5c38d7066f627af6227639a371dd957f64945105e3053ef7ac1c7a"
+  "series_sha256": "3a910511149df9b591a6a683d5c13926f2330fa32f68e0e27336c2522bf63293"
 }
