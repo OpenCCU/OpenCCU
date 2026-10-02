@@ -373,7 +373,13 @@
       "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "d6e23888d300f133d65f3122b5e647f3699106ba",
+    "base_pr": 105,
+    "cleanup_pr": null,
+    "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "bd3f608c4e76ff0d66ed8f1ea953ca82bb98ec64",

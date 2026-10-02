@@ -620,15 +620,6 @@
       "sha256": "e2b25781f299d2f3625fb4bf052394d56c288306cb1b146f4b660c206a71ec56"
     },
     {
-      "added": 8,
-      "files": [
-        "www/config/cp_software.cgi"
-      ],
-      "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch",
-      "removed": 0,
-      "sha256": "1f4cd213ed1c9f1269c48808663fed51baec3654fefd3a3e5119068748bbacc7"
-    },
-    {
       "added": 213,
       "files": [
         "www/rega/esp/system.fn",
@@ -1338,5 +1329,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "203c72c8cebf3d481749702d74a45a95ec226940b063d5bccae2bd4de70c7f9f"
+  "series_sha256": "1d62e1d580bfce664aa9e2bfd8d53d2ab44c51772540d55ea27cd3e8af4698cc"
 }
