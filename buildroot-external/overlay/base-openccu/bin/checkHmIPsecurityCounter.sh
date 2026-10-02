@@ -23,9 +23,10 @@
 #          Systems already wrapped before this check existed are only
 #          reported, because their devices may have been power cycled since
 #          then and work fine.
-#  repair  repair an already wrapped security counter: calc is set slightly
-#          above the highest counter the devices most likely have seen before
-#          the wrap (offset+1 + margin) and HMIPServer+ReGaHss are restarted.
+#  repair  request the repair of an already wrapped security counter at the
+#          next start of HMIPServer (a reboot of the system is recommended):
+#          calc is then set slightly above the highest counter the devices
+#          most likely have seen before the wrap (offset+1 + margin).
 #
 
 DATADIR=/etc/config/crRFD/data
@@ -123,6 +124,7 @@ duration() {
   fi
 }
 
+# protect the security counter before HMIPServer is started (S62HMServer)
 check() {
   FAILED=0
   for AP in "${DATADIR}"/*.ap; do
@@ -164,6 +166,7 @@ check() {
   [[ ${FAILED} -eq 0 ]] && rm -f "${REPAIR}"
 }
 
+# show the security counter state of all access points (returns 1 on errors)
 status() {
   RC=0
   FOUND=0
@@ -191,8 +194,13 @@ status() {
       echo "                (counter only increases with sent frames from now on)"
     else
       echo "  calculation:  ${CALC} (sent as $((CALC % WRAP)))"
-      echo "  state:        ERROR: security counter already wrapped. If HmIP devices are"
-      echo "                unreachable, power cycle them or run '$0 repair'"
+      echo "  state:        ERROR: security counter already wrapped."
+      if [[ -e "${REPAIR}" ]]; then
+        echo "                Repair requested, it is applied at the next system reboot."
+      else
+        echo "                If HmIP devices are unreachable, power cycle them or run"
+        echo "                '$0 repair' and reboot the system."
+      fi
       RC=1
     fi
   done
@@ -200,6 +208,7 @@ status() {
   return ${RC}
 }
 
+# request the repair of a wrapped security counter at the next HMIPServer start
 repair() {
   WRAPPED=0
   for AP in "${DATADIR}"/*.ap; do
@@ -213,16 +222,10 @@ repair() {
     return 0
   fi
 
+  # the repair is applied by S62HMServer (cf. check) before HMIPServer is
+  # started the next time
   touch "${REPAIR}"
-  if [[ -e /var/run/HMIPServer.pid ]]; then
-    # the repair is applied by S62HMServer (cf. check) before HMIPServer is
-    # started again. ReGaHss has to be restarted to re-register at HMIPServer
-    /etc/init.d/S62HMServer restart
-    /etc/init.d/S70ReGaHss restart
-    status
-  else
-    echo "The repair is applied at the next start of HMIPServer."
-  fi
+  echo "Repair of the HmIP security counter requested. Please reboot the system to apply it."
 }
 
 NOWMS=$(($(date +%s) * 1000))
