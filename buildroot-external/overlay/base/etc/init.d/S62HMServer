@@ -268,6 +268,10 @@ checkSecurityCounter() {
       continue
     fi
     [[ ${TARGET} -gt ${LIMIT} ]] && TARGET=${LIMIT}
+    # NEWOFFSET can be negative (system time far in the future or ~40 years
+    # after firstConnect). This is intended: HMIPServer itself stores negative
+    # offsets (current counter - time difference) and recalculates the offset
+    # at the next start, while skipping the change would wrap the counter.
     NEWOFFSET=$((TARGET - DIFF))
 
     # write the new offset as 8 byte big endian long
@@ -277,7 +281,7 @@ checkSecurityCounter() {
       ESC="${ESC}\\$(printf '%03o' "${B}")"; BYTES="${BYTES} ${B}"
       N=$((N - 8))
     done
-    cp -a "${AP}" "${AP}.bak"
+    [[ -e "${AP}.bak" ]] || cp -a "${AP}" "${AP}.bak"
     cp -a "${AP}" "${AP}.new"
     # shellcheck disable=SC2059
     printf "${ESC}" | dd of="${AP}.new" bs=1 seek="${OFFPOS}" count=8 conv=notrunc 2>/dev/null
