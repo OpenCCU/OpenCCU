@@ -371,18 +371,18 @@
       "base_pr": 104,
       "cleanup_pr": 4318,
       "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch"
+    },
+    {
+      "base_merge_commit": "d6e23888d300f133d65f3122b5e647f3699106ba",
+      "base_pr": 105,
+      "cleanup_pr": 4320,
+      "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "d6e23888d300f133d65f3122b5e647f3699106ba",
-    "base_pr": 105,
-    "cleanup_pr": 4320,
-    "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "bd3f608c4e76ff0d66ed8f1ea953ca82bb98ec64",
-  "verified_base_pin": "e45050a62e251b976cee764d2dbd46284ea2d926",
-  "verified_source_sha256": "f0050ed2a4b697013c22ec43dd446d326b2fd9816779f4f45418cb6b7f9d261b"
+  "verified_at_openccu_commit": "21fb5a113c6f50ac93c18d37e1534e208c12b1ae",
+  "verified_base_pin": "d6e23888d300f133d65f3122b5e647f3699106ba",
+  "verified_source_sha256": "818a38175b4659871e7926b2e5a91581d172863b2d8c3f93074b5e3c008630a0"
 }
