@@ -1,45 +1,45 @@
 {
   "os_list": [
     {
-      "name": "OpenCCU 3.89.11.20261001-e49a57 (Pi 5)",
+      "name": "OpenCCU 3.89.11.20261002-dcc425 (Pi 5)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.89.11.20261001-e49a57-rpi5.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.89.11.20261002-dcc425-rpi5.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
-      "release_date": "2026-10-01",
+      "release_date": "2026-10-02",
       "extract_size": 2418991616,
-      "extract_sha256": "8bc780d571e4b8442631b0eeca243a3a6a2c4e1b596ae7a2e0adcb6227d79197",
-      "image_download_size": 375115764,
-      "image_download_sha256": "95fa42f20ad110757c99f0923cbf151e0550c7283b1aac56736c53013c53563a",
+      "extract_sha256": "bdda0b7574ac276834a3172dcc0d7c6e79d9768d2d21b70c2c02ef62c63e46d0",
+      "image_download_size": 375092711,
+      "image_download_sha256": "efd095ec40af9067d3b20f2171582a18af3d0809bfd90884c946c28390b60406",
       "website": "https://github.com/OpenCCU/OpenCCU/releases/tag/snapshots",
       "devices": [
         "pi5-64bit"
       ]
     },
     {
-      "name": "OpenCCU 3.89.11.20261001-e49a57 (Pi 4, Pi 400)",
+      "name": "OpenCCU 3.89.11.20261002-dcc425 (Pi 4, Pi 400)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.89.11.20261001-e49a57-rpi4.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.89.11.20261002-dcc425-rpi4.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
-      "release_date": "2026-10-01",
+      "release_date": "2026-10-02",
       "extract_size": 2418991616,
-      "extract_sha256": "005850280549e191f38731ac4cc2f96e3f521d4db782c9d88f4749f2548f5c83",
-      "image_download_size": 375834353,
-      "image_download_sha256": "a4a408bb3f7db82881a7203b4bf434808291749900253cbb1835d4fea02ebeab",
+      "extract_sha256": "f848bf141d9df741f2d44547424d6b5b122c3925ba7d8b541fc1c9ff04e33ffb",
+      "image_download_size": 375813559,
+      "image_download_sha256": "03d894221d99e7c2e93f7f1a6dbdaaf9e554a4ca4a4b9e080e1c99d408213d43",
       "website": "https://github.com/OpenCCU/OpenCCU/releases/tag/snapshots",
       "devices": [
         "pi4-64bit"
       ]
     },
     {
-      "name": "OpenCCU 3.89.11.20261001-e49a57 (Pi 3, Pi Zero 2, ELV-Charly, CCU3)",
+      "name": "OpenCCU 3.89.11.20261002-dcc425 (Pi 3, Pi Zero 2, ELV-Charly, CCU3)",
       "description": "Lightweight Linux OS for running a HomeMatic/homematicIP IoT central.",
-      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.89.11.20261001-e49a57-rpi3.zip",
+      "url": "https://github.com/OpenCCU/OpenCCU/releases/download/snapshots/OpenCCU-3.89.11.20261002-dcc425-rpi3.zip",
       "icon": "https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/rpi-imager-dev.png",
-      "release_date": "2026-10-01",
+      "release_date": "2026-10-02",
       "extract_size": 2418991616,
-      "extract_sha256": "c0be357f589127ad740f9b3e5740281b8303dfe03163198a15715606839effdb",
-      "image_download_size": 375812403,
-      "image_download_sha256": "a6a4e83be8945e4228a67f9f9c920e2fa5e878c4a1d3b097ede897a588ae0ab3",
+      "extract_sha256": "b22d939dcba00bc4ba516e91dab4f9df62b6dc0239fd7f957bcbae291dd5ee51",
+      "image_download_size": 375793996,
+      "image_download_sha256": "0c35ead2f885949b43ddb7ee03944e5f3369aeecfa077115162a53f3ae4e2984",
       "website": "https://github.com/OpenCCU/OpenCCU/releases/tag/snapshots",
       "devices": [
         "pi3-64bit"
