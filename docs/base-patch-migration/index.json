@@ -1230,15 +1230,6 @@
       "sha256": "e79b6b21004f7c594fddcf7084ec768ee9a3e898213133e274faeb474964cd04"
     },
     {
-      "added": 1,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch",
-      "removed": 0,
-      "sha256": "dc506eeccddca4040869cb7f10f8f027adef5301b6e401fd7e1fe9770fcdb137"
-    },
-    {
       "added": 9,
       "files": [
         "www/webui/webui.js"
@@ -1357,5 +1348,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "da0afdcbeac078f14d69bc2aa5ba0513388234c1735e92add16a21e9458a7ffe"
+  "series_sha256": "0e52108b9ac000911797201b05d8584a28965d1aea11020332d32b5d066a39b4"
 }

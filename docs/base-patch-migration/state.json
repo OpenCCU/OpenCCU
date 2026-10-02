@@ -361,7 +361,13 @@
       "patch": "0187-WebUI-Fix-GroupEditingIfDevicesInInbox.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "eacd676afb4fb2192490614cb5c14829fc7bba0a",
+    "base_pr": 103,
+    "cleanup_pr": null,
+    "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "c00b3c08a1efb664d467a1dfa69b37a93169f541",
