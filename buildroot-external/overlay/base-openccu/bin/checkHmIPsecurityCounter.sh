@@ -105,7 +105,7 @@ writeOffset() {
   cp -a "$1" "$1.new"
   # shellcheck disable=SC2059
   printf "${ESC}" | dd of="$1.new" bs=1 seek="$3" count=8 conv=notrunc 2>/dev/null
-  if [[ "$(od -An -v -tu1 -j "$3" -N 8 "$1.new" | xargs)" == "${BYTES# }" ]] &&
+  if [[ "$(od -An -v -tu1 -j "$3" -N 8 "$1.new" 2>/dev/null | xargs)" == "${BYTES# }" ]] &&
      mv "$1.new" "$1"; then
     return 0
   fi
@@ -124,6 +124,7 @@ duration() {
 }
 
 check() {
+  FAILED=0
   for AP in "${DATADIR}"/*.ap; do
     [[ -f "${AP}" ]] || continue
     parseAP "${AP}" || continue
@@ -134,7 +135,7 @@ check() {
       continue
     fi
 
-    if [[ -e ${REPAIR} ]]; then
+    if [[ -e "${REPAIR}" ]]; then
       TARGET=$((OFFSET + MARGIN))
     elif [[ -e "${AP}.checked" ]]; then
       TARGET=$((OFFSET + 1))
@@ -156,9 +157,11 @@ check() {
       logger -t HMIPServer -p user.warn "security counter offset of ${AP##*/} changed from ${OFFSET} to ${NEWOFFSET} (calc ${TARGET})"
     else
       echo -n "ERROR: security counter fix failed, "
+      FAILED=1
     fi
   done
-  rm -f ${REPAIR}
+  # keep a requested repair for the next start if writing an offset failed
+  [[ ${FAILED} -eq 0 ]] && rm -f "${REPAIR}"
 }
 
 status() {
@@ -210,7 +213,7 @@ repair() {
     return 0
   fi
 
-  touch ${REPAIR}
+  touch "${REPAIR}"
   if [[ -e /var/run/HMIPServer.pid ]]; then
     # the repair is applied by S62HMServer (cf. check) before HMIPServer is
     # started again. ReGaHss has to be restarted to re-register at HMIPServer
