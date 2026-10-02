@@ -377,18 +377,24 @@
       "base_pr": 105,
       "cleanup_pr": 4320,
       "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch"
+    },
+    {
+      "base_merge_commit": "ff216fde12b38abec4d7abb90acf27b39c99c2cd",
+      "base_pr": 106,
+      "cleanup_pr": 4321,
+      "patch": "0045-WebUI-GlobalSysVarUsage.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "ff216fde12b38abec4d7abb90acf27b39c99c2cd",
-    "base_pr": 106,
-    "cleanup_pr": 4321,
-    "patch": "0045-WebUI-GlobalSysVarUsage.patch",
+    "base_merge_commit": "48d4bf79de5fe8649251e24feec004f1a23ecee4",
+    "base_pr": 107,
+    "cleanup_pr": 4322,
+    "patch": "0067-WebUI-Fix-BrokenLinkPeerList.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "21fb5a113c6f50ac93c18d37e1534e208c12b1ae",
-  "verified_base_pin": "d6e23888d300f133d65f3122b5e647f3699106ba",
-  "verified_source_sha256": "818a38175b4659871e7926b2e5a91581d172863b2d8c3f93074b5e3c008630a0"
+  "verified_at_openccu_commit": "04078d47de0f60293740fe2202d7c8adce6edacd",
+  "verified_base_pin": "ff216fde12b38abec4d7abb90acf27b39c99c2cd",
+  "verified_source_sha256": "d6fd574311ae7cdd7e3ee676fc595bd0476d1d2c19686edcf32142594ab0aac6"
 }

@@ -25,7 +25,6 @@
 0062-WebUI-FavoriteSorting.patch
 0065-WebUI-Fix-CountUsageStalling.patch
 0066-WebUI-Fix-ListSorting.patch
-0067-WebUI-Fix-BrokenLinkPeerList.patch
 0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch
 0070-WebUI-ProgramList-InactiveProgramsMod.patch
 0071-WebUI-ProgramList-DeleteProgramHint.patch

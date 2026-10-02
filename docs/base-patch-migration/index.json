@@ -427,15 +427,6 @@
       "sha256": "9bae04fc1b28767f9ce11e7c65ebf6bbd35078bab68c3e066b37b19b36ef4538"
     },
     {
-      "added": 14,
-      "files": [
-        "www/config/ic_linkpeerlist.cgi"
-      ],
-      "patch": "0067-WebUI-Fix-BrokenLinkPeerList.patch",
-      "removed": 4,
-      "sha256": "4914223e0a60c12f9ece0ccf983c4a7c31a5759f4c3b460a64ebc0895d801460"
-    },
-    {
       "added": 15,
       "files": [
         "www/webui/webui.js"
@@ -1318,5 +1309,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "2e1c46fdbbb27e153cc937adcf288177b4afd675f73cf4fc270fe370393b1cb9"
+  "series_sha256": "0a8007ce6830d1ceb38a70723faa02c4e8fffedeb7d08d562216805de92f39b4"
 }
