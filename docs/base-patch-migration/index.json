@@ -620,13 +620,13 @@
       "sha256": "e2b25781f299d2f3625fb4bf052394d56c288306cb1b146f4b660c206a71ec56"
     },
     {
-      "added": 9,
+      "added": 8,
       "files": [
         "www/config/cp_software.cgi"
       ],
       "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch",
-      "removed": 1,
-      "sha256": "028ef4feeb601daa67d1d7a6ba1efede635d96fceda0c7db46e851f638b8f6af"
+      "removed": 0,
+      "sha256": "1f4cd213ed1c9f1269c48808663fed51baec3654fefd3a3e5119068748bbacc7"
     },
     {
       "added": 213,
