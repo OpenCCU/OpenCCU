@@ -12,7 +12,7 @@
 # counter jumps backwards and all HmIP devices drop the frames of the CCU as
 # replays.
 #
-# Usage: hmipSecurityCounter.sh [status|check|repair]
+# Usage: checkHmIPsecurityCounter.sh [status|check|repair]
 #
 #  status  (default) show the security counter state of all HmIP access
 #          points incl. the estimated time left until the 32 bit limit.
@@ -131,7 +131,7 @@ check() {
     else
       # already in the wrapped state before this check existed
       echo -n "WARNING: HmIP security counter wrapped, "
-      logger -t HMIPServer -p user.warn "security counter of ${AP##*/} already wrapped (offset ${OFFSET}), see hmipSecurityCounter.sh"
+      logger -t HMIPServer -p user.warn "security counter of ${AP##*/} already wrapped (offset ${OFFSET}), see checkHmIPsecurityCounter.sh"
       continue
     fi
     [[ ${TARGET} -gt ${LIMIT} ]] && TARGET=${LIMIT}
