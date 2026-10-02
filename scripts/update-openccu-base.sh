@@ -54,6 +54,28 @@ fi
 
 sed -i "s/^OPENCCU_BASE_VERSION = .*/OPENCCU_BASE_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
 
+# keep OPENCCU_BASE_COMPAT_VERSION (base of the OpenCCU product version) in
+# sync with the OpenCCU-Base release. For commit pins this is the last release
+# tag reachable from the commit, which is only ever raised so that a manually
+# raised version (ahead of the upstream release tag) is kept.
+CURRENT_COMPAT_VERSION=$(sed -nE 's/^OPENCCU_BASE_COMPAT_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+if [[ "$(pin_type "${ID}")" == "commit" ]]; then
+  COMPAT_VERSION=$(describe_github_commit "OpenCCU" "OpenCCU-Base" "${ID}")
+  if [[ "${COMPAT_VERSION}" =~ ^(.*)-[0-9]+-g[0-9a-f]+$ ]]; then
+    COMPAT_VERSION=${BASH_REMATCH[1]}
+  fi
+  COMPAT_VERSION=$(strip_v_prefix "${COMPAT_VERSION}")
+  if [[ -n "${CURRENT_COMPAT_VERSION}" && "$(printf '%s\n' "${CURRENT_COMPAT_VERSION}" "${COMPAT_VERSION}" | sort -V | tail -n1)" != "${COMPAT_VERSION}" ]]; then
+    COMPAT_VERSION=${CURRENT_COMPAT_VERSION}
+  fi
+else
+  COMPAT_VERSION=$(strip_v_prefix "${ID}")
+fi
+if [[ "${COMPAT_VERSION}" =~ ^[0-9]+(\.[0-9]+)*$ && "${COMPAT_VERSION}" != "${CURRENT_COMPAT_VERSION}" ]]; then
+  echo "${PACKAGE_NAME}: updating compat version ${CURRENT_COMPAT_VERSION} -> ${COMPAT_VERSION}"
+  sed -i "s/^OPENCCU_BASE_COMPAT_VERSION = .*/OPENCCU_BASE_COMPAT_VERSION = ${COMPAT_VERSION}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
+fi
+
 ARCHIVE_FILE="${PACKAGE_NAME}-${ID}-git4.tar.gz"
 ARCHIVE_PATH="${DOWNLOAD_DIR}/${ARCHIVE_FILE}"
 
@@ -105,3 +127,9 @@ sha256  ${GPL2_HASH}  licenses/gpl-2.0.txt
 sha256  ${LGPL21_HASH}  licenses/lgpl-2.1.txt
 sha256  ${ARCHIVE_HASH}  ${ARCHIVE_FILE}
 EOF
+
+# report upstream version to the dependency update workflow. As OpenCCU-Base
+# is commonly pinned to development commits which still carry the version of
+# the last release, the commit is described relative to the last release tag
+# (e.g. "3.89.11-60-gbe2b31c").
+report_github_commit_update "OpenCCU" "OpenCCU-Base" "${CURRENT_ID}" "${ID}"

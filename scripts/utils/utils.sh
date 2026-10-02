@@ -157,3 +157,92 @@ function exit_if_version_unchanged() {
     exit 0
   fi
 }
+
+# Report a human readable version label for the update (e.g. a firmware
+# release date when the package itself is pinned to a commit SHA). Used by
+# the dependency update workflow for the PR title and commit message instead
+# of the plain package version. No-op outside of GitHub Actions.
+function report_update_version_label() {
+  local label=${1}
+
+  if [[ -n "${GITHUB_OUTPUT}" && -n "${label}" ]]; then
+    echo "version_label=${label}" >>"${GITHUB_OUTPUT}"
+  fi
+}
+
+# Report additional (markdown) details about the update which are appended
+# to the PR body by the dependency update workflow. No-op outside of GitHub
+# Actions.
+function report_update_details() {
+  local details=${1}
+  local delimiter
+
+  if [[ -n "${GITHUB_OUTPUT}" && -n "${details}" ]]; then
+    delimiter="EOF_$(date +%s%N)"
+    {
+      echo "details<<${delimiter}"
+      echo "${details}"
+      echo "${delimiter}"
+    } >>"${GITHUB_OUTPUT}"
+  fi
+}
+
+# Describe a commit of a GitHub repository relative to its latest reachable
+# tag (git describe), e.g. "3.89.11-60-gbe2b31c" for the 60th commit after
+# tag 3.89.11, or just "3.89.11" if the commit itself is tagged. Only tags
+# starting with the optional prefix are considered and the prefix is stripped
+# from the result. Prints nothing if no matching tag is found.
+function describe_github_commit() {
+  local owner=${1}
+  local repo=${2}
+  local commit=${3}
+  local tag_prefix=${4}
+  local repo_dir
+  local description=""
+
+  repo_dir=$(mktemp -d)
+  # treeless clone, only fetches commits and tags
+  if git clone -q --bare --filter=tree:0 "https://github.com/${owner}/${repo}.git" "${repo_dir}" 2>/dev/null; then
+    description=$(git -C "${repo_dir}" describe --tags --abbrev=7 --match "${tag_prefix}*" "${commit}" 2>/dev/null || true)
+  fi
+  rm -rf "${repo_dir}"
+
+  echo "${description#"${tag_prefix}"}"
+}
+
+# Report version label and details of a commit pinned GitHub package to the
+# dependency update workflow, using the upstream tags (see
+# describe_github_commit) so that e.g. "bump foo to 1.2.3-4-gabcdef0" is used
+# instead of a plain commit SHA. No-op for non-commit versions and outside of
+# GitHub Actions.
+function report_github_commit_update() {
+  local owner=${1}
+  local repo=${2}
+  local current_commit=${3}
+  local commit=${4}
+  local tag_prefix=${5}
+  local label current_label current_ref
+  local details
+
+  if [[ -z "${GITHUB_OUTPUT}" || ! "${commit}" =~ ^[0-9a-f]{40}$ ]]; then
+    return 0
+  fi
+
+  label=$(describe_github_commit "${owner}" "${repo}" "${commit}" "${tag_prefix}")
+  report_update_version_label "${label}"
+
+  if [[ "${current_commit}" =~ ^[0-9a-f]{40}$ ]]; then
+    current_ref=${current_commit:0:7}
+    current_label=$(describe_github_commit "${owner}" "${repo}" "${current_commit}" "${tag_prefix}")
+  else
+    # currently pinned to a release tag
+    current_ref=${current_commit}
+    current_label=${current_commit#"${tag_prefix}"}
+  fi
+
+  details="- Changes........: https://github.com/${owner}/${repo}/compare/${current_ref}...${commit:0:7}"
+  if [[ -n "${label}" ]]; then
+    details+=$'\n'"- Version........: \`${current_label:-${current_ref}}\` → \`${label}\`"
+  fi
+  report_update_details "${details}"
+}
