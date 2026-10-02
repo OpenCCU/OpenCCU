@@ -188,7 +188,47 @@ jobs:
             echo "rpi5_pieeprom_previous=${previous_rpi5_pieeprom}" >>"${GITHUB_OUTPUT}"
             echo "rpi4_pieeprom=${rpi4_pieeprom}" >>"${GITHUB_OUTPUT}"
             echo "rpi5_pieeprom=${rpi5_pieeprom}" >>"${GITHUB_OUTPUT}"
+
+            # rpi-eeprom is pinned to a commit SHA, but the relevant version
+            # is the release date of the pieeprom firmware images. Name the
+            # changed firmware images in the PR/commit title instead of the SHA.
+            rpi4_date=$(sed -nE 's/^pieeprom-(.*)\.bin$/\1/p' <<<"${rpi4_pieeprom}")
+            rpi5_date=$(sed -nE 's/^pieeprom-(.*)\.bin$/\1/p' <<<"${rpi5_pieeprom}")
+            rpi4_changed=false
+            rpi5_changed=false
+            if [[ -n "${rpi4_date}" && "${rpi4_pieeprom}" != "${previous_rpi4_pieeprom}" ]]; then
+              rpi4_changed=true
+            fi
+            if [[ -n "${rpi5_date}" && "${rpi5_pieeprom}" != "${previous_rpi5_pieeprom}" ]]; then
+              rpi5_changed=true
+            fi
+            if [[ "${rpi4_changed}" == "false" && "${rpi5_changed}" == "false" ]]; then
+              # no firmware image changed, list all known ones instead
+              if [[ -n "${rpi4_date}" ]]; then
+                rpi4_changed=true
+              fi
+              if [[ -n "${rpi5_date}" ]]; then
+                rpi5_changed=true
+              fi
+            fi
+            if [[ "${rpi4_changed}" == "true" && "${rpi5_changed}" == "true" ]]; then
+              if [[ "${rpi4_date}" == "${rpi5_date}" ]]; then
+                version_label="${rpi4_date} (RPi4, RPi5)"
+              else
+                version_label="${rpi4_date} (RPi4), ${rpi5_date} (RPi5)"
+              fi
+            elif [[ "${rpi4_changed}" == "true" ]]; then
+              version_label="${rpi4_date} (RPi4)"
+            elif [[ "${rpi5_changed}" == "true" ]]; then
+              version_label="${rpi5_date} (RPi5)"
+            fi
           fi
+
+          # human readable version used in PR title and commit message
+          # (falls back to the plain version/short SHA)
+          version_label="${version_label:-${version}}"
+          echo "version_label=${version_label}" >>"${GITHUB_OUTPUT}"
+          echo "title=bump ${{ matrix.slug }} to ${version_label}" >>"${GITHUB_OUTPUT}"
           echo "no_update=false" >>"${GITHUB_OUTPUT}"
 
       - name: Check package patch apply status
@@ -238,6 +278,7 @@ jobs:
           EOF
           if [[ "${{ steps.metadata.outputs.package }}" == "rpi-eeprom" ]]; then
             cat >>"${body_file}" <<EOF
+          - Changes........: https://github.com/raspberrypi/rpi-eeprom/compare/${{ steps.metadata.outputs.previous_version }}...${{ steps.metadata.outputs.version }}
           - RPi4 pieeprom..: \`${{ steps.metadata.outputs.rpi4_pieeprom_previous || 'n/a' }}\` → \`${{ steps.metadata.outputs.rpi4_pieeprom || 'n/a' }}\`
           - RPi5 pieeprom..: \`${{ steps.metadata.outputs.rpi5_pieeprom_previous || 'n/a' }}\` → \`${{ steps.metadata.outputs.rpi5_pieeprom || 'n/a' }}\`
           EOF
@@ -257,7 +298,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true' && steps.metadata.outputs.no_update != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_TITLE: "bump ${{ steps.metadata.outputs.package }} to ${{ steps.metadata.outputs.version }}"
+          PR_TITLE: ${{ steps.metadata.outputs.title }}
         run: |
           count=$(curl -fsSL \
             -H "Authorization: Bearer ${GH_TOKEN}" \
@@ -280,7 +321,7 @@ jobs:
           token: ${{ secrets.AUTO_MERGE_TOKEN != '' && secrets.AUTO_MERGE_TOKEN || github.token }}
           branch: pr/dependency-update-${{ matrix.slug }}-${{ steps.metadata.outputs.version }}
           delete-branch: true
-          commit-message: "bump ${{ matrix.slug }} to ${{ steps.metadata.outputs.version }}"
-          title: "bump ${{ matrix.slug }} to ${{ steps.metadata.outputs.version }}"
+          commit-message: ${{ steps.metadata.outputs.title }}
+          title: ${{ steps.metadata.outputs.title }}
           body-path: ${{ steps.pr_body.outputs.body_file }}
           labels: dependencies
