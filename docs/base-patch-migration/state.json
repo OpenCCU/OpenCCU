@@ -355,7 +355,13 @@
       "patch": "0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "790e48ab62e486e085d554317e22cd5eec08f194",
+    "base_pr": 101,
+    "cleanup_pr": null,
+    "patch": "0187-WebUI-Fix-GroupEditingIfDevicesInInbox.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "2f36d591d0725579527a6dc1889a2fd24d24fa0f",

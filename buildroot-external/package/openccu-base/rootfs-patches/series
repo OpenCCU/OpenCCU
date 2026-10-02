@@ -92,7 +92,6 @@
 0175-WebUI-Add-AllLogfileDownload.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0184-WebUI-Fix-EM8LockedChannelBehviour.patch
-0187-WebUI-Fix-GroupEditingIfDevicesInInbox.patch
 0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch
 0191-WebUI-Add-NaturalSortOrder.patch
 0193-WebUI-EnhancedTRVSettingsPage.patch
