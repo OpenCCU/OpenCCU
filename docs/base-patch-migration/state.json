@@ -365,18 +365,18 @@
       "base_pr": 103,
       "cleanup_pr": 4316,
       "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch"
+    },
+    {
+      "base_merge_commit": "e45050a62e251b976cee764d2dbd46284ea2d926",
+      "base_pr": 104,
+      "cleanup_pr": 4318,
+      "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "e45050a62e251b976cee764d2dbd46284ea2d926",
-    "base_pr": 104,
-    "cleanup_pr": 4318,
-    "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "c59e274b10e5ca625009b59a8d7bac352f4433a4",
-  "verified_base_pin": "eacd676afb4fb2192490614cb5c14829fc7bba0a",
-  "verified_source_sha256": "57512cf26ef0a7239fd0b7d5bae7c45800fc04005c63f42a2767ecdbb68394d8"
+  "verified_at_openccu_commit": "bd3f608c4e76ff0d66ed8f1ea953ca82bb98ec64",
+  "verified_base_pin": "e45050a62e251b976cee764d2dbd46284ea2d926",
+  "verified_source_sha256": "f0050ed2a4b697013c22ec43dd446d326b2fd9816779f4f45418cb6b7f9d261b"
 }
