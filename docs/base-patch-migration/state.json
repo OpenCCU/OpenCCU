@@ -367,7 +367,13 @@
       "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "e45050a62e251b976cee764d2dbd46284ea2d926",
+    "base_pr": 104,
+    "cleanup_pr": null,
+    "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "c59e274b10e5ca625009b59a8d7bac352f4433a4",
