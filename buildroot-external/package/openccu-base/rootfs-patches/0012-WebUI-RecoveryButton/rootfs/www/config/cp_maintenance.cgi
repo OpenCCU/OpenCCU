@@ -1261,6 +1261,7 @@ proc action_shutdown_go {} {
 }
 
 proc action_update_start {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1277,6 +1278,7 @@ proc action_update_start {} {
 }
 
 proc action_reboot {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1285,6 +1287,7 @@ proc action_reboot {} {
   exec /sbin/reboot
 }
 proc action_shutdown {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
