@@ -407,18 +407,18 @@
       "base_pr": 110,
       "cleanup_pr": 4326,
       "patch": "0148-WebUI-Fix-RebootInBackground.patch"
+    },
+    {
+      "base_merge_commit": "87f812fabce4d15739e045e84f15801373388c3c",
+      "base_pr": 111,
+      "cleanup_pr": 4327,
+      "patch": "0085-WebUI-AddonPopupScrollable.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "87f812fabce4d15739e045e84f15801373388c3c",
-    "base_pr": 111,
-    "cleanup_pr": 4327,
-    "patch": "0085-WebUI-AddonPopupScrollable.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "76ba0766338af46ce54b0dd2e52271ce4e826b69",
-  "verified_base_pin": "6dc6c5ee8625ad5ad2e5ce56427704ac5e68faa3",
-  "verified_source_sha256": "9e9b9f95c543857d97e2f0d93cc2e09dc9d27a33f7133951d8f07d301fcb2018"
+  "verified_at_openccu_commit": "2218de368346d167d5ffb10b910bc8f5383c113b",
+  "verified_base_pin": "87f812fabce4d15739e045e84f15801373388c3c",
+  "verified_source_sha256": "a8681728643b7fb8f9cc5343de046b0a8928a4bf6d8d60f14804a054e81f4309"
 }
