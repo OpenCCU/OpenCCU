@@ -1140,7 +1140,9 @@ function ::saveUser() {
   if (user.ID() == 1004) {
     user.UserLevel(iulAdmin);
   } else {
-    user.UserLevel(system.GetVar("level"));
+    if (oUser.UserLevel() == iulAdmin) {
+      user.UserLevel(system.GetVar("level"));
+    }
   }
   user.UserPhoneNumber(system.GetVar("phone"));
   user.UserMailAddress(system.GetVar("mail"));

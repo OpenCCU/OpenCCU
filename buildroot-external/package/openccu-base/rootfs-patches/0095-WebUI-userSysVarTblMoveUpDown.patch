@@ -1,6 +1,6 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -1339,13 +1339,14 @@
+@@ -1341,13 +1341,14 @@
  ! [userId], [opt: sTmpVars]
  function ::BuildUserSvTable() {
    WriteLine('<table cellpadding="3" cellspacing="1" class="CLASS02105" width="100%">');
@@ -16,7 +16,7 @@
    WriteLine('</tr> ');
    
    string enumTmp = "";
-@@ -1411,6 +1412,13 @@
+@@ -1413,6 +1414,13 @@
              WriteLine("onclick='delFromTmpVars("#tmp#");'>${btnRemove}</div>");
            }
          WriteLine("</td>");
@@ -30,7 +30,7 @@
        WriteLine("</tr>");
      }
    }
-@@ -1438,6 +1446,25 @@
+@@ -1440,6 +1448,25 @@
    return;
  }
  

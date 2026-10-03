@@ -546,7 +546,7 @@
       "sha256": "47c46b060edbe7fa2e8adfa41e8f0d3198eb58cdf782a58ca638b27673aa02c2"
     },
     {
-      "added": 9,
+      "added": 11,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/pages/msg/userAccountConfigAdmin.htm",
@@ -554,7 +554,7 @@
       ],
       "patch": "0093-WebUI-AllowAdminUserChanges.patch",
       "removed": 5,
-      "sha256": "1b56f353a1f8550ae9c7ae8e07ae6108e2ffadc07519fa9ae6af2952d5cf9f0c"
+      "sha256": "6ab7fcab3fd22b5426b2201e0b5a6fb89c25a96232e44edce9f10de8894df8fa"
     },
     {
       "added": 74,
@@ -566,7 +566,7 @@
       ],
       "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
       "removed": 1,
-      "sha256": "8422e099d8141e11d3e9984a7d445710bbefcd3db6d9c9ab974a4b552e6355c2"
+      "sha256": "2b75fcaf8b2ce66accffdf0115856a1b927d45abbfca0058cf0c87c2679e3535"
     },
     {
       "added": 213,
@@ -709,7 +709,7 @@
       ],
       "patch": "0122-WebUI-ProgramExecutionWithConditionCheck.patch",
       "removed": 16,
-      "sha256": "d924d495d235ac3b1f77edc769fb617a20d5ee6e9cb1572ae128d46f05481f76"
+      "sha256": "221f53012a064eff63e9974400752a302bd1b535e28f7dc31827beca8253f0a7"
     },
     {
       "added": 1,
@@ -800,7 +800,7 @@
       ],
       "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
       "removed": 25,
-      "sha256": "234a99cb3eaf66251d1caa95d58258cd84289a1742e4475d1e83408109d61f2b"
+      "sha256": "5beb4b27784551215653a056c87be97219ae564c77d462cde9377da3124cd8c1"
     },
     {
       "added": 836,
