@@ -395,18 +395,24 @@
       "base_pr": 108,
       "cleanup_pr": 4324,
       "patch": "0175-WebUI-Add-AllLogfileDownload.patch"
+    },
+    {
+      "base_merge_commit": "49198964e5e698580e62703ad42d5c17e359903a",
+      "base_pr": 109,
+      "cleanup_pr": 4325,
+      "patch": "0086-WebUI-Fix-500Errors.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "49198964e5e698580e62703ad42d5c17e359903a",
-    "base_pr": 109,
-    "cleanup_pr": 4325,
-    "patch": "0086-WebUI-Fix-500Errors.patch",
+    "base_merge_commit": "6dc6c5ee8625ad5ad2e5ce56427704ac5e68faa3",
+    "base_pr": 110,
+    "cleanup_pr": 4326,
+    "patch": "0148-WebUI-Fix-RebootInBackground.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "ab8b2461cded220227ae828759811f0b91fcca86",
-  "verified_base_pin": "da2e0a979e8d57bdd3e6230833628ade981505b2",
-  "verified_source_sha256": "803925e9e4b804fd951d6b8d9f1812ee8d85b617838337c52a34bb4f67ccd6d8"
+  "verified_at_openccu_commit": "8f261c0e0212b145e46e43cdec42ca93887998cc",
+  "verified_base_pin": "49198964e5e698580e62703ad42d5c17e359903a",
+  "verified_source_sha256": "f2f879e2e16b26dd33a4bddd37ce7e42932df130d580717d14c493661870ee34"
 }

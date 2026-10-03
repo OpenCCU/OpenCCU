@@ -964,17 +964,6 @@
       "sha256": "53ae4f60810a63d16dff5b34a497816279f9407d1b10743270161e35be7f8f07"
     },
     {
-      "added": 6,
-      "files": [
-        "www/api/methods/safemode/enter.tcl",
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_security.cgi"
-      ],
-      "patch": "0148-WebUI-Fix-RebootInBackground.patch",
-      "removed": 9,
-      "sha256": "e4f3474f0b79c29bbb95232d5971cd161b5b27153679667bbb5b76974c2bdd38"
-    },
-    {
       "added": 10,
       "files": [
         "www/error/error-500.html",
@@ -1290,5 +1279,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "f6fa0b1008be47ad7ca8c7fb2a4819103c09cde34748afb608dbb05ef463c76d"
+  "series_sha256": "97cf92d1481a156e71fadf1e124af3d9a1bd04cfd2b1ebc827b891f8fe5f8744"
 }
