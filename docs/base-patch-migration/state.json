@@ -409,7 +409,13 @@
       "patch": "0148-WebUI-Fix-RebootInBackground.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "87f812fabce4d15739e045e84f15801373388c3c",
+    "base_pr": 111,
+    "cleanup_pr": null,
+    "patch": "0085-WebUI-AddonPopupScrollable.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "76ba0766338af46ce54b0dd2e52271ce4e826b69",
