@@ -397,7 +397,13 @@
       "patch": "0175-WebUI-Add-AllLogfileDownload.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "49198964e5e698580e62703ad42d5c17e359903a",
+    "base_pr": 109,
+    "cleanup_pr": null,
+    "patch": "0086-WebUI-Fix-500Errors.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "ab8b2461cded220227ae828759811f0b91fcca86",

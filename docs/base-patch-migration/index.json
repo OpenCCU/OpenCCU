@@ -63,7 +63,7 @@
       ],
       "patch": "0007-WebUI-Enhanced-FirmwareUpdate.patch",
       "removed": 102,
-      "sha256": "84cbd11d2c413b9010f4d1f41ff8aea8dada11388e480dcb24075d8427aef7ca"
+      "sha256": "b117ee17f1bf93cd19cb34a313f5a34abd9b539f26ca665680f68de5e05000d8"
     },
     {
       "added": 0,
@@ -149,7 +149,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "1ce0a7719078825e0ea2bc3635fe1bb4f952196aea23651d6934f6987085b786"
+      "sha256": "c9f00046c4e29df5f72d4293b7e8d40b9380e1102bd98c6149d36c1023608e04"
     },
     {
       "added": 70,
@@ -515,16 +515,6 @@
       "patch": "0085-WebUI-AddonPopupScrollable.patch",
       "removed": 4,
       "sha256": "7bac6656c1682090f3c82e8ddd897c02effd3b011bd5abc04e1d007062181242"
-    },
-    {
-      "added": 4,
-      "files": [
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_security.cgi"
-      ],
-      "patch": "0086-WebUI-Fix-500Errors.patch",
-      "removed": 0,
-      "sha256": "136c536ce4bd0c1e2b9fa72b8d3674d5c18baceb043f0cba7a579205c02b2b64"
     },
     {
       "added": 15,
@@ -1300,5 +1290,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "dfacfad6665f1cda9e7579f1e64e781c2f8905d7b19defca944cdf342d3efda5"
+  "series_sha256": "f6fa0b1008be47ad7ca8c7fb2a4819103c09cde34748afb608dbb05ef463c76d"
 }

@@ -244,10 +244,10 @@
        set action "firmware_update_invalid"
      }
  
-@@ -1271,10 +1307,6 @@
- }
+@@ -1272,10 +1308,6 @@
  
  proc action_update_start {} {
+   puts ""
 -  if { [file exists "/tmp/createBackup"] } {
 -    catch { [create_backup] }
 -  }
