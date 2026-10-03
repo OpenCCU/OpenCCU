@@ -6,7 +6,7 @@
    
 -  cd /var/log
 -  foreach f {messages.1 messages.0 messages hmserver.log.1 hmserver.log} {
-+  foreach f [glob -directory /var/log *] {
++  foreach f [lsort [glob -nocomplain -directory /var/log * .*]] {
      catch {
 -      set fd [open $f r]
 -      puts -nonewline "\r\n***** $f *****\r\n"
