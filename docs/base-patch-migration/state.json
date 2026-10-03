@@ -431,18 +431,24 @@
       "base_pr": 117,
       "cleanup_pr": 4334,
       "patch": "0092-WebUI-Fix-DeviceReplacement.patch"
+    },
+    {
+      "base_merge_commit": "cb20afb406502f0c009a962ac73e5ed0a164cc3e",
+      "base_pr": 118,
+      "cleanup_pr": 4338,
+      "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "cb20afb406502f0c009a962ac73e5ed0a164cc3e",
-    "base_pr": 118,
-    "cleanup_pr": 4338,
-    "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch",
+    "base_merge_commit": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
+    "base_pr": 119,
+    "cleanup_pr": 4339,
+    "patch": "0127-WebUI-SortFirmwareOverview.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "3f409fd8a6f92e6f9f95d14853afb53e55da77c4",
-  "verified_base_pin": "2017a40f354ec916285034156b1ddedb25e8a73e",
-  "verified_source_sha256": "205f8ea208f44238a6972c2d3226c8747f0eccc94516d4a9b50160ede6073c31"
+  "verified_at_openccu_commit": "9cb0bb43d9f6d30e308d4b5e013e2d3a5e0e9d95",
+  "verified_base_pin": "cb20afb406502f0c009a962ac73e5ed0a164cc3e",
+  "verified_source_sha256": "73507f16545852576acfe4cea1a124e85e3aa2a4d2cac950d0f8923eb62022e3"
 }
