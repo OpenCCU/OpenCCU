@@ -1,6 +1,6 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -1601,3 +1601,60 @@
+@@ -1605,3 +1605,60 @@
  function ::keepAlive()
  {
  }

