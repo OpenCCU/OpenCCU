@@ -433,7 +433,13 @@
       "patch": "0092-WebUI-Fix-DeviceReplacement.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "cb20afb406502f0c009a962ac73e5ed0a164cc3e",
+    "base_pr": 118,
+    "cleanup_pr": null,
+    "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "3f409fd8a6f92e6f9f95d14853afb53e55da77c4",

@@ -1,6 +1,6 @@
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -32285,7 +32285,11 @@
+@@ -32291,7 +32291,11 @@
      this.removeMessagebox();
    },
    LoadFromFile: function(fn,pb) {
@@ -13,7 +13,7 @@
      var t = this;
      var opt = 
      {
-@@ -51235,7 +51239,11 @@
+@@ -51241,7 +51245,11 @@
    },
    
    LoadFromFile: function(src, pb) {
@@ -26,7 +26,7 @@
      var t = this;
      var opt = 
      {
-@@ -51364,7 +51372,11 @@
+@@ -51370,7 +51378,11 @@
    
    LoadFromFile: function(src, pb)
    {

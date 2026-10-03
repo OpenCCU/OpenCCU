@@ -781,7 +781,7 @@
    [ 
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -276,7 +276,7 @@
+@@ -278,7 +278,7 @@
  
  /* Grundlegende Tabelle auf der Statusanzeige-Seite */
  #tblStatus {
@@ -790,7 +790,7 @@
    height:100%;
    table-layout: fixed;
  }
-@@ -1450,7 +1450,7 @@
+@@ -1452,7 +1452,7 @@
  
  .sysConfigHeight
  {
@@ -799,7 +799,7 @@
  }
  
  .posPreBtn
-@@ -2664,8 +2664,8 @@
+@@ -2666,8 +2666,8 @@
  
    background-color: $_(subMenuBackground);
    font-weight: bold;
@@ -810,7 +810,7 @@
    text-align:left;
    vertical-align:middle;
    color: $_(textColorB); /* black */
-@@ -2679,6 +2679,12 @@
+@@ -2681,6 +2681,12 @@
    /* border: 2px solid $_(subMenuHighlight); */
    /* line-height: 30px; */
  }
@@ -823,7 +823,7 @@
  #webuiloader_wrapper {
    width: 100%;
    height: 100%;
-@@ -7008,11 +7014,12 @@
+@@ -7010,11 +7016,12 @@
  /* rega\pages\tabs\admin\linkprog.htm */
  
  .CLASS05400 {
@@ -837,7 +837,7 @@
  }
  
  .CLASS05402 {
-@@ -7023,16 +7030,54 @@
+@@ -7025,16 +7032,54 @@
  	text-align:center ! important;
  }
  
@@ -893,7 +893,7 @@
  /* rega\pages\tabs\favorites.htm */
  
  .CLASS05600 {
-@@ -7112,11 +7157,26 @@
+@@ -7114,11 +7159,26 @@
  /* pages\tabs\statusview.htm */
  
  .CLASS05700 {
@@ -921,7 +921,7 @@
  }
  
  .CLASS05702 {
-@@ -7253,13 +7313,32 @@
+@@ -7255,13 +7315,32 @@
  /* rega\pages\tabs\user\systemConfigUser.htm */
  
  .CLASS06100 {
@@ -957,7 +957,7 @@
  .CLASS06200 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -25152,19 +25152,19 @@
+@@ -25158,19 +25158,19 @@
      var _submenuItem_ = submenuItem;
      var _menuItem_ = menuItem;
      
@@ -983,7 +983,7 @@
    },
    
    /**
-@@ -25200,12 +25200,11 @@
+@@ -25206,12 +25206,11 @@
        submenuElement.className = "MainMenuSubMenu";
        Element.setStyle(submenuElement, {display: "none"});
        

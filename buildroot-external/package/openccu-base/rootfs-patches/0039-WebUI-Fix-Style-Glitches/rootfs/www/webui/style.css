@@ -171,6 +171,8 @@ a img {
     overflow: auto;
     display: flex;
     align-items: flex-start;
+    /* Prevent chrome from outlining this by focus */
+    outline: none;
 }
 
 #prgcontent

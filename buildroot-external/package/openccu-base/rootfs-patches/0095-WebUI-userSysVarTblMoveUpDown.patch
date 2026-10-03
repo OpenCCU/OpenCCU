@@ -68,7 +68,7 @@
    if( action == "checkName"                  ) { Call( "system.fn::checkName()");                   }
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -1452,6 +1452,30 @@
+@@ -1454,6 +1454,30 @@
    cursor:pointer;
  }
  
@@ -101,7 +101,7 @@
    width: 100%;
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -31811,6 +31811,27 @@
+@@ -31817,6 +31817,27 @@
      new Ajax.Updater("userSysVarTbl", url, opts);
    },
    
