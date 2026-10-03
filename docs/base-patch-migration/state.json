@@ -413,18 +413,18 @@
       "base_pr": 111,
       "cleanup_pr": 4327,
       "patch": "0085-WebUI-AddonPopupScrollable.patch"
+    },
+    {
+      "base_merge_commit": "79a2c046eaed7d26a90cac39f8a95c74115384f3",
+      "base_pr": 113,
+      "cleanup_pr": 4330,
+      "patch": "0066-WebUI-Fix-ListSorting.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "79a2c046eaed7d26a90cac39f8a95c74115384f3",
-    "base_pr": 113,
-    "cleanup_pr": 4330,
-    "patch": "0066-WebUI-Fix-ListSorting.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "2218de368346d167d5ffb10b910bc8f5383c113b",
-  "verified_base_pin": "87f812fabce4d15739e045e84f15801373388c3c",
-  "verified_source_sha256": "a8681728643b7fb8f9cc5343de046b0a8928a4bf6d8d60f14804a054e81f4309"
+  "verified_at_openccu_commit": "182ef542da6e6f1dbb1eafc704175cf7af3551b5",
+  "verified_base_pin": "79a2c046eaed7d26a90cac39f8a95c74115384f3",
+  "verified_source_sha256": "de61869f0aba8bcbb7df3d569e37d60c663c496b59b3965dfa731011064b71a1"
 }
