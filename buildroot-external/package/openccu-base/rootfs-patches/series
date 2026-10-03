@@ -85,7 +85,6 @@
 0170-WebUI-RegexSearchInDeviceLists.patch
 0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch
 0173-WebUI-SendPOSTRequest.patch
-0175-WebUI-Add-AllLogfileDownload.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch
 0191-WebUI-Add-NaturalSortOrder.patch

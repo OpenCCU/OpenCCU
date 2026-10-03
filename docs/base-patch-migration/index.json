@@ -1171,15 +1171,6 @@
       "sha256": "660df23a88f8b4f32324c04eb3949b10e3a0a062bc2187d6bda680dd71521bcb"
     },
     {
-      "added": 8,
-      "files": [
-        "www/config/cp_maintenance.cgi"
-      ],
-      "patch": "0175-WebUI-Add-AllLogfileDownload.patch",
-      "removed": 7,
-      "sha256": "e9ea76e7d91e0e0d5b2333cbff72ee43d54f5856f577696ced9b84ba6486037d"
-    },
-    {
       "added": 110,
       "files": [
         "www/webui/js/lang/de/translate.lang.extension.js",
@@ -1309,5 +1300,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "0a8007ce6830d1ceb38a70723faa02c4e8fffedeb7d08d562216805de92f39b4"
+  "series_sha256": "dfacfad6665f1cda9e7579f1e64e781c2f8905d7b19defca944cdf342d3efda5"
 }
