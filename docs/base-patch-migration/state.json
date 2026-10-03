@@ -412,7 +412,7 @@
   "in_progress": {
     "base_merge_commit": "87f812fabce4d15739e045e84f15801373388c3c",
     "base_pr": 111,
-    "cleanup_pr": null,
+    "cleanup_pr": 4327,
     "patch": "0085-WebUI-AddonPopupScrollable.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
