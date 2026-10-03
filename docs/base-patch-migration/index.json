@@ -700,15 +700,6 @@
       "sha256": "cbbf4d29e18f5284b8957811f7dae8dff099da240e4f1bee05305f5490406290"
     },
     {
-      "added": 9,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0127-WebUI-SortFirmwareOverview.patch",
-      "removed": 0,
-      "sha256": "f48b3fdaeef418c7efd81bb182fb8b57361103cca9fe0996928f5105f87f28d5"
-    },
-    {
       "added": 123,
       "files": [
         "www/api/methods.conf",
@@ -1228,5 +1219,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "9b23eeb8dc9a693a3e2f61f8c330d8c7a92af3896d10bcc51ae2d36e4603ed05"
+  "series_sha256": "73fe479e29cf2690207856b53bdf337a394341b618bfc3f5481c6ef7a209277b"
 }

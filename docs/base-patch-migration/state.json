@@ -439,7 +439,13 @@
       "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
+    "base_pr": 119,
+    "cleanup_pr": null,
+    "patch": "0127-WebUI-SortFirmwareOverview.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "9cb0bb43d9f6d30e308d4b5e013e2d3a5e0e9d95",
