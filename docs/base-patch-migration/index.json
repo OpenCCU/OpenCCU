@@ -537,15 +537,6 @@
       "sha256": "599086ffee897ff23b5f793dec58bd73cbfbcd8add2f5545d3d11854c164505b"
     },
     {
-      "added": 4,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0092-WebUI-Fix-DeviceReplacement.patch",
-      "removed": 4,
-      "sha256": "47c46b060edbe7fa2e8adfa41e8f0d3198eb58cdf782a58ca638b27673aa02c2"
-    },
-    {
       "added": 74,
       "files": [
         "www/rega/esp/system.fn",
@@ -1247,5 +1238,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "77c1e0e95833f07c1c3d146fc44a437fa132575659cf0d589da3e5157673bc52"
+  "series_sha256": "c01f6622fa0b04a97d490f12c5dac3eabdb92ba0c99ddb8f23df4825cbde81b3"
 }
