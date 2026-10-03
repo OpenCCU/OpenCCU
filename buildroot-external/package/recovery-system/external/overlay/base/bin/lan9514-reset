@@ -1,0 +1,142 @@
+#!/bin/sh
+# shellcheck shell=dash
+#
+# Bring back a LAN9514 (Raspberry Pi 2/3 Model B: the USB hub and the Ethernet controller in one
+# chip, the 3 B+'s LAN7515 likewise) that did not come up after a warm reboot. The SoC resets on a
+# reboot, the chip stays powered, and now and then it does not answer the next USB bus reset: no
+# hub, no eth0, no USB stick until a power cycle. In the recovery system that means no network and
+# no web page while an update runs, although the update itself goes on. The chip's reset input is
+# the line LAN_RUN of the firmware's GPIO expander.
+#
+# Run from /etc/network/if-pre-up.d before eth0 is brought up: when no hub of vendor 0424 is at
+# 1-1 (after a short grace for a slow enumeration), it pulses LAN_RUN (low for 50 ms, then high),
+# switches the host port's power off and on (dwc_otg's buspower; with dwc2 an unbind and bind),
+# waits for the hub and for eth0, and writes what happened to stdout and to /tmp/lan9514-reset
+# (key=value). It acts only on a board whose device-tree model is a Raspberry Pi 2 or 3 Model B,
+# and only when the hub is missing. Never fails.
+#
+# LAN_RUN is looked up by its line name in the device tree of each GPIO chip and written through
+# sysfs as an output ("low", then 1): gpioget would request it as an input and hold the chip in
+# reset.
+#
+# LAN_RESET_ROOT prefixes every path (for a test against a fake root); LAN_RESET_GRACE,
+# LAN_RESET_HUB_WAIT and LAN_RESET_ETH_WAIT (in tenths of a second) and LAN_RESET_PULSE (seconds)
+# shorten the waits there.
+
+R=${LAN_RESET_ROOT:-}
+GRACE=${LAN_RESET_GRACE:-50}       # the hub may still be enumerating: 5 s
+HUB_WAIT=${LAN_RESET_HUB_WAIT:-100} # after the reset: 10 s for the hub
+ETH_WAIT=${LAN_RESET_ETH_WAIT:-200} # and 20 s for eth0 (smsc95xx is a module udev loads)
+PULSE=${LAN_RESET_PULSE:-0.05}
+MARK="${R}/tmp/lan9514-reset"
+
+say() { echo "lan reset: $*"; }
+wr() { # <value> <file>
+  echo "$1" >"$2" 2>/dev/null
+}
+mark() { # key=value lines
+  printf '%s\n' "$@" >"${MARK}.tmp" && mv -f "${MARK}.tmp" "$MARK"
+}
+
+model=$(tr -d '\000' <"${R}/proc/device-tree/model" 2>/dev/null)
+case "$model" in
+  "Raspberry Pi 3 Model B"*|"Raspberry Pi 2 Model B"*) ;;
+  *) exit 0 ;;  # no LAN9514 on this board
+esac
+
+# shellcheck disable=SC2329 # called through wait_for
+hub_present() {
+  [ "$(cat "${R}/sys/bus/usb/devices/1-1/idVendor" 2>/dev/null)" = "0424" ]
+}
+wait_for() { # <tenths> <test command...>: 0 when the test passed in time; prints the tenths taken
+  n=0; max=$1; shift
+  while ! "$@"; do
+    [ "$n" -ge "$max" ] && { echo "$n"; return 1; }
+    sleep 0.1
+    n=$((n + 1))
+  done
+  echo "$n"
+}
+# shellcheck disable=SC2329 # called through wait_for
+eth_present() { [ -e "${R}/sys/class/net/eth0" ]; }
+
+if t=$(wait_for "$GRACE" hub_present); then
+  mark "result=present" "model=$model"
+  [ "$t" -gt 0 ] && say "LAN9514 hub present after $((t * 100)) ms"
+  exit 0
+fi
+
+say "no LAN9514 hub at USB 1-1 $((GRACE / 10)) s into the network start ($model) - resetting the chip"
+
+# LAN_RUN: the chip whose device-tree line names hold it
+gpio=""; before=""
+for c in "${R}"/sys/class/gpio/gpiochip*; do
+  names="$c/device/of_node/gpio-line-names"
+  [ -r "$names" ] || continue
+  i=$(tr '\000' '\n' <"$names" | grep -nx 'LAN_RUN' | cut -d: -f1 | head -n 1)
+  [ -n "$i" ] || continue
+  gpio=$(( $(cat "$c/base") + i - 1 ))
+  break
+done
+if [ -n "$gpio" ]; then
+  g="${R}/sys/class/gpio/gpio${gpio}"
+  exported=""
+  if [ ! -d "$g" ]; then
+    wr "$gpio" "${R}/sys/class/gpio/export"
+    exported=1
+    wait_for 10 test -d "$g" >/dev/null
+  fi
+  if [ -d "$g" ]; then
+    before="$(cat "$g/direction" 2>/dev/null)/$(cat "$g/value" 2>/dev/null)"
+    wr low "$g/direction"
+    sleep "$PULSE"
+    wr 1 "$g/value"
+    say "LAN_RUN (gpio${gpio}, was ${before}) pulsed low for ${PULSE} s, now $(cat "$g/direction" 2>/dev/null)/$(cat "$g/value" 2>/dev/null)"
+    [ -n "$exported" ] && wr "$gpio" "${R}/sys/class/gpio/unexport"
+  else
+    say "LAN_RUN (gpio${gpio}) could not be exported - no chip reset"
+  fi
+else
+  say "no GPIO line named LAN_RUN - no chip reset"
+fi
+
+# the host port: power off and on, so the core resets the bus and enumerates again
+ctl=""
+for f in "${R}"/sys/devices/platform/soc/*.usb/buspower; do
+  [ -e "$f" ] || continue
+  ctl="dwc_otg ${f%/buspower}"
+  wr 0 "$f"; sleep 1; wr 1 "$f"
+  break
+done
+if [ -z "$ctl" ]; then
+  for d in "${R}"/sys/bus/platform/drivers/dwc2/*.usb; do
+    [ -e "$d" ] || continue
+    dev=${d##*/}
+    ctl="dwc2 $dev"
+    wr "$dev" "${R}/sys/bus/platform/drivers/dwc2/unbind"; sleep 1
+    wr "$dev" "${R}/sys/bus/platform/drivers/dwc2/bind"
+    break
+  done
+fi
+if [ -n "$ctl" ]; then
+  say "USB host port re-powered (${ctl%% *})"
+else
+  say "no dwc_otg or dwc2 controller found - no bus reset"
+fi
+
+if t=$(wait_for "$HUB_WAIT" hub_present); then
+  hub_ms=$((t * 100))
+  if e=$(wait_for "$ETH_WAIT" eth_present); then
+    say "LAN9514 back: hub after ${hub_ms} ms, eth0 after $((e * 100)) ms more"
+    mark "result=recovered" "model=$model" "lan_run_gpio=$gpio" "lan_run_before=$before" "controller=${ctl%% *}" \
+      "hub_after_ms=$hub_ms" "eth0_after_ms=$((e * 100))"
+  else
+    say "LAN9514 hub back after ${hub_ms} ms, but no eth0 within $((ETH_WAIT / 10)) s"
+    mark "result=hub-only" "model=$model" "lan_run_gpio=$gpio" "lan_run_before=$before" "controller=${ctl%% *}" \
+      "hub_after_ms=$hub_ms"
+  fi
+else
+  say "LAN9514 still missing $((HUB_WAIT / 10)) s after the reset - Ethernet and USB need a power cycle"
+  mark "result=failed" "model=$model" "lan_run_gpio=$gpio" "lan_run_before=$before" "controller=${ctl%% *}"
+fi
+exit 0

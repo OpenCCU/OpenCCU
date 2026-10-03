@@ -1,0 +1,12 @@
+#!/bin/sh
+# shellcheck shell=dash
+#
+# Before eth0 is brought up: a LAN9514 that did not come back after a warm reboot is reset
+# (/bin/lan9514-reset; Raspberry Pi 2/3 Model B only, and only when its hub is missing). What it
+# did goes to the console and to /tmp/lan9514-reset.log. Runs before wait_iface (run-parts'
+# order), so that one finds eth0.
+
+[ "${IFACE}" = "eth0" ] || exit 0
+[ -e /sys/class/net/eth0 ] && exit 0
+/bin/lan9514-reset 2>&1 | tee -a /tmp/lan9514-reset.log
+exit 0
