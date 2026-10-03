@@ -1177,7 +1177,7 @@
       ],
       "patch": "0175-WebUI-Add-AllLogfileDownload.patch",
       "removed": 7,
-      "sha256": "187722253f5cac8954d9f9df258b6e672a5b10a405c4b886a9e206b8b373b41c"
+      "sha256": "e9ea76e7d91e0e0d5b2333cbff72ee43d54f5856f577696ced9b84ba6486037d"
     },
     {
       "added": 110,

@@ -1431,7 +1431,7 @@ proc action_download_logfile {} {
   puts "Content-Type:application/x-download"
   puts "Content-Disposition:attachment;filename=[set HOSTNAME]-$year-$month-$day.log\n"
   
-  foreach f [glob -directory /var/log *] {
+  foreach f [lsort [glob -nocomplain -directory /var/log * .*]] {
     catch {
       if {[file extension $f] != ".gz" && [file type $f] == "file"} {
         set fd [open $f r]
