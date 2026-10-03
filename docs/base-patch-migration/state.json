@@ -406,7 +406,7 @@
   "in_progress": {
     "base_merge_commit": "6dc6c5ee8625ad5ad2e5ce56427704ac5e68faa3",
     "base_pr": 110,
-    "cleanup_pr": null,
+    "cleanup_pr": 4326,
     "patch": "0148-WebUI-Fix-RebootInBackground.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
