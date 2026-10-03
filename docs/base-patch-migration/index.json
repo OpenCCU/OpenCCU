@@ -505,18 +505,6 @@
       "sha256": "76b80b6c4b4dfcf8aa836266f856fb8ac6fe54273d6e569e2577ec774570ea1d"
     },
     {
-      "added": 12,
-      "files": [
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_network.cgi",
-        "www/config/cp_security.cgi",
-        "www/config/cp_software.cgi"
-      ],
-      "patch": "0085-WebUI-AddonPopupScrollable.patch",
-      "removed": 4,
-      "sha256": "7bac6656c1682090f3c82e8ddd897c02effd3b011bd5abc04e1d007062181242"
-    },
-    {
       "added": 15,
       "files": [
         "www/webui/webui.js"
@@ -1279,5 +1267,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "97cf92d1481a156e71fadf1e124af3d9a1bd04cfd2b1ebc827b891f8fe5f8744"
+  "series_sha256": "b0bbf03254a0dfc2333924fb631542a8ea30e7f4403f99a07cb5c02faeb2fda5"
 }
