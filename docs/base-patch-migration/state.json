@@ -415,7 +415,13 @@
       "patch": "0085-WebUI-AddonPopupScrollable.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "79a2c046eaed7d26a90cac39f8a95c74115384f3",
+    "base_pr": 113,
+    "cleanup_pr": null,
+    "patch": "0066-WebUI-Fix-ListSorting.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "2218de368346d167d5ffb10b910bc8f5383c113b",
