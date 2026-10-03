@@ -546,17 +546,6 @@
       "sha256": "47c46b060edbe7fa2e8adfa41e8f0d3198eb58cdf782a58ca638b27673aa02c2"
     },
     {
-      "added": 11,
-      "files": [
-        "www/rega/esp/system.fn",
-        "www/rega/pages/msg/userAccountConfigAdmin.htm",
-        "www/rega/pages/tabs/admin/userAdministration.htm"
-      ],
-      "patch": "0093-WebUI-AllowAdminUserChanges.patch",
-      "removed": 5,
-      "sha256": "6ab7fcab3fd22b5426b2201e0b5a6fb89c25a96232e44edce9f10de8894df8fa"
-    },
-    {
       "added": 74,
       "files": [
         "www/rega/esp/system.fn",
@@ -1258,5 +1247,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "bc576e290af04f34959dcf0ea7e0475ed463efe6b5177d8518205533dd27423b"
+  "series_sha256": "77c1e0e95833f07c1c3d146fc44a437fa132575659cf0d589da3e5157673bc52"
 }
