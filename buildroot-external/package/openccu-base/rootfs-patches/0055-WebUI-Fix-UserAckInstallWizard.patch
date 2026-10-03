@@ -25,7 +25,7 @@
 +jsonrpc_response true
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9260,9 +9260,23 @@
+@@ -9261,9 +9261,23 @@
          }
          */
  
@@ -50,7 +50,7 @@
            if (!result) {
              var checkUpdateContentRunning = window.setInterval(function () {
                if (!bUpdateContentRunning) {
-@@ -9282,9 +9296,9 @@
+@@ -9283,9 +9297,9 @@
  
            // User password set
            // The User will see a hint that new firewall settings are active

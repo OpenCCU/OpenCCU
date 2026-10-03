@@ -42,7 +42,7 @@
          append footerHtml "<tr>"
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -836,6 +836,10 @@
+@@ -838,6 +838,10 @@
    z-index:501;
  }
  
@@ -55,7 +55,7 @@
    color: $_(textColorA); /* white */
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9631,10 +9631,10 @@
+@@ -9637,10 +9637,10 @@
    
    
    var m_name     = name;
@@ -67,7 +67,7 @@
    var m_textId = m_id + "Text";
  
    var isSet = function()
-@@ -9739,6 +9739,7 @@
+@@ -9745,6 +9745,7 @@
        }
      }
      if ($(m_id))     { $(m_id).hide(); }
@@ -75,7 +75,7 @@
      if (m_callback)  { m_callback(); }
    };
    
-@@ -9757,6 +9758,7 @@
+@@ -9763,6 +9764,7 @@
    this.reset = function()
    {
      m_value = "";
@@ -83,7 +83,7 @@
      this.close();
    };
  
-@@ -9779,7 +9781,6 @@
+@@ -9785,7 +9787,6 @@
    /*# Initialisierung #*/
    /*###################*/
    
@@ -91,7 +91,7 @@
    
  };
  
-@@ -9803,7 +9804,28 @@
+@@ -9809,7 +9810,28 @@
      this.callback = callback;
      this.id       = name.replace(/\./g, "_");
      this.formId   = this.id + "Form";
@@ -121,7 +121,7 @@
    },
  
    /**
-@@ -9914,16 +9936,20 @@
+@@ -9920,16 +9942,20 @@
      if ($(this.formId))
      {
        var values = $(this.formId).values;
@@ -142,7 +142,7 @@
        if (this.callback) { this.callback(); }
      }
    },
-@@ -9959,7 +9985,8 @@
+@@ -9965,7 +9991,8 @@
      {
        this.list[i]._selected = false;
      }
@@ -152,7 +152,7 @@
      this.close();
    }
    
-@@ -26766,6 +26793,7 @@
+@@ -26772,6 +26799,7 @@
      jQuery("#DeviceListPage_FuncFilter").draggable();
  
      DeviceList.updateDeviceStatus();
@@ -160,7 +160,7 @@
    },
    
    onRemoveDevice: function(whatEver)
-@@ -32274,6 +32302,9 @@
+@@ -32280,6 +32308,9 @@
    },  
    ShowPopup: function() {
      this.show();
@@ -170,7 +170,7 @@
    },
    
    restorePrevious: function() {
-@@ -33201,11 +33232,31 @@
+@@ -33207,11 +33238,31 @@
      if (file.substring(0, UI_PATH.length) == UI_PATH)
      {
        //method: 'get' ist für die ELV-CGIs notwendig.
@@ -204,7 +204,7 @@
      }
      /* ELV --> */
      
-@@ -37131,6 +37182,28 @@
+@@ -37137,6 +37188,28 @@
      this.fltObjType = 0;
      if (fltObjType)
        this.fltObjType = fltObjType;
@@ -233,7 +233,7 @@
    },
    
  
-@@ -37502,6 +37575,15 @@
+@@ -37508,6 +37581,15 @@
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
      this.bTypeString = false;
@@ -249,7 +249,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -37611,6 +37693,12 @@
+@@ -37617,6 +37699,12 @@
  {
    //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
    fltObj.addStringFilter(fId, $(ctrlId).value);
@@ -262,7 +262,7 @@
  };
  
  // Integer-Filter (Modus, Iface)
-@@ -51147,6 +51235,9 @@
+@@ -51153,6 +51241,9 @@
    
    ShowPopup: function() {
      this.show();
@@ -272,7 +272,7 @@
    }
  };
  
-@@ -51274,6 +51365,9 @@
+@@ -51280,6 +51371,9 @@
    ShowPopup: function()
    {
      this.show();

@@ -49,7 +49,7 @@
      "menuControlPage" : "Status and control",
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -454,7 +454,7 @@
+@@ -456,7 +456,7 @@
  
    color: $_(textColorB); /* black */
    font-weight: bold;
@@ -60,7 +60,7 @@
    text-align: center;
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -33030,6 +33030,11 @@
+@@ -33036,6 +33036,11 @@
    if ($("maindate")) { $("maindate").innerHTML = date; }
  };
  
@@ -72,7 +72,7 @@
  setAlarmMessageCount = function (count) {
  
    if ($("msgAlarms")) {
-@@ -35065,6 +35070,9 @@
+@@ -35071,6 +35076,9 @@
  
  LogoClick = function()
  {

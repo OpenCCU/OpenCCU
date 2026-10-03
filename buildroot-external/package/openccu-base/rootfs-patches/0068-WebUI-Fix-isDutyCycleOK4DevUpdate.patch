@@ -1,6 +1,6 @@
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -49697,21 +49697,26 @@
+@@ -49703,21 +49703,26 @@
  
  
  isDutyCycleOK4DevUpdate = function() {

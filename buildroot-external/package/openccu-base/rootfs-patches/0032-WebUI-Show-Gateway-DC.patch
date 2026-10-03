@@ -1,6 +1,6 @@
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -26981,6 +26981,8 @@
+@@ -26987,6 +26987,8 @@
    m_gatewayTableKeyHeader: null,
    m_gatewayTableIPHeader: null,
    m_gatewayTableStateHeader: null,
@@ -9,7 +9,7 @@
    m_gatewayTableActionHeader: null,
    m_gatewayTableBody: null,
    m_optionsButtonBar: null,
-@@ -27093,7 +27095,21 @@
+@@ -27099,7 +27101,21 @@
      //this.m_gatewayTableStateHeader.appendChild(document.createTextNode("Status"));
      this.m_gatewayTableStateHeader.appendChild(document.createTextNode(translateKey("thState")));
      this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableStateHeader);
@@ -32,7 +32,7 @@
      /* Spaltenüberschrift Verbunden (Tabelle für BidCoS-RF Gateways */
      this.m_gatewayTableActionHeader = document.createElement("th");
      this.m_gatewayTableActionHeader.className = "bidcosrf_tableheader";
-@@ -27413,6 +27429,16 @@
+@@ -27419,6 +27435,16 @@
  				    	 lgw = rfGateways[j];
  				    	}
  				    }
@@ -49,7 +49,7 @@
  		        	if(lgw) 
  		        	{
  					  if(lgwStatus.connstat == "NO_ERROR") {
-@@ -27446,6 +27472,25 @@
+@@ -27452,6 +27478,25 @@
  		  {
  			  var text = "";
  	   	      var status = rfGateways[i].determineState(gatewayStatus);
@@ -75,7 +75,7 @@
  		      if (status)
  		      {
  		        text = (status.isConnected) ? translateKey("lanGatewayLblConnected") : translateKey("lanGatewayLblNotConnected");
-@@ -27646,6 +27691,8 @@
+@@ -27652,6 +27697,8 @@
    m_keyLabel: null,
    m_ipLabel: null,
    m_stateLabel: null,
@@ -84,7 +84,7 @@
    m_actionCell: null,
    m_deleteButton: null,
    m_onDeleteHandler: null,
-@@ -27698,6 +27745,16 @@
+@@ -27704,6 +27751,16 @@
      this.m_stateLabel.className = "bidcosrf_tablecell";
      this.m_element.appendChild(this.m_stateLabel);
      
@@ -101,7 +101,7 @@
      /* Aktion */
      this.m_actionCell = document.createElement("td");
      this.m_actionCell.className = "bidcosrf_actioncell";
-@@ -27837,6 +27894,18 @@
+@@ -27843,6 +27900,18 @@
      return this;
    },
    

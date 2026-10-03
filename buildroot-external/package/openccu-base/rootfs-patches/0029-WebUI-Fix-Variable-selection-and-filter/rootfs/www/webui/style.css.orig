@@ -161,6 +161,8 @@ a img {
 {
     background-color: $_(contentBackground);
     overflow: auto;
+    /* Prevent chrome from outlining this by focus */
+    outline: none;
 }
 
 /* Kopfzeile */

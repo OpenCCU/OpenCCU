@@ -1129,11 +1129,11 @@
 +package provide cgi 1.10.0
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9375,6 +9375,7 @@
+@@ -9376,6 +9376,7 @@
      this.currentPageOptions  = options;
      
      this.currentPage.enter(options);
 +    window.name = 'ccu-main-window';
-   },
-   
-   reload: function()
+     window.setTimeout(() => {
+       if(jQuery(':focus').length === 0) {
+         jQuery('#content')[0].focus();

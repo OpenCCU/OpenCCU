@@ -18,7 +18,7 @@
  
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -33070,23 +33070,6 @@
+@@ -33076,23 +33076,6 @@
    new Ajax.Request(url,opt);
  };
  

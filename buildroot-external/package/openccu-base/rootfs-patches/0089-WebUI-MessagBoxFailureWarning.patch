@@ -1,6 +1,6 @@
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -51061,8 +51061,8 @@
+@@ -51067,8 +51067,8 @@
    CreateCPPopup("/config/cp_maintenance.cgi", "downloadOnly=1");
  };
  
@@ -11,7 +11,7 @@
  
    PopupClose = function() {
      dlgPopup.close();
-@@ -51102,7 +51102,7 @@
+@@ -51108,7 +51108,7 @@
  
  cpMessageBox.prototype =
  {
@@ -20,7 +20,7 @@
    {
      if ( $('messagebox') ){
        $("messagebox").hide();
-@@ -51114,7 +51114,7 @@
+@@ -51120,7 +51120,7 @@
      this.setWidth(800);
  
      this.createMessagebox();
@@ -29,7 +29,7 @@
    },
  
    getViewPortDim : function()
-@@ -51238,7 +51238,7 @@
+@@ -51244,7 +51244,7 @@
      this.removeMessagebox();
    },
    
@@ -38,7 +38,7 @@
      var url = src;
      if(url.indexOf('?sid=') === -1)
      {                                                                                 
-@@ -51254,6 +51254,15 @@
+@@ -51260,6 +51260,15 @@
        onComplete: function(trans) {
          centerMessageBox();
          $('messagebox').style.display="";
