@@ -20,10 +20,10 @@ service() {
 		disabled_monitors="$disabled_monitors $monitors"
 	fi
 }
-service RFD 'rfd rfdEnabled' S61rfd
+service RFD 'rfd rfdEnabled rfdDevice' S61rfd
 service MULTIMACD 'multimacd multimacdEnabled' S60multimacd
 service HS485D 'hs485d hs485dEnabled' S49hs485d S60hs485d
-service HMSERVER 'HMIPServer HMServer' S62HMServer
+service HMSERVER 'HMIPServer HMIPServerDevice HMServer' S62HMServer
 service REGAHSS 'ReGaHss regaHssEnabled' S70ReGaHss
 service EQ3CONFIGD eq3configd S50eq3configd
 service SSDPD ssdpd S50ssdpd
