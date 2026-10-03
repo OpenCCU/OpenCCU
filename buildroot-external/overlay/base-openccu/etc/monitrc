@@ -299,6 +299,14 @@ check program rfdEnabled with path "/bin/grep -q '^\[Interface .\]' /var/etc/rfd
     group homematic
     if status != 0 for 1 cycles then unmonitor
 
+# restart rfd if it still holds a /dev/mmd_bidcos removed by a multimacd restart
+check program rfdDevice with path "/bin/checkStaleDevice.sh /var/run/rfd.pid"
+    group homematic
+    if status != 0 for 2 cycles then
+      exec /bin/sh -c "/bin/triggerAlarm.tcl 'rfd: stale multimacd connection' 'WatchDog: rfd-stale' true; /usr/bin/monit restart rfd"
+      repeat every 5 cycles
+    depends on rfd
+
 # HMIPServer (HmIP-RF/HmIP-Wired) daemon monitoring
 check process HMIPServer with pidfile /var/run/HMIPServer.pid
     group homematic
@@ -316,6 +324,14 @@ check process HMIPServer with pidfile /var/run/HMIPServer.pid
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'HMIPServer: high filedescriptor usage (>95%)' 'WatchDog: hmipserver-highfd' true"
     depends on hmlangwDisabled
+
+# restart HMIPServer if it still holds a /dev/mmd_hmip removed by a multimacd restart
+check program HMIPServerDevice with path "/bin/checkStaleDevice.sh /var/run/HMIPServer.pid"
+    group homematic
+    if status != 0 for 2 cycles then
+      exec /bin/sh -c "/bin/triggerAlarm.tcl 'HMIPServer: stale multimacd connection' 'WatchDog: hmipserver-stale' true; /usr/bin/monit restart HMIPServer"
+      repeat every 5 cycles
+    depends on HMIPServer
 
 # ReGaHss logic engine daemon monitoring
 check process ReGaHss with pidfile /var/run/ReGaHss.pid
