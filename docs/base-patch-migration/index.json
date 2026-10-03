@@ -418,15 +418,6 @@
       "sha256": "b792139dc549c727f9b520b42ffaf0254a93f3b347de1a1bd09174ebc142c905"
     },
     {
-      "added": 2,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0066-WebUI-Fix-ListSorting.patch",
-      "removed": 6,
-      "sha256": "9bae04fc1b28767f9ce11e7c65ebf6bbd35078bab68c3e066b37b19b36ef4538"
-    },
-    {
       "added": 15,
       "files": [
         "www/webui/webui.js"
@@ -1267,5 +1258,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "b0bbf03254a0dfc2333924fb631542a8ea30e7f4403f99a07cb5c02faeb2fda5"
+  "series_sha256": "bc576e290af04f34959dcf0ea7e0475ed463efe6b5177d8518205533dd27423b"
 }
