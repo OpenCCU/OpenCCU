@@ -15,8 +15,11 @@
 #
 # The device pattern defaults to /dev/mmd_*. The script prints the stale
 # device and returns 1 if the process of <pidfile> holds a removed device
-# node matching the pattern, otherwise (also if the process does not run)
-# it returns 0.
+# node matching the pattern and a new device node with the same name exists
+# already, otherwise (also if the process does not run) it returns 0.
+# As long as the new device node is missing (e.g. while multimacd is still
+# starting), a restart would not help: S61rfd would even disable the RF
+# interface in rfd.conf if /dev/mmd_bidcos is missing.
 #
 
 PIDFILE=${1}
@@ -31,8 +34,11 @@ for fd in /proc/"${PID}"/fd/*; do
   # shellcheck disable=SC2254
   case "${target}" in
     ${PATTERN}" (deleted)")
-      echo "${target%" (deleted)"} held by PID ${PID} is stale"
-      exit 1
+      dev=${target%" (deleted)"}
+      if [ -c "${dev}" ]; then
+        echo "${dev} held by PID ${PID} is stale"
+        exit 1
+      fi
     ;;
   esac
 done

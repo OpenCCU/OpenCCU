@@ -304,6 +304,7 @@ check program rfdDevice with path "/bin/checkStaleDevice.sh /var/run/rfd.pid"
     group homematic
     if status != 0 for 2 cycles then
       exec /bin/sh -c "/bin/triggerAlarm.tcl 'rfd: stale multimacd connection' 'WatchDog: rfd-stale' true; /usr/bin/monit restart rfd"
+      repeat every 5 cycles
     depends on rfd
 
 # HMIPServer (HmIP-RF/HmIP-Wired) daemon monitoring
@@ -329,6 +330,7 @@ check program HMIPServerDevice with path "/bin/checkStaleDevice.sh /var/run/HMIP
     group homematic
     if status != 0 for 2 cycles then
       exec /bin/sh -c "/bin/triggerAlarm.tcl 'HMIPServer: stale multimacd connection' 'WatchDog: hmipserver-stale' true; /usr/bin/monit restart HMIPServer"
+      repeat every 5 cycles
     depends on HMIPServer
 
 # ReGaHss logic engine daemon monitoring
