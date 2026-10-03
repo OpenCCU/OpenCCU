@@ -68,7 +68,6 @@
 0145-WebUI-NaturalSorting.patch
 0146-WebUI-ImprovedStartpageLayout.patch
 0147-WebUI-Fix-AddonUninstallFailureHandling.patch
-0148-WebUI-Fix-RebootInBackground.patch
 0149-WebUI-ImprovedErrorPages.patch
 0150-WebUI-Responsive-ControlPage.patch
 0151-WebUI-Add-DeviceRestoreConfigButton.patch
