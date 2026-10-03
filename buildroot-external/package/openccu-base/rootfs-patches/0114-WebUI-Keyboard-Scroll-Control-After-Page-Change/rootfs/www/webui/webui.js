@@ -9182,7 +9182,7 @@ WebUI = Singleton.create({
 
       var content = document.createElement("div");
       content.id = "content";
-      content.tabIndex = 1;
+      content.tabIndex = -1;
       Element.setStyle(content, {cursor: "wait"});
       layer0.appendChild(content);
 

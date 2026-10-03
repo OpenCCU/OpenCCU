@@ -639,7 +639,7 @@
       ],
       "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch",
       "removed": 0,
-      "sha256": "e80c846d418ae69c349016e4ca8990a79cf85baef057e6e26b9e0f2f8bcf467f"
+      "sha256": "90199d32455881bb444691cf1d0063b8d920b49cc2282ad69955ec696bcac297"
     },
     {
       "added": 211,
