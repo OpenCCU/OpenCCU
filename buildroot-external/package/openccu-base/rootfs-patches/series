@@ -36,7 +36,6 @@
 0090-WebUI-Add-ReGaSaveButton.patch
 0091-WebUI-Add-HM-OU-LED16-LedStatus.patch
 0092-WebUI-Fix-DeviceReplacement.patch
-0093-WebUI-AllowAdminUserChanges.patch
 0095-WebUI-userSysVarTblMoveUpDown.patch
 0097-WebUI-SetSysvarValueByUser.patch
 0099-WebUI-Add-DeviceRenameAllChannels.patch
