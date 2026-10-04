@@ -1,4 +1,4 @@
-# Homematic and Homematic IP devices supported by OpenCCU
+# OpenCCU supported HomeMatic / Homematic IP devices
 
 [Deutsche Version](supported-devices.de.md)
 

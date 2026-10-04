@@ -142,7 +142,7 @@ PROTO_ORDER = ['HmIP-RF', 'HmIP-Wired', 'BidCos-RF', 'BidCos-Wired']
 
 TEXT = {
     'de': {
-        'title': 'Von OpenCCU unterstützte Homematic- und Homematic-IP-Geräte',
+        'title': 'OpenCCU unterstützte HomeMatic / Homematic IP Geräte',
         'other': '[English version](supported-devices.md)',
         'intro': (
             'Alle {count} Homematic (BidCos-RF, BidCos-Wired) und Homematic IP (HmIP-RF, '
@@ -211,7 +211,7 @@ TEXT = {
         'unsupported_h': 'Nicht unterstützt (nur WebUI-Eintrag vorhanden)',
     },
     'en': {
-        'title': 'Homematic and Homematic IP devices supported by OpenCCU',
+        'title': 'OpenCCU supported HomeMatic / Homematic IP devices',
         'other': '[Deutsche Version](supported-devices.de.md)',
         'intro': (
             'All {count} Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, '
