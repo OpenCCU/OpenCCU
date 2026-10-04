@@ -496,15 +496,6 @@
       "sha256": "8120dc9a8b05aae739e51ae96f072faf2a0f27f55a1b6b237ee1ab9556b2305e"
     },
     {
-      "added": 15,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0087-WebUI-Fix-DoubleSIDs.patch",
-      "removed": 3,
-      "sha256": "adf60b60393fe6308aba5b1c261b96bca5b773320c24adb9e541f237598fd3b6"
-    },
-    {
       "added": 14,
       "files": [
         "www/webui/webui.js"
@@ -1201,5 +1192,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "cf57c169643100125420af37756ef97c607273cd53650d4ca136efc576f0116e"
+  "series_sha256": "8bcd0d14d2f89caba6ed72d4e68da6a25ad6d1f0add2ca2f0fc829e8411b6df5"
 }
