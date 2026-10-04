@@ -443,18 +443,24 @@
       "base_pr": 119,
       "cleanup_pr": 4339,
       "patch": "0127-WebUI-SortFirmwareOverview.patch"
+    },
+    {
+      "base_merge_commit": "210589935cf9e5ec98c7bdd1595b37113949e090",
+      "base_pr": 120,
+      "cleanup_pr": 4342,
+      "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "210589935cf9e5ec98c7bdd1595b37113949e090",
-    "base_pr": 120,
-    "cleanup_pr": 4342,
-    "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch",
+    "base_merge_commit": "f054a4ac73ac0a36df1d18553bd0c0e84cb3892d",
+    "base_pr": 121,
+    "cleanup_pr": 4344,
+    "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "5b166af16df03c89ad315ae810fafccd0ba982fc",
-  "verified_base_pin": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
-  "verified_source_sha256": "bda31012f4de2bea7fb71ddea01703f1b61edd31a472787d43debf9d65f87bfd"
+  "verified_at_openccu_commit": "1dcb3c7a85813297bb76ef806207b3e2e687d031",
+  "verified_base_pin": "210589935cf9e5ec98c7bdd1595b37113949e090",
+  "verified_source_sha256": "6ac33ff64b7bc7bb915b0e60e15fa0bdc1a54bb9bc863c1b610775a6a706dbdd"
 }
