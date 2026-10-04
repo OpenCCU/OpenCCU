@@ -24,7 +24,8 @@ Usage:
 
 With --wiki, the pages are written as the OpenCCU wiki pages
 "Unterstützte-Geräte" and "en.Supported-Devices" into a wiki checkout; commit
-and push them from there.
+and push them from there. The workflow .github/workflows/wiki-supported-devices.yml
+does this automatically.
 """
 
 import argparse
