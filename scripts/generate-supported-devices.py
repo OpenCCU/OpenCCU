@@ -33,10 +33,12 @@ import datetime
 import html
 import re
 import subprocess
+import sys
 import tarfile
 import urllib.parse
 import xml.etree.ElementTree as ET
 import zipfile
+import zlib
 from pathlib import Path
 
 
@@ -371,11 +373,18 @@ def load_firmware(fwdir, openccu_version):
     """Newest firmware per device type that the given OpenCCU version accepts."""
     newest = {}
     for path in sorted(fwdir.glob('*/*.t*gz')):
-        with tarfile.open(path) as archive:
-            member = next((m for m in archive.getmembers() if Path(m.name).name == 'info'), None)
-            if member is None:
-                continue
-            text = archive.extractfile(member).read().decode('latin-1')
+        # a single damaged package must not stop the page generation
+        try:
+            with tarfile.open(path) as archive:
+                member = next((m for m in archive.getmembers() if Path(m.name).name == 'info'), None)
+                handle = archive.extractfile(member) if member else None
+                if handle is None:
+                    print(f'warning: skipping {path}: no info file', file=sys.stderr)
+                    continue
+                text = handle.read().decode('latin-1')
+        except (tarfile.TarError, OSError, EOFError, zlib.error) as error:
+            print(f'warning: skipping {path}: {error}', file=sys.stderr)
+            continue
         info = dict(line.split('=', 1) for line in text.splitlines() if '=' in line)
         version = info.get('FirmwareVersion', '').strip()
         minimum = info.get('CCU3FirmwareVersionMin', '0').strip()
