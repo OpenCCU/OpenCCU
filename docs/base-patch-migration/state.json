@@ -457,7 +457,13 @@
       "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "f26ef50ecc250848f18bc57066640997b14eb5b6",
+    "base_pr": 122,
+    "cleanup_pr": null,
+    "patch": "0087-WebUI-Fix-DoubleSIDs.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "7f65db386d21103a0c1977f9560f306e2ee67cdc",
