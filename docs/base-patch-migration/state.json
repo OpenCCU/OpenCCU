@@ -448,7 +448,7 @@
   "in_progress": {
     "base_merge_commit": "210589935cf9e5ec98c7bdd1595b37113949e090",
     "base_pr": 120,
-    "cleanup_pr": null,
+    "cleanup_pr": 4342,
     "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
