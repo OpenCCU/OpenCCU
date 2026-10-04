@@ -461,18 +461,18 @@
       "base_pr": 122,
       "cleanup_pr": 4346,
       "patch": "0087-WebUI-Fix-DoubleSIDs.patch"
+    },
+    {
+      "base_merge_commit": "6c6c7c79222f75a7c898d577cddde5b9b006a5f5",
+      "base_pr": 123,
+      "cleanup_pr": 4350,
+      "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "6c6c7c79222f75a7c898d577cddde5b9b006a5f5",
-    "base_pr": 123,
-    "cleanup_pr": 4350,
-    "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "2347db026b9ac8150a7f726cf8b512202f117421",
-  "verified_base_pin": "f26ef50ecc250848f18bc57066640997b14eb5b6",
-  "verified_source_sha256": "717a530a7a756368bd96c7fc2834d961653f2f96b350b528017e1a6ba4efded3"
+  "verified_at_openccu_commit": "019a4535fa15f2f72f1bc94a47e9a5393b4d03df",
+  "verified_base_pin": "6c6c7c79222f75a7c898d577cddde5b9b006a5f5",
+  "verified_source_sha256": "e9ae9296860fe506b8a405605f8649655fa2ec01d59d14b5e7b6fba976c75658"
 }
