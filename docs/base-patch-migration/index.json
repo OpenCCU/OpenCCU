@@ -1092,13 +1092,13 @@
       "sha256": "e79b6b21004f7c594fddcf7084ec768ee9a3e898213133e274faeb474964cd04"
     },
     {
-      "added": 9,
+      "added": 13,
       "files": [
         "www/webui/webui.js"
       ],
       "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch",
       "removed": 6,
-      "sha256": "70617f4b41bb7f263ed8ceab64baac74390b3713bf578b7e8e5a50cdc65607d2"
+      "sha256": "3c471e67bb8e69d33585781676d660b8c084888749c98ce870e0d3a4549120c4"
     },
     {
       "added": 15,
@@ -1181,7 +1181,7 @@
       ],
       "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
       "removed": 13,
-      "sha256": "b3e8e934c9420af9bf38ef6df5d5aed88f12b07c6c52d069fe383797f6ed7893"
+      "sha256": "41ded45424b02a9295f422d53bf201f4e5fb9ff1328a06059106948912b0b9d6"
     },
     {
       "added": 4,
@@ -1206,7 +1206,7 @@
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
-      "sha256": "e202b4567cb92ec5fb49931d7c3232db2679ab3094c106b7f3a9faa5f08795e3"
+      "sha256": "9f91f792145a3599f10ceedfbebecc9fbea9e75d6e2ecb24a98a55d5a7575e3b"
     }
   ],
   "schema": 1,

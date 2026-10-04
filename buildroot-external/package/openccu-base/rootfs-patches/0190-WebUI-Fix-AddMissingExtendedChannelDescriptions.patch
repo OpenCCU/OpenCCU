@@ -20,15 +20,19 @@
  
    if (chType == "KEY_TRANSCEIVER") {
      if (deviceType.toLowerCase().indexOf("hmip-asir") != -1) {
-@@ -36453,6 +36453,7 @@
+@@ -36453,6 +36453,11 @@
          case "hmip-wgt-a":
          case "hmip-wgtc":
          case "hmip-wgtc-a":
 +          if (channel === undefined) { var channel = DeviceList.getChannelByAddress(channelAddress); }
++          if (channel === undefined) {
++            result = translateKey("chType_SWITCH_VIRTUAL_RECEIVER");
++            break;
++          }
            var channelMode = homematic("Interface.getMetadata", {
              "objectId": channel.id,
              "dataId": "channelMode"
-@@ -36573,13 +36574,15 @@
+@@ -36573,13 +36578,15 @@
          typeExt = "_" + multiMode;
        } else {
          if (channelAddress != "undefined") {
