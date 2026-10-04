@@ -39,7 +39,6 @@
 0097-WebUI-SetSysvarValueByUser.patch
 0099-WebUI-Add-DeviceRenameAllChannels.patch
 0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch
-0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
 0111-WebUI-Fix-Translation-Performance.patch
 0119-WebUI-Fix-ProofAndSetValue.patch

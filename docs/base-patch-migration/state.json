@@ -445,7 +445,13 @@
       "patch": "0127-WebUI-SortFirmwareOverview.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "210589935cf9e5ec98c7bdd1595b37113949e090",
+    "base_pr": 120,
+    "cleanup_pr": null,
+    "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "5b166af16df03c89ad315ae810fafccd0ba982fc",

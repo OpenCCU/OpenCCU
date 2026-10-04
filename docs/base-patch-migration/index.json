@@ -595,15 +595,6 @@
       "sha256": "86307f916627a6c3cc999012039d29cb737a90808701aa4ece5fa93cb3c17624"
     },
     {
-      "added": 3,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch",
-      "removed": 10,
-      "sha256": "cd6cbc3328fba39123f71df0c7527fbd59dba5bbf926870d934cdc0ea49ea016"
-    },
-    {
       "added": 432,
       "files": [
         "bin/hm_autoconf",
@@ -1219,5 +1210,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "73fe479e29cf2690207856b53bdf337a394341b618bfc3f5481c6ef7a209277b"
+  "series_sha256": "0ac6727ea5df35ca31d94e5eb56f7a67f54ce10edad24a0ae9a6f6ec8d86a278"
 }
