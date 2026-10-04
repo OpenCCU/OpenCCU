@@ -38,6 +38,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BASE_MK = ROOT / 'buildroot-external/package/openccu-base/openccu-base.mk'
 BASE_RAW = 'https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/{rev}/www'
+FW_REPO = 'https://github.com/OpenCCU/HMDeviceFirmware'
 FW_PAGES = 'https://openccu.github.io/HMDeviceFirmware/'
 FW_CHANGELOG = FW_PAGES + 'changelogs/changelog_{stem}.html'
 SHOP_SEARCH = 'https://de.elv.com/search?q={}'
@@ -147,7 +148,10 @@ TEXT = {
             'Alle {count} Homematic (BidCos-RF, BidCos-Wired) und Homematic IP (HmIP-RF, '
             'HmIP-Wired) Gerätetypen, die von OpenCCU {occu} unterstützt werden – als Hilfe vor '
             'dem Kauf neuer Geräte. Die Bereiche lassen sich auf- und zuklappen; Erläuterungen '
-            'und Datenquellen stehen am [Ende der Seite](#hinweise).'),
+            'stehen in den [Hinweisen](#hinweise) am Ende der Seite.'),
+        'toc': 'Bereiche',
+        'basis_top': ('OpenCCU {occu} · {base} (Gerätebeschreibungen von `rfd`/`hs485d`, '
+                      'WebUI-Gerätedatenbank) · `HMIPServer.jar` {hmip}{fw} · Stand {date}'),
         'notes_h': 'Hinweise',
         'notes': [
             'Ein Gerätetyp gilt als unterstützt, wenn ihn der zuständige Schnittstellenprozess '
@@ -187,11 +191,6 @@ TEXT = {
             'Beschreibungen und Bilder: WebUI-Gerätedatenbank (`DEVDB.tcl`) und WebUI-Übersetzungen',
         ],
         'basis': 'Datenbasis',
-        'fwrepo': 'HMDeviceFirmware Commit',
-        'occu': 'OpenCCU Version',
-        'base': 'OpenCCU-Base Commit',
-        'hmip': 'HMIPServer.jar Version',
-        'gen': 'erzeugt am',
         'regen': 'Neu erzeugen mit',
         'count': 'Gerätetypen',
         'proto': 'Protokoll',
@@ -217,8 +216,11 @@ TEXT = {
         'intro': (
             'All {count} Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, '
             'HmIP-Wired) device types supported by OpenCCU {occu} – to check devices before '
-            'buying them. Each section can be expanded and collapsed; explanations and data '
-            'sources are at the [end of the page](#notes).'),
+            'buying them. Each section can be expanded and collapsed; explanations are in the '
+            '[notes](#notes) at the end of the page.'),
+        'toc': 'Sections',
+        'basis_top': ('OpenCCU {occu} · {base} (`rfd`/`hs485d` device descriptions, WebUI '
+                      'device database) · `HMIPServer.jar` {hmip}{fw} · as of {date}'),
         'notes_h': 'Notes',
         'notes': [
             'A device type counts as supported if the responsible OpenCCU interface process knows '
@@ -256,11 +258,6 @@ TEXT = {
             'Descriptions and images: WebUI device database (`DEVDB.tcl`) and WebUI translations',
         ],
         'basis': 'Data basis',
-        'fwrepo': 'HMDeviceFirmware commit',
-        'occu': 'OpenCCU version',
-        'base': 'OpenCCU-Base commit',
-        'hmip': 'HMIPServer.jar version',
-        'gen': 'generated on',
         'regen': 'Regenerate with',
         'count': 'device types',
         'proto': 'Protocol',
@@ -507,9 +504,15 @@ def table(rows, t, lang, base_rev, proto=True, firmware=True):
     return lines
 
 
-def section(title, rows, t, opened, **kwargs):
+SECTION_IDS = {'HmIP-RF': 'hmip-rf', 'HmIP-Wired': 'hmip-wired', 'BidCos-RF': 'bidcos-rf',
+               'BidCos-Wired': 'bidcos-wired', 'oem': 'partner-oem', 'limited': 'limited',
+               'unsupported': 'unsupported'}
+
+
+def section(title, rows, t, opened, anchor, **kwargs):
     attr = ' open' if opened else ''
-    return ([f"<details{attr}><summary><b>{title}</b> – {len(rows)} {t['count']}</summary>", '']
+    return ([f'<a name="{anchor}"></a>', '',
+             f"<details{attr}><summary><b>{title}</b> – {len(rows)} {t['count']}</summary>", '']
             + table(rows, t, **kwargs) + ['', '</details>', ''])
 
 
@@ -520,24 +523,29 @@ def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
     partner = [d for d in devices if d['webui'] and not OFFICIAL_TYPES.match(d['type'])]
     limited = [d for d in devices if not d['webui']]
     args = {'lang': lang, 'base_rev': base_rev, 'firmware': has_fw}
+    sections = [(proto, t['sec'][proto], [d for d in official if d['proto'] == proto], True,
+                 dict(args, proto=False)) for proto in PROTO_ORDER]
+    sections += [('oem', t['oem_h'], partner, False, args),
+                 ('limited', t['limited_h'], limited, False, args),
+                 ('unsupported', t['unsupported_h'], unsupported, False, dict(args, firmware=False))]
+
+    base = f"[OpenCCU-Base](https://github.com/OpenCCU/OpenCCU-Base/tree/{base_rev}) `{base_rev[:12]}`"
+    fw = f" · [HMDeviceFirmware]({FW_REPO}/tree/{fw_rev}) `{fw_rev[:12]}`" if has_fw else ''
+    basis = t['basis_top'].format(occu=occu_version, base=base, hmip=f'`{version}`', fw=fw,
+                                  date=datetime.date.today().isoformat())
     out = [f"# {t['title']}", '', t['other'], '',
-           t['intro'].format(count=len(devices), occu=occu_version), '']
-    for proto in PROTO_ORDER:
-        out += section(t['sec'][proto], [d for d in official if d['proto'] == proto], t, True,
-                       proto=False, **args)
-    out += section(t['oem_h'], partner, t, False, **args)
-    out += section(t['limited_h'], limited, t, False, **args)
-    out += section(t['unsupported_h'], unsupported, t, False, **dict(args, firmware=False))
+           t['intro'].format(count=len(devices), occu=occu_version), '',
+           f"**{t['toc']}:**", '']
+    out += [f"- [{title}](#{SECTION_IDS[key]}) – {len(rows)}" for key, title, rows, _, _ in sections]
+    out += ['', f"**{t['basis']}:** {basis}", '']
+    for key, title, rows, opened, kwargs in sections:
+        out += section(title, rows, t, opened, SECTION_IDS[key], **kwargs)
 
     notes = [n for n in t['notes'] if has_fw or '{fwpages}' not in n]
     out += [f"## {t['notes_h']}", '']
     out += [f'- {notes[0]}'] + [f'  - {s.format(jar=JAR)}' for s in t['src']]
     out += [f'- {n.format(fwpages=FW_PAGES, occu=occu_version)}' for n in notes[1:]] + ['']
-    basis = f"{t['occu']} `{occu_version}`, {t['base']} `{base_rev[:12]}`, {t['hmip']} `{version}`"
-    if has_fw:
-        basis += f", {t['fwrepo']} `{fw_rev[:12]}`"
-    out += [f"**{t['basis']}:** {basis}, {t['gen']} {datetime.date.today().isoformat()}.  ",
-            f"**{t['regen']}:** `scripts/generate-supported-devices.py --base <OpenCCU-Base> "
+    out += [f"**{t['regen']}:** `scripts/generate-supported-devices.py --base <OpenCCU-Base> "
             f"--firmware <HMDeviceFirmware>`", '']
     return '\n'.join(out)
 

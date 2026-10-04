@@ -2,7 +2,21 @@
 
 [Deutsche Version](supported-devices.de.md)
 
-All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wired) device types supported by OpenCCU 3.89.11 – to check devices before buying them. Each section can be expanded and collapsed; explanations and data sources are at the [end of the page](#notes).
+All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wired) device types supported by OpenCCU 3.89.11 – to check devices before buying them. Each section can be expanded and collapsed; explanations are in the [notes](#notes) at the end of the page.
+
+**Sections:**
+
+- [Homematic IP (HmIP-RF)](#hmip-rf) – 226
+- [Homematic IP Wired (HmIP-Wired)](#hmip-wired) – 38
+- [Homematic (BidCos-RF)](#bidcos-rf) – 168
+- [Homematic Wired (BidCos-Wired, RS485)](#bidcos-wired) – 10
+- [Partner and OEM devices (no Homematic type name)](#partner-oem) – 38
+- [Limited support (no WebUI integration)](#limited) – 60
+- [Not supported (WebUI entry only)](#unsupported) – 21
+
+**Data basis:** OpenCCU 3.89.11 · [OpenCCU-Base](https://github.com/OpenCCU/OpenCCU-Base/tree/ea614511caa23e046f5e83d68a2c525f8fc54ffa) `ea614511caa2` (`rfd`/`hs485d` device descriptions, WebUI device database) · `HMIPServer.jar` `1.5.1-SNAPSHOT 2026-06-30T07:34:55Z` · [HMDeviceFirmware](https://github.com/OpenCCU/HMDeviceFirmware/tree/4f563110d4201926f5d016c08fb68d79a7c085a9) `4f563110d420` · as of 2026-10-04
+
+<a name="hmip-rf"></a>
 
 <details open><summary><b>Homematic IP (HmIP-RF)</b> – 226 device types</summary>
 
@@ -237,6 +251,8 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 
 </details>
 
+<a name="hmip-wired"></a>
+
 <details open><summary><b>Homematic IP Wired (HmIP-Wired)</b> – 38 device types</summary>
 
 | Image | Type | Description | Firmware |
@@ -281,6 +297,8 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 | <a href="https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/ea614511caa23e046f5e83d68a2c525f8fc54ffa/www/config/img/devices/250/121_hmip-wth.png"><img src="https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/ea614511caa23e046f5e83d68a2c525f8fc54ffa/www/config/img/devices/50/121_hmip-wth_thumb.png" width="50" alt="HmIPW-WTH-A"></a> | [`HmIPW-WTH-A`](https://de.elv.com/search?q=HmIPW-WTH-A) | Homematic IP Wired Wall Thermostat with Humidity Sensor | [3.0.2](https://openccu.github.io/HMDeviceFirmware/changelogs/changelog_HmIPW_WTH_A_update_3_0_2_240408.html) |
 
 </details>
+
+<a name="bidcos-rf"></a>
 
 <details open><summary><b>Homematic (BidCos-RF)</b> – 168 device types</summary>
 
@@ -457,6 +475,8 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 
 </details>
 
+<a name="bidcos-wired"></a>
+
 <details open><summary><b>Homematic Wired (BidCos-Wired, RS485)</b> – 10 device types</summary>
 
 | Image | Type | Description | Firmware |
@@ -473,6 +493,8 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 | <a href="https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/ea614511caa23e046f5e83d68a2c525f8fc54ffa/www/config/img/devices/250/58_hmw-sen-sc-12-fm.png"><img src="https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/ea614511caa23e046f5e83d68a2c525f8fc54ffa/www/config/img/devices/50/58_hmw-sen-sc-12-fm_thumb.png" width="50" alt="HMW-Sen-SC-12-FM"></a> | [`HMW-Sen-SC-12-FM`](https://de.elv.com/search?q=HMW-Sen-SC-12-FM) | Wired RS485 Shutter Contact 12-channel, flush-mount | – |
 
 </details>
+
+<a name="partner-oem"></a>
 
 <details><summary><b>Partner and OEM devices (no Homematic type name)</b> – 38 device types</summary>
 
@@ -518,6 +540,8 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 | <a href="https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/ea614511caa23e046f5e83d68a2c525f8fc54ffa/www/config/img/devices/250/75_hm-pb-2-wm55.png"><img src="https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/ea614511caa23e046f5e83d68a2c525f8fc54ffa/www/config/img/devices/50/75_hm-pb-2-wm55_thumb.png" width="50" alt="ZEL STG RM WT 2"></a> | `ZEL STG RM WT 2` | Wireless Push-button 2-channel in 55mm frame (OEM: Roto) | BidCos-RF | – |
 
 </details>
+
+<a name="limited"></a>
 
 <details><summary><b>Limited support (no WebUI integration)</b> – 60 device types</summary>
 
@@ -586,6 +610,8 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 
 </details>
 
+<a name="unsupported"></a>
+
 <details><summary><b>Not supported (WebUI entry only)</b> – 21 device types</summary>
 
 | Image | Type | Description | Protocol |
@@ -630,5 +656,4 @@ All 540 Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, HmIP-Wire
 - Devices under "Limited support" are known to the interface process but have no dedicated WebUI integration (no device image, no device description). They can be paired, but their handling in the WebUI may be limited.
 - Devices under "Not supported" exist in the WebUI device database but are not known as a device type by any interface process (e.g. discontinued legacy devices or new devices whose support is still missing in the HMIPServer). Do not plan new purchases around them.
 
-**Data basis:** OpenCCU version `3.89.11`, OpenCCU-Base commit `ea614511caa2`, HMIPServer.jar version `1.5.1-SNAPSHOT 2026-06-30T07:34:55Z`, HMDeviceFirmware commit `4f563110d420`, generated on 2026-10-04.  
 **Regenerate with:** `scripts/generate-supported-devices.py --base <OpenCCU-Base> --firmware <HMDeviceFirmware>`
