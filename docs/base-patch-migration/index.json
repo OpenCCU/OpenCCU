@@ -1092,15 +1092,6 @@
       "sha256": "e79b6b21004f7c594fddcf7084ec768ee9a3e898213133e274faeb474964cd04"
     },
     {
-      "added": 13,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch",
-      "removed": 6,
-      "sha256": "3c471e67bb8e69d33585781676d660b8c084888749c98ce870e0d3a4549120c4"
-    },
-    {
       "added": 15,
       "files": [
         "www/rega/pages/tabs/admin/systemvars.htm",
@@ -1210,5 +1201,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "0ac6727ea5df35ca31d94e5eb56f7a67f54ce10edad24a0ae9a6f6ec8d86a278"
+  "series_sha256": "cf57c169643100125420af37756ef97c607273cd53650d4ca136efc576f0116e"
 }

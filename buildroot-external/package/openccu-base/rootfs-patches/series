@@ -77,7 +77,6 @@
 0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch
 0173-WebUI-SendPOSTRequest.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
-0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch
 0191-WebUI-Add-NaturalSortOrder.patch
 0193-WebUI-EnhancedTRVSettingsPage.patch
 0195-WebUI-Fix-MissingDimmerDefinition.patch
