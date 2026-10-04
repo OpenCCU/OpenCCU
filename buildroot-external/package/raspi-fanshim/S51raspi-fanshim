@@ -24,7 +24,7 @@ case $1 in
 			echo "ERROR: parallel use of Fan SHIM + HM-MOD-RPI-PCB not possible!"
 		else
 			# now start the daemon
-			if start-stop-daemon --start --background --pidfile "${PIDFILE}" --make-pidfile --quiet --exec "/opt/raspi-fanshim/FanshimService"; then
+			if start-stop-daemon -d / --start --background --pidfile "${PIDFILE}" --make-pidfile --quiet --exec "/opt/raspi-fanshim/FanshimService"; then
 				echo "OK"
 			else
 				echo "FAIL"

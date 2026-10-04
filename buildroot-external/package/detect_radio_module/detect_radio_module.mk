@@ -3,12 +3,13 @@
 # detect_radio_module
 #
 # Alexander Reinert <alex@areinert.de>
-# https://github.com/alexreinert/piVCCU/tree/master/detect_radio_module
+# https://github.com/OpenCCU/piVCCU/tree/master/detect_radio_module
+# (fork of https://github.com/alexreinert/piVCCU)
 #
 ################################################################################
 
 DETECT_RADIO_MODULE_VERSION = 908d18fd52963ef8bf54b12083650509ce116374
-DETECT_RADIO_MODULE_SITE = $(call github,alexreinert,piVCCU,$(DETECT_RADIO_MODULE_VERSION))
+DETECT_RADIO_MODULE_SITE = $(call github,OpenCCU,piVCCU,$(DETECT_RADIO_MODULE_VERSION))
 DETECT_RADIO_MODULE_LICENSE = Apache-2.0
 DETECT_RADIO_MODULE_LICENSE_FILES = LICENSE
 

@@ -17,6 +17,7 @@ $secondary: #89989b;
 
 // 3. Include remainder of required Bootstrap stylesheets
 @import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
 // @import "../node_modules/bootstrap/scss/mixins";
 // @import "../node_modules/bootstrap/scss/root";
 
@@ -55,6 +56,24 @@ $headings-font-weight: bold;
 
 // Merge the maps
 $theme-colors: map-merge($theme-colors, $colormap-colors);
+
+// Bootstrap >= 5.3 derives the *-text-emphasis, *-bg-subtle and *-border-subtle
+// CSS variables used by e.g. .alert-* or .list-group-item-* from separate maps.
+// Import them only after $theme-colors was merged (so that $theme-colors-rgb
+// includes our colors) and extend them with our own colors using the same
+// formulas Bootstrap uses for its default theme colors.
+@import "../node_modules/bootstrap/scss/maps";
+
+@each $name, $color in $colormap-colors {
+    $theme-colors-text: map-merge($theme-colors-text, ($name: shade-color($color, 60%)));
+    $theme-colors-bg-subtle: map-merge($theme-colors-bg-subtle, ($name: tint-color($color, 80%)));
+    $theme-colors-border-subtle: map-merge($theme-colors-border-subtle, ($name: tint-color($color, 60%)));
+    @if $enable-dark-mode {
+        $theme-colors-text-dark: map-merge($theme-colors-text-dark, ($name: tint-color($color, 40%)));
+        $theme-colors-bg-subtle-dark: map-merge($theme-colors-bg-subtle-dark, ($name: shade-color($color, 80%)));
+        $theme-colors-border-subtle-dark: map-merge($theme-colors-border-subtle-dark, ($name: shade-color($color, 40%)));
+    }
+}
 
 // Option A: Include all of Bootstrap
 @import "../node_modules/bootstrap/scss/bootstrap";

@@ -53,7 +53,7 @@ start() {
     chown root:root /usr/local/etc/ssh/authorized_keys
   fi
 
-  if start-stop-daemon -S -q -p "${PIDFILE}" --exec "${DAEMON}"; then
+  if start-stop-daemon -d / -S -q -p "${PIDFILE}" --exec "${DAEMON}"; then
     echo "OK"
   else
     echo "FAIL"

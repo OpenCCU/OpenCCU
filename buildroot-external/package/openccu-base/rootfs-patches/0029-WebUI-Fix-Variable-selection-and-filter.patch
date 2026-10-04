@@ -1,23 +1,23 @@
 --- a/www/rega/pages/msg/sysVarsArray.htm
 +++ b/www/rega/pages/msg/sysVarsArray.htm
-@@ -70,6 +70,7 @@
+@@ -67,6 +67,7 @@
              Write("tmp['values'] = '';");
            }
            Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
 +          Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
            Write("arSysVars[arSysVars.length] = tmp;");
-         }
        }
+     }
 --- a/www/rega/pages/msg/sysVarsArrayAll.htm
 +++ b/www/rega/pages/msg/sysVarsArrayAll.htm
-@@ -72,6 +72,7 @@
+@@ -69,6 +69,7 @@
              Write("tmp['values'] = '';");
            }
            Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
 +          Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
            Write("arSysVars[arSysVars.length] = tmp;");
-         }
        }
+     }
 --- a/www/rega/pages/msg/sysVarsSelection.htm
 +++ b/www/rega/pages/msg/sysVarsSelection.htm
 @@ -67,12 +67,11 @@
@@ -79,7 +79,7 @@
          <div class='FilterSetButton' onclick="$('btnFilterVarTypeSub').hide();">${filterClose}</div>
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -1141,10 +1141,20 @@
+@@ -1143,10 +1143,20 @@
    text-align:center;
  }
  .SysVarsTblPopup{
@@ -102,7 +102,7 @@
    background-color: $_(white); /* white */
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -36720,6 +36720,7 @@
+@@ -36726,6 +36726,7 @@
      this.bTypeValueList = false;
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
@@ -110,7 +110,7 @@
      this.bColLeft = false;
      this.bColCenter = false;
      this.bNameLeft = false;
-@@ -36966,6 +36967,12 @@
+@@ -36972,6 +36973,12 @@
              if (!bRet) { bRet = true; }
            }
          }
@@ -123,7 +123,7 @@
          return bRet;
        }
      }
-@@ -37019,6 +37026,7 @@
+@@ -37025,6 +37032,7 @@
      if (this.bTypeValueList) return true;
      if (this.bTypeNumber) return true;
      if (this.bTypeAlarm) return true;
@@ -131,7 +131,7 @@
      return false; 
    },
      
-@@ -37095,6 +37103,7 @@
+@@ -37101,6 +37109,7 @@
      this.bTypeValueList = false;
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
@@ -139,7 +139,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -37127,6 +37136,7 @@
+@@ -37133,6 +37142,7 @@
        $("cbValueList").checked = fltObj.bTypeValueList;
        $("cbNumber").checked = fltObj.bTypeNumber;
        $("cbAlarm").checked = fltObj.bTypeAlarm;
@@ -147,7 +147,7 @@
        break;
      case "btnFilterIfaceSub":
        $("cbSend").checked = fltObj.isFilterType(FIL_IFACE_S); 
-@@ -37253,7 +37263,8 @@
+@@ -37259,7 +37269,8 @@
        fltObj.bTypeLogic = $("cbLogic").checked;
        fltObj.bTypeValueList = $("cbValueList").checked;
        fltObj.bTypeNumber = $("cbNumber").checked;
@@ -157,7 +157,7 @@
        break;
      case "colPos":
        fltObj.bColLeft = $("cbColLeft").checked; 
-@@ -41237,25 +41248,25 @@
+@@ -41243,25 +41254,25 @@
        IseSort(arSysVars,this.colName,false,true);
        for (var i = 0; i < arSysVars.length; i++) 
        {

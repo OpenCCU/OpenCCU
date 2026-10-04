@@ -1,0 +1,65 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# One LED owner from early boot through shutdown, including recovery.
+# shellcheck source=/dev/null
+DAEMON="hss_led"
+PIDFILE="/var/run/$DAEMON.pid"
+RUNTIME="/var/run/hss_led"
+
+start() {
+	if [ ! -x "/bin/$DAEMON" ]; then
+		echo "$DAEMON is missing or not executable" >&2
+		return 1
+	fi
+	if [ ! -x /bin/hss_ledctl ]; then
+		echo "hss_ledctl is missing or not executable" >&2
+		return 1
+	fi
+	# /VERSION is available before S01InitHost creates /var/hm_mode.
+	PLATFORM=""
+	[ ! -r /VERSION ] || . /VERSION
+	run_user=hssled
+	case "$PLATFORM" in oci*|lxc*) run_user=root ;; esac
+	mkdir -p "$RUNTIME" || return 1
+	chown -R "$run_user:status" "$RUNTIME" || return 1
+	chmod 0755 "$RUNTIME" || return 1
+	if [ "$run_user" = hssled ]; then
+		# Existing coldplug nodes may predate the udev rules. New nodes and
+		# timer attributes are handled by 82-hss_led.rules (also in recovery).
+		for led in /sys/class/leds/*; do
+			[ -d "$led" ] || continue
+			led=$(readlink -f "$led") || return 1
+			chgrp -R hssled "$led"
+			chmod -R g=u "$led"
+		done
+	fi
+	# Keep the existing OpenCCU logging policy explicit.
+	start-stop-daemon -S -q -o -b -m -d / -c "$run_user" \
+		-p "$PIDFILE" --exec "/bin/$DAEMON" -- -l 6 || return 1
+	n=0
+	until /bin/hss_ledctl --led rpi-rf-mod status >/dev/null 2>&1; do
+		n=$((n + 1))
+		[ "$n" -lt 50 ] || { echo "hss_led did not become ready" >&2; return 1; }
+		sleep 0.1
+	done
+}
+
+stop() {
+	start-stop-daemon -K -q -o -p "$PIDFILE" --exec "/bin/$DAEMON"
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	restart|reload)
+		stop
+		n=0
+		while /bin/hss_ledctl --led rpi-rf-mod status >/dev/null 2>&1; do
+			n=$((n + 1))
+			[ "$n" -lt 50 ] || exit 1
+			sleep 0.1
+		done
+		start
+		;;
+	*) echo "Usage: $0 {start|stop|restart}" >&2; exit 2 ;;
+esac

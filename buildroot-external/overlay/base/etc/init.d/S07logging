@@ -26,10 +26,10 @@ start() {
   fi
 
   # shellcheck disable=SC2086
-  start-stop-daemon -b -S -q -m -p /var/run/syslogd.pid --exec /sbin/syslogd -- $SYSLOGD_ARGS
+  start-stop-daemon -d / -b -S -q -m -p /var/run/syslogd.pid --exec /sbin/syslogd -- $SYSLOGD_ARGS
   if [[ "${HM_HOST}" != "oci" ]]; then
     # shellcheck disable=SC2086
-    start-stop-daemon -b -S -q -m -p /var/run/klogd.pid --exec /sbin/klogd -- $KLOGD_ARGS
+    start-stop-daemon -d / -b -S -q -m -p /var/run/klogd.pid --exec /sbin/klogd -- $KLOGD_ARGS
   fi
   echo "OK"
 }

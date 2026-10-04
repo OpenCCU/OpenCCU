@@ -197,7 +197,10 @@ function ::CreateVIR-LGRGBWColorControl() {
   if (oRGB) {
     rgbID = oRGB.ID();
     rgbValue = oRGB.Value();
-    rgbDefaultValue = oRGB.MetaData("DEFAULT").ToString();
+    var oRGBMetaData = oRGB.MetaData("DEFAULT");
+    if (oRGBMetaData) {
+      rgbDefaultValue = oRGBMetaData.ToString();
+    }
   }
 
   WriteLine("<tr>");

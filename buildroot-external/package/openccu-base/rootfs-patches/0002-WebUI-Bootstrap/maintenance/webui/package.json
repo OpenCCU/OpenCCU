@@ -9,10 +9,10 @@
     "author": "ptweety",
     "license": "Apache-2.0",
     "dependencies": {
-        "@popperjs/core": "^2.10.2",
-        "bootstrap": "^5.2.3"
+        "@popperjs/core": "^2.11.8",
+        "bootstrap": "^5.3.8"
     },
     "devDependencies": {
-        "sass": "^1.57.1"
+        "sass": "1.78.0"
     }
 }

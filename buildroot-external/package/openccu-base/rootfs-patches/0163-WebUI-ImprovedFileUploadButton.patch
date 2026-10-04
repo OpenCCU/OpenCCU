@@ -193,8 +193,8 @@
      "Belgium" : "Belgium",
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -9353,3 +9353,30 @@
- .CodeMirror-gutter-wrapper {
+@@ -9355,3 +9355,30 @@
+ .cm-gutters {
    font-family: monospace;
  }
 +

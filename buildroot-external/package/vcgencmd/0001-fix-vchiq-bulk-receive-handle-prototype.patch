@@ -1,0 +1,21 @@
+Subject: [PATCH] vchiq_arm: fix bulk receive callback prototype for C23
+
+Since C23, an empty parameter list specifies a function taking no
+arguments. Match the callback prototype declared in vchiq_if.h to
+avoid conflicting types when compiling with GCC 15's default dialect.
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/interface/vchiq_arm/vchiq_lib.c
++++ b/interface/vchiq_arm/vchiq_lib.c
+@@ -537,7 +537,7 @@ vchiq_bulk_receive_handle(VCHIQ_SERVICE_HANDLE_T handle,
+    int size,
+    void *userdata,
+    VCHIQ_BULK_MODE_T mode,
+-   int (*copy_pagelist)())
++   int (*copy_pagelist)(char *vcptr, const struct pagelist_struct *pagelist))
+ {
+    VCHIQ_SERVICE_T *service = find_service_by_handle(handle);
+    VCHIQ_QUEUE_BULK_TRANSFER_T args;

@@ -18,6 +18,7 @@ HM_SERVER_ARGS="/var/etc/crRFD.conf /var/etc/HMServer.conf"
 HM_SERVER_DEVNODE=/dev/mmd_hmip
 LOGLEVEL_HMIP=error
 PIDFILE=/var/run/HMIPServer.pid
+NTPSYNC_TIMEOUT=180
 
 init() {
   export JAVA_HOME=/opt/java/
@@ -156,9 +157,38 @@ waitStartupComplete() {
   done
 }
 
+# The HmIP security counter handling of HMIPServer depends on a valid
+# system time. If HMIPServer is started with a system time in the past (e.g.
+# no RTC and NTP not reachable yet after a power outage) the security counter
+# can be set to a wrong value so that all HmIP devices become unreachable
+# (cf. https://github.com/OpenCCU/OpenCCU/issues/4274). Thus, if the system
+# time could not be taken from a valid RTC (cf. S02InitRTC) we wait (with
+# timeout) for a NTP time sync during system startup.
+waitTimeSync() {
+  if [[ -n "${HM_HMIP_DEV}" ]] &&
+     [[ -e /var/status/systemTimeRestored ]] &&
+     [[ ! -e /var/status/startupFinished ]] &&
+     [[ ! -e /etc/config/NoNTPSyncWait ]] &&
+     [[ -x /etc/init.d/S46chronyd ]]; then
+    echo -n "NTP sync"
+    if /etc/init.d/S46chronyd waitsync ${NTPSYNC_TIMEOUT}; then
+      echo -n "OK, "
+    else
+      echo -n "WARNING: timeout, "
+    fi
+  fi
+}
+
 start() {
   echo -n "Starting HMIPServer: "
+  waitTimeSync
   init
+
+  # protect the HmIP security counter against the 32 bit overflow in
+  # HMIPServer (cf. https://github.com/OpenCCU/OpenCCU/issues/4274)
+  if [[ -n "${HM_HMIP_DEV}" ]] && [[ -x /bin/checkHmIPsecurityCounter.sh ]]; then
+    /bin/checkHmIPsecurityCounter.sh check
+  fi
 
   # get the architecture
   ARCH=$(uname -m)
@@ -205,7 +235,7 @@ start() {
   echo -900 >/proc/$$/oom_score_adj 2>/dev/null
 
   # shellcheck disable=SC2086
-  start-stop-daemon -b -S -q -m -p "${PIDFILE}" --exec java -- -Dos.arch=${ARCH} ${JAVAOPT} -Dlog4j.configurationFile=file:///var/etc/log4j2.xml -Dfile.encoding=ISO-8859-1 -cp "${HM_SERVER}" ${HM_SERVER_CLASS} ${HM_SERVER_ARGS}
+  start-stop-daemon -d / -b -S -q -m -p "${PIDFILE}" --exec java -- -Dos.arch=${ARCH} ${JAVAOPT} -Dlog4j.configurationFile=file:///var/etc/log4j2.xml -Dfile.encoding=ISO-8859-1 -cp "${HM_SERVER}" ${HM_SERVER_CLASS} ${HM_SERVER_ARGS}
   echo -n "."
   waitStartupComplete
 }

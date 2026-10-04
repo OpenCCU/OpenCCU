@@ -1,0 +1,472 @@
+{
+  "completed": [
+    {
+      "base_merge_commit": "81eb8370d4b5855ad4e179827fb168028af8d825",
+      "base_pr": 38,
+      "cleanup_pr": 4205,
+      "patch": "0110-WebUI-Fix-cp_software-Typo.patch"
+    },
+    {
+      "base_merge_commit": "b3064f381dd192e3a2dbb16a7204b4d407180759",
+      "base_pr": 39,
+      "cleanup_pr": 4206,
+      "patch": "0107-WebUI-Fix-rgbw.fn-CheckMetaDataIsNotNULL.patch"
+    },
+    {
+      "base_merge_commit": "587230316a97e380516b0ac4d21a497c187657cd",
+      "base_pr": 40,
+      "cleanup_pr": 4208,
+      "patch": "0112-WebUI-Fix-Typo-hmipChannelConfigDialogs.patch"
+    },
+    {
+      "base_merge_commit": "8fbd62ed8790b5e8ad9a9d771cf2ea1818112b25",
+      "base_pr": 41,
+      "cleanup_pr": 4210,
+      "patch": "0142-WebUI-Fix-StartpageGuestTranslate.patch"
+    },
+    {
+      "base_merge_commit": "e82b21066b6394f5d5a3824026eb7eb8c6d45921",
+      "base_pr": 42,
+      "cleanup_pr": 4213,
+      "patch": "0101-WebUI-Fix-JSON-describe.patch"
+    },
+    {
+      "base_merge_commit": "2f14844f9f53f76db74fcdad9227f5d89e095c17",
+      "base_pr": 43,
+      "cleanup_pr": 4215,
+      "patch": "0106-WebUI-Improvement-TreatOPERATOR_NONEasOPERATOR_OR.patch"
+    },
+    {
+      "base_merge_commit": "e3a292b0012b331e45be97e36ae2f8a8f5797b58",
+      "base_pr": 44,
+      "cleanup_pr": 4218,
+      "patch": "0204-WebUI-Fix-SetProfileBySysvarNotAllowed.patch"
+    },
+    {
+      "base_merge_commit": "ce20f9d0e4c631e5c2e25784b195caecc1085951",
+      "base_pr": 45,
+      "cleanup_pr": 4221,
+      "patch": "0167-WebUI-Fix-InternalTclURLs.patch"
+    },
+    {
+      "base_merge_commit": "f806cfb018124c2e68eed14746560243345ac35d",
+      "base_pr": 46,
+      "cleanup_pr": 4222,
+      "patch": "0207-WebUI-Fix-ReGaScriptInjection.patch"
+    },
+    {
+      "base_merge_commit": "fb13b8a36634734a813f313926980078abd57d2c",
+      "base_pr": 47,
+      "cleanup_pr": 4223,
+      "patch": "0208-WebUI-Fix-DoorLockTransceiverVisibility.patch"
+    },
+    {
+      "base_merge_commit": "2cb6594c1c7be30776e25b733fa05426186425be",
+      "base_pr": 48,
+      "cleanup_pr": 4227,
+      "patch": "0034-WebUI-Addon-Config.patch"
+    },
+    {
+      "base_merge_commit": "59e46830783d5517be449301ebf682d29b86e58e",
+      "base_pr": 49,
+      "cleanup_pr": 4228,
+      "patch": "0182-WebUI-Fix-DimmerControl-InitButtonsWithChannelState.patch"
+    },
+    {
+      "base_merge_commit": "41a8796a2869699f008f229c382e493186dd7c04",
+      "base_pr": 50,
+      "cleanup_pr": 4229,
+      "patch": "0166-WebUI-Fix-PowermeterControl.patch"
+    },
+    {
+      "base_merge_commit": "47852670b376000b91a5cfb7906dca84e2469aa4",
+      "base_pr": 51,
+      "cleanup_pr": 4230,
+      "patch": "0176-WebUI-Fix-HeatingControl-BWTHSwitchState.patch"
+    },
+    {
+      "base_merge_commit": "2a34e0a82e603e725a40fbaefcb209c35b462fbc",
+      "base_pr": 52,
+      "cleanup_pr": 4231,
+      "patch": "0177-WebUI-Fix-EmptyHmIPWKPPIN.patch"
+    },
+    {
+      "base_merge_commit": "d9ebce227ad4e756d3ff23c467dd7127df571125",
+      "base_pr": 53,
+      "cleanup_pr": 4232,
+      "patch": "0178-WebUI-Fix-ValidateSaveSysvarInput.patch"
+    },
+    {
+      "base_merge_commit": "3efc877da639476319f68065fe9223531ed09e3d",
+      "base_pr": 54,
+      "cleanup_pr": 4233,
+      "patch": "0180-WebUI-ShowCurrentIPOnNetworkSettingsPage.patch"
+    },
+    {
+      "base_merge_commit": "d678401394f4e8c25abae5a0fa7c629f6647811a",
+      "base_pr": 55,
+      "cleanup_pr": 4234,
+      "patch": "0181-WebUI-Fix-HTTPSfirmwareURLsOnly.patch"
+    },
+    {
+      "base_merge_commit": "caec7573d289a4b36f322862f22b110903dddf45",
+      "base_pr": 57,
+      "cleanup_pr": 4243,
+      "patch": "0157-WebUI-Fix-WrongJSONQuotes.patch"
+    },
+    {
+      "base_merge_commit": "e27bd998a13f151d8fc8829978343c6b8e2a3f05",
+      "base_pr": 58,
+      "cleanup_pr": 4247,
+      "patch": "0158-WebUI-Fix-SysProtocolCharEncoding.patch"
+    },
+    {
+      "base_merge_commit": "85f79d1fe6afd13db054cd24506ab85ac5715246",
+      "base_pr": 61,
+      "cleanup_pr": 4251,
+      "patch": "0010-WebUI-Disable-TimeModuleWarn.patch"
+    },
+    {
+      "base_merge_commit": "1c2f055666510096ba689df2ef6767951db9c436",
+      "base_pr": 62,
+      "cleanup_pr": 4252,
+      "patch": "0014-WebUI-Fix-ControlPanelSorting.patch"
+    },
+    {
+      "base_merge_commit": "661be9e8829a2404a89f0b64c72f7283cb72dbc4",
+      "base_pr": 63,
+      "cleanup_pr": 4253,
+      "patch": "0003-rftypes-Fix.patch"
+    },
+    {
+      "base_merge_commit": "3fcb25433bb7de366bf438a4beaf890b67614fce",
+      "base_pr": 64,
+      "cleanup_pr": 4254,
+      "patch": "0013-WebUI-SecKeyChangesDisplay.patch"
+    },
+    {
+      "base_merge_commit": "38a4f5453eade273b8a15019bb3247f5c5a61d50",
+      "base_pr": 65,
+      "cleanup_pr": 4257,
+      "patch": "0004-WebUI-UseMonitRestarts.patch"
+    },
+    {
+      "base_merge_commit": "1f82c7b1f785d5f3fc7b3fd5c24ddd6588b8e8da",
+      "base_pr": 66,
+      "cleanup_pr": 4259,
+      "patch": "0117-WebUI-Fix-Rounding-within-Temperatur-Comfort-Lowering.patch"
+    },
+    {
+      "base_merge_commit": "982f3df9cc7ccd647d5eca286845ecf17bb18c04",
+      "base_pr": 67,
+      "cleanup_pr": 4260,
+      "patch": "0159-WebUI-Fix-JSONRpcResponses.patch"
+    },
+    {
+      "base_merge_commit": "00f9b9e6459cbfcfa9f2325909d669bc6ba290e5",
+      "base_pr": 68,
+      "cleanup_pr": 4261,
+      "patch": "0194-WebUI-Add-MissingChannelDescriptions.patch"
+    },
+    {
+      "base_merge_commit": "79d51dc26e5a87a81b5ab1c264029a37683a0237",
+      "base_pr": 69,
+      "cleanup_pr": 4262,
+      "patch": "0037-WebUI-DevConfig.patch"
+    },
+    {
+      "base_merge_commit": "8de440529b0d09e9493ce8cfe0137270a4820c67",
+      "base_pr": 70,
+      "cleanup_pr": 4263,
+      "patch": "0064-WebUI-Fix-URLPlugin.patch"
+    },
+    {
+      "base_merge_commit": "9dfbdcdce48108ec2e842cc016433bb0deb68b6a",
+      "base_pr": 71,
+      "cleanup_pr": 4264,
+      "patch": "0162-WebUI-Fix-MissingHmipChannelParameters.patch"
+    },
+    {
+      "base_merge_commit": "80c9bc3e213944e0627c18134c5ef2a5cd962a0b",
+      "base_pr": 72,
+      "cleanup_pr": 4265,
+      "patch": "0027-WebUI-Fix-EmptyTableCUxDDevices.patch"
+    },
+    {
+      "base_merge_commit": "932ce52b380bd65aea17f297d01b178adf636394",
+      "base_pr": 73,
+      "cleanup_pr": 4266,
+      "patch": "0033-WebUI-Fix-DeviceParameters.patch"
+    },
+    {
+      "base_merge_commit": "1b7a9156fd24a3d79760a279425de9d0c7c99910",
+      "base_pr": 75,
+      "cleanup_pr": 4268,
+      "patch": "0059-WebUI-Fix-KeepProgramActiveState.patch"
+    },
+    {
+      "base_merge_commit": "1898cab4e8faf80d430ba6849c08e85d70fcd87f",
+      "base_pr": 76,
+      "cleanup_pr": 4269,
+      "patch": "0100-WebUI-Fix-CreateDirectLink-GroupDescription-Translation.patch"
+    },
+    {
+      "base_merge_commit": "7d9c08c554d94621b0a36dfbaded953b1244ba6e",
+      "base_pr": 77,
+      "cleanup_pr": 4270,
+      "patch": "0021-WebUI-Remove-Logo.patch"
+    },
+    {
+      "base_merge_commit": "3499f6515521f8ae82d309462a809f71ef233547",
+      "base_pr": 78,
+      "cleanup_pr": 4271,
+      "patch": "0063-WebUI-DownloadAddonsInNewTab.patch"
+    },
+    {
+      "base_merge_commit": "163ace412280cc3ad0be321637202de401cc35c0",
+      "base_pr": 79,
+      "cleanup_pr": 4272,
+      "patch": "0172-WebUI-Fix-ScriptErrorAfterCPSoftwareClose.patch"
+    },
+    {
+      "base_merge_commit": "2aee789dd71d09d55714cc8155b1d14fa206bdcf",
+      "base_pr": 80,
+      "cleanup_pr": 4273,
+      "patch": "0139-WebUI-Fix-ScriptErrorOnUnknownDatapoint.patch"
+    },
+    {
+      "base_merge_commit": "a7c8217c79ec7977538db0e8ccda018020334a42",
+      "base_pr": 81,
+      "cleanup_pr": 4275,
+      "patch": "0128-WebUI-Fix-UpdateAccessPointButton.patch"
+    },
+    {
+      "base_merge_commit": "f484a5bf6d6a1e2d2bfe2ed47e46802d1a7fe000",
+      "base_pr": 82,
+      "cleanup_pr": 4277,
+      "patch": "0116-WebUI-Chrome-88-Sort-Header-Cell.patch"
+    },
+    {
+      "base_merge_commit": "c827595eb3ee55528fdefd17dcc31d29ecc0fee1",
+      "base_pr": 83,
+      "cleanup_pr": 4281,
+      "patch": "0083-WebUI-Fix-DeviceTestScriptError.patch"
+    },
+    {
+      "base_merge_commit": "092ffdf0f37005dc8e4ef4fa7609ee7c10329229",
+      "base_pr": 84,
+      "cleanup_pr": 4282,
+      "patch": "0102-WebUI-Fix-TrailingNewLineInFirewallIPTextarea.patch"
+    },
+    {
+      "base_merge_commit": "40894ac084e4fbae7fa79298fc310acee4fc91c1",
+      "base_pr": 85,
+      "cleanup_pr": 4284,
+      "patch": "0082-WebUI-Fix-SetVisibilityScriptError.patch"
+    },
+    {
+      "base_merge_commit": "afa0cd9bf8ff007ed563323ac3971f2fffb66c5b",
+      "base_pr": 86,
+      "cleanup_pr": 4285,
+      "patch": "0123-WebUI-Fix-ChannelActionDuration.patch"
+    },
+    {
+      "base_merge_commit": "ed7f7c1bcfd189a4426fa3303e4936fec63129be",
+      "base_pr": 87,
+      "cleanup_pr": 4288,
+      "patch": "0115-WebUI-GatewayConfiguration-DevicesListSortByName.patch"
+    },
+    {
+      "base_merge_commit": "c0909d88040e3772cca977614a6a9a4b99604fdb",
+      "base_pr": 88,
+      "cleanup_pr": 4290,
+      "patch": "0041-WebUI-ThirdPartyDevice-Sorting.patch"
+    },
+    {
+      "base_merge_commit": "21c987c27b2368e08b91f70228e74df2a2569624",
+      "base_pr": 89,
+      "cleanup_pr": 4291,
+      "patch": "0094-WebUI-userSysVarTblValuesWordWrap.patch"
+    },
+    {
+      "base_merge_commit": "4a4284910fa0aff927fe8bed968d76e9f2e3126e",
+      "base_pr": 90,
+      "cleanup_pr": 4293,
+      "patch": "0200-WebUI-Fix-EventStalling.patch"
+    },
+    {
+      "base_merge_commit": "f99990bc8df1ab27527d010641675bea6b91e6bf",
+      "base_pr": 91,
+      "cleanup_pr": 4294,
+      "patch": "0076-WebUI-Fix-SuperCharScriptUse.patch"
+    },
+    {
+      "base_merge_commit": "71f46417dd8ce0d5fae8eb1554dd65a3eaf69c8e",
+      "base_pr": 92,
+      "cleanup_pr": 4296,
+      "patch": "0060-WebUI-Fix-SessionLogoutSave.patch"
+    },
+    {
+      "base_merge_commit": "f32e2fd7978202b65a76e73e3933401a9498957e",
+      "base_pr": 93,
+      "cleanup_pr": 4298,
+      "patch": "0168-WebUI-Add-ImprovedLogout.patch"
+    },
+    {
+      "base_merge_commit": "f9bdc53294ae14a4c8c85a5f187a28298c768a16",
+      "base_pr": 94,
+      "cleanup_pr": 4300,
+      "patch": "0185-WebUI-Fix-CPPopupCentering.patch"
+    },
+    {
+      "base_merge_commit": "756cd5ebf4ef2de80613d040589da50ecb3b9070",
+      "base_pr": 95,
+      "cleanup_pr": 4301,
+      "patch": "0074-WebUI-Fix-KeyReturn.patch"
+    },
+    {
+      "base_merge_commit": "ee18da873c77ef2feb0b1e462dae482027d7ef13",
+      "base_pr": 96,
+      "cleanup_pr": 4303,
+      "patch": "0201-WebUI-Fix-SystemFnSyntax.patch"
+    },
+    {
+      "base_merge_commit": "be2b31ce8112e559919c8c1f9a0d536ca3ef8772",
+      "base_pr": 97,
+      "cleanup_pr": 4306,
+      "patch": "0118-WebUI-Fix-ISO8601-DateUses.patch"
+    },
+    {
+      "base_merge_commit": "f139f24c3f388bb3f999fa351a970e247eeb2d99",
+      "base_pr": 98,
+      "cleanup_pr": 4307,
+      "patch": "0198-WebUI-Fix-StringTableValue.patch"
+    },
+    {
+      "base_merge_commit": "b507f3ebd0ffd01a54de1b543bd9bfa20372486b",
+      "base_pr": 99,
+      "cleanup_pr": 4310,
+      "patch": "0197-WebUI-Fix-MissingRouterOption.patch"
+    },
+    {
+      "base_merge_commit": "b74e421d45ff041066d9dc71196fa6a156a4acd4",
+      "base_pr": 100,
+      "cleanup_pr": 4311,
+      "patch": "0105-WebUI-Fix-DeviceInBoxHmIPOnly.patch"
+    },
+    {
+      "base_merge_commit": "790e48ab62e486e085d554317e22cd5eec08f194",
+      "base_pr": 101,
+      "cleanup_pr": 4315,
+      "patch": "0187-WebUI-Fix-GroupEditingIfDevicesInInbox.patch"
+    },
+    {
+      "base_merge_commit": "eacd676afb4fb2192490614cb5c14829fc7bba0a",
+      "base_pr": 103,
+      "cleanup_pr": 4316,
+      "patch": "0184-WebUI-Fix-EM8LockedChannelBehviour.patch"
+    },
+    {
+      "base_merge_commit": "e45050a62e251b976cee764d2dbd46284ea2d926",
+      "base_pr": 104,
+      "cleanup_pr": 4318,
+      "patch": "0084-WebUI-Fix-InvalidObjectCrashes.patch"
+    },
+    {
+      "base_merge_commit": "d6e23888d300f133d65f3122b5e647f3699106ba",
+      "base_pr": 105,
+      "cleanup_pr": 4320,
+      "patch": "0096-WebUI-AdditionalSoftwareSortedList.patch"
+    },
+    {
+      "base_merge_commit": "ff216fde12b38abec4d7abb90acf27b39c99c2cd",
+      "base_pr": 106,
+      "cleanup_pr": 4321,
+      "patch": "0045-WebUI-GlobalSysVarUsage.patch"
+    },
+    {
+      "base_merge_commit": "48d4bf79de5fe8649251e24feec004f1a23ecee4",
+      "base_pr": 107,
+      "cleanup_pr": 4322,
+      "patch": "0067-WebUI-Fix-BrokenLinkPeerList.patch"
+    },
+    {
+      "base_merge_commit": "da2e0a979e8d57bdd3e6230833628ade981505b2",
+      "base_pr": 108,
+      "cleanup_pr": 4324,
+      "patch": "0175-WebUI-Add-AllLogfileDownload.patch"
+    },
+    {
+      "base_merge_commit": "49198964e5e698580e62703ad42d5c17e359903a",
+      "base_pr": 109,
+      "cleanup_pr": 4325,
+      "patch": "0086-WebUI-Fix-500Errors.patch"
+    },
+    {
+      "base_merge_commit": "6dc6c5ee8625ad5ad2e5ce56427704ac5e68faa3",
+      "base_pr": 110,
+      "cleanup_pr": 4326,
+      "patch": "0148-WebUI-Fix-RebootInBackground.patch"
+    },
+    {
+      "base_merge_commit": "87f812fabce4d15739e045e84f15801373388c3c",
+      "base_pr": 111,
+      "cleanup_pr": 4327,
+      "patch": "0085-WebUI-AddonPopupScrollable.patch"
+    },
+    {
+      "base_merge_commit": "79a2c046eaed7d26a90cac39f8a95c74115384f3",
+      "base_pr": 113,
+      "cleanup_pr": 4330,
+      "patch": "0066-WebUI-Fix-ListSorting.patch"
+    },
+    {
+      "base_merge_commit": "b0fdda9ab31895e2f624750dcb2a029d47e9ce52",
+      "base_pr": 114,
+      "cleanup_pr": 4333,
+      "patch": "0093-WebUI-AllowAdminUserChanges.patch"
+    },
+    {
+      "base_merge_commit": "2017a40f354ec916285034156b1ddedb25e8a73e",
+      "base_pr": 117,
+      "cleanup_pr": 4334,
+      "patch": "0092-WebUI-Fix-DeviceReplacement.patch"
+    },
+    {
+      "base_merge_commit": "cb20afb406502f0c009a962ac73e5ed0a164cc3e",
+      "base_pr": 118,
+      "cleanup_pr": 4338,
+      "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch"
+    },
+    {
+      "base_merge_commit": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
+      "base_pr": 119,
+      "cleanup_pr": 4339,
+      "patch": "0127-WebUI-SortFirmwareOverview.patch"
+    },
+    {
+      "base_merge_commit": "210589935cf9e5ec98c7bdd1595b37113949e090",
+      "base_pr": 120,
+      "cleanup_pr": 4342,
+      "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch"
+    },
+    {
+      "base_merge_commit": "f054a4ac73ac0a36df1d18553bd0c0e84cb3892d",
+      "base_pr": 121,
+      "cleanup_pr": 4344,
+      "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch"
+    }
+  ],
+  "in_progress": {
+    "base_merge_commit": "f26ef50ecc250848f18bc57066640997b14eb5b6",
+    "base_pr": 122,
+    "cleanup_pr": 4346,
+    "patch": "0087-WebUI-Fix-DoubleSIDs.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
+  "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
+  "schema": 1,
+  "verified_at_openccu_commit": "7f65db386d21103a0c1977f9560f306e2ee67cdc",
+  "verified_base_pin": "f054a4ac73ac0a36df1d18553bd0c0e84cb3892d",
+  "verified_source_sha256": "6d1c3fb8cc982e6fbe7237abc57ccd4ef17f39edf037f5313669abf4860f184d"
+}

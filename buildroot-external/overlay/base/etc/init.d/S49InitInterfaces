@@ -1,0 +1,58 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169 source=/dev/null
+# Prepare the shared interface list before starting the webserver.
+CFG_TEMPLATE_DIR=/etc/config_templates
+[[ -r /var/hm_mode ]] && . /var/hm_mode
+[[ "${HM_MODE}" != "NORMAL" ]] && exit 0
+
+init() {
+  [[ -r "${CFG_TEMPLATE_DIR}/InterfacesList.xml" ]] || return 0
+  # check for differences in /etc/config/InterfacesList.xml between
+  # the template and the active file and adapt it accordingly.
+  if [[ ! -e /etc/config/InterfacesList.xml ]]; then
+    cp ${CFG_TEMPLATE_DIR}/InterfacesList.xml /etc/config
+  else
+    cmp -s ${CFG_TEMPLATE_DIR}/InterfacesList.xml /etc/config/InterfacesList.xml || cp ${CFG_TEMPLATE_DIR}/InterfacesList.xml /etc/config
+  fi
+
+  # if there is no HmIP support required we have to strip
+  # the HmIP-RF part from InterfacesList.xml
+  if [[ -z "${HM_HMIP_DEV}" || ! -f /opt/HMServer/HMIPServer.jar ]]; then
+    # remove HmIP-RF from InterfacesList.xml because not required (BidCos-RF only mode)
+    line_start=$(grep -n '>HmIP-RF<' /etc/config/InterfacesList.xml | cut -d: -f1 | head -1)
+    line_end=$(grep -n '>HmIP-RF<' /etc/config/InterfacesList.xml | cut -d: -f1 | tail -1)
+    if [[ -n "${line_start}" && -n "${line_end}" ]]; then
+      line_start=$((line_start-1))
+      line_end=$((line_end+1))
+      sed -i "${line_start},${line_end}d" /etc/config/InterfacesList.xml
+    fi
+  fi
+
+  # if there is no BidCos-RF support required we have to strip
+  # the BidCos-RF part from InterfacesList.xml
+  if [[ ! -x /bin/rfd ]] || { [[ -z "${HM_HMRF_DEV}" ]] && ( [[ ! -f /etc/config/rfd.conf ]] || ! grep -E -q "^Type = (HMLGW2|Lan Interface)" /etc/config/rfd.conf ); }; then
+    # remove BidCos-RF from InterfacesList.xml because not required (HmIP-RFUSB only mode)
+    line_start=$(grep -n '>BidCos-RF<' /etc/config/InterfacesList.xml | cut -d: -f1 | head -1)
+    line_end=$(grep -n '>BidCos-RF<' /etc/config/InterfacesList.xml | cut -d: -f1 | tail -1)
+    if [[ -n "${line_start}" && -n "${line_end}" ]]; then
+      line_start=$((line_start-1))
+      line_end=$((line_end+1))
+      sed -i "${line_start},${line_end}d" /etc/config/InterfacesList.xml
+    fi
+  fi
+
+  if [[ ! -f /opt/HMServer/HMIPServer.jar ]]; then
+    line_start=$(grep -n '<name>VirtualDevices</name>' /etc/config/InterfacesList.xml | cut -d: -f1 | head -1)
+    line_end=$(grep -n '<info>Virtual Devices</info>' /etc/config/InterfacesList.xml | cut -d: -f1 | tail -1)
+    if [[ -n "${line_start}" && -n "${line_end}" ]]; then
+      sed -i "$((line_start-1)),$((line_end+1))d" /etc/config/InterfacesList.xml
+    fi
+  fi
+}
+
+case "$1" in
+  start|restart|reload) init ;;
+  stop) ;;
+  *) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac
+exit 0

@@ -1,0 +1,1196 @@
+{
+  "patches": [
+    {
+      "added": 573,
+      "files": [
+        "www/api/methods/ccu/downloadFirmware.tcl",
+        "www/config/cp_maintenance.cgi",
+        "www/config/cp_network.cgi",
+        "www/config/cp_time.cgi",
+        "www/config/help.cgi",
+        "www/error/error-500.html",
+        "www/error/error-503.html",
+        "www/ise/htm/header.htm",
+        "www/ise/js/functions.j_",
+        "www/rega/help.htm",
+        "www/rega/index.htm",
+        "www/rega/login.htm",
+        "www/rega/logout.htm",
+        "www/rega/pages/index.htm",
+        "www/tcl/eq3_old/common.tcl",
+        "www/upnp/basic_dev.cgi",
+        "www/webui/error/notready.html",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/de/translate.lang.system.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.system.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0001-OpenCCU.patch",
+      "removed": 254,
+      "sha256": "4b73caccf4e9f37d705a44815de1f747e4aadb6fced388189aad55bfd1eabc2b"
+    },
+    {
+      "added": 165,
+      "files": [
+        "www/rega/login.htm",
+        "www/rega/logout.htm",
+        "www/rega/pages/index.htm",
+        "www/webui/css/extern/hmBootstrap.css",
+        "www/webui/css/extern/main.min.css",
+        "www/webui/css/extern/main.min.css.map",
+        "www/webui/js/extern/bootstrap.bundle.min.js",
+        "www/webui/js/extern/bootstrap.bundle.min.js.map",
+        "www/webui/scss/main.scss"
+      ],
+      "patch": "0002-WebUI-Bootstrap.patch",
+      "removed": 1,
+      "sha256": "a5d2e7ceec22e640b907784f1f7b3ffa0eb0ff88f24986f1570808510e2a068c"
+    },
+    {
+      "added": 172,
+      "files": [
+        "www/api/backup/version.cgi",
+        "www/config/backup.tcl",
+        "www/config/cp_maintenance.cgi",
+        "www/config/cp_security.cgi",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0007-WebUI-Enhanced-FirmwareUpdate.patch",
+      "removed": 102,
+      "sha256": "b117ee17f1bf93cd19cb34a313f5a34abd9b539f26ca665680f68de5e05000d8"
+    },
+    {
+      "added": 0,
+      "files": [
+        "www/config/cp_maintenance.cgi"
+      ],
+      "patch": "0008-WebUI-Disable-ReGa.patch",
+      "removed": 79,
+      "sha256": "73f1c3a22f10059b365de9629ae62bac1243e6413a45b9c55d86f050174d41af"
+    },
+    {
+      "added": 77,
+      "files": [
+        "www/api/methods.conf",
+        "www/api/methods/recoverymode/enter.tcl",
+        "www/config/cp_maintenance.cgi",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0012-WebUI-RecoveryButton.patch",
+      "removed": 0,
+      "sha256": "2bee5243cbb38ba91a00c3ef74ee04b91e6f013db9261aa30b6061b8acdc6828"
+    },
+    {
+      "added": 43,
+      "files": [
+        "www/rega/esp/programs.fn",
+        "www/rega/esp/sico.inc",
+        "www/rega/pages/msg/setValueRange.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0019-WebUI-EqualThanCondition.patch",
+      "removed": 7,
+      "sha256": "ff54c26300bc354f4252169743e85efbbfc73b8c4834796ec5d5511ead83a25b"
+    },
+    {
+      "added": 15,
+      "files": [
+        "www/config/cp_maintenance.cgi",
+        "www/config/ic_common.tcl",
+        "www/config/ic_ifacecmd.cgi",
+        "www/config/ic_neweasymode.cgi",
+        "www/error/error-500.html",
+        "www/error/error-503.html",
+        "www/rega/index.htm",
+        "www/rega/login.htm",
+        "www/rega/logout.htm",
+        "www/rega/pages/index.htm",
+        "www/tools/designer.html",
+        "www/tools/js/common/httploader.js",
+        "www/webui/js/lang/loadTextResource.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0026-WebUI-Fix-CacheControl.patch",
+      "removed": 74,
+      "sha256": "022fd236749effe23b93b33315f7543668dd428ef0900e613165d68b49a69f73"
+    },
+    {
+      "added": 51,
+      "files": [
+        "www/rega/pages/msg/sysVarsArray.htm",
+        "www/rega/pages/msg/sysVarsArrayAll.htm",
+        "www/rega/pages/msg/sysVarsSelection.htm",
+        "www/rega/pages/tabs/admin/systemvars.htm",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0029-WebUI-Fix-Variable-selection-and-filter.patch",
+      "removed": 24,
+      "sha256": "ae211093fbd03edd1e6ff12b04eda7d3842836c9b3e9b5498c9ea782e824f55d"
+    },
+    {
+      "added": 370,
+      "files": [
+        "www/config/cp_maintenance.cgi",
+        "www/config/cp_network.cgi",
+        "www/config/cp_security.cgi",
+        "www/config/cp_software.cgi",
+        "www/config/fileupload.ccc",
+        "www/tcl/extern/cgi.tcl",
+        "www/webui/webui.js"
+      ],
+      "patch": "0031-WebUI-Fix-FileUpload.patch",
+      "removed": 317,
+      "sha256": "ed1218804fceb3b608ac79dad8291e2df4da7bdc5703d337f6c941c2bb4259df"
+    },
+    {
+      "added": 70,
+      "files": [
+        "www/webui/webui.js"
+      ],
+      "patch": "0032-WebUI-Show-Gateway-DC.patch",
+      "removed": 1,
+      "sha256": "c25537f3f3a564999fe80154b0e2fe7095e2abc3f4ec21298e138314cbf49648"
+    },
+    {
+      "added": 11,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/pages/msg/sysVarsArray.htm",
+        "www/rega/pages/msg/sysVarsArrayAll.htm",
+        "www/rega/pages/tabs/admin/msg/newSysVar.htm",
+        "www/rega/pages/tabs/admin/systemvars.htm",
+        "www/rega/pages/tabs/control/sysvars.htm",
+        "www/rega/pages/tabs/statusviews/alarmMessages.htm",
+        "www/rega/pages/tabs/user/newFav.htm"
+      ],
+      "patch": "0035-WebUI-Fix-SysVarPopups.patch",
+      "removed": 11,
+      "sha256": "ac47ab6615ac0edc5673797a7f95f99ea6ffe2bf67e233b57b3861b5d2b96083"
+    },
+    {
+      "added": 42,
+      "files": [
+        "www/rega/login.htm",
+        "www/rega/logout.htm",
+        "www/rega/pages/index.htm",
+        "www/webui/site.webmanifest"
+      ],
+      "patch": "0036-WebUI-ImprovedFavIcons.patch",
+      "removed": 3,
+      "sha256": "91da4ac74be2e1fa3acebc22f7fe6f8c31b8d8e1bcae3e0458a1b65d30dc614c"
+    },
+    {
+      "added": 277,
+      "files": [
+        "www/api/methods.conf",
+        "www/api/methods/device/liststatus.tcl",
+        "www/api/methods/interface/rssiinfo.tcl",
+        "www/webui/webui.js"
+      ],
+      "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
+      "removed": 3,
+      "sha256": "ffe906e8ae10a9faa8509d11ca5eae4e6167c6951147b6b176f48315b5db6554"
+    },
+    {
+      "added": 778,
+      "files": [
+        "opt/HMServer/pages/AvailableFirmware.ftl",
+        "opt/HMServer/pages/DiagramSettingsDetailPage.ftl",
+        "opt/HMServer/pages/DiagramSettingsListPage.ftl",
+        "opt/HMServer/pages/GroupEditPage.ftl",
+        "opt/HMServer/pages/GroupListPage.ftl",
+        "www/config/control_panel.cgi",
+        "www/config/cp_add_device.cgi",
+        "www/config/ic_deviceFirmwareOverview.cgi",
+        "www/config/ic_deviceparameters.cgi",
+        "www/config/ic_linkpeerlist.cgi",
+        "www/config/ic_selchannel.cgi",
+        "www/config/ic_setprofiles.cgi",
+        "www/rega/esp/controls/blind.fn",
+        "www/rega/esp/controls/button.fn",
+        "www/rega/esp/controls/door_opener.fn",
+        "www/rega/esp/controls/door_window_contact.fn",
+        "www/rega/esp/controls/dual_white_controller.fn",
+        "www/rega/esp/controls/key_switch_sc.fn",
+        "www/rega/esp/controls/lock.fn",
+        "www/rega/esp/controls/rgbw.fn",
+        "www/rega/esp/controls/rhs.fn",
+        "www/rega/esp/controls/servo.fn",
+        "www/rega/esp/controls/universal_light_receiver.fn",
+        "www/rega/esp/datapointconfigurator.fn",
+        "www/rega/esp/system.fn",
+        "www/rega/pages/msg/setVIR_LG_RGBWController.htm",
+        "www/rega/pages/msg/setVIR_LG_WHITEController.htm",
+        "www/rega/pages/tabs/admin/systemvars.htm",
+        "www/rega/pages/tabs/admin/userAdministration.htm",
+        "www/rega/pages/tabs/admin/views/functionchannels.htm",
+        "www/rega/pages/tabs/admin/views/functions.htm",
+        "www/rega/pages/tabs/admin/views/newDeviceLoader.htm",
+        "www/rega/pages/tabs/admin/views/newdevicechannelsloader.htm",
+        "www/rega/pages/tabs/admin/views/newdevices.htm",
+        "www/rega/pages/tabs/admin/views/programlist.htm",
+        "www/rega/pages/tabs/admin/views/programs.htm",
+        "www/rega/pages/tabs/admin/views/roomchannels.htm",
+        "www/rega/pages/tabs/admin/views/rooms.htm",
+        "www/rega/pages/tabs/control/devices.htm",
+        "www/rega/pages/tabs/control/functions.htm",
+        "www/rega/pages/tabs/control/hdevichannels.htm",
+        "www/rega/pages/tabs/control/hfuncchannels.htm",
+        "www/rega/pages/tabs/control/hroomchannels.htm",
+        "www/rega/pages/tabs/control/programs.htm",
+        "www/rega/pages/tabs/control/rooms.htm",
+        "www/rega/pages/tabs/control/systemProtocol.htm",
+        "www/rega/pages/tabs/control/sysvars.htm",
+        "www/rega/pages/tabs/favViewer.htm",
+        "www/rega/pages/tabs/statusviews/alarmMessages.htm",
+        "www/rega/pages/tabs/statusviews/serviceMessages.htm",
+        "www/rega/pages/tabs/user/favOverview.htm",
+        "www/webui/color.map",
+        "www/webui/js/extern/sliderControl.js",
+        "www/webui/js/extern/wz_jsgraphics.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0039-WebUI-Fix-Style-Glitches.patch",
+      "removed": 652,
+      "sha256": "ae95942a3b3774f9899661d68bc6dde771c6246bf51db0266290bef601ad061e"
+    },
+    {
+      "added": 33,
+      "files": [
+        "www/config/cp_software.cgi",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0040-WebUI-AddonInstallNoReboot.patch",
+      "removed": 12,
+      "sha256": "4bfc73bea08504dd76189da26993ec0b9d64a1e0bf244a45f19fd47e1927ef5d"
+    },
+    {
+      "added": 138,
+      "files": [
+        "www/rega/esp/controls/heating_control.fn",
+        "www/webui/webui.js"
+      ],
+      "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
+      "removed": 19,
+      "sha256": "943035125753d5897eb0f6320b1886bf6ca7b9a1801a2a5310a95708fdc3a2ef"
+    },
+    {
+      "added": 30,
+      "files": [
+        "www/rega/pages/msg/userAccountConfigAdmin.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0043-WebUI-SysVarFavorites-SortByName.patch",
+      "removed": 1,
+      "sha256": "715bdb9aec532a52d016bcac4e30420b593ae3881e01ab50abba4279c5e21126"
+    },
+    {
+      "added": 128,
+      "files": [
+        "www/api/methods.conf",
+        "www/api/methods/device/get.tcl",
+        "www/api/methods/device/listalldetail.tcl",
+        "www/api/methods/device/setenabledservicemsg.tcl",
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/statusviews/serviceMessages.htm",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
+      "removed": 3,
+      "sha256": "b7704564b621fb44866a83b04d25ff622b1b78f356c15bb9a36c10a7171472de"
+    },
+    {
+      "added": 305,
+      "files": [
+        "www/rega/pages/index.htm",
+        "www/rega/pages/msg/editScript.htm",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0046-WebUI-ImprovedScriptEditor.patch",
+      "removed": 138,
+      "sha256": "25f125c4270c3b370e4f8ca515dd8ac69c8da17c7225397e452447dd7af7352e"
+    },
+    {
+      "added": 751,
+      "files": [
+        "www/api/methods/system/getpositiondata.tcl",
+        "www/config/cp_time.cgi",
+        "www/webui/webui.js"
+      ],
+      "patch": "0054-WebUI-AddTimeZones.patch",
+      "removed": 155,
+      "sha256": "f6669485a264ad3a836c7c579668845c57f382f7d5dc4012d5914d3662e84ae8"
+    },
+    {
+      "added": 31,
+      "files": [
+        "www/api/methods/ccu/setuserackinstallwizard.tcl",
+        "www/webui/webui.js"
+      ],
+      "patch": "0055-WebUI-Fix-UserAckInstallWizard.patch",
+      "removed": 5,
+      "sha256": "75b0c27f1c033f238a212369ab0c42a783433b49bc76b687c1e752827772d0f5"
+    },
+    {
+      "added": 123,
+      "files": [
+        "www/config/ic_deviceFirmwareOverview.cgi",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0056-WebUI-Sticky-Filters.patch",
+      "removed": 6,
+      "sha256": "ce429be0a26269e88821596d34dca382d13992dacaadcc001aa7ca1f9365beb4"
+    },
+    {
+      "added": 262,
+      "files": [
+        "www/api/methods.conf",
+        "www/api/methods/interface/getdutycycle.tcl",
+        "www/rega/pages/tabs/startpage.htm",
+        "www/webui/css/extern/hmBootstrap.css",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
+      "removed": 106,
+      "sha256": "fff4c101cefff68b04a48bf444c9fa2e5317d710d098e62c561605ad8bf07863"
+    },
+    {
+      "added": 357,
+      "files": [
+        "www/rega/pages/tabs/admin/linkprog.htm",
+        "www/rega/pages/tabs/admin/systemconfig.htm",
+        "www/rega/pages/tabs/control.htm",
+        "www/rega/pages/tabs/user/systemConfigUser.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/js/mainmenu/admin.js",
+        "www/webui/js/mainmenu/user.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0061-WebUI-MenuSortedIcons.patch",
+      "removed": 327,
+      "sha256": "9f79915df4a19a6c07037054d266dc604fa2e667d3aef601299f01762b8021f3"
+    },
+    {
+      "added": 202,
+      "files": [
+        "www/rega/esp/favorites.fn",
+        "www/rega/pages/tabs/user/favOverview.htm"
+      ],
+      "patch": "0062-WebUI-FavoriteSorting.patch",
+      "removed": 137,
+      "sha256": "b8bb2d695f3fa480f6e3aa8cd2f2a9c057331620170fac067d278673046ea188"
+    },
+    {
+      "added": 12,
+      "files": [
+        "www/api/methods/device/haslinksorprograms.tcl",
+        "www/api/methods/device/hasprograms.tcl",
+        "www/config/ic_metadata.tcl",
+        "www/rega/pages/msg/chnListBody.htm",
+        "www/rega/pages/tabs/admin/views/functionchannels.htm",
+        "www/rega/pages/tabs/admin/views/functions.htm",
+        "www/rega/pages/tabs/admin/views/roomchannels.htm",
+        "www/rega/pages/tabs/admin/views/rooms.htm"
+      ],
+      "patch": "0065-WebUI-Fix-CountUsageStalling.patch",
+      "removed": 49,
+      "sha256": "b792139dc549c727f9b520b42ffaf0254a93f3b347de1a1bd09174ebc142c905"
+    },
+    {
+      "added": 15,
+      "files": [
+        "www/webui/webui.js"
+      ],
+      "patch": "0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch",
+      "removed": 10,
+      "sha256": "5321ec09fc05147755b9856a7cc01d850e314bad7b43666a98667d17648d7442"
+    },
+    {
+      "added": 33,
+      "files": [
+        "www/rega/pages/tabs/admin/views/programlist.htm",
+        "www/webui/color.map",
+        "www/webui/style.css"
+      ],
+      "patch": "0070-WebUI-ProgramList-InactiveProgramsMod.patch",
+      "removed": 10,
+      "sha256": "6e110be3e137707ac9809fa4b0bf9426483a5e27f000fcd679ead259cc59231b"
+    },
+    {
+      "added": 7,
+      "files": [
+        "www/rega/pages/tabs/admin/views/programlist.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0071-WebUI-ProgramList-DeleteProgramHint.patch",
+      "removed": 6,
+      "sha256": "8f49937049dcdf6a82c075d88b266beb35084133fce68d0b2a5d5237a34b3e4c"
+    },
+    {
+      "added": 269,
+      "files": [
+        "bin/hm_autoconf",
+        "bin/hm_startup"
+      ],
+      "patch": "0072-WebUI-Fix-hm_autoconf.patch",
+      "removed": 174,
+      "sha256": "11709ecc8bf41d7d6f95b7e4d3fac02868a63fe2352fc6d73930f852d0e7cfd8"
+    },
+    {
+      "added": 87,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/admin/msg/timemodule.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0073-WebUI-AstroDelays.patch",
+      "removed": 27,
+      "sha256": "05d739e78b314d59e181e1429a3b8ac3bd026290564c4614c5f571e221805ff7"
+    },
+    {
+      "added": 8,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/webui/webui.js"
+      ],
+      "patch": "0075-WebUI-Fix-HTMLinUserFavorites.patch",
+      "removed": 18,
+      "sha256": "965397b80a25f61035eb94e5954cbb68371b74e2dcb42e9a7f0952f1af2c33b8"
+    },
+    {
+      "added": 59,
+      "files": [
+        "www/rega/esp/programs.fn",
+        "www/rega/esp/sico.fn",
+        "www/rega/esp/sico.htm",
+        "www/rega/esp/sico.inc",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0077-WebUI-NegateCondition.patch",
+      "removed": 5,
+      "sha256": "8120dc9a8b05aae739e51ae96f072faf2a0f27f55a1b6b237ee1ab9556b2305e"
+    },
+    {
+      "added": 14,
+      "files": [
+        "www/webui/webui.js"
+      ],
+      "patch": "0089-WebUI-MessagBoxFailureWarning.patch",
+      "removed": 5,
+      "sha256": "01f9b8c5c523b8f7c30e2e72dea4377b1f51742b02da95b2a60414dd54077cf7"
+    },
+    {
+      "added": 15,
+      "files": [
+        "www/ise/htm/header.htm",
+        "www/rega/esp/system.fn",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0090-WebUI-Add-ReGaSaveButton.patch",
+      "removed": 1,
+      "sha256": "6900394881c7edff101e8f1dd5e8f69b478302a437ef5f3bdf8442e00f27dbcc"
+    },
+    {
+      "added": 27,
+      "files": [
+        "www/rega/esp/controls/button.fn"
+      ],
+      "patch": "0091-WebUI-Add-HM-OU-LED16-LedStatus.patch",
+      "removed": 1,
+      "sha256": "599086ffee897ff23b5f793dec58bd73cbfbcd8add2f5545d3d11854c164505b"
+    },
+    {
+      "added": 74,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/esp/system.htm",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
+      "removed": 1,
+      "sha256": "916504996787bca46b7fc8139244165b7806008ebc9800c1eeb26ee538a77074"
+    },
+    {
+      "added": 213,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/admin/msg/newSysVar.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0097-WebUI-SetSysvarValueByUser.patch",
+      "removed": 75,
+      "sha256": "6a68c5eb2ef2da9b583b5d8a01160a1a2e7988fdb442150f129d6e874e43d566"
+    },
+    {
+      "added": 86,
+      "files": [
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch",
+      "removed": 7,
+      "sha256": "91dd7da07960e11e92367e29a26107fd5dd8e8f5096473c3ce66b9565cd0c15b"
+    },
+    {
+      "added": 47,
+      "files": [
+        "www/api/methods/device/get.tcl",
+        "www/api/methods/device/listalldetail.tcl",
+        "www/api/methods/device/listprogramids.tcl",
+        "www/api/methods/room/getall.tcl",
+        "www/api/methods/subsection/getall.tcl",
+        "www/config/stringtable_de.txt",
+        "www/rega/pages/tabs/admin/views/functionchannels.htm",
+        "www/rega/pages/tabs/admin/views/functions.htm",
+        "www/rega/pages/tabs/admin/views/roomchannels.htm",
+        "www/rega/pages/tabs/admin/views/rooms.htm",
+        "www/webui/js/lang/de/translate.lang.stringtable.js",
+        "www/webui/js/lang/en/translate.lang.stringtable.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch",
+      "removed": 27,
+      "sha256": "86307f916627a6c3cc999012039d29cb737a90808701aa4ece5fa93cb3c17624"
+    },
+    {
+      "added": 432,
+      "files": [
+        "bin/hm_autoconf",
+        "www/api/methods.conf",
+        "www/api/methods/ccu/getsystemlanguage.tcl",
+        "www/api/methods/ccu/setsystemlanguage.tcl",
+        "www/rega/pages/msg/systemLanguageConfig.htm",
+        "www/rega/pages/tabs/admin/userAdministration.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
+      "removed": 1,
+      "sha256": "cc17785f7ae98ada993dd059b0c4461e04898a6c1d0b4cfd8b5997496a6166fb"
+    },
+    {
+      "added": 56,
+      "files": [
+        "www/config/cp_security.cgi",
+        "www/webui/js/lang/translate.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0111-WebUI-Fix-Translation-Performance.patch",
+      "removed": 24,
+      "sha256": "048d55cf051ab6cfd2b8cf98b0e65f004a7cb4ff9a77376094646e4336807c2a"
+    },
+    {
+      "added": 211,
+      "files": [
+        "www/config/easymodes/cc_rt_dev_master.tcl",
+        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl",
+        "www/config/easymodes/etc/profile_cond_x_ch_master.tcl",
+        "www/config/easymodes/etc/uiElements.tcl",
+        "www/config/easymodes/hm-cc-vg-1_master.tcl",
+        "www/config/easymodes/powermeter_iec_ch1_master.tcl",
+        "www/config/easymodes/powermeter_iec_ch2_master.tcl",
+        "www/config/easymodes/powermeter_igl_ch_master.tcl",
+        "www/config/easymodes/powermeter_v2_iec_ch1_master.tcl",
+        "www/config/easymodes/powermeter_v2_iec_ch2_master.tcl",
+        "www/config/easymodes/tc_it_dev_master.tcl",
+        "www/config/easymodes/wa_od_ch_master.tcl",
+        "www/config/ic_common.tcl",
+        "www/config/ic_deviceparameters.cgi",
+        "www/webui/webui.js"
+      ],
+      "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
+      "removed": 70,
+      "sha256": "a77fbbc70657cb1303368a53ff2f31835915f5ca832362037c0871687c15cdbc"
+    },
+    {
+      "added": 12,
+      "files": [
+        "www/pda/templates/index.tmpl",
+        "www/rega/login.htm",
+        "www/rega/pages/msg/userAccountConfigAdmin.htm",
+        "www/rega/pages/msg/userAccountConfigUser.htm",
+        "www/webui/webui.js"
+      ],
+      "patch": "0120-WebUI-ImprovedPasswordFields.patch",
+      "removed": 12,
+      "sha256": "175a718282200f2da564fefab407a13b7e80e704a2983f1bbd6c92af293cfc12"
+    },
+    {
+      "added": 38,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/control/programs.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0122-WebUI-ProgramExecutionWithConditionCheck.patch",
+      "removed": 16,
+      "sha256": "221f53012a064eff63e9974400752a302bd1b535e28f7dc31827beca8253f0a7"
+    },
+    {
+      "added": 1,
+      "files": [
+        "www/webui/style.css"
+      ],
+      "patch": "0124-WebUI-Fix-ShowMultipleSpacesInSysVar.patch",
+      "removed": 0,
+      "sha256": "c2a4e6a7786b1860ed76fe67f96b59945503b21d47b1835ae48e7d7828cd7b42"
+    },
+    {
+      "added": 76,
+      "files": [
+        "www/webui/webui.js"
+      ],
+      "patch": "0125-WebUI-ChannelHighlights.patch",
+      "removed": 26,
+      "sha256": "cbbf4d29e18f5284b8957811f7dae8dff099da240e4f1bee05305f5490406290"
+    },
+    {
+      "added": 123,
+      "files": [
+        "www/api/methods.conf",
+        "www/api/methods/ccu/getaddonversions.tcl",
+        "www/rega/pages/tabs/startpage.htm",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
+      "removed": 0,
+      "sha256": "892b5157bffc90e115ed0b168aa12636d11593a7d57c841d21177130ccb0eb92"
+    },
+    {
+      "added": 102,
+      "files": [
+        "www/config/easymodes/EnterFreeValue.tcl",
+        "www/config/easymodes/cc_tc_ch_master.tcl",
+        "www/config/easymodes/cc_tc_ch_master_le_v1_9.tcl",
+        "www/config/easymodes/etc/localization/de/HmIP_DEVICES.txt",
+        "www/config/easymodes/etc/localization/en/HmIP_DEVICES.txt",
+        "www/pda/eq3/controls/generic.tcl",
+        "www/pda/eq3/controls/temp.tcl",
+        "www/rega/esp/controls/heating_control.fn",
+        "www/rega/esp/controls/thermostat.fn",
+        "www/rega/esp/datapointconfigurator.fn",
+        "www/rega/esp/programs.fn",
+        "www/webui/webui.js"
+      ],
+      "patch": "0132-WebUI-Fix-UnitDisplay.patch",
+      "removed": 96,
+      "sha256": "d1d528bb9ce4c83bcdab85c7f0cfa0c250dbdec179bd627a1bc2e498dfdc6093"
+    },
+    {
+      "added": 104,
+      "files": [
+        "www/rega/esp/functions.fn",
+        "www/rega/pages/tabs/control/devices.htm",
+        "www/rega/pages/tabs/control/hdevichannels.htm",
+        "www/rega/pages/tabs/control/hfuncchannels.htm",
+        "www/rega/pages/tabs/control/hroomchannels.htm",
+        "www/rega/pages/tabs/statusviews/alarmMessages.htm",
+        "www/rega/pages/tabs/user/newFav.htm"
+      ],
+      "patch": "0133-WebUI-Fix-InternalIDExposure.patch",
+      "removed": 49,
+      "sha256": "e0ca1a56cc776d14ae8e1852f3cbf463054970b416910e0120bda6ee1d151819"
+    },
+    {
+      "added": 177,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/esp/system.htm",
+        "www/rega/pages/tabs/admin/systemvars.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
+      "removed": 25,
+      "sha256": "5beb4b27784551215653a056c87be97219ae564c77d462cde9377da3124cd8c1"
+    },
+    {
+      "added": 836,
+      "files": [
+        "www/config/control_panel.cgi",
+        "www/config/cp_advancedsettings.cgi",
+        "www/rega/login.htm",
+        "www/rega/logout.htm",
+        "www/rega/pages/index.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0135-WebUI-Add-ControlPanel-AdvancedSettings.patch",
+      "removed": 16,
+      "sha256": "c4f0ded687547317621b5e3156e2927434703c0260b1c08c78b94590e4faef78"
+    },
+    {
+      "added": 72,
+      "files": [
+        "www/config/cp_network.cgi",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
+      "removed": 8,
+      "sha256": "ccf09e9d9cef25e72dc181e47d12eb2fcb9354b60c2292c2487868ec9ffd6104"
+    },
+    {
+      "added": 26,
+      "files": [
+        "www/config/cp_add_device.cgi",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0137-WebUI-Add-NoInterfaceWarning.patch",
+      "removed": 5,
+      "sha256": "21699a19e5726016c3f5904b919cbc55d141316a95c3430cdcd3c8534636b7d2"
+    },
+    {
+      "added": 46,
+      "files": [
+        "www/config/ic_deviceparameters.cgi",
+        "www/rega/pages/tabs/admin/views/programs.htm",
+        "www/rega/pages/tabs/control/devices.htm",
+        "www/rega/pages/tabs/control/hdevichannels.htm",
+        "www/rega/pages/tabs/control/hfuncchannels.htm",
+        "www/rega/pages/tabs/control/hroomchannels.htm",
+        "www/rega/pages/tabs/control/programs.htm",
+        "www/rega/pages/tabs/control/sysvars.htm",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch",
+      "removed": 20,
+      "sha256": "8c65e0cda73df0659cabb30e36118bb3241fc5d85af5e061d5a001a77e87e899"
+    },
+    {
+      "added": 62,
+      "files": [
+        "www/rega/pages/tabs/control/hdevichannels.htm",
+        "www/rega/pages/tabs/control/hfuncchannels.htm",
+        "www/rega/pages/tabs/control/hroomchannels.htm"
+      ],
+      "patch": "0140-WebUI-Add-ChannelPicsInControl.patch",
+      "removed": 14,
+      "sha256": "3b3e86b4a0b84d18aeb23efbb9469e6907fffdedc197c9f43654d4ad7f616d90"
+    },
+    {
+      "added": 17,
+      "files": [
+        "www/ise/htm/header.htm",
+        "www/rega/pages/index.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch",
+      "removed": 1,
+      "sha256": "327019918e08c0ab448b2b62de1b4e54041eb31071f858f8441f5bb654928cf8"
+    },
+    {
+      "added": 58,
+      "files": [
+        "www/rega/esp/controls/weather_sensor.fn",
+        "www/rega/esp/datapointconfigurator.fn",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.label.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.label.js"
+      ],
+      "patch": "0143-WebUI-Fix-Translation.patch",
+      "removed": 42,
+      "sha256": "4e893a31091e7630faccbc2aa14e0be7ea22a9fa2a825ff9c9d183625b71144c"
+    },
+    {
+      "added": 376,
+      "files": [
+        "www/rega/esp/controls/maintenance.fn",
+        "www/rega/esp/datapointconfigurator.fn",
+        "www/webui/js/lang/de/translate.lang.option.js",
+        "www/webui/js/lang/en/translate.lang.option.js"
+      ],
+      "patch": "0144-WebUI-ControlForMaintenanceChannel.patch",
+      "removed": 1,
+      "sha256": "07ff6afc2bf10dbe9a6554382e508b4de2c96f9c36c39e647d80852324420dee"
+    },
+    {
+      "added": 6,
+      "files": [
+        "www/webui/webui.js"
+      ],
+      "patch": "0145-WebUI-NaturalSorting.patch",
+      "removed": 47,
+      "sha256": "77b8720aff1690c284b2a047ada20c0023bf42d6792f550c0ece63ea4d1bf828"
+    },
+    {
+      "added": 45,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/startpage.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0146-WebUI-ImprovedStartpageLayout.patch",
+      "removed": 33,
+      "sha256": "fb5f4f95cdbf90df245d721076e9a4471ea0626b942ac9ecf4583649d7f87051"
+    },
+    {
+      "added": 17,
+      "files": [
+        "www/config/cp_software.cgi",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.extension.js"
+      ],
+      "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch",
+      "removed": 10,
+      "sha256": "6a14165db037a212095b168cebad13b95f58a33a79cbf216f320bce688f6f2aa"
+    },
+    {
+      "added": 10,
+      "files": [
+        "www/error/error-500.html",
+        "www/error/error-503.html"
+      ],
+      "patch": "0149-WebUI-ImprovedErrorPages.patch",
+      "removed": 20,
+      "sha256": "89282b1041c50624258dd59c912fc389331704879fe5bc6b85c091a33560099a"
+    },
+    {
+      "added": 46,
+      "files": [
+        "www/config/control_panel.cgi",
+        "www/webui/style.css"
+      ],
+      "patch": "0150-WebUI-Responsive-ControlPage.patch",
+      "removed": 106,
+      "sha256": "84df6a9968c233c1552d0fc1e03f66c38eb4b619e9d20b387f5c08bfeaeb997a"
+    },
+    {
+      "added": 56,
+      "files": [
+        "www/config/ic_deviceparameters.cgi",
+        "www/webui/webui.js"
+      ],
+      "patch": "0151-WebUI-Add-DeviceRestoreConfigButton.patch",
+      "removed": 3,
+      "sha256": "363df3a1215350ecf0bdea0fc4d6d7aa92525602d1bcd220bb97f1aa6b1aea1b"
+    },
+    {
+      "added": 12,
+      "files": [
+        "www/rega/pages/msg/sysVarsSelection.htm",
+        "www/rega/pages/tabs/admin/views/programs.htm"
+      ],
+      "patch": "0152-WebUI-SysvarSelectionPopupInternalToggle.patch",
+      "removed": 2,
+      "sha256": "b04c77bf54d077a2c5b932a6686ff3942e499f7e08f15bb15379278cf9233595"
+    },
+    {
+      "added": 22,
+      "files": [
+        "www/ise/htm/header.htm",
+        "www/webui/webui.js"
+      ],
+      "patch": "0153-WebUI-Fix-ImproveImgUpdates.patch",
+      "removed": 23,
+      "sha256": "68e43b831844ff41e6b94e9f43bf890c8290a048db984d2afe146d264853a6d8"
+    },
+    {
+      "added": 88,
+      "files": [
+        "www/rega/login.htm",
+        "www/rega/logout.htm",
+        "www/rega/pages/tabs/control/devices.htm",
+        "www/rega/pages/tabs/control/functions.htm",
+        "www/rega/pages/tabs/control/rooms.htm",
+        "www/rega/pages/tabs/startpage.htm",
+        "www/webui/style.css",
+        "www/webui/webui.js"
+      ],
+      "patch": "0154-WebUI-DynamicResizing.patch",
+      "removed": 350,
+      "sha256": "0f379158de98a4267b0dd44a28301adcc6893fd8f04ec4c4ac733adfc9fd82c6"
+    },
+    {
+      "added": 22,
+      "files": [
+        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl",
+        "www/rega/esp/datapointconfigurator.fn",
+        "www/rega/esp/functions.fn",
+        "www/tools/js/model/devicetypelist.js",
+        "www/webui/js/lang/de/translate.lang.deviceDescription.js",
+        "www/webui/js/lang/en/translate.lang.deviceDescription.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0155-WebUI-Add-HmIP-RFUSB-Support.patch",
+      "removed": 12,
+      "sha256": "d976b9d13354a708d43d88651462f65961490421b74c4098f5934d4e988f33e9"
+    },
+    {
+      "added": 23,
+      "files": [
+        "www/rega/pages/tabs/admin/systemvars.htm",
+        "www/rega/pages/tabs/admin/userAdministration.htm",
+        "www/rega/pages/tabs/user/favOverview.htm",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0156-WebUI-ImprovedConfirmDeletePopup.patch",
+      "removed": 20,
+      "sha256": "c9d41d32927372f55706888130f0040032ddfda18362119f82d3a9418dd0e6df"
+    },
+    {
+      "added": 165,
+      "files": [
+        "www/config/ic_deviceparameters.cgi",
+        "www/webui/webui.js"
+      ],
+      "patch": "0161-WebUI-Add-ShowRFGatewayInDeviceList.patch",
+      "removed": 10,
+      "sha256": "f4856df65e98352989b5e1f21cd1c5610989825399f6112a6e7d4c5299bc7fdf"
+    },
+    {
+      "added": 74,
+      "files": [
+        "opt/HMServer/pages/AvailableFirmware.ftl",
+        "www/config/cp_maintenance.cgi",
+        "www/config/cp_network.cgi",
+        "www/config/cp_security.cgi",
+        "www/tcl/extern/cgi.tcl",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/style.css"
+      ],
+      "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
+      "removed": 40,
+      "sha256": "64b34d7b95f2a4fd33a4ed8f70366de7412bf8fa1626b670dee08520d694be32"
+    },
+    {
+      "added": 68,
+      "files": [
+        "www/api/methods/user/restarthmipserver.tcl",
+        "www/api/methods/user/starthmipserver.tcl",
+        "www/api/methods/user/stophmipserver.tcl",
+        "www/config/cp_maintenance.cgi",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0164-WebUI-Add-HMIPServerLogConfiguration.patch",
+      "removed": 18,
+      "sha256": "eb19372d4eebdd8903a061db327e0c67fad012dd5e51d233f84ecbbf796cf1ab"
+    },
+    {
+      "added": 54,
+      "files": [
+        "www/config/cp_maintenance.cgi",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch",
+      "removed": 7,
+      "sha256": "0e54c65fc9efd5f406dee70b6c1a24dccd7ded0cc3c620d96c7e468857df21bc"
+    },
+    {
+      "added": 86,
+      "files": [
+        "www/webui/webui.js"
+      ],
+      "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
+      "removed": 11,
+      "sha256": "6248ed38793d7b54f4b718758cbd1f4359ca9a674baa3dd4720a0cd6f75ced11"
+    },
+    {
+      "added": 60,
+      "files": [
+        "www/webui/js/lang/de/translate.lang.help.js",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.help.js",
+        "www/webui/js/lang/en/translate.lang.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch",
+      "removed": 0,
+      "sha256": "d6b5bdc130e5af53a4e795b11bb2277972ffee916989687d02ded7e31dda1d0d"
+    },
+    {
+      "added": 43,
+      "files": [
+        "www/config/ic_common.tcl",
+        "www/config/ic_ifacecmd.cgi",
+        "www/config/ic_neweasymode.cgi",
+        "www/webui/webui.js"
+      ],
+      "patch": "0173-WebUI-SendPOSTRequest.patch",
+      "removed": 19,
+      "sha256": "660df23a88f8b4f32324c04eb3949b10e3a0a062bc2187d6bda680dd71521bcb"
+    },
+    {
+      "added": 110,
+      "files": [
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
+      "removed": 19,
+      "sha256": "e79b6b21004f7c594fddcf7084ec768ee9a3e898213133e274faeb474964cd04"
+    },
+    {
+      "added": 15,
+      "files": [
+        "www/rega/pages/tabs/admin/systemvars.htm",
+        "www/rega/pages/tabs/admin/userAdministration.htm",
+        "www/rega/pages/tabs/admin/views/functions.htm",
+        "www/rega/pages/tabs/admin/views/newdevices.htm",
+        "www/rega/pages/tabs/admin/views/programlist.htm",
+        "www/rega/pages/tabs/admin/views/rooms.htm",
+        "www/rega/pages/tabs/control/devices.htm",
+        "www/rega/pages/tabs/control/functions.htm",
+        "www/rega/pages/tabs/control/hdevichannels.htm",
+        "www/rega/pages/tabs/control/hfuncchannels.htm",
+        "www/rega/pages/tabs/control/hroomchannels.htm",
+        "www/rega/pages/tabs/control/programs.htm",
+        "www/rega/pages/tabs/control/rooms.htm",
+        "www/rega/pages/tabs/control/sysvars.htm",
+        "www/rega/pages/tabs/user/favOverview.htm"
+      ],
+      "patch": "0191-WebUI-Add-NaturalSortOrder.patch",
+      "removed": 14,
+      "sha256": "14f7dce480ae452324237add7b9a059dd0f30f8dfdd9ea62260297b0f72970cf"
+    },
+    {
+      "added": 163,
+      "files": [
+        "www/config/easymodes/MASTER_LANG/HEATINGTHERMOSTATE_2ND_GEN.js",
+        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl",
+        "www/config/easymodes/hmip/hmip-etrv-b1_1_master.tcl",
+        "www/config/easymodes/hmip/hmip-etrv-b_1_master.tcl",
+        "www/config/easymodes/hmip/hmip-etrv-c-2_1_master.tcl",
+        "www/config/easymodes/hmip/hmip-etrv-c_1_master.tcl",
+        "www/config/easymodes/hmip/hmip-etrv-cl_1_master.tcl"
+      ],
+      "patch": "0193-WebUI-EnhancedTRVSettingsPage.patch",
+      "removed": 2524,
+      "sha256": "8404fa38f1807a4cf2b6aee643e859e8df7220ea5e29aa5d82b8aa2846f0f2ba"
+    },
+    {
+      "added": 27,
+      "files": [
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_BRIGHTNESS.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_HUMIDITY.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_PARTICULATE_MATTER.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_DROP.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_QUANTITY.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_TEMPERATURE.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_DIRECTION.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_SPEED.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_3.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_5.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_COUNTER_TRANSMITTER.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_DIRECTION_TRANSMITTER.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/RAIN_DETECTION_TRANSMITTER.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/SHUTTER_CONTACT.tcl",
+        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/WATER_DETECTION_TRANSMITTER.tcl"
+      ],
+      "patch": "0195-WebUI-Fix-MissingDimmerDefinition.patch",
+      "removed": 12,
+      "sha256": "de328b492b4a675b96ef82d05291337e0760047c9c31157ba4ee04beeb0ff294"
+    },
+    {
+      "added": 82,
+      "files": [
+        "www/rega/pages/tabs/control/devices.htm",
+        "www/rega/pages/tabs/control/functions.htm",
+        "www/rega/pages/tabs/control/rooms.htm"
+      ],
+      "patch": "0196-WebUI-Fix-FilterOfTwoColumnControlPages.patch",
+      "removed": 10,
+      "sha256": "c6aab4e4cbfdf19991edcebf7391073ae6e5e0fefd5f739b9c22158ff2daf061"
+    },
+    {
+      "added": 13,
+      "files": [
+        "www/rega/pages/tabs/control/systemProtocol.htm",
+        "www/webui/webui.js"
+      ],
+      "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
+      "removed": 13,
+      "sha256": "41ded45424b02a9295f422d53bf201f4e5fb9ff1328a06059106948912b0b9d6"
+    },
+    {
+      "added": 4,
+      "files": [
+        "www/tcl/extern/cgi.tcl"
+      ],
+      "patch": "0203-WebUI-NoExpectCGI.patch",
+      "removed": 246,
+      "sha256": "7cacbe5740bcd99ff525c8b08c290b90d0fcdb5f77f1a16f73477d57e5c44317"
+    },
+    {
+      "added": 8,
+      "files": [
+        "opt/HMServer/pages/StorageSettingsDialog.ftl",
+        "www/api/methods.conf",
+        "www/api/methods/ccu/removeFieldTestActive.tcl",
+        "www/webui/js/lang/de/translate.lang.extension.js",
+        "www/webui/js/lang/de/translate.lang.label.js",
+        "www/webui/js/lang/en/translate.lang.extension.js",
+        "www/webui/js/lang/en/translate.lang.label.js",
+        "www/webui/webui.js"
+      ],
+      "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
+      "removed": 96,
+      "sha256": "9f91f792145a3599f10ceedfbebecc9fbea9e75d6e2ecb24a98a55d5a7575e3b"
+    }
+  ],
+  "schema": 1,
+  "series_sha256": "8bcd0d14d2f89caba6ed72d4e68da6a25ad6d1f0add2ca2f0fc829e8411b6df5"
+}

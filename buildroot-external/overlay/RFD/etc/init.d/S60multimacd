@@ -48,7 +48,7 @@ waitStartupComplete() {
         # restart multimacd
         start-stop-daemon -K -q -p ${PIDFILE}
         sleep 2
-        start-stop-daemon -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}
+        start-stop-daemon -d / -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}
       else
         # wait until /dev/mmd_* devices are accessible
         for j in $(seq 1 ${STEPS}); do
@@ -109,7 +109,7 @@ start() {
 
         # start multimacd with nice level -15 to increase
         # process priority
-        start-stop-daemon -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}
+        start-stop-daemon -d / -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}
         waitStartupComplete
       else
         echo "ERROR: /dev/eq3loop missing"

@@ -50,7 +50,7 @@ function ::WriteConditionText()
                   }
                   else
                   {
-                    sRet = sRet#" (nicht ausgewählt)";
+                    sRet = sRet#" (nicht ausgewï¿½hlt)";
                   }
                 }
                 if( iLVT == ivtSystemId )
@@ -62,7 +62,7 @@ function ::WriteConditionText()
                   }
                   else
                   {
-                    sRet = sRet#" (nicht ausgewählt)";
+                    sRet = sRet#" (nicht ausgewï¿½hlt)";
                   }
                 }
                 if( bOK )
@@ -84,11 +84,19 @@ function ::WriteConditionText()
                     {
                       if( iRV1 == 0 )
                       {
-                        sRet = sRet#' '#oLV.ValueName0()#' ';
+                        string sVN0 = oLV.ValueName0();
+                        sVN0 = sVN0.Replace("&", "&amp;");
+                        sVN0 = sVN0.Replace("<", "&lt;");
+                        sVN0 = sVN0.Replace(">", "&gt;");
+                        sRet = sRet#' '#sVN0#' ';
                       }
                       if( iRV1 == 1 )
                       {
-                        sRet = sRet#' '#oLV.ValueName1()#' ';
+                        string sVN1 = oLV.ValueName1();
+                        sVN1 = sVN1.Replace("&", "&amp;");
+                        sVN1 = sVN1.Replace("<", "&lt;");
+                        sVN1 = sVN1.Replace(">", "&gt;");
+                        sRet = sRet#' '#sVN1#' ';
                       }
                     }
                   }
@@ -196,7 +204,7 @@ function ::WriteConditionText()
                                   Call("/esp/functions.fn::getSpecialBinaryTranslation()");
                                   sRet = sRet#' '#sValue;
                                 }
-                                !Write( "<script>conInfo('- ist binär und Action, RV1="#iRV1#" -- RV2="#iRV2#"');</script>" );
+                                !Write( "<script>conInfo('- ist binï¿½r und Action, RV1="#iRV1#" -- RV2="#iRV2#"');</script>" );
                               }
                               else
                               {
@@ -278,9 +286,9 @@ function ::WriteConditionText()
                       iRV2 = iRV2*100;
                     }
                     
-                    if( sValueUnit == "°C" )
+                    if( sValueUnit == "ï¿½C" )
                     {
-                      sValueUnit = "° C";
+                      sValueUnit = "ï¿½ C";
                     }
                     else
                     {
@@ -306,11 +314,11 @@ function ::WriteConditionText()
                         sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeGreaterThan} "#iRV2.ToString(2)#sValueUnit;
                       }
                     }
-                    !if( iCT1 == 8 ) { sCT = "größer als "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 8 ) { sCT = "grï¿½ï¿½er als "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 8 ) { sCT = "${ruleConditionLblGreaterThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 10 ) { sCT = "kleiner als "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 10 ) { sCT = "${ruleConditionLblLessThan} "#iRV1.ToString(2)#sValueUnit; }
-                    !if( iCT1 == 9 ) { sCT = "größer oder gleich "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 9 ) { sCT = "grï¿½ï¿½er oder gleich "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
@@ -328,11 +336,11 @@ function ::WriteConditionText()
                     {
                       oSC.ConditionType2(4);
                     }
-                    !if( iCT2 == 13 ) {sCT = 'auslösen auf Aktualisierung';}
+                    !if( iCT2 == 13 ) {sCT = 'auslï¿½sen auf Aktualisierung';}
                     if( iCT2 == 13 ) {sCT = '${ruleConditionSelectTriggerWhenUpdated}';}
-                    !if( iCT2 == 15 ) {sCT = 'nur prüfen';}
+                    !if( iCT2 == 15 ) {sCT = 'nur prï¿½fen';}
                     if( iCT2 == 15 ) {sCT = '${ruleConditionSelectCheckOnly}';}
-                    !if( iCT2 == 4 ) {sCT = 'auslösen auf Änderung';}
+                    !if( iCT2 == 4 ) {sCT = 'auslï¿½sen auf ï¿½nderung';}
                     if( iCT2 == 4 ) {sCT = '${ruleConditionSelectWhenChanged}';}
                     sRet = sRet#' '#sCT;
                   }
@@ -383,9 +391,9 @@ function ::WriteConditionText()
                   {
                     oSC.ConditionType2(13);
                   }
-                  !if( iCT2 == 13 ) {sRet = sRet#' auslösen zu Zeitpunkten';}
+                  !if( iCT2 == 13 ) {sRet = sRet#' auslï¿½sen zu Zeitpunkten';}
                   if( iCT2 == 13 ) {sRet = sRet#' ${ruleConditionSelectTriggerOnTime}';}
-                  !if( iCT2 == 15 ) {sRet = sRet#' nur prüfen';}
+                  !if( iCT2 == 15 ) {sRet = sRet#' nur prï¿½fen';}
                   if( iCT2 == 15 ) {sRet = sRet#' ${ruleConditionSelectCheckOnly}';}
                 }
                 else
@@ -464,7 +472,7 @@ function ::WriteDestinationText()
             {
               if( iVPT == ivtDelay )
               {
-                !sRet = sRet#" verzögert um " ;
+                !sRet = sRet#" verzï¿½gert um " ;
                 sRet = sRet#" ${ruleActivitySelectDelayed} " ;
                 integer iHours = iVP.ToString().Substr(11,2).ToInteger();
                 integer iMinutes = iVP.ToString().Substr(14,2).ToInteger();
@@ -489,7 +497,7 @@ function ::WriteDestinationText()
               ! ##############################################################################
               if( iP == ivtString )
               {
-                !sRet = sRet#" ausführen";
+                !sRet = sRet#" ausfï¿½hren";
                 sRet = sRet#" ${ruleDescrPerform}";
               }
               if( iP == ivtObjectId )
@@ -721,7 +729,7 @@ function ::WriteDestinationText()
         }
         else
         {
-          !sRet = sRet#"Keine Aktivitäten";
+          !sRet = sRet#"Keine Aktivitï¿½ten";
           sRet = sRet#"${ruleDescrNoActivities}";
         }
       }

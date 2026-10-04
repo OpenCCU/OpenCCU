@@ -1,0 +1,49 @@
+unix: avoid dlopen(NULL) when native path resolution fails
+
+Tcl_FSGetNativePath() may return NULL when a Tcl path cannot be
+resolved to a native filesystem path. This can happen, for example,
+when loading a shared library by a relative name while the process has
+inherited a current working directory which has subsequently been
+removed and getcwd() therefore fails.
+
+TclpDlopen() currently passes the returned value directly to dlopen().
+On POSIX systems, however, dlopen(NULL, ...) is a valid operation: it
+returns a handle for the main program instead of reporting an error.
+Consequently, Tcl considers the library to have been opened
+successfully and does not execute its existing fallback using the
+original filename.
+
+The subsequent lookup of the extension initialization function is then
+performed against the main program and its globally loaded objects
+rather than against the requested shared library. This results in
+misleading errors such as an undefined Tcl extension initialization
+symbol even though the library itself and its initialization function
+are present and valid.
+
+Only call dlopen() with the native path if Tcl_FSGetNativePath()
+actually returned one. Otherwise keep the handle NULL so that the
+existing fallback path is used. The fallback passes the original
+filename to the dynamic loader, allowing its normal library search
+mechanism to locate the requested shared object.
+
+This does not alter the existing behavior when native path resolution
+succeeds.
+
+Reported-at: https://github.com/OpenCCU/OpenCCU/issues/4194
+Upstream: Not submitted yet
+
+--- tcl/unix/tclLoadDl.c.orig
++++ tcl/unix/tclLoadDl.c
+@@ -97,7 +97,11 @@ TclpDlopen(
+     } else {
+     	dlopenflags |= RTLD_NOW;
+     }
+-    handle = dlopen(native, dlopenflags);
++    handle = NULL;
++    if (native != NULL) {
++	handle = dlopen(native, dlopenflags);
++    }
++
+     if (handle == NULL) {
+ 	/*
+ 	 * Let the OS loader examine the binary search path for whatever

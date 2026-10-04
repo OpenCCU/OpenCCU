@@ -10,13 +10,45 @@ die() {
   exit 1
 }
 
-[[ $# == 1 || $# == 2 ]] || \
-  die "usage: ${0##*/} PRISTINE_ROOTFS [OPENCCU_BASE_SOURCE]"
+[[ $# -ge 1 ]] || \
+  die "usage: ${0##*/} PRISTINE_ROOTFS [OPENCCU_BASE_SOURCE] [--skip-patch NAME] [--result-dir DIRECTORY]"
+pristine_arg=$1
+shift
+source_arg=
+if [[ $# -gt 0 && $1 != --* ]]; then
+  source_arg=$1
+  shift
+fi
+skip_patch=
+result_dir=
+while (($#)); do
+  [[ $# -ge 2 ]] || die "missing option value: $1"
+  case $1 in
+    --skip-patch)
+      [[ -n $2 ]] || die "invalid option value: $1"
+      skip_patch=$2
+      ;;
+    --result-dir)
+      [[ -n $2 ]] || die "invalid option value: $1"
+      result_dir=$2
+      ;;
+    *) die "unknown option: $1" ;;
+  esac
+  shift 2
+done
+if [[ -n $skip_patch ]]; then
+  [[ $skip_patch == [0-9][0-9][0-9][0-9]-*.patch && $skip_patch != */* ]] || \
+    die "invalid skip patch: $skip_patch"
+  grep -Fxq -- "$skip_patch" "${script_dir}/series" || \
+    die "skip patch is not in series: $skip_patch"
+fi
+[[ -z $result_dir || (! -e $result_dir && ! -L $result_dir) ]] || \
+  die "result directory already exists: $result_dir"
 patch --version 2>/dev/null | grep -q '^GNU patch ' || \
   die "GNU patch is required"
-pristine_rootfs=$(cd "$1" && pwd -P)
-if (($# == 2)); then
-  openccu_base_source=$(cd "$2" && pwd -P)
+pristine_rootfs=$(cd "$pristine_arg" && pwd -P)
+if [[ -n $source_arg ]]; then
+  openccu_base_source=$(cd "$source_arg" && pwd -P)
 else
   openccu_base_source=$(cd "${pristine_rootfs}/../.." && pwd -P)
 fi
@@ -41,10 +73,13 @@ assert_symlink() {
 
 "${script_dir}/create_patches.sh" --check
 
+applied_count=0
 while IFS= read -r patch_name || [[ -n $patch_name ]]; do
   [[ -n $patch_name && $patch_name != \#* ]] || continue
-  patch -s -t -d "$state" -p1 -F0 -N <"${script_dir}/${patch_name}" || \
+  [[ $patch_name != "$skip_patch" ]] || continue
+  patch -s -t -d "$state" -p1 -F0 -N --no-backup-if-mismatch <"${script_dir}/${patch_name}" || \
     die "patch does not apply with zero fuzz: $patch_name"
+  applied_count=$((applied_count + 1))
 done <"${script_dir}/series"
 
 "${script_dir}/finalize_patch_input.sh" "$state"
@@ -131,5 +166,9 @@ grep -Fq "$fav_pattern" "${state}/www/pda/fav.cgi" || \
 "$tclsh" "${repo_root}/scripts/testcases/security/rega_script_injection_test.tcl" \
   "$state"
 
-printf 'Validated %s patches against %s\n' \
-  "$(grep -Ec '^[^#[:space:]]' "${script_dir}/series")" "$pristine_rootfs"
+if [[ -n $result_dir ]]; then
+  mkdir -p -- "$(dirname "$result_dir")"
+  mkdir -- "$result_dir"
+  cp -a "$state/." "$result_dir/"
+fi
+printf 'Validated %s patches against %s\n' "$applied_count" "$pristine_rootfs"

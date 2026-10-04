@@ -36,7 +36,16 @@ Parity validation should verify at least:
 
 ## Version maintenance
 
-`scripts/update-openccu-base.sh` updates the pinned OpenCCU-Base source commit.
+`scripts/update-openccu-base.sh` updates `OPENCCU_BASE_VERSION` using the
+current pin mode:
+
+- if `OPENCCU_BASE_VERSION` is a release version, it resolves the latest stable
+  OpenCCU-Base release tag and updates release-to-release.
+- if `OPENCCU_BASE_VERSION` is a 40-character commit SHA, it resolves OpenCCU-Base
+  `HEAD` and updates SHA-to-SHA.
+
+To intentionally switch pin mode (release↔SHA), pass the target version/SHA as
+an explicit script argument.
 `OPENCCU_BASE_COMPAT_VERSION` is the OpenCCU release identity and must be
 reviewed and adjusted manually whenever the imported baseline changes.
 

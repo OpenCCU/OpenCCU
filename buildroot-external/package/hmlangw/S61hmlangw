@@ -16,7 +16,7 @@ HM_HMRF_MMDNODE=/dev/mmd_bidcos
 start() {
 	echo -n "Starting LAN Gateway Daemon: "
 	if [[ -c ${HM_HMRF_DEVNODE} ]]; then
-		if start-stop-daemon -S -b -m -p ${PIDFILE} --startas /bin/sh -- -c "exec /bin/${DAEMON} -b -n ${HM_HMRF_SERIAL} -s ${HM_HMRF_MMDNODE} -r -1 >/var/log/${DAEMON}.log 2>&1"; then
+		if start-stop-daemon -d / -S -b -m -p ${PIDFILE} --startas /bin/sh -- -c "exec /bin/${DAEMON} -b -n ${HM_HMRF_SERIAL} -s ${HM_HMRF_MMDNODE} -r -1 >/var/log/${DAEMON}.log 2>&1"; then
 			echo "OK"
 		else
 			echo "FAIL"

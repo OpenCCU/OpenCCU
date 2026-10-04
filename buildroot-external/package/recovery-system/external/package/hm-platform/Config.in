@@ -1,6 +1,0 @@
-config BR2_PACKAGE_HM_PLATFORM
-	bool "eQ-3 HomeMatic Services for RecoverySystem"
-	help
-	  HomeMatic Services by eQ-3 based on OCCU for Recovery System only
-	  
-	  http://www.eq-3.de/

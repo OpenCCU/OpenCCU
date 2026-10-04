@@ -71,13 +71,6 @@
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
-@@ -1165,4 +1166,4 @@
-   
- </div>
- 
--<script>translatePage('#ProgramTable')</script>
-\ No newline at end of file
-+<script>translatePage('#ProgramTable')</script>
 --- a/www/rega/pages/tabs/control/devices.htm
 +++ b/www/rega/pages/tabs/control/devices.htm
 @@ -90,7 +90,7 @@

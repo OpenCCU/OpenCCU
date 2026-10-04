@@ -1,0 +1,21 @@
+Subject: [PATCH] vmcs_host: specify GPU service callback parameter for C23
+
+The GPU service invokes this callback with its void *cookie argument.
+Since C23 an empty parameter list means no parameters, so GCC 15 rejects
+that call. Declare the existing callback argument explicitly.
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+--- a/interface/vmcs_host/vc_vchi_gpuserv.h
++++ b/interface/vmcs_host/vc_vchi_gpuserv.h
+@@ -58,7 +58,7 @@
+ 
+ struct gpu_callback_s {
+   // callback to call when complete (can be NULL)
+-  void (*func)();
++  void (*func)(void *cookie);
+   void *cookie;
+ };
+ 

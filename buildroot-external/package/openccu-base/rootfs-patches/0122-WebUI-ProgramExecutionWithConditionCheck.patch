@@ -1,6 +1,6 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -1282,7 +1282,13 @@
+@@ -1288,7 +1288,13 @@
    Write("<td>");
    string sClass = "ControlBtnOff";
    if( objProg.Active() ) { sClass = "ControlBtnOn"; }
@@ -15,7 +15,7 @@
      Write("<tr>");
      Write("<td  class='CLASS02103'>");
          Write("<div align='center'>");
-@@ -1291,7 +1297,11 @@
+@@ -1297,7 +1303,11 @@
        Write("</td>");
      Write("</tr>");
      !Write("<tr><td>Aktiv</td></tr>");
@@ -28,7 +28,7 @@
      Write("</table>");
    Write("</td>");
    if (system.GetVar("iStatusOnly") == 0)
-@@ -1300,15 +1310,17 @@
+@@ -1306,15 +1316,17 @@
      !Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>Start</div>");
      Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStart}</div>");
      Write("<script type='text/javascript'>");

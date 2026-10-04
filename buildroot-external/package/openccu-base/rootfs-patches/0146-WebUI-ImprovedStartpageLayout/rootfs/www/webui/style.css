@@ -5484,6 +5484,7 @@ application {
 	word-wrap: anywhere;
 	display: inline-block;
 	padding: 2px;
+	white-space: break-spaces;
 }
 
 .CLASS02535A {
@@ -5492,7 +5493,6 @@ application {
 	word-wrap: break-word;
 	max-width: 480px;
 	display: inline-block;
-	white-space: break-spaces;
 }
 
 .CLASS02535B {

@@ -1,0 +1,4 @@
+# Allow hss_led to control LED-class devices selected through hss_ledctl.
+# Include hotplug LEDs and attributes created when selecting a trigger.
+SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R hssled /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
+SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R hssled /sys%p", RUN+="/bin/chmod -R g=u /sys%p"

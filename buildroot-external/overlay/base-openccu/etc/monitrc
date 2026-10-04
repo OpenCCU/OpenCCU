@@ -26,15 +26,15 @@ check program hw-watchdogEnabled with path "/usr/bin/test -c /dev/watchdog"
 # hss_led service monitoring
 check process hss_led with pidfile /var/run/hss_led.pid
     group homematic
-    start = "/sbin/start-stop-daemon -S -q -b -m -c hssled:hssled -p /var/run/hss_led.pid --exec /bin/hss_led -- -l 6"
-    stop = "/sbin/start-stop-daemon -K -q -p /var/run/hss_led.pid"
+    start = "/etc/init.d/S00hss_led start"
+    stop = "/etc/init.d/S00hss_led stop"
+    restart = "/etc/init.d/S00hss_led restart"
     #if failed port 8182 type udp for 5 cycles then restart
     if not exist for 1 cycles then restart
     if 1 restart within 1 cycles then
       exec "/bin/triggerAlarm.tcl 'hss_led restarted' 'WatchDog: hssled-restart' true"
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'hss_led: high filedescriptor usage (>95%)' 'WatchDog: hssled-highfd' true"
-    depends on hmlangwDisabled
 
 # syslog/klog daemons monitoring
 check process klogd with pidfile /var/run/klogd.pid
@@ -299,6 +299,14 @@ check program rfdEnabled with path "/bin/grep -q '^\[Interface .\]' /var/etc/rfd
     group homematic
     if status != 0 for 1 cycles then unmonitor
 
+# restart rfd if it still holds a /dev/mmd_bidcos removed by a multimacd restart
+check program rfdDevice with path "/bin/checkStaleDevice.sh /var/run/rfd.pid"
+    group homematic
+    if status != 0 for 2 cycles then
+      exec /bin/sh -c "/bin/triggerAlarm.tcl 'rfd: stale multimacd connection' 'WatchDog: rfd-stale' true; /usr/bin/monit restart rfd"
+      repeat every 5 cycles
+    depends on rfd
+
 # HMIPServer (HmIP-RF/HmIP-Wired) daemon monitoring
 check process HMIPServer with pidfile /var/run/HMIPServer.pid
     group homematic
@@ -317,6 +325,14 @@ check process HMIPServer with pidfile /var/run/HMIPServer.pid
       exec "/bin/triggerAlarm.tcl 'HMIPServer: high filedescriptor usage (>95%)' 'WatchDog: hmipserver-highfd' true"
     depends on hmlangwDisabled
 
+# restart HMIPServer if it still holds a /dev/mmd_hmip removed by a multimacd restart
+check program HMIPServerDevice with path "/bin/checkStaleDevice.sh /var/run/HMIPServer.pid"
+    group homematic
+    if status != 0 for 2 cycles then
+      exec /bin/sh -c "/bin/triggerAlarm.tcl 'HMIPServer: stale multimacd connection' 'WatchDog: hmipserver-stale' true; /usr/bin/monit restart HMIPServer"
+      repeat every 5 cycles
+    depends on HMIPServer
+
 # ReGaHss logic engine daemon monitoring
 check process ReGaHss with pidfile /var/run/ReGaHss.pid
     group homematic
@@ -331,7 +347,11 @@ check process ReGaHss with pidfile /var/run/ReGaHss.pid
       exec "/bin/triggerAlarm.tcl 'ReGaHss restarted' 'WatchDog: regahss-restart' true"
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'ReGaHss: high filedescriptor usage (>95%)' 'WatchDog: regahss-highfd' true"
-    depends on hmlangwDisabled
+    depends on regaHssEnabled, hmlangwDisabled
+
+check program regaHssEnabled with path "/usr/bin/test -x /bin/ReGaHss"
+    group homematic
+    if status != 0 for 1 cycles then unmonitor
 
 # cronjob daemon monitoring
 check process crond with pidfile /var/run/crond.pid

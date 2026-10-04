@@ -25,7 +25,7 @@ case "$1" in
 		/usr/sbin/xe-linux-distribution /var/cache/xe-linux-distribution
 
 		# shellcheck disable=SC2086
-		if ! start-stop-daemon -b -S -q -x $EXEC -- $ARGS -p "${PIDFILE}"; then
+		if ! start-stop-daemon -d / -b -S -q -x $EXEC -- $ARGS -p "${PIDFILE}"; then
 			echo "FAILED"
 			exit 1
 		else

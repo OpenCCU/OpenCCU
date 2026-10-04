@@ -25,7 +25,7 @@ proc create_backup {} {
   set HOSTNAME [exec hostname]
   set system_version [read_version "/VERSION"]
   set iso8601_date [exec date -Iseconds]
-  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-]\d+)$} $iso8601_date dummy year month day hour minute second zone
+  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-].+)$} $iso8601_date dummy year month day hour minute second zone
   set backupfile [set HOSTNAME]-$system_version-$year-$month-$day-$hour$minute.sbk
   # cleanup previous runs
   catch { exec rm -f /usr/local/tmp/last_backup.sbk }

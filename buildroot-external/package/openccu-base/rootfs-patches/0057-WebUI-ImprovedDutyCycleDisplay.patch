@@ -250,7 +250,7 @@
 +}
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -2382,27 +2382,6 @@
+@@ -2384,27 +2384,6 @@
  progress::-moz-progress-bar { background: #3678c9; }
  progress::-webkit-progress-value { background: #3678c9; }
  
@@ -278,7 +278,7 @@
  .Filter {
    margin:0;
    border:1px solid $_(black); /* black */
-@@ -5024,9 +5003,13 @@
+@@ -5026,9 +5005,13 @@
  	height:50%;
  }
  
@@ -312,7 +312,7 @@
          delete dcTimeout;
        }, 10);
      }
-@@ -9224,7 +9221,6 @@
+@@ -9225,7 +9222,6 @@
        // Check the dutyCycle and carrierSense periodically
        new PeriodicalExecuter(function () {
          showDutyCycle();
@@ -320,7 +320,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35469,74 +35465,101 @@
+@@ -35475,74 +35471,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},

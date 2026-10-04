@@ -1261,6 +1261,7 @@ proc action_shutdown_go {} {
 }
 
 proc action_update_start {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1277,6 +1278,7 @@ proc action_update_start {} {
 }
 
 proc action_reboot {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1285,6 +1287,7 @@ proc action_reboot {} {
   exec /sbin/reboot
 }
 proc action_shutdown {} {
+  puts ""
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
@@ -1345,7 +1348,7 @@ proc action_apply_logging {} {
 proc action_download_logfile {} {
   set HOSTNAME [exec hostname]
   set iso8601_date [exec date -Iseconds]
-  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-]\d+)$} $iso8601_date dummy year month day hour minute second zone
+  regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-].+)$} $iso8601_date dummy year month day hour minute second zone
   
   puts "Content-Type:application/x-download"
   puts "Content-Disposition:attachment;filename=[set HOSTNAME]-$year-$month-$day.log\n"

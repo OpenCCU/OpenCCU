@@ -9215,7 +9215,7 @@ WebUI = Singleton.create({
 
       var content = document.createElement("div");
       content.id = "content";
-      content.tabIndex = 1;
+      content.tabIndex = -1;
       Element.setStyle(content, {cursor: "wait"});
       layer0.appendChild(content);
 
@@ -16832,7 +16832,7 @@ HMScriptExecutor = Class.create({
     this.m_layer.appendChild(this.m_frame.getElement());
     Layer.add(this.m_layer);
 
-    this.m_input = CodeMirror.fromTextArea(document.getElementById('code'), {
+    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
       mode: "text/x-rega",
       autofocus: true,
       matchBrackets: true,
@@ -16884,7 +16884,7 @@ HMScriptExecutor = Class.create({
     });
     this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
 
-    this.m_output = CodeMirror.fromTextArea(document.getElementById('output'), {
+    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
       mode: "default",
       readOnly: true,
       lineWrapping: true,
@@ -30841,7 +30841,7 @@ ise.Devices.prototype = {
   
   setVisible: function(id, ctrlId, mode) {
     var url = "/esp/devices.htm?sid="+SessionId;
-    var pb = "integer devId = " + DeviceList.getChannel(id).deviceId + ";";
+    var pb = "integer devId = " + ((mode) ? DeviceList.getChannel(id).deviceId : id) + ";";
     pb += "string action= 'setVisible';";
 
     if (mode) {
@@ -32314,7 +32314,7 @@ iseMessageBox.prototype =
 
     if (this.draggable) {
       jQuery("#messagebox").draggable({
-        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line"
+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
       });
     }
 
@@ -33739,9 +33739,9 @@ logout = function() {
   regaMonitor.stop();
   InterfaceMonitor.stop();
 
-  // logout and make sure we save the regadom
-  homematic('Session.logout', {}, function() {
-    homematic('system.saveObjectModel', {}, function() {
+  // save the regadom first, since Session.logout ends the session
+  homematic('system.saveObjectModel', {}, function() {
+    homematic('Session.logout', {}, function() {
       ProgressBar.hide();
       ProgressBar.StopKnightRiderLight();
       location.href = "/logout.htm?lang="+getLang();
@@ -36441,6 +36441,10 @@ getExtendedDescription = function(oChannelDescr)  {
         case "hmip-wgtc":
         case "hmip-wgtc-a":
           if (channel === undefined) { var channel = DeviceList.getChannelByAddress(channelAddress); }
+          if (channel === undefined) {
+            result = translateKey("chType_SWITCH_VIRTUAL_RECEIVER");
+            break;
+          }
           var channelMode = homematic("Interface.getMetadata", {
             "objectId": channel.id,
             "dataId": "channelMode"

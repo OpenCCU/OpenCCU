@@ -9182,7 +9182,7 @@ WebUI = Singleton.create({
 
       var content = document.createElement("div");
       content.id = "content";
-      content.tabIndex = 1;
+      content.tabIndex = -1;
       Element.setStyle(content, {cursor: "wait"});
       layer0.appendChild(content);
 
@@ -30777,7 +30777,7 @@ ise.Devices.prototype = {
   
   setVisible: function(id, ctrlId, mode) {
     var url = "/esp/devices.htm?sid="+SessionId;
-    var pb = "integer devId = " + DeviceList.getChannel(id).deviceId + ";";
+    var pb = "integer devId = " + ((mode) ? DeviceList.getChannel(id).deviceId : id) + ";";
     pb += "string action= 'setVisible';";
 
     if (mode) {

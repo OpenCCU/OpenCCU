@@ -13,6 +13,20 @@
 / {
     compatible = "brcm,bcm2708";
 
+    // One trigger drives all three GPIO LEDs. Numeric color IDs keep this
+    // overlay compatible with the package's direct dtc (no C preprocessor).
+    fragment@20 {
+        target-path = "/";
+        __overlay__ {
+            multi-led {
+                compatible = "leds-group-multicolor";
+                label = "rpi_rf_mod:rgb:status";
+                color = <8>; // LED_COLOR_ID_RGB
+                leds = <&rpi_rf_mod_red>, <&rpi_rf_mod_green>, <&rpi_rf_mod_blue>;
+            };
+        };
+    };
+
     // fragment to ensure we have the correct gpio pin
     // setup for the RPI-RF-MOD
     fragment@0 {
@@ -35,18 +49,21 @@
             pinctrl-0 = <&rpi_rf_mod_pins>;
             rpi_rf_mod_red: rpi_rf_mod_red {
                 label = "rpi_rf_mod:red";
+                color = <1>; // LED_COLOR_ID_RED
                 gpios = <&gpio 16 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
             rpi_rf_mod_green: rpi_rf_mod_green {
                 label = "rpi_rf_mod:green";
+                color = <2>; // LED_COLOR_ID_GREEN
                 gpios = <&gpio 20 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";
             };
             rpi_rf_mod_blue: rpi_rf_mod_blue {
                 label = "rpi_rf_mod:blue";
+                color = <3>; // LED_COLOR_ID_BLUE
                 gpios = <&gpio 21 0>;
                 default-state = "keep";
                 linux,default-trigger = "none";

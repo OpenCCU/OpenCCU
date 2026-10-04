@@ -166,6 +166,8 @@ a img {
     overflow: auto;
     display: flex;
     align-items: flex-start;
+    /* Prevent chrome from outlining this by focus */
+    outline: none;
 }
 
 #prgcontent
@@ -9147,7 +9149,8 @@ color: $_(textColorA); /* white */
   border:solid 1px $_(black);
 }
 
-.CodeMirror {
+.CodeMirror,
+.cm-editor {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   text-align: left;
@@ -9155,6 +9158,7 @@ color: $_(textColorA); /* white */
   resize: vertical;
 }
 
-.CodeMirror-gutter-wrapper {
+.CodeMirror-gutter-wrapper,
+.cm-gutters {
   font-family: monospace;
 }

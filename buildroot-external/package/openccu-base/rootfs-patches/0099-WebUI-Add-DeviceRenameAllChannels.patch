@@ -48,7 +48,7 @@
      "generalChannelConfigHintReceiver": "<p>In connection with actuators usually switching commands will be send.</p>",
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -3285,7 +3285,7 @@
+@@ -3287,7 +3287,7 @@
    top: 50%;
    left: 50%;
    width: 800px;
@@ -57,7 +57,7 @@
    margin-left: -400px;
    margin-top: -225px;
    background-color: $_(black); /* black */
-@@ -3311,7 +3311,7 @@
+@@ -3313,7 +3313,7 @@
    top: 24px;
    left: 2px;
    width: 796px;
@@ -66,7 +66,7 @@
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
    overflow: auto;
-@@ -3319,7 +3319,7 @@
+@@ -3321,7 +3321,7 @@
  
  #DeviceConfigDialogFooter {
    position: absolute;
@@ -124,7 +124,7 @@
        <\/div>\n
      <\/div>\n
  \n
-@@ -15506,11 +15536,13 @@
+@@ -15512,11 +15542,13 @@
  DeviceConfigDialog = Singleton.create({
    LAYER_ID: "DeviceConfigDialogLayer",
    NAME_ID: "DeviceConfigDialog_DeviceName",
@@ -138,7 +138,7 @@
    RESULT_OK: 1,
    RESULT_ABORT: 0,
    POLL_INTERVAL: 3,
-@@ -15558,6 +15590,9 @@
+@@ -15564,6 +15596,9 @@
        this.__hideLogging();
      }
      translateJSTemplate("#DeviceConfigDialog");
@@ -148,7 +148,7 @@
    },
  
    __hideFunctionTest: function() {
-@@ -15618,6 +15653,34 @@
+@@ -15624,6 +15659,34 @@
    },
    
    /**

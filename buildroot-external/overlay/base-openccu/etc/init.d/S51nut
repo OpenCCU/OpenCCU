@@ -53,7 +53,7 @@ case $1 in
         fi
         # Start data server (upsd)
         # shellcheck disable=SC2086
-        start-stop-daemon -S -q -p ${UPSD_PID} -x ${UPSD} -- ${UPSD_OPTIONS} 2>/dev/null >/dev/null
+        start-stop-daemon -d / -S -q -p ${UPSD_PID} -x ${UPSD} -- ${UPSD_OPTIONS} 2>/dev/null >/dev/null
         echo -n "."
       ;;
     esac
@@ -63,7 +63,7 @@ case $1 in
       case "${MODE}" in
         standalone|netserver|netclient)
           # shellcheck disable=SC2086
-          start-stop-daemon -S -q -p ${UPSMON_PID} -x ${UPSMON} -- ${UPSMON_OPTIONS} 2>/dev/null >/dev/null
+          start-stop-daemon -d / -S -q -p ${UPSMON_PID} -x ${UPSMON} -- ${UPSMON_OPTIONS} 2>/dev/null >/dev/null
           echo "OK"
           exit 0
         ;;

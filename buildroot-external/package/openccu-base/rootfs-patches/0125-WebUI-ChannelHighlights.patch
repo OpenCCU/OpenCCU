@@ -112,7 +112,7 @@
  DEV_LIST.push('HmIPW-FIO6');
  DEV_DESCRIPTION["HmIPW-FIO6"] = "HmIPW-FIO6";
  DEV_PATHS["HmIPW-FIO6"] = new Object();
-@@ -5487,19 +5537,18 @@
+@@ -5487,18 +5537,18 @@
  DEV_PATHS["HmIPW-WRC6"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
  DEV_PATHS["HmIPW-WRC6"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
  DEV_HIGHLIGHT["HmIPW-WRC6"] = new Object();
@@ -128,7 +128,6 @@
 -DEV_HIGHLIGHT["HmIPW-WRC6"]["10"] = [1, 0.705, 0.495, 0.025];
 -DEV_HIGHLIGHT["HmIPW-WRC6"]["11"] = [1, 0.3, 0.706, 0.025];
 -DEV_HIGHLIGHT["HmIPW-WRC6"]["12"] = [1, 0.705, 0.671, 0.025];
--DEV_HIGHLIGHT["HmIPW-WRC6"]["13"] = [5, '1', '2', '3', '4', '5', '6'];
 +DEV_HIGHLIGHT["HmIPW-WRC6"]["1"]  = [1, 0.270, 0.310, 0.050];
 +DEV_HIGHLIGHT["HmIPW-WRC6"]["2"]  = [1, 0.675, 0.285, 0.050];
 +DEV_HIGHLIGHT["HmIPW-WRC6"]["3"]  = [1, 0.270, 0.510, 0.050];
@@ -141,6 +140,6 @@
 +DEV_HIGHLIGHT["HmIPW-WRC6"]["10"] = [1, 0.675, 0.480, 0.050];
 +DEV_HIGHLIGHT["HmIPW-WRC6"]["11"] = [1, 0.270, 0.706, 0.050];
 +DEV_HIGHLIGHT["HmIPW-WRC6"]["12"] = [1, 0.675, 0.671, 0.050];
+ DEV_HIGHLIGHT["HmIPW-WRC6"]["13"] = [5, '1', '2', '3', '4', '5', '6'];
  DEV_HIGHLIGHT["HmIPW-WRC6"]["1+2"] = [5, '1', '2'];
  DEV_HIGHLIGHT["HmIPW-WRC6"]["3+4"] = [5, '3', '4'];
- DEV_HIGHLIGHT["HmIPW-WRC6"]["5+6"] = [5, '5', '6'];

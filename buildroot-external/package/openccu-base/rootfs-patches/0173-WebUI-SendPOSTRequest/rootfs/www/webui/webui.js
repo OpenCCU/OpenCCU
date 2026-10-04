@@ -9215,7 +9215,7 @@ WebUI = Singleton.create({
 
       var content = document.createElement("div");
       content.id = "content";
-      content.tabIndex = 1;
+      content.tabIndex = -1;
       Element.setStyle(content, {cursor: "wait"});
       layer0.appendChild(content);
 
@@ -30773,7 +30773,7 @@ ise.Devices.prototype = {
   
   setVisible: function(id, ctrlId, mode) {
     var url = "/esp/devices.htm?sid="+SessionId;
-    var pb = "integer devId = " + DeviceList.getChannel(id).deviceId + ";";
+    var pb = "integer devId = " + ((mode) ? DeviceList.getChannel(id).deviceId : id) + ";";
     pb += "string action= 'setVisible';";
 
     if (mode) {
@@ -33671,9 +33671,9 @@ logout = function() {
   regaMonitor.stop();
   InterfaceMonitor.stop();
 
-  // logout and make sure we save the regadom
-  homematic('Session.logout', {}, function() {
-    homematic('system.saveObjectModel', {}, function() {
+  // save the regadom first, since Session.logout ends the session
+  homematic('system.saveObjectModel', {}, function() {
+    homematic('Session.logout', {}, function() {
       ProgressBar.hide();
       ProgressBar.StopKnightRiderLight();
       location.href = "/logout.htm?lang="+getLang();

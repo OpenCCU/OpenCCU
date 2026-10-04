@@ -3,7 +3,7 @@
 
 Usage: python3 test_devicetypes_assets.py OPENCCU_BASE_SOURCE
 The source tree must have the Buildroot package patches applied already.
-The Java stub tests error propagation, not the real stripper's correctness.
+The strip stub tests error propagation, not the real stripper's correctness.
 """
 
 import argparse
@@ -39,23 +39,35 @@ class DeviceTypesAssetsTest(unittest.TestCase):
         (self.devices / "replaceMap/rfReplaceMap.xml").write_text("<map/>\n")
         for name in ("st_values.cgi", "st_values.js"):
             (self.devices / name).write_text("fixture\n")
-        java = self.source / "java stub"
-        java.write_text('''#!/bin/sh
+        strip_script = '''#!/bin/sh
 set -eu
-printf '%s\\n' "$3" >> "$CALL_LOG"
-case "$3" in
+if [ "${1-}" = "-jar" ]; then
+  device="$3"
+  output="$5"
+else
+  device="$1"
+  output="$3"
+fi
+printf '%s\\n' "$device" >> "$CALL_LOG"
+case "$device" in
   */"$FAIL_DEVICE")
     case "$MODE" in
       fail) exit 42 ;;
-      partial) printf 'partial' > "$5"; exit 42 ;;
-      empty) : > "$5"; exit 0 ;;
+      partial) printf 'partial' > "$output"; exit 42 ;;
+      empty) : > "$output"; exit 0 ;;
       missing) exit 0 ;;
     esac
     ;;
 esac
-printf 'generated\\n' > "$5"
-''')
+printf 'generated\\n' > "$output"
+'''
+        java = self.source / "java stub"
+        java.write_text(strip_script)
         java.chmod(0o755)
+        strip = self.source / "build-tools/bidcos-devicetype-strip"
+        strip.parent.mkdir()
+        strip.write_text(strip_script)
+        strip.chmod(0o755)
         (self.source / "CMakeLists.txt").write_text('''\
 cmake_minimum_required(VERSION 3.20)
 project(DeviceTypesFailureTest NONE)

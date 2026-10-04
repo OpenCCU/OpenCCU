@@ -9157,6 +9157,7 @@ WebUI = Singleton.create({
 
       var content = document.createElement("div");
       content.id = "content";
+      content.tabIndex = -1;
       Element.setStyle(content, {cursor: "wait"});
       layer0.appendChild(content);
 
@@ -9386,6 +9387,11 @@ WebUI = Singleton.create({
     this.currentPageOptions  = options;
     
     this.currentPage.enter(options);
+    window.setTimeout(() => {
+      if(jQuery(':focus').length === 0) {
+        jQuery('#content')[0].focus();
+      }
+    }, 200);
   },
   
   reload: function()

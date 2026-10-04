@@ -5,12 +5,12 @@
 <body>
 <p><b>&#9749; Please Support OpenCCU!</b></p>
 <p>If you find OpenCCU useful, consider supporting its further development:</p>
-<p><a href="https://github.com/sponsors/OpenCCU"><img src="https://img.shields.io/badge/GitHub%20Sponsors-sponsor-pink.svg" alt="GitHub Sponsors"/></a>
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL"><img src="https://img.shields.io/badge/donate-PayPal-green.svg" alt="Donate via PayPal"/></a></p>
+<p><a href="https://github.com/sponsors/OpenCCU" target="_blank"><img src="https://img.shields.io/badge/GitHub%20Sponsors-sponsor-pink.svg" alt="GitHub Sponsors"/></a>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL" target="_blank"><img src="https://img.shields.io/badge/donate-PayPal-green.svg" alt="Donate via PayPal"/></a></p>
 <p>Your support helps to constantly maintain and further improve OpenCCU. Thank you!</p>
 <hr/>
 <p>You are about to install a third-party firmware on your CCU device.
-This <a href=https://openccu.de/>OpenCCU</a> firmware
+This <a href="https://openccu.de/" target="_blank">OpenCCU</a> firmware
 consists of the same feature set like the original eQ-3 vendor CCU
 firmware with the same version number. On top of that it
 comes with some additional features and first hand bugfixes that
@@ -22,26 +22,26 @@ converted to be usable with the OpenCCU firmware. We do,
 however, suggest that you create a fresh backup before actually
 installing this firmware on your CCU device.</p>
 <hr/>
-<p><b>For recent ChangeLog and Releases overview visit:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>
+<p><b>For recent ChangeLog and Releases overview visit:</b> <a href="https://github.com/OpenCCU/OpenCCU/releases" target="_blank">https://github.com/OpenCCU/OpenCCU/releases</a>.</p>
 <p><b>Changes in this release compared to the previous version:</b></p>
 <!-- OPENCCU_CHANGELOG_BEGIN -->
 <!-- OPENCCU_CHANGELOG_END -->
 <p>The "OpenCCU" software/firmware is a free and non-commercial
-open source software project (<a href=https://openccu.de/>https://openccu.de/</a>)
+open source software project (<a href="https://openccu.de/" target="_blank">https://openccu.de/</a>)
 which is distributed under the terms and conditions of the
-<a href=https://www.apache.org/licenses/LICENSE-2.0>Apache 2.0 license</a>.
+<a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache 2.0 license</a>.
 It is developed by a free independent open source community. It comes
 with other third-party software integrated which is also developed
 and distributed under certain different license conditions. On the
 above mentioned project homepage you can find all license conditions
 of the incorporated software products in OpenCCU.</p>
 <p>In case of problems/suggestions or feature requests please use the
-<a href=https://homematic-forum.de/forum/viewforum.php?f=65>OpenCCU discussion platform</a>
+<a href="https://homematic-forum.de/forum/viewforum.php?f=65" target="_blank">OpenCCU discussion platform</a>
 or in case of reproducible issues please use the issue-tracker on the
 project homepage itself.</p>
 <p>If you want to support the development of OpenCCU by contributing
 your own software skills or want to contribute in other way (e.g.
-writing documentation, etc.) please visit our <a href=https://github.com/OpenCCU/OpenCCU>project homepage</a>
+writing documentation, etc.) please visit our <a href="https://github.com/OpenCCU/OpenCCU" target="_blank">project homepage</a>
 for more information how to contribute.
 <hr/>
 <p>Unless required by applicable law or agreed to in writing, we

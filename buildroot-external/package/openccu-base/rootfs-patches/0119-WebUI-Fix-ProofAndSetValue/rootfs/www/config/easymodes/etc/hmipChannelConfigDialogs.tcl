@@ -4558,6 +4558,7 @@ proc getAccelerationTransceiver {chn p descr address} {
   set html ""
   set param EVENT_DELAY_UNIT
   if { [info exists ps($param)] == 1 } {
+    incr prn
     append html "<tr>"
     append html "<td>\${stringTableEventDelay}</td>"
     append html [getComboBox $chn $prn "$specialID" "eventDelay"]

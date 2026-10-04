@@ -1553,6 +1553,7 @@ proc read_version { filename } {
 }
 
 proc action_reboot {} {
+  puts ""
   exec /sbin/reboot
 }
 

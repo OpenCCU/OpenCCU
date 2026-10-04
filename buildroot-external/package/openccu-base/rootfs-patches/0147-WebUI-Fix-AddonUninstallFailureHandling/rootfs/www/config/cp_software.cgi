@@ -272,15 +272,15 @@ proc action_put_page {} {
       set scripts ""
       set loop -1
       catch { set scripts [glob /etc/config/rc.d/*] }
-      array set scriptsArray ""                                           
-      foreach s $scripts {                                                                             
+      set scriptsList {}
+      foreach s $scripts {
         array set sw_info ""
-        get_info $s sw_info                      
-        if { ![info exists sw_info(Name)] } continue                             
-        set scriptsArray([string tolower $sw_info(Name)]) $s
-      }                                      
-      foreach name [lsort [array names scriptsArray]] {
-        set s $scriptsArray($name)  
+        if { [catch { get_info $s sw_info }] } continue
+        if { ![info exists sw_info(Name)] } continue
+        lappend scriptsList [list $sw_info(Name) $s]
+      }
+      foreach entry [lsort -index 0 -nocase $scriptsList] {
+        set s [lindex $entry 1]
         incr loop;
         catch {
           if { ! [file executable $s] } continue
@@ -525,13 +525,16 @@ proc action_operation {} {
   
   if {[catch {exec $script $op} result]} {
     set errorfile /var/log/addon-uninstall-error.log
-    exec echo $result >>$errorfile
-    set result "Failure\nPlease see $errorfile on the central for more details."
+    if {[catch {exec echo $result >>$errorfile}]} {
+      set result "Failure\nThe error details could not be written to $errorfile."
+    } else {
+      set result "Failure\nPlease see $errorfile on the central for more details."
+    }
   } else {
     set result "Success"
-  }
-  if { "$op" == "uninstall" } {
-    exec rm -rf $script
+    if { "$op" == "uninstall" } {
+      exec rm -rf $script
+    }
   }
   puts $result
 }
