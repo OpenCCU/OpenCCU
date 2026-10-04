@@ -36454,6 +36454,10 @@ getExtendedDescription = function(oChannelDescr)  {
         case "hmip-wgtc":
         case "hmip-wgtc-a":
           if (channel === undefined) { var channel = DeviceList.getChannelByAddress(channelAddress); }
+          if (channel === undefined) {
+            result = translateKey("chType_SWITCH_VIRTUAL_RECEIVER");
+            break;
+          }
           var channelMode = homematic("Interface.getMetadata", {
             "objectId": channel.id,
             "dataId": "channelMode"
