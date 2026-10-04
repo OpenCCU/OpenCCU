@@ -10,7 +10,6 @@ a device can be used:
   * WebUI:        www/config/devdescr/DEVDB.tcl and
                   www/webui/js/lang/{de,en}/translate.lang.deviceDescription.js
   * Firmware:     an OpenCCU/HMDeviceFirmware checkout (optional)
-  * Shop links:   scripts/supported-devices-links.json (type -> ELV product page)
 
 A device type counts as supported if one of the interface processes knows it.
 The WebUI database is used for the descriptions and device images and to flag
@@ -27,7 +26,6 @@ Usage:
 import argparse
 import datetime
 import html
-import json
 import re
 import subprocess
 import tarfile
@@ -42,7 +40,7 @@ BASE_MK = ROOT / 'buildroot-external/package/openccu-base/openccu-base.mk'
 BASE_RAW = 'https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/{rev}/www'
 FW_PAGES = 'https://openccu.github.io/HMDeviceFirmware/'
 FW_CHANGELOG = FW_PAGES + 'changelogs/changelog_{stem}.html'
-LINKS = Path(__file__).resolve().with_name('supported-devices-links.json')
+SHOP_SEARCH = 'https://de.elv.com/search?q={}'
 # Homematic type names; everything else is a partner/OEM designation
 OFFICIAL_TYPES = re.compile(r'^(HM-|HMW-|HmIP|HMIP-|ELV-SH-)')
 JAR = Path('opt/HMServer/HMIPServer.jar')
@@ -162,10 +160,9 @@ TEXT = {
             '(`-A` = anthrazit, `-2`/`-3` = neuere Hardwarerevision) sind jeweils eigene Einträge.',
             'Die Bilder stammen aus der WebUI-Gerätedatenbank; ein Klick auf ein Bild öffnet die '
             'größere Ansicht.',
-            '{links}Ist eine Typbezeichnung verlinkt, führt der Link zur Produktseite im ELV-Shop '
-            '(Vertriebspartner von eQ-3) mit Beschreibung, technischen Daten und '
-            'Bedienungsanleitung. Für Geräte ohne auffindbare Produktseite (meist ältere, nicht '
-            'mehr erhältliche Geräte) gibt es keinen Link.',
+            'Die Typbezeichnung verlinkt auf die Produktsuche im ELV-Shop (Vertriebspartner von '
+            'eQ-3) mit Beschreibung, technischen Daten und Bedienungsanleitung. Für ältere, nicht '
+            'mehr erhältliche Geräte liefert die Suche ggf. keinen Treffer.',
             'Die Spalte „Firmware“ nennt die neueste Geräte-Firmware aus dem '
             '[HMDeviceFirmware-Archiv]({fwpages}), die mit OpenCCU {occu} installiert werden kann '
             '(benötigte CCU-Mindestversion laut Firmware-Paket). Die Versionsnummer verlinkt auf '
@@ -234,10 +231,9 @@ TEXT = {
             '(`-A` = anthracite, `-2`/`-3` = newer hardware revision) are listed separately.',
             'The images are taken from the WebUI device database; click an image to open the '
             'larger view.',
-            '{links}A linked type name leads to the product page of the ELV shop (eQ-3 distribution '
-            'partner, German) with description, technical data and user manual. Devices without '
-            'a product page that could be found (mostly older devices no longer sold) are not '
-            'linked.',
+            'The type name links to the product search of the ELV shop (eQ-3 distribution '
+            'partner, German) with description, technical data and user manual. For older '
+            'devices that are no longer sold the search may return no result.',
             'The "Firmware" column shows the newest device firmware from the '
             '[HMDeviceFirmware archive]({fwpages}) that can be installed with OpenCCU {occu} '
             '(minimum CCU version required by the firmware package). The version links to its '
@@ -484,7 +480,7 @@ def guess_proto(dev_type):
     return 'BidCos-Wired' if dev_type.startswith('HMW-') else 'BidCos-RF'
 
 
-def table(rows, t, lang, base_rev, links, proto=True, firmware=True):
+def table(rows, t, lang, base_rev, proto=True, firmware=True):
     idx = 0 if lang == 'de' else 1
     head = [t['img'], t['type'], t['desc']] + ([t['proto']] if proto else []) + ([t['fw']] if firmware else [])
     lines = ['| ' + ' | '.join(head) + ' |', '| ' + ' | '.join('---' for _ in head) + ' |']
@@ -501,8 +497,8 @@ def table(rows, t, lang, base_rev, links, proto=True, firmware=True):
             thumb, large = d['img']
             img = f'<a href="{raw}{large}"><img src="{raw}{thumb}" width="50" alt="{html.escape(d["type"])}"></a>'
         name = f"`{esc(d['type'])}`"
-        if links.get(d['type']):
-            name = f"[{name}]({links[d['type']]})"
+        if OFFICIAL_TYPES.match(d['type']):
+            name = f"[{name}]({SHOP_SEARCH.format(urllib.parse.quote(d['type']))})"
         cells = [img, name, esc(desc)] + ([d['proto']] if proto else [])
         if firmware:
             fw = d.get('fw')
@@ -517,13 +513,13 @@ def section(title, rows, t, opened, **kwargs):
             + table(rows, t, **kwargs) + ['', '</details>', ''])
 
 
-def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, links):
+def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
     t = TEXT[lang]
     has_fw = fw_rev is not None
     official = [d for d in devices if d['webui'] and OFFICIAL_TYPES.match(d['type'])]
     partner = [d for d in devices if d['webui'] and not OFFICIAL_TYPES.match(d['type'])]
     limited = [d for d in devices if not d['webui']]
-    args = {'lang': lang, 'base_rev': base_rev, 'links': links, 'firmware': has_fw}
+    args = {'lang': lang, 'base_rev': base_rev, 'firmware': has_fw}
     out = [f"# {t['title']}", '', t['other'], '',
            t['intro'].format(count=len(devices), occu=occu_version), '']
     for proto in PROTO_ORDER:
@@ -533,11 +529,10 @@ def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, 
     out += section(t['limited_h'], limited, t, False, **args)
     out += section(t['unsupported_h'], unsupported, t, False, **dict(args, firmware=False))
 
-    notes = [n for n in t['notes']
-             if (has_fw or '{fwpages}' not in n) and (links or '{links}' not in n)]
+    notes = [n for n in t['notes'] if has_fw or '{fwpages}' not in n]
     out += [f"## {t['notes_h']}", '']
     out += [f'- {notes[0]}'] + [f'  - {s.format(jar=JAR)}' for s in t['src']]
-    out += [f'- {n.format(fwpages=FW_PAGES, occu=occu_version, links="")}' for n in notes[1:]] + ['']
+    out += [f'- {n.format(fwpages=FW_PAGES, occu=occu_version)}' for n in notes[1:]] + ['']
     basis = f"{t['occu']} `{occu_version}`, {t['base']} `{base_rev[:12]}`, {t['hmip']} `{version}`"
     if has_fw:
         basis += f", {t['fwrepo']} `{fw_rev[:12]}`"
@@ -560,10 +555,9 @@ def main():
     firmware = load_firmware(args.firmware, occu_version) if args.firmware else {}
     fw_rev = git_rev(args.firmware) if args.firmware else None
     devices, unsupported, version = collect(args.base, firmware)
-    links = json.loads(LINKS.read_text(encoding='utf-8')) if LINKS.is_file() else {}
     base_rev = git_rev(args.base)
     for lang, name in (('en', 'supported-devices.md'), ('de', 'supported-devices.de.md')):
-        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, links)
+        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version)
         (args.out_dir / name).write_text(text, encoding='utf-8')
         print(f'wrote {args.out_dir / name}')
 
