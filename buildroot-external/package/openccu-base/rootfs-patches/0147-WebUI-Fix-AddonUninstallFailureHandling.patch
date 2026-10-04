@@ -14,21 +14,27 @@
            }
          };
          if ("uninstall" == op) 
-@@ -523,13 +523,17 @@
+@@ -523,13 +523,20 @@
    import script
    import op
    
 -  if {[catch {exec $script $op}]} {
 -    puts "Failure"
+-  }
+-  if { "$op" == "uninstall" } {
+-    exec rm -rf $script
 +  if {[catch {exec $script $op} result]} {
 +    set errorfile /var/log/addon-uninstall-error.log
-+    exec echo $result >>$errorfile
-+    set result "Failure\nPlease see $errorfile on the central for more details."
++    if {[catch {exec echo $result >>$errorfile}]} {
++      set result "Failure\nThe error details could not be written to $errorfile."
++    } else {
++      set result "Failure\nPlease see $errorfile on the central for more details."
++    }
 +  } else {
 +    set result "Success"
-   }
-   if { "$op" == "uninstall" } {
-     exec rm -rf $script
++    if { "$op" == "uninstall" } {
++      exec rm -rf $script
++    }
    }
 -  puts "Success"
 +  puts $result

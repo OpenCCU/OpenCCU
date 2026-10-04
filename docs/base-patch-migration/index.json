@@ -875,15 +875,15 @@
       "sha256": "fb5f4f95cdbf90df245d721076e9a4471ea0626b942ac9ecf4583649d7f87051"
     },
     {
-      "added": 11,
+      "added": 17,
       "files": [
         "www/config/cp_software.cgi",
         "www/webui/js/lang/de/translate.lang.extension.js",
         "www/webui/js/lang/en/translate.lang.extension.js"
       ],
       "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch",
-      "removed": 7,
-      "sha256": "53ae4f60810a63d16dff5b34a497816279f9407d1b10743270161e35be7f8f07"
+      "removed": 10,
+      "sha256": "6a14165db037a212095b168cebad13b95f58a33a79cbf216f320bce688f6f2aa"
     },
     {
       "added": 10,
