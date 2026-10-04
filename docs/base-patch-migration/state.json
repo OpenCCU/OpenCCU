@@ -455,18 +455,24 @@
       "base_pr": 121,
       "cleanup_pr": 4344,
       "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch"
+    },
+    {
+      "base_merge_commit": "f26ef50ecc250848f18bc57066640997b14eb5b6",
+      "base_pr": 122,
+      "cleanup_pr": 4346,
+      "patch": "0087-WebUI-Fix-DoubleSIDs.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "f26ef50ecc250848f18bc57066640997b14eb5b6",
-    "base_pr": 122,
-    "cleanup_pr": 4346,
-    "patch": "0087-WebUI-Fix-DoubleSIDs.patch",
+    "base_merge_commit": "6c6c7c79222f75a7c898d577cddde5b9b006a5f5",
+    "base_pr": 123,
+    "cleanup_pr": 4350,
+    "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "7f65db386d21103a0c1977f9560f306e2ee67cdc",
-  "verified_base_pin": "f054a4ac73ac0a36df1d18553bd0c0e84cb3892d",
-  "verified_source_sha256": "6d1c3fb8cc982e6fbe7237abc57ccd4ef17f39edf037f5313669abf4860f184d"
+  "verified_at_openccu_commit": "2347db026b9ac8150a7f726cf8b512202f117421",
+  "verified_base_pin": "f26ef50ecc250848f18bc57066640997b14eb5b6",
+  "verified_source_sha256": "717a530a7a756368bd96c7fc2834d961653f2f96b350b528017e1a6ba4efded3"
 }
