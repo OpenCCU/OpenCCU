@@ -454,7 +454,7 @@
   "in_progress": {
     "base_merge_commit": "f054a4ac73ac0a36df1d18553bd0c0e84cb3892d",
     "base_pr": 121,
-    "cleanup_pr": null,
+    "cleanup_pr": 4344,
     "patch": "0190-WebUI-Fix-AddMissingExtendedChannelDescriptions.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
