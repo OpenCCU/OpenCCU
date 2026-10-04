@@ -418,15 +418,6 @@
       "sha256": "b792139dc549c727f9b520b42ffaf0254a93f3b347de1a1bd09174ebc142c905"
     },
     {
-      "added": 15,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch",
-      "removed": 10,
-      "sha256": "76a127e390fd4cd04350a5f3161a86138bea4b55423a14a98766bfdbe7cd177f"
-    },
-    {
       "added": 33,
       "files": [
         "www/rega/pages/tabs/admin/views/programlist.htm",
@@ -1181,5 +1172,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "a4903cbff4982fde047ccd66a483d197c96b6ec1fdd516b7c51e912ea0d10f24"
+  "series_sha256": "a90a3243148c1aaa39be0fd40649f12d3874e802377190fb42a49210777cc07a"
 }
