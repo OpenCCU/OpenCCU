@@ -9,26 +9,39 @@ a device can be used:
   * HmIP/HmIPW:   opt/HMServer/HMIPServer.jar       (devicespecification/*.xml)
   * WebUI:        www/config/devdescr/DEVDB.tcl and
                   www/webui/js/lang/{de,en}/translate.lang.deviceDescription.js
+  * Firmware:     an OpenCCU/HMDeviceFirmware checkout (optional)
 
 A device type counts as supported if one of the interface processes knows it.
-The WebUI database is used for the descriptions and to flag devices without
-dedicated WebUI integration. WebUI entries without any interface process
-support are listed separately as not supported.
+The WebUI database is used for the descriptions and device images and to flag
+devices without dedicated WebUI integration. WebUI entries without any
+interface process support are listed separately as not supported. With
+--firmware, the newest device firmware installable on the current OpenCCU
+version is listed for each device type.
 
 Usage:
-  scripts/generate-supported-devices.py --base ../OpenCCU-Base [--out-dir docs]
+  scripts/generate-supported-devices.py --base ../OpenCCU-Base \
+      [--firmware ../HMDeviceFirmware] [--out-dir docs]
 """
 
 import argparse
 import datetime
+import html
 import re
 import subprocess
+import tarfile
 import urllib.parse
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 
 
+ROOT = Path(__file__).resolve().parent.parent
+BASE_MK = ROOT / 'buildroot-external/package/openccu-base/openccu-base.mk'
+BASE_RAW = 'https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/{rev}/www'
+FW_REPO = 'https://github.com/OpenCCU/HMDeviceFirmware'
+FW_CHANGELOG = FW_REPO + '/blob/master/docs/changelogs/changelog_{stem}.md'
+SHOP_SEARCH = 'https://de.elv.com/search?sSearch={}'
+SHOP_TYPES = re.compile(r'^(HM-|HMW-|HmIP|HMIP-|ELV-SH-)')
 JAR = Path('opt/HMServer/HMIPServer.jar')
 JAR_SPECS = 'de/eq3/cbcs/devicedescription/devicespecification/'
 DEVDB = Path('www/config/devdescr/DEVDB.tcl')
@@ -144,6 +157,8 @@ TEXT = {
             'Beschreibungen: WebUI-Gerätedatenbank (`DEVDB.tcl`) und WebUI-Übersetzungen',
         ],
         'basis': 'Datenbasis',
+        'fwrepo': 'HMDeviceFirmware Commit',
+        'occu': 'OpenCCU Version',
         'base': 'OpenCCU-Base Commit',
         'hmip': 'HMIPServer.jar Version',
         'gen': 'erzeugt am',
@@ -158,6 +173,15 @@ TEXT = {
             'OpenCCU kann Geräte-Firmware-Updates für viele Geräte direkt einspielen.',
             'Typbezeichnungen mit Ländersuffix (`-UK`, `-CH`, `-PE`, `-IT`) und Varianten '
             '(`-A` = anthrazit, `-2`/`-3` = neuere Hardwarerevision) sind jeweils eigene Einträge.',
+            'Die Bilder stammen aus der WebUI-Gerätedatenbank; ein Klick auf ein Bild öffnet die '
+            'größere Ansicht.',
+            'Die Typbezeichnung verlinkt auf die Produktsuche im ELV-Shop (Vertriebspartner von '
+            'eQ-3) mit Produktbeschreibung, technischen Daten und Bedienungsanleitung. Für ältere, '
+            'nicht mehr erhältliche Geräte liefert die Suche ggf. keinen Treffer.',
+            'Die Spalte „Firmware“ nennt die neueste Geräte-Firmware aus dem '
+            '[HMDeviceFirmware-Archiv]({fwrepo}), die mit OpenCCU {occu} installiert werden kann '
+            '(benötigte CCU-Mindestversion laut Firmware-Paket). Die Versionsnummer verlinkt auf '
+            'das Changelog. „–“ bedeutet, dass im Archiv keine Firmware für diesen Gerätetyp liegt.',
             'Geräte in Abschnitt „Eingeschränkte Unterstützung“ werden zwar vom '
             'Schnittstellenprozess erkannt, haben aber keine eigene Integration in die WebUI '
             '(kein Gerätebild, keine Gerätebeschreibung). Sie lassen sich anlernen, die Bedienung '
@@ -168,6 +192,8 @@ TEXT = {
         'count': 'Anzahl Gerätetypen',
         'sum': 'Gesamt',
         'type': 'Typ',
+        'img': 'Bild',
+        'fw': 'Firmware',
         'desc': 'Beschreibung',
         'aka': 'auch als',
         'oem': 'OEM',
@@ -206,6 +232,8 @@ TEXT = {
             'Descriptions: WebUI device database (`DEVDB.tcl`) and WebUI translations',
         ],
         'basis': 'Data basis',
+        'fwrepo': 'HMDeviceFirmware commit',
+        'occu': 'OpenCCU version',
         'base': 'OpenCCU-Base commit',
         'hmip': 'HMIPServer.jar version',
         'gen': 'generated on',
@@ -220,6 +248,15 @@ TEXT = {
             'OpenCCU can install device firmware updates for many devices directly.',
             'Type names with a country suffix (`-UK`, `-CH`, `-PE`, `-IT`) and variants '
             '(`-A` = anthracite, `-2`/`-3` = newer hardware revision) are listed separately.',
+            'The images are taken from the WebUI device database; click an image to open the '
+            'larger view.',
+            'The type name links to the product search of the ELV shop (eQ-3 distribution '
+            'partner, German) with product description, technical data and user manual. For '
+            'older devices that are no longer sold the search may return no result.',
+            'The "Firmware" column shows the newest device firmware from the '
+            '[HMDeviceFirmware archive]({fwrepo}) that can be installed with OpenCCU {occu} '
+            '(minimum CCU version required by the firmware package). The version links to its '
+            'changelog. "–" means the archive holds no firmware for this device type.',
             'Devices in the section "Limited support" are known to the interface process but '
             'have no dedicated WebUI integration (no device image, no device description). They '
             'can be paired, but their handling in the WebUI may be limited.',
@@ -229,6 +266,8 @@ TEXT = {
         'count': 'Device types',
         'sum': 'Total',
         'type': 'Type',
+        'img': 'Image',
+        'fw': 'Firmware',
         'desc': 'Description',
         'aka': 'also as',
         'oem': 'OEM',
@@ -309,6 +348,12 @@ def load_webui(base):
     src = (base / DEVDB).read_text(encoding='latin-1')
     devlist = tcl_list(re.search(r'^set DEV_LIST \{(.*)\}$', src, re.M).group(1))
     descr = tcl_list(re.search(r'^array set DEV_DESCRIPTION \{(.*)\}$', src, re.M).group(1))
+    paths = tcl_list(re.search(r'^array set DEV_PATHS +\{(.*)\}$', src, re.M).group(1))
+    images = {}
+    for dev_type, value in zip(paths[::2], paths[1::2]):
+        sizes = dict(tcl_list(item)[:2] for item in tcl_list(value))
+        if (base / 'www' / sizes.get('50', '').lstrip('/')).is_file():
+            images[dev_type] = (sizes['50'], sizes.get('250', sizes['50']))
     langs = {}
     for lang in ('de', 'en'):
         text = (base / LANG.format(lang)).read_text(encoding='latin-1')
@@ -316,12 +361,40 @@ def load_webui(base):
             key: clean(urllib.parse.unquote(re.sub(r'<br\s*/?>', ' ', value), encoding='latin-1'))
             for key, value in re.findall(r'^\s*"([^"]+)"\s*:\s*"(.*)",?\s*$', text, re.M)
         }
-    return devlist, dict(zip(descr[::2], descr[1::2])), langs
+    return devlist, dict(zip(descr[::2], descr[1::2])), langs, images
+
+
+def version_key(version):
+    return tuple(int(part) for part in re.findall(r'\d+', version))
+
+
+def fw_key(dev_type):
+    return re.sub(r'[ _]', '-', dev_type.lower())
+
+
+def load_firmware(fwdir, openccu_version):
+    """Newest firmware per device type that the given OpenCCU version accepts."""
+    newest = {}
+    for path in sorted(fwdir.glob('*/*.t*gz')):
+        with tarfile.open(path) as archive:
+            member = next((m for m in archive.getmembers() if Path(m.name).name == 'info'), None)
+            if member is None:
+                continue
+            text = archive.extractfile(member).read().decode('latin-1')
+        info = dict(line.split('=', 1) for line in text.splitlines() if '=' in line)
+        version = info.get('FirmwareVersion', '').strip()
+        minimum = info.get('CCU3FirmwareVersionMin', '0').strip()
+        if not version or version_key(minimum) > version_key(openccu_version):
+            continue
+        key = fw_key(info.get('Name', '').strip())
+        if key not in newest or version_key(version) > version_key(newest[key]['version']):
+            newest[key] = {'version': version, 'stem': path.name.split('.')[0]}
+    return newest
 
 
 def git_rev(base):
     try:
-        return subprocess.run(['git', '-C', str(base), 'rev-parse', '--short=12', 'HEAD'],
+        return subprocess.run(['git', '-C', str(base), 'rev-parse', 'HEAD'],
                               capture_output=True, text=True, check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return 'unknown'
@@ -343,16 +416,18 @@ def oem_of(dev_type, oem):
     return None
 
 
-def collect(base):
+def collect(base, firmware):
     rf = load_bidcos(base, 'rftypes')
     wired = load_bidcos(base, 'hs485types')
     hmip, version = load_hmip(base)
-    devlist, devdescr, langs = load_webui(base)
+    devlist, devdescr, langs, images = load_webui(base)
     webui = {t.lower(): t for t in devlist}
 
+    def webui_type(dev_type):
+        return dev_type if dev_type in devdescr else webui.get(dev_type.lower())
+
     def describe(dev_type, fallback):
-        webui_type = dev_type if dev_type in devdescr else webui.get(dev_type.lower())
-        key = devdescr.get(webui_type) if webui_type else None
+        key = devdescr.get(webui_type(dev_type)) if webui_type(dev_type) else None
         if dev_type in TYPE_DESC:
             return TYPE_DESC[dev_type]
         if key in OVERRIDE:
@@ -388,6 +463,8 @@ def collect(base):
                         'desc': describe(dev_type, info['desc']), 'aka': []})
     for device in devices:
         device['aka'] = sorted(variants.get(device.get('key'), []))
+        device['img'] = images.get(webui_type(device.get('key', device['type'])))
+        device['fw'] = firmware.get(fw_key(device.get('key', device['type'])))
 
     known = {d['type'].lower() for d in devices} | {k.lower() for k in list(rf) + list(wired) + list(hmip)}
     unsupported = []
@@ -395,7 +472,7 @@ def collect(base):
         if dev_type.lower() in known or WEBUI_VIRTUAL.match(dev_type):
             continue
         key = devdescr.get(dev_type)
-        unsupported.append({'type': dev_type, 'proto': guess_proto(dev_type),
+        unsupported.append({'type': dev_type, 'proto': guess_proto(dev_type), 'img': images.get(dev_type),
                             'desc': tuple(langs[lang].get(key) or dev_type for lang in ('de', 'en'))})
     return devices, unsupported, version
 
@@ -412,30 +489,47 @@ def guess_proto(dev_type):
     return 'BidCos-Wired' if dev_type.startswith('HMW-') else 'BidCos-RF'
 
 
-def table(rows, t, lang):
+def table(rows, t, lang, base_rev, firmware=True):
     idx = 0 if lang == 'de' else 1
-    head = [t['type'], t['desc'], t['proto']]
+    head = [t['img'], t['type'], t['desc'], t['proto']] + ([t['fw']] if firmware else [])
     lines = ['| ' + ' | '.join(head) + ' |', '| ' + ' | '.join('---' for _ in head) + ' |']
+    raw = BASE_RAW.format(rev=base_rev)
     for d in sorted(rows, key=lambda r: r['type'].lower()):
         desc = d['desc'][idx]
         if d.get('oem'):
             desc += f" ({t['oem']}: {d['oem']})"
         if d.get('aka'):
             desc += f" ({t['aka']} " + ', '.join(f'`{a}`' for a in d['aka']) + ')'
-        lines.append(f"| `{esc(d['type'])}` | {esc(desc)} | {d['proto']} |")
+        img = ''
+        if d.get('img'):
+            thumb, large = d['img']
+            img = f'<a href="{raw}{large}"><img src="{raw}{thumb}" width="50" alt="{html.escape(d["type"])}"></a>'
+        name = f"`{esc(d['type'])}`"
+        if SHOP_TYPES.match(d['type']):
+            name = f"[{name}]({SHOP_SEARCH.format(urllib.parse.quote(d['type']))})"
+        cells = [img, name, esc(desc), d['proto']]
+        if firmware:
+            fw = d.get('fw')
+            cells.append(f"[{fw['version']}]({FW_CHANGELOG.format(stem=fw['stem'])})" if fw else '–')
+        lines.append('| ' + ' | '.join(cells) + ' |')
     return lines
 
 
-def render(lang, devices, unsupported, base_rev, version):
+def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
     t = TEXT[lang]
+    has_fw = fw_rev is not None
     full = [d for d in devices if d['webui']]
     limited = [d for d in devices if not d['webui']]
     out = [f"# {t['title']}", '', t['other'], '', t['intro'], '', t['how'], '']
     out += [f'- {s.format(jar=JAR)}' for s in t['src']]
-    out += ['', f"**{t['basis']}:** {t['base']} `{base_rev}`, {t['hmip']} `{version}`, "
-            f"{t['gen']} {datetime.date.today().isoformat()}.  ",
-            f"**{t['regen']}:** `scripts/generate-supported-devices.py --base <OpenCCU-Base>`", '']
-    out += [f"## {t['notes_h']}", ''] + [f'- {n}' for n in t['notes']] + ['']
+    basis = f"{t['occu']} `{occu_version}`, {t['base']} `{base_rev[:12]}`, {t['hmip']} `{version}`"
+    if has_fw:
+        basis += f", {t['fwrepo']} `{fw_rev[:12]}`"
+    out += ['', f"**{t['basis']}:** {basis}, {t['gen']} {datetime.date.today().isoformat()}.  ",
+            f"**{t['regen']}:** `scripts/generate-supported-devices.py --base <OpenCCU-Base> "
+            f"--firmware <HMDeviceFirmware>`", '']
+    notes = [n for n in t['notes'] if has_fw or '{fwrepo}' not in n]
+    out += [f"## {t['notes_h']}", ''] + [f'- {n.format(fwrepo=FW_REPO, occu=occu_version)}' for n in notes] + ['']
     out += [f"## {t['summary']}", '', f"| {t['proto']} | {t['count']} |", '| --- | ---: |']
     for proto in PROTO_ORDER:
         out.append(f"| [{t['sec'][proto]}](#{anchor(t['sec'][proto])}) | "
@@ -444,10 +538,11 @@ def render(lang, devices, unsupported, base_rev, version):
     out.append(f"| **{t['sum']}** | **{len(devices)}** |")
     out.append('')
     for proto in PROTO_ORDER:
-        out += [f"## {t['sec'][proto]}", ''] + table([d for d in full if d['proto'] == proto], t, lang) + ['']
-    out += [f"## {t['limited_h']}", '', t['limited'], ''] + table(limited, t, lang) + ['']
+        out += [f"## {t['sec'][proto]}", '']
+        out += table([d for d in full if d['proto'] == proto], t, lang, base_rev, has_fw) + ['']
+    out += [f"## {t['limited_h']}", '', t['limited'], ''] + table(limited, t, lang, base_rev, has_fw) + ['']
     out += [f"## {t['unsupported_h']}", '', t['unsupported'], '']
-    out += table(unsupported, t, lang) + ['']
+    out += table(unsupported, t, lang, base_rev, False) + ['']
     return '\n'.join(out)
 
 
@@ -460,12 +555,20 @@ def anchor(heading):
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--base', required=True, type=Path, help='path to an OpenCCU-Base checkout')
-    parser.add_argument('--out-dir', default=Path(__file__).resolve().parent.parent / 'docs', type=Path)
+    parser.add_argument('--firmware', type=Path, help='path to an OpenCCU/HMDeviceFirmware checkout')
+    parser.add_argument('--openccu-version', help='OpenCCU version for firmware compatibility '
+                        '(default: OPENCCU_BASE_COMPAT_VERSION from openccu-base.mk)')
+    parser.add_argument('--out-dir', default=ROOT / 'docs', type=Path)
     args = parser.parse_args()
-    devices, unsupported, version = collect(args.base)
+    occu_version = args.openccu_version or re.search(
+        r'^OPENCCU_BASE_COMPAT_VERSION *= *(\S+)', BASE_MK.read_text(), re.M).group(1)
+    firmware = load_firmware(args.firmware, occu_version) if args.firmware else {}
+    fw_rev = git_rev(args.firmware) if args.firmware else None
+    devices, unsupported, version = collect(args.base, firmware)
     base_rev = git_rev(args.base)
     for lang, name in (('en', 'supported-devices.md'), ('de', 'supported-devices.de.md')):
-        (args.out_dir / name).write_text(render(lang, devices, unsupported, base_rev, version), encoding='utf-8')
+        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version)
+        (args.out_dir / name).write_text(text, encoding='utf-8')
         print(f'wrote {args.out_dir / name}')
 
 
