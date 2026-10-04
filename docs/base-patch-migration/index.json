@@ -424,7 +424,7 @@
       ],
       "patch": "0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch",
       "removed": 10,
-      "sha256": "5321ec09fc05147755b9856a7cc01d850e314bad7b43666a98667d17648d7442"
+      "sha256": "76a127e390fd4cd04350a5f3161a86138bea4b55423a14a98766bfdbe7cd177f"
     },
     {
       "added": 33,
