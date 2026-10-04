@@ -16,7 +16,7 @@
 -      dcVal = (typeof iFace.dutyCycle != "undefined") ? parseInt(iFace.dutyCycle) : 0;
 -      if (dcVal >= dcWarningLevel) {
 -        dcOK = false;
-+  if(iface === null) {
++  if(iface === null || iface.length === 0) {
 +    iface = homematic("Interface.listBidcosInterfaces", {"interface": "HmIP-RF"});
 +  }
 +

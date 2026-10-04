@@ -49953,7 +49953,7 @@ isDutyCycleOK4DevUpdate = function() {
     dcWarningLevel = 80,
     dcOK = true;
 
-  if(iface === null) {
+  if(iface === null || iface.length === 0) {
     iface = homematic("Interface.listBidcosInterfaces", {"interface": "HmIP-RF"});
   }
 
