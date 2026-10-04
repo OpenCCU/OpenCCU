@@ -437,18 +437,24 @@
       "base_pr": 118,
       "cleanup_pr": 4338,
       "patch": "0114-WebUI-Keyboard-Scroll-Control-After-Page-Change.patch"
+    },
+    {
+      "base_merge_commit": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
+      "base_pr": 119,
+      "cleanup_pr": 4339,
+      "patch": "0127-WebUI-SortFirmwareOverview.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
-    "base_pr": 119,
-    "cleanup_pr": 4339,
-    "patch": "0127-WebUI-SortFirmwareOverview.patch",
+    "base_merge_commit": "210589935cf9e5ec98c7bdd1595b37113949e090",
+    "base_pr": 120,
+    "cleanup_pr": 4342,
+    "patch": "0108-WebUI-ShowInvisibleHmIPChannelsInPrograms.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "9cb0bb43d9f6d30e308d4b5e013e2d3a5e0e9d95",
-  "verified_base_pin": "cb20afb406502f0c009a962ac73e5ed0a164cc3e",
-  "verified_source_sha256": "73507f16545852576acfe4cea1a124e85e3aa2a4d2cac950d0f8923eb62022e3"
+  "verified_at_openccu_commit": "5b166af16df03c89ad315ae810fafccd0ba982fc",
+  "verified_base_pin": "ea614511caa23e046f5e83d68a2c525f8fc54ffa",
+  "verified_source_sha256": "bda31012f4de2bea7fb71ddea01703f1b61edd31a472787d43debf9d65f87bfd"
 }
