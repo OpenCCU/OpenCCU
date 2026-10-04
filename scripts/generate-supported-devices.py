@@ -10,6 +10,7 @@ a device can be used:
   * WebUI:        www/config/devdescr/DEVDB.tcl and
                   www/webui/js/lang/{de,en}/translate.lang.deviceDescription.js
   * Firmware:     an OpenCCU/HMDeviceFirmware checkout (optional)
+  * Shop links:   scripts/supported-devices-links.json (type -> ELV product page)
 
 A device type counts as supported if one of the interface processes knows it.
 The WebUI database is used for the descriptions and device images and to flag
@@ -26,6 +27,7 @@ Usage:
 import argparse
 import datetime
 import html
+import json
 import re
 import subprocess
 import tarfile
@@ -38,10 +40,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BASE_MK = ROOT / 'buildroot-external/package/openccu-base/openccu-base.mk'
 BASE_RAW = 'https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/{rev}/www'
-FW_REPO = 'https://github.com/OpenCCU/HMDeviceFirmware'
-FW_CHANGELOG = FW_REPO + '/blob/master/docs/changelogs/changelog_{stem}.md'
-SHOP_SEARCH = 'https://de.elv.com/search?sSearch={}'
-SHOP_TYPES = re.compile(r'^(HM-|HMW-|HmIP|HMIP-|ELV-SH-)')
+FW_PAGES = 'https://openccu.github.io/HMDeviceFirmware/'
+FW_CHANGELOG = FW_PAGES + 'changelogs/changelog_{stem}.html'
+LINKS = Path(__file__).resolve().with_name('supported-devices-links.json')
+# Homematic type names; everything else is a partner/OEM designation
+OFFICIAL_TYPES = re.compile(r'^(HM-|HMW-|HmIP|HMIP-|ELV-SH-)')
 JAR = Path('opt/HMServer/HMIPServer.jar')
 JAR_SPECS = 'de/eq3/cbcs/devicedescription/devicespecification/'
 DEVDB = Path('www/config/devdescr/DEVDB.tcl')
@@ -143,18 +146,48 @@ TEXT = {
         'title': 'Von OpenCCU unterstützte Homematic- und Homematic-IP-Geräte',
         'other': '[English version](supported-devices.md)',
         'intro': (
-            'Diese Liste enthält alle Homematic (BidCos-RF, BidCos-Wired) und Homematic IP '
-            '(HmIP-RF, HmIP-Wired) Gerätetypen, die von der aktuellen OpenCCU unterstützt werden. '
-            'Sie soll vor dem Kauf neuer Geräte helfen zu prüfen, ob ein Gerät mit OpenCCU '
-            'verwendet werden kann.'),
-        'how': (
-            'Die Liste wird automatisch aus den OpenCCU-Base Quellen erzeugt. Ein Gerätetyp '
-            'gilt als unterstützt, wenn ihn der zuständige Schnittstellenprozess kennt:'),
+            'Alle {count} Homematic (BidCos-RF, BidCos-Wired) und Homematic IP (HmIP-RF, '
+            'HmIP-Wired) Gerätetypen, die von OpenCCU {occu} unterstützt werden – als Hilfe vor '
+            'dem Kauf neuer Geräte. Die Bereiche lassen sich auf- und zuklappen; Erläuterungen '
+            'und Datenquellen stehen am [Ende der Seite](#hinweise).'),
+        'notes_h': 'Hinweise',
+        'notes': [
+            'Ein Gerätetyp gilt als unterstützt, wenn ihn der zuständige Schnittstellenprozess '
+            'von OpenCCU kennt. Die Liste wird automatisch aus diesen Quellen erzeugt:',
+            'Für Homematic IP wird ein HmIP-fähiges Funkmodul (z.B. RPI-RF-MOD, HM-MOD-RPI-PCB, '
+            'HmIP-RFUSB) benötigt, für Homematic IP Wired zusätzlich ein Homematic IP Wired '
+            'Access Point (HmIPW-DRAP) und für Homematic Wired (BidCos-Wired/RS485) ein '
+            'Homematic Wired LAN Gateway (HMW-LGW-O-DR-GS-EU).',
+            'Typbezeichnungen mit Ländersuffix (`-UK`, `-CH`, `-PE`, `-IT`) und Varianten '
+            '(`-A` = anthrazit, `-2`/`-3` = neuere Hardwarerevision) sind jeweils eigene Einträge.',
+            'Die Bilder stammen aus der WebUI-Gerätedatenbank; ein Klick auf ein Bild öffnet die '
+            'größere Ansicht.',
+            '{links}Ist eine Typbezeichnung verlinkt, führt der Link zur Produktseite im ELV-Shop '
+            '(Vertriebspartner von eQ-3) mit Beschreibung, technischen Daten und '
+            'Bedienungsanleitung. Für Geräte ohne auffindbare Produktseite (meist ältere, nicht '
+            'mehr erhältliche Geräte) gibt es keinen Link.',
+            'Die Spalte „Firmware“ nennt die neueste Geräte-Firmware aus dem '
+            '[HMDeviceFirmware-Archiv]({fwpages}), die mit OpenCCU {occu} installiert werden kann '
+            '(benötigte CCU-Mindestversion laut Firmware-Paket). Die Versionsnummer verlinkt auf '
+            'das Changelog. „–“ bedeutet, dass im Archiv keine Firmware für diesen Gerätetyp liegt.',
+            'Partner- und OEM-Geräte sind Geräte anderer Hersteller (z.B. Roto, Schüco, DORMA, '
+            'Möhlenhoff, Warmup) oder ältere ELV-Wetterstationen, die keine Homematic-'
+            'Typenbezeichnung tragen, sondern unter ihrer Hersteller- bzw. Artikelbezeichnung '
+            'geführt werden.',
+            'Geräte unter „Eingeschränkte Unterstützung“ werden zwar vom Schnittstellenprozess '
+            'erkannt, haben aber keine eigene Integration in die WebUI (kein Gerätebild, keine '
+            'Gerätebeschreibung). Sie lassen sich anlernen, die Bedienung in der WebUI kann '
+            'jedoch eingeschränkt sein.',
+            'Geräte unter „Nicht unterstützt“ sind zwar in der WebUI-Gerätedatenbank vorhanden, '
+            'aber keinem Schnittstellenprozess als Gerätetyp bekannt (z.B. abgekündigte Altgeräte '
+            'oder neue Geräte, deren Unterstützung im HMIPServer noch fehlt). Sie sollten nicht '
+            'für eine Neuanschaffung eingeplant werden.',
+        ],
         'src': [
             '`BidCos-RF`: Gerätebeschreibungen des `rfd` (`src/devicetypes/rftypes/*.xml`)',
             '`BidCos-Wired`: Gerätebeschreibungen des `hs485d` (`src/devicetypes/hs485types/*.xml`)',
             '`HmIP-RF`/`HmIP-Wired`: Gerätespezifikationen im `HMIPServer.jar` (`{jar}`)',
-            'Beschreibungen: WebUI-Gerätedatenbank (`DEVDB.tcl`) und WebUI-Übersetzungen',
+            'Beschreibungen und Bilder: WebUI-Gerätedatenbank (`DEVDB.tcl`) und WebUI-Übersetzungen',
         ],
         'basis': 'Datenbasis',
         'fwrepo': 'HMDeviceFirmware Commit',
@@ -163,34 +196,8 @@ TEXT = {
         'hmip': 'HMIPServer.jar Version',
         'gen': 'erzeugt am',
         'regen': 'Neu erzeugen mit',
-        'notes_h': 'Hinweise',
-        'notes': [
-            'Für Homematic IP wird ein HmIP-fähiges Funkmodul (z.B. RPI-RF-MOD, HM-MOD-RPI-PCB, '
-            'HmIP-RFUSB) benötigt, für Homematic IP Wired zusätzlich ein Homematic IP Wired '
-            'Access Point (HmIPW-DRAP) und für Homematic Wired (BidCos-Wired/RS485) ein '
-            'Homematic Wired LAN Gateway (HMW-LGW-O-DR-GS-EU).',
-            'Bei einigen Gerätetypen hängt der Funktionsumfang von der Firmware des Geräts ab. '
-            'OpenCCU kann Geräte-Firmware-Updates für viele Geräte direkt einspielen.',
-            'Typbezeichnungen mit Ländersuffix (`-UK`, `-CH`, `-PE`, `-IT`) und Varianten '
-            '(`-A` = anthrazit, `-2`/`-3` = neuere Hardwarerevision) sind jeweils eigene Einträge.',
-            'Die Bilder stammen aus der WebUI-Gerätedatenbank; ein Klick auf ein Bild öffnet die '
-            'größere Ansicht.',
-            'Die Typbezeichnung verlinkt auf die Produktsuche im ELV-Shop (Vertriebspartner von '
-            'eQ-3) mit Produktbeschreibung, technischen Daten und Bedienungsanleitung. Für ältere, '
-            'nicht mehr erhältliche Geräte liefert die Suche ggf. keinen Treffer.',
-            'Die Spalte „Firmware“ nennt die neueste Geräte-Firmware aus dem '
-            '[HMDeviceFirmware-Archiv]({fwrepo}), die mit OpenCCU {occu} installiert werden kann '
-            '(benötigte CCU-Mindestversion laut Firmware-Paket). Die Versionsnummer verlinkt auf '
-            'das Changelog. „–“ bedeutet, dass im Archiv keine Firmware für diesen Gerätetyp liegt.',
-            'Geräte in Abschnitt „Eingeschränkte Unterstützung“ werden zwar vom '
-            'Schnittstellenprozess erkannt, haben aber keine eigene Integration in die WebUI '
-            '(kein Gerätebild, keine Gerätebeschreibung). Sie lassen sich anlernen, die Bedienung '
-            'in der WebUI kann jedoch eingeschränkt sein.',
-        ],
-        'summary': 'Übersicht',
+        'count': 'Gerätetypen',
         'proto': 'Protokoll',
-        'count': 'Anzahl Gerätetypen',
-        'sum': 'Gesamt',
         'type': 'Typ',
         'img': 'Bild',
         'fw': 'Firmware',
@@ -203,33 +210,54 @@ TEXT = {
             'BidCos-RF': 'Homematic (BidCos-RF)',
             'BidCos-Wired': 'Homematic Wired (BidCos-Wired, RS485)',
         },
+        'oem_h': 'Partner- und OEM-Geräte (ohne Homematic-Typenbezeichnung)',
         'limited_h': 'Eingeschränkte Unterstützung (ohne WebUI-Integration)',
-        'limited': (
-            'Diese Gerätetypen sind in den Schnittstellenprozessen hinterlegt, haben aber '
-            'keinen Eintrag in der WebUI-Gerätedatenbank. Vor dem Kauf sollte geprüft werden, '
-            'ob der benötigte Funktionsumfang in der WebUI verfügbar ist.'),
         'unsupported_h': 'Nicht unterstützt (nur WebUI-Eintrag vorhanden)',
-        'unsupported': (
-            'Diese Gerätetypen sind zwar in der WebUI-Gerätedatenbank vorhanden, aber keinem '
-            'Schnittstellenprozess als Gerätetyp bekannt und gelten daher nicht als unterstützt '
-            '(z.B. abgekündigte Altgeräte oder neue Geräte, deren Unterstützung im HMIPServer '
-            'noch fehlt). Sie sollten nicht für eine Neuanschaffung eingeplant werden.'),
     },
     'en': {
         'title': 'Homematic and Homematic IP devices supported by OpenCCU',
         'other': '[Deutsche Version](supported-devices.de.md)',
         'intro': (
-            'This list contains all Homematic (BidCos-RF, BidCos-Wired) and Homematic IP '
-            '(HmIP-RF, HmIP-Wired) device types supported by the current OpenCCU. Use it to '
-            'check whether a device can be used with OpenCCU before buying it.'),
-        'how': (
-            'The list is generated automatically from the OpenCCU-Base sources. A device type '
-            'counts as supported if the responsible interface process knows it:'),
+            'All {count} Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, '
+            'HmIP-Wired) device types supported by OpenCCU {occu} – to check devices before '
+            'buying them. Each section can be expanded and collapsed; explanations and data '
+            'sources are at the [end of the page](#notes).'),
+        'notes_h': 'Notes',
+        'notes': [
+            'A device type counts as supported if the responsible OpenCCU interface process knows '
+            'it. The list is generated automatically from these sources:',
+            'Homematic IP requires an HmIP capable radio module (e.g. RPI-RF-MOD, HM-MOD-RPI-PCB, '
+            'HmIP-RFUSB), Homematic IP Wired additionally requires a Homematic IP Wired Access '
+            'Point (HmIPW-DRAP) and Homematic Wired (BidCos-Wired/RS485) requires a Homematic '
+            'Wired LAN Gateway (HMW-LGW-O-DR-GS-EU).',
+            'Type names with a country suffix (`-UK`, `-CH`, `-PE`, `-IT`) and variants '
+            '(`-A` = anthracite, `-2`/`-3` = newer hardware revision) are listed separately.',
+            'The images are taken from the WebUI device database; click an image to open the '
+            'larger view.',
+            '{links}A linked type name leads to the product page of the ELV shop (eQ-3 distribution '
+            'partner, German) with description, technical data and user manual. Devices without '
+            'a product page that could be found (mostly older devices no longer sold) are not '
+            'linked.',
+            'The "Firmware" column shows the newest device firmware from the '
+            '[HMDeviceFirmware archive]({fwpages}) that can be installed with OpenCCU {occu} '
+            '(minimum CCU version required by the firmware package). The version links to its '
+            'changelog. "–" means the archive holds no firmware for this device type.',
+            'Partner and OEM devices are devices of other manufacturers (e.g. Roto, Schüco, DORMA, '
+            'Möhlenhoff, Warmup) or older ELV weather stations that carry no Homematic type name '
+            'but are listed under their manufacturer or article designation.',
+            'Devices under "Limited support" are known to the interface process but have no '
+            'dedicated WebUI integration (no device image, no device description). They can be '
+            'paired, but their handling in the WebUI may be limited.',
+            'Devices under "Not supported" exist in the WebUI device database but are not known '
+            'as a device type by any interface process (e.g. discontinued legacy devices or new '
+            'devices whose support is still missing in the HMIPServer). Do not plan new '
+            'purchases around them.',
+        ],
         'src': [
             '`BidCos-RF`: `rfd` device descriptions (`src/devicetypes/rftypes/*.xml`)',
             '`BidCos-Wired`: `hs485d` device descriptions (`src/devicetypes/hs485types/*.xml`)',
             '`HmIP-RF`/`HmIP-Wired`: device specifications in `HMIPServer.jar` (`{jar}`)',
-            'Descriptions: WebUI device database (`DEVDB.tcl`) and WebUI translations',
+            'Descriptions and images: WebUI device database (`DEVDB.tcl`) and WebUI translations',
         ],
         'basis': 'Data basis',
         'fwrepo': 'HMDeviceFirmware commit',
@@ -238,33 +266,8 @@ TEXT = {
         'hmip': 'HMIPServer.jar version',
         'gen': 'generated on',
         'regen': 'Regenerate with',
-        'notes_h': 'Notes',
-        'notes': [
-            'Homematic IP requires an HmIP capable radio module (e.g. RPI-RF-MOD, HM-MOD-RPI-PCB, '
-            'HmIP-RFUSB), Homematic IP Wired additionally requires a Homematic IP Wired Access '
-            'Point (HmIPW-DRAP) and Homematic Wired (BidCos-Wired/RS485) requires a Homematic '
-            'Wired LAN Gateway (HMW-LGW-O-DR-GS-EU).',
-            'For some device types the available functions depend on the device firmware. '
-            'OpenCCU can install device firmware updates for many devices directly.',
-            'Type names with a country suffix (`-UK`, `-CH`, `-PE`, `-IT`) and variants '
-            '(`-A` = anthracite, `-2`/`-3` = newer hardware revision) are listed separately.',
-            'The images are taken from the WebUI device database; click an image to open the '
-            'larger view.',
-            'The type name links to the product search of the ELV shop (eQ-3 distribution '
-            'partner, German) with product description, technical data and user manual. For '
-            'older devices that are no longer sold the search may return no result.',
-            'The "Firmware" column shows the newest device firmware from the '
-            '[HMDeviceFirmware archive]({fwrepo}) that can be installed with OpenCCU {occu} '
-            '(minimum CCU version required by the firmware package). The version links to its '
-            'changelog. "–" means the archive holds no firmware for this device type.',
-            'Devices in the section "Limited support" are known to the interface process but '
-            'have no dedicated WebUI integration (no device image, no device description). They '
-            'can be paired, but their handling in the WebUI may be limited.',
-        ],
-        'summary': 'Summary',
+        'count': 'device types',
         'proto': 'Protocol',
-        'count': 'Device types',
-        'sum': 'Total',
         'type': 'Type',
         'img': 'Image',
         'fw': 'Firmware',
@@ -277,17 +280,9 @@ TEXT = {
             'BidCos-RF': 'Homematic (BidCos-RF)',
             'BidCos-Wired': 'Homematic Wired (BidCos-Wired, RS485)',
         },
+        'oem_h': 'Partner and OEM devices (no Homematic type name)',
         'limited_h': 'Limited support (no WebUI integration)',
-        'limited': (
-            'These device types are known to the interface processes but have no entry in the '
-            'WebUI device database. Check whether the functions you need are available in the '
-            'WebUI before buying.'),
         'unsupported_h': 'Not supported (WebUI entry only)',
-        'unsupported': (
-            'These device types exist in the WebUI device database but are not known as a '
-            'device type by any interface process and therefore do not count as supported '
-            '(e.g. discontinued legacy devices or new devices whose support is still missing '
-            'in the HMIPServer). Do not plan new purchases around them.'),
     },
 }
 
@@ -489,12 +484,13 @@ def guess_proto(dev_type):
     return 'BidCos-Wired' if dev_type.startswith('HMW-') else 'BidCos-RF'
 
 
-def table(rows, t, lang, base_rev, firmware=True):
+def table(rows, t, lang, base_rev, links, proto=True, firmware=True):
     idx = 0 if lang == 'de' else 1
-    head = [t['img'], t['type'], t['desc'], t['proto']] + ([t['fw']] if firmware else [])
+    head = [t['img'], t['type'], t['desc']] + ([t['proto']] if proto else []) + ([t['fw']] if firmware else [])
     lines = ['| ' + ' | '.join(head) + ' |', '| ' + ' | '.join('---' for _ in head) + ' |']
     raw = BASE_RAW.format(rev=base_rev)
-    for d in sorted(rows, key=lambda r: r['type'].lower()):
+    # devices with a Homematic type name first, partner/OEM designations last
+    for d in sorted(rows, key=lambda r: (not OFFICIAL_TYPES.match(r['type']), r['type'].lower())):
         desc = d['desc'][idx]
         if d.get('oem'):
             desc += f" ({t['oem']}: {d['oem']})"
@@ -505,9 +501,9 @@ def table(rows, t, lang, base_rev, firmware=True):
             thumb, large = d['img']
             img = f'<a href="{raw}{large}"><img src="{raw}{thumb}" width="50" alt="{html.escape(d["type"])}"></a>'
         name = f"`{esc(d['type'])}`"
-        if SHOP_TYPES.match(d['type']):
-            name = f"[{name}]({SHOP_SEARCH.format(urllib.parse.quote(d['type']))})"
-        cells = [img, name, esc(desc), d['proto']]
+        if links.get(d['type']):
+            name = f"[{name}]({links[d['type']]})"
+        cells = [img, name, esc(desc)] + ([d['proto']] if proto else [])
         if firmware:
             fw = d.get('fw')
             cells.append(f"[{fw['version']}]({FW_CHANGELOG.format(stem=fw['stem'])})" if fw else '–')
@@ -515,41 +511,40 @@ def table(rows, t, lang, base_rev, firmware=True):
     return lines
 
 
-def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
+def section(title, rows, t, opened, **kwargs):
+    attr = ' open' if opened else ''
+    return ([f"<details{attr}><summary><b>{title}</b> – {len(rows)} {t['count']}</summary>", '']
+            + table(rows, t, **kwargs) + ['', '</details>', ''])
+
+
+def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, links):
     t = TEXT[lang]
     has_fw = fw_rev is not None
-    full = [d for d in devices if d['webui']]
+    official = [d for d in devices if d['webui'] and OFFICIAL_TYPES.match(d['type'])]
+    partner = [d for d in devices if d['webui'] and not OFFICIAL_TYPES.match(d['type'])]
     limited = [d for d in devices if not d['webui']]
-    out = [f"# {t['title']}", '', t['other'], '', t['intro'], '', t['how'], '']
-    out += [f'- {s.format(jar=JAR)}' for s in t['src']]
+    args = {'lang': lang, 'base_rev': base_rev, 'links': links, 'firmware': has_fw}
+    out = [f"# {t['title']}", '', t['other'], '',
+           t['intro'].format(count=len(devices), occu=occu_version), '']
+    for proto in PROTO_ORDER:
+        out += section(t['sec'][proto], [d for d in official if d['proto'] == proto], t, True,
+                       proto=False, **args)
+    out += section(t['oem_h'], partner, t, False, **args)
+    out += section(t['limited_h'], limited, t, False, **args)
+    out += section(t['unsupported_h'], unsupported, t, False, **dict(args, firmware=False))
+
+    notes = [n for n in t['notes']
+             if (has_fw or '{fwpages}' not in n) and (links or '{links}' not in n)]
+    out += [f"## {t['notes_h']}", '']
+    out += [f'- {notes[0]}'] + [f'  - {s.format(jar=JAR)}' for s in t['src']]
+    out += [f'- {n.format(fwpages=FW_PAGES, occu=occu_version, links="")}' for n in notes[1:]] + ['']
     basis = f"{t['occu']} `{occu_version}`, {t['base']} `{base_rev[:12]}`, {t['hmip']} `{version}`"
     if has_fw:
         basis += f", {t['fwrepo']} `{fw_rev[:12]}`"
-    out += ['', f"**{t['basis']}:** {basis}, {t['gen']} {datetime.date.today().isoformat()}.  ",
+    out += [f"**{t['basis']}:** {basis}, {t['gen']} {datetime.date.today().isoformat()}.  ",
             f"**{t['regen']}:** `scripts/generate-supported-devices.py --base <OpenCCU-Base> "
             f"--firmware <HMDeviceFirmware>`", '']
-    notes = [n for n in t['notes'] if has_fw or '{fwrepo}' not in n]
-    out += [f"## {t['notes_h']}", ''] + [f'- {n.format(fwrepo=FW_REPO, occu=occu_version)}' for n in notes] + ['']
-    out += [f"## {t['summary']}", '', f"| {t['proto']} | {t['count']} |", '| --- | ---: |']
-    for proto in PROTO_ORDER:
-        out.append(f"| [{t['sec'][proto]}](#{anchor(t['sec'][proto])}) | "
-                   f"{sum(1 for d in full if d['proto'] == proto)} |")
-    out.append(f"| [{t['limited_h']}](#{anchor(t['limited_h'])}) | {len(limited)} |")
-    out.append(f"| **{t['sum']}** | **{len(devices)}** |")
-    out.append('')
-    for proto in PROTO_ORDER:
-        out += [f"## {t['sec'][proto]}", '']
-        out += table([d for d in full if d['proto'] == proto], t, lang, base_rev, has_fw) + ['']
-    out += [f"## {t['limited_h']}", '', t['limited'], ''] + table(limited, t, lang, base_rev, has_fw) + ['']
-    out += [f"## {t['unsupported_h']}", '', t['unsupported'], '']
-    out += table(unsupported, t, lang, base_rev, False) + ['']
     return '\n'.join(out)
-
-
-def anchor(heading):
-    slug = heading.strip().lower()
-    slug = re.sub(r'[^\w\- ]', '', slug)
-    return slug.replace(' ', '-')
 
 
 def main():
@@ -565,9 +560,10 @@ def main():
     firmware = load_firmware(args.firmware, occu_version) if args.firmware else {}
     fw_rev = git_rev(args.firmware) if args.firmware else None
     devices, unsupported, version = collect(args.base, firmware)
+    links = json.loads(LINKS.read_text(encoding='utf-8')) if LINKS.is_file() else {}
     base_rev = git_rev(args.base)
     for lang, name in (('en', 'supported-devices.md'), ('de', 'supported-devices.de.md')):
-        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version)
+        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, links)
         (args.out_dir / name).write_text(text, encoding='utf-8')
         print(f'wrote {args.out_dir / name}')
 
