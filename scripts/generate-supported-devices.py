@@ -20,7 +20,11 @@ version is listed for each device type.
 
 Usage:
   scripts/generate-supported-devices.py --base ../OpenCCU-Base \
-      [--firmware ../HMDeviceFirmware] [--out-dir docs]
+      [--firmware ../HMDeviceFirmware] (--wiki ../OpenCCU.wiki | --out-dir DIR)
+
+With --wiki, the pages are written as the OpenCCU wiki pages
+"Unterstützte-Geräte" and "en.Supported-Devices" into a wiki checkout; commit
+and push them from there.
 """
 
 import argparse
@@ -143,7 +147,7 @@ PROTO_ORDER = ['HmIP-RF', 'HmIP-Wired', 'BidCos-RF', 'BidCos-Wired']
 TEXT = {
     'de': {
         'title': 'OpenCCU unterstützte HomeMatic / Homematic IP Geräte',
-        'other': '[English version](supported-devices.md)',
+        'other': '[English version]({other})',
         'intro': (
             'Alle {count} Homematic (BidCos-RF, BidCos-Wired) und Homematic IP (HmIP-RF, '
             'HmIP-Wired) Gerätetypen, die von OpenCCU {occu} unterstützt werden – als Hilfe vor '
@@ -192,6 +196,7 @@ TEXT = {
         ],
         'basis': 'Datenbasis',
         'regen': 'Neu erzeugen mit',
+        'repo': 'im OpenCCU-Repository',
         'count': 'Gerätetypen',
         'proto': 'Protokoll',
         'type': 'Typ',
@@ -212,7 +217,7 @@ TEXT = {
     },
     'en': {
         'title': 'OpenCCU supported HomeMatic / Homematic IP devices',
-        'other': '[Deutsche Version](supported-devices.de.md)',
+        'other': '[Deutsche Version]({other})',
         'intro': (
             'All {count} Homematic (BidCos-RF, BidCos-Wired) and Homematic IP (HmIP-RF, '
             'HmIP-Wired) device types supported by OpenCCU {occu} – to check devices before '
@@ -259,6 +264,7 @@ TEXT = {
         ],
         'basis': 'Data basis',
         'regen': 'Regenerate with',
+        'repo': 'in the OpenCCU repository',
         'count': 'device types',
         'proto': 'Protocol',
         'type': 'Type',
@@ -516,7 +522,13 @@ def section(title, rows, t, opened, anchor, **kwargs):
             + table(rows, t, **kwargs) + ['', '</details>', ''])
 
 
-def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
+# output file names per language: (wiki page, plain markdown file); links use the
+# name without the .md suffix in the wiki
+PAGES = {'de': ('Unterstützte-Geräte', 'supported-devices.de.md'),
+         'en': ('en.Supported-Devices', 'supported-devices.md')}
+
+
+def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, wiki):
     t = TEXT[lang]
     has_fw = fw_rev is not None
     official = [d for d in devices if d['webui'] and OFFICIAL_TYPES.match(d['type'])]
@@ -533,7 +545,8 @@ def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
     fw = f" · [HMDeviceFirmware]({FW_REPO}/tree/{fw_rev}) `{fw_rev[:12]}`" if has_fw else ''
     basis = t['basis_top'].format(occu=occu_version, base=base, hmip=f'`{version}`', fw=fw,
                                   date=datetime.date.today().isoformat())
-    out = [f"# {t['title']}", '', t['other'], '',
+    other = PAGES['en' if lang == 'de' else 'de'][0 if wiki else 1]
+    out = [f"# {t['title']}", '', t['other'].format(other=other), '',
            t['intro'].format(count=len(devices), occu=occu_version), '',
            f"**{t['toc']}:**", '']
     out += [f"- [{title}](#{SECTION_IDS[key]}) – {len(rows)}" for key, title, rows, _, _ in sections]
@@ -546,7 +559,7 @@ def render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version):
     out += [f'- {notes[0]}'] + [f'  - {s.format(jar=JAR)}' for s in t['src']]
     out += [f'- {n.format(fwpages=FW_PAGES, occu=occu_version)}' for n in notes[1:]] + ['']
     out += [f"**{t['regen']}:** `scripts/generate-supported-devices.py --base <OpenCCU-Base> "
-            f"--firmware <HMDeviceFirmware>`", '']
+            f"--firmware <HMDeviceFirmware> --wiki <OpenCCU.wiki>` ({t['repo']})", '']
     return '\n'.join(out)
 
 
@@ -556,7 +569,9 @@ def main():
     parser.add_argument('--firmware', type=Path, help='path to an OpenCCU/HMDeviceFirmware checkout')
     parser.add_argument('--openccu-version', help='OpenCCU version for firmware compatibility '
                         '(default: OPENCCU_BASE_COMPAT_VERSION from openccu-base.mk)')
-    parser.add_argument('--out-dir', default=ROOT / 'docs', type=Path)
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument('--wiki', type=Path, help='write the wiki pages into this OpenCCU wiki checkout')
+    target.add_argument('--out-dir', type=Path, help='write supported-devices[.de].md into this directory')
     args = parser.parse_args()
     occu_version = args.openccu_version or re.search(
         r'^OPENCCU_BASE_COMPAT_VERSION *= *(\S+)', BASE_MK.read_text(), re.M).group(1)
@@ -564,10 +579,11 @@ def main():
     fw_rev = git_rev(args.firmware) if args.firmware else None
     devices, unsupported, version = collect(args.base, firmware)
     base_rev = git_rev(args.base)
-    for lang, name in (('en', 'supported-devices.md'), ('de', 'supported-devices.de.md')):
-        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version)
-        (args.out_dir / name).write_text(text, encoding='utf-8')
-        print(f'wrote {args.out_dir / name}')
+    for lang, (page, name) in PAGES.items():
+        path = args.wiki / f'{page}.md' if args.wiki else args.out_dir / name
+        text = render(lang, devices, unsupported, base_rev, version, fw_rev, occu_version, bool(args.wiki))
+        path.write_text(text, encoding='utf-8')
+        print(f'wrote {path}')
 
 
 if __name__ == '__main__':
