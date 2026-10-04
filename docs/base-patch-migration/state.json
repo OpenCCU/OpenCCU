@@ -466,7 +466,7 @@
   "in_progress": {
     "base_merge_commit": "6c6c7c79222f75a7c898d577cddde5b9b006a5f5",
     "base_pr": 123,
-    "cleanup_pr": null,
+    "cleanup_pr": 4350,
     "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
