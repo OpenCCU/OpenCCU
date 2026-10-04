@@ -523,7 +523,7 @@ proc action_operation {} {
   import script
   import op
   
-  if {[catch {exec $script $op} result]} {
+  if {[catch {exec $script $op} result] && [lindex $::errorCode 0] ne "NONE"} {
     set errorfile /var/log/addon-uninstall-error.log
     if {[catch {exec echo $result >>$errorfile}]} {
       set result "Failure\nThe error details could not be written to $errorfile."

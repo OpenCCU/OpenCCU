@@ -883,7 +883,7 @@
       ],
       "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch",
       "removed": 10,
-      "sha256": "6a14165db037a212095b168cebad13b95f58a33a79cbf216f320bce688f6f2aa"
+      "sha256": "beeaa94a99d660007ebd9d71ab2ccba127256c477be1c673fd9a5dc00afb7496"
     },
     {
       "added": 10,
