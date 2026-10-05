@@ -529,7 +529,7 @@
 +++ b/www/webui/webui.js
 @@ -9327,6 +9327,11 @@
              new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
-             homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
+             homematic("CCU.setUserAckInstallWizard");
            }
 +
 +          // open the systemLanguage config dialog if no systemLanguage was selected yet

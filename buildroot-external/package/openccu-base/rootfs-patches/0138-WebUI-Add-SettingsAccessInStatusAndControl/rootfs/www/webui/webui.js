@@ -9374,7 +9374,7 @@ WebUI = Singleton.create({
           // The User will see a hint that new firewall settings are active
           if ((getUPL() == UPL_USER) && (!homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName}))) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
-            homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
+            homematic("CCU.setUserAckInstallWizard");
           }
 
           // open the systemLanguage config dialog if no systemLanguage was selected yet
@@ -17095,7 +17095,7 @@ FirewallConfigDialog = Class.create({
       delete firstStartInstallWizard;
       homematic("CCU.setSecurityHint");
       homematic("CCU.setFirewallConfigured");
-      homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+      homematic("CCU.setUserAckInstallWizard");
     }
 
     if (this.dlgWoPasswd ) {
@@ -20395,7 +20395,7 @@ DialogUserPassword = Class.create({
 
         if (homematic('CCU.existsFile', {'file': "/etc/config/firewallConfigured"})) {
           WebUI.enter(StartPage);
-          homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+          homematic("CCU.setUserAckInstallWizard");
 
           if (getUPL() == UPL_USER) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"),translateKey("dglUserNewFwSettingsContent"));
@@ -20406,7 +20406,7 @@ DialogUserPassword = Class.create({
             new DialogChooseSecuritySettings();
           } else {
             WebUI.enter(StartPage);
-            homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+            homematic("CCU.setUserAckInstallWizard");
           }
         }
       }
@@ -20633,7 +20633,7 @@ DialogExpressSettings = Class.create({
           delete firstStartInstallWizard;
           homematic("CCU.setSecurityHint");
           homematic("CCU.setFirewallConfigured");
-          homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+          homematic("CCU.setUserAckInstallWizard");
         }
 
         if (self.dlgWoPasswd) {
