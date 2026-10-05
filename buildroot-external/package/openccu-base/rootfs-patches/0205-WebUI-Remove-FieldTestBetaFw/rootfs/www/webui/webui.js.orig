@@ -9318,7 +9318,8 @@ WebUI = Singleton.create({
         }
         */
 
-        var usrName = userName.replace(/[ \/\xC4\xD6\xDC\xE4\xF6\xFC\xDF]/g, function(m) {
+        var toAckName = function(name) {
+          return name.replace(/[ \/\xC4\xD6\xDC\xE4\xF6\xFC\xDF]/g, function(m) {
                         return {
                           ' ': ';',
                           '/': '',
@@ -9331,10 +9332,29 @@ WebUI = Singleton.create({
                           '\xDF': 'ss'
                         }[m];
                       });
+        };
+        var usrName = toAckName(userName);
+
+        // Until now, userName also contained the role and the UI mode shown in
+        // the header (now userNameInfo), and the acknowledgement file of the
+        // install wizard was named after it. Still accept such a file and store
+        // the acknowledgement under the plain user name, so that the wizard does
+        // not reappear after the update.
+        var hasUserAckInstallWizard = function() {
+          var ackFile = "/etc/config/userprofiles/userAckInstallWizard_";
+          if (homematic('CCU.existsFile', {'file': ackFile + usrName})) {
+            return true;
+          }
+          if (homematic('CCU.existsFile', {'file': ackFile + toAckName(userNameInfo)})) {
+            homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
+            return true;
+          }
+          return false;
+        };
 
         var usrPwd = homematic('User.hasUserPWD', {'userID': userId});
         if (usrPwd == false) {
-          var result = homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName});
+          var result = hasUserAckInstallWizard();
           if (!result) {
             var checkUpdateContentRunning = window.setInterval(function () {
               if (!bUpdateContentRunning) {
@@ -9354,7 +9374,7 @@ WebUI = Singleton.create({
 
           // User password set
           // The User will see a hint that new firewall settings are active
-          if ((getUPL() == UPL_USER) && (!homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName}))) {
+          if ((getUPL() == UPL_USER) && (!hasUserAckInstallWizard())) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
             homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
           }

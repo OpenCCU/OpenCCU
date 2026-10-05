@@ -147,7 +147,8 @@
         elseif (oUser.UserLevel() == iulUser) { sUserLevel = "lblUser" ; }
         string sUserEasyMode = "lblUIModeExpert";
         if (oUser.UserEasyLinkMode()) { sUserEasyMode = "lblUIModeEasy"; }
-        WriteLine('var userName = "' # sUserFullName # ' (" + translateKey("' # sUserLevel # '") + ") | " + translateKey("lblEasyModeActiveShort") + " " + translateKey("' # sUserEasyMode # '");');
+        WriteLine('var userName = "' # sUserFullName # '";');
+        WriteLine('var userNameInfo = "' # sUserFullName # ' (" + translateKey("' # sUserLevel # '") + ") | " + translateKey("lblEasyModeActiveShort") + " " + translateKey("' # sUserEasyMode # '");');
         WriteLine('var userLink = "CreatePopup(ID_USER_ACCOUNT_CONFIG_ADMIN, '#oUser.ID()#')"');
       %>
 

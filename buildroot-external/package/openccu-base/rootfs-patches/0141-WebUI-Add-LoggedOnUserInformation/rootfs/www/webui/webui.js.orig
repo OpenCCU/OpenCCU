@@ -169,20 +169,6 @@ CHANNEL_CONFIG_DIALOG_JST = "<div id=\"ChannelConfigDialog\">\n
       <\/div>\n
     <\/div>\n
     {\/if}\n
-    {if channel.channelType == \"KEY_TRANSCEIVER\" || channel.channelType == \"KEY\" || channel.channelType == \"MULTI_MODE_INPUT_TRANSMITTER\"}\n
-      <div id=\"channelCentralLink\" class=\"ChannelConfigDialogSection\">\n
-      <div class=\"CLASS11003\" name=\"generalDeviceChannelConfigLblCentralLink\">Taster-/Schaltevent an Zentrale&nbsp;<img src=\"/ise/img/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"ChannelConfigDialog.showConfigCentralLinkHelp();\"><\/div>\n
-      <hr \/>\n
-       <div>\n
-        <table border=\"0\" class=\"ChannelConfigDialogTable\" width=\"250px\">\n
-          <tr>\n
-            <td width=\"50%\"><div id=\"ChannelConfigDialogCreateCentralLinkButton\" class=\"StdButton\" name=\"channelConfigBtnCreateCentralLink\" onclick=\"ChannelConfigDialog.createCentralLink('${channel.channelType}');\">Aktivieren<\/div><\/td>\n
-            <td width=\"50%\"><div id=\"ChannelConfigDialogRemoveCentralLinkButton\" class=\"{if !channel.hasProgramIds()}StdButton{else}StdButtonInactive{\/if}\" name=\"channelConfigBtnRemoveCentralLink\" onclick=\"{if !channel.hasProgramIds()}ChannelConfigDialog.removeCentralLink('${channel.channelType}');{\/if}\">Deaktivieren<\/div><\/td>\n
-          <\/tr>\n
-        <\/table>\n
-      </div>\n
-      </div>\n
-    {\/if}\n
   <\/div>\n
 \n
   <div id=\"ChannelConfigDialogContentMain\">\n
@@ -505,7 +491,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" border=\"0\" cellspacing=\"
           <td class=\"DeviceListThumbnail\" ><div id=\"${PREFIX}${device.id}Thumbnail\" class=\"thumbnail\" onmouseover=\"picDivShow(jg_250, \'${device.deviceType.id}\', 250, \'\', this);\" onmouseout=\"picDivHide(jg_250);\">${device.getThumbnailHTML()}<\/div><\/td>\n
           <td class=\"DeviceListCell\" name=\"${device.typeDescription}\" >${device.typeDescription}<\/td>\n
           <td class=\"DeviceListCell\" >${device.address}${device.rfAddress}<\/td>\n
-          <td class=\"DeviceListCell\" id=\"DeviceInterfaceDisplayName${device.id}\" >${device.interfaceDisplayName}<\/td>\n
+          <td class=\"DeviceListCell\" >${device.interfaceName}<\/td>\n
           <td class=\"DeviceListCell j_chMode\" >{for name in device.modes}${name}<br \/>{forelse}&#160;{\/for}<\/td>\n
           <td class=\"DeviceListCell j_functions\" >{for subsection in device.subsections}${subsection.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
           <td class=\"DeviceListCell j_rooms\" >{for room in device.rooms}${room.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
@@ -1851,12 +1837,6 @@ DEV_PATHS["RPI-RF-MOD"] = new Object();
 DEV_PATHS["RPI-RF-MOD"]["50"] = "/config/img/devices/50/CCU3_thumb.png";
 DEV_PATHS["RPI-RF-MOD"]["250"] = "/config/img/devices/250/CCU3.png";
 DEV_HIGHLIGHT["RPI-RF-MOD"] = new Object();
-DEV_LIST.push('HmIP-RFUSB');
-DEV_DESCRIPTION["HmIP-RFUSB"] = "HmIP-RFUSB";
-DEV_PATHS["HmIP-RFUSB"] = new Object();
-DEV_PATHS["HmIP-RFUSB"]["50"] = "/config/img/devices/50/CCU3_thumb.png";
-DEV_PATHS["HmIP-RFUSB"]["250"] = "/config/img/devices/250/CCU3.png";
-DEV_HIGHLIGHT["HmIP-RFUSB"] = new Object();
 DEV_LIST.push('HM-EM-CCM');
 DEV_DESCRIPTION["HM-EM-CCM"] = "HM-EM-CCM";
 DEV_PATHS["HM-EM-CCM"] = new Object();
@@ -8363,7 +8343,8 @@ String.prototype.ex_compareTo = function(other)
     var strA = this.toLowerCase();
     var strB = other.toLowerCase();
   
-    return strA.localeCompare(strB, undefined, {numeric: true, sensitivity: 'base'});
+    if      (strA > strB) { return 1; }
+    else if (strA < strB) { return -1; }
   }
   
   return 0;
@@ -8818,6 +8799,7 @@ function showSecurityDialog() {
          1 - user selected YES
          */
         if (action == 1) {
+          WebUI.resize();
           jQuery(".Layer0").show();
           homematic("CCU.setSecurityHint");
           if (getProduct() >= 3) {
@@ -9054,8 +9036,42 @@ WebUI = Singleton.create({
     this.currentPageOptions  = null;    // Argumente der aktuellen Seite
     this.previousPage        = null;    // Vorherige Seite
     this.previousPageOptions = null;    // Argumente der vorherigen Seite
+    this.onResizeHandler     = null;    // EventHandler: onResize
+
+    this.onResizeHandler = this.onResize.bindAsEventListener(this);
+    Event.observe(window, "resize", this.onResizeHandler);
   },  
   
+  /**
+   * Ereignis. Wird bei der Änderung der Fenstergröße aufgerufen.
+   * Passt die Steuerelemente entsprechend der Änderung an.
+   */
+  onResize: function()
+  {
+    var height       = WebUI.getHeight();
+    var width        = WebUI.getWidth();
+    var bodyOverflow = "hidden";
+
+    if (width  < this.MIN_WIDTH)  { width  = this.MIN_WIDTH;  bodyOverflow = "auto"; }
+    if (height < this.MIN_HEIGHT) { height = this.MIN_HEIGHT; bodyOverflow = "auto"; }
+    var contentHeight = height - this.STATIC_HEIGHT;
+
+    if ($("body"))    { Element.setStyle("body", {"overflow": bodyOverflow, "width": width  + "px", "height": height + "px"}); }
+    if ($("header"))  { Element.setStyle("header" , {"height": this.HEADER_HEIGHT  + "px", "width": width + "px"}); }
+    if ($("menubar")) { Element.setStyle("menubar", {"height": this.MENUBAR_HEIGHT + "px", "width": width + "px"}); }
+    if ($("content")) { Element.setStyle("content", {"height": contentHeight       + "px", "width": width + "px"}); }
+    if ($("footer"))  { Element.setStyle("footer" , {"height": this.FOOTER_HEIGHT  + "px", "width": width + "px"}); }
+
+    if (this.currentPage) { this.currentPage.resize(); }
+
+    if(typeof dcTimeout == "undefined") {
+      dcTimeout = window.setTimeout(function () {
+        showDutyCycle();
+        delete dcTimeout;
+      }, 10);
+    }
+  },
+
   /*########################*/
   /*# Öffentliche Elemente #*/
   /*########################*/
@@ -9255,6 +9271,8 @@ WebUI = Singleton.create({
 
 
     if (result) {
+      WebUI.resize();
+
       if (!isFF) {
         jQuery(".Layer0").show();
         WebUI.enter(StartPage);
@@ -9318,8 +9336,7 @@ WebUI = Singleton.create({
         }
         */
 
-        var toAckName = function(name) {
-          return name.replace(/[ \/\xC4\xD6\xDC\xE4\xF6\xFC\xDF]/g, function(m) {
+        var usrName = userName.replace(/[ \/\xC4\xD6\xDC\xE4\xF6\xFC\xDF]/g, function(m) {
                         return {
                           ' ': ';',
                           '/': '',
@@ -9332,29 +9349,10 @@ WebUI = Singleton.create({
                           '\xDF': 'ss'
                         }[m];
                       });
-        };
-        var usrName = toAckName(userName);
-
-        // Until now, userName also contained the role and the UI mode shown in
-        // the header (now userNameInfo), and the acknowledgement file of the
-        // install wizard was named after it. Still accept such a file and store
-        // the acknowledgement under the plain user name, so that the wizard does
-        // not reappear after the update.
-        var hasUserAckInstallWizard = function() {
-          var ackFile = "/etc/config/userprofiles/userAckInstallWizard_";
-          if (homematic('CCU.existsFile', {'file': ackFile + usrName})) {
-            return true;
-          }
-          if (homematic('CCU.existsFile', {'file': ackFile + toAckName(userNameInfo)})) {
-            homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
-            return true;
-          }
-          return false;
-        };
 
         var usrPwd = homematic('User.hasUserPWD', {'userID': userId});
         if (usrPwd == false) {
-          var result = hasUserAckInstallWizard();
+          var result = homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName});
           if (!result) {
             var checkUpdateContentRunning = window.setInterval(function () {
               if (!bUpdateContentRunning) {
@@ -9374,7 +9372,7 @@ WebUI = Singleton.create({
 
           // User password set
           // The User will see a hint that new firewall settings are active
-          if ((getUPL() == UPL_USER) && (!hasUserAckInstallWizard())) {
+          if ((getUPL() == UPL_USER) && (!homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName}))) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
             homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
           }
@@ -9457,6 +9455,13 @@ WebUI = Singleton.create({
     {
       throw new Error("content not defined");
     }
+  },
+  /**
+   * Ruft das onResize-Ereignis auf.
+   **/
+  resize: function()
+  {
+    this.onResize();
   },
   
   /**
@@ -9697,23 +9702,7 @@ Cursor = {
 		document.body.style.cursor = cursorType;
 	}
 	
-};
-
-const isValidRegex = function(possiblyValidRegex)
-{
-  try
-  {
-    const r = new RegExp(possiblyValidRegex);
-  }
-  catch(err)
-  {
-    return false;
-  }
-
-  return true;
-}
-
-/**
+};/**
  * stringfilter.js
  **/
  
@@ -9799,23 +9788,12 @@ StringFilter = function(name, callback)
     //var patternList = m_value.split("|");
     text            = text.toLowerCase();
     
-    let searchString = m_value.toLowerCase();
-    if(isValidRegex(searchString))
+    for (var i = 0, len = patternList.length; i < len; i++)
     {
-      var r = new RegExp(searchString);
-      if (r.test(text) === true) { return true; }
-
-      return false;
+      if (0 <= text.indexOf(patternList[i])) { return true; }
     }
-    else
-    {
-      for (var i = 0, len = patternList.length; i < len; i++)
-      {
-        if (0 <= text.indexOf(patternList[i])) { return true; }
-      }
-
-      return false;
-    }
+    
+    return false;
   };
   
   /**
@@ -11579,8 +11557,7 @@ DeviceTypeList = Singleton.create({
     "HM-Sec-SD-Team",
     "HM-Sec-SD-2-Team",
     "HmIP-CCU3",
-    "RPI-RF-MOD",
-    "HmIP-RFUSB"
+    "RPI-RF-MOD"
   ],
   
   /**
@@ -12405,7 +12382,6 @@ Device = Class.create({
 
 
       this.interfaceName = data["interface"];
-      this.interfaceDisplayName = data["interface_displayname"];
       this.isReadyConfig = data["isReady"];
       this.enabledServiceMsg = (data["enabledServiceMsg"] == "true") ? true : false;
       this.deviceType = deviceType;
@@ -12654,13 +12630,6 @@ Device = Class.create({
     this.rssiPeerColor = getColorCode(this.RSSI_PEER);
   },
 
-  updateInterfaceDisplayName: function(interfaceDisplayName) {
-    this.interfaceDisplayName = interfaceDisplayName;
-    var devInterfaceDisplayNameCell = document.getElementById('DeviceInterfaceDisplayName' + this.id);
-    if (devInterfaceDisplayNameCell !== null && typeof(devInterfaceDisplayNameCell) !== 'undefined') {
-      devInterfaceDisplayNameCell.innerHTML = interfaceDisplayName;
-    }
-  },
   /**
    * Legt den Namen des Geräts fest.
    **/
@@ -12873,7 +12842,6 @@ DeviceList = Singleton.create({
     {
       var id = data["id"];
       device = this.devices[id];
-      data["interface_displayname"] = this.loadIfDisplayName(data);
 
       if (typeof(device) != "undefined") 
       {
@@ -12986,49 +12954,6 @@ DeviceList = Singleton.create({
     return singles;
   },
   
-  loadBidCosGateways: function()
-  {
-    this.BidCosGateways=[];	   
-    this.allBidCosDevsList = homematic("Interface.listDevices", {"interface": "BidCos-RF"});
-    var rfGateways = homematic("BidCoS_RF.getConfigurationRF");
-    if (rfGateways) {
-      for (i = 0, len = rfGateways.interfaces.length; i < len; i++) {
-        var gateway = rfGateways.interfaces[i];
-        if (gateway.type === globalLGWTypes.HMLGW2) {
-          this.BidCosGateways.push(
-           new BidcosRfPage.Gateway()
-            .setGatewayClass("RF")
-            .setType(gateway.type)
-            .setUserName((gateway.userName.length > 0) ? gateway.userName : gateway.serialNumber)
-            .setAddress(gateway.serialNumber)
-            .setKey(gateway.encryptionKey)
-            .setIP(gateway.ipAddress)
-          );
-        }
-      }
-      this.BidCosGateways.sort((a, b) => a.m_userName.localeCompare(b.m_userName, undefined, { numeric: true, sensitivity: 'base' }));
-      for (i = 0, len = this.BidCosGateways.length; i < len; i++) {
-        DeviceListPage.INTERFACES.push({id:this.BidCosGateways[i].m_userName, name:this.BidCosGateways[i].m_userName});
-      }
-    }
-  },
-  
-  loadIfDisplayName: function(data) 
-  {
-    if (typeof this.BidCosGateways === 'undefined') { this.loadBidCosGateways(); }
-    var dispname = data["interface"];
-    if ( this.allBidCosDevsList && this.BidCosGateways.length > 0 && data["interface"] === "BidCos-RF") {
-      var idx = this.allBidCosDevsList.findIndex(({ address }) => address === data["address"]);
-      if (idx > -1) {
-        var _device= this.allBidCosDevsList[idx];
-        var gwIdx = this.BidCosGateways.findIndex(({ m_address }) => m_address === _device["interface"]);
-        if ( gwIdx > -1 ) {
-          dispname = (this.BidCosGateways[gwIdx].m_userName.length > 0) ?  this.BidCosGateways[gwIdx].m_userName : _device["interface"]; 
-        }
-      }
-    }
-    return dispname;
-  },
   /**
    * Lädt die Geräteliste erneut
    **/
@@ -13079,7 +13004,6 @@ DeviceList = Singleton.create({
         {
           var id = data["id"];
           var device = self.devices[id];
-          data["interface_displayname"] =  self.loadIfDisplayName(data);
 
           if (typeof(device) != "undefined")
           {
@@ -13138,16 +13062,6 @@ DeviceList = Singleton.create({
         }
       }
     });
-  },
-  
-  updateInterfaceDisplayName:function(addr,gwName) {
-    var _this_ = this;
-    for (var id in _this_.devices) {
-      var device = _this_.devices[id];
-      if (device.address === addr) {
-        device.updateInterfaceDisplayName(gwName);
-      }
-    }
   },
 
   /**
@@ -15602,43 +15516,7 @@ ChannelConfigDialog = Singleton.create({
       _this_.pollTest();
     });
   },
-
-  showConfigCentralLinkHelp: function() {
-    var title = translateKey("dialogHelpCentralLinkTitle"),
-    content = translateKey("dialogHelpCentralLinkContent");
-    MessageBox.show(title, content,'', 475, 450);
-  },
-
-  createCentralLink: function(channeltype)
-  {
-    var addr=this.channel.address;
-    new YesNoDialog(translateKey('dialogSafetyCheck'), translateKey('dialogQuestionAddLink').replace('%s', addr+' <> CCU'), function(result) {
-      if (result == YesNoDialog.RESULT_YES) {
-        if (channeltype === "KEY_TRANSCEIVER" || channeltype === "MULTI_MODE_INPUT_TRANSMITTER") {
-          homematic("Interface.reportValueUsage", {"interface": "HmIP-RF", "address": addr, "valueId": "PRESS_SHORT", "refCounter":"1"});
-        } else if (channeltype === "KEY") {
-          homematic("Interface.reportValueUsage", {"interface": "BidCos-RF", "address": addr, "valueId": "PRESS_SHORT", "refCounter":"1"});
-        }
-      }
-    }, "html");
-  },
   
-  removeCentralLink: function(channeltype)
-  {
-    var addr=this.channel.address;
-    new YesNoDialog(translateKey('dialogSafetyCheck'), translateKey('dialogQuestionRemoveLink').replace('%s', addr+' <> CCU'), function(result) {
-      if (result == YesNoDialog.RESULT_YES) {
-        if (channeltype === "KEY_TRANSCEIVER" || channeltype === "MULTI_MODE_INPUT_TRANSMITTER") {
-          homematic("Interface.reportValueUsage", {"interface": "HmIP-RF", "address": addr, "valueId": "PRESS_SHORT", "refCounter":"0"});
-          homematic("Interface.reportValueUsage", {"interface": "HmIP-RF", "address": addr, "valueId": "PRESS_LONG", "refCounter":"0"});
-        } else if (channeltype === "KEY") {
-          homematic("Interface.reportValueUsage", {"interface": "BidCos-RF", "address": addr, "valueId": "PRESS_SHORT", "refCounter":"0"});
-          homematic("Interface.reportValueUsage", {"interface": "BidCos-RF", "address": addr, "valueId": "PRESS_LONG", "refCounter":"0"});
-        }
-      }
-    }, "html");
-  },
-
   /**
    * Callback. Fragt zyklisch das Ergebnis des Funktionstests ab.
    **/
@@ -18751,20 +18629,6 @@ function showDisplayConfigTextHelp() {
   var title = translateKey("dialogHelpAcousticDisplayReceiverTitle"),
     content = translateKey("dialogHelpAcousticDisplayReceiverContent");
   MessageBox.show(title, content,'', 475, 450);
-};
-
-function toggleSerialNumberDisplay() {
-  var tb = document.getElementById("fwUpdates");
-  if (tb) {
-    var th = tb.getElementsByTagName("th")[2];
-    if (th.style.display === "none") {
-      th.style.display = "block";
-      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'block')
-    } else {
-      th.style.display = "none";
-      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'none')
-    }
-  }
 };
 
 StatusDisplayDialogAcousticEPaper = Class.create({
@@ -25571,6 +25435,11 @@ IPage = Interface.create({
    **/
   leave: function() {},
   
+  /**
+   * Callback beim Verändern der Bildschirmgröße
+   **/
+  resize: function() {}
+  
 });
 /**
  * page.js
@@ -25598,6 +25467,13 @@ Page = Class.create({
   {
   },
   
+  /**
+   * Callback. Wird beim Verändern des Bildschirms aufgerufen.
+   **/
+  resize: function()
+  {
+  }
+  
 });
 /**
  * StartPage.js
@@ -25607,8 +25483,8 @@ var preURL = (WEBUI_VERSION.split(".")[0] < 3) ? "" : "ccu3-";
 
 StartPage = Singleton.create(Page, {
   MAINMENU_ID: "MAINMENU_STARTPAGE",
-  downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
-  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
+  downloadURLServer: (isHTTPS) ? "https://"+preURL+"update.homematic.com:8443/firmware/download?cmd=download" : "http://"+preURL+"update.homematic.com/firmware/download?cmd=download",
+  fieldTestURLServer: (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download" : "http://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
   fieldTestActive: "/etc/config/fieldTestActive",
   downloadURL : "",
   prevDownloadURL : "",
@@ -25626,6 +25502,19 @@ StartPage = Singleton.create(Page, {
   initialize: function ()
   {
     this.deviceList = [];
+
+    switch (getUPL())
+    {
+      case UPL_ADMIN:
+      case UPL_USER:
+        this.resize = this.resizeUser;
+        break;
+      case UPL_GUEST:
+        this.rezise = this.resizeGuest;
+        break;
+      default:
+        break;
+    }
   },
 
   /**
@@ -25636,6 +25525,7 @@ StartPage = Singleton.create(Page, {
     iseInitUpdateArrays();
     setPath("");
     setFooter("");
+    WebUI.resize();
   
     switch (getUPL())
     {
@@ -25669,6 +25559,35 @@ StartPage = Singleton.create(Page, {
     }
     this.prevDownloadURL = this.downloadURL;
     conInfo("Device Fw. downloadURL: " + this.downloadURL);
+  },
+  
+  /**
+   * Berechnet die Größe der normalen Startseite (Admin und Benutzer)
+   **/
+  resizeUser: function()
+  {
+    var contentHeight     = $("content").getHeight();
+    var contentWidth      = $("content").getWidth();
+    var width = parseInt(contentWidth / 2);
+    
+    if ($("contentLeft"))
+    {
+      //Element.setStyle("contentLeft", {"height": contentHeight + "px", "width": width + "px"});
+      Element.setStyle("contentLeft", {"height": contentHeight + "px", "width": "55%"});
+    }
+    if ($("contentLeft"))
+    {
+      //Element.setStyle("contentRight", {"height": contentHeight + "px", "width": (width - 10) + "px"});
+      Element.setStyle("contentRight", {"height": contentHeight + "px", "width": "44%"});
+    }
+    
+    if ($("favSelector"))
+    {   
+      var FavSelectorHeight = $("favSelector").getHeight();
+      var FAV_MARGIN_HEIGHT = 8;          
+      var favViewHeight = (contentHeight - FavSelectorHeight - FAV_MARGIN_HEIGHT) * 0.95;
+      $("favView").setStyle({"height": favViewHeight});
+    }
   },
 
   getPageMeasurement: function() {
@@ -25723,26 +25642,11 @@ StartPage = Singleton.create(Page, {
     return false;
   },*/
 
-  cmpVersion: function (aa, bb) {
-    // 0   Version equal 
-    // >0  Version aa newer 
-    // <0  Version bb newer  
-    const aArr = aa.split(".");
-    const bArr = bb.split(".");
-    const min = Math.min(aArr.length, bArr.length);
-    for (let index = 0; index < min; index++) {
-        if (aArr[index] != bArr[index])
-            return (aArr[index] - bArr[index]);
-    }
-    return 0;
-  },
-
   showAllDeviceFirmware: function() {
     var self = this;
     if (!this.fetchDeviceList) {
       this.fetchDeviceList = true; // prevents this to be called multiple times (when clicking the start page)
       this.messageBoxHTML = "";
-      this.DeviceUpdateList = {};
       this.newFwCounter = 0;
       this.devIndex = 0;
       if (this.devList.length == 0) {
@@ -25852,23 +25756,12 @@ StartPage = Singleton.create(Page, {
         newFW = resultMajorMinor;
       }
 
-      // generate RefUpdateList with detailed Information per DeviceType for grouped list
       if (devIsUpdatable && fwVersion && (fwVersion != "n/a") && (newFW != curFw)) {
-        if (!this.DeviceUpdateList[deviceType]) {
-          this.DeviceUpdateList[deviceType] = {};
-        }
-        var RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
-        if (!RefUpdateList) {
-          this.DeviceUpdateList[deviceType][curFw] = { DevCnt: 0, FWAvailable: 0, FWUpload: 0, Address: [], downloadURL: this.downloadURL, deviceTypeForUrl: deviceTypeForUrl, fwVersion: fwVersion, curVersion: curFw, availableFirmware: availableFW };
-          RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
-        }
-        RefUpdateList.DevCnt++;
-        RefUpdateList.Address.push(self.devList[self.devIndex].address);
         // FW not yet available on the CCU
         if (availableFW != newFW) {
-          RefUpdateList.FWUpload++;
+          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + devAddress + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=\"window.location.href='" + self.downloadURL + "&serial="+self.serial+"&product=" + deviceTypeForUrl + "'\">" + fwVersion + "</td></tr>";
         } else {
-          RefUpdateList.FWAvailable++;
+          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + self.devList[self.devIndex].address + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=alert(translateKey('hintDevFwAlreadyUploaded'));>" + fwVersion + "</td></tr>";
         }
         self.newFwCounter++;
       }
@@ -25877,38 +25770,6 @@ StartPage = Singleton.create(Page, {
     if (self.devIndex < self.devList.length) {
       self.fetchAndSetDeviceVersion();
     } else {
-      for (const Typ of Object.keys(this.DeviceUpdateList).sort()) {
-        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort()) {
-          let Obj = this.DeviceUpdateList[Typ][curFw];
-          let curVersion = Obj.curVersion;
-          let color = "black";
-          if (this.cmpVersion(Obj.curVersion, Obj.fwVersion) > 0) {
-            curVersion = "<b>" + Obj.curVersion + "</b>";
-            color = "orange";
-          }
-          this.messageBoxHTML += "<tr>" +
-                                   "<td style='text-align:left;vertical-align:top;' height='15px'>" +
-                                     Typ +
-                                   "</td>" +
-                                   "<td style='text-align:center;vertical-align:top;' class='UILink' " +
-                                     "onClick='toggleSerialNumberDisplay()'>" +
-                                     Obj.DevCnt +
-                                   "</td>" +
-                                   "<td style='text-align:left;vertical-align:top;display:none;'>" +
-                                     Obj.Address.join('<br/>') +
-                                   "</td>" +
-                                   "<td style='text-align:left;vertical-align:top;color:" + color + "'>" +
-                                     curVersion +
-                                   "</td>" +
-                                   "<td style='text-align:left;vertical-align:top;' class='UILink' " +
-                                       "onClick=\"window.location.href='" +
-                                         Obj.downloadURL +
-                                         "&serial=0&product=" + Obj.deviceTypeForUrl + "'\">" +
-                                         Obj.fwVersion +
-                                   "</td>" +
-                                   "</tr>";
-        }
-      }
       self.fetchDeviceList = false;
       self.deleteScriptElements();
       if (self.newFwCounter > 0) {
@@ -25936,34 +25797,25 @@ StartPage = Singleton.create(Page, {
 
   showAvailableDeviceFirmware: function() {
     var contentHeight = jQuery("#content").innerHeight(),
-    maxMessageBoxHeight = (this.newFwCounter + 5) * 20,
+    maxMessageBoxHeight = (this.newFwCounter * 20) + 50,
     msgBoxHeight = (maxMessageBoxHeight < contentHeight) ? maxMessageBoxHeight : contentHeight;
 
     MessageBox.show(translateKey("dialogShowDeviceFirmwareTitle"),
-    "<table id='fwUpdates' style='width:100%;'>"+
+    "<table>"+
       "<colgroup>" +
-      "<col style='width:40%;'>" +
-      "<col style='width:19%;'>" +
-      "<col style='display:none;'>" +
-      "<col style='width:19%;'>" +
-      "<col style='width:19%;'>" +
+      "<col style='width:200px;'>" +
+      "<col style='width:100px;'>" +
+      "<col style='width:100px;'>" +
       "</colgroup>" +
-      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
-      "<th style='text-align:center;vertical-align:top;'>"+translateKey('lblQuantity')+"</th>"+
-      "<th style='text-align:left;vertical-align:top;display:none;'>"+translateKey('dialogShowDeviceFirmwareTHSerials')+"</th>"+
-      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
-      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
+      "<th align='left'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
+      "<th align='left'>"+translateKey('thSerialNumber')+"</th>"+
+      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
+      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
       this.messageBoxHTML +
-      "<tr><td colspan='5' align='left'><br/><b>"+translateKey('dialogShowDeviceFirmwareDescription')+":</b><br/>" +
-      translateKey('dialogShowDeviceFirmwareDownloadInfo1') + "<br/>" +
-      translateKey('dialogShowDeviceFirmwareDownloadInfo2') + "&nbsp;" +
-        "'<div class='UILink' style='display: inline;' onclick='MessageBox.close();WebUI.enter(DeviceFirmware);'>"+translateKey('submenuDeviceFirmware')+"</div>" +
-        " => " + translateKey('footerBtnNew') + "'&nbsp;" +
-        translateKey('dialogShowDeviceFirmwareDownloadInfo3') +
       //"<tr><td colspan='3' align='center'><a href='http://www.eq-3.de/downloads.html' target='_blank'>"+translateKey('dialogShowDeviceFirmwareLinkDownload')+"</a></td></tr>" +
     "</table>",
     "",
-    450,
+    400,
     msgBoxHeight
     );
   },
@@ -26009,18 +25861,14 @@ StartPage = Singleton.create(Page, {
   showUpdate: function() {
     var fn = function() {
       var result = homematic.com.isUpdateAvailable();
-      if ((result) && ($("updateCol"))) {
-        var updateText = " (" + homematic.com.getLatestVersion() + " " + translateKey('isAvailable') + ")";
-        if (getUPL() == UPL_ADMIN) {
+      if ((result) && ($("updateCol")) && ($("updateRow"))) {
+        var updateText = translateKey('firmware') + " " + homematic.com.getLatestVersion() + " " + translateKey('isAvailable');
         jQuery("#updateCol").text(updateText)
           .addClass("firmwareAvailable")
           .unbind("click").bind("click", function() {
             showNewFirmwareDownload();
           });
-        } else {
-          jQuery("#updateCol").text(updateText);
-        }
-        jQuery("#updateCol").show();
+        jQuery("#updateRow").show();
       }
       return result;
     };
@@ -26030,9 +25878,11 @@ StartPage = Singleton.create(Page, {
     }
   },
   
-  showDutyCycle: function() {
-    showDutyCycle();
-  }
+  /**
+   * Berechnet die Größe der Startseite für den Gast
+   **/
+  resizeGuest: function() { }   
+  
   
 });
 ControlPage = new function()
@@ -26053,6 +25903,10 @@ ControlPage = new function()
     }
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlRoomsPage = new function()
 {
@@ -26068,6 +25922,10 @@ ControlRoomsPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlFunctionsPage = new function()
 {
@@ -26083,6 +25941,10 @@ ControlFunctionsPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlFavoritesPage = new function()
 {
@@ -26099,6 +25961,10 @@ ControlFavoritesPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlFavoritePage = new function()
 {
@@ -26114,6 +25980,10 @@ ControlFavoritePage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlDevicesPage = new function()
 {
@@ -26129,6 +25999,10 @@ ControlDevicesPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlProgramsPage = new function()
 {
@@ -26144,6 +26018,10 @@ ControlProgramsPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlVariablesPage = new function()
 {
@@ -26159,6 +26037,10 @@ ControlVariablesPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ControlProtocolPage = new function()
 {
@@ -26174,6 +26056,10 @@ ControlProtocolPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 LinksAndProgramsPage = new function()
 {
@@ -26189,6 +26075,10 @@ LinksAndProgramsPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 LinkListPage = new function()
 {
@@ -26213,6 +26103,10 @@ LinkListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ProgramListPage = new function()
 {
@@ -26228,6 +26122,10 @@ ProgramListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 LinkEditProfilePage = new function()
 {
@@ -26248,6 +26146,10 @@ LinkEditProfilePage = new function()
   {
   };
   
+  this.resize = function()
+  {
+  };
+  
 };AlarmMessagesPage = new function()
 {
   
@@ -26263,6 +26165,10 @@ LinkEditProfilePage = new function()
     if ($("msgAlarms")) { $("msgAlarms").removeClassName("Messages_Selected"); }
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 ServiceMessagesPage = new function()
 {
@@ -26279,6 +26185,10 @@ ServiceMessagesPage = new function()
     if ($("msgServices")) { $("msgServices").removeClassName("Messages_Selected"); }
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 HelpPage = new function()
 {
@@ -26295,6 +26205,10 @@ HelpPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 adminFirstStartup = new function()
 {
@@ -26308,6 +26222,10 @@ adminFirstStartup = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 userFirstStartup = new function()
 {
@@ -26321,6 +26239,10 @@ userFirstStartup = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 /**
  * devielistpage.js
@@ -26503,7 +26425,7 @@ if (PLATFORM == "Central") {
             (this.TypeNameFilter.match(device.typeName))                 &&
             (this.DescriptionFilter.match(translateKey(device.typeDescription)))       &&
             (this.AddressFilter.match(device.address))                   &&
-            (this.InterfaceFilter.matchString(device.interfaceDisplayName))     &&
+            (this.InterfaceFilter.matchString(device.interfaceName))     &&
             (this.ModeFilter.matchStringArray(device.modes)) &&
             (this.RoomFilter.matchArray(device.rooms))                   &&
             (this.FuncFilter.matchArray(device.subsections)));
@@ -27059,6 +26981,10 @@ if (PLATFORM == "Central") {
   {
   };
 
+  this.resize = function()
+  {
+  };
+
  }();
 
 }
@@ -27076,6 +27002,10 @@ FavoriteListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 FunctionListPage = new function()
 {
@@ -27090,6 +27020,10 @@ FunctionListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 NewDeviceListPage = new function()
 {
@@ -27113,6 +27047,10 @@ NewDeviceListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 RoomListPage = new function()
 {
@@ -27128,6 +27066,10 @@ RoomListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 SystemConfigPageUser = new function()
 {
@@ -27143,6 +27085,10 @@ SystemConfigPageUser = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 SystemConfigPage = new function()
 {
@@ -27158,6 +27104,10 @@ SystemConfigPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 UserAdminPageUser = new function()
 {
@@ -27173,6 +27123,10 @@ UserAdminPageUser = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 UserAdminPageAdmin = new function()
 {
@@ -27188,6 +27142,10 @@ UserAdminPageAdmin = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 SystemControlPage = new function()
 {
@@ -27203,6 +27161,10 @@ SystemControlPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 CreateDiagramPage = new function()
 {
@@ -27241,6 +27203,10 @@ CreateDiagramPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 CreateDiagramPage = new function()
 {
@@ -27279,6 +27245,10 @@ CreateDiagramPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 DiagramListPage = new function()
 {
@@ -27305,6 +27275,10 @@ DiagramListPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 CreateGroupPage = new function()
 {
@@ -27333,6 +27307,10 @@ CreateGroupPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 CreateTestPage = new function()
 {
@@ -27359,6 +27337,10 @@ CreateTestPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 DeviceFirmware = new function()
 {
@@ -27385,6 +27367,10 @@ DeviceFirmware = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 function compare(a,b) {
   if (a.name < b.name)
@@ -27435,6 +27421,10 @@ DeviceFirmwareInformation = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+
 }();VariableListPage = new function()
 {
   var MAINMENU_ID = "MAINMENU_OPTIONS";
@@ -27449,6 +27439,10 @@ DeviceFirmwareInformation = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 DeviceConfigPage = new function()
 {
@@ -27482,6 +27476,10 @@ DeviceConfigPage = new function()
   {
   };
 
+  this.resize = function()
+  {
+  };
+  
 }();
 getGatewayStatus = function()
 {
@@ -27813,6 +27811,10 @@ BidcosRfPage =
   {
     this.destroy();
     InterfaceMonitor.start();
+  },
+  
+  resize: function()
+  {
   },
   
   onSourceChanged: function()
@@ -28735,7 +28737,6 @@ BidcosRfPage.Device.prototype =
       //jQuery("."+gateway.getAddress()).attr("class","bidcosrf_tablecell " + gateway.getAddress().replace(/\s+/g,""));
       this.setGateway(gateway.getAddress());
       this.setRoaming(roaming);
-      DeviceList.updateInterfaceDisplayName(this.m_address, (gateway.getUserName()).length > 0 ? gateway.getUserName() : 'BidCos-RF');
     }
   }
 };
@@ -29852,8 +29853,8 @@ homematic.com =
     this.m_ccuProduct = getProduct();
     this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
     this.m_product = "HM-RASPBERRYMATIC";
-    this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
-    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
+    this.m_URLServer = (isHTTPS) ? "https://"+this.preURL+"update.homematic.com:8443" : "http://"+this.preURL+"update.homematic.com";
+    this.m_fieldTestURLServer = (isHTTPS) ? "https://fieldtest-ccu3-update.homematic.com" : "http://fieldtest-ccu3-update.homematic.com";
 
     this.serial = homematic("CCU.getSerial");
     this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
@@ -33251,31 +33252,37 @@ resetReGaSaveButton = function () {
 };
 
 setAlarmMessageCount = function (count) {
+
   if ($("msgAlarms")) {
-    const newMsg = translateKey('alarmMsg') + " (" + count + ")";
-    if ($("msgAlarms").innerHTML !== newMsg) {
-      $("msgAlarms").innerHTML = newMsg;
+    //$("msgAlarms").innerHTML = "${Alarmmeldungen} (" + count + ")";
+    $("msgAlarms").innerHTML = translateKey('alarmMsg') + " (" + count + ")";
+
+  }
+  if (count === 0) {
+    if ($("imgAlarms")) {
+      $("imgAlarms").src = "/ise/img/dot/green.png";
     }
   }
-  if ($("imgAlarms")) {
-    const newImg = (count === 0 ? '/ise/img/dot/green.png' : '/ise/img/dot/red.png');
-    if ($("imgAlarms").getAttribute('src') !== newImg) {
-      $("imgAlarms").src = newImg;
+  else {
+    if ($("imgAlarms")) {
+      $("imgAlarms").src = "/ise/img/dot/red.png";
     }
   }
 };
 
 setServiceMessageCount = function (count) {
   if ($("msgServices")) {
-    const newMsg = translateKey('serviceMsg') + " (" + count + ")";
-    if ($("msgServices").innerHTML !== newMsg) {
-      $("msgServices").innerHTML = newMsg;
+    $("msgServices").innerHTML = translateKey('serviceMsg') + " (" + count + ")";
+
+  }
+  if (count === 0) {
+    if ($("imgServices")) {
+      $("imgServices").src = "/ise/img/dot/green.png";
     }
   }
-  if ($("imgServices")) {
-    const newImg = (count === 0 ? '/ise/img/dot/green.png' : '/ise/img/dot/yellow.png');
-    if ($("imgServices").getAttribute('src') !== newImg) {
-      $("imgServices").src = newImg;
+  else {
+    if ($("imgServices")) {
+      $("imgServices").src = "/ise/img/dot/yellow.png";
     }
   }
 };
@@ -33762,27 +33769,11 @@ setPath = function (path) {
 
 
 logout = function() {
-  // disable logout button
-  jQuery("#btnLogOut > div").css('color', 'graytext');
-  jQuery("#btnLogOut > div").attr("onclick", "").unbind("click");
-
-  // create ProgressBar
-  ProgressBar = new ProgressBarMsgBox(translateKey('logoutInProgress'), 1);
-  ProgressBar.show();
-  ProgressBar.StartKnightRiderLight();
-
-  // stop all update monitors
   regaMonitor.stop();
   InterfaceMonitor.stop();
-
-  // save the regadom first, since Session.logout ends the session
-  homematic('system.saveObjectModel', {}, function() {
-    homematic('Session.logout', {}, function() {
-      ProgressBar.hide();
-      ProgressBar.StopKnightRiderLight();
-      location.href = "/logout.htm?lang="+getLang();
-    });
-  });
+  location.href = "/logout.htm?lang="+getLang();
+  homematic('Session.logout', {});
+  homematic('system.saveObjectModel', {});
 };
 
 
@@ -35019,12 +35010,52 @@ iseArraySwap = function(arr,entryA,entryB)
 
 iseSortMultiArray = function(arr,dsc,dir,sln, sessionVar,popup)
 {
-  conInfo("Sort multi array2.");
-  const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-  /* arr.forEach( x => { if( typeof x[dsc] == "undefined" ) { x[dsc] = ""; } } ); */
-  arr.sort( (x, y) => { return collator.compare(x[dsc], y[dsc]); } );
-  if( dir === 1 ) { arr.reverse(); }
+  conInfo("Sort multi array.");
+  do
+  {
+    var n = arr.length - 1;
+    var bSwapped = false;
+    for(var i=0;i<n;i++)
+    {
+      if( typeof arr[i][dsc] == "undefined" )
+      {
+        arr[i][dsc] = "";
+      }
+      if( typeof arr[i+1][dsc] == "undefined" )
+      {
+        arr[i+1][dsc] = "";
+      }      
+      var item = arr[i][dsc].toLowerCase();
+      item = item.replace("ö", "o");
+      item = item.replace("ä", "a");
+      item = item.replace("ü", "u");
+      item = item.replace("ß", "ss");
+      var nextitem = arr[i+1][dsc].toLowerCase();
+      nextitem = nextitem.replace("ö", "o");
+      nextitem = nextitem.replace("ä", "a");
+      nextitem = nextitem.replace("ü", "u");
+      nextitem = nextitem.replace("ß", "ss");
+      if( dir === 0 )
+      {
+        if( item > nextitem )
+        {
+          iseArraySwap(arr,i,i+1);
+          bSwapped = true;
+        }
+      }
+      else
+      {
+        if( item < nextitem )
+        {
+          iseArraySwap(arr,i,i+1);
+          bSwapped = true;
+        }
+      }
+    }
+  } while( bSwapped );
+    
   if (!popup) iseTransferSortedArray(arr,dsc,sln, sessionVar);
+  
 };
 
 iseTransferSortedArray = function(arr,dsc,sortListNumber, sessionVar)
@@ -35343,14 +35374,12 @@ StopFlashing = function()
 
 SwitchOnFlashLight = function()
 {
-  if ($("headerLogo")) { $("headerLogo").classList.add('hidden'); }
-  if ($("headerLogoRed")) { $("headerLogoRed").classList.remove('hidden'); }
+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small_red.png"; }
 };
 
 SwitchOffFlashLight = function()
 {
-  if ($("headerLogo")) { $("headerLogo").classList.remove('hidden'); }
-  if ($("headerLogoRed")) { $("headerLogoRed").classList.add('hidden'); }
+  if ($("headerLogo")) { $("headerLogo").src = "/ise/img/occu-logo_small.png"; }
 };
 
 getAjaxLoadElem = function() {
@@ -36392,15 +36421,15 @@ getExtendedDescription = function(oChannelDescr)  {
     multiMode = oChannelDescr.multiMode;
   var tmpDev;
 
-  if (typeof channelType != "undefined") {
-    chType = channelType;
-  } else if (typeof channelAddress != "undefined") {
+  if (typeof channelAddress != "undefined") {
     var channel = DeviceList.getChannelByAddress(channelAddress);
     if (channel) {
       chType = channel.channelType;
       channelIsVisible = channel.isVisible;
     }
-  } 
+  } else if (typeof channelType != "undefined") {
+    chType = channelType;
+  }
 
   if (chType == "KEY_TRANSCEIVER") {
     if (deviceType.toLowerCase().indexOf("hmip-asir") != -1) {
@@ -36479,11 +36508,6 @@ getExtendedDescription = function(oChannelDescr)  {
         case "hmip-wgt-a":
         case "hmip-wgtc":
         case "hmip-wgtc-a":
-          if (channel === undefined) { var channel = DeviceList.getChannelByAddress(channelAddress); }
-          if (channel === undefined) {
-            result = translateKey("chType_SWITCH_VIRTUAL_RECEIVER");
-            break;
-          }
           var channelMode = homematic("Interface.getMetadata", {
             "objectId": channel.id,
             "dataId": "channelMode"
@@ -36604,14 +36628,12 @@ getExtendedDescription = function(oChannelDescr)  {
         typeExt = "_" + multiMode;
       } else {
         if (channelAddress != "undefined") {
-          var chn = DeviceList.getChannelByAddress(channelAddress);
-          if (typeof chn != "undefined") {
-          var chnMode = parseInt(chn.multiMode);
+          var chn = DeviceList.getChannelByAddress(channelAddress),
+          chnMode = parseInt(chn.multiMode);
           if (! isNaN(chnMode)) {
             typeExt = "_" + chnMode;
           } else {
             typeExt = "";
-          }
           }
         } else {
           typeExt = "_1";
@@ -37562,15 +37584,7 @@ iseFilter.prototype = {
     {
       if (typeof obj['type'] != 'undefined') {
         if (obj['type'] === "")                      { return false; }
-        if (isValidRegex(this.filType))
-        {
-          var r = new RegExp(this.filType);
-          if (r.test(obj['type'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['type'].toLowerCase().indexOf(this.filType) == -1) { return false; }
-        }
+        if (obj['type'].toLowerCase().indexOf(this.filType) == -1) { return false; }
       }
     }
     if (this.filDesc !== "")
@@ -37580,15 +37594,7 @@ iseFilter.prototype = {
       {
         //conInfo( "iseFilter: desc="+obj['desc'] );
         if (obj['desc'] === "")                      { return false; }
-        if (isValidRegex(this.filDesc))
-        {
-          var r = new RegExp(this.filDesc);
-          if (r.test(obj['desc'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['desc'].toLowerCase().indexOf(this.filDesc) == -1) { return false; }
-        }
+        if (obj['desc'].toLowerCase().indexOf(this.filDesc) == -1) { return false; }
       }
     }
     if (this.filName !== "")
@@ -37597,15 +37603,7 @@ iseFilter.prototype = {
       {
         if (obj['name'] === "")                      { return false; }
         var transName = translateString(obj['name']);
-        if (isValidRegex(this.filName))
-        {
-          var r = new RegExp(this.filName);
-          if (r.test(transName.toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (transName.toLowerCase().indexOf(this.filName) == -1) { return false; }
-        }
+        if (transName.toLowerCase().indexOf(this.filName) == -1) { return false; }
       }
     }
     if (this.filSn !== "")
@@ -37613,15 +37611,7 @@ iseFilter.prototype = {
       if (typeof obj['sn'] != 'undefined')
       {
         if (obj['sn'] === "")                     { return false; }
-        if (isValidRegex(this.filSn))
-        {
-          var r = new RegExp(this.filSn);
-          if (r.test(obj['sn'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['sn'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
-        }
+        if (obj['sn'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
       }
     }
     if (this.filUnit !== "")
@@ -37629,15 +37619,7 @@ iseFilter.prototype = {
       if (typeof obj['unit'] != 'undefined')
       {
         if (obj['unit'] === "")                      { return false; }
-        if (isValidRegex(this.filUnit))
-        {
-          var r = new RegExp(this.filUnit);
-          if (r.test(obj['unit'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['unit'].toLowerCase().indexOf(this.filUnit) == -1) { return false; }
-        }
+        if (obj['unit'].toLowerCase().indexOf(this.filUnit) == -1) { return false; }
       }
     }
 
@@ -37661,15 +37643,7 @@ iseFilter.prototype = {
     if (this.filChnLink !== "")
     {
       if (obj['chn'] === "")                         { return false; }
-      if (isValidRegex(this.filChnLink))
-      {
-        var r = new RegExp(this.filChnLink);
-        if (r.test(obj['chn'].toLowerCase()) === false) { return false; }
-      }
-      else
-      {
-        if (obj['chn'].toLowerCase().indexOf(this.filChnLink) == -1) { return false; }
-      }
+      if (obj['chn'].toLowerCase().indexOf(this.filChnLink) == -1) { return false; }
     }
 /*    
     if (this.filVarTypes !== "")
@@ -46830,27 +46804,6 @@ SendRequest = function(scriptname, html_container_id, callback)
   new Ajax.Updater(id, scriptname, opt);
 };
 
-SendPOSTRequest = function(scriptname, html_container_id, callback)
-{
-  scriptname = Get_ReGa_Path(scriptname);
-  var params = poststr;
-
-  if ((html_container_id) && (html_container_id !== "")) { id = html_container_id; }
-  else                                                   { id = Get_UI_CONTENTBOX_ID(); }
-
-  var _callback_ = callback; 
-  
-  var opt =
-  {
-    method:'post',
-    parameters:params,
-    evalScripts:true,
-    onComplete: function() { if (_callback_) { _callback_(); } }
-  };
-
-  new Ajax.Updater(id, scriptname + '?sid=' + document.getElementById('global_sid').value, opt);
-};
-
 ShowLoadingBox = function(msg)
 {
   
@@ -47145,7 +47098,7 @@ PrepareDeleteDeviceForm_old = function(iface, sn, devname, devtype)
   poststr += "&devname=" + devname;
   poststr += "&devtype=" + devtype;
 
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 
   ProgressBar = new ProgressBarMsgBox("Verknüpfungen und Programme werden abgefragt...", 1);
   ProgressBar.show();
@@ -47381,7 +47334,7 @@ RemoveLink = function(iface, sender_address, receiver_address, sender_type, redi
 {
   var questionRemoveLink = ((iface == "HmIP-RF") && (sender_type != "HmIP-SMI55") && (sender_type != "HmIP-SMI55-A") && (sender_address.split(":")[0] == receiver_address.split(":")[0])) ? translateKey('dialogQuestionRemoveInternalLink') : translateKey('dialogQuestionRemoveLink');
 
-  new YesNoDialog(translateKey('dialogSafetyCheck'), questionRemoveLink.replace('%s', sender_address+' - '+receiver_address), function(result) {
+  new YesNoDialog(translateKey('dialogSafetyCheck'), questionRemoveLink, function(result) {
     if (result == YesNoDialog.RESULT_YES)
     {
       ResetPostString();
@@ -47396,7 +47349,7 @@ RemoveLink = function(iface, sender_address, receiver_address, sender_type, redi
       if ((redirect_url) && (redirect_url !== "")) { poststr += "&redirect_url=" + redirect_url; }
       else                                         { poststr += "&redirect_url=IC_LINKPEERLIST"; }
 
-      SendPOSTRequest('ic_ifacecmd.cgi');
+      SendRequest('ic_ifacecmd.cgi');
     }
   }, "html");
 };
@@ -47465,7 +47418,7 @@ CheckConfigPending = function(iface, sender_address, receiver_address, redirect_
   poststr += "&receiver_address=" +receiver_address;
   poststr += "&cmd=ShowConfigPendingMsg";
 
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 
@@ -47658,7 +47611,7 @@ DetermineParameterValue = function(iface, address, ps_id, param_id, html_inputel
   poststr += "&param_id="          + param_id;
   poststr += "&html_inputelem_id=" + html_inputelem_id;
 
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 
   //ProgressBar = new ProgressBarMsgBox("Parameter wird festgesetzt...", 1);
   ProgressBar = new ProgressBarMsgBox(translateKey("dialogDetermineParameterTitle"), 1);
@@ -49197,7 +49150,7 @@ AddLink = function(iface, sender_address, sender_group, receiver_address, name, 
   ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
 
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 ShowNewLinkSummary = function(iface, sender_address, receiver_address, name, description, group_name, group_description)
@@ -49539,7 +49492,7 @@ ActivateLinkParamset = function (iface, sender_address, receiver_address, hideWa
   poststr += "&receiver_address=" + receiver_address;
   poststr += "&cmd=activateLinkParamset";
 
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 SetLinkInfo = function (iface, sender_address, receiver_address, name, description) {
@@ -49554,7 +49507,7 @@ SetLinkInfo = function (iface, sender_address, receiver_address, name, descripti
   poststr += "&description=" + elv_toQueryString(description);
   poststr += "&cmd=setLinkInfo";
 
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 
@@ -49595,7 +49548,7 @@ SetEasyMode = function (iface, address, peer, special_input_id, paramid) {
     }
     poststr += "&new_profilepath=" + is_newProfile(paramid).split('-')[0] + fileExtension;
   }
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 CollectData_SaveProfileSettings = function (reload) {
@@ -50038,7 +49991,7 @@ FirmwareUpdate = function(devType) {
     poststr += "&iface=" + $F('global_iface');
     poststr += "&address=" + $F('global_address');
     poststr += "&cmd=firmware_update";
-    SendPOSTRequest('ic_ifacecmd.cgi');
+    SendRequest('ic_ifacecmd.cgi');
     ProgressBar = new ProgressBarMsgBox(translateKey("performingFirmwareUpdate"), 1);
     ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
@@ -50069,19 +50022,6 @@ isHeatingControlDirty = function() {
   }
   return false;
 };
-
-RestoreDeviceParameters = function()
-{
-  ProgressBar = new ProgressBarMsgBox(translateKey("transferConfigData"), 0);
-  ProgressBar.show();
-  ProgressBar.StartKnightRiderLight();
-  
-  homematic("Interface.restoreConfigToDevice", {"interface": $F('global_iface'), "address": $F('global_address')}, function() {
-    ProgressBar.hide();
-    ProgressBar.StopKnightRiderLight();
-    CheckConfigPending($F('global_iface'), $F('global_address'), '', $F('global_redirect_url'), true);
-  });
-}
 
 SaveDeviceParameters = function()
 {
@@ -50393,7 +50333,7 @@ SetParameters = function(iface, address, special_input_id)
 
 
 
-  SendPOSTRequest('ic_ifacecmd.cgi', null, function() {
+  SendRequest('ic_ifacecmd.cgi', null, function() {
     if (device)
     {
       DeviceList.beginUpdateDevice(device.id);
@@ -50412,7 +50352,7 @@ SendInternalKeyPress = function(iface, sender, receiver, longKeyPress)
   poststr += "&receiver=" + receiver;
   poststr += "&longKeyPress=" + simLongKeyPress;
   poststr += "&cmd=SendInternalKeyPress";
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 SetInternalKey = function(iface, address, special_input_id, peerAddress)
@@ -50441,7 +50381,7 @@ SetInternalKey = function(iface, address, special_input_id, peerAddress)
   AddSeparateSettings('subset_'   + special_input_id + '_', pnr);
   
   //alert(poststr);
-  SendPOSTRequest('ic_ifacecmd.cgi');
+  SendRequest('ic_ifacecmd.cgi');
 };
 
 ShowInternalKeyProfile = function(selectelem, channel, counter)
@@ -53169,7 +53109,6 @@ ShowHintIfProgramExists = function(id, ch) {
     } else {
       if((arChnHasLinks[parseInt(ch)] != true) && (! wgtHasLinksOrPrograms)) {
         var elm = jQuery(".j_multiMode_" + ch).find("[name='CHANNEL_OPERATION_MODE']")[0];
-        if (elm === undefined) elm = jQuery("#separate_CHANNEL_" + ch + "_1");
         jQuery(elm).prop("disabled", false);
       }
     }

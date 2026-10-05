@@ -81,7 +81,7 @@
 
   if ($("UserName"))
   {
-    $("UserName").appendChild(document.createTextNode(userName));
+    $("UserName").appendChild(document.createTextNode(userNameInfo));
     if (getUPL() != UPL_GUEST) {
       $("UserName").setAttribute('onClick', userLink);
       $("UserName").setAttribute('style','cursor: pointer;');
