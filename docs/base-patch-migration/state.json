@@ -485,18 +485,18 @@
       "base_pr": 126,
       "cleanup_pr": 4363,
       "patch": "0055-WebUI-Fix-UserAckInstallWizard.patch"
+    },
+    {
+      "base_merge_commit": "6b02215165446c2a024d0489c45b48531da7661c",
+      "base_pr": 127,
+      "cleanup_pr": 4364,
+      "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "6b02215165446c2a024d0489c45b48531da7661c",
-    "base_pr": 127,
-    "cleanup_pr": 4364,
-    "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "3cbc406de9099ba73c3a2d4a4ccd4918bfbb8258",
-  "verified_base_pin": "fec91dbce8f4c1cb3686713d11dd47b2368c441f",
-  "verified_source_sha256": "59edc2febe386cf66dd1ca77a4d5c488a8a8ffd0338f886b2f72667d45c9570d"
+  "verified_at_openccu_commit": "fa09c9202e4b553aad66c18f1156cb90c7b52da7",
+  "verified_base_pin": "6b02215165446c2a024d0489c45b48531da7661c",
+  "verified_source_sha256": "62c450c8748a95e15caa349d148ed708c15f5c4dcbc8ae9d9c345371eb61964b"
 }
