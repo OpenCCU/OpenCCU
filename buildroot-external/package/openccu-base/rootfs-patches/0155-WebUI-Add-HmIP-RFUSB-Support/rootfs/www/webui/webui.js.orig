@@ -9311,7 +9311,7 @@ WebUI = Singleton.create({
                           '\xFC': 'ue',
                           '\xDF': 'ss'
                         }[m];
-                      });
+                      }).replace(/[^\x20-\x7e]+/g, '');
         };
         var usrName = toAckName(userName);
 

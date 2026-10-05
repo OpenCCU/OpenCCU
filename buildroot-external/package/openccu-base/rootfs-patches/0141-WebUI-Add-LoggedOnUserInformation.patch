@@ -69,7 +69,7 @@
 @@ -9349,10 +9350,29 @@
                            '\xDF': 'ss'
                          }[m];
-                       });
+                       }).replace(/[^\x20-\x7e]+/g, '');
 +        };
 +        var usrName = toAckName(userName);
 +

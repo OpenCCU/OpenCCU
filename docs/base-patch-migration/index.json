@@ -346,7 +346,7 @@
       ],
       "patch": "0055-WebUI-Fix-UserAckInstallWizard.patch",
       "removed": 5,
-      "sha256": "75b0c27f1c033f238a212369ab0c42a783433b49bc76b687c1e752827772d0f5"
+      "sha256": "797d303f3d932ee12470aa94c3e1eb714262c99e6cc06cbb5433f75361c25313"
     },
     {
       "added": 123,
@@ -801,7 +801,7 @@
       ],
       "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch",
       "removed": 4,
-      "sha256": "25281b492dad748cec14110da048795f80d20d26ac7057a7a2c06f0b8bb5e5ed"
+      "sha256": "3541591bed27826b74b0cad0de86ce9c431bc72365fd2d51ee70c35f8b49a3c6"
     },
     {
       "added": 58,
