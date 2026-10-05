@@ -173,8 +173,8 @@
         "www/rega/pages/tabs/user/newFav.htm"
       ],
       "patch": "0035-WebUI-Fix-SysVarPopups.patch",
-      "removed": 11,
-      "sha256": "ac47ab6615ac0edc5673797a7f95f99ea6ffe2bf67e233b57b3861b5d2b96083"
+      "removed": 10,
+      "sha256": "bed25ed26edc8cd91ea27313d1b4551a0bf857959ddb46e5598ebacea9cca500"
     },
     {
       "added": 42,
@@ -701,7 +701,7 @@
       ],
       "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
       "removed": 25,
-      "sha256": "5beb4b27784551215653a056c87be97219ae564c77d462cde9377da3124cd8c1"
+      "sha256": "2f5979856e3a573aa1954035bcc186cdfd55cc8b035f79cb8de0f5ae4e121978"
     },
     {
       "added": 836,
