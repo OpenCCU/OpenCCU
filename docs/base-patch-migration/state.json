@@ -467,18 +467,24 @@
       "base_pr": 123,
       "cleanup_pr": 4350,
       "patch": "0147-WebUI-Fix-AddonUninstallFailureHandling.patch"
+    },
+    {
+      "base_merge_commit": "b08ea2703292199206613e6c9098af14249698dd",
+      "base_pr": 124,
+      "cleanup_pr": 4351,
+      "patch": "0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "b08ea2703292199206613e6c9098af14249698dd",
-    "base_pr": 124,
-    "cleanup_pr": 4351,
-    "patch": "0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch",
+    "base_merge_commit": "54b2c4d75153935d0b88e89262660e0463ee0424",
+    "base_pr": 125,
+    "cleanup_pr": 4357,
+    "patch": "0090-WebUI-Add-ReGaSaveButton.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "019a4535fa15f2f72f1bc94a47e9a5393b4d03df",
-  "verified_base_pin": "6c6c7c79222f75a7c898d577cddde5b9b006a5f5",
-  "verified_source_sha256": "e9ae9296860fe506b8a405605f8649655fa2ec01d59d14b5e7b6fba976c75658"
+  "verified_at_openccu_commit": "725d175b3d470acd08326b5b01889dedddc29f04",
+  "verified_base_pin": "b08ea2703292199206613e6c9098af14249698dd",
+  "verified_source_sha256": "5aa974472822eb6dc5a925cdc8130f81c5f204ab5b4e559d246fd85bdb5bc802"
 }
