@@ -1,6 +1,6 @@
 --- a/www/rega/esp/controls/button.fn
 +++ b/www/rega/esp/controls/button.fn
-@@ -26,9 +26,35 @@
+@@ -26,9 +26,37 @@
  
      WriteLine("</table>");
    WriteLine("</td>");
@@ -22,6 +22,8 @@
 +      WriteLine("</tr>");
 +      WriteLine("</table>");
 +    WriteLine("</td>");
++  } else {
++    WriteLine("<td></td>");
 +  }
 +
 +  WriteLine("<td></td><td></td><td></td>");

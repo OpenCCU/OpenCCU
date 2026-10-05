@@ -43,6 +43,8 @@ function ::CreateKeyShortOnly() {
       WriteLine("</tr>");
       WriteLine("</table>");
     WriteLine("</td>");
+  } else {
+    WriteLine("<td></td>");
   }
 
   WriteLine("<td></td><td></td><td></td>");
