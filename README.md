@@ -23,7 +23,7 @@ ___
 
 OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, open-source operating system for running a **cloud-free smart-home hub** compatible with eQ-3’s [Homematic IP](https://www.homematic-ip.com/) and [HomeMatic](http://homematic.com/) devices. It targets **100% compatibility** with the vendor’s _CCU3_ and can be installed directly on [CCU3](https://homematic-ip.com/en/product/smart-home-ccu3-central-control-unit) and [ELV Charly](https://www.elv.de/elv-smart-home-zentrale-charly-starter-set-bausatz.html) hardware. It also runs on common 64-bit capable SBCs (e.g., [Raspberry Pi](https://www.raspberrypi.org/), [Hardkernel ODROID](https://www.hardkernel.com/product-category/odroid-board/), [ASUS Tinkerboard 2/2S](https://tinker-board.asus.com/series/tinker-board-2.html)) and generic x86_64 or aarch64 hardware. In addition, OpenCCU is available as a pure virtual appliance for popular hypervisors and container platforms (e.g., Proxmox VE, VirtualBox, Synology VMM, Docker/OCI, Kubernetes) and as a native [Home Assistant](https://www.home-assistant.io/) App. Beyond CCU3 parity, it provides **WebUI, OS-level, and connectivity enhancements** for a more advanced user experience.
 
-[more...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung)
+[more...](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction)
 
 ## :cookie: Features
 
@@ -31,7 +31,7 @@ OpenCCU – formerly known as _RaspberryMatic_ – is a free, non-commercial, op
 - **Backup interchangeability.** Backups are cross-compatible, enabling straightforward migration between the vendor CCU firmware and OpenCCU.
 - **Enhancements beyond vendor firmware.** Includes WebUI improvements, Linux OS updates, stability and performance fixes, and new capabilities that do not yet exist upstream.
 
-[more...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#features)
+[more...](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#features)
 
 ## :computer: Requirements
 
@@ -48,9 +48,9 @@ OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and
 - [Proxmox VE](https://www.proxmox.com/en/proxmox-ve), [QEMU/KVM](https://www.qemu.org/), [XCP-ng/XenServer](https://xcp-ng.org/), [VMware ESXi](https://www.vmware.com/de/products/esxi-and-esx.html) / [Workstation Player](https://www.vmware.com/de/products/workstation-player/workstation-player-evaluation.html), [Hyper-V](https://learn.microsoft.com/de-de/virtualization/hyper-v-on-windows/), [VirtualBox](https://www.virtualbox.org/)
 - [Synology Virtual Machine Manager](https://www.synology.com/de-de/dsm/feature/virtual_machine_manager), [QNAP Virtualization Station](https://www.qnap.com/event/station/de-de/virtualization.php), [Unraid](https://unraid.net/)
 - [Docker/OCI](https://www.docker.com/), [LXC](https://linuxcontainers.org/), [Kubernetes (K8s)](https://kubernetes.io/)
-- [Home Assistant](https://home-assistant.io/) (add-on)
+- [Home Assistant](https://home-assistant.io/) (App)
 
-[more...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#vorraussetzungen)
+[more...](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#requirements)
 
 ## :cloud: Quick-Start
 
@@ -71,72 +71,94 @@ OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and
    - You will land in the familiar CCU WebUI and can start configuring your Homematic / Homematic IP devices.
    - *Optional:* restore an existing CCU backup to migrate your setup.
 
-[more...](https://github.com/OpenCCU/OpenCCU/wiki/Installation#schnellstart)
+[more...](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#quick-start)
 
 ## :memo: Documentation ([🇩🇪](https://github.com/OpenCCU/OpenCCU/wiki/Home)/[🇺🇸](https://github.com/OpenCCU/OpenCCU/wiki/en.Home))
 
-1. [Introduction](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung)
-   * [Requirements](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#vorraussetzungen)
-   * [Features](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#features)
-   * [Limitations](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#limitationeneinschränkungen)
-   * [License and Warranty](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#lizenz--haftung)
-   * [Commercial Distribution](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#kommerzieller-vertrieb)
-2. [Installation](https://github.com/OpenCCU/OpenCCU/wiki/Installation)
-   * [Quick-Start](https://github.com/OpenCCU/OpenCCU/wiki/Installation#schnellstart)
-   * [Basic Installation (Hardware)](https://github.com/OpenCCU/OpenCCU/wiki/Installation#grundinstallation-hardware)
-     * [CCU3](https://github.com/OpenCCU/OpenCCU/wiki/Installation-CCU3)
-     * [ELV-Charly](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ELV-Charly)
-     * [RaspberryPi](https://github.com/OpenCCU/OpenCCU/wiki/Installation-RaspberryPi)
-     * [Hardkernel ODROID](https://github.com/OpenCCU/OpenCCU/wiki/Installation-ODROID)
-     * [ASUS Tinkerboard 2/2S](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Tinkerboard2)
-     * [Generic x86_64 / aarch64](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Generic-x86_64)
-   * [Basic Installation (Virtual)](https://github.com/OpenCCU/OpenCCU/wiki/Installation#grundinstallation-virtuell)
-     * [Proxmox Virtual Environment](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Proxmox-VE)
-     * [Home Assistant Add-on](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HomeAssistant)
-     * [Docker Container (OCI)](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Docker-OCI)
-     * [Linux Container (LXC)](https://github.com/OpenCCU/OpenCCU/wiki/Installation-LXC)
-     * [QEmu/KVM](https://github.com/OpenCCU/OpenCCU/wiki/Installation-QEmu)
-     * [Kubernetes/K8s](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Kubernetes)
-     * [Synology Virtual Machine Manager](https://github.com/OpenCCU/OpenCCU/wiki/Installation-Synology-VMM)
-     * [QNAP VirtualizationStation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-QNAP-VirtualizationStation)
-     * [UNRAID](https://github.com/OpenCCU/OpenCCU/wiki/Installation-UNRAID)
-     * [XCP-ng/XenServer](https://github.com/OpenCCU/OpenCCU/wiki/Installation-XCPng)
-     * [Oracle VirtualBox](https://github.com/OpenCCU/OpenCCU/wiki/Installation-VirtualBox)
-     * [vmWare Workstation Player](https://github.com/OpenCCU/OpenCCU/wiki/Installation-vmWare-Workstation-Player)
-     * [vmWare ESXi](https://github.com/OpenCCU/OpenCCU/wiki/Installation-vmWare-ESXi)
-     * [HyperV](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HyperV)
-   * [Configuration Upgrade](https://github.com/OpenCCU/OpenCCU/wiki/Installation#konfigurationsübernahme)
-     * [Upgrade from CCU3](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-von-ccu3)
-     * [Upgrade from CCU2](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-von-ccu2)
-     * [Upgrade from CCU1](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-von-ccu1)
-     * [Upgrade to virtual OpenCCU](https://github.com/OpenCCU/OpenCCU/wiki/Installation#umstieg-zu-virtuellem-raspberrymatic)
-   * [Deinstallation](https://github.com/OpenCCU/OpenCCU/wiki/Deinstallation)
-3. [Administration](https://github.com/OpenCCU/OpenCCU/wiki/Administration)
-   * [Firmware Update/Upgrade](https://github.com/OpenCCU/OpenCCU/wiki/Administration#firmware-updateupgrade)
-   * [Backup/Restore](https://github.com/OpenCCU/OpenCCU/wiki/Administration#backup--restore)
-   * [Security Advices](https://github.com/OpenCCU/OpenCCU/wiki/Administration#sicherheitshinweise)
-   * [CCU-Addon Software](https://github.com/OpenCCU/OpenCCU/wiki/Administration#ccu-addons--zusatzsoftware)
-4. Usage
-   * [WebUI Usage](https://github.com/OpenCCU/OpenCCU/wiki/WebUI-Benutzung)
-     * [Log-Level setup](https://github.com/OpenCCU/OpenCCU/wiki/WebUI-Benutzung#log-daten-und-log-level)
-   * [Tips & Tricks](https://github.com/OpenCCU/OpenCCU/wiki/Tipps)
-   * [Expert-Features](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features)
-     * [WLAN/WiFi Setup](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#wlanwifi-nutzung)
-     * [Bluetooth Setup](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#bluetooth-nutzung)
-     * [LAN-Gateway Mode](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#lan-gateway-betrieb)
-     * [USV Client/Server Setup](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#usv-clientserver-nut)
-     * [USB-Boot Setup](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#usb-boot)
-     * [Monit-WatchDog WebUI](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#monit-watchdog-weboberfl%C3%A4che)
-     * [HB-RF-ETH Setup](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#hb-rf-eth-anbindung)
-     * [Individual Diagramm/Backup-Path](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#individueller-diagrammbackup-speicherpfad)
-     * [Own commands during bootup](https://github.com/OpenCCU/OpenCCU/wiki/Experten-Features#eigene-aktionen-während-des-bootvorgangs)
-5. [Support, Contributions](https://github.com/OpenCCU/OpenCCU/wiki/Support)
-   * [Known Issues](https://github.com/OpenCCU/OpenCCU/wiki/Support#bekannte-probleme)
-   * [Request Help](https://github.com/OpenCCU/OpenCCU/wiki/Support#hilfe-suchen)
-   * [FAQ – Frequently Asked Questions](https://github.com/OpenCCU/OpenCCU/wiki/Support#faq)
-   * [Report Issues](https://github.com/OpenCCU/OpenCCU/wiki/Support#bugreports)
-   * [Request Features](https://github.com/OpenCCU/OpenCCU/wiki/Support#featurerequests)
-   * [Contributions / Development](https://github.com/OpenCCU/OpenCCU/wiki/Support#mitarbeit--weiterentwicklung)
+1. [Introduction](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction)
+   * [Release Variants](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#release-variants)
+   * [Requirements](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#requirements)
+   * [Supported Devices](https://github.com/OpenCCU/OpenCCU/wiki/en.Supported-Devices)
+   * [Features](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#features)
+   * [Limitations](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#limitations)
+   * [License & Liability](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#license--liability)
+   * [Commercial Distribution](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#commercial-distribution)
+2. [Installation](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation)
+   * [Quick Start](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#quick-start)
+   * [Basic Installation (Hardware)](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#basic-installation-hardware)
+     * [CCU3](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-CCU3)
+     * [ELV-Charly](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-ELV-Charly)
+     * [Raspberry Pi](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-RaspberryPi)
+     * [ODROID](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-ODROID)
+     * [ASUS Tinker Board 2/2S](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Tinkerboard2)
+     * [Generic x86_64/aarch64](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Generic-x86_64)
+   * [Basic Installation (Virtual)](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#basic-installation-virtual)
+     * [Proxmox Virtual Environment](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Proxmox-VE)
+     * [Home Assistant App](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-HomeAssistant)
+     * [Docker Container (OCI)](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Docker-OCI)
+     * [Linux Container (LXC)](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-LXC)
+     * [QEMU/KVM](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-QEmu)
+     * [Kubernetes/K8s](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Kubernetes)
+     * [Synology Virtual Machine Manager](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-Synology-VMM)
+     * [QNAP Virtualization Station](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-QNAP-VirtualizationStation)
+     * [Unraid](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-UNRAID)
+     * [XCP-ng/XenServer](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-XCPng)
+     * [Oracle VirtualBox](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-VirtualBox)
+     * [VMware ESXi](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-vmWare-ESXi)
+     * [VMware Workstation Player](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-vmWare-Workstation-Player)
+     * [Hyper-V](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-HyperV)
+   * [Configuration Transfer](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#configuration-transfer)
+     * [Upgrade from CCU3](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#upgrade-from-ccu3)
+     * [Upgrade from CCU2](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#upgrade-from-ccu2)
+     * [Upgrade from CCU1](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#upgrade-from-ccu1)
+     * [Upgrade to a Virtual OpenCCU](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#upgrade-to-a-virtual-openccu)
+     * [Migration from FHEM](https://github.com/OpenCCU/OpenCCU/wiki/en.Migration-FHEM)
+     * [Migration from RaspberryMatic](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#migration-from-raspberrymatic)
+     * [Migration of the RaspberryMatic HA Add-on](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#migration-of-the-raspberrymatic-ha-add-on)
+   * [First Steps after Installation](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation#first-steps-after-installation)
+   * [Uninstallation](https://github.com/OpenCCU/OpenCCU/wiki/en.Uninstallation)
+3. [Administration](https://github.com/OpenCCU/OpenCCU/wiki/en.Administration)
+   * [Firmware Update/Upgrade](https://github.com/OpenCCU/OpenCCU/wiki/en.Administration#firmware-updateupgrade)
+   * [Backup/Restore](https://github.com/OpenCCU/OpenCCU/wiki/en.Administration#backup--restore)
+   * [Home Assistant Integration](https://github.com/OpenCCU/OpenCCU/wiki/en.HomeAssistant-Integration)
+   * [Security Advice](https://github.com/OpenCCU/OpenCCU/wiki/en.Administration#security-advice)
+   * [CCU Add-ons / Additional Software](https://github.com/OpenCCU/OpenCCU/wiki/en.Administration#ccu-add-ons--additional-software)
+   * [Status LEDs](https://github.com/OpenCCU/OpenCCU/wiki/en.Administration#status-led-function)
+4. [Usage](https://github.com/OpenCCU/OpenCCU/wiki/en.Usage)
+   * [WebUI Usage](https://github.com/OpenCCU/OpenCCU/wiki/en.WebUI-Usage)
+     * [Log Data and Log Level](https://github.com/OpenCCU/OpenCCU/wiki/en.WebUI-Usage#log-data-and-log-level)
+     * [Advanced Settings](https://github.com/OpenCCU/OpenCCU/wiki/en.WebUI-Usage#advanced-settings)
+     * [Remote Access via Tailscale](https://github.com/OpenCCU/OpenCCU/wiki/en.WebUI-Usage#remote-access-via-tailscale)
+     * [Custom HTTPS Certificate](https://github.com/OpenCCU/OpenCCU/wiki/en.WebUI-Usage#installing-a-certificate-of-a-private-pki)
+   * [Tips & Tricks](https://github.com/OpenCCU/OpenCCU/wiki/en.Tips)
+     * [HmIP-HAP as HmIP Gateway](https://github.com/OpenCCU/OpenCCU/wiki/en.Tips#homematicip-accesspoint-hmip-hap-as-hmip-gateway)
+     * [Negated Conditions in Programs](https://github.com/OpenCCU/OpenCCU/wiki/en.Tips#negated-conditions-in-programs)
+     * [Time Module with Extended Astro Function](https://github.com/OpenCCU/OpenCCU/wiki/en.Tips#time-module-with-extended-astro-function-offset-and-limit)
+     * [Disable Internet Connection Monitoring](https://github.com/OpenCCU/OpenCCU/wiki/en.Tips#disabling-the-internet-connection-monitoring)
+   * [Expert Features](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features)
+     * [WLAN/WiFi Support](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#wlanwifi-usage)
+     * [Bluetooth Support](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#bluetooth-usage)
+     * [LAN Gateway Mode](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#lan-gateway-mode)
+     * [UPS Client/Server Mode](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#ups-clientserver-nut)
+     * [USB Boot](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#usb-boot)
+     * [Monit WatchDog Web Interface](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#monit-watchdog-web-interface)
+     * [SNMP](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#snmp)
+     * [HB-RF-ETH Connection](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#hb-rf-eth-connection)
+     * [Individual Diagram/Backup Storage Path](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#individual-diagrambackup-storage-path)
+     * [Custom Actions during Boot](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#custom-actions-during-boot)
+     * [Custom Actions during Shutdown](https://github.com/OpenCCU/OpenCCU/wiki/en.Expert-Features#custom-actions-during-shutdown)
+5. [Support, Contributions](https://github.com/OpenCCU/OpenCCU/wiki/en.Support)
+   * [Known Issues](https://github.com/OpenCCU/OpenCCU/wiki/en.Support#known-issues)
+   * [Request Help](https://github.com/OpenCCU/OpenCCU/wiki/en.Support#request-help)
+   * [FAQ – Frequently Asked Questions](https://github.com/OpenCCU/OpenCCU/wiki/en.FAQ)
+   * [Report Issues](https://github.com/OpenCCU/OpenCCU/wiki/en.Support#bug-reports)
+   * [Request Features](https://github.com/OpenCCU/OpenCCU/wiki/en.Support#feature-requests)
+   * [Contributions / Development](https://github.com/OpenCCU/OpenCCU/wiki/en.Support#contributions--development)
+6. [Miscellaneous](https://github.com/OpenCCU/OpenCCU/wiki/en.Miscellaneous)
+   * [Acknowledgements](https://github.com/OpenCCU/OpenCCU/wiki/en.Miscellaneous#acknowledgements)
+   * [Project History](https://github.com/OpenCCU/OpenCCU/wiki/en.Miscellaneous#project-history)
+   * [Literature & Talks](https://github.com/OpenCCU/OpenCCU/wiki/en.Miscellaneous#literature--talks)
+   * [Further Links](https://github.com/OpenCCU/OpenCCU/wiki/en.Miscellaneous#further-links)
 
 ## :yum: Support & Contributions
 
@@ -161,7 +183,7 @@ OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and
 **Community standards**
 - Please read and follow our **[CODE OF CONDUCT](CODE_OF_CONDUCT.md)**.
 
-[more...](https://github.com/OpenCCU/OpenCCU/wiki/Support)
+[more...](https://github.com/OpenCCU/OpenCCU/wiki/en.Support)
 
 ## :scroll: Licenses
 
@@ -175,7 +197,7 @@ OpenCCU can be installed on vendor CCU hardware, common 64-bit capable SBCs, and
 
 Unless required by applicable law or agreed to in writing, OpenCCU is provided by the Contributors (and each Contributor provides its Contributions) on an **"AS IS"** BASIS, **WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND**, either express or implied, including, without limitation, any warranties or conditions of **TITLE, NON-INFRINGEMENT, MERCHANTABILITY,** or **FITNESS FOR A PARTICULAR PURPOSE**. You are solely responsible for determining the appropriateness of using or redistributing OpenCCU and assume any risks associated with Your exercise of permissions under this License.
 
-[more...](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#lizenz--haftung)
+[more...](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#license--liability)
 
 ## :book: Literature
 

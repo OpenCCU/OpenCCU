@@ -21,15 +21,15 @@ the WebUI and underlying operating system for an improved user experience.
 - Use your Home Assistant central as a full-fledged HomeMatic/homematicIP control center unit (CCU).
 - Access the CCU WebUI directly from your Home Assistant user interface.
 - Provides all features of a OpenCCU system within your Home Assistant environment.
-- Interconnect to HomeMatic/homematicIP devices using the standard, vendor-provided RF modules (`RPI-RF-MOD`, `HM-MOD-RPI-PCB`, `HmIP-RFUSB`, `HM-CFG-USB-2`, `HM-CFG-LAN`), Wired gateways (`HmIPW-DRAP`, `HMW-LGW-O-DR-GS-EU`) or LAN gateway solutions (`HmIP-HAP`, `HM-LGW-O-TW-W-EU`) – see [Requirements](https://github.com/OpenCCU/OpenCCU/wiki/Einleitung#vorraussetzungen).
+- Interconnect to HomeMatic/homematicIP devices using the standard, vendor-provided RF modules (`RPI-RF-MOD`, `HM-MOD-RPI-PCB`, `HmIP-RFUSB`, `HM-CFG-USB-2`, `HM-CFG-LAN`), Wired gateways (`HmIPW-DRAP`, `HMW-LGW-O-DR-GS-EU`) or LAN gateway solutions (`HmIP-HAP`, `HM-LGW-O-TW-W-EU`) – see [Requirements](https://github.com/OpenCCU/OpenCCU/wiki/en.Introduction#requirements).
 - Supports additional third-party open-hardware based USB/Ethernet adapter devices (`HB-RF-USB`, `HB-RF-USB-2`, `HB-RF-ETH`).
 
 ## Documentation / Installation
 
 For a detailed documentation please refer to the "Documentation" tab of the installed App or
-consult the [online documentation](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HomeAssistant) available in the OpenCCU GitHub project. Also note, that after having installed the App you also have to setup the [HomeMatic integration](https://github.com/OpenCCU/OpenCCU/wiki/HomeAssistant-Integration) part in Home Assistant itself so that your Home Assistant is able to see and use the HomeMatic/homematicIP devices of your OpenCCU.
+consult the [online documentation](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-HomeAssistant) available in the OpenCCU GitHub project. Also note, that after having installed the App you also have to setup the [HomeMatic integration](https://github.com/OpenCCU/OpenCCU/wiki/en.HomeAssistant-Integration) part in Home Assistant itself so that your Home Assistant is able to see and use the HomeMatic/homematicIP devices of your OpenCCU.
 
-:warning: Please note, that if you are going to use a `RPI-RF-MOD` or `HM-MOD-RPI-PCB` RF module connected to the GPIO of a Raspberry Pi or other SBC you have to make sure to explicitly [enable the UART interface](https://github.com/OpenCCU/OpenCCU/wiki/Installation-HomeAssistant#using-homeassistant-os) of these systems.
+:warning: Please note, that if you are going to use a `RPI-RF-MOD` or `HM-MOD-RPI-PCB` RF module connected to the GPIO of a Raspberry Pi or other SBC you have to make sure to explicitly [enable the UART interface](https://github.com/OpenCCU/OpenCCU/wiki/en.Installation-HomeAssistant#requirements) of these systems.
 
 ## License
 
