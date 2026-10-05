@@ -487,7 +487,13 @@
       "patch": "0055-WebUI-Fix-UserAckInstallWizard.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "6b02215165446c2a024d0489c45b48531da7661c",
+    "base_pr": 127,
+    "cleanup_pr": null,
+    "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "3cbc406de9099ba73c3a2d4a4ccd4918bfbb8258",

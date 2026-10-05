@@ -781,19 +781,6 @@
       "sha256": "3b3e86b4a0b84d18aeb23efbb9469e6907fffdedc197c9f43654d4ad7f616d90"
     },
     {
-      "added": 41,
-      "files": [
-        "www/ise/htm/header.htm",
-        "www/rega/pages/index.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch",
-      "removed": 4,
-      "sha256": "3541591bed27826b74b0cad0de86ce9c431bc72365fd2d51ee70c35f8b49a3c6"
-    },
-    {
       "added": 58,
       "files": [
         "www/rega/esp/controls/weather_sensor.fn",
@@ -1149,5 +1136,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "38fb6482c915f8db3af2497655ca892415ed7a9d7da72ab03f7d77be4c683200"
+  "series_sha256": "d89c022c37fdc6471d67d034a6f37d2cabc15962ea6a519cc29c8140ce069d7b"
 }
