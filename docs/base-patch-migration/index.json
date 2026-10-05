@@ -496,20 +496,6 @@
       "sha256": "01f9b8c5c523b8f7c30e2e72dea4377b1f51742b02da95b2a60414dd54077cf7"
     },
     {
-      "added": 21,
-      "files": [
-        "www/ise/htm/header.htm",
-        "www/rega/esp/system.fn",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0090-WebUI-Add-ReGaSaveButton.patch",
-      "removed": 1,
-      "sha256": "cf5a67040fc3e53e9e775d45c9a1e0d3493891099644ed76ab63539839248368"
-    },
-    {
       "added": 27,
       "files": [
         "www/rega/esp/controls/button.fn"
@@ -1172,5 +1158,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "a90a3243148c1aaa39be0fd40649f12d3874e802377190fb42a49210777cc07a"
+  "series_sha256": "1ea1f8b257cefa3b6a00ea3ea82c51cd9c7ba0189d6dc89a31db4509c3ba4578"
 }
