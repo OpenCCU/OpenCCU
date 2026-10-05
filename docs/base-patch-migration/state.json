@@ -473,18 +473,24 @@
       "base_pr": 124,
       "cleanup_pr": 4351,
       "patch": "0068-WebUI-Fix-isDutyCycleOK4DevUpdate.patch"
+    },
+    {
+      "base_merge_commit": "54b2c4d75153935d0b88e89262660e0463ee0424",
+      "base_pr": 125,
+      "cleanup_pr": 4357,
+      "patch": "0090-WebUI-Add-ReGaSaveButton.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "54b2c4d75153935d0b88e89262660e0463ee0424",
-    "base_pr": 125,
-    "cleanup_pr": 4357,
-    "patch": "0090-WebUI-Add-ReGaSaveButton.patch",
+    "base_merge_commit": "fec91dbce8f4c1cb3686713d11dd47b2368c441f",
+    "base_pr": 126,
+    "cleanup_pr": 4363,
+    "patch": "0055-WebUI-Fix-UserAckInstallWizard.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "725d175b3d470acd08326b5b01889dedddc29f04",
-  "verified_base_pin": "b08ea2703292199206613e6c9098af14249698dd",
-  "verified_source_sha256": "5aa974472822eb6dc5a925cdc8130f81c5f204ab5b4e559d246fd85bdb5bc802"
+  "verified_at_openccu_commit": "7302d5e4755bb5559e9074d5b2d0754e5bc931a0",
+  "verified_base_pin": "54b2c4d75153935d0b88e89262660e0463ee0424",
+  "verified_source_sha256": "9c1b1cb373140436f7bfbf53ce85727730556d8c9c4f2fcc25cce208b1c6e248"
 }
