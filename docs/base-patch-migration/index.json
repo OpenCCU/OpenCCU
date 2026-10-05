@@ -1024,7 +1024,7 @@
       ],
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
       "removed": 11,
-      "sha256": "6ee45132f612048d6a8165fea6ff8df77596fde882abe048be8187fb927b9e47"
+      "sha256": "abe071ee01c51257997d8d5e1f8a51040c860253939cc0cf6ad7b166e02bed53"
     },
     {
       "added": 60,

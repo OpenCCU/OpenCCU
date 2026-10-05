@@ -37512,7 +37512,7 @@ iseFilter.prototype = {
         }
         else
         {
-          if (obj['desc'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
+          if (obj['sn'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
         }
       }
     }
