@@ -10,7 +10,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 Our development team heavily uses (and loves!) GitHub for all of our software management. We use GitHub issues to track all bugs and features.
 
-If you find an issue, please do file it on the repository. The [OpenCCU issues](https://github.com/OpenCCU/OpenCCU/issues) should be used only for issues on OpenCCU itself - bugs related to the general CCU firmware environment belong to the original OCCU repository of eQ3.
+If you find an issue, please do file it on the repository. Bugs in OpenCCU – including bugs in the CCU components originating from eQ-3 (e.g. ReGaHss, HMIPServer, rfd, hs485d or the WebUI), which OpenCCU obtains via [OpenCCU-Base](https://github.com/OpenCCU/OpenCCU-Base) – are reported in the [OpenCCU issues](https://github.com/OpenCCU/OpenCCU/issues). Please discuss a problem in the [GitHub Discussions](https://github.com/OpenCCU/OpenCCU/discussions) or the [OpenCCU subforum](https://homematic-forum.de/forum/viewforum.php?f=65) first until it is clear that it is actually a bug in OpenCCU, and report security vulnerabilities according to our [security policy](SECURITY.md).
 
 Please file issues using the issue template provided, filling out as many fields as possible. We love examples for addressing issues.
 
