@@ -151,10 +151,11 @@
     Write("</td>");
     
     Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
-      sHtml = sv.DPInfo().Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
+      sHtml = sv.DPInfo();
       sHtml = sHtml.Replace("&", "&amp;");
       sHtml = sHtml.Replace("<", "&lt;");
       sHtml = sHtml.Replace(">", "&gt;");
+      sHtml = sHtml.Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
       Write(sHtml);
     Write("</td>");
     

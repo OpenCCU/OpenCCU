@@ -129,10 +129,10 @@
      
 -    Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
 +    Write("<td  style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
-       sHtml = sv.DPInfo().Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
+       sHtml = sv.DPInfo();
        sHtml = sHtml.Replace("&", "&amp;");
        sHtml = sHtml.Replace("<", "&lt;");
-@@ -158,7 +172,7 @@
+@@ -159,7 +173,7 @@
        Write(sHtml);
      Write("</td>");
      
@@ -141,7 +141,7 @@
        string s = "Unbekannt: " # sv.ValueSubType();
        if( sv.ValueSubType() == istPresent )
        {
-@@ -187,7 +201,7 @@
+@@ -188,7 +202,7 @@
        Write(s);
      Write("</td>");
      
@@ -150,7 +150,7 @@
        if (sv.ValueSubType() == istPresent) {
        }
        if (sv.ValueSubType() == istChar8859) {
-@@ -231,7 +245,7 @@
+@@ -232,7 +246,7 @@
      Write("</td>");
      
      
@@ -159,7 +159,7 @@
        sHtml = sv.ValueUnit();
        sHtml = sHtml.Replace("&", "&amp;");
        sHtml = sHtml.Replace("<", "&lt;");
-@@ -239,15 +253,17 @@
+@@ -240,15 +254,17 @@
        Write(sHtml);
      Write("</td>");
      
@@ -180,7 +180,7 @@
          Write("<td class='CLASS05210'>");
            string sClassName = "StdButton";
            string sOnclick = "DeleteSysVar("#sv.ID()#");";
-@@ -258,6 +274,22 @@
+@@ -259,6 +275,22 @@
            }
            Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnRemove}</div>");
          Write("</td>");
@@ -203,7 +203,7 @@
          Write("<td class='CLASS05211'>");
            string sChecked = "";
            if (sv.Visible()) {
-@@ -265,24 +297,29 @@
+@@ -266,24 +298,29 @@
            }
            Write("<input id='svvis"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpVisibility("#sv.ID()#", this)' />${lblVisible}");
          Write("</td>");
@@ -241,7 +241,7 @@
        string sJSTmp = "WebUI.enter(ProgramListPage, '"#sv.DPEnumUsagePrograms()#"');";
        Write( '<div class="StdButton" onclick="'#sJSTmp#'">${btnPrograms}</div>' );
      Write("</td>");
-@@ -338,7 +375,39 @@
+@@ -339,7 +376,39 @@
    new iseSubMenuControl("btnFilterVarType", "btnFilterVarTypeSub", "svOffset", {}, mouseOpts, false, true);  
    new iseSubMenuControl("btnFilterUnit", "btnFilterUnitSub", "svOffset", {}, mouseOpts, false, true);
    new iseSubMenuControl("btnFilterChn", "btnFilterChnSub", "svOffset", {}, mouseOpts, false, true);
@@ -282,7 +282,7 @@
    var s = "";
    
    s += "<table cellspacing='8'>";
-@@ -346,6 +415,7 @@
+@@ -347,6 +416,7 @@
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='newSysVar()'>${footerBtnNew}</div></td>";

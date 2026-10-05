@@ -62,16 +62,15 @@
          Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"');");
 --- a/www/rega/pages/tabs/admin/systemvars.htm
 +++ b/www/rega/pages/tabs/admin/systemvars.htm
-@@ -151,7 +151,7 @@
-     Write("</td>");
-     
-     Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
--      sHtml = sv.DPInfo();
-+      sHtml = sv.DPInfo().Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
+@@ -155,6 +155,7 @@
        sHtml = sHtml.Replace("&", "&amp;");
        sHtml = sHtml.Replace("<", "&lt;");
        sHtml = sHtml.Replace(">", "&gt;");
-@@ -294,7 +294,7 @@
++      sHtml = sHtml.Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
+       Write(sHtml);
+     Write("</td>");
+     
+@@ -294,7 +295,7 @@
        Write("tmp['id'] = '"#sv.ID()#"';");
        Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
        Write("tmp['name'] = '"#sv.Name()#"';");
