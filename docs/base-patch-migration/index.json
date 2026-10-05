@@ -339,16 +339,6 @@
       "sha256": "f6669485a264ad3a836c7c579668845c57f382f7d5dc4012d5914d3662e84ae8"
     },
     {
-      "added": 31,
-      "files": [
-        "www/api/methods/ccu/setuserackinstallwizard.tcl",
-        "www/webui/webui.js"
-      ],
-      "patch": "0055-WebUI-Fix-UserAckInstallWizard.patch",
-      "removed": 5,
-      "sha256": "797d303f3d932ee12470aa94c3e1eb714262c99e6cc06cbb5433f75361c25313"
-    },
-    {
       "added": 123,
       "files": [
         "www/config/ic_deviceFirmwareOverview.cgi",
@@ -1159,5 +1149,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1ea1f8b257cefa3b6a00ea3ea82c51cd9c7ba0189d6dc89a31db4509c3ba4578"
+  "series_sha256": "38fb6482c915f8db3af2497655ca892415ed7a9d7da72ab03f7d77be4c683200"
 }
