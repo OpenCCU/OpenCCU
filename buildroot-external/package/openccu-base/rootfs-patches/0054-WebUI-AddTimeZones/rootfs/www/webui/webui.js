@@ -16951,7 +16951,7 @@ FirewallConfigDialog = Class.create({
       delete firstStartInstallWizard;
       homematic("CCU.setSecurityHint");
       homematic("CCU.setFirewallConfigured");
-      homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+      homematic("CCU.setUserAckInstallWizard");
     }
 
     if (this.dlgWoPasswd ) {
@@ -20251,7 +20251,7 @@ DialogUserPassword = Class.create({
 
         if (homematic('CCU.existsFile', {'file': "/etc/config/firewallConfigured"})) {
           WebUI.enter(StartPage);
-          homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+          homematic("CCU.setUserAckInstallWizard");
 
           if (getUPL() == UPL_USER) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"),translateKey("dglUserNewFwSettingsContent"));
@@ -20262,7 +20262,7 @@ DialogUserPassword = Class.create({
             new DialogChooseSecuritySettings();
           } else {
             WebUI.enter(StartPage);
-            homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+            homematic("CCU.setUserAckInstallWizard");
           }
         }
       }
@@ -20489,7 +20489,7 @@ DialogExpressSettings = Class.create({
           delete firstStartInstallWizard;
           homematic("CCU.setSecurityHint");
           homematic("CCU.setFirewallConfigured");
-          homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+          homematic("CCU.setUserAckInstallWizard");
         }
 
         if (self.dlgWoPasswd) {

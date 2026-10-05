@@ -1061,8 +1061,8 @@ CCU.setSecurityHint {
 CCU.setUserAckInstallWizard {
   LEVEL GUEST
   SCRIPT_FILE ccu/setuserackinstallwizard.tcl
-  INFO {Legt die Datei/etc/config/userprofiles/userAckInstallWizard_USERNAME an}
-  ARGUMENTS {_session_id_ userName}
+  INFO {Legt die Datei /etc/config/userprofiles/userAckInstallWizardId_USERID für den angemeldeten Anwender an}
+  ARGUMENTS {_session_id_}
 }
 
 CCU.setFirewallConfigured {

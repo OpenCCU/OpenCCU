@@ -567,7 +567,7 @@
       ],
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 1,
-      "sha256": "cc17785f7ae98ada993dd059b0c4461e04898a6c1d0b4cfd8b5997496a6166fb"
+      "sha256": "b7e007831f4f33a02805ff416506f3e0cd5d824abf6214b2e58aa03d8787294b"
     },
     {
       "added": 56,
@@ -813,7 +813,7 @@
       ],
       "patch": "0145-WebUI-NaturalSorting.patch",
       "removed": 47,
-      "sha256": "f9d5d6fc847d076296e49fd6fade090b6eca6c05410222434789f03da61d45e0"
+      "sha256": "7cf841ff03fafa83665961e450d5cf5954d0ecafa5a679a63c2acad121f8b7bc"
     },
     {
       "added": 45,
@@ -827,7 +827,7 @@
       ],
       "patch": "0146-WebUI-ImprovedStartpageLayout.patch",
       "removed": 33,
-      "sha256": "69da2ec51cd108d0bbf16e8517c006138ff0c49a47a38aa23cb16616a213d04c"
+      "sha256": "726c3a429e70eb2923a2ff1804a118c250a7888cd9745a0881d55d085594a67d"
     },
     {
       "added": 10,
@@ -857,7 +857,7 @@
       ],
       "patch": "0151-WebUI-Add-DeviceRestoreConfigButton.patch",
       "removed": 3,
-      "sha256": "2a13176c6658d34fee62cfb5504a111b2df30ad218cd279bf6ca90ce647814d1"
+      "sha256": "053c75c101001897235359e09dc7494068663de8d9ed42efb7c8b20af13db1a9"
     },
     {
       "added": 12,
@@ -877,7 +877,7 @@
       ],
       "patch": "0153-WebUI-Fix-ImproveImgUpdates.patch",
       "removed": 23,
-      "sha256": "829ac08bf84aed395dda34113d5bef0b03ac96c31bf0dc578f77e4e3af5fa1f0"
+      "sha256": "e8f554bfc7d62cb3794e44728e8c61a95c6465a43c456c6bbba7b2246f2d2401"
     },
     {
       "added": 88,
@@ -893,7 +893,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "d4dc81b6c2424c27380320531b56d87dded9166a34a9d4365faa3881d2213a06"
+      "sha256": "0937b1d2d709b1996d88ee72dcfc8bb057796b6e7f2fdf08a0355a7de479ec52"
     },
     {
       "added": 22,
@@ -908,7 +908,7 @@
       ],
       "patch": "0155-WebUI-Add-HmIP-RFUSB-Support.patch",
       "removed": 12,
-      "sha256": "10e1e3f737e0eebfad8dc9aec987831ac347174277271469a1a8ac719d888914"
+      "sha256": "c372772bcab7c248758d777d38c5679cb556ed50643617c2d2eee5f40e698f50"
     },
     {
       "added": 23,
@@ -924,7 +924,7 @@
       ],
       "patch": "0156-WebUI-ImprovedConfirmDeletePopup.patch",
       "removed": 20,
-      "sha256": "7d6aca5e1a38423f4bf190a1f263aadc4e6e6ed48215372d898da00760ee0756"
+      "sha256": "313cde2c8b7bd661f9fc801b346c4d0f92f8e8728ae11d97740cb9061ac5acdb"
     },
     {
       "added": 165,
@@ -934,7 +934,7 @@
       ],
       "patch": "0161-WebUI-Add-ShowRFGatewayInDeviceList.patch",
       "removed": 10,
-      "sha256": "e46a719229ed81ffb4407d3128eee3ce4ab16ae69d0b63bf9ef109d2ec8c2933"
+      "sha256": "967770479e9257ceb61a49a9841dc84ecf4058795346e5e1cf57736d7d40e27c"
     },
     {
       "added": 74,
@@ -988,7 +988,7 @@
       ],
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
       "removed": 11,
-      "sha256": "c10ddafbda67d357c96ee27d4138abc4dd15a922e373bb02bfb1f8055c890b9a"
+      "sha256": "705a66fa9857683b1eb9bf8d131e182fb53c4c516cb4b3615ff8a8ebe2469e12"
     },
     {
       "added": 60,
@@ -1001,7 +1001,7 @@
       ],
       "patch": "0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch",
       "removed": 0,
-      "sha256": "82da1792432fba3b34370768bfdbdf1ad735f605813caae4122d06aabed9233b"
+      "sha256": "206f4e442ce6a30256c46c72f777750e77ab020140bf74152d0b4d008b9df995"
     },
     {
       "added": 43,
@@ -1013,7 +1013,7 @@
       ],
       "patch": "0173-WebUI-SendPOSTRequest.patch",
       "removed": 19,
-      "sha256": "8c74b49e7e15c580f9f89da0d5ef6188000b9199824ce463846c0d776d131009"
+      "sha256": "39f8adb11c0a1a8974c3f13928c3885d8abb149842d91fc0f32680230917c8aa"
     },
     {
       "added": 110,
@@ -1024,7 +1024,7 @@
       ],
       "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
       "removed": 19,
-      "sha256": "ed49ee4ed1bf08af6fc662c21cc149e77f8a2ddc8ef590c567471b650c242008"
+      "sha256": "85ed33ef96042454dde6a8e4f738466dff2da501ad773161161c0cbc65016992"
     },
     {
       "added": 15,
@@ -1107,7 +1107,7 @@
       ],
       "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
       "removed": 13,
-      "sha256": "536674acaa66d9b288fb91d2f2171c0c53c4ab700acd5e9e4ab291583dab83d4"
+      "sha256": "d80caa63fa26409b11a52eb61d4185e3c7d4c44efdcd828710d3a8863e5575ee"
     },
     {
       "added": 4,
@@ -1132,7 +1132,7 @@
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
-      "sha256": "e1a4fffdee8c3caaa6e56d9400d5910230329239c65251a7e6c0e1594fb9eb2f"
+      "sha256": "0d12a1de8bcd7a0fac5809a1974e7db036ae9b98ea03a2fe8ecfef36731e16c2"
     }
   ],
   "schema": 1,
