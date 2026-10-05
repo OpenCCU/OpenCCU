@@ -486,13 +486,13 @@
       "sha256": "01f9b8c5c523b8f7c30e2e72dea4377b1f51742b02da95b2a60414dd54077cf7"
     },
     {
-      "added": 27,
+      "added": 29,
       "files": [
         "www/rega/esp/controls/button.fn"
       ],
       "patch": "0091-WebUI-Add-HM-OU-LED16-LedStatus.patch",
       "removed": 1,
-      "sha256": "599086ffee897ff23b5f793dec58bd73cbfbcd8add2f5545d3d11854c164505b"
+      "sha256": "53e3f1b4967b2db52fd3ea87bbed3d59f85074ff1d31c28385cc2dbc6c45dc3a"
     },
     {
       "added": 74,
