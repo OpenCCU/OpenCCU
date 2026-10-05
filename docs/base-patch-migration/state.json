@@ -493,10 +493,16 @@
       "patch": "0141-WebUI-Add-LoggedOnUserInformation.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "ce9df227fc67b7224c7211ab35be45f2c169618f",
+    "base_pr": 129,
+    "cleanup_pr": 4367,
+    "patch": "0091-WebUI-Add-HM-OU-LED16-LedStatus.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "fa09c9202e4b553aad66c18f1156cb90c7b52da7",
-  "verified_base_pin": "6b02215165446c2a024d0489c45b48531da7661c",
-  "verified_source_sha256": "62c450c8748a95e15caa349d148ed708c15f5c4dcbc8ae9d9c345371eb61964b"
+  "verified_at_openccu_commit": "d03dea0808dd22df435003f25ab4dc736c78e8f2",
+  "verified_base_pin": "8d0ee1d35ba2afbbd5bdd965723681d89db3ed38",
+  "verified_source_sha256": "2c8a7c35f03f588b8b46c874bc2f7dc7a00705fec77d1ad947766169039d25d9"
 }
