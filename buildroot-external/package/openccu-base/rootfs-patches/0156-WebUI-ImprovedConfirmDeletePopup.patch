@@ -131,7 +131,7 @@
      "dialogQuestionRestart" : "Please click here to perform the restart?",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -47047,7 +47047,7 @@
+@@ -47067,7 +47067,7 @@
  {
    var questionRemoveLink = ((iface == "HmIP-RF") && (sender_type != "HmIP-SMI55") && (sender_type != "HmIP-SMI55-A") && (sender_address.split(":")[0] == receiver_address.split(":")[0])) ? translateKey('dialogQuestionRemoveInternalLink') : translateKey('dialogQuestionRemoveLink');
  

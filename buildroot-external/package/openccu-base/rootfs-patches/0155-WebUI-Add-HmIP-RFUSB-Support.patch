@@ -135,7 +135,7 @@
  DEV_LIST.push('VIR-HUE-GTW');
  DEV_DESCRIPTION["VIR-HUE-GTW"] = "VIR-HUE-GTW";
  DEV_PATHS["VIR-HUE-GTW"] = new Object();
-@@ -11512,7 +11518,8 @@
+@@ -11532,7 +11538,8 @@
      "HM-Sec-SD-Team",
      "HM-Sec-SD-2-Team",
      "HmIP-CCU3",
