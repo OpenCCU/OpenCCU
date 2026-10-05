@@ -1056,30 +1056,6 @@
       "sha256": "8404fa38f1807a4cf2b6aee643e859e8df7220ea5e29aa5d82b8aa2846f0f2ba"
     },
     {
-      "added": 27,
-      "files": [
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_BRIGHTNESS.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_HUMIDITY.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_PARTICULATE_MATTER.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_DROP.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_QUANTITY.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_TEMPERATURE.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_DIRECTION.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_SPEED.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_3.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/MULTI_MODE_INPUT_TRANSMITTER_5.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_COUNTER_TRANSMITTER.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/PASSAGE_DETECTOR_DIRECTION_TRANSMITTER.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/RAIN_DETECTION_TRANSMITTER.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/SHUTTER_CONTACT.tcl",
-        "www/config/easymodes/DIMMER_VIRTUAL_RECEIVER/WATER_DETECTION_TRANSMITTER.tcl"
-      ],
-      "patch": "0195-WebUI-Fix-MissingDimmerDefinition.patch",
-      "removed": 12,
-      "sha256": "de328b492b4a675b96ef82d05291337e0760047c9c31157ba4ee04beeb0ff294"
-    },
-    {
       "added": 82,
       "files": [
         "www/rega/pages/tabs/control/devices.htm",
@@ -1127,5 +1103,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "4b326e48b90721a0371813106a10e52bf436b12ac623ef9e9c219ddf7d2d1e48"
+  "series_sha256": "750b4c6f89e2ef031090d626bc656a8a91677888902458bc880ae682b443d151"
 }
