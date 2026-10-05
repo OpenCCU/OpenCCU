@@ -761,7 +761,7 @@
       ],
       "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
       "removed": 8,
-      "sha256": "ccf09e9d9cef25e72dc181e47d12eb2fcb9354b60c2292c2487868ec9ffd6104"
+      "sha256": "c2f9c6108a6a458d5cbaf7cce4028dc35f057afad3211d1f73fcfa528a9e7fc3"
     },
     {
       "added": 26,
