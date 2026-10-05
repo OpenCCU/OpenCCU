@@ -53,7 +53,7 @@
    };
    
    /**
-@@ -37371,7 +37398,15 @@
+@@ -37377,7 +37404,15 @@
      {
        if (typeof obj['type'] != 'undefined') {
          if (obj['type'] === "")                      { return false; }
@@ -70,7 +70,7 @@
        }
      }
      if (this.filDesc !== "")
-@@ -37381,7 +37416,15 @@
+@@ -37387,7 +37422,15 @@
        {
          //conInfo( "iseFilter: desc="+obj['desc'] );
          if (obj['desc'] === "")                      { return false; }
@@ -87,7 +87,7 @@
        }
      }
      if (this.filName !== "")
-@@ -37390,7 +37433,15 @@
+@@ -37396,7 +37439,15 @@
        {
          if (obj['name'] === "")                      { return false; }
          var transName = translateString(obj['name']);
@@ -104,7 +104,7 @@
        }
      }
      if (this.filSn !== "")
-@@ -37398,7 +37449,15 @@
+@@ -37404,7 +37455,15 @@
        if (typeof obj['sn'] != 'undefined')
        {
          if (obj['sn'] === "")                     { return false; }
@@ -121,7 +121,7 @@
        }
      }
      if (this.filUnit !== "")
-@@ -37406,7 +37465,15 @@
+@@ -37412,7 +37471,15 @@
        if (typeof obj['unit'] != 'undefined')
        {
          if (obj['unit'] === "")                      { return false; }
@@ -138,7 +138,7 @@
        }
      }
  
-@@ -37430,7 +37497,15 @@
+@@ -37436,7 +37503,15 @@
      if (this.filChnLink !== "")
      {
        if (obj['chn'] === "")                         { return false; }

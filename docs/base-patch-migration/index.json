@@ -496,7 +496,7 @@
       "sha256": "01f9b8c5c523b8f7c30e2e72dea4377b1f51742b02da95b2a60414dd54077cf7"
     },
     {
-      "added": 15,
+      "added": 21,
       "files": [
         "www/ise/htm/header.htm",
         "www/rega/esp/system.fn",
@@ -507,7 +507,7 @@
       ],
       "patch": "0090-WebUI-Add-ReGaSaveButton.patch",
       "removed": 1,
-      "sha256": "6900394881c7edff101e8f1dd5e8f69b478302a437ef5f3bdf8442e00f27dbcc"
+      "sha256": "cf5a67040fc3e53e9e775d45c9a1e0d3493891099644ed76ab63539839248368"
     },
     {
       "added": 27,
@@ -625,7 +625,7 @@
       ],
       "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
       "removed": 70,
-      "sha256": "a77fbbc70657cb1303368a53ff2f31835915f5ca832362037c0871687c15cdbc"
+      "sha256": "6627cdc9628e480b1e7873ee066f8fb4877d1410db70d195bf728c22bf5c6f54"
     },
     {
       "added": 12,
@@ -652,7 +652,7 @@
       ],
       "patch": "0122-WebUI-ProgramExecutionWithConditionCheck.patch",
       "removed": 16,
-      "sha256": "221f53012a064eff63e9974400752a302bd1b535e28f7dc31827beca8253f0a7"
+      "sha256": "e95e25b14711453b8602c73c2eaea8863d41c26ad1eb4a010ed890aaf319f10e"
     },
     {
       "added": 1,
@@ -704,7 +704,7 @@
       ],
       "patch": "0132-WebUI-Fix-UnitDisplay.patch",
       "removed": 96,
-      "sha256": "d1d528bb9ce4c83bcdab85c7f0cfa0c250dbdec179bd627a1bc2e498dfdc6093"
+      "sha256": "ec3524afdd46ce33ba0c4611a6d0687f3c8bffeb1a29e3fef27e185f9feb0f81"
     },
     {
       "added": 104,
@@ -750,7 +750,7 @@
       ],
       "patch": "0135-WebUI-Add-ControlPanel-AdvancedSettings.patch",
       "removed": 16,
-      "sha256": "c4f0ded687547317621b5e3156e2927434703c0260b1c08c78b94590e4faef78"
+      "sha256": "8348f677868bae50c5d5ab005b8d0746a094e2c8157fdfb50728e785ce82e29a"
     },
     {
       "added": 72,
@@ -849,7 +849,7 @@
       ],
       "patch": "0145-WebUI-NaturalSorting.patch",
       "removed": 47,
-      "sha256": "77b8720aff1690c284b2a047ada20c0023bf42d6792f550c0ece63ea4d1bf828"
+      "sha256": "8c4fc053c648a2b1d78156273606b3a17b425bd3177f24dc17f0ce69298cf1f6"
     },
     {
       "added": 45,
@@ -893,7 +893,7 @@
       ],
       "patch": "0151-WebUI-Add-DeviceRestoreConfigButton.patch",
       "removed": 3,
-      "sha256": "363df3a1215350ecf0bdea0fc4d6d7aa92525602d1bcd220bb97f1aa6b1aea1b"
+      "sha256": "0a5050668319b4c20d7d996fc7a2c13777b0e9fdc1531bd82b486faf4c4267ec"
     },
     {
       "added": 12,
@@ -913,7 +913,7 @@
       ],
       "patch": "0153-WebUI-Fix-ImproveImgUpdates.patch",
       "removed": 23,
-      "sha256": "68e43b831844ff41e6b94e9f43bf890c8290a048db984d2afe146d264853a6d8"
+      "sha256": "6c405bf5ece7268dca71b7d6774139ba69c46feac82d36d0f1553ba39ca63373"
     },
     {
       "added": 88,
@@ -960,7 +960,7 @@
       ],
       "patch": "0156-WebUI-ImprovedConfirmDeletePopup.patch",
       "removed": 20,
-      "sha256": "c9d41d32927372f55706888130f0040032ddfda18362119f82d3a9418dd0e6df"
+      "sha256": "214313791784a2572378dd60c52cc09e3b81dd9acc33883f8eee6952753f7bb2"
     },
     {
       "added": 165,
@@ -1024,7 +1024,7 @@
       ],
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
       "removed": 11,
-      "sha256": "6248ed38793d7b54f4b718758cbd1f4359ca9a674baa3dd4720a0cd6f75ced11"
+      "sha256": "6ee45132f612048d6a8165fea6ff8df77596fde882abe048be8187fb927b9e47"
     },
     {
       "added": 60,
@@ -1049,7 +1049,7 @@
       ],
       "patch": "0173-WebUI-SendPOSTRequest.patch",
       "removed": 19,
-      "sha256": "660df23a88f8b4f32324c04eb3949b10e3a0a062bc2187d6bda680dd71521bcb"
+      "sha256": "45b60ceeaf8b20c0fb9cd022f06f4ed7a59f2cf119489894dcd59a89b35261b8"
     },
     {
       "added": 110,
@@ -1143,7 +1143,7 @@
       ],
       "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
       "removed": 13,
-      "sha256": "41ded45424b02a9295f422d53bf201f4e5fb9ff1328a06059106948912b0b9d6"
+      "sha256": "c52484c0ae3fe67b23435bb9414c437fd7f65df910a13ddf62bcb7a0a39b2ade"
     },
     {
       "added": 4,
@@ -1168,7 +1168,7 @@
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
-      "sha256": "9f91f792145a3599f10ceedfbebecc9fbea9e75d6e2ecb24a98a55d5a7575e3b"
+      "sha256": "701baa3367ebd0c2d89255c9d51e047601799cacf4b8dbde6f47067e766777a8"
     }
   ],
   "schema": 1,

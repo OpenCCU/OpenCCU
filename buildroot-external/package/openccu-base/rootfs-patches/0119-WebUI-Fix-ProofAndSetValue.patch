@@ -552,7 +552,7 @@
            append s1 "</td>"
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -47526,50 +47526,65 @@
+@@ -47532,50 +47532,65 @@
      srcElm.value = value;
    }
  
@@ -632,7 +632,7 @@
      }
      srcElm.setAttribute("valvalid", "true");
    }
-@@ -47577,9 +47592,9 @@
+@@ -47583,9 +47598,9 @@
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";

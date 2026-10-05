@@ -33065,8 +33065,11 @@ setDate = function(date)
 };
 
 resetReGaSaveButton = function () {
-  document.getElementById("btnReGaSave").style.color=WebUI.getColor("textColorB");
-  document.getElementById("btnReGaSave").onclick=function() { LogoClick(); };
+  var btnReGaSave = document.getElementById("btnReGaSave");
+  if (btnReGaSave) {
+    btnReGaSave.style.color=WebUI.getColor("textColorB");
+    btnReGaSave.onclick=function() { LogoClick(); };
+  }
 };
 
 setAlarmMessageCount = function (count) {
@@ -35068,8 +35071,11 @@ recreateControl = function(chnId,sTimeStamp)
 
 LogoClick = function()
 {
-  document.getElementById("btnReGaSave").style.color=WebUI.getColor("grayText");
-  document.getElementById("btnReGaSave").onclick="";
+  var btnReGaSave = document.getElementById("btnReGaSave");
+  if (btnReGaSave) {
+    btnReGaSave.style.color=WebUI.getColor("grayText");
+    btnReGaSave.onclick="";
+  }
 
   //alert( iseUpdateIDArray.join("_") );
   //alert( iseUpdateTMArray.join("_") );
