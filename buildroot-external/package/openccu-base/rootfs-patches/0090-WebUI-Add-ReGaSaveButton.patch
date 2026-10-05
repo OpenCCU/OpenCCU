@@ -60,24 +60,30 @@
    text-align: center;
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -33036,6 +33036,11 @@
+@@ -33036,6 +33036,14 @@
    if ($("maindate")) { $("maindate").innerHTML = date; }
  };
  
 +resetReGaSaveButton = function () {
-+  document.getElementById("btnReGaSave").style.color=WebUI.getColor("textColorB");
-+  document.getElementById("btnReGaSave").onclick=function() { LogoClick(); };
++  var btnReGaSave = document.getElementById("btnReGaSave");
++  if (btnReGaSave) {
++    btnReGaSave.style.color=WebUI.getColor("textColorB");
++    btnReGaSave.onclick=function() { LogoClick(); };
++  }
 +};
 +
  setAlarmMessageCount = function (count) {
  
    if ($("msgAlarms")) {
-@@ -35071,6 +35076,9 @@
+@@ -35071,6 +35079,12 @@
  
  LogoClick = function()
  {
-+  document.getElementById("btnReGaSave").style.color=WebUI.getColor("grayText");
-+  document.getElementById("btnReGaSave").onclick="";
++  var btnReGaSave = document.getElementById("btnReGaSave");
++  if (btnReGaSave) {
++    btnReGaSave.style.color=WebUI.getColor("grayText");
++    btnReGaSave.onclick="";
++  }
 +
    //alert( iseUpdateIDArray.join("_") );
    //alert( iseUpdateTMArray.join("_") );
