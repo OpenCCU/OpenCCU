@@ -312,7 +312,7 @@
           if (sv.Internal()) {
             sChecked = "checked";
           }
-          Write("<input id='svinternal"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpInternal("#sv.ID()#", this);reloadPage();' />${lblSystemIntern}");
+          Write("<input id='svinternal"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpInternal("#sv.ID()#", this);' />${lblSystemIntern}");
         Write("</td>");
         Write("</tr></table>");
       Write("</td>");

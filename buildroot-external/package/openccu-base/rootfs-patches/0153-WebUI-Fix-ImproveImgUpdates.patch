@@ -14,7 +14,7 @@
      <table class="CLASS11102">
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -33282,37 +33282,31 @@
+@@ -33291,37 +33291,31 @@
  };
  
  setAlarmMessageCount = function (count) {
@@ -66,7 +66,7 @@
      }
    }
  };
-@@ -35364,12 +35358,14 @@
+@@ -35373,12 +35367,14 @@
  
  SwitchOnFlashLight = function()
  {

@@ -219,7 +219,7 @@
 +          if (sv.Internal()) {
 +            sChecked = "checked";
 +          }
-+          Write("<input id='svinternal"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpInternal("#sv.ID()#", this);reloadPage();' />${lblSystemIntern}");
++          Write("<input id='svinternal"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpInternal("#sv.ID()#", this);' />${lblSystemIntern}");
 +        Write("</td>");
 +        Write("</tr></table>");
 +      Write("</td>");
@@ -355,7 +355,7 @@
  -ms-word-break: break-all;
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -30974,7 +30974,15 @@
+@@ -30974,7 +30974,24 @@
      pb += "integer iVisible   = '"+($(ctrlId).checked ? 1 : 0)+"';";
      new Ajax.Request(url, {postBody: ReGa.encode(pb)});  
    },
@@ -363,10 +363,19 @@
 +
 +  saveDpInternal: function(id, ctrlId) {                              
 +    var url = "/esp/system.htm?sid="+SessionId;                       
++    var webuiPage = WebUI.currentPage;
++    var page = sActPage;
++    var pageArgs = sActPageArgs;
 +    var pb = "string action = 'saveDpInternal';";                     
 +    pb += "integer dpId = " + id + ";";             
 +    pb += "integer iInternal   = '"+($(ctrlId).checked ? 1 : 0)+"';";
-+    new Ajax.Request(url, {postBody: ReGa.encode(pb)});
++    new Ajax.Request(url, {
++      postBody: ReGa.encode(pb),
++      onComplete: function() {
++        // reload only if the user did not open another page meanwhile
++        if ((WebUI.currentPage == webuiPage) && (sActPage == page) && (sActPageArgs == pageArgs)) { reloadPage(); }
++      }
++    });
 +  },
 +
    ClearHistoryData: function()
