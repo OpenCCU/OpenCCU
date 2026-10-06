@@ -520,7 +520,7 @@
   "in_progress": {
     "base_merge_commit": "52c49889264786be4f73e3f470097c88b25efc77",
     "base_pr": 133,
-    "cleanup_pr": null,
+    "cleanup_pr": 4378,
     "patch": "0152-WebUI-SysvarSelectionPopupInternalToggle.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
