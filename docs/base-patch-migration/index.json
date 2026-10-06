@@ -376,22 +376,6 @@
       "sha256": "b8bb2d695f3fa480f6e3aa8cd2f2a9c057331620170fac067d278673046ea188"
     },
     {
-      "added": 12,
-      "files": [
-        "www/api/methods/device/haslinksorprograms.tcl",
-        "www/api/methods/device/hasprograms.tcl",
-        "www/config/ic_metadata.tcl",
-        "www/rega/pages/msg/chnListBody.htm",
-        "www/rega/pages/tabs/admin/views/functionchannels.htm",
-        "www/rega/pages/tabs/admin/views/functions.htm",
-        "www/rega/pages/tabs/admin/views/roomchannels.htm",
-        "www/rega/pages/tabs/admin/views/rooms.htm"
-      ],
-      "patch": "0065-WebUI-Fix-CountUsageStalling.patch",
-      "removed": 49,
-      "sha256": "b792139dc549c727f9b520b42ffaf0254a93f3b347de1a1bd09174ebc142c905"
-    },
-    {
       "added": 33,
       "files": [
         "www/rega/pages/tabs/admin/views/programlist.htm",
@@ -1087,5 +1071,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "b219e2d8223b8a7313e2fd61d13c410b25e9d017e0dc3e6ad48ceb08f755cf59"
+  "series_sha256": "c93736653d8bc580a6c7f234bee4d4646a1112a5f106f585f2a31e35e8136a2c"
 }
