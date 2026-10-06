@@ -923,7 +923,7 @@
 -
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -33752,15 +33752,25 @@
+@@ -33753,15 +33753,25 @@
  };
  
  setPath = function (path) {
@@ -956,7 +956,7 @@
  
  
  
-@@ -35688,7 +35698,7 @@
+@@ -35689,7 +35699,7 @@
  
  
  showDutyCycle = function() {
@@ -965,7 +965,7 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
-@@ -51314,6 +51324,11 @@
+@@ -51315,6 +51325,11 @@
    CreateCPPopup("/config/cp_maintenance.cgi");
  };
  
