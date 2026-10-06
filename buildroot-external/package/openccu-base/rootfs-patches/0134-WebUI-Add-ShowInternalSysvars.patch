@@ -102,15 +102,6 @@
        {
          object oTmp = dom.GetObject( sTmp );
          if( oTmp )
-@@ -45,7 +57,7 @@
-   
- </script>
- <div id="svOffset" style="display:none"></div>
--<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable filterTable" style="display:none">
-+<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable" style="display:none">
- <colgroup>
-   <col />
-   <col />
 @@ -141,8 +153,10 @@
      string sTrId = "sv"#sysvar;
      Write("<tr id='"#sTrId#"'>");

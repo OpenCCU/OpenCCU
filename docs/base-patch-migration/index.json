@@ -185,7 +185,7 @@
       "sha256": "ffe906e8ae10a9faa8509d11ca5eae4e6167c6951147b6b176f48315b5db6554"
     },
     {
-      "added": 778,
+      "added": 779,
       "files": [
         "opt/HMServer/pages/AvailableFirmware.ftl",
         "opt/HMServer/pages/DiagramSettingsDetailPage.ftl",
@@ -246,8 +246,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
-      "removed": 652,
-      "sha256": "ae95942a3b3774f9899661d68bc6dde771c6246bf51db0266290bef601ad061e"
+      "removed": 653,
+      "sha256": "8bea0f511e5014773a09d4d105e63153229b52ad6032d1c3100bf43143217d0a"
     },
     {
       "added": 33,
@@ -657,7 +657,7 @@
       "sha256": "e0ca1a56cc776d14ae8e1852f3cbf463054970b416910e0120bda6ee1d151819"
     },
     {
-      "added": 177,
+      "added": 176,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/esp/system.htm",
@@ -668,8 +668,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
-      "removed": 25,
-      "sha256": "2f5979856e3a573aa1954035bcc186cdfd55cc8b035f79cb8de0f5ae4e121978"
+      "removed": 24,
+      "sha256": "7238c4cc0d298d2295f1cf94cc090ab8a99a3e9e06e9c817c51b3a55bc68aee4"
     },
     {
       "added": 836,
