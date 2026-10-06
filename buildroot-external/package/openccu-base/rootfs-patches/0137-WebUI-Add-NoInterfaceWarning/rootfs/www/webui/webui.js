@@ -30979,12 +30979,17 @@ ise.System.prototype = {
 
   saveDpInternal: function(id, ctrlId) {                              
     var url = "/esp/system.htm?sid="+SessionId;                       
+    var page = sActPage;
+    var pageArgs = sActPageArgs;
     var pb = "string action = 'saveDpInternal';";                     
     pb += "integer dpId = " + id + ";";             
     pb += "integer iInternal   = '"+($(ctrlId).checked ? 1 : 0)+"';";
     new Ajax.Request(url, {
       postBody: ReGa.encode(pb),
-      onComplete: function() { reloadPage(); }
+      onComplete: function() {
+        // reload only if the user did not open another page meanwhile
+        if ((sActPage == page) && (sActPageArgs == pageArgs)) { reloadPage(); }
+      }
     });
   },
 

@@ -201,7 +201,7 @@
        $("body").appendChild(script);
        homematic.com.callback = callback;
    },
-@@ -37153,22 +37140,6 @@
+@@ -37158,22 +37145,6 @@
    dlg.resetHeight();
  };
  
