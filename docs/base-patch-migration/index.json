@@ -75,7 +75,7 @@
       "sha256": "73f1c3a22f10059b365de9629ae62bac1243e6413a45b9c55d86f050174d41af"
     },
     {
-      "added": 77,
+      "added": 79,
       "files": [
         "www/api/methods.conf",
         "www/api/methods/recoverymode/enter.tcl",
@@ -84,8 +84,8 @@
         "www/webui/js/lang/en/translate.lang.js"
       ],
       "patch": "0012-WebUI-RecoveryButton.patch",
-      "removed": 0,
-      "sha256": "2bee5243cbb38ba91a00c3ef74ee04b91e6f013db9261aa30b6061b8acdc6828"
+      "removed": 2,
+      "sha256": "b0482542b1fef82c10ec142aa5bcd72f484f2483a01d074f02bb8dc2ea77e811"
     },
     {
       "added": 43,
@@ -387,15 +387,13 @@
       "sha256": "6e110be3e137707ac9809fa4b0bf9426483a5e27f000fcd679ead259cc59231b"
     },
     {
-      "added": 7,
+      "added": 5,
       "files": [
-        "www/rega/pages/tabs/admin/views/programlist.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js"
+        "www/rega/pages/tabs/admin/views/programlist.htm"
       ],
       "patch": "0071-WebUI-ProgramList-DeleteProgramHint.patch",
-      "removed": 6,
-      "sha256": "8f49937049dcdf6a82c075d88b266beb35084133fce68d0b2a5d5237a34b3e4c"
+      "removed": 4,
+      "sha256": "8f57ff02b20e88f2a390fcad4897d2519c67a3f4a91ae37e99c54a85d86528e5"
     },
     {
       "added": 269,

@@ -33,25 +33,3 @@
        if (result == YesNoDialog.RESULT_YES)
        {
          var url = '/esp/programs.htm?sid='+SessionId;
---- a/www/webui/js/lang/de/translate.lang.js
-+++ b/www/webui/js/lang/de/translate.lang.js
-@@ -395,7 +395,7 @@
-     "dialogRecoveryCheck" : "Sicherheitsabfrage",
-     "dialogInfo" : "Info",
-     "dialogHint" : "Hinweis",
--    "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm wirklich l%F6schen?",
-+    "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm '%s' wirklich l%F6schen?",
-     "dialogQuestionRemoveLink" : "M%F6chten Sie die Verkn%FCpfung wirklich l%F6schen?",
-     "dialogQuestionRemoveUser" : "M%F6chten Sie den Benutzer wirklich l%F6schen?",
-     "dialogQuestionRemoveSysVar" : "M%F6chten Sie die Systemvariable wirklich l%F6schen?",
---- a/www/webui/js/lang/en/translate.lang.js
-+++ b/www/webui/js/lang/en/translate.lang.js
-@@ -394,7 +394,7 @@
-     "dialogRecoveryCheck" : "Confirmation prompt",
-     "dialogInfo" : "Info",
-     "dialogHint" : "Please note",
--    "dialogQuestionRemoveProgram" : "Do you really want to delete the program?",
-+    "dialogQuestionRemoveProgram" : "Do you really want to delete the program '%s'?",
-     "dialogQuestionRemoveLink" : "Do you really want to delete the connection?",
-     "dialogQuestionRemoveUser" : "Do you really want to delete the user?",
-     "dialogQuestionRemoveSysVar" : "Do you really want to delete the system variable?",
