@@ -508,7 +508,7 @@
   "in_progress": {
     "base_merge_commit": "f46173d63a67c8a6fb6ef03a9124d624911737e4",
     "base_pr": 131,
-    "cleanup_pr": null,
+    "cleanup_pr": 4374,
     "patch": "0065-WebUI-Fix-CountUsageStalling.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
