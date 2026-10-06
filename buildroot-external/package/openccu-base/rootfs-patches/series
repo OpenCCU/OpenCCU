@@ -42,7 +42,6 @@
 0131-WebUI-ShowAddonUpdatesOnStartpage.patch
 0132-WebUI-Fix-UnitDisplay.patch
 0133-WebUI-Fix-InternalIDExposure.patch
-0134-WebUI-Add-ShowInternalSysvars.patch
 0135-WebUI-Add-ControlPanel-AdvancedSettings.patch
 0136-WebUI-Add-Tailscale-VPN.patch
 0137-WebUI-Add-NoInterfaceWarning.patch
