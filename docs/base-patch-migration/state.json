@@ -517,7 +517,13 @@
       "patch": "0134-WebUI-Add-ShowInternalSysvars.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "52c49889264786be4f73e3f470097c88b25efc77",
+    "base_pr": 133,
+    "cleanup_pr": null,
+    "patch": "0152-WebUI-SysvarSelectionPopupInternalToggle.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "26c5db04cc12fbaf4c1e079330a9e701f8f041fc",
