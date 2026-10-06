@@ -161,22 +161,6 @@
       "sha256": "c25537f3f3a564999fe80154b0e2fe7095e2abc3f4ec21298e138314cbf49648"
     },
     {
-      "added": 11,
-      "files": [
-        "www/rega/esp/system.fn",
-        "www/rega/pages/msg/sysVarsArray.htm",
-        "www/rega/pages/msg/sysVarsArrayAll.htm",
-        "www/rega/pages/tabs/admin/msg/newSysVar.htm",
-        "www/rega/pages/tabs/admin/systemvars.htm",
-        "www/rega/pages/tabs/control/sysvars.htm",
-        "www/rega/pages/tabs/statusviews/alarmMessages.htm",
-        "www/rega/pages/tabs/user/newFav.htm"
-      ],
-      "patch": "0035-WebUI-Fix-SysVarPopups.patch",
-      "removed": 10,
-      "sha256": "bed25ed26edc8cd91ea27313d1b4551a0bf857959ddb46e5598ebacea9cca500"
-    },
-    {
       "added": 42,
       "files": [
         "www/rega/login.htm",
@@ -1103,5 +1087,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "750b4c6f89e2ef031090d626bc656a8a91677888902458bc880ae682b443d151"
+  "series_sha256": "b219e2d8223b8a7313e2fd61d13c410b25e9d017e0dc3e6ad48ceb08f755cf59"
 }
