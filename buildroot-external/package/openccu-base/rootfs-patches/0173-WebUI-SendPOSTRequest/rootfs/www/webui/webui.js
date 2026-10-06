@@ -30907,7 +30907,10 @@ ise.System.prototype = {
     var pb = "string action = 'saveDpInternal';";                     
     pb += "integer dpId = " + id + ";";             
     pb += "integer iInternal   = '"+($(ctrlId).checked ? 1 : 0)+"';";
-    new Ajax.Request(url, {postBody: ReGa.encode(pb)});
+    new Ajax.Request(url, {
+      postBody: ReGa.encode(pb),
+      onComplete: function() { reloadPage(); }
+    });
   },
 
   ClearHistoryData: function()

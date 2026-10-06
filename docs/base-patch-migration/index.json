@@ -657,7 +657,7 @@
       "sha256": "e0ca1a56cc776d14ae8e1852f3cbf463054970b416910e0120bda6ee1d151819"
     },
     {
-      "added": 176,
+      "added": 179,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/esp/system.htm",
@@ -669,7 +669,7 @@
       ],
       "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
       "removed": 24,
-      "sha256": "7238c4cc0d298d2295f1cf94cc090ab8a99a3e9e06e9c817c51b3a55bc68aee4"
+      "sha256": "4c8c59c4ad6ffbe6dc9dbd3c71632cd11b446644c3b15e8318360629ac86d4d0"
     },
     {
       "added": 836,
@@ -685,7 +685,7 @@
       ],
       "patch": "0135-WebUI-Add-ControlPanel-AdvancedSettings.patch",
       "removed": 16,
-      "sha256": "8348f677868bae50c5d5ab005b8d0746a094e2c8157fdfb50728e785ce82e29a"
+      "sha256": "459798b491e1ce09b7ab271ee249a949760abac52e102a4506b6c859af0577ac"
     },
     {
       "added": 72,
@@ -726,7 +726,7 @@
       ],
       "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch",
       "removed": 20,
-      "sha256": "8c65e0cda73df0659cabb30e36118bb3241fc5d85af5e061d5a001a77e87e899"
+      "sha256": "e1a4839ccf8421870d3b58aac5bbc89f62f74a1257666324da5f74bb5f1183d6"
     },
     {
       "added": 62,
@@ -772,7 +772,7 @@
       ],
       "patch": "0145-WebUI-NaturalSorting.patch",
       "removed": 47,
-      "sha256": "7cf841ff03fafa83665961e450d5cf5954d0ecafa5a679a63c2acad121f8b7bc"
+      "sha256": "9aa0ca8b8d1801af401bc6f17d4d3c4dfdee321181ecb36e8ac6f43d21ae8107"
     },
     {
       "added": 45,
@@ -816,7 +816,7 @@
       ],
       "patch": "0151-WebUI-Add-DeviceRestoreConfigButton.patch",
       "removed": 3,
-      "sha256": "053c75c101001897235359e09dc7494068663de8d9ed42efb7c8b20af13db1a9"
+      "sha256": "27d5ff354ec8a2ab0a9119f25a4fcb28aca35d401de9fb9ba6b0d9a03db33c8f"
     },
     {
       "added": 12,
@@ -836,7 +836,7 @@
       ],
       "patch": "0153-WebUI-Fix-ImproveImgUpdates.patch",
       "removed": 23,
-      "sha256": "e8f554bfc7d62cb3794e44728e8c61a95c6465a43c456c6bbba7b2246f2d2401"
+      "sha256": "c804d159cb0e0936a8f96f2839105454bd712640c46d86d01458eda0737e9b76"
     },
     {
       "added": 88,
@@ -883,7 +883,7 @@
       ],
       "patch": "0156-WebUI-ImprovedConfirmDeletePopup.patch",
       "removed": 20,
-      "sha256": "313cde2c8b7bd661f9fc801b346c4d0f92f8e8728ae11d97740cb9061ac5acdb"
+      "sha256": "83f3746f091ce11a30738e9820118c21241a1cbb855a3a20a4bd2cd4ea1f11dd"
     },
     {
       "added": 165,
@@ -947,7 +947,7 @@
       ],
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
       "removed": 11,
-      "sha256": "705a66fa9857683b1eb9bf8d131e182fb53c4c516cb4b3615ff8a8ebe2469e12"
+      "sha256": "bbf05caeb319a7d455d6932dab367fc659f43758eabdbd05ba2c6cd69e688570"
     },
     {
       "added": 60,
@@ -972,7 +972,7 @@
       ],
       "patch": "0173-WebUI-SendPOSTRequest.patch",
       "removed": 19,
-      "sha256": "39f8adb11c0a1a8974c3f13928c3885d8abb149842d91fc0f32680230917c8aa"
+      "sha256": "e8031f81f991f2f80966199e76b71a55763155d9a8d49e4f063433f5cb9f9d5f"
     },
     {
       "added": 110,
@@ -1042,7 +1042,7 @@
       ],
       "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
       "removed": 13,
-      "sha256": "d80caa63fa26409b11a52eb61d4185e3c7d4c44efdcd828710d3a8863e5575ee"
+      "sha256": "2ba28bd00dacdf4ca1d353d0d489de139ae7c64006bd47ad9d6cc63fa14ee000"
     },
     {
       "added": 4,
@@ -1067,7 +1067,7 @@
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
-      "sha256": "0d12a1de8bcd7a0fac5809a1974e7db036ae9b98ea03a2fe8ecfef36731e16c2"
+      "sha256": "655c2a85b120360fd22f7f3f1c88276ebcd6fe07e8152be5e15b8e04037f8d73"
     }
   ],
   "schema": 1,

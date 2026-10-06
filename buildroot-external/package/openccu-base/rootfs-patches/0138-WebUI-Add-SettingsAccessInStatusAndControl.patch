@@ -180,7 +180,7 @@
  .CLASS05005 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -31348,7 +31348,7 @@
+@@ -31351,7 +31351,7 @@
      };
      new Ajax.Request(url,opts);
    },
@@ -189,7 +189,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -31360,12 +31360,12 @@
+@@ -31363,12 +31363,12 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}
@@ -204,7 +204,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -31378,12 +31378,12 @@
+@@ -31381,12 +31381,12 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}
@@ -219,7 +219,7 @@
    {
      var url = "/esp/programs.htm?sid="+SessionId;
      var pb = '';
-@@ -31395,7 +31395,7 @@
+@@ -31398,7 +31398,7 @@
        onComplete:function(t)
        {
          if(dbg){alert( t.responseText );}

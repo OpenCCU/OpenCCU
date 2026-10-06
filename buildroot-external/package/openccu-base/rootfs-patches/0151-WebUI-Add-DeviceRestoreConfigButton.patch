@@ -97,7 +97,7 @@
    puts "</TBODY>"
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -50013,6 +50013,19 @@
+@@ -50016,6 +50016,19 @@
    return false;
  };
  
