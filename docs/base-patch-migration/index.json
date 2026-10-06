@@ -804,16 +804,6 @@
       "sha256": "82bc9c1cec34d25de335ce477b37ab3eed8beab56a2fbc57b84c557c2ee306a6"
     },
     {
-      "added": 12,
-      "files": [
-        "www/rega/pages/msg/sysVarsSelection.htm",
-        "www/rega/pages/tabs/admin/views/programs.htm"
-      ],
-      "patch": "0152-WebUI-SysvarSelectionPopupInternalToggle.patch",
-      "removed": 2,
-      "sha256": "b04c77bf54d077a2c5b932a6686ff3942e499f7e08f15bb15379278cf9233595"
-    },
-    {
       "added": 22,
       "files": [
         "www/ise/htm/header.htm",
@@ -1056,5 +1046,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "7e0017c1ce811ebb1ca0ff40b2b5557dbdb7ed053e3a554c14000abc65c3a0af"
+  "series_sha256": "9ad963a01ef389bfe5fc06e70575a7c538802adbfc99768c60e3d5766d7c3297"
 }
