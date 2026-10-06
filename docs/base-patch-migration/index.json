@@ -657,21 +657,6 @@
       "sha256": "e0ca1a56cc776d14ae8e1852f3cbf463054970b416910e0120bda6ee1d151819"
     },
     {
-      "added": 185,
-      "files": [
-        "www/rega/esp/system.fn",
-        "www/rega/esp/system.htm",
-        "www/rega/pages/tabs/admin/systemvars.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0134-WebUI-Add-ShowInternalSysvars.patch",
-      "removed": 24,
-      "sha256": "3880bc4dbe31d6797fb6e12f12d7408995cff23be29e924e864c9a72c6b251c5"
-    },
-    {
       "added": 836,
       "files": [
         "www/config/control_panel.cgi",
@@ -1071,5 +1056,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "c93736653d8bc580a6c7f234bee4d4646a1112a5f106f585f2a31e35e8136a2c"
+  "series_sha256": "7e0017c1ce811ebb1ca0ff40b2b5557dbdb7ed053e3a554c14000abc65c3a0af"
 }
