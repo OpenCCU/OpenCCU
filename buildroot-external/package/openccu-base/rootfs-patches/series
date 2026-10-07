@@ -63,7 +63,6 @@
 0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch
 0173-WebUI-SendPOSTRequest.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
-0191-WebUI-Add-NaturalSortOrder.patch
 0193-WebUI-EnhancedTRVSettingsPage.patch
 0196-WebUI-Fix-FilterOfTwoColumnControlPages.patch
 0203-WebUI-NoExpectCGI.patch
