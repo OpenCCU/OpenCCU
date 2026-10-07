@@ -409,16 +409,6 @@
       "sha256": "05d739e78b314d59e181e1429a3b8ac3bd026290564c4614c5f571e221805ff7"
     },
     {
-      "added": 8,
-      "files": [
-        "www/rega/esp/system.fn",
-        "www/webui/webui.js"
-      ],
-      "patch": "0075-WebUI-Fix-HTMLinUserFavorites.patch",
-      "removed": 18,
-      "sha256": "823a4b898e17364fa524031a90276d092cc11cd1bb7a137f23b3e946cd77bcee"
-    },
-    {
       "added": 59,
       "files": [
         "www/rega/esp/programs.fn",
@@ -1022,5 +1012,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "91091280a61ae2ad68b4ecbb3513a71fb4032e74835816bced41500c17c8b71e"
+  "series_sha256": "92fcdd9265add931104c203a9e7eaa281214b9ba2ba5a725ac7ba817270299f1"
 }
