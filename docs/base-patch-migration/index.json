@@ -416,7 +416,7 @@
       ],
       "patch": "0075-WebUI-Fix-HTMLinUserFavorites.patch",
       "removed": 18,
-      "sha256": "965397b80a25f61035eb94e5954cbb68371b74e2dcb42e9a7f0952f1af2c33b8"
+      "sha256": "823a4b898e17364fa524031a90276d092cc11cd1bb7a137f23b3e946cd77bcee"
     },
     {
       "added": 59,

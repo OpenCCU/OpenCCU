@@ -468,7 +468,7 @@ function ::UpdateUI()
       boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
       Call( "/esp/system.fn::getSysVarValAsString()" );
       ! Escape unwanted chars
-      sSysVarVal = sSysVarVal.Replace(^\\^, ^\\\\^);
+      sSysVarVal = sSysVarVal.Replace("\\", "\\\\");
       sSysVarVal = sSysVarVal.Replace("`", "\\`");
       sSysVarVal = sSysVarVal.Replace("${", "\\${");
       WriteLine("if ($('SYSVAR_" # svId # "')) {");
