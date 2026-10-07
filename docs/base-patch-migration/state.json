@@ -523,7 +523,13 @@
       "patch": "0152-WebUI-SysvarSelectionPopupInternalToggle.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "11b320be070ca45570db52dc8121821eb026c5d4",
+    "base_pr": 134,
+    "cleanup_pr": null,
+    "patch": "0071-WebUI-ProgramList-DeleteProgramHint.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "7494c5f8766f42f3088e5d143eb854dc7d9f1dba",
