@@ -271,18 +271,6 @@
       "sha256": "943035125753d5897eb0f6320b1886bf6ca7b9a1801a2a5310a95708fdc3a2ef"
     },
     {
-      "added": 30,
-      "files": [
-        "www/rega/pages/msg/userAccountConfigAdmin.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0043-WebUI-SysVarFavorites-SortByName.patch",
-      "removed": 1,
-      "sha256": "715bdb9aec532a52d016bcac4e30420b593ae3881e01ab50abba4279c5e21126"
-    },
-    {
       "added": 128,
       "files": [
         "www/api/methods.conf",
@@ -979,5 +967,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "b5e22f35c6ecaa62a7b8ea647b6ad5f40849ef8768cc04f4e9248311d784e488"
+  "series_sha256": "1d322e191bdc63f03d981efeda7f754ddfe3740b578dc47358e69c6a2562309e"
 }
