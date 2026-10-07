@@ -6,7 +6,7 @@
        Call( "/esp/system.fn::getSysVarValAsString()" );
 -      WriteLine("updateSysVar('" # svId # "', '" # sSysVarVal # "');");
 +      ! Escape unwanted chars
-+      sSysVarVal = sSysVarVal.Replace(^\\^, ^\\\\^);
++      sSysVarVal = sSysVarVal.Replace("\\", "\\\\");
 +      sSysVarVal = sSysVarVal.Replace("`", "\\`");
 +      sSysVarVal = sSysVarVal.Replace("${", "\\${");
 +      WriteLine("if ($('SYSVAR_" # svId # "')) {");
