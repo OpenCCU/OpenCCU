@@ -387,15 +387,6 @@
       "sha256": "6e110be3e137707ac9809fa4b0bf9426483a5e27f000fcd679ead259cc59231b"
     },
     {
-      "added": 5,
-      "files": [
-        "www/rega/pages/tabs/admin/views/programlist.htm"
-      ],
-      "patch": "0071-WebUI-ProgramList-DeleteProgramHint.patch",
-      "removed": 4,
-      "sha256": "8f57ff02b20e88f2a390fcad4897d2519c67a3f4a91ae37e99c54a85d86528e5"
-    },
-    {
       "added": 269,
       "files": [
         "bin/hm_autoconf",
@@ -1044,5 +1035,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "9ad963a01ef389bfe5fc06e70575a7c538802adbfc99768c60e3d5766d7c3297"
+  "series_sha256": "22e71a284080858078914c1ca5deff51336a817d3fd108a0a6d6fdcfab18d0a7"
 }
