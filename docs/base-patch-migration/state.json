@@ -553,7 +553,13 @@
       "patch": "0191-WebUI-Add-NaturalSortOrder.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "34bd63fb452cf0445cd5f02401189ed5c4a7307b",
+    "base_pr": 144,
+    "cleanup_pr": null,
+    "patch": "0043-WebUI-SysVarFavorites-SortByName.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "8cbb398b7533edbad198707ff9560460dabb130e",
