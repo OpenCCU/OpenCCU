@@ -394,7 +394,7 @@ jQuery.extend(true,langJSON, {
     "dialogRecoveryCheck" : "Sicherheitsabfrage",
     "dialogInfo" : "Info",
     "dialogHint" : "Hinweis",
-    "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm wirklich l%F6schen?",
+    "dialogQuestionRemoveProgram" : "M%F6chten Sie das Programm '%s' wirklich l%F6schen?",
     "dialogQuestionRemoveLink" : "M%F6chten Sie die Verkn%FCpfung wirklich l%F6schen?",
     "dialogQuestionRemoveUser" : "M%F6chten Sie den Benutzer wirklich l%F6schen?",
     "dialogQuestionRemoveSysVar" : "M%F6chten Sie die Systemvariable wirklich l%F6schen?",

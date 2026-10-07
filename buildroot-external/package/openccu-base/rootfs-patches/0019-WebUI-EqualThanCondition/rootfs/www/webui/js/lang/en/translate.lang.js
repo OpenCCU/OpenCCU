@@ -392,7 +392,7 @@ jQuery.extend(true,langJSON, {
     "dialogRecoveryCheck" : "Confirmation prompt",
     "dialogInfo" : "Info",
     "dialogHint" : "Please note",
-    "dialogQuestionRemoveProgram" : "Do you really want to delete the program?",
+    "dialogQuestionRemoveProgram" : "Do you really want to delete the program '%s'?",
     "dialogQuestionRemoveLink" : "Do you really want to delete the connection?",
     "dialogQuestionRemoveUser" : "Do you really want to delete the user?",
     "dialogQuestionRemoveSysVar" : "Do you really want to delete the system variable?",
