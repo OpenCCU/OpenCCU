@@ -526,7 +526,7 @@
   "in_progress": {
     "base_merge_commit": "11b320be070ca45570db52dc8121821eb026c5d4",
     "base_pr": 134,
-    "cleanup_pr": null,
+    "cleanup_pr": 4381,
     "patch": "0071-WebUI-ProgramList-DeleteProgramHint.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
