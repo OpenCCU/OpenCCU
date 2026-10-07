@@ -976,16 +976,6 @@
       "sha256": "c6aab4e4cbfdf19991edcebf7391073ae6e5e0fefd5f739b9c22158ff2daf061"
     },
     {
-      "added": 13,
-      "files": [
-        "www/rega/pages/tabs/control/systemProtocol.htm",
-        "www/webui/webui.js"
-      ],
-      "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
-      "removed": 13,
-      "sha256": "7eb50b62c07aa48a7e489a0fb1f51c05f8b43f616778fb8b453c129a33c7bee9"
-    },
-    {
       "added": 4,
       "files": [
         "www/tcl/extern/cgi.tcl"
@@ -1012,5 +1002,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "92fcdd9265add931104c203a9e7eaa281214b9ba2ba5a725ac7ba817270299f1"
+  "series_sha256": "d4621c7519c39d78425473c5b9b615378c429db926dd9d0386beb2c8b0ecf17d"
 }

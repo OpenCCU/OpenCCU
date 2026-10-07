@@ -533,18 +533,24 @@
       "base_pr": 135,
       "cleanup_pr": 4382,
       "patch": "0120-WebUI-ImprovedPasswordFields.patch"
+    },
+    {
+      "base_merge_commit": "ed6dd54ac0bee790e18df1cba4bfc4f614b8499d",
+      "base_pr": 136,
+      "cleanup_pr": 4385,
+      "patch": "0075-WebUI-Fix-HTMLinUserFavorites.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "ed6dd54ac0bee790e18df1cba4bfc4f614b8499d",
-    "base_pr": 136,
-    "cleanup_pr": 4385,
-    "patch": "0075-WebUI-Fix-HTMLinUserFavorites.patch",
+    "base_merge_commit": "135bca48b4cd87e4e0ce0c2cb86c7ef8583db5d6",
+    "base_pr": 137,
+    "cleanup_pr": 4386,
+    "patch": "0199-WebUI-ImprovedSystemProtocol.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "7794e35ad2de85e16d0e0cc9c33d993386c3a41d",
-  "verified_base_pin": "1faaa3b93140208b28028002d5e666f078f660b6",
-  "verified_source_sha256": "8c772d266a859db2bba75a5c3c47592a6a94c0931622afa108a3ba3d3a510b67"
+  "verified_at_openccu_commit": "36223f452906c0fadbdf95b3268fb30561ae91eb",
+  "verified_base_pin": "ed6dd54ac0bee790e18df1cba4bfc4f614b8499d",
+  "verified_source_sha256": "25afe713aebdcda3d04611c47583efd423d594e3e8940d79b2e75ee1e351695c"
 }
