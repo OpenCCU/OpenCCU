@@ -34,7 +34,6 @@
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
 0111-WebUI-Fix-Translation-Performance.patch
 0119-WebUI-Fix-ProofAndSetValue.patch
-0120-WebUI-ImprovedPasswordFields.patch
 0122-WebUI-ProgramExecutionWithConditionCheck.patch
 0124-WebUI-Fix-ShowMultipleSpacesInSysVar.patch
 0125-WebUI-ChannelHighlights.patch

@@ -529,7 +529,13 @@
       "patch": "0071-WebUI-ProgramList-DeleteProgramHint.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "1faaa3b93140208b28028002d5e666f078f660b6",
+    "base_pr": 135,
+    "cleanup_pr": null,
+    "patch": "0120-WebUI-ImprovedPasswordFields.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "5363780b5d510324a93bf28adac99f36076fb2f2",

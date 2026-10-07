@@ -552,19 +552,6 @@
       "sha256": "6627cdc9628e480b1e7873ee066f8fb4877d1410db70d195bf728c22bf5c6f54"
     },
     {
-      "added": 12,
-      "files": [
-        "www/pda/templates/index.tmpl",
-        "www/rega/login.htm",
-        "www/rega/pages/msg/userAccountConfigAdmin.htm",
-        "www/rega/pages/msg/userAccountConfigUser.htm",
-        "www/webui/webui.js"
-      ],
-      "patch": "0120-WebUI-ImprovedPasswordFields.patch",
-      "removed": 12,
-      "sha256": "175a718282200f2da564fefab407a13b7e80e704a2983f1bbd6c92af293cfc12"
-    },
-    {
       "added": 38,
       "files": [
         "www/rega/esp/system.fn",
@@ -1035,5 +1022,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "22e71a284080858078914c1ca5deff51336a817d3fd108a0a6d6fdcfab18d0a7"
+  "series_sha256": "91091280a61ae2ad68b4ecbb3513a71fb4032e74835816bced41500c17c8b71e"
 }
