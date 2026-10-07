@@ -24,7 +24,6 @@
 0070-WebUI-ProgramList-InactiveProgramsMod.patch
 0072-WebUI-Fix-hm_autoconf.patch
 0073-WebUI-AstroDelays.patch
-0075-WebUI-Fix-HTMLinUserFavorites.patch
 0077-WebUI-NegateCondition.patch
 0089-WebUI-MessagBoxFailureWarning.patch
 0095-WebUI-userSysVarTblMoveUpDown.patch
