@@ -927,29 +927,6 @@
       "sha256": "85ed33ef96042454dde6a8e4f738466dff2da501ad773161161c0cbc65016992"
     },
     {
-      "added": 15,
-      "files": [
-        "www/rega/pages/tabs/admin/systemvars.htm",
-        "www/rega/pages/tabs/admin/userAdministration.htm",
-        "www/rega/pages/tabs/admin/views/functions.htm",
-        "www/rega/pages/tabs/admin/views/newdevices.htm",
-        "www/rega/pages/tabs/admin/views/programlist.htm",
-        "www/rega/pages/tabs/admin/views/rooms.htm",
-        "www/rega/pages/tabs/control/devices.htm",
-        "www/rega/pages/tabs/control/functions.htm",
-        "www/rega/pages/tabs/control/hdevichannels.htm",
-        "www/rega/pages/tabs/control/hfuncchannels.htm",
-        "www/rega/pages/tabs/control/hroomchannels.htm",
-        "www/rega/pages/tabs/control/programs.htm",
-        "www/rega/pages/tabs/control/rooms.htm",
-        "www/rega/pages/tabs/control/sysvars.htm",
-        "www/rega/pages/tabs/user/favOverview.htm"
-      ],
-      "patch": "0191-WebUI-Add-NaturalSortOrder.patch",
-      "removed": 14,
-      "sha256": "14f7dce480ae452324237add7b9a059dd0f30f8dfdd9ea62260297b0f72970cf"
-    },
-    {
       "added": 163,
       "files": [
         "www/config/easymodes/MASTER_LANG/HEATINGTHERMOSTATE_2ND_GEN.js",
@@ -1002,5 +979,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "d4621c7519c39d78425473c5b9b615378c429db926dd9d0386beb2c8b0ecf17d"
+  "series_sha256": "b5e22f35c6ecaa62a7b8ea647b6ad5f40849ef8768cc04f4e9248311d784e488"
 }
