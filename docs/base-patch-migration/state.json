@@ -556,7 +556,7 @@
   "in_progress": {
     "base_merge_commit": "34bd63fb452cf0445cd5f02401189ed5c4a7307b",
     "base_pr": 144,
-    "cleanup_pr": null,
+    "cleanup_pr": 4390,
     "patch": "0043-WebUI-SysVarFavorites-SortByName.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
