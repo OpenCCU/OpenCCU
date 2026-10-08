@@ -551,18 +551,24 @@
       "base_pr": 141,
       "cleanup_pr": 4389,
       "patch": "0191-WebUI-Add-NaturalSortOrder.patch"
+    },
+    {
+      "base_merge_commit": "34bd63fb452cf0445cd5f02401189ed5c4a7307b",
+      "base_pr": 144,
+      "cleanup_pr": 4390,
+      "patch": "0043-WebUI-SysVarFavorites-SortByName.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "34bd63fb452cf0445cd5f02401189ed5c4a7307b",
-    "base_pr": 144,
-    "cleanup_pr": 4390,
-    "patch": "0043-WebUI-SysVarFavorites-SortByName.patch",
+    "base_merge_commit": "3be3c5e8b152e42a544ce754ea103a6b2632f757",
+    "base_pr": 151,
+    "cleanup_pr": 4395,
+    "patch": "0137-WebUI-Add-NoInterfaceWarning.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "8cbb398b7533edbad198707ff9560460dabb130e",
-  "verified_base_pin": "1c22085fa55308b1bf45f553c8e40c33159ecbce",
-  "verified_source_sha256": "e9c6fba01ad3713219c6efbfe4d1fbde807020bc61a6b6b72c67349e14a7808b"
+  "verified_at_openccu_commit": "ebc1e556932af749bb767d434e05b7c99555268e",
+  "verified_base_pin": "68bc1f279ad48592290dadaabcd48d525d8439c2",
+  "verified_source_sha256": "58b1b75bfbe23c1d5de4f9c1c7fff0df5e049dd6a683905e43a36ebfb61acde8"
 }
