@@ -96,8 +96,11 @@ asked. Run the checks that match the files you touched, fastest first:
 | A single package | `make -C build-<product> <pkg>-rebuild` (needs an existing build dir) |
 
 CI (`.github/workflows/ci.yml`) runs all linters, the Python tests and
-`make PRODUCT=rpi3 check`, then builds every product. Report honestly which
-checks you ran and which you could not run.
+`make PRODUCT=rpi3 check`. The product build matrix only runs when the `build`
+job's `if:` condition permits it (e.g. not for most pull requests), and changes
+that touch only `paths-ignore` files such as Markdown skip CI entirely. So a
+green or missing CI run does not prove that the images build. Report honestly
+which checks you ran and which you could not run.
 
 ## Hard rules
 
