@@ -565,7 +565,13 @@
       "patch": "0137-WebUI-Add-NoInterfaceWarning.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "5bb7f848a29e6c60a9ca81529e55a55b3454d3be",
+    "base_pr": 153,
+    "cleanup_pr": null,
+    "patch": "0070-WebUI-ProgramList-InactiveProgramsMod.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "5a742ec146ebf4dddd9b0890c8828fb721a12d6a",
