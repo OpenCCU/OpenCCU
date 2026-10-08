@@ -638,18 +638,6 @@
       "sha256": "c2f9c6108a6a458d5cbaf7cce4028dc35f057afad3211d1f73fcfa528a9e7fc3"
     },
     {
-      "added": 26,
-      "files": [
-        "www/config/cp_add_device.cgi",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0137-WebUI-Add-NoInterfaceWarning.patch",
-      "removed": 5,
-      "sha256": "21699a19e5726016c3f5904b919cbc55d141316a95c3430cdcd3c8534636b7d2"
-    },
-    {
       "added": 46,
       "files": [
         "www/config/ic_deviceparameters.cgi",
@@ -967,5 +955,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1d322e191bdc63f03d981efeda7f754ddfe3740b578dc47358e69c6a2562309e"
+  "series_sha256": "83e33406822e2f40cacb3224ff5cbc2a27060562ea27c5fdeac57cad1675b5ed"
 }
