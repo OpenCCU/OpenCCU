@@ -563,18 +563,18 @@
       "base_pr": 151,
       "cleanup_pr": 4395,
       "patch": "0137-WebUI-Add-NoInterfaceWarning.patch"
+    },
+    {
+      "base_merge_commit": "5bb7f848a29e6c60a9ca81529e55a55b3454d3be",
+      "base_pr": 153,
+      "cleanup_pr": 4397,
+      "patch": "0070-WebUI-ProgramList-InactiveProgramsMod.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "5bb7f848a29e6c60a9ca81529e55a55b3454d3be",
-    "base_pr": 153,
-    "cleanup_pr": 4397,
-    "patch": "0070-WebUI-ProgramList-InactiveProgramsMod.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
+  "in_progress": null,
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "5a742ec146ebf4dddd9b0890c8828fb721a12d6a",
-  "verified_base_pin": "3be3c5e8b152e42a544ce754ea103a6b2632f757",
-  "verified_source_sha256": "e98b9018cb823af6a54fe037901aca6638900b5e59489e1634150034cfd95db0"
+  "verified_at_openccu_commit": "bbce73f46c0134058eebfaf632dc1eecc7f4b029",
+  "verified_base_pin": "bc90b1374c2cb579f4be1c5c17f5f5ef91ac13dc",
+  "verified_source_sha256": "50fd7cd6b6489a036d2f46f3510c94f500ca3d1e03e91022fef3fb844c7d12b0"
 }
