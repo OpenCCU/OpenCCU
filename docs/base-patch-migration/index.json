@@ -33,23 +33,6 @@
       "sha256": "4b73caccf4e9f37d705a44815de1f747e4aadb6fced388189aad55bfd1eabc2b"
     },
     {
-      "added": 165,
-      "files": [
-        "www/rega/login.htm",
-        "www/rega/logout.htm",
-        "www/rega/pages/index.htm",
-        "www/webui/css/extern/hmBootstrap.css",
-        "www/webui/css/extern/main.min.css",
-        "www/webui/css/extern/main.min.css.map",
-        "www/webui/js/extern/bootstrap.bundle.min.js",
-        "www/webui/js/extern/bootstrap.bundle.min.js.map",
-        "www/webui/scss/main.scss"
-      ],
-      "patch": "0002-WebUI-Bootstrap.patch",
-      "removed": 1,
-      "sha256": "a5d2e7ceec22e640b907784f1f7b3ffa0eb0ff88f24986f1570808510e2a068c"
-    },
-    {
       "added": 172,
       "files": [
         "www/api/backup/version.cgi",
@@ -944,5 +927,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "d83bc4147ccd778f78f46c5fa8544229930729e228d2500188e42b6b82643bd8"
+  "series_sha256": "8d5835fd3e96907c89741033a4dff8fa179f3b2ab18e7ee5bef4e93949302db4"
 }
