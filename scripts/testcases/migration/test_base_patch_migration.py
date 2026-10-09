@@ -329,6 +329,16 @@ class MigrationTest(unittest.TestCase):
         self.assertEqual(migration.pin(self.repo), old)
         self.assertEqual(migration.git(self.repo, 'status', '--porcelain'), '')
 
+    def test_cleanup_rejects_file_named_rootfs(self):
+        args, old, new = self.cleanup_fixture()
+        workspace = self.patches / NAME[:-6]
+        shutil.rmtree(workspace / 'rootfs')
+        (workspace / 'rootfs').write_text('not a directory')
+        self.commit(self.repo)
+        with self.assertRaisesRegex(ValueError, 'outside rootfs/ in patch workspace: rootfs$'):
+            self.run_cleanup(args)
+        self.assertEqual(migration.pin(self.repo), old)
+
     def test_cleanup_rejects_completed_patch(self):
         args, old, new = self.cleanup_fixture()
         migration.write_json(self.repo / migration.STATE,

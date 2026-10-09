@@ -497,8 +497,8 @@ def cleanup(repo, args):
     # Only rootfs/ is generated from the patch. Other files kept next to it,
     # such as maintenance inputs or notes, are not migrated with the patch and
     # would be lost with the workspace, so they have to be moved first.
-    extra = sorted(p.relative_to(workspace).as_posix() for p in workspace.rglob('*')
-                   if p.is_file() and p.relative_to(workspace).parts[0] != 'rootfs')
+    files = [p.relative_to(workspace) for p in workspace.rglob('*') if p.is_file()]
+    extra = sorted(f.as_posix() for f in files if len(f.parts) < 2 or f.parts[0] != 'rootfs')
     require(not extra, 'files outside rootfs/ in patch workspace: ' + ', '.join(extra))
     mk = repo / PACKAGE / 'openccu-base.mk'
     hashfile = repo / PACKAGE / 'openccu-base.hash'
