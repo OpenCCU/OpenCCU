@@ -225,8 +225,8 @@ class MigrationTest(unittest.TestCase):
         (self.package / 'openccu-base.hash').write_text(
             'sha256  ' + migration.digest(base / 'licenses/test.txt') + '  licenses/test.txt\n'
             'sha256  ' + 'f' * 64 + f'  openccu-base-{old}-git4.tar.gz\n')
-        workspace = self.patches / NAME[:-6]
-        workspace.mkdir()
+        workspace = self.patches / NAME[:-6] / 'rootfs'
+        workspace.mkdir(parents=True)
         (workspace / 'test.orig').write_text('old')
         (workspace / 'test').write_text('new')
         migration.write_json(self.repo / migration.STATE, {'completed': [], 'in_progress': None})
@@ -315,6 +315,28 @@ class MigrationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'untracked file'):
             self.run_cleanup(args)
         self.assertEqual(extra.read_text(), 'keep me')
+        self.assertEqual(migration.pin(self.repo), old)
+
+    def test_cleanup_rejects_files_outside_rootfs(self):
+        args, old, new = self.cleanup_fixture()
+        extra = self.patches / NAME[:-6] / 'maintenance' / 'package.json'
+        extra.parent.mkdir()
+        extra.write_text('{}')
+        self.commit(self.repo)
+        with self.assertRaisesRegex(ValueError, 'outside rootfs/.*maintenance/package.json'):
+            self.run_cleanup(args)
+        self.assertTrue(extra.exists())
+        self.assertEqual(migration.pin(self.repo), old)
+        self.assertEqual(migration.git(self.repo, 'status', '--porcelain'), '')
+
+    def test_cleanup_rejects_file_named_rootfs(self):
+        args, old, new = self.cleanup_fixture()
+        workspace = self.patches / NAME[:-6]
+        shutil.rmtree(workspace / 'rootfs')
+        (workspace / 'rootfs').write_text('not a directory')
+        self.commit(self.repo)
+        with self.assertRaisesRegex(ValueError, 'outside rootfs/ in patch workspace: rootfs$'):
+            self.run_cleanup(args)
         self.assertEqual(migration.pin(self.repo), old)
 
     def test_cleanup_rejects_completed_patch(self):

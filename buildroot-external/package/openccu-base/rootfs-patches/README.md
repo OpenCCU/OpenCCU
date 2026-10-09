@@ -37,9 +37,12 @@ workspace files, define the desired result. Keep both representations in sync;
 `validate_patches.sh` detects divergence after a refresh.
 
 Non-rootfs maintenance inputs may be kept next to a patch workspace and are
-preserved by `update_patchfiles.sh`. For example, patch `0002` retains its npm
-and Sass metadata below `maintenance/webui`; these files are not emitted into
-the firmware image.
+preserved by `update_patchfiles.sh`; these files are not emitted into the
+firmware image. They are not migrated with the patch:
+`scripts/base-patch-migration.py prepare-cleanup` refuses to remove a workspace
+that contains files outside `rootfs/`, so move them first (for example, the
+Bootstrap tooling of the former patch `0002` now lives in OpenCCU-Base below
+`src/webui/bootstrap`).
 
 Normal builds call `prepare_patch_input.sh` before applying the series and
 `finalize_patch_input.sh` afterwards. The pair temporarily splits generated

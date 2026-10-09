@@ -494,6 +494,12 @@ def cleanup(repo, args):
     tracked = set(git(repo, 'ls-files').splitlines())
     require(all(p.relative_to(repo).as_posix() in tracked for p in paths if p.is_file()),
             'untracked file in patch workspace')
+    # Only rootfs/ is generated from the patch. Other files kept next to it,
+    # such as maintenance inputs or notes, are not migrated with the patch and
+    # would be lost with the workspace, so they have to be moved first.
+    files = [p.relative_to(workspace) for p in workspace.rglob('*') if p.is_file()]
+    extra = sorted(f.as_posix() for f in files if len(f.parts) < 2 or f.parts[0] != 'rootfs')
+    require(not extra, 'files outside rootfs/ in patch workspace: ' + ', '.join(extra))
     mk = repo / PACKAGE / 'openccu-base.mk'
     hashfile = repo / PACKAGE / 'openccu-base.hash'
     oldname = f'openccu-base-{old}-git4.tar.gz'
