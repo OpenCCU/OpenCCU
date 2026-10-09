@@ -577,7 +577,13 @@
       "patch": "0002-WebUI-Bootstrap.patch"
     }
   ],
-  "in_progress": null,
+  "in_progress": {
+    "base_merge_commit": "7d8dbddf1d5ad2a5be0ccdfd0d0706742ac56ab7",
+    "base_pr": 157,
+    "cleanup_pr": null,
+    "patch": "0026-WebUI-Fix-CacheControl.patch",
+    "phase": "cleanup-prepared; merge not yet verified"
+  },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
   "verified_at_openccu_commit": "f5ae9c94107220be490694ca7b3abee9a49870c3",

@@ -84,28 +84,6 @@
       "sha256": "ff54c26300bc354f4252169743e85efbbfc73b8c4834796ec5d5511ead83a25b"
     },
     {
-      "added": 15,
-      "files": [
-        "www/config/cp_maintenance.cgi",
-        "www/config/ic_common.tcl",
-        "www/config/ic_ifacecmd.cgi",
-        "www/config/ic_neweasymode.cgi",
-        "www/error/error-500.html",
-        "www/error/error-503.html",
-        "www/rega/index.htm",
-        "www/rega/login.htm",
-        "www/rega/logout.htm",
-        "www/rega/pages/index.htm",
-        "www/tools/designer.html",
-        "www/tools/js/common/httploader.js",
-        "www/webui/js/lang/loadTextResource.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0026-WebUI-Fix-CacheControl.patch",
-      "removed": 74,
-      "sha256": "022fd236749effe23b93b33315f7543668dd428ef0900e613165d68b49a69f73"
-    },
-    {
       "added": 51,
       "files": [
         "www/rega/pages/msg/sysVarsArray.htm",
@@ -927,5 +905,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "8d5835fd3e96907c89741033a4dff8fa179f3b2ab18e7ee5bef4e93949302db4"
+  "series_sha256": "c70004917b01029748b6c98305184a45cb51250b4553dc5920db373e82ce33ad"
 }
