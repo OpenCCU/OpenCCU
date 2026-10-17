@@ -1,0 +1,134 @@
+From eb33a5ad6d64bae16b2444ce14c6533729c2350e Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Wed, 23 Sep 2026 20:17:53 +0100
+Subject: [PATCH] usb: dwc_otg: pad DMA buffers for short control-IN transfers
+
+BCM283x USB DMA writes complete 32-bit words. The 18-byte device
+descriptor allocated during enumeration can therefore suffer a two-byte
+overrun, reported by KFENCE when hub_port_init() frees it.
+
+Bounce ordinary, non-word-sized control-IN buffers at the Linux HCD
+mapping boundary, following the approach used by dwc2. Map the padded
+length but restore the original URB length before enqueueing. Unmap
+before copying back, bound the copy to the caller's buffer, and restore
+the original pointer on both completion and mapping failure.
+
+Leave pre-mapped, scatter-gather and other transfer types unchanged.
+This deliberately avoids re-enabling the old per-channel workaround,
+which was disabled after USB hub-status/boot regressions.
+
+Link: https://github.com/OpenCCU/OpenCCU/issues/4212
+Link: https://github.com/raspberrypi/linux/commit/279fbca16aed002bab902d393a20fe2db506b28b
+Upstream: Pending
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+---
+ drivers/usb/host/dwc_otg/dwc_otg_hcd_linux.c | 86 ++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_hcd_linux.c b/drivers/usb/host/dwc_otg/dwc_otg_hcd_linux.c
+index 430a1a510..1d59e24d3 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_hcd_linux.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_hcd_linux.c
+@@ -128,6 +128,90 @@ struct wrapper_priv_data {
+ 	dwc_otg_hcd_t *dwc_otg_hcd;
+ };
+ 
++#define DWC_OTG_DMA_ALIGN 4
++
++static void **dwc_otg_control_buffer_cookie(struct urb *urb)
++{
++	size_t size = ALIGN((size_t)urb->transfer_buffer_length,
++			    DWC_OTG_DMA_ALIGN);
++
++	/* Keep the saved pointer outside the DMA buffer's last cache line. */
++	return urb->transfer_buffer + ALIGN(size, dma_get_cache_alignment());
++}
++
++static void dwc_otg_free_control_buffer(struct urb *urb, bool copy_back)
++{
++	void *original;
++
++	if (!(urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER))
++		return;
++
++	original = *dwc_otg_control_buffer_cookie(urb);
++	if (copy_back && urb->actual_length > 0)
++		memcpy(original, urb->transfer_buffer,
++		       min(urb->actual_length, urb->transfer_buffer_length));
++	kfree(urb->transfer_buffer);
++	urb->transfer_buffer = original;
++	urb->transfer_flags &= ~URB_ALIGNED_TEMP_BUFFER;
++}
++
++static int dwc_otg_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
++				   gfp_t mem_flags)
++{
++	int length = urb->transfer_buffer_length;
++	size_t dma_length;
++	void *buffer;
++	int ret;
++
++	/*
++	 * BCM283x writes complete words even for a short control-IN response.
++	 * An aligned 18-byte device descriptor therefore needs 20 bytes of
++	 * writable storage. Bounce ordinary control-IN buffers before mapping
++	 * so both the normal and FIQ paths use the padded DMA destination.
++	 * Pre-mapped and scatter-gather buffers need separate handling.
++	 */
++	if (!hcd_uses_dma(hcd) || hcd->self.uses_pio_for_control ||
++	    !usb_pipecontrol(urb->pipe) || !usb_urb_dir_in(urb) ||
++	    length <= 0 || !(length & (DWC_OTG_DMA_ALIGN - 1)) ||
++	    (urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP) ||
++	    urb->num_sgs || urb->sg || !urb->transfer_buffer)
++		return usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
++
++	dma_length = ALIGN((size_t)length, DWC_OTG_DMA_ALIGN);
++	if (dma_length > INT_MAX)
++		return -EOVERFLOW;
++	buffer = kmalloc(ALIGN(dma_length, dma_get_cache_alignment()) +
++			 sizeof(urb->transfer_buffer), mem_flags);
++	if (!buffer)
++		return -ENOMEM;
++
++	/* Install the bounce buffer without changing the USB request length. */
++	*(void **)(buffer + ALIGN(dma_length, dma_get_cache_alignment())) =
++		urb->transfer_buffer;
++	urb->transfer_buffer = buffer;
++	urb->transfer_flags |= URB_ALIGNED_TEMP_BUFFER;
++
++	/* Include the hardware's final word in the DMA mapping as well. */
++	urb->transfer_buffer_length = dma_length;
++	ret = usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
++	urb->transfer_buffer_length = length;
++	if (ret)
++		dwc_otg_free_control_buffer(urb, false);
++	return ret;
++}
++
++static void dwc_otg_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
++{
++	int length = urb->transfer_buffer_length;
++
++	if (urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER)
++		urb->transfer_buffer_length = ALIGN(length, DWC_OTG_DMA_ALIGN);
++	usb_hcd_unmap_urb_for_dma(hcd, urb);
++	urb->transfer_buffer_length = length;
++	/* DMA ownership must return to the CPU before copying received data. */
++	dwc_otg_free_control_buffer(urb, true);
++}
++
+ /** @} */
+ 
+ static struct hc_driver dwc_otg_hc_driver = {
+@@ -148,6 +232,8 @@ static struct hc_driver dwc_otg_hc_driver = {
+ 
+ 	.urb_enqueue = dwc_otg_urb_enqueue,
+ 	.urb_dequeue = dwc_otg_urb_dequeue,
++	.map_urb_for_dma = dwc_otg_map_urb_for_dma,
++	.unmap_urb_for_dma = dwc_otg_unmap_urb_for_dma,
+ 	.endpoint_disable = endpoint_disable,
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
+ 	.endpoint_reset = endpoint_reset,
+-- 
+2.51.1
+
