@@ -304,7 +304,8 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
                   Write('<div class="CLASS06412">Bearbeiten...</div>');
                 }
                 if ((bDelAllowed) && (!oFav.Unerasable())) {
-                    Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#');">${btnRemove}</div>');
+                    string sDelName = oFav.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
+                    Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#',\''#sDelName#'\');">${btnRemove}</div>');
                 }
                 else {
                   Write('<div class="CLASS06412">${btnRemove}</div>');

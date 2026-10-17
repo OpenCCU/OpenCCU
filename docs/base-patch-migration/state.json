@@ -677,18 +677,24 @@
       "base_pr": 210,
       "cleanup_pr": 4456,
       "patch": "0155-WebUI-Add-HmIP-RFUSB-Support.patch"
+    },
+    {
+      "base_merge_commit": "af4539c3755ccdedab11216483dcf28e9321d25a",
+      "base_pr": 212,
+      "cleanup_pr": 4457,
+      "patch": "0153-WebUI-Fix-ImproveImgUpdates.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "af4539c3755ccdedab11216483dcf28e9321d25a",
-    "base_pr": 212,
-    "cleanup_pr": 4457,
-    "patch": "0153-WebUI-Fix-ImproveImgUpdates.patch",
+    "base_merge_commit": "17383a074fb95a652335c31dadbbd85a0bf3b22f",
+    "base_pr": 213,
+    "cleanup_pr": 4459,
+    "patch": "0156-WebUI-ImprovedConfirmDeletePopup.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "0ba6800df3aa3afea28670d335ec428936bac3de",
-  "verified_base_pin": "a4a4a70359ea9d74fc87cc1e227d5c7d0382f79f",
-  "verified_source_sha256": "9f2a5dc611cd41c8a0f87a266c9ebe1d5669c1baeaa44a9be6873969ecede5f8"
+  "verified_at_openccu_commit": "638b1d7db704198ddd7ed335efa097deeeb96485",
+  "verified_base_pin": "af4539c3755ccdedab11216483dcf28e9321d25a",
+  "verified_source_sha256": "bf0c1d93b9bc3b5069689d21ceca66a2c2f059ecc23fb3e51176ed539147a8c4"
 }

@@ -240,14 +240,14 @@
       "sha256": "29943f4d6fb665316a92a519d305df082b5c2d58ef16736147cf84e485f6451d"
     },
     {
-      "added": 202,
+      "added": 203,
       "files": [
         "www/rega/esp/favorites.fn",
         "www/rega/pages/tabs/user/favOverview.htm"
       ],
       "patch": "0062-WebUI-FavoriteSorting.patch",
-      "removed": 137,
-      "sha256": "b8bb2d695f3fa480f6e3aa8cd2f2a9c057331620170fac067d278673046ea188"
+      "removed": 138,
+      "sha256": "10612306c3dcb568badc8bbcadbb9b542d4f32aba15c6ec005f0fc8da19fbd3d"
     },
     {
       "added": 269,
@@ -553,22 +553,6 @@
       "sha256": "0937b1d2d709b1996d88ee72dcfc8bb057796b6e7f2fdf08a0355a7de479ec52"
     },
     {
-      "added": 26,
-      "files": [
-        "www/rega/pages/tabs/admin/systemvars.htm",
-        "www/rega/pages/tabs/admin/userAdministration.htm",
-        "www/rega/pages/tabs/user/favOverview.htm",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0156-WebUI-ImprovedConfirmDeletePopup.patch",
-      "removed": 20,
-      "sha256": "4103b9b3b31074bfdc2c99c74551b0d017c0872365adb2d280c7bfd70f4a7358"
-    },
-    {
       "added": 165,
       "files": [
         "www/config/ic_deviceparameters.cgi",
@@ -695,5 +679,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1191dd3c649cb158ee9b20145ddac6815fa9aaad2401c06d4f02ae5cf777ca4d"
+  "series_sha256": "0d895cd7057203602323646570d3ea35e39a1e93befd309ca6d5d2fb7c40e364"
 }

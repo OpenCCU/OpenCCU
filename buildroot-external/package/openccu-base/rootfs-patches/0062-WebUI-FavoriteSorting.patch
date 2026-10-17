@@ -71,7 +71,7 @@
      <td class="CLASS06405">
        <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
        <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
-@@ -168,155 +179,199 @@
+@@ -168,156 +179,200 @@
    </tr>
    <%
      integer iCount =  0;
@@ -260,7 +260,8 @@
 +                  Write('<div class="CLASS06412">Bearbeiten...</div>');
 +                }
 +                if ((bDelAllowed) && (!oFav.Unerasable())) {
-+                    Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#');">${btnRemove}</div>');
++                    string sDelName = oFav.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
++                    Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#',\''#sDelName#'\');">${btnRemove}</div>');
 +                }
 +                else {
 +                  Write('<div class="CLASS06412">${btnRemove}</div>');
@@ -293,7 +294,8 @@
 -              Write('<div class="CLASS06412">Bearbeiten...</div>');
 -            }
 -            if ((bDelAllowed) && (!oFav.Unerasable())) {
--                Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#');">${btnRemove}</div>');
+-                string sDelName = oFav.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
+-                Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#',\''#sDelName#'\');">${btnRemove}</div>');
 -            }
 -            else {
 -              Write('<div class="CLASS06412">${btnRemove}</div>');
@@ -402,7 +404,7 @@
        }
      }
    %>
-@@ -390,6 +445,16 @@
+@@ -391,6 +446,16 @@
      }
    }
    
