@@ -1,0 +1,420 @@
+--- a/www/rega/esp/system.fn
++++ b/www/rega/esp/system.fn
+@@ -820,8 +820,16 @@
+   !sv.ValueSubType(ist);
+   sv.DPInfo( system.GetVar("sInfo") );
+   sv.ValueUnit( system.GetVar("sUnit") );
++  integer oldValueListCount = 0;
++  if( (system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum) )
++  {
++    oldValueListCount = web.webGetValueListCount(sv.ValueList());
++  }
+   sv.RemoveMetaData('MIN');
+   sv.RemoveMetaData('MAX');
++  sv.RemoveMetaData('BV0');
++  sv.RemoveMetaData('BV1');
++  sv.RemoveMetaData('VALUE_LIST');
+   var svValue;
+   if (ist == istAlarm)
+   {
+@@ -850,6 +858,79 @@
+   }
+   elseif (ist == istEnum)
+   {
++    if( system.GetVar("createNew") == 0 )
++    {
++      integer newCount = web.webGetValueListCount(system.GetVar("sValList"));
++      if( (newCount > 0) && (newCount < oldValueListCount) )
++      {
++        integer maxIndex = newCount - 1;
++        string prgId;
++        string condId;
++        integer singleNum;
++        integer conditions;
++        object prg;
++        object rule;
++        object cond;
++        object sc;
++        object dest;
++        object sd;
++        foreach(prgId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs())
++        {
++          prg = dom.GetObject(prgId);
++          if( prg )
++          {
++            rule = prg.Rule();
++            while( rule )
++            {
++              conditions = rule.RuleConditions().Count();
++              if( conditions > 0 )
++              {
++                foreach(condId, system.GenerateEnum(0, conditions - 1))
++                {
++                  cond = rule.RuleCondition(condId.ToInteger());
++                  if( cond )
++                  {
++                    singleNum = 0;
++                    sc = cond.CndSingleCondition(singleNum);
++                    while( sc )
++                    {
++                      if( (sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID()) )
++                      {
++                        if( (sc.RightVal1ValType() == ivtInteger) && (sc.RightVal1() > maxIndex) )
++                        {
++                          sc.RightVal1(maxIndex);
++                        }
++                      }
++                      singleNum = singleNum + 1;
++                      sc = cond.CndSingleCondition(singleNum);
++                    }
++                  }
++                }
++              }
++              dest = rule.RuleDestination();
++              if( dest )
++              {
++                singleNum = 0;
++                sd = dest.DestSingleDestination(singleNum);
++                while( sd )
++                {
++                  if( (sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID()) )
++                  {
++                    if( (sd.DestinationValueType() == ivtInteger) && (sd.DestinationValue() > maxIndex) )
++                    {
++                      sd.DestinationValue(maxIndex);
++                    }
++                  }
++                  singleNum = singleNum + 1;
++                  sd = dest.DestSingleDestination(singleNum);
++                }
++              }
++              rule = rule.RuleSubRule();
++            }
++          }
++        }
++      }
++    }
+     sv.ValueType( ivtInteger );
+     sv.ValueSubType( istEnum );
+     sv.ValueList(system.GetVar("sValList"));
+--- a/www/rega/pages/tabs/admin/msg/newSysVar.htm
++++ b/www/rega/pages/tabs/admin/msg/newSysVar.htm
+@@ -4,8 +4,28 @@
+     object sv = dom.GetObject(system.GetVar("varid"));
+   }
+   string hidden = "";
+-  if (system.GetVar("editValueOnly") == 1) {hidden="hidden";}
++  boolean svEditValueOnly = (system.GetVar("editValueOnly") == 1);
++  if (svEditValueOnly) {hidden="hidden";}
+   system.SetSessionVar("editValueOnly",0);
++  boolean svUsed = false;
++  if ((system.GetVar("createNew") == 0) && !svEditValueOnly) {
++    string itemId;
++    object item;
++    foreach(itemId, dom.GetObject(ID_SCONDITIONS).EnumIDs()) {
++      item = dom.GetObject(itemId);
++      if (item && (item.LeftValType() == ivtSystemId) && (item.LeftVal() == sv.ID())) {
++        svUsed = true;
++      }
++    }
++    if (!svUsed) {
++      foreach(itemId, dom.GetObject(ID_SDESTINATIONS).EnumIDs()) {
++        item = dom.GetObject(itemId);
++        if (item && (item.DestinationParam() == ivtSystemId) && (item.DestinationDP() == sv.ID())) {
++          svUsed = true;
++        }
++      }
++    }
++  }
+ %></div>
+ 
+ <div class="CLASS05000">
+@@ -60,7 +80,7 @@
+       <input id="inpDesc" type="text" value="<%Write(svDesc)%>" onblur="stringRemoveNonPrintableChars(this);"/>
+     </td>
+       <td class="CLASS05004" <%Write(hidden)%> >
+-        <select id="selType" onchange="onTypeChange()">
++        <select id="selType" onchange="onTypeChange()" <% if (svUsed || ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istAlarm))) { Write("disabled"); } %> >
+         <% 
+           if (system.GetVar("createNew") == 1) {
+             Write("<option selected>${lblLogicValue}</option><option>${lblValueList}</option><option>${lblNumber}</option><option>${lblAlarm}</option><option>${lblString}</option>");
+@@ -77,7 +97,12 @@
+             Write("<option "#sel#">${lblNumber}</option>");
+             string sel = "";
+             if (sv.ValueSubType() == istAlarm) { sel = "selected"; }
+-            Write("<option "#sel#">${lblAlarm}</option>");
++            if (sv.ValueSubType() == istAlarm) {
++              Write("<option "#sel#">${lblAlarm}</option>");
++            }
++            else {
++              Write("<option disabled>${lblAlarm}</option>");
++            }
+             string sel = "";
+             if (sv.ValueSubType() == istChar8859) { sel = "selected"; }
+             Write("<option "#sel#">${lblString}</option>");
+@@ -146,6 +171,7 @@
+   </table>
+ </div>
+ <div class="popupControls">
++  <div id="svEditMessage" style="color: red; text-align: center; padding-bottom: 5px; display: none;"></div>
+   <table>
+   <tr>
+     <td>
+@@ -160,6 +186,33 @@
+ <script type="text/javascript">
+   dlgResult = 0;
+ 
++  var svEditValueOnly = <% Write(svEditValueOnly); %>;
++  var svUsedInPrograms = <% Write(svUsed); %>;
++  var svExisting = <% Write(system.GetVar("createNew") == 0); %>;
++  var svAlarm = <% if (system.GetVar("createNew") == 0) { Write(sv.ValueSubType() == istAlarm); } else { Write(false); } %>;
++  var svOriginalMin = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write(sv.ValueMin()); } else { Write(0); } %>;
++  var svOriginalMax = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write(sv.ValueMax()); } else { Write(0); } %>;
++  var svOriginalValueListCount = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) { Write(web.webGetValueListCount(sv.ValueList())); } else { Write(0); } %>;
++
++  showSvEditMessage = function(key) {
++    $("svEditMessage").innerHTML = translateKey(key);
++    $("svEditMessage").style.display = "block";
++  };
++
++  clearSvEditMessage = function() {
++    $("svEditMessage").innerHTML = "";
++    $("svEditMessage").style.display = "none";
++  };
++
++  if (!svEditValueOnly) {
++    if (svAlarm) {
++      showSvEditMessage("svEditTypeAlarm");
++    }
++    else if (svUsedInPrograms) {
++      showSvEditMessage("svEditTypeUsed");
++    }
++  }
++
+   var arrElem = ["#inpName", "#inpDesc"];
+ 
+   jQuery.each(arrElem, function(index, elem){
+@@ -175,6 +228,95 @@
+     $("chnNameRow").hidden = true;
+   };
+   
++
++  var svProgramMaxIndices = [<%
++    if ((system.GetVar("createNew") == 0) && !svEditValueOnly && (sv.ValueSubType() == istEnum))
++    {
++      string programId;
++      string conditionId;
++      object program;
++      object rule;
++      object condition;
++      object sc;
++      object destination;
++      object sd;
++      integer singleNum;
++      integer conditionCount;
++      integer maxIndex;
++      boolean first = true;
++      foreach(programId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs())
++      {
++        program = dom.GetObject(programId);
++        if( program )
++        {
++          maxIndex = -1;
++          rule = program.Rule();
++          while( rule )
++          {
++            conditionCount = rule.RuleConditions().Count();
++            if( conditionCount > 0 )
++            {
++              foreach(conditionId, system.GenerateEnum(0, conditionCount - 1))
++              {
++                condition = rule.RuleCondition(conditionId.ToInteger());
++                if( condition )
++                {
++                  singleNum = 0;
++                  sc = condition.CndSingleCondition(singleNum);
++                  while( sc )
++                  {
++                    if( (sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID()) )
++                    {
++                      if( (sc.RightVal1ValType() == ivtInteger) && (sc.RightVal1() > maxIndex) ) { maxIndex = sc.RightVal1(); }
++                    }
++                    singleNum = singleNum + 1;
++                    sc = condition.CndSingleCondition(singleNum);
++                  }
++                }
++              }
++            }
++            destination = rule.RuleDestination();
++            if( destination )
++            {
++              singleNum = 0;
++              sd = destination.DestSingleDestination(singleNum);
++              while( sd )
++              {
++                if( (sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID()) )
++                {
++                  if( (sd.DestinationValueType() == ivtInteger) && (sd.DestinationValue() > maxIndex) ) { maxIndex = sd.DestinationValue(); }
++                }
++                singleNum = singleNum + 1;
++                sd = destination.DestSingleDestination(singleNum);
++              }
++            }
++            rule = rule.RuleSubRule();
++          }
++          if( maxIndex >= 0 )
++          {
++            if( !first ) { Write(","); }
++            Write(maxIndex);
++            first = false;
++          }
++        }
++      }
++    }
++  %>];
++
++  svCheckValueListReduction = function(newCount, onNoChanges) {
++    var count = svProgramMaxIndices.filter(function(index) { return index >= newCount; }).length;
++    if (count > 0) {
++      var message = (count == 1 ? translateKey("svEditProgramConfirmOne") : translateKey("svEditProgramConfirmMany").replace("%d", count));
++      new YesNoDialog(translateKey("dialogSafetyCheck"), message, function(result) {
++        if (result == YesNoDialog.RESULT_YES) {
++          onNoChanges();
++        }
++      });
++      return;
++    }
++    onNoChanges();
++  };
++
+   saveSysVars = function()
+   {
+     if ( isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false ) return;
+@@ -207,8 +349,18 @@
+           break;
+         case 1:
+           iSubType = SYSVAR_ENUM;
+-          pb += "string sValList = '"+$("txVals").value.replace(/(?:\r\n|\r|\n)/g,';')+"';";
+-          pb += "string sValue = '"+$("selEnum").value+"';";
++          if (!$("txVals").value.split(/[;\r\n]+/).some(function(v) { return v.strip().length > 0; }))
++          {
++            showSvEditMessage("svEditEmptyValueList");
++            return;
++          }
++          var vals = $("txVals").value.replace(/(?:\r\n|\r|\n)/g,';');
++          var maxIndex = vals.split(";").length - 1;
++          var value = parseInt($("selEnum").value, 10);
++          if (isNaN(value) || value < 0) value = 0;
++          if (value > maxIndex) value = maxIndex;
++          pb += "string sValList = '"+vals+"';";
++          pb += "string sValue = '"+value+"';";
+           break;
+         case 2:
+           iSubType = SYSVAR_GENERIC;
+@@ -228,6 +380,16 @@
+           var itmpMaxVal = parseFloat( $("inpMax").value );
+           if( isNaN(itmpMinVal) ) itmpMinVal = 0;
+           if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
++          if (itmpMinVal > itmpMaxVal)
++          {
++            showSvEditMessage("svEditInvalidRange");
++            return;
++          }
++          if (svUsedInPrograms && svExisting && ((itmpMinVal > svOriginalMin) || (itmpMaxVal < svOriginalMax)))
++          {
++            showSvEditMessage("svEditRangeUsed");
++            return;
++          }
+           pb += "integer iMinVal = '"+itmpMinVal+"';";
+           pb += "integer iMaxVal = '"+itmpMaxVal+"';";
+           
+@@ -265,6 +427,11 @@
+           if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
+         }
+       };
++      if (iSelIdx == 1 && svExisting && (svOriginalValueListCount > vals.split(";").length))
++      {
++        svCheckValueListReduction(vals.split(";").length, function() { new Ajax.Request(url, opts); });
++        return;
++      }
+       new Ajax.Request(url, opts);
+     } else {
+         // No name available
+@@ -316,6 +483,7 @@
+         break;
+       case 1:
+         loadValueEdit(translateKey("lblVal1Val2Val3"));
++        updateValueList();
+         break;
+       case 2:
+         loadIntEdit(0, 65000);
+@@ -387,6 +555,28 @@
+     $("tdValueEdit").innerHTML = s
+   };
+   
++  updateValueList = function()
++  {
++    var selection = $("selEnum");
++    var oldIndex = parseInt(selection.value, 10);
++    var vals = $("txVals").value.replace(/(?:\r\n|\r|\n)/g,';').split(";");
++
++    selection.options.length = 0;
++    for (var i = 0; i < vals.length; i++)
++    {
++      var option = document.createElement("option");
++      option.value = i;
++      option.text = vals[i];
++      selection.add(option);
++    }
++
++    if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
++    if (oldIndex >= vals.length) oldIndex = vals.length - 1;
++    selection.selectedIndex = oldIndex;
++    var table = jQuery(selection).closest("table")[0];
++    if (table) table.style.display = "";
++  };
++
+   loadValueEdit = function(vals, sValue, optionList) 
+   {
+     if( vals == "" )
+@@ -396,7 +586,7 @@
+     var s = "";
+     s += "<table class='CLASS05012'>";
+     s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
+-    s += "<tr><td> <textarea id='txVals' rows='2'>"+vals+"</textarea> </td></tr>";
++    s += "<tr><td> <textarea id='txVals' rows='2' onblur='updateValueList()'>"+vals+"</textarea> </td></tr>";
+     s += "</table>";
+     $("tdEdit").innerHTML = s;
+     
+--- a/www/webui/js/lang/de/translate.lang.js
++++ b/www/webui/js/lang/de/translate.lang.js
+@@ -1104,6 +1104,13 @@
+     "optionNone" : "Keine",
+     "optionNotActive" : "Nicht aktiv",
+ 
++    "svEditTypeUsed" : "Der Variablentyp kann nicht ge%E4ndert werden, da diese Systemvariable in Programmen verwendet wird.",
++    "svEditTypeAlarm" : "Der Typ einer bestehenden Alarmvariable kann nicht ge%E4ndert werden.",
++    "svEditInvalidRange" : "Der Minimalwert darf nicht gr%F6%DFer als der Maximalwert sein.",
++    "svEditRangeUsed" : "Der Wertebereich kann nicht verkleinert werden, da diese Systemvariable in Programmen verwendet wird.",
++    "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",
++    "svEditProgramConfirmOne" : "1 Programm muss an die reduzierte Werteliste angepasst werden. Soll das betroffene Programm automatisch angepasst werden? Bitte anschlie%DFend pr%FCfen.",
++    "svEditProgramConfirmMany" : "%d Programme m%FCssen an die reduzierte Werteliste angepasst werden. Sollen die betroffenen Programme automatisch angepasst werden? Bitte anschlie%DFend pr%FCfen.",
+     "HelpTitle" : "Hilfe"
+   }
+ });
+--- a/www/webui/js/lang/en/translate.lang.js
++++ b/www/webui/js/lang/en/translate.lang.js
+@@ -1182,6 +1182,13 @@
+     "optionNone" : "None",
+     "optionNotActive" : "Not active",
+ 
++    "svEditTypeUsed" : "The variable type cannot be changed because this system variable is used in programs.",
++    "svEditTypeAlarm" : "The type of an existing alarm variable cannot be changed.",
++    "svEditInvalidRange" : "The minimum value must not exceed the maximum value.",
++    "svEditRangeUsed" : "The numeric range cannot be reduced because this system variable is used in programs.",
++    "svEditEmptyValueList" : "The value list must contain at least one non-empty entry.",
++    "svEditProgramConfirmOne" : "1 program must be adjusted to the shortened value list. Should the affected program be adjusted automatically? Please review it afterwards.",
++    "svEditProgramConfirmMany" : "%d programs must be adjusted to the shortened value list. Should the affected programs be adjusted automatically? Please review them afterwards.",
+     "HelpTitle" : "Help"
+   }
+ });
