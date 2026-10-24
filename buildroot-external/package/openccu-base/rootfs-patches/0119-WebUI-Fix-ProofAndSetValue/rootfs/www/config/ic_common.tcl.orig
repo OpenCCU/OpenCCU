@@ -581,11 +581,10 @@ proc modify_easymode_ui {IGNORE_PARAMS profile pPROFILE} {
 
 #cgi_debug -on
 
-  global env
+  global env _cgi _cgi_uservar
   upvar $pPROFILE PROFILE_TMP
 
-  set params [split [cgi_unquote_input $env(QUERY_STRING)] &]
-
+  set params $_cgi(uservars)
 
   #Parametername eines evtl. Subsets auf den URL-Parametern generieren. z.B. subset_4_1
   set i 1
@@ -593,7 +592,10 @@ proc modify_easymode_ui {IGNORE_PARAMS profile pPROFILE} {
 
   foreach p $params {
 
-    if { [regexp {^(.*)=(.*)$} $p dummy name value] } then {
+    set name $p
+    set value $_cgi_uservar($name)
+
+    if { $name != "" } then {
 
       if { [lsearch -exact $IGNORE_PARAMS $name] >= 0} then {
 
@@ -646,7 +648,7 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
   global HTMLTITLE env
 
-  set IGNORE_PARAMS {address cmd iface paramid peer pnr ps_id ps_type sid SUBSET_OPTION_VALUE NAME}
+  set IGNORE_PARAMS {address cmd iface paramid peer pnr ps_id ps_type sid SUBSET_OPTION_VALUE NAME _}
 
   if { $profile != "" } then {
     
@@ -1113,7 +1115,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
     set idval "separate_${pnr}_$j"
 
     if { ! ($operations & 3) } then { continue }
-    if {    $operations & 1  } then { catch {set value $ps($param_id)} }
+    if {    $operations & 1  } then { catch {set value [cgi_quote_html $ps($param_id)]} }
     if {    $operations & 2  } then { set access "" } else { set access "disabled=\"disabled\"" }
 
     append s "<tr>"
