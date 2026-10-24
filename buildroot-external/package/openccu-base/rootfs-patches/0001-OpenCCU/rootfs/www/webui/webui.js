@@ -46341,6 +46341,29 @@ SendRequest = function(scriptname, html_container_id, callback)
   new Ajax.Updater(id, scriptname, opt);
 };
 
+SendPOSTRequest = function(scriptname, html_container_id, callback)
+{
+  scriptname = Get_ReGa_Path(scriptname);
+  var params = poststr;
+
+  if ((html_container_id) && (html_container_id !== "")) { id = html_container_id; }
+  else                                                   { id = Get_UI_CONTENTBOX_ID(); }
+
+  var _callback_ = callback; 
+  
+  var opt =
+  {
+    method:'post',
+    parameters:params,
+    evalScripts:true,
+    onComplete: function() { if (_callback_) { _callback_(); } }
+  };
+
+  // pass the session the same way as the page does (sid or icsessionid)
+  var sidElem = document.getElementById('global_sid');
+  new Ajax.Updater(id, scriptname + '?' + sidElem.name + '=' + sidElem.value, opt);
+};
+
 ShowLoadingBox = function(msg)
 {
   
@@ -46635,7 +46658,7 @@ PrepareDeleteDeviceForm_old = function(iface, sn, devname, devtype)
   poststr += "&devname=" + devname;
   poststr += "&devtype=" + devtype;
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 
   ProgressBar = new ProgressBarMsgBox("Verknüpfungen und Programme werden abgefragt...", 1);
   ProgressBar.show();
@@ -46886,7 +46909,7 @@ RemoveLink = function(iface, sender_address, receiver_address, sender_type, redi
       if ((redirect_url) && (redirect_url !== "")) { poststr += "&redirect_url=" + redirect_url; }
       else                                         { poststr += "&redirect_url=IC_LINKPEERLIST"; }
 
-      SendRequest('ic_ifacecmd.cgi');
+      SendPOSTRequest('ic_ifacecmd.cgi');
     }
   }, "html");
 };
@@ -46955,7 +46978,7 @@ CheckConfigPending = function(iface, sender_address, receiver_address, redirect_
   poststr += "&receiver_address=" +receiver_address;
   poststr += "&cmd=ShowConfigPendingMsg";
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 
@@ -47148,7 +47171,7 @@ DetermineParameterValue = function(iface, address, ps_id, param_id, html_inputel
   poststr += "&param_id="          + param_id;
   poststr += "&html_inputelem_id=" + html_inputelem_id;
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 
   //ProgressBar = new ProgressBarMsgBox("Parameter wird festgesetzt...", 1);
   ProgressBar = new ProgressBarMsgBox(translateKey("dialogDetermineParameterTitle"), 1);
@@ -48672,7 +48695,7 @@ AddLink = function(iface, sender_address, sender_group, receiver_address, name, 
   ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 ShowNewLinkSummary = function(iface, sender_address, receiver_address, name, description, group_name, group_description)
@@ -49014,7 +49037,7 @@ ActivateLinkParamset = function (iface, sender_address, receiver_address, hideWa
   poststr += "&receiver_address=" + receiver_address;
   poststr += "&cmd=activateLinkParamset";
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 SetLinkInfo = function (iface, sender_address, receiver_address, name, description) {
@@ -49029,7 +49052,7 @@ SetLinkInfo = function (iface, sender_address, receiver_address, name, descripti
   poststr += "&description=" + elv_toQueryString(description);
   poststr += "&cmd=setLinkInfo";
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 
@@ -49070,7 +49093,7 @@ SetEasyMode = function (iface, address, peer, special_input_id, paramid) {
     }
     poststr += "&new_profilepath=" + is_newProfile(paramid).split('-')[0] + fileExtension;
   }
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 CollectData_SaveProfileSettings = function (reload) {
@@ -49513,7 +49536,7 @@ FirmwareUpdate = function(devType) {
     poststr += "&iface=" + $F('global_iface');
     poststr += "&address=" + $F('global_address');
     poststr += "&cmd=firmware_update";
-    SendRequest('ic_ifacecmd.cgi');
+    SendPOSTRequest('ic_ifacecmd.cgi');
     ProgressBar = new ProgressBarMsgBox(translateKey("performingFirmwareUpdate"), 1);
     ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
@@ -49873,7 +49896,7 @@ SetParameters = function(iface, address, special_input_id)
 
 
 
-  SendRequest('ic_ifacecmd.cgi', null, function() {
+  SendPOSTRequest('ic_ifacecmd.cgi', null, function() {
     if (device)
     {
       DeviceList.beginUpdateDevice(device.id);
@@ -49892,7 +49915,7 @@ SendInternalKeyPress = function(iface, sender, receiver, longKeyPress)
   poststr += "&receiver=" + receiver;
   poststr += "&longKeyPress=" + simLongKeyPress;
   poststr += "&cmd=SendInternalKeyPress";
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 SetInternalKey = function(iface, address, special_input_id, peerAddress)
@@ -49921,7 +49944,7 @@ SetInternalKey = function(iface, address, special_input_id, peerAddress)
   AddSeparateSettings('subset_'   + special_input_id + '_', pnr);
   
   //alert(poststr);
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 ShowInternalKeyProfile = function(selectelem, channel, counter)

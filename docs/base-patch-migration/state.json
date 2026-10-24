@@ -755,18 +755,24 @@
       "base_pr": 240,
       "cleanup_pr": 4509,
       "patch": "0171-WebUI-Add-HmIPKeyTransceiverCentralLinkConfiguration.patch"
+    },
+    {
+      "base_merge_commit": "61561b6336286b774e652dd645f77ce899bafe42",
+      "base_pr": 242,
+      "cleanup_pr": 4518,
+      "patch": "0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "61561b6336286b774e652dd645f77ce899bafe42",
-    "base_pr": 242,
-    "cleanup_pr": 4518,
-    "patch": "0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch",
+    "base_merge_commit": "b6796fe8101063f80f39e6f3b5c29b4ddfdf7c74",
+    "base_pr": 243,
+    "cleanup_pr": null,
+    "patch": "0173-WebUI-SendPOSTRequest.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "ae2824179744bd50c9267d31794d32b16f0d137a",
-  "verified_base_pin": "1eebb6bd20bad386f603b745ace107e29862ea5c",
-  "verified_source_sha256": "ce0ddc7f1c3060bbf2904cdbc3cb9dd6438cf221b768c68cbce88501e8f39ccb"
+  "verified_at_openccu_commit": "c0c95f282a3c955fb4c16c257106147cb7c7868b",
+  "verified_base_pin": "61561b6336286b774e652dd645f77ce899bafe42",
+  "verified_source_sha256": "a1952d38c9bec678f97aeca26c7941ea5708aca4b28a668ae1eb10d67a0f2a7b"
 }
