@@ -67,7 +67,7 @@
    upvar $pNEWPROFILE  PROFILE_TMP
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -46827,6 +46827,27 @@
+@@ -46827,6 +46827,29 @@
    new Ajax.Updater(id, scriptname, opt);
  };
  
@@ -89,13 +89,15 @@
 +    onComplete: function() { if (_callback_) { _callback_(); } }
 +  };
 +
-+  new Ajax.Updater(id, scriptname + '?sid=' + document.getElementById('global_sid').value, opt);
++  // pass the session the same way as the page does (sid or icsessionid)
++  var sidElem = document.getElementById('global_sid');
++  new Ajax.Updater(id, scriptname + '?' + sidElem.name + '=' + sidElem.value, opt);
 +};
 +
  ShowLoadingBox = function(msg)
  {
    
-@@ -47121,7 +47142,7 @@
+@@ -47121,7 +47144,7 @@
    poststr += "&devname=" + devname;
    poststr += "&devtype=" + devtype;
  
@@ -104,7 +106,7 @@
  
    ProgressBar = new ProgressBarMsgBox("Verknüpfungen und Programme werden abgefragt...", 1);
    ProgressBar.show();
-@@ -47372,7 +47393,7 @@
+@@ -47372,7 +47395,7 @@
        if ((redirect_url) && (redirect_url !== "")) { poststr += "&redirect_url=" + redirect_url; }
        else                                         { poststr += "&redirect_url=IC_LINKPEERLIST"; }
  
@@ -113,7 +115,7 @@
      }
    }, "html");
  };
-@@ -47441,7 +47462,7 @@
+@@ -47441,7 +47464,7 @@
    poststr += "&receiver_address=" +receiver_address;
    poststr += "&cmd=ShowConfigPendingMsg";
  
@@ -122,7 +124,7 @@
  };
  
  
-@@ -47634,7 +47655,7 @@
+@@ -47634,7 +47657,7 @@
    poststr += "&param_id="          + param_id;
    poststr += "&html_inputelem_id=" + html_inputelem_id;
  
@@ -131,7 +133,7 @@
  
    //ProgressBar = new ProgressBarMsgBox("Parameter wird festgesetzt...", 1);
    ProgressBar = new ProgressBarMsgBox(translateKey("dialogDetermineParameterTitle"), 1);
-@@ -49173,7 +49194,7 @@
+@@ -49173,7 +49196,7 @@
    ProgressBar.show();
      ProgressBar.StartKnightRiderLight();
  
@@ -140,7 +142,7 @@
  };
  
  ShowNewLinkSummary = function(iface, sender_address, receiver_address, name, description, group_name, group_description)
-@@ -49515,7 +49536,7 @@
+@@ -49515,7 +49538,7 @@
    poststr += "&receiver_address=" + receiver_address;
    poststr += "&cmd=activateLinkParamset";
  
@@ -149,7 +151,7 @@
  };
  
  SetLinkInfo = function (iface, sender_address, receiver_address, name, description) {
-@@ -49530,7 +49551,7 @@
+@@ -49530,7 +49553,7 @@
    poststr += "&description=" + elv_toQueryString(description);
    poststr += "&cmd=setLinkInfo";
  
@@ -158,7 +160,7 @@
  };
  
  
-@@ -49571,7 +49592,7 @@
+@@ -49571,7 +49594,7 @@
      }
      poststr += "&new_profilepath=" + is_newProfile(paramid).split('-')[0] + fileExtension;
    }
@@ -167,7 +169,7 @@
  };
  
  CollectData_SaveProfileSettings = function (reload) {
-@@ -50014,7 +50035,7 @@
+@@ -50014,7 +50037,7 @@
      poststr += "&iface=" + $F('global_iface');
      poststr += "&address=" + $F('global_address');
      poststr += "&cmd=firmware_update";
@@ -176,7 +178,7 @@
      ProgressBar = new ProgressBarMsgBox(translateKey("performingFirmwareUpdate"), 1);
      ProgressBar.show();
      ProgressBar.StartKnightRiderLight();
-@@ -50374,7 +50395,7 @@
+@@ -50374,7 +50397,7 @@
  
  
  
@@ -185,7 +187,7 @@
      if (device)
      {
        DeviceList.beginUpdateDevice(device.id);
-@@ -50393,7 +50414,7 @@
+@@ -50393,7 +50416,7 @@
    poststr += "&receiver=" + receiver;
    poststr += "&longKeyPress=" + simLongKeyPress;
    poststr += "&cmd=SendInternalKeyPress";
@@ -194,7 +196,7 @@
  };
  
  SetInternalKey = function(iface, address, special_input_id, peerAddress)
-@@ -50422,7 +50443,7 @@
+@@ -50422,7 +50445,7 @@
    AddSeparateSettings('subset_'   + special_input_id + '_', pnr);
    
    //alert(poststr);

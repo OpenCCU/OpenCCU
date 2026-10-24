@@ -46907,7 +46907,9 @@ SendPOSTRequest = function(scriptname, html_container_id, callback)
     onComplete: function() { if (_callback_) { _callback_(); } }
   };
 
-  new Ajax.Updater(id, scriptname + '?sid=' + document.getElementById('global_sid').value, opt);
+  // pass the session the same way as the page does (sid or icsessionid)
+  var sidElem = document.getElementById('global_sid');
+  new Ajax.Updater(id, scriptname + '?' + sidElem.name + '=' + sidElem.value, opt);
 };
 
 ShowLoadingBox = function(msg)
