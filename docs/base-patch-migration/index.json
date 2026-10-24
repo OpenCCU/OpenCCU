@@ -491,7 +491,7 @@
       "sha256": "51cb86e70e4ee5970adb168b54d5deb9f03d774a3e8f792a61d6cfab2d0d1b8d"
     },
     {
-      "added": 43,
+      "added": 45,
       "files": [
         "www/config/ic_common.tcl",
         "www/config/ic_ifacecmd.cgi",
@@ -500,7 +500,7 @@
       ],
       "patch": "0173-WebUI-SendPOSTRequest.patch",
       "removed": 19,
-      "sha256": "d658e58de033c77c044bf94a35cc91b786e415a81a4d841bf2954c34e9d7c7d8"
+      "sha256": "df60fda3810d9370f60d3547a159816587c6dcfaa7b5c3e7077b91e55a56cca7"
     },
     {
       "added": 120,
