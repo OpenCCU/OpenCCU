@@ -81,7 +81,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
           if(oPrograms)
           {
             if (oUser.UserLevel() == iulAdmin) {
-              WriteLine("<script type='text/javascript'>EditProgram = function(id) { var opt={postBody: 'string action = \"SetProgram\"; string id = \"'+id+'\";',onComplete: function(t){if(t.responseText=='true') { loadPrograms(); }}};new Ajax.Request('/esp/programs.htm?sid='+SessionId,opt);};</script></td>");
+              WriteLine("<script type='text/javascript'>EditProgram = function(id) { var opt={postBody: 'string action = \"SetProgram\"; string id = \"'+id+'\";',onComplete: function(t){if(t.responseText=='true') { loadPrograms(); }}};new Ajax.Request('/esp/programs.htm?sid='+SessionId,opt);};</script>");
             }
             string sPID;
             foreach( sPID, oUser.UserTempViewIDs().EnumIDs() )

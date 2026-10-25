@@ -43,6 +43,7 @@
                 </tr>
                 <%
                   string sEnumDeviceIds = "";
+                  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
                   object obj = dom.GetObject(ID_DEVICES);
                   if ( obj )
                   {
@@ -86,7 +87,11 @@
                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                           Write(devs.Name());
                           Write("</td>");
-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                          if( oUser && oUser.UserLevel() == iulAdmin ) {
+                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                          } else {
+                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
+                          }
                           
                           string sPicDivId = "picDiv"#devs.ID();
                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");

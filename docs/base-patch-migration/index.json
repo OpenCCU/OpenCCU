@@ -382,7 +382,7 @@
       "sha256": "9e739f25f67477acfece667dcdc0d86779b1fcbbefa50a37762de032149f9dde"
     },
     {
-      "added": 46,
+      "added": 55,
       "files": [
         "www/config/ic_deviceparameters.cgi",
         "www/rega/pages/tabs/admin/views/programs.htm",
@@ -397,7 +397,7 @@
       ],
       "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch",
       "removed": 20,
-      "sha256": "35ce14f2bc6c3ef6a5b9662f303467345026c55bdafc2b2c8c82cc5832b96b5c"
+      "sha256": "277727b053ad3e904bd34d573b10d54fd0937c028f059663ec0a07ea21bbf699"
     },
     {
       "added": 45,
@@ -447,7 +447,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "613ddb06c68cc2c574a72c23ce7d54d83ada7a90db1e48b82b39301a2904c3bf"
+      "sha256": "f25daf6b6a53db372fcb69d12136e6b7036ba39a2269ab8e699ff341ae9ba2b0"
     },
     {
       "added": 74,
