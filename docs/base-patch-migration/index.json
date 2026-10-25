@@ -121,7 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 656,
-      "sha256": "fa5e58b4b47b2cb93e94ffd672c2f15fe45ec1cd6bd2dc6c07f74553db66753a"
+      "sha256": "049fd46f7d185bf3bf4cfaff23e06d859d06dcb199a322a45322ad52ba1ca5e3"
     },
     {
       "added": 138,
@@ -381,7 +381,7 @@
       ],
       "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch",
       "removed": 18,
-      "sha256": "be6b6791eee278b30802e9175dddbbe48214825f9b5323e58b8c306529a4cabc"
+      "sha256": "1bf5af9ea6aaa76e15b2a8e27871be9e68157deca5388c42541e70559e139409"
     },
     {
       "added": 45,
