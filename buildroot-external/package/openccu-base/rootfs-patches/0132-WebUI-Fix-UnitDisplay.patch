@@ -437,7 +437,7 @@
              string sValue = "?";
 --- a/www/rega/esp/programs.fn
 +++ b/www/rega/esp/programs.fn
-@@ -707,7 +707,7 @@
+@@ -711,7 +711,7 @@
                          
                          if( unit.Length() && sValue == "" )
                          {
