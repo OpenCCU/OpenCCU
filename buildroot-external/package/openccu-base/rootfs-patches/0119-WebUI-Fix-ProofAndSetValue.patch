@@ -521,7 +521,7 @@
  
 --- a/www/config/ic_common.tcl
 +++ b/www/config/ic_common.tcl
-@@ -1380,7 +1380,7 @@
+@@ -1382,7 +1382,7 @@
  
            append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
            append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
@@ -552,7 +552,7 @@
            append s1 "</td>"
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -47759,50 +47759,65 @@
+@@ -47782,50 +47782,65 @@
      srcElm.value = value;
    }
  
@@ -632,7 +632,7 @@
      }
      srcElm.setAttribute("valvalid", "true");
    }
-@@ -47810,9 +47825,9 @@
+@@ -47833,9 +47848,9 @@
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";

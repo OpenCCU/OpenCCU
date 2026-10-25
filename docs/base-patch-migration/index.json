@@ -182,7 +182,7 @@
       ],
       "patch": "0056-WebUI-Sticky-Filters.patch",
       "removed": 6,
-      "sha256": "3287d80ed29e2445d0b979fa9a45b95803020fbaea4908d177ea2527d9ed5234"
+      "sha256": "1eb9c7f5f4af7e900769e5eae1526b5fe5e855826ad19c7af96cc8984ba59779"
     },
     {
       "added": 262,
@@ -325,7 +325,7 @@
       ],
       "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
       "removed": 70,
-      "sha256": "76939907c350bf69773fc3ab44fc9ad530ed0b6d089ea83c7aab1e411858e8fe"
+      "sha256": "e3225de9730dd02d7f8f65027eb535d79b71024034dbb555c8ed8c67df2b08a0"
     },
     {
       "added": 76,
@@ -368,7 +368,7 @@
       ],
       "patch": "0132-WebUI-Fix-UnitDisplay.patch",
       "removed": 96,
-      "sha256": "5c8f67820242178ad000a68bf2c89a5fb8a3f772706e3c5d9c09f68890f4ccdc"
+      "sha256": "ffb220886bb9480951277dc2cda70a158a759da12404ba19b12984296246bdff"
     },
     {
       "added": 72,
@@ -491,18 +491,6 @@
       "sha256": "51cb86e70e4ee5970adb168b54d5deb9f03d774a3e8f792a61d6cfab2d0d1b8d"
     },
     {
-      "added": 45,
-      "files": [
-        "www/config/ic_common.tcl",
-        "www/config/ic_ifacecmd.cgi",
-        "www/config/ic_neweasymode.cgi",
-        "www/webui/webui.js"
-      ],
-      "patch": "0173-WebUI-SendPOSTRequest.patch",
-      "removed": 19,
-      "sha256": "df60fda3810d9370f60d3547a159816587c6dcfaa7b5c3e7077b91e55a56cca7"
-    },
-    {
       "added": 120,
       "files": [
         "www/webui/js/lang/de/translate.lang.extension.js",
@@ -540,5 +528,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "8cb7348f278b409c9588d02176d5e49a946e7120bc59fc4387aa858c634bb9e3"
+  "series_sha256": "67910245022c2670b08dc9a3ba7cc4f5f38e83d2205a304833abbcd16b918217"
 }

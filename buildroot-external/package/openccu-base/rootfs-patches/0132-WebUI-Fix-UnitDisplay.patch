@@ -533,7 +533,7 @@
          } else {
            j_energyCostCCU.text(energyCostCCU).show();
            j_energyCostDevice.text(energyCostDevice).show();
-@@ -51114,7 +51121,7 @@
+@@ -51137,7 +51144,7 @@
        //msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\"starttime_"   +dayidx +"_"+i+"\" disabled=\"disabled\" type=\"text\" value=\""+ this.tom_toTime( endtime) +"\">Uhr</td>";
        msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\""+prgNr+"starttime_" + dayidx + "_" + i + "\" disabled=\"disabled\" type=\"text\" value=\"" + this.tom_toTime(endtime) + "\">" + translateKey('lblProgramTimeExtension') + "</td>";
        msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\""+prgNr+"endtime_" + dayidx + "_" + i + "\" " + (i == timeouts.length - 1 ? 'disabled=\"disabled\"' : '') + " type=\"text\" value=\"" + this.tom_toTime(timeouts[i][tom_endtime]) + "\" onblur=\""+prgNr+"tom.tom_checkAndSetTime ('" + day + "', this, " + i + "); document.getElementById('"+prgNr+"starttime_" + dayidx + "_" + (i + 1) + "').value=this.value; \">" + translateKey('lblProgramTimeExtension') + "</td>";
