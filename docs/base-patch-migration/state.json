@@ -772,7 +772,7 @@
   "in_progress": {
     "base_merge_commit": "a8ee29047c4f820f484353a2e6c30698e79ef1b0",
     "base_pr": 244,
-    "cleanup_pr": null,
+    "cleanup_pr": 4526,
     "patch": "0077-WebUI-NegateCondition.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
