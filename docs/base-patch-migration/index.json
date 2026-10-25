@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 253,
-      "sha256": "90bdafa1888afddd9c626df897a84723341e71667c9de11a5bb8ac8d6481ed1e"
+      "sha256": "1a6e76aeea1c810bf891b3ba78aacf2ffd1c78aac564fbca714791d175dc8c43"
     },
     {
       "added": 370,
@@ -121,7 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 656,
-      "sha256": "e1e1a37e97d8e8c6be2f5c7645ad2ea038632e7afc96aaf644f2679fd19c0de9"
+      "sha256": "66ddce1a82b342f1f35133ebc20d5f4683831aced10659e3166778d7e17dec2c"
     },
     {
       "added": 138,
@@ -131,7 +131,7 @@
       ],
       "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
       "removed": 19,
-      "sha256": "163d45dc210ad524ddff06bc98d271623516e4aad1a05ad4904bea44b7af7600"
+      "sha256": "0d07e0a70a7c52115cd7a1203500c9c14b24966b6874ebd69f683fd44c0c4982"
     },
     {
       "added": 128,
@@ -160,7 +160,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "f0d2059b461b17b4fdaf20297c02163ab784f92770c00a8e8822496671bba1bd"
+      "sha256": "252ebdce346f1d7ef48d8fd9cd5af77c8645ba6415304addd36261f87bd8d387"
     },
     {
       "added": 757,
@@ -171,7 +171,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "4ab0785f4ca4caad8e3449bd4fe323d5ca1549189cbf0d02ad1d4c03a5f81d80"
+      "sha256": "285740d6ae1c14dda1ffe82dca30fc13e5fc7b1412168ab39fc859c8e968bef3"
     },
     {
       "added": 123,
@@ -182,7 +182,7 @@
       ],
       "patch": "0056-WebUI-Sticky-Filters.patch",
       "removed": 6,
-      "sha256": "1eb9c7f5f4af7e900769e5eae1526b5fe5e855826ad19c7af96cc8984ba59779"
+      "sha256": "75d96c7c6b1a76bf29ce34ad389f5e3ddf6525dfc6751f8bdc87d339382cb938"
     },
     {
       "added": 262,
@@ -196,7 +196,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 106,
-      "sha256": "835d6f3efd4e1c9d0fde3cb57beb1d4991c3f3da7648ebbb759b9199d399cb89"
+      "sha256": "57d5caa8c9c62c3fc42292bf15fd1a1b33531437d89d6f69578cd561be9e2983"
     },
     {
       "added": 357,
@@ -215,21 +215,6 @@
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
       "sha256": "f54bf5f46186a4fc8b3a119e2e2fa57725c2910aef9e44c1bc1f8de859cf4898"
-    },
-    {
-      "added": 66,
-      "files": [
-        "www/rega/esp/programs.fn",
-        "www/rega/esp/sico.fn",
-        "www/rega/esp/sico.htm",
-        "www/rega/esp/sico.inc",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0077-WebUI-NegateCondition.patch",
-      "removed": 8,
-      "sha256": "2a0df083e5d3e8e835d8d2ef3f091ae714f322efe522b8892cdbea60fd97f175"
     },
     {
       "added": 74,
@@ -528,5 +513,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "67910245022c2670b08dc9a3ba7cc4f5f38e83d2205a304833abbcd16b918217"
+  "series_sha256": "53bb595d535b7e0b9097bb37726c80c4d6845c3abd5f7e7cb23cfc87d2cfcc12"
 }

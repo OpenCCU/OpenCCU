@@ -31514,6 +31514,24 @@ ise.SingleCondition.prototype =
     new Ajax.Request(url,opts);        
   },
 
+  SetNegateCondition: function(scid,nc) {                                                          
+    var url = "/esp/sico.htm?sid="+SessionId;            
+    var pb = '';                          
+    pb += 'string action = "SetNegateCondition";';                                     
+    pb += 'string scid = "'+scid+'";';               
+    pb += 'string nc = "'+nc+'";';                                                                     
+    var opts =                                                                                     
+    {                                                
+      postBody: ReGa.encode(pb),      
+      onComplete:function(t)                                    
+      {                                          
+        if(dbg){alert( t.responseText );}                                                      
+        ReloadSingleCondition(scid);                                                       
+      }                                              
+    };                                
+    new Ajax.Request(url,opts);                                  
+  },
+  
   SetLeftValue: function(scid,lv)
   {
     var url = "/esp/sico.htm?sid="+SessionId;

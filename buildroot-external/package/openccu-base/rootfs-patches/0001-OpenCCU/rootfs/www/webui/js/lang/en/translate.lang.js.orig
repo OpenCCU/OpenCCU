@@ -917,6 +917,7 @@ jQuery.extend(true,langJSON, {
     "ruleConditionLblTimeDuringNight" : "at night",
     "ruleConditionLblTimeClock" : "o'clock",
     "ruleConditionLblTimeIteration" : "repetitions",
+    "ruleConditionLblNot" : "not",
 
     "ruleConditionSelectTriggerWhenUpdated" : "trigger when updated",
     "ruleConditionSelectCheckOnly" : "check only",
