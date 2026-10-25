@@ -473,6 +473,22 @@
        }
      }
    %>
+--- a/www/rega/pages/tabs/control/sysvars.htm
++++ b/www/rega/pages/tabs/control/sysvars.htm
+@@ -91,7 +91,12 @@
+                 string sTimestamp = o.Timestamp();
+                 Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
+                 WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
+-                WriteLine( '<td class="tBodyCell"><div id="dpc'#o.ID()#'">' );
++                if( oUser.UserLevel() == iulAdmin ) {
++                  WriteLine( '<td class="tBodyCell CLASS03905" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">' );
++                } else {
++                  WriteLine( '<td class="tBodyCell">' );
++                }
++                WriteLine( '<div id="dpc'#o.ID()#'">' );
+                 
+                 integer cId = o.ID();
+                 integer iStatusOnly = 1;
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
 @@ -115,6 +115,7 @@

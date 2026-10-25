@@ -75,29 +75,6 @@
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
---- a/www/rega/pages/tabs/control/devices.htm
-+++ b/www/rega/pages/tabs/control/devices.htm
-@@ -48,6 +48,7 @@
-                 </tr>
-                 <%
-                   string sEnumDeviceIds = "";
-+                  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
-                   object obj = dom.GetObject(ID_DEVICES);
-                   if ( obj )
-                   {
-@@ -91,7 +92,11 @@
-                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-                           Write(devs.Name());
-                           Write("</td>");
--                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
-+                          if( oUser && oUser.UserLevel() == iulAdmin ) {
-+                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-+                          } else {
-+                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
-+                          }
-                           
-                           string sPicDivId = "picDiv"#devs.ID();
-                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
 --- a/www/rega/pages/tabs/control/hdevichannels.htm
 +++ b/www/rega/pages/tabs/control/hdevichannels.htm
 @@ -196,7 +196,11 @@
@@ -168,22 +145,6 @@
                    WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
                    object oPrgID = o.ID();
                    WriteLine( '<td class="tBodyCell">' );
---- a/www/rega/pages/tabs/control/sysvars.htm
-+++ b/www/rega/pages/tabs/control/sysvars.htm
-@@ -91,7 +91,12 @@
-                 string sTimestamp = o.Timestamp();
-                 Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
-                 WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
--                WriteLine( '<td class="tBodyCell"><div id="dpc'#o.ID()#'">' );
-+                if( oUser.UserLevel() == iulAdmin ) {
-+                  WriteLine( '<td class="tBodyCell CLASS03905" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">' );
-+                } else {
-+                  WriteLine( '<td class="tBodyCell">' );
-+                }
-+                WriteLine( '<div id="dpc'#o.ID()#'">' );
-                 
-                 integer cId = o.ID();
-                 integer iStatusOnly = 1;
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
 @@ -6856,6 +6856,7 @@

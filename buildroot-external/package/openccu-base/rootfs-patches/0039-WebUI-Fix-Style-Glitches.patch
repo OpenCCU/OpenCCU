@@ -1643,7 +1643,15 @@
                  </colgroup>
                  <tr>
                    <th>${thName}</th>
-@@ -93,10 +88,10 @@
+@@ -53,6 +48,7 @@
+                 </tr>
+                 <%
+                   string sEnumDeviceIds = "";
++                  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+                   object obj = dom.GetObject(ID_DEVICES);
+                   if ( obj )
+                   {
+@@ -93,10 +89,14 @@
                          }
                          string trId = "devices"#devs.ID();
                          WriteLine('<tr id="'#trId#'" class="CLASS03904">');
@@ -1652,11 +1660,15 @@
                            Write(devs.Name());
                            Write("</td>");
 -                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' style='height: 80px;'>");
-+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
++                          if( oUser && oUser.UserLevel() == iulAdmin ) {
++                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
++                          } else {
++                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
++                          }
                            
                            string sPicDivId = "picDiv"#devs.ID();
                            Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
-@@ -133,12 +128,7 @@
+@@ -133,12 +133,7 @@
      <!-- Rechte Spalte -->
      <td id="contentRight">
        <div id="divRTD" class="CLASS03908">
