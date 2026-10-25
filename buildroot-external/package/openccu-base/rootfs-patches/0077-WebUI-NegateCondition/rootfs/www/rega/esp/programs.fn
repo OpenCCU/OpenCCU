@@ -76,7 +76,7 @@ function ::WriteConditionText()
                 if( bOK )
                 {
                 
-                  boolean bSysVarGeneric = ( (iLVT == ivtSystemId) && (oLV.ValueType() == ivtFloat) && (oLV.ValueSubType() == istGeneric) );
+                  boolean bSysVarGeneric = ( (iLVT == ivtSystemId) && ((oLV.ValueType() == ivtFloat) || (oLV.ValueType() == ivtInteger)) && (oLV.ValueSubType() == istGeneric) );
 
                   if( !bSysVarGeneric )
                   {
@@ -293,8 +293,12 @@ function ::WriteConditionText()
                   {
                     !sRet = sRet#' <i>im Wertebereich</i> ';
 
-                    if (iCT1 != 5) {
-                      Write( ' <i>${ruleConditionLblWithinValueRange}</i> ' );
+                    if( bSysVarGeneric && oSC.NegateCondition() ) {
+                      Write( ' <i>${ruleConditionLblNot} ${ruleConditionLblWithinValueRange}</i> ' );
+                    } else {
+                      if (iCT1 != 5) {
+                        Write( ' <i>${ruleConditionLblWithinValueRange}</i> ' );
+                      }
                     }
 
                     string sCT = "";
