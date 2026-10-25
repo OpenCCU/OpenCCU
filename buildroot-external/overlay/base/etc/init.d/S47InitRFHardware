@@ -159,6 +159,24 @@ query_rf_parameters() {
 
     echo -n "."
 
+    # In an OCI/HA environment the host grants device-cgroup access to a
+    # device node that only appeared after the container was started
+    # (e.g. /dev/raw-uart of the hb_rf_eth module loaded above) with a
+    # delay (HA supervisor: >= 2s after the udev event). Thus wait until
+    # the node can actually be opened. This also catches a not (yet)
+    # connected HB-RF-ETH, for which open() fails with ENODEV.
+    if [[ "${HM_HOST}" == "oci" ]] && [[ -c "/dev/${dev}" ]]; then
+      for try in $(seq 1 40); do
+        head -c0 "/dev/${dev}" >/dev/null 2>&1 && break
+        if [[ ${try} -eq 40 ]]; then
+          echo -n "ERROR: /dev/${dev} not accessible, "
+          break
+        fi
+        [[ $((try % 4)) -eq 0 ]] && echo -n "."
+        sleep 0.25
+      done
+    fi
+
     # use detect_radio_module to retrieve all relevant info from
     # the rf-module
     if [[ -c /dev/${dev} ]]; then
