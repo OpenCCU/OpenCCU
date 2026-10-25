@@ -35,15 +35,19 @@
  
 --- a/www/rega/pages/tabs/admin/views/programs.htm
 +++ b/www/rega/pages/tabs/admin/views/programs.htm
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,11 @@
  <script type="text/javascript" language="javascript">
  
    <%
-+    string prevPage=system.GetSessionVar("sessionTAB");
++    if( system.GetSessionVar("sessionTAB") != "programs" )
++    {
++      system.SetSessionVar("sessionPrgPrevTAB", system.GetSessionVar("sessionTAB"));
++    }
++    string prevPage = system.GetSessionVar("sessionPrgPrevTAB");
      system.SetSessionVar("sessionTAB", "programs");
      object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
      object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
-@@ -975,15 +976,15 @@
+@@ -975,15 +980,15 @@
    };
    CancelProgramEdit = function(copy)
    {
@@ -62,7 +66,7 @@
    };
    AddSubRuleSelectChange = function(idx,rid)
    {
-@@ -1114,7 +1115,7 @@
+@@ -1114,7 +1119,7 @@
    var s = "";
    s += "<table cellspacing='8'>";
    s += "<tr>";
@@ -73,12 +77,24 @@
      s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
 --- a/www/rega/pages/tabs/control/devices.htm
 +++ b/www/rega/pages/tabs/control/devices.htm
-@@ -91,7 +91,7 @@
+@@ -48,6 +48,7 @@
+                 </tr>
+                 <%
+                   string sEnumDeviceIds = "";
++                  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+                   object obj = dom.GetObject(ID_DEVICES);
+                   if ( obj )
+                   {
+@@ -91,7 +92,11 @@
                            Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                            Write(devs.Name());
                            Write("</td>");
 -                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
-+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
++                          if( oUser && oUser.UserLevel() == iulAdmin ) {
++                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
++                          } else {
++                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
++                          }
                            
                            string sPicDivId = "picDiv"#devs.ID();
                            Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
@@ -90,7 +106,7 @@
              Write("<tr id='"#trId#"'>");
 -            Write("<td class='GrayBkg' name='devName'>");
 +            if( oUser && oUser.UserLevel() == iulAdmin ) {
-+              Write("<td class='GrayBkg CLASS03905' name='devName' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.className=\"DeviceListRow_Highlight\";' onmouseout='this.className=\"DeviceListRow\";'>");
++              Write("<td class='GrayBkg CLASS03905' name='devName' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
 +            } else {
 +              Write("<td class='GrayBkg' name='devName'>");
 +            }
@@ -105,7 +121,7 @@
              boolean showExtDesc = false;
 -            Write("<td class='GrayBkg'>");
 +            if( oUser && oUser.UserLevel() == iulAdmin ) {
-+              Write("<td class='GrayBkg CLASS04007' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.className=\"DeviceListRow_Highlight\";' onmouseout='this.className=\"DeviceListRow\";'>");
++              Write("<td class='GrayBkg CLASS04007' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
 +            } else {
 +              Write("<td class='GrayBkg'>");
 +            }
@@ -120,7 +136,7 @@
              Write("<tr id='"#trId#"'>");
 -            Write("<td class='GrayBkg'>");
 +            if( oUser && oUser.UserLevel() == iulAdmin ) {
-+              Write("<td class='GrayBkg CLASS04007' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.className=\"DeviceListRow_Highlight\";' onmouseout='this.className=\"DeviceListRow\";'>");
++              Write("<td class='GrayBkg CLASS04007' onclick='DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
 +            } else {
 +              Write("<td class='GrayBkg'>");
 +            }
@@ -134,7 +150,7 @@
            if(oPrograms)
            {
 +            if (oUser.UserLevel() == iulAdmin) {
-+              WriteLine("<script type='text/javascript'>EditProgram = function(id) { var opt={postBody: 'string action = \"SetProgram\"; string id = \"'+id+'\";',onComplete: function(t){if(t.responseText=='true') { loadPrograms(); }}};new Ajax.Request('/esp/programs.htm?sid='+SessionId,opt);};</script></td>");
++              WriteLine("<script type='text/javascript'>EditProgram = function(id) { var opt={postBody: 'string action = \"SetProgram\"; string id = \"'+id+'\";',onComplete: function(t){if(t.responseText=='true') { loadPrograms(); }}};new Ajax.Request('/esp/programs.htm?sid='+SessionId,opt);};</script>");
 +            }
              string sPID;
              foreach( sPID, oUser.UserTempViewIDs().EnumIDs() )

@@ -132,7 +132,7 @@
        <table class="filterTable CLASS03901 j_translate" cellpadding="0" cellspacing="0">
          <tr>
            <td style="vertical-align: top; border: 0px">
-@@ -123,10 +118,10 @@
+@@ -128,10 +123,10 @@
            </td>
         </tr> 
       </table>
@@ -145,7 +145,7 @@
        <div id="divRTD" class="CLASS03908">
          <table id="tblRightContent" class="CLASS03909" cellpadding="0" cellspacing="0">
           <tr class="CLASS03910">
-@@ -134,9 +129,8 @@
+@@ -139,9 +134,8 @@
           </tr>
          </table>
        </div>

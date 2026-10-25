@@ -1,7 +1,11 @@
 <script type="text/javascript" language="javascript">
 
   <%
-    string prevPage=system.GetSessionVar("sessionTAB");
+    if( system.GetSessionVar("sessionTAB") != "programs" )
+    {
+      system.SetSessionVar("sessionPrgPrevTAB", system.GetSessionVar("sessionTAB"));
+    }
+    string prevPage = system.GetSessionVar("sessionPrgPrevTAB");
     system.SetSessionVar("sessionTAB", "programs");
     object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
     object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
