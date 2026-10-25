@@ -479,6 +479,16 @@ check program hb_rf_eth-Check with path "/bin/grep -q 1 /sys/class/hb-rf-eth/hb-
       repeat every 5 cycles
     depends on hb_rf_eth-CheckEnabled
 
+# restart multimacd if the HB-RF-ETH had to start a new session (e.g. after a
+# restart of the gateway) while the radio module was in use, as its state is
+# unknown then. The rfdDevice/HMIPServerDevice checks restart rfd/HMIPServer.
+check program hb_rf_eth-Session with path "/bin/sh -c '! /bin/grep -qs 1 /sys/class/hb-rf-eth/hb-rf-eth/session_lost'"
+    group homematic
+    if status != 0 then
+      exec "/usr/bin/monit restart multimacd"
+      repeat every 5 cycles
+    depends on hb_rf_eth-CheckEnabled
+
 check program hb_rf_eth-CheckEnabled with path "/usr/bin/test -e /etc/config/hb_rf_eth"
     group homematic
     if status != 0 for 1 cycles then unmonitor
