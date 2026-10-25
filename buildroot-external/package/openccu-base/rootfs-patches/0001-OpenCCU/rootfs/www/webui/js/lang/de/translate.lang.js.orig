@@ -882,6 +882,7 @@ jQuery.extend(true,langJSON, {
     "ruleConditionLblTimeDuringNight" : "nachts",
     "ruleConditionLblTimeClock" : "Uhr",
     "ruleConditionLblTimeIteration" : "Wiederholungen",
+    "ruleConditionLblNot" : "nicht",
     "ruleConditionSelectTriggerWhenUpdated" : "bei Aktualisierung ausl%F6sen",
     "ruleConditionSelectCheckOnly" : "nur pr%FCfen",
     "ruleConditionSelectWhenChanged" : "bei %C4nderung ausl%F6sen",

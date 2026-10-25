@@ -761,18 +761,24 @@
       "base_pr": 242,
       "cleanup_pr": 4518,
       "patch": "0165-WebUI-ShowFreeUserspaceOnMaintenancePage.patch"
+    },
+    {
+      "base_merge_commit": "b6796fe8101063f80f39e6f3b5c29b4ddfdf7c74",
+      "base_pr": 243,
+      "cleanup_pr": 4522,
+      "patch": "0173-WebUI-SendPOSTRequest.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "b6796fe8101063f80f39e6f3b5c29b4ddfdf7c74",
-    "base_pr": 243,
-    "cleanup_pr": 4522,
-    "patch": "0173-WebUI-SendPOSTRequest.patch",
+    "base_merge_commit": "a8ee29047c4f820f484353a2e6c30698e79ef1b0",
+    "base_pr": 244,
+    "cleanup_pr": null,
+    "patch": "0077-WebUI-NegateCondition.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "c0c95f282a3c955fb4c16c257106147cb7c7868b",
-  "verified_base_pin": "61561b6336286b774e652dd645f77ce899bafe42",
-  "verified_source_sha256": "a1952d38c9bec678f97aeca26c7941ea5708aca4b28a668ae1eb10d67a0f2a7b"
+  "verified_at_openccu_commit": "b228fdd91109374dbff10791700dc56731a86633",
+  "verified_base_pin": "b6796fe8101063f80f39e6f3b5c29b4ddfdf7c74",
+  "verified_source_sha256": "14c0c59e59f0d6150d1d3a9df65e63e0e88252994e69a799090c464414262e51"
 }
