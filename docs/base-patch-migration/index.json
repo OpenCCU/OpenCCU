@@ -217,7 +217,7 @@
       "sha256": "f54bf5f46186a4fc8b3a119e2e2fa57725c2910aef9e44c1bc1f8de859cf4898"
     },
     {
-      "added": 59,
+      "added": 66,
       "files": [
         "www/rega/esp/programs.fn",
         "www/rega/esp/sico.fn",
@@ -228,8 +228,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0077-WebUI-NegateCondition.patch",
-      "removed": 5,
-      "sha256": "1a317b91ad75ad087633d1b539b5a453a1e179d107e7b5ccc6db5561a0f7a338"
+      "removed": 8,
+      "sha256": "2a0df083e5d3e8e835d8d2ef3f091ae714f322efe522b8892cdbea60fd97f175"
     },
     {
       "added": 74,
@@ -368,7 +368,7 @@
       ],
       "patch": "0132-WebUI-Fix-UnitDisplay.patch",
       "removed": 96,
-      "sha256": "ffb220886bb9480951277dc2cda70a158a759da12404ba19b12984296246bdff"
+      "sha256": "61ba29564729fd70672192626576f19af6c5e0b109fec841ae5f0e651c7c1ece"
     },
     {
       "added": 72,
