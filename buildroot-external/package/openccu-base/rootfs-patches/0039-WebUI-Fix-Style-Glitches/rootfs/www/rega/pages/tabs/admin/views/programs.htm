@@ -1,6 +1,11 @@
 <script type="text/javascript" language="javascript">
 
   <%
+    if( system.GetSessionVar("sessionTAB") != "programs" )
+    {
+      system.SetSessionVar("sessionPrgPrevTAB", system.GetSessionVar("sessionTAB"));
+    }
+    string prevPage = system.GetSessionVar("sessionPrgPrevTAB");
     system.SetSessionVar("sessionTAB", "programs");
     object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
     object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
@@ -975,15 +980,15 @@
   };
   CancelProgramEdit = function(copy)
   {
-    isePrograms.Delete(copy);
+    isePrograms.Delete(copy, '<% Write(prevPage); %>');
   };
   SaveProgramEdit = function(orig,copy)
   {
-    setTimeout( "isePrograms.Restore("+orig+","+copy+")", 500 );
+    setTimeout( "isePrograms.Restore("+orig+","+copy+", '<% Write(prevPage); %>')", 500 );
   };
   CopyToNewProgram = function(copy)
   {
-    setTimeout( "isePrograms.CopyToNewProgram("+copy+")", 500 );
+    setTimeout( "isePrograms.CopyToNewProgram("+copy+", '<% Write(prevPage); %>')", 500 );
   };
   AddSubRuleSelectChange = function(idx,rid)
   {
@@ -1114,7 +1119,7 @@
   var s = "";
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CancelProgramEdit(<% Write(oPrg.ID()); %>);'>${footerBtnCancel}</div></td>";
+    s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CancelProgramEdit(<% Write(oPrg.ID()); %>);'>${footerBtnPageBack}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";

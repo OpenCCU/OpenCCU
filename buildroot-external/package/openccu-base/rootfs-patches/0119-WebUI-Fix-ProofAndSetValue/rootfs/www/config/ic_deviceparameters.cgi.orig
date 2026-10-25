@@ -18,12 +18,12 @@ proc put_error {iface address} {
       puts "<div class=\"subOffsetDivPopup CLASS22000\">"
 
       puts "<script type=\"text/javascript\">"
-      puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>Programme &amp; Verkn&uuml;pfungen</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>Direkte Verkn&uuml;pfungen</span> &gt; Ger&auml;te- / Kanalparameter einstellen\");"
+      puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>\${menuProgramsLinksPage}</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>\${submenuDirectLinks}</span> &gt; \${setDeviceAndChannelParams}\");"
 
       puts "  var s = \"\";"
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
-      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>Abbrechen</div></td>\";"
+      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>\${footerBtnPageBack}</div></td>\";"
       puts "  s += \"</tr>\";"
       puts "  s += \"</table>\";"
       puts "  setFooter(s);"
@@ -153,7 +153,7 @@ proc put_page {} {
       puts "  var s = \"\";"
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
-      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>\"+translateKey('footerBtnCancel')+\"</div></td>\";"
+      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>\"+translateKey('footerBtnPageBack')+\"</div></td>\";"
       puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div id='footerButtonTake' class='FooterButton' onclick='goBack=true; SaveDeviceParameters();'>\"+translateKey('footerBtnTransfer')+\"</div></td>\";"
       puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div id='footerButtonOK' class='FooterButton' onclick='goBack=false; SaveDeviceParameters();'>\"+translateKey('footerBtnOk')+\"</div></td>\";"
       puts "  s += \"</tr>\";"
@@ -1504,7 +1504,7 @@ proc put_NaviButtons {} {
   
   puts "<TR>"
   puts "<td class=\"CLASS22012\" onclick=\"SaveDeviceParameters();\"><div class=\"CLASS21000\">OK</div></td>"
-  puts "<td class=\"CLASS22012\" onclick=\"CloseDeviceParameters();\"><div class=\"CLASS21000\">Abbrechen</div></td>"
+  puts "<td class=\"CLASS22012\" onclick=\"CloseDeviceParameters();\"><div class=\"CLASS21000\">Zur%FCck</div></td>"
   puts "<td class=\"CLASS22013\">&nbsp;</td>"
   puts "</TR>"
 

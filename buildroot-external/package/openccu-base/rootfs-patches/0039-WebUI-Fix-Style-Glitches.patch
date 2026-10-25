@@ -1414,7 +1414,7 @@
        <td class="thCell CLASS04900" >${thActivity}</td>
 --- a/www/rega/pages/tabs/admin/views/programs.htm
 +++ b/www/rega/pages/tabs/admin/views/programs.htm
-@@ -1131,6 +1131,13 @@
+@@ -1136,6 +1136,13 @@
  
  <div id="prgcontent">
    <table id="ProgramTable" class="filterTable tTable j_translate" border="0" cellpadding="0" cellspacing="0">
@@ -1428,7 +1428,7 @@
      <thead>
        <tr>
          <td class="thCell CLASS04802" >${thName}</td>
-@@ -1142,11 +1149,11 @@
+@@ -1147,11 +1154,11 @@
      </thead>
      <tbody>
        <tr class="CLASS04803">
@@ -1727,7 +1727,7 @@
             
 --- a/www/rega/pages/tabs/control/hdevichannels.htm
 +++ b/www/rega/pages/tabs/control/hdevichannels.htm
-@@ -241,7 +241,7 @@
+@@ -245,7 +245,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1738,7 +1738,7 @@
              integer cId = chn.ID();
 --- a/www/rega/pages/tabs/control/hfuncchannels.htm
 +++ b/www/rega/pages/tabs/control/hfuncchannels.htm
-@@ -187,7 +187,7 @@
+@@ -191,7 +191,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1749,7 +1749,7 @@
              integer cId = chn.ID();
 --- a/www/rega/pages/tabs/control/hroomchannels.htm
 +++ b/www/rega/pages/tabs/control/hroomchannels.htm
-@@ -193,7 +193,7 @@
+@@ -197,7 +197,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1781,7 +1781,7 @@
          <th class="tHeaderCell CLASS03303" >${thDescription}</th>
          <th class="tHeaderCell CLASS03303" >${thActivity}</th>
          <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
-@@ -141,6 +148,7 @@
+@@ -148,6 +155,7 @@
  <script type="text/javascript">
  
    translatePage("#prgcontent");
@@ -3467,7 +3467,7 @@
  }
  
  .CLASS04906 {
-@@ -6896,6 +6917,7 @@
+@@ -6897,6 +6918,7 @@
  .CLASS05012 {
  	color: $_(textColorB); /* black */
  	font-size:9pt;
@@ -3475,7 +3475,7 @@
  }
  
  /* rega\pages\tabs\admin\msg\timemodule.htm */
-@@ -6934,6 +6956,10 @@
+@@ -6935,6 +6957,10 @@
  	color: $_(textColorB); /* black */
  }
  
@@ -3486,7 +3486,7 @@
  .CLASS05105 {
  	text-align:left;
  }
-@@ -6972,7 +6998,6 @@
+@@ -6973,7 +6999,6 @@
  .CLASS05200 {
  	text-align:center;
  	vertical-align:middle;
@@ -3494,7 +3494,7 @@
  	height: auto;
  }
  
-@@ -7040,10 +7065,10 @@
+@@ -7041,10 +7066,10 @@
  }
  
  .CLASS05301 {
@@ -3506,7 +3506,7 @@
  }
  
  .CLASS05302 {
-@@ -7216,6 +7241,10 @@
+@@ -7217,6 +7242,10 @@
  
  /* rega\pages\tabs\favViewer.htm  */
  
@@ -3517,7 +3517,7 @@
  .CLASS05800 {
  	width:100%;
  	text-align:center;
-@@ -7344,11 +7373,13 @@
+@@ -7345,11 +7374,13 @@
  /* rega\pages\tabs\user\newFav.htm */
  
  .CLASS06300 {
@@ -3533,7 +3533,7 @@
  }
  
  .CLASS06302 {
-@@ -7636,7 +7667,6 @@
+@@ -7637,7 +7668,6 @@
  }
  
  .CLASS06409 {
@@ -3541,7 +3541,7 @@
  }
  
  .CLASS06410 {
-@@ -7799,7 +7829,7 @@
+@@ -7800,7 +7830,7 @@
  
  .CLASS10902 {
    border:1px solid $_(gray); /* #999999 */
@@ -3550,7 +3550,7 @@
    background-color:$_(inactiveButton); /* rgb(192,192,192) */
    cursor:default;
  }
-@@ -7914,7 +7944,6 @@
+@@ -7915,7 +7945,6 @@
  }
  
  .CLASS11105 {
@@ -3558,7 +3558,7 @@
    padding-top: 7px;
  }
  
-@@ -7941,7 +7970,6 @@
+@@ -7942,7 +7971,6 @@
  /* config/ic_setprofiles */
  
  .CLASS20001 {
@@ -3566,7 +3566,7 @@
  }
  
  .CLASS20002 {
-@@ -7963,7 +7991,7 @@
+@@ -7964,7 +7992,7 @@
  }
  
  .CLASS20006 {
@@ -3575,7 +3575,7 @@
  }
  
  .CLASS20007 {
-@@ -7999,7 +8027,6 @@
+@@ -8000,7 +8028,6 @@
  }
  
  .CLASS20010 {
@@ -3583,7 +3583,7 @@
  }
  
  /* config\easymodes\DIMMER\MOTION_DETECTOR.tcl */
-@@ -8300,6 +8327,7 @@
+@@ -8301,6 +8328,7 @@
  
    padding: 3px;
    text-align:center;
@@ -3591,7 +3591,7 @@
    vertical-align:middle;
    margin:2px;
    cursor: pointer;
-@@ -8528,7 +8556,9 @@
+@@ -8529,7 +8557,9 @@
  /* config\help.cgi */
  
  .CLASS21300 {
@@ -3602,7 +3602,7 @@
  }
  
  .CLASS21301 {
-@@ -8754,8 +8784,11 @@
+@@ -8755,8 +8785,11 @@
  
  /* config\control_panel.cgi */
  
@@ -3615,7 +3615,7 @@
  }
  
  .CLASS21701 {
-@@ -8826,7 +8859,8 @@
+@@ -8827,7 +8860,8 @@
  /* config\ic_selchannel.cgi */
  
  .CLASS21900 {
@@ -3625,7 +3625,7 @@
  }
  
  .CLASS21901 {
-@@ -8851,9 +8885,11 @@
+@@ -8852,9 +8886,11 @@
  
    color: $_(textColorB); /* black */
    border: 1px solid $_(black); /* black */
@@ -3638,7 +3638,7 @@
  }
  
  .CLASS21905 {
-@@ -8876,7 +8912,6 @@
+@@ -8877,7 +8913,6 @@
  
  .CLASS21908 {
    overflow: auto;
@@ -3646,7 +3646,7 @@
    width:100%;
  }
  
-@@ -8933,13 +8968,17 @@
+@@ -8934,13 +8969,17 @@
  /* config\ic_deviceparameters.cgi */
  
  .CLASS22000 {
@@ -3666,7 +3666,7 @@
  }
  
  .CLASS22002 {
-@@ -8949,11 +8988,17 @@
+@@ -8950,11 +8989,17 @@
  
  .CLASS22003 {
    background-color: $_(white);
@@ -3684,7 +3684,7 @@
  }
  
  .CLASS22005 {
-@@ -9011,7 +9056,8 @@
+@@ -9012,7 +9057,8 @@
  }
  
  .CLASS22101 {
@@ -3694,7 +3694,7 @@
  }
  
  .CLASS22102 {
-@@ -9033,9 +9079,8 @@
+@@ -9034,9 +9080,8 @@
  .CLASS22104 {
    left:0px;
    top:0px;
@@ -3705,7 +3705,7 @@
    position:relative;
    width:50px;
    height:50px;
-@@ -9045,10 +9090,12 @@
+@@ -9046,10 +9091,12 @@
    position:relative;
    width:50px;
    height:50px;

@@ -31465,7 +31465,7 @@ ise.Programs.prototype = {
     };
     new Ajax.Request(url,opts);
   },
-  Delete: function(id)
+  Delete: function(id,prevPage)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
@@ -31477,12 +31477,12 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        WebUI.enter(ProgramListPage);
+        WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
   },
-  Restore: function(orig,copy)
+  Restore: function(orig,copy,prevPage)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
@@ -31495,12 +31495,12 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        WebUI.enter(ProgramListPage);
+        WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
   },
-  CopyToNewProgram: function(id)
+  CopyToNewProgram: function(id,prevPage)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
@@ -31512,7 +31512,7 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        WebUI.enter(ProgramListPage);        
+        WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
