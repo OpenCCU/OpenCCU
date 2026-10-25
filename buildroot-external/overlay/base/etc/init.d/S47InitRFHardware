@@ -163,11 +163,13 @@ query_rf_parameters() {
     # device node that only appeared after the container was started
     # (e.g. /dev/raw-uart of the hb_rf_eth module loaded above) with a
     # delay (HA supervisor: >= 2s after the udev event). Thus wait until
-    # the node can actually be opened. This also catches a not (yet)
-    # connected HB-RF-ETH, for which open() fails with ENODEV.
+    # the node can actually be opened read-write (as detect_radio_module
+    # does). This also catches a not (yet) connected HB-RF-ETH, for which
+    # open() fails with ENODEV. The subshell is required: a failing
+    # redirection on the ':' special builtin would abort the whole script.
     if [[ "${HM_HOST}" == "oci" ]] && [[ -c "/dev/${dev}" ]]; then
       for try in $(seq 1 40); do
-        head -c0 "/dev/${dev}" >/dev/null 2>&1 && break
+        ( : <>"/dev/${dev}" ) 2>/dev/null && break
         if [[ ${try} -eq 40 ]]; then
           echo -n "ERROR: /dev/${dev} not accessible, "
           break
