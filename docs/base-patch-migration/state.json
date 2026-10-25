@@ -767,18 +767,24 @@
       "base_pr": 243,
       "cleanup_pr": 4522,
       "patch": "0173-WebUI-SendPOSTRequest.patch"
+    },
+    {
+      "base_merge_commit": "a8ee29047c4f820f484353a2e6c30698e79ef1b0",
+      "base_pr": 244,
+      "cleanup_pr": 4526,
+      "patch": "0077-WebUI-NegateCondition.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "a8ee29047c4f820f484353a2e6c30698e79ef1b0",
-    "base_pr": 244,
-    "cleanup_pr": 4526,
-    "patch": "0077-WebUI-NegateCondition.patch",
+    "base_merge_commit": "f79b691e47a13bbdf01679f2b672f4c2534ca2ac",
+    "base_pr": 245,
+    "cleanup_pr": null,
+    "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "b228fdd91109374dbff10791700dc56731a86633",
-  "verified_base_pin": "b6796fe8101063f80f39e6f3b5c29b4ddfdf7c74",
-  "verified_source_sha256": "14c0c59e59f0d6150d1d3a9df65e63e0e88252994e69a799090c464414262e51"
+  "verified_at_openccu_commit": "695dd0566ace01ec21e43f59d425060c3360275c",
+  "verified_base_pin": "a8ee29047c4f820f484353a2e6c30698e79ef1b0",
+  "verified_source_sha256": "f4eb99d8dffbc53919c2fc29881c162847cc236862ef752cfd642d70685c98c9"
 }

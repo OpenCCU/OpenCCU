@@ -6843,6 +6843,7 @@ color: $_(textColorA); /* white */
 
 .CLASS05004 {
 	background-color:$_(white); /* white */
+	cursor:pointer;
 }
 
 .CLASS05005 {

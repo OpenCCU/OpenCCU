@@ -196,7 +196,11 @@
             string trId = device.ID()#tmp;
             boolean showExtDesc = false;
             Write("<tr id='"#trId#"'>");
-            Write("<td class='GrayBkg' name='devName'>");
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("<td class='GrayBkg CLASS03905' name='devName' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
+            } else {
+              Write("<td class='GrayBkg' name='devName'>");
+            }
 
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 

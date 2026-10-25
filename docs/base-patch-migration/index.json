@@ -121,7 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 656,
-      "sha256": "049fd46f7d185bf3bf4cfaff23e06d859d06dcb199a322a45322ad52ba1ca5e3"
+      "sha256": "64ba50b16ad5298ad8d73074dfe13b967e9b97fac4a7a536d74d26ff185025d9"
     },
     {
       "added": 138,
@@ -160,7 +160,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "252ebdce346f1d7ef48d8fd9cd5af77c8645ba6415304addd36261f87bd8d387"
+      "sha256": "0df8836c6baafc7e5e281d9de9ef1b22f55487d73d648ccfb75611e8f4e230d0"
     },
     {
       "added": 757,
@@ -214,7 +214,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "f54bf5f46186a4fc8b3a119e2e2fa57725c2910aef9e44c1bc1f8de859cf4898"
+      "sha256": "a670f6a6ff78e1d2adcd95897ccb37f6dd44c24f0165978844bc660f6eb58482"
     },
     {
       "added": 74,
@@ -368,22 +368,6 @@
       "sha256": "9e739f25f67477acfece667dcdc0d86779b1fcbbefa50a37762de032149f9dde"
     },
     {
-      "added": 43,
-      "files": [
-        "www/config/ic_deviceparameters.cgi",
-        "www/rega/pages/tabs/admin/views/programs.htm",
-        "www/rega/pages/tabs/control/hdevichannels.htm",
-        "www/rega/pages/tabs/control/hfuncchannels.htm",
-        "www/rega/pages/tabs/control/hroomchannels.htm",
-        "www/rega/pages/tabs/control/programs.htm",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch",
-      "removed": 18,
-      "sha256": "1bf5af9ea6aaa76e15b2a8e27871be9e68157deca5388c42541e70559e139409"
-    },
-    {
       "added": 45,
       "files": [
         "www/rega/esp/system.fn",
@@ -512,5 +496,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "53bb595d535b7e0b9097bb37726c80c4d6845c3abd5f7e7cb23cfc87d2cfcc12"
+  "series_sha256": "17b99d38c259ddebc70a11f57c8ad36c27240b5898cb72e3b06d0c5aa287cbd2"
 }
