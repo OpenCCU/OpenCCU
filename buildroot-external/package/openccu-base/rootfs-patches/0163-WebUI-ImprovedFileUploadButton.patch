@@ -170,7 +170,7 @@
  # establish a per-file limit for uploads
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -1073,6 +1073,8 @@
+@@ -1074,6 +1074,8 @@
      "btnSysConfAdditionalSoft" : "Zusatzsoftware",
      "lblSysConfAdditionalSoft1" : "Zusatzsoftware verwalten",
      "lblSysConfAdditionalSoft2" : "Zusatzsoftware installieren",
@@ -181,7 +181,7 @@
      "Belgium" : "Belgien",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -1150,6 +1150,9 @@
+@@ -1151,6 +1151,9 @@
      "lblSysConfAdditionalSoft1" : "Manage additional software",
      "lblSysConfAdditionalSoft2" : "Install additional software",
  

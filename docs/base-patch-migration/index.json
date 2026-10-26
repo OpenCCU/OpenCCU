@@ -327,15 +327,15 @@
       "sha256": "bbcda3148c33440b763f61e28279c09727046c70919a4179f7c170eeede4a530"
     },
     {
-      "added": 72,
+      "added": 90,
       "files": [
         "www/config/cp_network.cgi",
         "www/webui/js/lang/de/translate.lang.js",
         "www/webui/js/lang/en/translate.lang.js"
       ],
       "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
-      "removed": 8,
-      "sha256": "3d3acc8b624e37fd4b93b9b20247a15b0190fc0d04fd39970f9925b8547d7d8c"
+      "removed": 11,
+      "sha256": "21796b48166c8e01b8b08bec716558d9cf8d437037a0cd7f88791c28cf4770d0"
     },
     {
       "added": 10,
@@ -387,7 +387,7 @@
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
-      "sha256": "3b11f56accf2b4ac77a93babf8b4e02e92cdc68e5c028cbd70788bd15ba03ce1"
+      "sha256": "19e545139dd38a3d937468cd9a32e623c067175456da2cf92652c088224eb254"
     },
     {
       "added": 68,

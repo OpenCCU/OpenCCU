@@ -730,6 +730,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsNetworkMessageCertificateUploadSucceed" : "Certificate uploaded. The web server is now restarted.",
     "dialogSettingsNetworkMessageSaveSettingsSucceed" : "Settings have been saved",
     "dialogSettingsNetworkMessageSaveSettingsError" : "Error while writing the new settings",
+    "dialogSettingsNetworkMessageRebootRequired" : "The changed network settings take effect after a restart of the " + HMIdentifier.en.CCUShortName + ".",
     "dialogSettingsNetworkMessageAlertMessageError1" : "Network settings could not be saved",
     "commentSettingsDialogNetworkEnd" : "***********************************************",
     "commentSettingsDialogFirewall" : "***********************************************",
