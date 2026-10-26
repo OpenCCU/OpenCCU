@@ -601,7 +601,7 @@ proc action_put_page {} {
                       puts "\${dialogSettingsCMLblLogHomematicIP}"
                     }
                     table_data {align="right"} {
-                      if [catch { set hmip_level [read_var /etc/config/syslog LOGLEVEL_HMIP]  } ] {set hmip_level "ERROR"}
+                      if { [catch { set hmip_level [read_var /etc/config/syslog LOGLEVEL_HMIP] }] || $hmip_level == "" } {set hmip_level "ERROR"}
                       cgi_select log_hmip= {id="select_log_hmip"} {
                         foreach level [lsort [array names HMIP_LOGLEVELS]] {
                           set levelVal [string range $level 1 end]
