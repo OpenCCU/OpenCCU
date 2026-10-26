@@ -3720,7 +3720,7 @@
  .CLASS22107 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -312,7 +312,7 @@
+@@ -314,7 +314,7 @@
      <\/th>\n
    {\/if}\n
  {\/macro}\n
@@ -3729,7 +3729,7 @@
    <colgroup>\n
      <col style=\"width:11%;\"\/>\n
      <col style=\"width:11%;\"\/>\n
-@@ -402,25 +402,25 @@
+@@ -404,25 +404,25 @@
  <\/table>\n
  \n
  ";
@@ -3773,7 +3773,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -26172,7 +26172,7 @@
+@@ -26171,7 +26171,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3782,7 +3782,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -26180,7 +26180,7 @@
+@@ -26179,7 +26179,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3791,7 +3791,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -27695,7 +27695,7 @@
+@@ -27693,7 +27693,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3800,7 +3800,7 @@
          "</tr>" +
        "</table>";
  
-@@ -32054,13 +32054,11 @@
+@@ -32052,13 +32052,11 @@
        case ID_ROOMS:
          this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
          this.setWidth75Perc();
@@ -3814,7 +3814,7 @@
          this.setFile( "/pages/msg/popupPropEditor.htm" );
          break;
        case ID_TRANSFER_PARAMETERS:
-@@ -33644,7 +33642,7 @@
+@@ -33642,7 +33640,7 @@
    var opts = {
      evalScripts: true,
      onComplete: function(trans) {
@@ -3823,7 +3823,7 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
-@@ -46185,7 +46183,7 @@
+@@ -46183,7 +46181,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3832,7 +3832,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -46237,8 +46235,8 @@
+@@ -46235,8 +46233,8 @@
    
    if (!form) return;
  
@@ -3843,7 +3843,7 @@
  
    switch (form[gd_type])
    {
-@@ -46334,7 +46332,7 @@
+@@ -46332,7 +46330,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;

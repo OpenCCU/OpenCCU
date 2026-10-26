@@ -33,7 +33,7 @@
      Write(" CHANNELS {"); 
      if (device.TypeName() == "DEVICE")
      {
-@@ -138,6 +146,7 @@
+@@ -145,6 +153,7 @@
  append result ",\"interface\":[json_toString $device(INTERFACE)]"
  append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
  append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
@@ -59,7 +59,7 @@
      Write(" CHANNELS {");
  
      var first = true;
-@@ -220,6 +229,7 @@
+@@ -227,6 +236,7 @@
    append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
    append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
    append result ",\"isReady\":[json_toString $device(READY_CONFIG)]"
@@ -188,7 +188,7 @@
      "generalChannelConfigLblFunctions": "Functions",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -271,6 +271,7 @@
+@@ -273,6 +273,7 @@
          <tr id=\"btnEnableDeviceLogging\"><td name=\"generalDeviceChannelConfigLblLogged\">Protokolliert:<\/td><td><input id=\"DeviceConfigDialog_isLogged\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isLoggingChanged=true;\" {if device.isLogged} checked=\"checked\" {\/if} {if !device.isLogable} disabled=\"disabled\" readonly=\"readonly\" {\/if}\/><\/td><\/tr>\n
  \n
          <tr id=\"trAllChnVisible\" class=\"hidden\"><td name=\"lblAllChannelsVisible\">Alle Kan%E4le sichtbar:<\/td><td><input id=\"DeviceConfigDialog_isVisible\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isVisibilityChanged=true;\"\/><\/td><\/tr>\n
@@ -196,7 +196,7 @@
        <\/table>\n
      <\/div>\n
      \n
-@@ -12301,6 +12302,7 @@
+@@ -12302,6 +12303,7 @@
  
        this.interfaceName = data["interface"];
        this.isReadyConfig = data["isReady"];
@@ -204,7 +204,7 @@
        this.deviceType = deviceType;
        this.typeName = deviceType.name;
        this.typeDescription = deviceType.description;
-@@ -12577,6 +12579,23 @@
+@@ -12578,6 +12580,23 @@
    {
    },  
  
@@ -228,7 +228,7 @@
    setDeviceInputCheck: function() {
      this.deviceInputCheck = true;
    },
-@@ -15655,6 +15674,7 @@
+@@ -15654,6 +15673,7 @@
    USABLE_ID: "DeviceConfigDialog_isUsable",
    VISIBLE_ID: "DeviceConfigDialog_isVisible",
    LOGGED_ID: "DeviceConfigDialog_isLogged",
@@ -236,7 +236,7 @@
    TEST_RESULT_ID: "DeviceConfigDialogTestResult",
    RESULT_OK: 1,
    RESULT_ABORT: 0,
-@@ -15680,6 +15700,7 @@
+@@ -15679,6 +15699,7 @@
      this.isVisibilityChanged = false;
      this.isUsabilityChanged = false;
      this.isLoggingChanged = false;   
@@ -244,7 +244,7 @@
      this.callback = callback;
      this.layer = document.createElement("div");
      this.layer.id = this.LAYER_ID;
-@@ -15746,6 +15767,8 @@
+@@ -15745,6 +15766,8 @@
          if (this.isUsabilityChanged) { channel.setUsability(isUsable); }
          if (this.isLoggingChanged) { channel.setLogging(isLogged); }
        }, this);

@@ -812,7 +812,7 @@
    setWrap: function(isWrap)
    {
      if (isWrap) { Element.writeAttribute(this.m_element, "wrap", "soft"); }
-@@ -16729,8 +16751,8 @@
+@@ -16728,8 +16750,8 @@
    {
      var screenWidth  = WebUI.getWidth();
      var screenHeight = WebUI.getHeight();
@@ -823,7 +823,7 @@
      var frameX       = parseInt((screenWidth  - frameWidth)  / 2);
      var frameY       = parseInt((screenHeight - frameHeight) / 2);
  
-@@ -16740,63 +16762,142 @@
+@@ -16739,63 +16761,142 @@
      
      this.m_layer = document.createElement("div");
      this.m_layer.className = "DialogLayer";
@@ -998,7 +998,7 @@
    },
    
    close: function()
-@@ -16806,8 +16907,8 @@
+@@ -16805,8 +16906,8 @@
    
  });
  
@@ -1009,7 +1009,7 @@
  
  /**
   * firewallconfigdialog.js
-@@ -32072,6 +32173,9 @@
+@@ -32070,6 +32171,9 @@
    },
    initPopup: function(id)
    {
@@ -1019,7 +1019,7 @@
      switch(this.id)
      {
        case ID_ROOMS:
-@@ -32129,9 +32233,10 @@
+@@ -32127,9 +32231,10 @@
          break;
        case ID_EDIT_SCRIPT:
          this.setTitle( translateKey("dialogEditScript") /*"Skript bearbeiten"*/ );
@@ -1032,7 +1032,7 @@
          this.setFile( "/pages/msg/editScript.htm" );
          break;
        case ID_CONTROL_TEST:
-@@ -32239,7 +32344,9 @@
+@@ -32237,7 +32342,9 @@
      }
  
      if (this.draggable) {
@@ -1043,7 +1043,7 @@
      }
  
    },
-@@ -32399,7 +32506,12 @@
+@@ -32397,7 +32504,12 @@
        onComplete: function(trans)
        {
          //$("messagebox").style.width = t.width + "px";

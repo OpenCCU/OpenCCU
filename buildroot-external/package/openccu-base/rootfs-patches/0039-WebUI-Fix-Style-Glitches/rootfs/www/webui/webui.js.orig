@@ -92,6 +92,8 @@ CHANNELCHOOSER_JST = "{macro printHead(name, id, transKey)}\n
           {if channel.channelType == \"VIR-OL-GTW-CH\"} {var virtualChannel = \"hidden\"} {\/if}\n
           {if channel.channelType == \"VIR-HUE-GTW-CH\"} {var virtualChannel = \"hidden\"} {\/if}\n
 \n
+          {if (channel.index == 0)} {var virtualChannel = classExpertOnly} {\/if}\n
+          \n
           {if channel.channelType != \"_MAINTENANCE\"}\n
               <tr class=\"ChannelChooserRow ${virtualChannel}\" id=\"${PREFIX}${channel.id}\" onclick=\"ChannelChooser.select(this.id);\" onmouseover=\"this.className=\'ChannelChooserRow_Highlight\';\" onmouseout=\"this.className=\'ChannelChooserRow\';\">\n
                 <td class=\"ChannelChooserCell\">${channel.name}<br\/><br\/><span class=\"j_extChnDescr\">${channel.typeDescription}_${channel.address}<\/span><\/td>\n
@@ -463,14 +465,10 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
     {for device in devices}\n
       {if !device.inInbox}\n
         <tr id=\"${PREFIX}${device.id}\" class=\"DeviceListRow\" onclick=\"DeviceListPage.selectDevice(\'${device.id}\');\" onmouseover=\"this.className=\'DeviceListRow_Highlight\';\" onmouseout=\"this.className=\'DeviceListRow\';\">\n
-          {if (device.typeName != \"HmIP-CCU3\") && (device.typeName != \"RPI-RF-MOD\")  && (device.typeName != \"HmIP-HAP\") && (device.typeName != \"HmIP-HAP-A\") && (device.typeName != \"HmIP-HAP2\") && (device.typeName != \"HmIP-HAP2-A\") && (device.typeName != \"HmIP-HAP-B1\") && (device.typeName != \"HmIP-HAP JS1\")}\n
-            <td class=\"DeviceListCell_Invisible\" onclick=\"if (event) { Event.stop(event); } else { Event.stop(window.event); }\">\n
-              <img id=\"${PREFIX}${device.id}PLUS\" onclick=\"DeviceListPage.expandDevice(event, \'${device.id}\');\" src=\"\/ise\/img\/plus.png\" width=\"16px\" height=\"16px\" alt=\"Kan&auml;le anzeigen\" title=\"Kan&auml;le anzeigen\" {if device._expanded} style=\"display:none;\"{\/if}\/>\n
-              <img id=\"${PREFIX}${device.id}MINUS\" onclick=\"DeviceListPage.collapseDevice(event, \'${device.id}\');\" src=\"\/ise\/img\/minus.png\" width=\"16px\" height=\"16px\" alt=\"Kan&auml;le verbergen\" title=\"Kan&auml;le verbergen\" {if !device._expanded} style=\"display:none;\"{\/if}\/>\n
-            <\/td>\n
-            {else}\n
-             <td class=\"DeviceListCell_Invisible\" \/>\n
-          {\/if}\n
+          <td class=\"DeviceListCell_Invisible\" onclick=\"if (event) { Event.stop(event); } else { Event.stop(window.event); }\">\n
+            <img id=\"${PREFIX}${device.id}PLUS\" onclick=\"DeviceListPage.expandDevice(event, \'${device.id}\');\" src=\"\/ise\/img\/plus.png\" width=\"16px\" height=\"16px\" alt=\"Kan&auml;le anzeigen\" title=\"Kan&auml;le anzeigen\" {if device._expanded} style=\"display:none;\"{\/if}\/>\n
+            <img id=\"${PREFIX}${device.id}MINUS\" onclick=\"DeviceListPage.collapseDevice(event, \'${device.id}\');\" src=\"\/ise\/img\/minus.png\" width=\"16px\" height=\"16px\" alt=\"Kan&auml;le verbergen\" title=\"Kan&auml;le verbergen\" {if !device._expanded} style=\"display:none;\"{\/if}\/>\n
+          <\/td>\n
           <td class=\"DeviceListCell\" colspan=\"3\">${device.name}<\/td>\n
           <td class=\"DeviceListCell\" >${device.typeName}<\/td>\n
           <td class=\"DeviceListThumbnail\" ><div id=\"${PREFIX}${device.id}Thumbnail\" class=\"thumbnail\" onmouseover=\"picDivShow(jg_250, \'${device.deviceType.id}\', 250, \'\', this);\" onmouseout=\"picDivHide(jg_250);\">${device.getThumbnailHTML()}<\/div><\/td>\n
@@ -6254,6 +6252,8 @@ elvST['COND_TX_THRESHOLD_LO'] = '${stringTableCondThresholdLo}';
 elvST['COND_TX_THRESHOLD_LO_POWER'] = '${stringTableCondThresholdLoPower}';
 elvST['CONFIG_PENDING=FALSE'] = '${stringTableConfigPendingFalse}';
 elvST['CONFIG_PENDING=TRUE'] = '${stringTableConfigPendingTrue}';
+elvST['STICKY_UNREACH=FALSE'] = '${stringTableStickyUnreachFalse}';
+elvST['STICKY_UNREACH=TRUE'] = '${stringTableStickyUnreachTrue}';
 elvST['CONF_BUTTON_TIME'] = '${stringTableConfButtonTime}';
 elvST['CONF_BUTTON_TIME=PERMANENT'] = '${stringTableConfButtonTimePermanent}';
 elvST['CONTROL_MODE=AUTO-MODE'] = '${stringTableClimateControlRTTransceiverAutoMode}';
@@ -11767,6 +11767,7 @@ Channel = Class.create({
       this.isWritable = data["isWritable"];      
       this.isEventable = data["isEventable"];
       this.isActive = data["isChannelActive"];
+      this.isInternal = data["isInternal"]
 
       if (typeof data["mode_multi_mode"] != "undefined") {
         this.multiMode = data["mode_multi_mode"];
@@ -14662,7 +14663,7 @@ ChannelChooser = Singleton.create({
 
     channels.each(function(channel) {
       var self = this;
-      if (this.match(channel)) {
+      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
 
         if ((channel.device.interfaceName == this.HmIPIdentifier) || (channel.device.interfaceName == this.HmIPWIdentifier)) {
           if ((this.src == this.PRG_CONDITION) || (this.src == this.FAV_CHANNELS)) {
@@ -15105,11 +15106,9 @@ MultiChannelChooser = Singleton.create({
 
     channels.each(function(channel) {
       var self = this;
-      if (this.match(channel)) {
+      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
         if (channel.device.interfaceName == this.HmIPIdentifier || channel.device.interfaceName == this.HmIPWIdentifier) {
-          if (channel.index > 0) {
-            this.filterHmIPChannels(channel, result);
-          }
+          this.filterHmIPChannels(channel, result);
         } else {
           result.push(channel);
         }
@@ -26457,7 +26456,6 @@ if (PLATFORM == "Central") {
     var result = true;
     switch (channel.channelType) {
       case "ALARM_COND_SWITCH_TRANSMITTER":
-      case "MAINTENANCE":
       case "WEEK_PROGRAM":
         result = false;
         break;

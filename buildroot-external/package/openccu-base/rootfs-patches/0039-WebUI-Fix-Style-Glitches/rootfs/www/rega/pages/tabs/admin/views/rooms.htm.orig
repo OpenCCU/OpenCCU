@@ -337,7 +337,7 @@ if ( oUser )
       string sStyle = "";
       integer iReadyCount = 0;
       string rdytmp = "";
-      foreach (rdytmp, elem.EnumEnabledIDs()) {
+      foreach (rdytmp, elem.EnumIDs()) {
         object oChnTmp = dom.GetObject(rdytmp);
         if (oChnTmp.ReadyConfig()) {
           iReadyCount = iReadyCount + 1;
@@ -374,7 +374,7 @@ if ( oUser )
       
       string sEnumPrgFilter = "";
       string tmp = "";
-      foreach( tmp, elem.EnumEnabledIDs() )
+      foreach( tmp, elem.EnumIDs() )
       {
         object chnTmp = dom.GetObject(tmp);
         if( chnTmp )
@@ -406,7 +406,7 @@ if ( oUser )
       integer iCount = 0;
       integer iSubObjects = 0; ! Anzahl "Unter-Objekte" je Raum... als "Platzhalter" für Tabellen-Reihen
       string tmp = "";
-      foreach(tmp, elem.EnumEnabledIDs())
+      foreach(tmp, elem.EnumIDs())
       {
         iSubObjects = iSubObjects + 1;
       }

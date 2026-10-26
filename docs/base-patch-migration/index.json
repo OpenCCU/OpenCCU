@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 253,
-      "sha256": "1a6e76aeea1c810bf891b3ba78aacf2ffd1c78aac564fbca714791d175dc8c43"
+      "sha256": "6038e6b2888076b7c78333948681fe150b24b5e1fbde257b1b26d7788ba7775d"
     },
     {
       "added": 370,
@@ -56,7 +56,7 @@
       ],
       "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
       "removed": 3,
-      "sha256": "7183c410ad6c8d2361e60ba403cb1bfbe05cf4ab37f524db1993ef9376357a89"
+      "sha256": "2dfaf5fa8d6a8c09437d9a24734297db9df91bdf017e2e97a7a7bc799b84c2f6"
     },
     {
       "added": 787,
@@ -121,7 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 656,
-      "sha256": "64ba50b16ad5298ad8d73074dfe13b967e9b97fac4a7a536d74d26ff185025d9"
+      "sha256": "8365245e89e5b81b6a8d5412c124435219b95a5a8a9bfdbc80df7683b99e16e5"
     },
     {
       "added": 138,
@@ -131,7 +131,7 @@
       ],
       "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
       "removed": 19,
-      "sha256": "0d07e0a70a7c52115cd7a1203500c9c14b24966b6874ebd69f683fd44c0c4982"
+      "sha256": "680c84994ca1c891465713db18e29c31094cabe169ffc23ef88355ae86b4f83a"
     },
     {
       "added": 128,
@@ -148,7 +148,7 @@
       ],
       "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
       "removed": 3,
-      "sha256": "644854a9ebc5a962d9144339299b01d01350d790608bfcbcd523adc19a44a8f7"
+      "sha256": "7817ba830e16dd8bce3742a9c466ad08ac97103f442f556e20ed9113a74440db"
     },
     {
       "added": 305,
@@ -160,7 +160,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "0df8836c6baafc7e5e281d9de9ef1b22f55487d73d648ccfb75611e8f4e230d0"
+      "sha256": "d3d2dce287290ef18bf25cd40a0e9f3c8eef6f184e647a3d95a3b56b00cb4f0a"
     },
     {
       "added": 757,
@@ -171,7 +171,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "285740d6ae1c14dda1ffe82dca30fc13e5fc7b1412168ab39fc859c8e968bef3"
+      "sha256": "d97428ba7f9949ffe6478f86ea9a620d48715b1b962a397478900eef4f9bafd2"
     },
     {
       "added": 123,
@@ -182,7 +182,7 @@
       ],
       "patch": "0056-WebUI-Sticky-Filters.patch",
       "removed": 6,
-      "sha256": "75d96c7c6b1a76bf29ce34ad389f5e3ddf6525dfc6751f8bdc87d339382cb938"
+      "sha256": "baa98c6b27065177795d40eb59d16e54af9a733a125814d41e32621f3edf0559"
     },
     {
       "added": 262,
@@ -196,7 +196,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 106,
-      "sha256": "57d5caa8c9c62c3fc42292bf15fd1a1b33531437d89d6f69578cd561be9e2983"
+      "sha256": "3d2d5d5121c25ed6c9b070559668285eeda34ababcbd78bb432d333b5f21ef36"
     },
     {
       "added": 357,
@@ -214,7 +214,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "a670f6a6ff78e1d2adcd95897ccb37f6dd44c24f0165978844bc660f6eb58482"
+      "sha256": "fb00bf36677a74f758a0d7a94ef3e2843bf6f546f44230b7f5c9911d236d4454"
     },
     {
       "added": 76,
@@ -226,7 +226,7 @@
       ],
       "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
       "removed": 1,
-      "sha256": "42f47048c6c7bbbc4cd6fa2ba7ee990d3532c57d311b2c35acb692d79b426175"
+      "sha256": "1c8bb15e101364b2bd0f7604e56af4a0777ea5b5350d9973cc37bcd751a29828"
     },
     {
       "added": 219,
@@ -240,7 +240,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 76,
-      "sha256": "26605a8014c8dc86ce76193243503ac69cd1ef8d44dfc610e21efff9c95b1b3b"
+      "sha256": "780919e9f95a1c8c59329f398f22864fbb8a378d6385d0cf4efa0bae3624ac1f"
     },
     {
       "added": 86,
@@ -252,26 +252,7 @@
       ],
       "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch",
       "removed": 7,
-      "sha256": "f9b45b641c0424195d33db5f4e7fd617591f13147062ff4327de1f8ee63920b1"
-    },
-    {
-      "added": 43,
-      "files": [
-        "www/api/methods/device/get.tcl",
-        "www/api/methods/device/listalldetail.tcl",
-        "www/api/methods/device/listprogramids.tcl",
-        "www/api/methods/room/getall.tcl",
-        "www/api/methods/subsection/getall.tcl",
-        "www/config/stringtable_de.txt",
-        "www/rega/pages/tabs/admin/views/functionchannels.htm",
-        "www/rega/pages/tabs/admin/views/functions.htm",
-        "www/rega/pages/tabs/admin/views/roomchannels.htm",
-        "www/rega/pages/tabs/admin/views/rooms.htm",
-        "www/webui/webui.js"
-      ],
-      "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch",
-      "removed": 27,
-      "sha256": "50b3b4a5033fbc9a839aba7649d5b16992e4aa202407160cd0cb572a944a4197"
+      "sha256": "478c51aa7f5717206ec05191119689523d2a95e6a0c1077fee777df8104b7ca3"
     },
     {
       "added": 439,
@@ -496,5 +477,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "17b99d38c259ddebc70a11f57c8ad36c27240b5898cb72e3b06d0c5aa287cbd2"
+  "series_sha256": "1cba2e2c39930be473d55c435232bab3e30efd3ed2013c51162a4ee8124028bc"
 }

@@ -10,7 +10,7 @@
   if( func )
   {
     bListAll = false;
-    sEnum = func.EnumEnabledIDs();
+    sEnum = func.EnumIDs();
     sID = system.GetVar("id");
   }
   else
