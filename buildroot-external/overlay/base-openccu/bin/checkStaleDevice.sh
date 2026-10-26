@@ -29,8 +29,29 @@ PATTERN=${2:-/dev/mmd_*}
 PID=$(cat "${PIDFILE}" 2>/dev/null)
 { [ -n "${PID}" ] && [ -d "/proc/${PID}/fd" ]; } || exit 0
 
-for fd in /proc/"${PID}"/fd/*; do
-  target=$(readlink "${fd}" 2>/dev/null) || continue
+# Nothing can be stale as long as no device node matching the pattern exists
+# (e.g. if multimacd is not used), so skip scanning the fds in that case.
+found=0
+# shellcheck disable=SC2086
+for dev in ${PATTERN}; do
+  if [ -c "${dev}" ]; then
+    found=1
+    break
+  fi
+done
+[ ${found} -eq 1 ] || exit 0
+
+# List all fds with a single ls call and only keep the ones pointing to a
+# removed file. Forking a readlink for each fd caused a high CPU load for
+# processes with thousands of open fds like HMIPServer, cf.
+# https://github.com/OpenCCU/OpenCCU/issues/4546
+# The fd names are plain numbers, so parsing the ls output is safe here.
+# shellcheck disable=SC2010
+deleted=$(ls -ln "/proc/${PID}/fd/" 2>/dev/null | grep ' (deleted)$')
+[ -n "${deleted}" ] || exit 0
+
+while IFS= read -r line; do
+  target=${line#* -> }
   # shellcheck disable=SC2254
   case "${target}" in
     ${PATTERN}" (deleted)")
@@ -41,6 +62,8 @@ for fd in /proc/"${PID}"/fd/*; do
       fi
     ;;
   esac
-done
+done <<EOF
+${deleted}
+EOF
 
 exit 0
