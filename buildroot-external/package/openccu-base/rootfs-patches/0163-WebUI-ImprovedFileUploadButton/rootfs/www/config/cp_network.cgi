@@ -500,7 +500,6 @@ proc action_put_page {} {
         pb += "&dns2=0.0.0.0";
         }
         
-        pb += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
         var opts = {
           postBody: pb,
           sendXML: false,
@@ -515,6 +514,7 @@ proc action_put_page {} {
             else alert(translateKey("dialogSettingsNetworkMessageAlertMessageError1") + "\n" +transport.responseText);
           }
         };
+        opts.postBody += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
         new Ajax.Request(url, opts);
       }
     }
