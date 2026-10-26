@@ -1,6 +1,6 @@
 --- a/www/webui/js/lang/de/translate.lang.extension.js
 +++ b/www/webui/js/lang/de/translate.lang.extension.js
-@@ -60,13 +60,21 @@
+@@ -60,13 +60,22 @@
      "generalDeviceChannelConfigLblLogged" : "Protokolliert:",
      "generalDeviceChannelConfigLblServiceMsg": "Servicemeldungen:",
      "generalDeviceChannelConfigLblFuncTest" : "Funktionstest",
@@ -17,6 +17,7 @@
 +    "generalDeviceRenameChannelHint" : "Benennt alle Kan%E4le des Ger%E4ts um.<br/><br/>Die Kanalnamen lauten anschlie%DFend: <i>Ger%E4tename%26lt;Trennzeichen%26gt;Kanalnummer</i>",
 +    "generalDeviceRenameChannelHintTooltip" : "Benennt alle Kan%E4le des Ger%E4ts um. Die Kanalnamen lauten anschlie%DFend: 'Ger%E4tename<Trennzeichen>Kanalnummer'",
 +    "generalDeviceRenameChannelIncludingOwnHint" : "Ist diese Option aktiviert, werden bereits vorher selbst vergebene Kanalnamen mit umbenannt.",
++    "generalDeviceRenameChannelsConfirm" : "Alle Kan%E4le umbenennen?",
      "generalDeviceConfigHint" : "Im Rahmen des Funktionstests wird gepr%FCft, ob die Kommunikation mit dem Ger%E4t fehlerfrei funktioniert.<br /> Dazu werden an alle mit dem Ger%E4t verkn%FCpften Aktoren Schaltbefehle gesendet, die deren Zustand %E4ndern. Sensoren, wie z.B. Fernbedienungen, melden sich im Allgemeinen erst dann, wenn sie manuell bet%E4tigt werden. Der Test gilt als bestanden, sobald die erste R%FCckmeldung von dem Ger%E4t empfangen wurde.",
 +    "generalDeviceConfigHintTooltip" : "Im Rahmen des Funktionstests wird gepr%FCft, ob die Kommunikation mit dem Ger%E4t fehlerfrei funktioniert. Dazu werden an alle mit dem Ger%E4t verkn%FCpften Aktoren Schaltbefehle gesendet, die deren Zustand %E4ndern. Sensoren, wie z.B. Fernbedienungen, melden sich im Allgemeinen erst dann, wenn sie manuell bet%E4tigt werden. Der Test gilt als bestanden, sobald die erste R%FCckmeldung von dem Ger%E4t empfangen wurde.",
      "generalChannelConfigHint" : "<p>Im Rahmen des Funktionstests wird gepr%FCft, ob die Kommunikation mit dem Kanal fehlerfrei funktioniert.</p>",
@@ -24,7 +25,7 @@
      "generalChannelConfigHintReceiver" : "<p>Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgel%F6st.</p>",
 --- a/www/webui/js/lang/en/translate.lang.extension.js
 +++ b/www/webui/js/lang/en/translate.lang.extension.js
-@@ -60,13 +60,21 @@
+@@ -60,13 +60,22 @@
      "generalDeviceChannelConfigLblLogged": "Logged:",
      "generalDeviceChannelConfigLblServiceMsg": "Service messages:",
      "generalDeviceChannelConfigLblFuncTest": "Functional test",
@@ -39,8 +40,9 @@
      "generalDeviceChannelConfigBtnFuncTest": "Start test",
 +    "generalDeviceChannelConfigBtnRenameChannels" : "Rename channels",
 +    "generalDeviceRenameChannelHint" : "Renames all channels of the device according to a given pattern.<br/><br/>The new channel names will afterwards look like: <i>device_name%26lt;separator%26gt;channel_number</i>",
-+    "generalDeviceRenameChannelHintTooltip" : "Renames all channels of the device according to a given pattern. The new channel names will afterwards look like: 'device_name%26lt;separator%26gt;channel_number'",
++    "generalDeviceRenameChannelHintTooltip" : "Renames all channels of the device according to a given pattern. The new channel names will afterwards look like: 'device_name<separator>channel_number'",
 +    "generalDeviceRenameChannelIncludingOwnHint" : "If this option is selected, all channels will be renamed including manually renamed ones.",
++    "generalDeviceRenameChannelsConfirm" : "Rename all channels?",
      "generalDeviceConfigHint": "During the functional test the error-free communication to the device is checked.<br /> Therefore, switching commands will be send to all actuators connected to the device. Sensors (e.g. remote controls) are usually sending signals only if they are operated manually. The test is passed as soon as the first feedback will be received by the device.",
 +    "generalDeviceConfigHintTooltip": "During the functional test the error-free communication to the device is checked. Therefore, switching commands will be send to all actuators connected to the device. Sensors (e.g. remote controls) are usually sending signals only if they are operated manually. The test is passed as soon as the first feedback will be received by the device.",
      "generalChannelConfigHint": "<p>During the functional test the error-free communication to the channel is checked.</p>",
@@ -91,7 +93,7 @@
 +      <\/div>\n
 +    <\/div>\n
 +	\n
-+    <div id=\"deviceFunctionTestPanel\" class=\"DeviceConfigDialogSection\">\n
++    <div id=\"deviceRenameChannelsPanel\" class=\"DeviceConfigDialogSection\">\n
 +      <div class=\"CLASS10804\" name=\"generalDeviceChannelConfigLblRenameChannel\">Funktionstest<\/div>\n
 +      <hr \/>\n
 +      <div>\n
@@ -161,7 +163,7 @@
 +  },
 +  
 +  renameChannels: function() {
-+    if (confirm("Alle Kanäle umbenennen?")) {
++    if (confirm(translateKey("generalDeviceRenameChannelsConfirm"))) {
 +      var renameOwnChannelNames = $(this.RENAME_OWN_ID).checked;
 +
 +      this.device.channels.each(function(channel) {

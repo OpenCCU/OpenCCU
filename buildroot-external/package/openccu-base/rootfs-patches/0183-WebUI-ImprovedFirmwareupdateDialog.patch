@@ -1,6 +1,6 @@
 --- a/www/webui/js/lang/de/translate.lang.extension.js
 +++ b/www/webui/js/lang/de/translate.lang.extension.js
-@@ -645,9 +645,14 @@
+@@ -646,9 +646,14 @@
      "dialogRenameVirtualGroupDeviceTitle" : "Umbenennung des virtuellen Ger%E4tes",
      "dialogVirtualGroupDeviceContent" : "M%F6chten Sie das virtuelle Ger%e4t der Gruppe sowie die entsprechenden Kan%E4le mit dem Gruppennamen %FCberschreiben?",
      "dialogShowDeviceFirmwareTitle" : "Es stehen Ger%E4te-Firmware-Updates zur Verf%FCgung",
@@ -18,7 +18,7 @@
      "dialogShowDeviceFirmwareLinkDownload": "Zum Downloadbereich",
      "hintDevFwAlreadyUploaded" : "" +
        "Die aktuellste Firmware des Ger%E4tes befindet sich bereits auf der " + HMIdentifier.de.CCUShortName + ".\n"+
-@@ -1102,4 +1107,4 @@
+@@ -1103,4 +1108,4 @@
  });
  
  langJSON.de.hintActivateDetectorSelfTest += langJSON.de.checkSmokeDetectorSelfTest;
@@ -27,7 +27,7 @@
 +langJSON.de.hintReInclusionDetectorFailed += langJSON.de.checkSmokeDetectorSelfTest;
 --- a/www/webui/js/lang/en/translate.lang.extension.js
 +++ b/www/webui/js/lang/en/translate.lang.extension.js
-@@ -645,9 +645,14 @@
+@@ -646,9 +646,14 @@
      "dialogRenameVirtualGroupDeviceTitle" : "Rename the virtual device",
      "dialogVirtualGroupDeviceContent" : "Would you like to rename the virtual device of the group and its channels to the group name?",
      "dialogShowDeviceFirmwareTitle" : "There are new device firmware updates available",
