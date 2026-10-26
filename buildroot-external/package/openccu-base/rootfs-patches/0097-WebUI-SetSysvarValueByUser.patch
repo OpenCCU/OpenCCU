@@ -527,7 +527,7 @@
      "dialogEnterValue" : "Enter value",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -32259,14 +32259,22 @@
+@@ -32257,14 +32257,22 @@
          this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
          this.addToPostBody( 'integer varid = 0;' );
          this.addToPostBody( 'integer createNew = 1;' );
@@ -552,7 +552,7 @@
          this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
          break;
        case ID_CREATE_SCRIPT:
-@@ -33151,6 +33159,8 @@
+@@ -33149,6 +33157,8 @@
  dbg = false;
  rfr = true;
  

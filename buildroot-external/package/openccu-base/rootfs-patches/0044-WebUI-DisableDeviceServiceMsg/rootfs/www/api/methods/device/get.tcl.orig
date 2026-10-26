@@ -44,7 +44,7 @@ set script {
       foreach(channelId, device.Channels())
       {
         var channel = dom.GetObject(channelId);
-        if (false == channel.Internal())
+        if (channel)
         {
           if (true != first) { Write(" "); } else { first = false; }
           Write("{");
@@ -67,6 +67,12 @@ set script {
               if (OPERATION_WRITE & operations) { writable  = true; }
               if (OPERATION_EVENT & operations) { eventable = true; }
             }
+          }
+
+          var isInternal = channel.Internal();
+          if(isInternal)
+          {
+            writable = false;
           }
           
           var isUsable = false;
@@ -115,6 +121,7 @@ set script {
           Write(" EVENTABLE {" # eventable # "}");
           Write(" AES_AVAILABLE {" # isAesAvailable # "}");
           Write(" VIRTUAL {" # isVirtual # "}");
+          Write(" INTERNAL {" # isInternal # "}");
           Write(" CHANNEL_TYPE {" # channel.HssType() # "}");
           Write("}");
         }
@@ -167,6 +174,7 @@ foreach _channel $device(CHANNELS) {
 	append result ",\"isEventable\":$channel(EVENTABLE)"
 	append result ",\"isAesAvailable\":$channel(AES_AVAILABLE)"
 	append result ",\"isVirtual\":$channel(VIRTUAL)"
+	append result ",\"isInternal\":$channel(INTERNAL)"
 	append result ",\"channelType\":[json_toString $channel(CHANNEL_TYPE)]"
 	append result "\}"
 	
