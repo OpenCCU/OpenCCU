@@ -217,7 +217,7 @@
       "sha256": "fb00bf36677a74f758a0d7a94ef3e2843bf6f546f44230b7f5c9911d236d4454"
     },
     {
-      "added": 74,
+      "added": 76,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/esp/system.htm",
@@ -226,7 +226,7 @@
       ],
       "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
       "removed": 1,
-      "sha256": "2357e4d96e6856b54be914c9c8f727fb141cb0275d3c7216db24b13dd6e76d37"
+      "sha256": "1c8bb15e101364b2bd0f7604e56af4a0777ea5b5350d9973cc37bcd751a29828"
     },
     {
       "added": 219,
