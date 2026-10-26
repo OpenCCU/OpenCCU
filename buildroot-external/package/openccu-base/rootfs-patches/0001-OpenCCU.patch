@@ -1140,7 +1140,7 @@
      "BidCosRF" : "Homematic Funk",
      "BidCosWired" : "Homematic Wired",
      "VirtualDevices" : "VirtualDevices",
-@@ -490,6 +490,7 @@
+@@ -491,6 +491,7 @@
      "dialogSettingsCMLblActualSoftwareVersion" : "Aktuelle Software-Version:",
      "dialogSettingsCMLblAvailableSoftwareVersion" : "Verf%FCgbare Software-Version:",
      "dialogSettingsCMLblPerformSoftwareUpdate" : "Software-Update durchf%FChren",
@@ -1148,7 +1148,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Schritt 1: Neue Software herunterladen",
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Schritt 2: Heruntergeladene Software ausw%E4hlen",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Schritt 3: Software auf " + HMIdentifier.de.CCUShortName + " laden",
-@@ -514,6 +515,7 @@
+@@ -515,6 +516,7 @@
      "dialogSettingsCMHintSoftwareUpdate3" : "F%FChren Sie vor dem Update eine Datensicherung durch.",
      "dialogSettingsCMHintSoftwareUpdate4a" : "Der Ladezustand der Batterien betr%E4gt nur noch ",
      "dialogSettingsCMHintSoftwareUpdate4b" : "Um einem Datenverlust durch Ausfall der Stromversorgung vorzubeugen, empfehlen wir, die Batterien vor dem Update zu erneuern.",
@@ -1201,7 +1201,7 @@
      "BidCosRF" : "Homematic RF",
      "BidCosWired" : "BidCos-Wired",
      "BidCosRF-Filter" : "BidCos-RF",
-@@ -489,6 +489,7 @@
+@@ -490,6 +490,7 @@
      "dialogSettingsCMLblActualSoftwareVersion" : "Current software version:",
      "dialogSettingsCMLblAvailableSoftwareVersion" : "Available software version:",
      "dialogSettingsCMLblPerformSoftwareUpdate" : "Perform software update",
@@ -1209,7 +1209,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Step 1: Download new software",
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Step 2: Select downloaded software",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Step 3: Upload software to " + HMIdentifier.en.CCUShortName,
-@@ -513,6 +514,7 @@
+@@ -514,6 +515,7 @@
      "dialogSettingsCMHintSoftwareUpdate3" : "Please perform a data backup before starting the update.",
      "dialogSettingsCMHintSoftwareUpdate4a" : "The charging status the batteries is only at ",
      "dialogSettingsCMHintSoftwareUpdate4b" : "To prevent from data loss due to power failure, it is recommended to replace the batteries before starting the update.",
@@ -1258,7 +1258,7 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -29528,7 +29528,7 @@
+@@ -29532,7 +29532,7 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
@@ -1267,7 +1267,7 @@
      this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
      this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
  
-@@ -29539,7 +29539,7 @@
+@@ -29543,7 +29543,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1276,7 +1276,7 @@
      $("body").appendChild(script);
    },
  
-@@ -34985,11 +34985,11 @@
+@@ -34989,11 +34989,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {

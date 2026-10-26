@@ -626,7 +626,7 @@
    setFooter("");
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -65,10 +65,11 @@
+@@ -66,10 +66,11 @@
      "submenuFavorites" : "Favoriten",
      "submenuCreateFavorite" : "Favoriten erstellen",
      "submenuPrograms" : "Programme",
@@ -640,7 +640,7 @@
      "submenuDeviceInbox" : "Ger%E4te - Posteingang",
      "submenuUserManagement" : "Benutzerverwaltung",
      "submenuSysControl" : "Systemsteuerung",
-@@ -116,7 +117,7 @@
+@@ -117,7 +118,7 @@
      "thValues" : "Werte",
      "thUnit" : "Ma%DFeinheit",
      "thLastUpdate" : "Letzte<br/>Aktualisierung",
@@ -649,7 +649,7 @@
      "thFilter" : "Filter",
      "thDescription" : "Beschreibung",
      "thActivity" : "Aktivit%E4t",
-@@ -331,7 +332,7 @@
+@@ -332,7 +333,7 @@
      "lblSettingsFunctions5" : "Gewerkeigenschaften bearbeiten",
      "commentSettingsBtnFunctionsEnd" : "***********************************************",
      "commentSettingsBtnSysVar" : "***********************************************",
@@ -658,7 +658,7 @@
      "lblSettingsSysVar1" : "%DCbersicht aller Systemvariablen",
      "lblSettingsSysVar2" : "Bestehende Systemvariablen bearbeiten",
      "lblSettingsSysVar3" : "Neue Systemvariablen anlegen",
-@@ -464,7 +465,7 @@
+@@ -465,7 +466,7 @@
      "lblMenuStatusControlFavorites1" : "%DCbersicht aller verf%FCgbaren Favoriten",
      "btnMenuStatusControlPrograms" : "Programme",
      "lblMenuStatusControlPrograms1" : "Direkter Zugriff auf alle Programme",
@@ -669,7 +669,7 @@
      "lblMenuStatusControlSysProtocolTime" : "Zeit",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -64,10 +64,11 @@
+@@ -65,10 +65,11 @@
      "submenuFavorites" : "Favourites",
      "submenuCreateFavorite" : "Create favourites",
      "submenuPrograms" : "Programs",
@@ -683,7 +683,7 @@
      "submenuDeviceInbox" : "Device inbox",
      "submenuUserManagement" : "User management",
      "submenuSysControl" : "Control panel",
-@@ -330,7 +331,7 @@
+@@ -331,7 +332,7 @@
      "lblSettingsFunctions5" : "Edit function properties",
      "commentSettingsBtnFunctionsEnd" : "***********************************************",
      "commentSettingsBtnSysVar" : "***********************************************",
@@ -692,7 +692,7 @@
      "lblSettingsSysVar1" : "Overview of all system variables",
      "lblSettingsSysVar2" : "Edit existing system variables",
      "lblSettingsSysVar3" : "Create new system variables",
-@@ -463,7 +464,7 @@
+@@ -464,7 +465,7 @@
      "lblMenuStatusControlFavorites1" : "Overview of all functions available",
      "btnMenuStatusControlPrograms" : "Programs",
      "lblMenuStatusControlPrograms1" : "Direct access to all programs",
@@ -781,7 +781,7 @@
    [ 
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -278,7 +278,7 @@
+@@ -291,7 +291,7 @@
  
  /* Grundlegende Tabelle auf der Statusanzeige-Seite */
  #tblStatus {
@@ -790,7 +790,7 @@
    height:100%;
    table-layout: fixed;
  }
-@@ -1487,7 +1487,7 @@
+@@ -1500,7 +1500,7 @@
  
  .sysConfigHeight
  {
@@ -799,7 +799,7 @@
  }
  
  .posPreBtn
-@@ -2705,8 +2705,8 @@
+@@ -2718,8 +2718,8 @@
  
    background-color: $_(subMenuBackground);
    font-weight: bold;
@@ -810,7 +810,7 @@
    text-align:left;
    vertical-align:middle;
    color: $_(textColorB); /* black */
-@@ -2720,6 +2720,12 @@
+@@ -2733,6 +2733,12 @@
    /* border: 2px solid $_(subMenuHighlight); */
    /* line-height: 30px; */
  }
@@ -823,7 +823,7 @@
  #webuiloader_wrapper {
    width: 100%;
    height: 100%;
-@@ -7068,11 +7074,12 @@
+@@ -7081,11 +7087,12 @@
  /* rega\pages\tabs\admin\linkprog.htm */
  
  .CLASS05400 {
@@ -837,7 +837,7 @@
  }
  
  .CLASS05402 {
-@@ -7083,16 +7090,54 @@
+@@ -7096,16 +7103,54 @@
  	text-align:center ! important;
  }
  
@@ -893,7 +893,7 @@
  /* rega\pages\tabs\favorites.htm */
  
  .CLASS05600 {
-@@ -7172,11 +7217,26 @@
+@@ -7185,11 +7230,26 @@
  /* pages\tabs\statusview.htm */
  
  .CLASS05700 {
@@ -921,7 +921,7 @@
  }
  
  .CLASS05702 {
-@@ -7313,13 +7373,32 @@
+@@ -7326,13 +7386,32 @@
  /* rega\pages\tabs\user\systemConfigUser.htm */
  
  .CLASS06100 {

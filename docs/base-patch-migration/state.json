@@ -785,18 +785,24 @@
       "base_pr": 246,
       "cleanup_pr": 4535,
       "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch"
+    },
+    {
+      "base_merge_commit": "4fd1892885e1f0482c6c0b46058d349733488f32",
+      "base_pr": 247,
+      "cleanup_pr": 4540,
+      "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "4fd1892885e1f0482c6c0b46058d349733488f32",
-    "base_pr": 247,
-    "cleanup_pr": 4540,
-    "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
+    "base_merge_commit": "14fbdf0a28f6cab39e3fa28be9551f09cbf29580",
+    "base_pr": 248,
+    "cleanup_pr": 4542,
+    "patch": "0146-WebUI-ImprovedStartpageLayout.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "7e870f5e32da37639662ead1640a1490c2f1ff9c",
-  "verified_base_pin": "8db5d94c998090536e12458ecaef543ecb4df001",
-  "verified_source_sha256": "0fdef6dee02beee692e86fbe4aae861a1c05a783653d0f72d41e34519a08edc5"
+  "verified_at_openccu_commit": "e6bbf56fabbef618be019c9da363f993d4986679",
+  "verified_base_pin": "4fd1892885e1f0482c6c0b46058d349733488f32",
+  "verified_source_sha256": "ab4583124e4d97c691eecbedb94a01019837ea82881d972bf853d12835f9909b"
 }

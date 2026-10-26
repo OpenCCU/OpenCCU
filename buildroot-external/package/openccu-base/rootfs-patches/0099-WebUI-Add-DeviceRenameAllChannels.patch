@@ -48,7 +48,7 @@
      "generalChannelConfigHintReceiver": "<p>In connection with actuators usually switching commands will be send.</p>",
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -3292,7 +3292,7 @@
+@@ -3305,7 +3305,7 @@
    top: 50%;
    left: 50%;
    width: 800px;
@@ -57,7 +57,7 @@
    margin-left: -400px;
    margin-top: -225px;
    background-color: $_(black); /* black */
-@@ -3318,7 +3318,7 @@
+@@ -3331,7 +3331,7 @@
    top: 24px;
    left: 2px;
    width: 796px;
@@ -66,7 +66,7 @@
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
    overflow: auto;
-@@ -3326,7 +3326,7 @@
+@@ -3339,7 +3339,7 @@
  
  #DeviceConfigDialogFooter {
    position: absolute;

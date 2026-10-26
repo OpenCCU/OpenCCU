@@ -42,7 +42,7 @@
          append footerHtml "<tr>"
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -838,6 +838,10 @@
+@@ -851,6 +851,10 @@
    z-index:501;
  }
  
@@ -152,7 +152,7 @@
      this.close();
    }
    
-@@ -26980,6 +27007,7 @@
+@@ -26984,6 +27011,7 @@
      jQuery("#DeviceListPage_FuncFilter").draggable();
  
      DeviceList.updateDeviceStatus();
@@ -160,7 +160,7 @@
    },
    
    onRemoveDevice: function(whatEver)
-@@ -32541,6 +32569,9 @@
+@@ -32545,6 +32573,9 @@
    },  
    ShowPopup: function() {
      this.show();
@@ -170,7 +170,7 @@
    },
    
    restorePrevious: function() {
-@@ -33446,11 +33477,31 @@
+@@ -33450,11 +33481,31 @@
      if (file.substring(0, UI_PATH.length) == UI_PATH)
      {
        //method: 'get' ist für die ELV-CGIs notwendig.
@@ -204,7 +204,7 @@
      }
      /* ELV --> */
      
-@@ -37382,6 +37433,28 @@
+@@ -37386,6 +37437,28 @@
      this.fltObjType = 0;
      if (fltObjType)
        this.fltObjType = fltObjType;
@@ -233,7 +233,7 @@
    },
    
  
-@@ -37753,6 +37826,15 @@
+@@ -37757,6 +37830,15 @@
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
      this.bTypeString = false;
@@ -249,7 +249,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -37862,6 +37944,12 @@
+@@ -37866,6 +37948,12 @@
  {
    //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
    fltObj.addStringFilter(fId, $(ctrlId).value);
@@ -262,7 +262,7 @@
  };
  
  // Integer-Filter (Modus, Iface)
-@@ -51474,6 +51562,9 @@
+@@ -51478,6 +51566,9 @@
    
    ShowPopup: function() {
      this.show();
@@ -272,7 +272,7 @@
    }
  };
  
-@@ -51605,6 +51696,9 @@
+@@ -51609,6 +51700,9 @@
    ShowPopup: function()
    {
      this.show();

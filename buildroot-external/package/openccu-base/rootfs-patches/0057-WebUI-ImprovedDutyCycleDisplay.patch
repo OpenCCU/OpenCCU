@@ -43,7 +43,7 @@
 +jsonrpc_response "$result"
 --- a/www/rega/pages/tabs/startpage.htm
 +++ b/www/rega/pages/tabs/startpage.htm
-@@ -251,22 +251,134 @@
+@@ -232,22 +232,134 @@
                }
               %>
  
@@ -192,7 +192,7 @@
              </tr>
  
            </table>
-@@ -306,14 +418,7 @@
+@@ -287,14 +399,7 @@
        } else {
          WEBUI_VERSION = "0.0.0";
        }
@@ -231,7 +231,7 @@
 +}
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -2423,27 +2423,6 @@
+@@ -2436,27 +2436,6 @@
  progress::-moz-progress-bar { background: #3678c9; }
  progress::-webkit-progress-value { background: #3678c9; }
  
@@ -259,7 +259,7 @@
  .Filter {
    margin:0;
    border:1px solid $_(black); /* black */
-@@ -5065,9 +5044,13 @@
+@@ -5078,9 +5057,13 @@
  	height:50%;
  }
  
@@ -301,7 +301,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35713,74 +35709,101 @@
+@@ -35717,74 +35713,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},

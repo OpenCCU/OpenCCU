@@ -302,7 +302,7 @@ function ::UpdateUI()
 
   string sTime = system.Date( "%H:%M" );
   string sDate = system.Date( "%d.%m.%Y" );
-  WriteLine('setTime("' # sTime # '");');
+  WriteLine('setTime("' # sDate # ',&nbsp;' # sTime #'");');
   WriteLine('setDate("' # sDate # '");');
 !  Write( 'if( $("maintime") ) $("maintime").innerHTML = "'#sTime#'";' );
 !  Write( 'if( $("maindate") ) $("maindate").innerHTML = "'#sDate#'";' );
