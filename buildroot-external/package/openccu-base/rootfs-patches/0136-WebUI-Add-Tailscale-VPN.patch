@@ -54,12 +54,7 @@
        table_row {class="CLASS21119"} {
          table_data {class="CLASS21116"} {
            #puts "Zertifikat<br />erstellen"
-@@ -466,11 +503,17 @@
-         pb += "&dns2=0.0.0.0";
-         }
-         
-+        pb += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
-         var opts = {
+@@ -470,11 +507,17 @@
            postBody: pb,
            sendXML: false,
            onSuccess: function(transport) {
@@ -73,6 +68,11 @@
              //else alert("Netzwerkkonfiguration konnte nicht gespeichert werden:\n"+transport.responseText);
              else alert(translateKey("dialogSettingsNetworkMessageAlertMessageError1") + "\n" +transport.responseText);
            }
+         };
++        opts.postBody += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
+         new Ajax.Request(url, opts);
+       }
+     }
 @@ -617,10 +660,15 @@
      import dhcp
      import dns1
