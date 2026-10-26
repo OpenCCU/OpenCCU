@@ -791,18 +791,24 @@
       "base_pr": 247,
       "cleanup_pr": 4540,
       "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch"
+    },
+    {
+      "base_merge_commit": "14fbdf0a28f6cab39e3fa28be9551f09cbf29580",
+      "base_pr": 248,
+      "cleanup_pr": 4542,
+      "patch": "0146-WebUI-ImprovedStartpageLayout.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "14fbdf0a28f6cab39e3fa28be9551f09cbf29580",
-    "base_pr": 248,
-    "cleanup_pr": 4542,
-    "patch": "0146-WebUI-ImprovedStartpageLayout.patch",
+    "base_merge_commit": "511edb5204c520d8ea343966490205269a9b402d",
+    "base_pr": 249,
+    "cleanup_pr": null,
+    "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "e6bbf56fabbef618be019c9da363f993d4986679",
-  "verified_base_pin": "4fd1892885e1f0482c6c0b46058d349733488f32",
-  "verified_source_sha256": "ab4583124e4d97c691eecbedb94a01019837ea82881d972bf853d12835f9909b"
+  "verified_at_openccu_commit": "0ef83ad26d9a83bbd0907d8674f98e5bcc515b55",
+  "verified_base_pin": "14fbdf0a28f6cab39e3fa28be9551f09cbf29580",
+  "verified_source_sha256": "5b9a5717c6332310afe92c686c3e00dfcdf7a9442b62dced27cc6784dbafafa0"
 }

@@ -190,7 +190,7 @@
        }
      }
    }
-@@ -355,8 +353,7 @@
+@@ -392,8 +390,7 @@
              table_row {
                table_data {width="20"} {}
                table_data {colspan="2"} {
@@ -200,7 +200,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -735,13 +732,15 @@
+@@ -802,13 +799,15 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
