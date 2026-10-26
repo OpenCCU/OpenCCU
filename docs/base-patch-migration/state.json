@@ -784,7 +784,7 @@
   "in_progress": {
     "base_merge_commit": "8db5d94c998090536e12458ecaef543ecb4df001",
     "base_pr": 246,
-    "cleanup_pr": null,
+    "cleanup_pr": 4535,
     "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
