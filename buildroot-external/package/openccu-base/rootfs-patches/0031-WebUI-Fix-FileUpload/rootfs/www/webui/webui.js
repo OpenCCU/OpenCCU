@@ -31692,6 +31692,27 @@ ise.User.prototype =
     new Ajax.Updater("userSysVarTbl", url, opts);
   },
   
+  MoveSysVar: function(uid, svId, dir) {
+    var url = "/esp/system.htm?sid=" + SessionId;
+    var pb = "string action = 'UserMoveSysVarBuildTable';";
+    pb += "integer userId = "+ uid +";";
+    pb += "integer svId = " + svId + ";";
+    pb += "integer svMoveDirection = " + dir + ";";
+    var opts = {
+      postBody: ReGa.encode(pb),
+      onSuccess: function(t) {
+        // funktioniert seltsamerweise nur durch den "Updater"-Aufruf nicht
+        $("userSysVarTbl").innerHTML = t.responseText;
+      },
+      onComplete: function(response) {
+        if (200 == response.status) {
+          translatePage("#userSysVarTbl");
+        }
+      }
+    };
+    new Ajax.Updater("userSysVarTbl", url, opts);
+  },
+    
   buildTmpSysVarTable: function(arSysVars) {
     var url = "/esp/system.htm?sid="+SessionId;
     var pb = "string action = 'BuildUserSvTable';";

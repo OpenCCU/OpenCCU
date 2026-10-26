@@ -1276,7 +1276,7 @@
      $("body").appendChild(script);
    },
  
-@@ -34964,11 +34964,11 @@
+@@ -34985,11 +34985,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {

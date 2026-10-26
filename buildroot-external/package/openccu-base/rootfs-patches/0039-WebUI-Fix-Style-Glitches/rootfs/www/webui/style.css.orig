@@ -1430,6 +1430,30 @@ div.caption  { display: table-caption; }
   cursor:pointer;
 }
 
+.tSysvarMoveUp
+{
+  background-image: url(/ise/img/up.png);
+  background-position: center;
+  height: 15px;
+  width: 20px;
+  background-size: contain;
+  background-repeat: round;
+  cursor: pointer;
+  mix-blend-mode: darken;
+}
+
+.tSysvarMoveDown
+{
+  background-image: url(/ise/img/down.png);
+  background-position: center;
+  height: 15px;
+  width: 20px;
+  background-size: contain;
+  background-repeat: round;
+  cursor: pointer;
+  mix-blend-mode: darken;
+}
+
 .oLine
 {
   background-color: $_(background); /* #183473 */

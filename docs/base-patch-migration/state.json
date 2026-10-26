@@ -779,18 +779,24 @@
       "base_pr": 245,
       "cleanup_pr": 4531,
       "patch": "0138-WebUI-Add-SettingsAccessInStatusAndControl.patch"
+    },
+    {
+      "base_merge_commit": "8db5d94c998090536e12458ecaef543ecb4df001",
+      "base_pr": 246,
+      "cleanup_pr": 4535,
+      "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "8db5d94c998090536e12458ecaef543ecb4df001",
-    "base_pr": 246,
-    "cleanup_pr": 4535,
-    "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch",
+    "base_merge_commit": "4fd1892885e1f0482c6c0b46058d349733488f32",
+    "base_pr": 247,
+    "cleanup_pr": null,
+    "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "662e3987502d55348dee0508498fe68bb7044bed",
-  "verified_base_pin": "f79b691e47a13bbdf01679f2b672f4c2534ca2ac",
-  "verified_source_sha256": "ff201d51a457481a2b788fbf5bede6d7d7b165d7d2906dab989fea1f60444996"
+  "verified_at_openccu_commit": "7e870f5e32da37639662ead1640a1490c2f1ff9c",
+  "verified_base_pin": "8db5d94c998090536e12458ecaef543ecb4df001",
+  "verified_source_sha256": "0fdef6dee02beee692e86fbe4aae861a1c05a783653d0f72d41e34519a08edc5"
 }
