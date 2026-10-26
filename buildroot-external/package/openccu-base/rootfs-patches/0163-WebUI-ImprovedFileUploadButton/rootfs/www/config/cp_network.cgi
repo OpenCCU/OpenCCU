@@ -505,7 +505,12 @@ proc action_put_page {} {
           postBody: pb,
           sendXML: false,
           onSuccess: function(transport) {
-            if (transport.responseText.match(/^Success/g))PopupClose();
+            if (transport.responseText.match(/^Success/g)) {
+              PopupClose();
+              if (transport.responseText.match(/^SuccessReboot/g)) {
+                MessageBox.show(translateKey("dialogSettingsNetworkTitle"), translateKey("dialogSettingsNetworkMessageRebootRequired"));
+              }
+            }
             //else alert("Netzwerkkonfiguration konnte nicht gespeichert werden:\n"+transport.responseText);
             else alert(translateKey("dialogSettingsNetworkMessageAlertMessageError1") + "\n" +transport.responseText);
           }
@@ -653,9 +658,14 @@ proc action_save_settings {} {
     import dns1
     import dns2
     import vpn
-    if { [write_config $dhcp $hostname $ip $mask $gw $dns1 $dns2 $vpn] } {
-      #activate the new settings
-      puts "Success"
+    set rc [write_config $dhcp $hostname $ip $mask $gw $dns1 $dns2 $vpn]
+    if { $rc } {
+      # changed network settings only take effect after a reboot
+      if { $rc == 2 } {
+        puts "SuccessReboot"
+      } else {
+        puts "Success"
+      }
       # puts "\${dialogSettingsNetworkMessageSaveSettingsSucceed}"
       return
     } else {
@@ -744,6 +754,7 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
   set netconfig [read $fd]
   close $fd
   set fd -1
+  set old_netconfig $netconfig
   
   if { $dhcp } {
     set_property netconfig "MODE" "DHCP"
@@ -764,6 +775,7 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
   
   puts -nonewline $fd $netconfig
   close $fd
+  set changed [expr {$netconfig ne $old_netconfig}]
 
   # set vpn status
   set cur_vpn [file exists "/etc/config/tailscaleEnabled"]
@@ -777,6 +789,7 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
     }
   }
 
+  if { $changed } { return 2 }
   return 1
 }
 
