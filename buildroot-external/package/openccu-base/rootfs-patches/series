@@ -17,7 +17,6 @@
 0131-WebUI-ShowAddonUpdatesOnStartpage.patch
 0132-WebUI-Fix-UnitDisplay.patch
 0136-WebUI-Add-Tailscale-VPN.patch
-0146-WebUI-ImprovedStartpageLayout.patch
 0149-WebUI-ImprovedErrorPages.patch
 0150-WebUI-Responsive-ControlPage.patch
 0154-WebUI-DynamicResizing.patch

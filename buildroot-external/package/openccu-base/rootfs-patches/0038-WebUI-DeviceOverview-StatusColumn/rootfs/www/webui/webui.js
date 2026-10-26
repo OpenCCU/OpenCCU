@@ -25769,14 +25769,18 @@ StartPage = Singleton.create(Page, {
   showUpdate: function() {
     var fn = function() {
       var result = homematic.com.isUpdateAvailable();
-      if ((result) && ($("updateCol")) && ($("updateRow"))) {
-        var updateText = translateKey('firmware') + " " + homematic.com.getLatestVersion() + " " + translateKey('isAvailable');
+      if ((result) && ($("updateCol"))) {
+        var updateText = " (" + homematic.com.getLatestVersion() + " " + translateKey('isAvailable') + ")";
+        if (getUPL() == UPL_ADMIN) {
         jQuery("#updateCol").text(updateText)
           .addClass("firmwareAvailable")
           .unbind("click").bind("click", function() {
             showNewFirmwareDownload();
           });
-        jQuery("#updateRow").show();
+        } else {
+          jQuery("#updateCol").text(updateText);
+        }
+        jQuery("#updateCol").show();
       }
       return result;
     };

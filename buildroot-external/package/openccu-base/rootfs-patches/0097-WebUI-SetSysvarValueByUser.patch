@@ -505,7 +505,7 @@
                    integer cId = oEntry.ID();
                    integer iStatusOnly = 0;
                    boolean bInStatusList = false;
-@@ -229,11 +234,17 @@
+@@ -210,11 +215,17 @@
                
                if (oUser) {
                  string tmp;
@@ -527,7 +527,7 @@
                    integer iVT = oDP.ValueType();
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -115,6 +115,7 @@
+@@ -116,6 +116,7 @@
      "thFirmware" : "Firmware",
      "thTypeOfVariable" : "Variablentyp",
      "thValues" : "Werte",
@@ -535,7 +535,7 @@
      "thUnit" : "Ma%DFeinheit",
      "thLastUpdate" : "Letzte<br/>Aktualisierung",
      "thControl" : "Bedienung",
-@@ -423,6 +424,7 @@
+@@ -424,6 +425,7 @@
      "dialogChannelOverView" : "Kanal%FCbersicht",
      "dialogCreateNewSysVar" : "Systemvariable neu anlegen",
      "dialogEditSysVar" : "Systemvariable bearbeiten",
@@ -545,7 +545,7 @@
      "dialogEnterValue" : "Wert eingeben",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -114,6 +114,7 @@
+@@ -115,6 +115,7 @@
      "thFirmware" : "Firmware",
      "thTypeOfVariable" : "Variable type",
      "thValues" : "Values",
@@ -553,7 +553,7 @@
      "thUnit" : "Unit of measurement",
      "thLastUpdate" : "Last<br/>update",
      "thControl" : "Control",
-@@ -422,6 +423,7 @@
+@@ -423,6 +424,7 @@
      "dialogChannelOverView" : "Channel overview",
      "dialogCreateNewSysVar" : "Create new system variable",
      "dialogEditSysVar" : "Edit system variable",
@@ -563,7 +563,7 @@
      "dialogEnterValue" : "Enter value",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -32257,14 +32257,22 @@
+@@ -32261,14 +32261,22 @@
          this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
          this.addToPostBody( 'integer varid = 0;' );
          this.addToPostBody( 'integer createNew = 1;' );
@@ -588,7 +588,7 @@
          this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
          break;
        case ID_CREATE_SCRIPT:
-@@ -33149,6 +33157,8 @@
+@@ -33153,6 +33161,8 @@
  dbg = false;
  rfr = true;
  

@@ -171,47 +171,28 @@
       <table id="tblRightContent" width="100%">
         <tr style="vertical-align: top;" class="CLASS01810">
           <td>
-          <table id="tblStartpageInfo" width="100%" class="CLASS01811 startPageInfo hidden">
-
-            <tr>
-              <th style="width:40%"></th>
-              <th style="width:60%"></th>
-            </tr>
-
+          <table id="tblStartpageInfo" width="100%" class="CLASS01811 startPageInfo hidden" cellpadding="2" cellspacing="0">
+            <colgroup>
+              <col style="width:30%;"/>
+              <col />
+            </colgroup>
             <tr>
                 <!-- Uhrzeit -->
-              <td>${time}:</td>
-              <td><span id="maintime"><% Write(system.Date("%H:%M")); %></span><!-- Uhr--></td>
-            </tr>
-            <tr>
-              <!--Datum -->
-              <td>${date}:</td>
-              <td><span id="maindate"><% Write(system.Date("%d.%m.%Y")); %></span></td>
+              <td>${date} / ${time}:</td>
+              <%  object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') ); %>
+              <td><span id="maintime" <% if( oUser.UserLevel() == iulAdmin ) { Write("onclick='showTimeCP();' style='cursor:pointer;'"); } %>><% Write(system.Date("%d.%m.%Y")); %>,&nbsp;<% Write(system.Date("%H:%M")); %></span>&nbsp;${ruleConditionLblTimeClock}</td>
             </tr>
 
             <tr>
             <!-- Sonnenaufgang -->
-              <td>${sunrise}:</td>
-              <td id="sunrise"><% Write(system.SunriseTime("%H:%M")); %><!-- Uhr --></td>
-            </tr>
-
-            <tr>
-            <!-- Sonnenuntergang -->
-              <td>${sunset}:</td>
-              <td id="sunset"><% Write(system.SunsetTime("%H:%M")); %><!-- Uhr--></td>
+              <td>${astroDaytime}:</td>
+              <td id="sunrise"><% Write(system.SunriseTime("%H:%M")); %>&nbsp;-&nbsp;<% Write(system.SunsetTime("%H:%M")); %>&nbsp;${ruleConditionLblTimeClock}</td>
             </tr>
 
             <tr>
               <td>${currentFirmwareVersion}</td>
              <!-- <td id="currentFirmware">${lblCurrentFirmwareVersionNotKnown}</td> -->
-              <td id="currentFirmware">--</td>
-            </tr>
-
-            <tr id="updateRow" style="display:none;">
-              <!-- CCU2-Update -->
-              <td>${update}</td>
-               <!-- Firmware ist verf&uuml;gbar -->
-              <td colspan="3" id="updateCol">${newFirmwareAvailable}</td>
+              <td><span id="currentFirmware">--</span><span id="updateCol" style="display:none;"></span></td>
             </tr>
 
             <!-- Device-Firmware -->

@@ -470,7 +470,7 @@
  
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -97,6 +97,7 @@
+@@ -98,6 +98,7 @@
      "footerBtnCloseTree" : "Baumstruktur<br/>schlie%DFen",
      "footerBtnEdit" : "Bearbeiten",
      "footerBtnAutoLogin" : "Automatisches<br/>Anmelden",
@@ -478,7 +478,7 @@
      "footerBtnVirtualChannelsShow" : "Virtuelle Kan%E4le anzeigen",
      "footerBtnVirtualChannelsHide" : "Virtuelle Kan%E4le ausblenden",
      "footerBtnSaveNewFav" : "Auswahl als neue<br />Favoritenseite speichern",
-@@ -167,6 +168,8 @@
+@@ -168,6 +169,8 @@
      "thPhoneNumber" : "Telefonnummer",
      "thAutomaticLogin" : "Automatisches<br/>Anmelden",
      "thChooseUser" : "Benutzerauswahl",
@@ -487,7 +487,7 @@
      "thSafetyNote" : "Sicherheitshinweis",
      "thGateway" : "Gateway",
      "thAccessCode" : "Zugriffscode",
-@@ -256,6 +259,8 @@
+@@ -257,6 +260,8 @@
      "hintUsrAutoLoginRow2" : "Eine automatische Anmeldung erm%F6glicht die Systemanmeldung ohne Eingabe von Benutzernamen und Passwort.<br/>",
      "hintUsrAutoLoginRow3" : "Der ausgew%E4hlte Benutzer wird automatisch ohne weitere Pr%FCfung angemeldet. Das System ist somit nicht mehr gegen externen Zugriff gesch%FCtzt.<br />",
      "hintUsrAutoLoginRow4" : "Der Zugriff auf andere Benutzerkonten erfolgt %FCber 'Abmelden' und entsprechender Neuanmeldung.<br />",
@@ -496,7 +496,7 @@
      "profileSettings" : "Profileinstellung",
      "profileSettingsSender" : "Profileinstellung - Sender",
      "profileSettingsReceiver" : "Profileinstellung - Empf%E4nger",
-@@ -443,6 +448,7 @@
+@@ -444,6 +449,7 @@
      "dialogStateInfoDataTransferToDeviceSuccess" : "Statusinfo: Daten%FCbertragung erfolgreich",
      "dialogWarningDataTransferToDeviceNotPossible" : "Achtung! Daten%FCbertragung nicht m%F6glich",
      "dialogConfigAutomaticLogin" : "Konfiguration - Automatisches Anmelden",
@@ -506,7 +506,7 @@
      "dialogRestartSafeModeTitle" : "Neustart",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -96,6 +96,7 @@
+@@ -97,6 +97,7 @@
      "footerBtnCloseTree" : "Close tree structure",
      "footerBtnEdit" : "Edit",
      "footerBtnAutoLogin" : "Log in<br/>automatically",
@@ -514,7 +514,7 @@
      "footerBtnVirtualChannelsShow" : "Show virtual channels",
      "footerBtnVirtualChannelsHide" : "Hide virtual channels",
      "footerBtnSaveNewFav" : "Save selection as new<br/>favourites page",
-@@ -166,6 +167,8 @@
+@@ -167,6 +168,8 @@
      "thPhoneNumber" : "Phone number",
      "thAutomaticLogin" : "Log in<br/>automatically",
      "thChooseUser" : "User selection",
@@ -523,7 +523,7 @@
      "thSafetyNote" : "Security alert",
      "thGateway" : "Gateway",
      "thAccessCode" : "Access code",
-@@ -255,6 +258,8 @@
+@@ -256,6 +259,8 @@
      "hintUsrAutoLoginRow2" : "If automatic login is activated you will be logged-in to the system without entering your user name or password.<br/>",
      "hintUsrAutoLoginRow3" : "The selected user will be logged-in automatically without further validation. The system is no longer protected against external influences.<br />",
      "hintUsrAutoLoginRow4" : "You can access other user accounts with click on \"Login\". Afterwards, please login with the user name and password again.",
@@ -532,7 +532,7 @@
      "profileSettings" : "Profile setting",
      "profileSettingsSender" : "Profile settings - transmitter",
      "profileSettingsReceiver" : "Profile settings - receiver",
-@@ -442,6 +447,7 @@
+@@ -443,6 +448,7 @@
      "dialogStateInfoDataTransferToDeviceSuccess" : "Status info: Data transfer successful",
      "dialogWarningDataTransferToDeviceNotPossible" : "Attention! Unable to transfer data",
      "dialogConfigAutomaticLogin" : "Configuration - automatic login",
@@ -554,7 +554,7 @@
          }
        }
      } else {
-@@ -26014,6 +26019,10 @@
+@@ -26018,6 +26023,10 @@
    
    this.leave = function()
    {
@@ -565,7 +565,7 @@
    };
  
    this.resize = function()
-@@ -32425,7 +32434,12 @@
+@@ -32429,7 +32438,12 @@
          this.setWidth(800);
          this.setFile( "/pages/msg/autoLoginConfig.htm" );
          break;
@@ -579,7 +579,7 @@
          this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
          this.addToPostBody( 'string type = "'+this.type+'";' );
          this.setWidth(800);
-@@ -33249,6 +33263,7 @@
+@@ -33253,6 +33267,7 @@
  ID_SET_OUCFM_MODE        = 1023;
  ID_SET_STATUS_DISPLAY    = 1024;
  ID_BIDCOS_INTERFACE = 1025;

@@ -94,6 +94,19 @@ input[type=checkbox], input[type=radio] {
   padding: 4px;*/
 }
 
+.startPageInfo td:nth-child(1) {
+  word-wrap: break-word;
+}
+
+.startPageInfo td {
+  word-wrap: anywhere;
+  vertical-align: top;
+}
+
+tr.UserSysVars:nth-child(odd) {
+  background-color: $_(activeBackground);
+}
+
 html,body
 {
   margin:0;
