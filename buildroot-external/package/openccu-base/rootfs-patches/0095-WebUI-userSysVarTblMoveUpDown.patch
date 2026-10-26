@@ -16,21 +16,23 @@
    WriteLine('</tr> ');
    
    string enumTmp = "";
-@@ -1426,6 +1427,13 @@
+@@ -1426,6 +1427,15 @@
              WriteLine("onclick='delFromTmpVars("#tmp#");'>${btnRemove}</div>");
            }
          WriteLine("</td>");
 +        WriteLine("<td class='WhiteBkg CLASS02110'>");
-+          !WriteLine("<table class='CLASS02108'>");                                                                                        
-+          WriteLine("<table>");                                                                                        
-+            WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
-+            WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
-+          WriteLine("</table>");
++          if (system.GetVar("userId") != 0) {
++            !WriteLine("<table class='CLASS02108'>");                                                                                        
++            WriteLine("<table>");                                                                                        
++              WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
++              WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
++            WriteLine("</table>");
++          }
 +        WriteLine("</td>");  
        WriteLine("</tr>");
      }
    }
-@@ -1453,6 +1461,25 @@
+@@ -1453,6 +1463,25 @@
    return;
  }
  
