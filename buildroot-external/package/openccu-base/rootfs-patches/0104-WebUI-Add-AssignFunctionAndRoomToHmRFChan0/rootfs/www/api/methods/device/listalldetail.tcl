@@ -80,7 +80,7 @@ set deviceDescrScript {
         var isInternal = channel.Internal();
         if(isInternal)
         {
-          writeable = false;
+          writable = false;
         }
 
         var isUsable = false;

@@ -17,7 +17,7 @@
 +          var isInternal = channel.Internal();
 +          if(isInternal)
 +          {
-+            writeable = false;
++            writable = false;
 +          }
            
            var isUsable = false;
@@ -56,7 +56,7 @@
 +        var isInternal = channel.Internal();
 +        if(isInternal)
 +        {
-+          writeable = false;
++          writable = false;
 +        }
 +
          var isUsable = false;
@@ -204,15 +204,6 @@
        }
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -47,7 +47,7 @@
-       {eval}actualDeviceAddress = \"\";{\/eval}\n
- \n
-       {for channel in channels}\n
--        {if channel.device.inInbox != true}\n
-+        {if ((channel.device.inInbox != true) && (channel.address != \"BidCoS-RF:0\")) }\n
-           {var virtualChannel = \"\"}\n
-           {var classExpertOnly = \"hidden j_expertChannel\"}\n
-           {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
 @@ -92,6 +92,8 @@
            {if channel.channelType == \"VIR-OL-GTW-CH\"} {var virtualChannel = \"hidden\"} {\/if}\n
            {if channel.channelType == \"VIR-HUE-GTW-CH\"} {var virtualChannel = \"hidden\"} {\/if}\n
@@ -241,15 +232,6 @@
            <td class=\"DeviceListCell\" colspan=\"3\">${device.name}<\/td>\n
            <td class=\"DeviceListCell\" >${device.typeName}<\/td>\n
            <td class=\"DeviceListThumbnail\" ><div id=\"${PREFIX}${device.id}Thumbnail\" class=\"thumbnail\" onmouseover=\"picDivShow(jg_250, \'${device.deviceType.id}\', 250, \'\', this);\" onmouseout=\"picDivHide(jg_250);\">${device.getThumbnailHTML()}<\/div><\/td>\n
-@@ -709,7 +707,7 @@
-     <tbody>\n
-       {eval}actualDeviceAddress = \"\";{\/eval}\n
-       {for channel in channels}\n
--        {if channel.device.inInbox != true}\n
-+        {if ((channel.device.inInbox != true) && (channel.address != \"BidCoS-RF:0\"))}\n
-           {var virtualChannel = \"\"}\n
-           {var classExpertOnly = \"hidden j_expertChannel\"}\n
-           {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
 @@ -6285,6 +6283,8 @@
  elvST['COND_TX_THRESHOLD_LO_POWER'] = '${stringTableCondThresholdLoPower}';
  elvST['CONFIG_PENDING=FALSE'] = '${stringTableConfigPendingFalse}';
@@ -267,9 +249,21 @@
  
        if (typeof data["mode_multi_mode"] != "undefined") {
          this.multiMode = data["mode_multi_mode"];
-@@ -15201,9 +15202,7 @@
+@@ -14756,7 +14757,7 @@
+ 
+     channels.each(function(channel) {
        var self = this;
-       if (this.match(channel)) {
+-      if (this.match(channel)) {
++      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
+ 
+         if ((channel.device.interfaceName == this.HmIPIdentifier) || (channel.device.interfaceName == this.HmIPWIdentifier)) {
+           if ((this.src == this.PRG_CONDITION) || (this.src == this.FAV_CHANNELS)) {
+@@ -15199,11 +15200,9 @@
+ 
+     channels.each(function(channel) {
+       var self = this;
+-      if (this.match(channel)) {
++      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
          if (channel.device.interfaceName == this.HmIPIdentifier || channel.device.interfaceName == this.HmIPWIdentifier) {
 -          if (channel.index > 0) {
 -            this.filterHmIPChannels(channel, result);
