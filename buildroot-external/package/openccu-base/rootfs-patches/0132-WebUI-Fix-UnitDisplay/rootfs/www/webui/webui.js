@@ -47,7 +47,7 @@ CHANNELCHOOSER_JST = "{macro printHead(name, id, transKey)}\n
       {eval}actualDeviceAddress = \"\";{\/eval}\n
 \n
       {for channel in channels}\n
-        {if ((channel.device.inInbox != true) && (channel.address != \"BidCoS-RF:0\")) }\n
+        {if channel.device.inInbox != true}\n
           {var virtualChannel = \"\"}\n
           {var classExpertOnly = \"hidden j_expertChannel\"}\n
           {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
@@ -707,7 +707,7 @@ MULTI_CHANNELCHOOSER_JST = "{macro printHead(name, id, langKey)}\n
     <tbody>\n
       {eval}actualDeviceAddress = \"\";{\/eval}\n
       {for channel in channels}\n
-        {if ((channel.device.inInbox != true) && (channel.address != \"BidCoS-RF:0\"))}\n
+        {if channel.device.inInbox != true}\n
           {var virtualChannel = \"\"}\n
           {var classExpertOnly = \"hidden j_expertChannel\"}\n
           {var channelTypeID = channel.deviceType.id.toUpperCase()}\n
@@ -14812,7 +14812,7 @@ ChannelChooser = Singleton.create({
 
     channels.each(function(channel) {
       var self = this;
-      if (this.match(channel)) {
+      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
 
         if ((channel.device.interfaceName == this.HmIPIdentifier) || (channel.device.interfaceName == this.HmIPWIdentifier)) {
           if ((this.src == this.PRG_CONDITION) || (this.src == this.FAV_CHANNELS)) {
@@ -15255,7 +15255,7 @@ MultiChannelChooser = Singleton.create({
 
     channels.each(function(channel) {
       var self = this;
-      if (this.match(channel)) {
+      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
         if (channel.device.interfaceName == this.HmIPIdentifier || channel.device.interfaceName == this.HmIPWIdentifier) {
           this.filterHmIPChannels(channel, result);
         } else {

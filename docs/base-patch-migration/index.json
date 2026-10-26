@@ -271,7 +271,7 @@
       ],
       "patch": "0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch",
       "removed": 27,
-      "sha256": "e1df6f1a63e9af6468b6ece774be3f4dc79192a226d05ddf8cb0a8cef797d683"
+      "sha256": "50b3b4a5033fbc9a839aba7649d5b16992e4aa202407160cd0cb572a944a4197"
     },
     {
       "added": 439,
