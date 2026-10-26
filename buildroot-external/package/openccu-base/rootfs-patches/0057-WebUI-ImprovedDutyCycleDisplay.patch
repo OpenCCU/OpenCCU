@@ -250,7 +250,7 @@
 +}
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -2399,27 +2399,6 @@
+@@ -2423,27 +2423,6 @@
  progress::-moz-progress-bar { background: #3678c9; }
  progress::-webkit-progress-value { background: #3678c9; }
  
@@ -278,7 +278,7 @@
  .Filter {
    margin:0;
    border:1px solid $_(black); /* black */
-@@ -5041,9 +5020,13 @@
+@@ -5065,9 +5044,13 @@
  	height:50%;
  }
  
@@ -320,7 +320,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35692,74 +35688,101 @@
+@@ -35713,74 +35709,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},

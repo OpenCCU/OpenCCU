@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 253,
-      "sha256": "6038e6b2888076b7c78333948681fe150b24b5e1fbde257b1b26d7788ba7775d"
+      "sha256": "02056323447a8a996f9fe0c08792517c255d7f89e9a207d4fbbfe56e511dd621"
     },
     {
       "added": 370,
@@ -121,7 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 656,
-      "sha256": "8365245e89e5b81b6a8d5412c124435219b95a5a8a9bfdbc80df7683b99e16e5"
+      "sha256": "ec87ac4be52db041d364f7032d3747170a6d603bbcf818668061701151ffb475"
     },
     {
       "added": 138,
@@ -131,7 +131,7 @@
       ],
       "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
       "removed": 19,
-      "sha256": "680c84994ca1c891465713db18e29c31094cabe169ffc23ef88355ae86b4f83a"
+      "sha256": "f3c215d695571eec69edbb490ef11544dd85bcc4c3c58f5a1b82f3da596ad83b"
     },
     {
       "added": 128,
@@ -160,7 +160,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "d3d2dce287290ef18bf25cd40a0e9f3c8eef6f184e647a3d95a3b56b00cb4f0a"
+      "sha256": "4beb962c313435ca2f8fec36a4a032150334f8f1436d6bc19fce36d92ec7929b"
     },
     {
       "added": 757,
@@ -171,7 +171,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "d97428ba7f9949ffe6478f86ea9a620d48715b1b962a397478900eef4f9bafd2"
+      "sha256": "fe34326d928441ff5c83ca4f9c30445a79c482fbbfeeacde116ccfa5a4966f7c"
     },
     {
       "added": 123,
@@ -182,7 +182,7 @@
       ],
       "patch": "0056-WebUI-Sticky-Filters.patch",
       "removed": 6,
-      "sha256": "baa98c6b27065177795d40eb59d16e54af9a733a125814d41e32621f3edf0559"
+      "sha256": "98bc8453edae8cce51f0cddd3b70fafc741b59369d1ae242e1ede4fc5f0f85f7"
     },
     {
       "added": 262,
@@ -196,7 +196,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 106,
-      "sha256": "3d2d5d5121c25ed6c9b070559668285eeda34ababcbd78bb432d333b5f21ef36"
+      "sha256": "234d2a8600cfea82fe05a1b8ae92b59baff217929f83d6031c5d92ee8a3a39e6"
     },
     {
       "added": 357,
@@ -214,19 +214,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "fb00bf36677a74f758a0d7a94ef3e2843bf6f546f44230b7f5c9911d236d4454"
-    },
-    {
-      "added": 76,
-      "files": [
-        "www/rega/esp/system.fn",
-        "www/rega/esp/system.htm",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0095-WebUI-userSysVarTblMoveUpDown.patch",
-      "removed": 1,
-      "sha256": "1c8bb15e101364b2bd0f7604e56af4a0777ea5b5350d9973cc37bcd751a29828"
+      "sha256": "6eea1395d155f2dbeb853197df1df9db36eaa6cb3859b89dfed4223f474c3847"
     },
     {
       "added": 219,
@@ -477,5 +465,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "1cba2e2c39930be473d55c435232bab3e30efd3ed2013c51162a4ee8124028bc"
+  "series_sha256": "420a338cc5cd9e6fc74d7acb74ff63473cffc603313b27cf2c57dd3b490df01c"
 }
