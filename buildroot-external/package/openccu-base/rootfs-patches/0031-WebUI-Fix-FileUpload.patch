@@ -1,6 +1,6 @@
 --- a/www/config/cp_maintenance.cgi
 +++ b/www/config/cp_maintenance.cgi
-@@ -62,10 +62,14 @@
+@@ -70,10 +70,14 @@
        puts "conInfo(\"EULA found\");"
        puts "jQuery('#fwUpload').hide();"
        puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
@@ -18,7 +18,7 @@
          puts "} else {"
            puts "jQuery('#fwUpload').hide();"
            puts "dlgPopup.hide();"
-@@ -78,16 +82,19 @@
+@@ -86,16 +90,19 @@
  
      puts "req.fail(function(data) {"
        puts "conInfo(\"EULA not available\");"
@@ -42,7 +42,7 @@
    http_head
    division {class="popupTitle"} {
      #puts "Softwareupdate - Best&auml;tigung"
-@@ -256,7 +263,7 @@
+@@ -264,7 +271,7 @@
  }
  
  proc action_firmware_update_cancel {} {
@@ -51,7 +51,7 @@
  
    if {[getProduct] < 3} {
      catch {exec rm /var/new_firmware.tar.gz}
-@@ -454,9 +461,7 @@
+@@ -462,9 +469,7 @@
              table_row {
                td {width="20"} {}
                table_data {colspan="2"} {
@@ -62,7 +62,7 @@
                    file_button firmware_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
-@@ -996,7 +1001,7 @@
+@@ -1020,7 +1025,7 @@
  
  proc action_firmware_upload {} {
  
@@ -71,7 +71,7 @@
  
    if { [catch { import directDownload } error] } {
      set directDownload false
-@@ -1005,10 +1010,7 @@
+@@ -1029,10 +1034,7 @@
    http_head
    
    if { $directDownload } {
@@ -83,7 +83,7 @@
    }
  
    if {[getProduct] < 3} {
-@@ -1123,10 +1125,14 @@
+@@ -1147,10 +1149,14 @@
  
    cgi_javascript {
      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
@@ -102,7 +102,7 @@
    }
  }
  
-@@ -1409,10 +1415,10 @@
+@@ -1454,10 +1460,10 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input

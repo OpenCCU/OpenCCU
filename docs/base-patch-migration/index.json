@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 253,
-      "sha256": "9f49e9a2fb17e9adb57d1f2349a3baa4018056604a3aaf9d14606de5b14c9f93"
+      "sha256": "216cfabdadf11e3d6165bcbf187092ac9b50a7aea1f87428f191f483e568a8fa"
     },
     {
       "added": 370,
@@ -44,7 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "3499488bc74f3e143eee497e14a708b9113afbf382c468c35d2a901a153c79e8"
+      "sha256": "1dacb7137fb468661565b316192d44949a8c0ae24e192a8241c143414dfd15e3"
     },
     {
       "added": 277,
@@ -121,7 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 656,
-      "sha256": "0bcc771cf9bd4ddecf206372afde4e8674702355af5543c611faf72dfc02b4f7"
+      "sha256": "f1d0f7a066cf2412da3fd05cf170513ed4411bcde9e2d29104b9bfb40ca8eb53"
     },
     {
       "added": 138,
@@ -214,7 +214,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "e1bcac865757bc2b86e63917837e75052d197eb58aafa36e0006440305614997"
+      "sha256": "88c46cb575007bfb71a2b15d6fb94b5f1a834b30c05ca32b7d229a3540a3eb2e"
     },
     {
       "added": 233,
@@ -229,7 +229,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 79,
-      "sha256": "e1a5d42f3b6cf8ce15fee8949f302825dabd53137c4110247a31eabebca5e4ab"
+      "sha256": "27df2c0ba2140edb02f1ca33d099710b3b10f4e57c257b19bdbc6a812b305883"
     },
     {
       "added": 86,
@@ -258,7 +258,7 @@
       ],
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
-      "sha256": "33202d1832d1aa518e00807654bd9acfbe662a991c27d85db97bd11f171fe7c3"
+      "sha256": "26594b502852edc71a089833b726a1fecd03141fd950839d4a5bf79fc26d2a2d"
     },
     {
       "added": 211,
@@ -376,23 +376,7 @@
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
-      "sha256": "19e545139dd38a3d937468cd9a32e623c067175456da2cf92652c088224eb254"
-    },
-    {
-      "added": 68,
-      "files": [
-        "www/api/methods/user/restarthmipserver.tcl",
-        "www/api/methods/user/starthmipserver.tcl",
-        "www/api/methods/user/stophmipserver.tcl",
-        "www/config/cp_maintenance.cgi",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.js"
-      ],
-      "patch": "0164-WebUI-Add-HMIPServerLogConfiguration.patch",
-      "removed": 18,
-      "sha256": "a20a53692a9c29d5421e7e734d75cd9a8b433c42eff539e92524435e38128079"
+      "sha256": "f12c2f17556e86b3c6332e5b4feeadd0add38b9cd99a6267cdf21fec5e67eed3"
     },
     {
       "added": 86,
@@ -441,5 +425,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "e8f4371d3dd1d7c0d73350bc55d7e627e7d7cd36015816ca92b18b4d7a09b503"
+  "series_sha256": "0199da4548e03d0a47d19d9c6e41ce4e001a99f59bd9135b8beaef935ea517f1"
 }

@@ -797,18 +797,24 @@
       "base_pr": 248,
       "cleanup_pr": 4542,
       "patch": "0146-WebUI-ImprovedStartpageLayout.patch"
+    },
+    {
+      "base_merge_commit": "511edb5204c520d8ea343966490205269a9b402d",
+      "base_pr": 249,
+      "cleanup_pr": 4548,
+      "patch": "0136-WebUI-Add-Tailscale-VPN.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "511edb5204c520d8ea343966490205269a9b402d",
-    "base_pr": 249,
-    "cleanup_pr": 4548,
-    "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
+    "base_merge_commit": "f02781e1d8eb4556dec17e1bfeafb98d5caedf61",
+    "base_pr": 250,
+    "cleanup_pr": 4551,
+    "patch": "0164-WebUI-Add-HMIPServerLogConfiguration.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "0ef83ad26d9a83bbd0907d8674f98e5bcc515b55",
-  "verified_base_pin": "14fbdf0a28f6cab39e3fa28be9551f09cbf29580",
-  "verified_source_sha256": "5b9a5717c6332310afe92c686c3e00dfcdf7a9442b62dced27cc6784dbafafa0"
+  "verified_at_openccu_commit": "fb88d309d0a114995da7274754f203461e6236c5",
+  "verified_base_pin": "511edb5204c520d8ea343966490205269a9b402d",
+  "verified_source_sha256": "1822eb7def1658a6e47d5011078592ea123b7c5200987e66e900cdb3c25b0b6d"
 }

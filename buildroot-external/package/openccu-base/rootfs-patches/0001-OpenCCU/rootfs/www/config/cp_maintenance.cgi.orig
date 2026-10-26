@@ -14,6 +14,14 @@ array set LOGLEVELS {
   5 "\${dialogSettingsCMLogLevel3}"
 }
 
+array set HMIP_LOGLEVELS {
+  "0TRACE" "\${dialogSettingsCMLogLevel5}"
+  "1DEBUG" "\${dialogSettingsCMLogLevel0}"
+  "2INFO" "\${dialogSettingsCMLogLevel1}"
+  "3WARN" "\${dialogSettingsCMLogLevel2}"
+  "4ERROR" "\${dialogSettingsCMLogLevel3}"
+}
+
 array set REGA_LOGLEVELS {
   0 "\${dialogSettingsCMLogLevel0}"
   1 "\${dialogSettingsCMLogLevel1}"
@@ -337,7 +345,7 @@ proc execCmd {varName cmd} {
 }
 
 proc action_put_page {} {
-  global env sid REMOTE_FIRMWARE_SCRIPT LOGLEVELS REGA_LOGLEVELS RFD_URL HS485D_URL downloadOnly
+  global env sid REMOTE_FIRMWARE_SCRIPT LOGLEVELS HMIP_LOGLEVELS REGA_LOGLEVELS RFD_URL HS485D_URL downloadOnly
   http_head
 
   division {class="popupTitle j_translate"} {
@@ -602,6 +610,21 @@ proc action_put_page {} {
                 table {class="CLASS20909"} {
                   table_row {
                     table_data {align="left"} {
+                      puts "\${dialogSettingsCMLblLogHomematicIP}"
+                    }
+                    table_data {align="right"} {
+                      if { [catch { set hmip_level [read_var /etc/config/syslog LOGLEVEL_HMIP] }] || $hmip_level == "" } {set hmip_level "ERROR"}
+                      cgi_select log_hmip= {id="select_log_hmip"} {
+                        foreach level [lsort [array names HMIP_LOGLEVELS]] {
+                          set levelVal [string range $level 1 end]
+                          set selected [expr { $levelVal == $hmip_level ? "selected" : "" }]
+                          cgi_option $HMIP_LOGLEVELS($level) value=$levelVal $selected
+                        }
+                      }
+                    }
+                  }
+                  table_row {
+                    table_data {align="left"} {
                       puts "\${dialogSettingsCMLblLogBidCosRF}"
                     }
                     table_data {align="right"} {
@@ -724,6 +747,7 @@ proc action_put_page {} {
     puts {
       apply_logging = function() {
         var pb = "action=apply_logging";
+        pb += "&level_hmip="+document.getElementById("select_log_hmip").value;
         pb += "&level_rfd="+document.getElementById("select_log_rfd").value;
         pb += "&level_hs485d="+document.getElementById("select_log_hs485d").value;
         //pb += "&level_pfmd="+document.getElementById("select_log_pfmd").value;
@@ -1348,13 +1372,20 @@ proc action_shutdown {} {
 }
 
 proc get_logserver {} {
-  return [read_var //etc/config/syslog LOGHOST]
+  return [read_var /etc/config/syslog LOGHOST]
 }
 
 # proc set_log_config {loghost level_rfd level_hs485d level_pfmd level_rega}
-proc set_log_config {loghost level_rfd level_hs485d level_rega} {
+proc set_log_config {loghost level_rfd level_hs485d level_rega level_hmip} {
   #global RFD_URL HS485D_URL PFMD_URL
   global RFD_URL HS485D_URL
+
+  # read in old syslog values
+  set LOGHOST [read_var /etc/config/syslog LOGHOST]
+  set LOGLEVEL_RFD [read_var /etc/config/syslog LOGLEVEL_RFD]
+  set LOGLEVEL_HS485D [read_var /etc/config/syslog LOGLEVEL_HS485D]
+  set LOGLEVEL_REGA [read_var /etc/config/syslog LOGLEVEL_REGA]
+  set LOGLEVEL_HMIP [read_var /etc/config/syslog LOGLEVEL_HMIP]
 
   set fd -1
   catch {set fd [open "/etc/config/syslog" w]}
@@ -1367,13 +1398,26 @@ proc set_log_config {loghost level_rfd level_hs485d level_rega} {
   puts $fd "LOGLEVEL_HS485D=$level_hs485d"
   # puts $fd "LOGLEVEL_PFMFD=$level_pfmd"
   puts $fd "LOGLEVEL_REGA=$level_rega"
+  puts $fd "LOGLEVEL_HMIP=$level_hmip"
   close $fd
   
-  catch { xmlrpc $RFD_URL logLevel [list int $level_rfd]}
-  catch { xmlrpc $HS485D_URL logLevel [list int $level_hs485d]}
-  # catch { xmlrpc $PFMD_URL logLevel [list int $level_pfmd]}
-  rega "system.LogLevel($level_rega)"
-  
+  if { "$LOGLEVEL_RFD" != "$level_rfd" } {
+    catch { xmlrpc $RFD_URL logLevel [list int $level_rfd]}
+  }
+
+  if { "$LOGLEVEL_HS485D" != "$level_hs485d" } {
+    catch { xmlrpc $HS485D_URL logLevel [list int $level_hs485d]}
+  }
+
+  if { "$LOGLEVEL_REGA" != "$level_rega" } {
+    rega "system.LogLevel($level_rega)"
+  }
+
+  #if { "$LOGLEVEL_HMIP" != "$level_hmip" ||
+  #     "$LOGHOST" != "$loghost" } {
+  #  exec /usr/bin/monit restart HMIPServer >/dev/null &
+  #}
+
   return 1
 }
 
@@ -1383,11 +1427,12 @@ proc action_apply_logging {} {
   import level_hs485d
   # import level_pfmd
   import level_rega
+  import level_hmip
   
   http_head
   
   # if {![set_log_config $log_server $level_rfd $level_hs485d $level_pfmd $level_rega]}
-  if {![set_log_config $log_server $level_rfd $level_hs485d $level_rega]} {
+  if {![set_log_config $log_server $level_rfd $level_hs485d $level_rega $level_hmip]} {
     puts "Failure"
     return
   }
