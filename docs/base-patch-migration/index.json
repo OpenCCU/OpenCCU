@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 253,
-      "sha256": "10bd644d334ae8899176512f343f534c521534be547afe2d4ade5cd3d99ccfd2"
+      "sha256": "9f49e9a2fb17e9adb57d1f2349a3baa4018056604a3aaf9d14606de5b14c9f93"
     },
     {
       "added": 370,
@@ -44,7 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "ec46064d8fe3a9c173a53aefba6805b10ddf827d0d0d6d1bf7e5a6bf5a431c91"
+      "sha256": "3499488bc74f3e143eee497e14a708b9113afbf382c468c35d2a901a153c79e8"
     },
     {
       "added": 277,
@@ -327,17 +327,6 @@
       "sha256": "bbcda3148c33440b763f61e28279c09727046c70919a4179f7c170eeede4a530"
     },
     {
-      "added": 90,
-      "files": [
-        "www/config/cp_network.cgi",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js"
-      ],
-      "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
-      "removed": 11,
-      "sha256": "0966b1ee76b64a93ea25c2b2af1ddb3d6fadf61934be9912cc03972d81ca7bfe"
-    },
-    {
       "added": 10,
       "files": [
         "www/error/error-500.html",
@@ -452,5 +441,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "d4e345476bba0ce0d743ee4a905acb6997bdcbf475a0333fe0d6c87fdc75cc52"
+  "series_sha256": "e8f4371d3dd1d7c0d73350bc55d7e627e7d7cd36015816ca92b18b4d7a09b503"
 }
