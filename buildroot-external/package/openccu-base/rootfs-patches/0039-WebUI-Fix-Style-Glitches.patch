@@ -2142,7 +2142,7 @@
  			   this.htm += '<\/div>';
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -93,8 +93,8 @@
+@@ -94,8 +94,8 @@
      "footerBtnTransfer" : "%DCbernehmen",
      "footerBtnOk" : "OK",
      "footerBtnSaveNewProgram" : "Einstellungen als neues<br/>Programm speichern",

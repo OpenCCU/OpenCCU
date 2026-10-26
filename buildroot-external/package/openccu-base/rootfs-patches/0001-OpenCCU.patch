@@ -28,7 +28,7 @@
  }
 --- a/www/config/cp_maintenance.cgi
 +++ b/www/config/cp_maintenance.cgi
-@@ -381,20 +381,21 @@
+@@ -389,20 +389,21 @@
                table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                  puts "\${dialogSettingsCMLblActualSoftwareVersion}"
                }
@@ -53,7 +53,7 @@
              table_row {
                table_data {align="left"} {colspan="3"} {
                  #puts "[bold "Software-Update durchf�hren"]"
-@@ -413,7 +414,7 @@
+@@ -421,7 +422,7 @@
                      table_row {
                        table_data {
                          division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
@@ -62,7 +62,7 @@
                        }
                      }
                    }
-@@ -437,7 +438,7 @@
+@@ -445,7 +446,7 @@
                      table_row {
                        table_data {
                          division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
@@ -71,7 +71,7 @@
                        }
                      }
                    }
-@@ -486,30 +487,18 @@
+@@ -494,30 +495,18 @@
                  puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
                }
              }
@@ -1140,7 +1140,7 @@
      "BidCosRF" : "Homematic Funk",
      "BidCosWired" : "Homematic Wired",
      "VirtualDevices" : "VirtualDevices",
-@@ -491,6 +491,7 @@
+@@ -492,6 +492,7 @@
      "dialogSettingsCMLblActualSoftwareVersion" : "Aktuelle Software-Version:",
      "dialogSettingsCMLblAvailableSoftwareVersion" : "Verf%FCgbare Software-Version:",
      "dialogSettingsCMLblPerformSoftwareUpdate" : "Software-Update durchf%FChren",
@@ -1148,7 +1148,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Schritt 1: Neue Software herunterladen",
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Schritt 2: Heruntergeladene Software ausw%E4hlen",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Schritt 3: Software auf " + HMIdentifier.de.CCUShortName + " laden",
-@@ -515,6 +516,7 @@
+@@ -517,6 +518,7 @@
      "dialogSettingsCMHintSoftwareUpdate3" : "F%FChren Sie vor dem Update eine Datensicherung durch.",
      "dialogSettingsCMHintSoftwareUpdate4a" : "Der Ladezustand der Batterien betr%E4gt nur noch ",
      "dialogSettingsCMHintSoftwareUpdate4b" : "Um einem Datenverlust durch Ausfall der Stromversorgung vorzubeugen, empfehlen wir, die Batterien vor dem Update zu erneuern.",
@@ -1201,7 +1201,7 @@
      "BidCosRF" : "Homematic RF",
      "BidCosWired" : "BidCos-Wired",
      "BidCosRF-Filter" : "BidCos-RF",
-@@ -490,6 +490,7 @@
+@@ -491,6 +491,7 @@
      "dialogSettingsCMLblActualSoftwareVersion" : "Current software version:",
      "dialogSettingsCMLblAvailableSoftwareVersion" : "Available software version:",
      "dialogSettingsCMLblPerformSoftwareUpdate" : "Perform software update",
@@ -1209,7 +1209,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Step 1: Download new software",
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Step 2: Select downloaded software",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Step 3: Upload software to " + HMIdentifier.en.CCUShortName,
-@@ -514,6 +515,7 @@
+@@ -516,6 +517,7 @@
      "dialogSettingsCMHintSoftwareUpdate3" : "Please perform a data backup before starting the update.",
      "dialogSettingsCMHintSoftwareUpdate4a" : "The charging status the batteries is only at ",
      "dialogSettingsCMHintSoftwareUpdate4b" : "To prevent from data loss due to power failure, it is recommended to replace the batteries before starting the update.",

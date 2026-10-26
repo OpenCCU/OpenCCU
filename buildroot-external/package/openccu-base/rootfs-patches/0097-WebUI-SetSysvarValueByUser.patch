@@ -527,7 +527,7 @@
                    integer iVT = oDP.ValueType();
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -116,6 +116,7 @@
+@@ -117,6 +117,7 @@
      "thFirmware" : "Firmware",
      "thTypeOfVariable" : "Variablentyp",
      "thValues" : "Werte",
@@ -535,7 +535,7 @@
      "thUnit" : "Ma%DFeinheit",
      "thLastUpdate" : "Letzte<br/>Aktualisierung",
      "thControl" : "Bedienung",
-@@ -424,6 +425,7 @@
+@@ -425,6 +426,7 @@
      "dialogChannelOverView" : "Kanal%FCbersicht",
      "dialogCreateNewSysVar" : "Systemvariable neu anlegen",
      "dialogEditSysVar" : "Systemvariable bearbeiten",
@@ -545,7 +545,7 @@
      "dialogEnterValue" : "Wert eingeben",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -115,6 +115,7 @@
+@@ -116,6 +116,7 @@
      "thFirmware" : "Firmware",
      "thTypeOfVariable" : "Variable type",
      "thValues" : "Values",
@@ -553,7 +553,7 @@
      "thUnit" : "Unit of measurement",
      "thLastUpdate" : "Last<br/>update",
      "thControl" : "Control",
-@@ -423,6 +424,7 @@
+@@ -424,6 +425,7 @@
      "dialogChannelOverView" : "Channel overview",
      "dialogCreateNewSysVar" : "Create new system variable",
      "dialogEditSysVar" : "Edit system variable",

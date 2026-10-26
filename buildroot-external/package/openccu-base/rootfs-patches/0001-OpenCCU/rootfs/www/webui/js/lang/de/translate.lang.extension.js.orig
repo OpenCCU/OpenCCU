@@ -360,7 +360,7 @@ jQuery.extend(true,langJSON, {
     "sysVarRainYesterdayDescr" : "Regenmenge vorheriger Tag",
     "actionStatusControlActivate" : "Bet%E4tigen",
     "transferConfigData" : "Ger%E4te-/Kanaleinstellungen werden an Komponenten %FCbertragen...",
-    "setLoggingSuccess" : "Setzen der Logging-Einstellungen erfolgreich!",
+    "setLoggingSuccess" : "Setzen der Logging-Einstellungen erfolgreich!\n\nBitte beachten: Ver%E4nderte Einstellungen des Homematic IP-Dienstes werden erst nach einem Neustart der Zentrale aktiv.",
     "setLoggingFailure" : "Setzen der Logging-Einstellungen fehlgeschlagen:\n",
     "maxEntriesReachedTitle" : "Achtung!",
     "maxEntriesReached_a" : "Die maximale Anzahl von ",
