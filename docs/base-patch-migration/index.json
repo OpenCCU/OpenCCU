@@ -59,7 +59,7 @@
       "sha256": "81b8e3a37a453f4cea5674952a41a41a89854b59fa1055700d2d5573ab37b0ff"
     },
     {
-      "added": 787,
+      "added": 786,
       "files": [
         "opt/HMServer/pages/AvailableFirmware.ftl",
         "opt/HMServer/pages/DiagramSettingsDetailPage.ftl",
@@ -120,8 +120,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
-      "removed": 656,
-      "sha256": "f1d0f7a066cf2412da3fd05cf170513ed4411bcde9e2d29104b9bfb40ca8eb53"
+      "removed": 654,
+      "sha256": "03efde545414caec55e47b147945673f34173b5d398cfbce46095fcb0be37737"
     },
     {
       "added": 138,
@@ -160,7 +160,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "fa05985cfe31429882481cbc7ecc3d771530535ceca6b49eeda2b88a1621e8fc"
+      "sha256": "fc0bdf9f05a03a874c5735cee484d356f7dbaf6279ffd409660bdd6dc265d73c"
     },
     {
       "added": 757,
@@ -196,7 +196,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 99,
-      "sha256": "ee2c716dfed3e63703ed5174127ff1f21eb482d4f1f47ebe0f92313c22b05839"
+      "sha256": "abacba2d4cdf4dd0825aad63aab5ce1d4da169027a0f2611855adc9a3b2e4487"
     },
     {
       "added": 357,
@@ -214,7 +214,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "88c46cb575007bfb71a2b15d6fb94b5f1a834b30c05ca32b7d229a3540a3eb2e"
+      "sha256": "800ccf2ea360d9c159b75b456c27827a680650371b71d657c449fcf34a6c6f32"
     },
     {
       "added": 233,
@@ -232,7 +232,7 @@
       "sha256": "27df2c0ba2140edb02f1ca33d099710b3b10f4e57c257b19bdbc6a812b305883"
     },
     {
-      "added": 88,
+      "added": 89,
       "files": [
         "www/webui/js/lang/de/translate.lang.extension.js",
         "www/webui/js/lang/en/translate.lang.extension.js",
@@ -240,8 +240,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch",
-      "removed": 7,
-      "sha256": "9e30b030dcfa99c1ec60fcdec078705b74a55d21afad9d3e23ac9a57a121f6e5"
+      "removed": 9,
+      "sha256": "8d01a77fdea11b9f8a52e5cc33311eeb66138b7b7bc87a160bab2b0825af1887"
     },
     {
       "added": 439,
