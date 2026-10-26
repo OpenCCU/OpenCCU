@@ -32,6 +32,8 @@ PID=$(cat "${PIDFILE}" 2>/dev/null)
 # Nothing can be stale as long as no device node matching the pattern exists
 # (e.g. if multimacd is not used), so skip scanning the fds in that case.
 found=0
+# expand the pattern as a glob, but do not split it at whitespace
+IFS=''
 # shellcheck disable=SC2086
 for dev in ${PATTERN}; do
   if [ -c "${dev}" ]; then
