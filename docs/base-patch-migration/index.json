@@ -185,7 +185,7 @@
       "sha256": "98bc8453edae8cce51f0cddd3b70fafc741b59369d1ae242e1ede4fc5f0f85f7"
     },
     {
-      "added": 262,
+      "added": 257,
       "files": [
         "www/api/methods.conf",
         "www/api/methods/interface/getdutycycle.tcl",
@@ -195,8 +195,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
-      "removed": 106,
-      "sha256": "234d2a8600cfea82fe05a1b8ae92b59baff217929f83d6031c5d92ee8a3a39e6"
+      "removed": 99,
+      "sha256": "37e5622766ea2b8ad6ab1ac8b5f95a3ec1df43500a23407ac129c91b4be9d15f"
     },
     {
       "added": 357,
@@ -217,18 +217,19 @@
       "sha256": "6eea1395d155f2dbeb853197df1df9db36eaa6cb3859b89dfed4223f474c3847"
     },
     {
-      "added": 219,
+      "added": 233,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/pages/tabs/admin/msg/newSysVar.htm",
         "www/rega/pages/tabs/control/sysvars.htm",
+        "www/rega/pages/tabs/startpage.htm",
         "www/webui/js/lang/de/translate.lang.js",
         "www/webui/js/lang/en/translate.lang.js",
         "www/webui/webui.js"
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
-      "removed": 76,
-      "sha256": "780919e9f95a1c8c59329f398f22864fbb8a378d6385d0cf4efa0bae3624ac1f"
+      "removed": 79,
+      "sha256": "081ee8a66ba2cf526b8ccf533085b77a85716afa31ec42656a1875b5c22cca83"
     },
     {
       "added": 86,
@@ -303,7 +304,7 @@
       ],
       "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
       "removed": 0,
-      "sha256": "f0abda61fe1d3531d6978d29e17b848ad22b2217318b2fad990f613bce9470a9"
+      "sha256": "4272bdef9f5e53f3931ae82a3c207a02772f315c35e24d7c04275e1a1ccb67ae"
     },
     {
       "added": 102,
@@ -337,7 +338,7 @@
       "sha256": "9e739f25f67477acfece667dcdc0d86779b1fcbbefa50a37762de032149f9dde"
     },
     {
-      "added": 45,
+      "added": 36,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/pages/tabs/startpage.htm",
@@ -347,8 +348,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0146-WebUI-ImprovedStartpageLayout.patch",
-      "removed": 33,
-      "sha256": "05e53c047ccb60890d5ae5837ca507662ab6a4c8f7f9a06b70c66a878228a323"
+      "removed": 36,
+      "sha256": "1aa74a3eb404c756a229a55b5700118e412572ad9edae970ebce495186e030df"
     },
     {
       "added": 10,
@@ -384,7 +385,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "f25daf6b6a53db372fcb69d12136e6b7036ba39a2269ab8e699ff341ae9ba2b0"
+      "sha256": "64878bf042108eb1c2a20de2748051efa7e43b1a5e76e06170f23f66419478f4"
     },
     {
       "added": 74,

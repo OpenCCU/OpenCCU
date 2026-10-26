@@ -43,26 +43,7 @@
 +jsonrpc_response "$result"
 --- a/www/rega/pages/tabs/startpage.htm
 +++ b/www/rega/pages/tabs/startpage.htm
-@@ -166,13 +166,11 @@
-       <table id="tblRightContent" width="100%">
-         <tr style="vertical-align: top;" class="CLASS01810">
-           <td>
--          <table id="tblStartpageInfo" width="100%" class="CLASS01811 startPageInfo hidden">
--
--            <tr>
--              <th style="width:40%"></th>
--              <th style="width:60%"></th>
--            </tr>
--
-+          <table id="tblStartpageInfo" width="100%" class="CLASS01811 startPageInfo hidden" cellpadding="2" cellspacing="0">
-+            <colgroup>
-+              <col style="width:30%;"/>
-+              <col />
-+            </colgroup>
-             <tr>
-                 <!-- Uhrzeit -->
-               <td>${time}:</td>
-@@ -251,22 +249,134 @@
+@@ -251,22 +251,134 @@
                }
               %>
  
@@ -211,7 +192,7 @@
              </tr>
  
            </table>
-@@ -306,14 +416,7 @@
+@@ -306,14 +418,7 @@
        } else {
          WEBUI_VERSION = "0.0.0";
        }
