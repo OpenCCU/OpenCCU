@@ -802,7 +802,7 @@
   "in_progress": {
     "base_merge_commit": "511edb5204c520d8ea343966490205269a9b402d",
     "base_pr": 249,
-    "cleanup_pr": null,
+    "cleanup_pr": 4548,
     "patch": "0136-WebUI-Add-Tailscale-VPN.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
