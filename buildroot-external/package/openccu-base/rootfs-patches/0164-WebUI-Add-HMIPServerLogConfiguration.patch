@@ -186,14 +186,14 @@
      "maxEntriesReached_a" : "Die maximale Anzahl von ",
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -3,6 +3,7 @@
-     "CCUFullNameHeader" : "OpenCCU",
-     "CCUFullNameText" : "OpenCCU",
-     "CCUShortName" : "OpenCCU",
+@@ -9,6 +9,7 @@
+     "BidCosRFFilter" : "BidCos-RF",
+     "BidCosWiredFilter" : "BidCos-Wired",
+     "HmIPRF" : "HmIP-RF",
 +    "HomematicIP" : "Homematic IP",
-     "BidCosRF" : "Homematic Funk",
-     "BidCosWired" : "Homematic Wired",
-     "VirtualDevices" : "VirtualDevices",
+     "HomeMaticCFGAdapter" : "Homematic Konfigurations-Adapter",
+     "LabelHomeMatic" : "Homematic",
+     "LabelHomematic" : "Homematic",
 @@ -505,6 +506,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Schritt 2: Heruntergeladene Software ausw%E4hlen",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Schritt 3: Software auf " + HMIdentifier.de.CCUShortName + " laden",
@@ -223,14 +223,14 @@
      "maxEntriesReached_a" : "Maximum number of ",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -3,6 +3,7 @@
-     "CCUFullNameHeader" : "OpenCCU",
-     "CCUFullNameText" : "OpenCCU",
-     "CCUShortName" : "OpenCCU",
-+    "HomematicIP" : "Homematic IP",
-     "BidCosRF" : "Homematic RF",
-     "BidCosWired" : "BidCos-Wired",
+@@ -8,6 +8,7 @@
      "BidCosRF-Filter" : "BidCos-RF",
+     "BidCosWired-Filter" : "BidCos-Wired",
+     "HmIPRF" : "HmIP-RF",
++    "HomematicIP" : "Homematic IP",
+     "VirtualDevices" : "VirtualDevices",
+     "HomeMaticCFGAdapter" : "Homematic Configuration-Adapter",
+     "LabelHomeMatic" : "Homematic",
 @@ -504,6 +505,7 @@
      "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Step 2: Select downloaded software",
      "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Step 3: Upload software to " + HMIdentifier.en.CCUShortName,

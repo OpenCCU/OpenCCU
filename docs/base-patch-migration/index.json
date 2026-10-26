@@ -392,7 +392,7 @@
       ],
       "patch": "0164-WebUI-Add-HMIPServerLogConfiguration.patch",
       "removed": 18,
-      "sha256": "c1838d2fb74c58523130d9df793b20a5fa13bf522c7acfe26241c0eafa5c928b"
+      "sha256": "a20a53692a9c29d5421e7e734d75cd9a8b433c42eff539e92524435e38128079"
     },
     {
       "added": 86,
