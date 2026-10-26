@@ -77,7 +77,7 @@
    height: 50px;
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -282,12 +282,42 @@
+@@ -284,12 +284,42 @@
          <table border=\"0\"  class=\"DeviceConfigDialogTable\" width=\"250px\">\n
            <tr>\n
              <td width=\"50%\"><div id=\"DeviceConfigDialogTestButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnFuncTest\" onclick=\"DeviceConfigDialog.startTest();\">Test starten<\/div><\/td>\n
@@ -124,7 +124,7 @@
        <\/div>\n
      <\/div>\n
  \n
-@@ -15716,11 +15746,13 @@
+@@ -15715,11 +15745,13 @@
  DeviceConfigDialog = Singleton.create({
    LAYER_ID: "DeviceConfigDialogLayer",
    NAME_ID: "DeviceConfigDialog_DeviceName",
@@ -138,7 +138,7 @@
    RESULT_OK: 1,
    RESULT_ABORT: 0,
    POLL_INTERVAL: 3,
-@@ -15768,6 +15800,9 @@
+@@ -15767,6 +15799,9 @@
        this.__hideLogging();
      }
      translateJSTemplate("#DeviceConfigDialog");
@@ -148,7 +148,7 @@
    },
  
    __hideFunctionTest: function() {
-@@ -15828,6 +15863,34 @@
+@@ -15827,6 +15862,34 @@
    },
    
    /**

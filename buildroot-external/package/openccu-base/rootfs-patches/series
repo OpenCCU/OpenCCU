@@ -12,7 +12,6 @@
 0095-WebUI-userSysVarTblMoveUpDown.patch
 0097-WebUI-SetSysvarValueByUser.patch
 0099-WebUI-Add-DeviceRenameAllChannels.patch
-0104-WebUI-Add-AssignFunctionAndRoomToHmRFChan0.patch
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
 0119-WebUI-Fix-ProofAndSetValue.patch
 0125-WebUI-ChannelHighlights.patch

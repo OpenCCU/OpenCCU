@@ -285,7 +285,7 @@ arSortFObj[arSortFObj.length] = tmpFunction;
         object obj = dom.GetObject(ID_ROOMS);
         if ( obj ) {
           string tmp = "";
-          foreach( tmp, obj.EnumEnabledIDs() ) {
+          foreach( tmp, obj.EnumIDs() ) {
             object elem = dom.GetObject(tmp);
             if (elem) {
               string divId = "rdiv"#tmp;
@@ -328,7 +328,7 @@ if ( oUser )
       string sStyle = "";
       integer iEnumCount = 0;
       string tmp = "";
-      foreach(tmp, elem.EnumEnabledIDs())
+      foreach(tmp, elem.EnumIDs())
       {
         object objTmp = dom.GetObject(tmp);
         if (objTmp && objTmp.IsTypeOf(OT_CHANNEL) && objTmp.ReadyConfig())
@@ -367,7 +367,7 @@ if ( oUser )
       
       string sEnumPrgFilter = "";
       string tmp = "";
-      foreach( tmp, elem.EnumEnabledIDs() )
+      foreach( tmp, elem.EnumIDs() )
       {
         object chnTmp = dom.GetObject(tmp);
         if( chnTmp && chnTmp.IsTypeOf(OT_CHANNEL) )        
