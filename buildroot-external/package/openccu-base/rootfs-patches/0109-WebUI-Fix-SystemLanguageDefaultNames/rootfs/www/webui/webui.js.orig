@@ -6092,6 +6092,7 @@ elvST['BOOST_MODE=FALSE'] = '${stringTableBoostModeFalse}';
 elvST['BOOST_MODE=TRUE'] = '${stringTableBoostModeTrue}';
 elvST['BOOST_STATE'] = '${stringTableBoostState}';
 elvST['BOOST_TIME'] = '${stringTableBoostTime}';
+elvST['QUICK_VETO_TIME'] = '${stringTableQuickVetoTime}';
 elvST['BOOTED=FALSE'] = '${stringTableBootedFalse}';
 elvST['BOOTED=TRUE'] = '${stringTableBootedTrue}';
 elvST['BRIGHTNESS'] = '${stringTableBrightness}';

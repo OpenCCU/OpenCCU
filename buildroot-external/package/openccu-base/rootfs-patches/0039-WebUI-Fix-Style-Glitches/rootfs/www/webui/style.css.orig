@@ -3271,7 +3271,7 @@ html, body {
   top: 50%;
   left: 50%;
   width: 800px;
-  height: 450px;
+  height: 470px;
   margin-left: -400px;
   margin-top: -225px;
   background-color: $_(black); /* black */
@@ -3297,16 +3297,15 @@ html, body {
   top: 24px;
   left: 2px;
   width: 796px;
-  height: 371px;
+  height: 391px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-/*  overflow: scroll;   */
-  overflow: hidden;   
+  overflow: auto;
 }
 
 #DeviceConfigDialogFooter {
   position: absolute;
-  top: 398px;
+  top: 418px;
   left: 2px;
   width: 796px;
   height: 50px;

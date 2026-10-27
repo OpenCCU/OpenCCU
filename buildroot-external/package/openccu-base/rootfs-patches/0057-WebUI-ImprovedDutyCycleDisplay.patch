@@ -259,7 +259,7 @@
  .Filter {
    margin:0;
    border:1px solid $_(black); /* black */
-@@ -5079,9 +5058,13 @@
+@@ -5078,9 +5057,13 @@
  	height:50%;
  }
  
@@ -276,7 +276,7 @@
  .CLASS01812 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -8871,8 +8871,6 @@
+@@ -8902,8 +8902,6 @@
        window.setTimeout(function() {jQuery("#PagePath").css('color',"white");},100);
        ConfigData.isPresent = true;
        if (ConfigData.showMessage) { this.hideMessage(); }
@@ -285,7 +285,7 @@
        if (ConfigData.callback) { ConfigData.callback(); }
      });
    },
-@@ -9011,7 +9009,6 @@
+@@ -9042,7 +9040,6 @@
      if(typeof dcTimeout == "undefined") {
        dcTimeout = window.setTimeout(function () {
          showDutyCycle();
@@ -293,7 +293,7 @@
          delete dcTimeout;
        }, 10);
      }
-@@ -9246,7 +9243,6 @@
+@@ -9277,7 +9274,6 @@
        // Check the dutyCycle and carrierSense periodically
        new PeriodicalExecuter(function () {
          showDutyCycle();
@@ -301,7 +301,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35717,74 +35713,101 @@
+@@ -35783,74 +35779,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
