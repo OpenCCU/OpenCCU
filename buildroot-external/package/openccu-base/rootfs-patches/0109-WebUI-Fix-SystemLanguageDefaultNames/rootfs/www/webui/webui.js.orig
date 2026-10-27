@@ -293,7 +293,7 @@ DEVICE_CONFIG_DIALOG_JST = "<div id=\"DeviceConfigDialog\">\n
       <\/div>\n
     <\/div>\n
 	\n
-    <div id=\"deviceFunctionTestPanel\" class=\"DeviceConfigDialogSection\">\n
+    <div id=\"deviceRenameChannelsPanel\" class=\"DeviceConfigDialogSection\">\n
       <div class=\"CLASS10804\" name=\"generalDeviceChannelConfigLblRenameChannel\">Funktionstest<\/div>\n
       <hr \/>\n
       <div>\n
@@ -15871,7 +15871,7 @@ DeviceConfigDialog = Singleton.create({
   },
   
   renameChannels: function() {
-    if (confirm("Alle Kanäle umbenennen?")) {
+    if (confirm(translateKey("generalDeviceRenameChannelsConfirm"))) {
       var renameOwnChannelNames = $(this.RENAME_OWN_ID).checked;
 
       this.device.channels.each(function(channel) {

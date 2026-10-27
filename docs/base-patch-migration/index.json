@@ -232,7 +232,7 @@
       "sha256": "27df2c0ba2140edb02f1ca33d099710b3b10f4e57c257b19bdbc6a812b305883"
     },
     {
-      "added": 86,
+      "added": 88,
       "files": [
         "www/webui/js/lang/de/translate.lang.extension.js",
         "www/webui/js/lang/en/translate.lang.extension.js",
@@ -241,7 +241,7 @@
       ],
       "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch",
       "removed": 7,
-      "sha256": "7c15b768a95a8c899cb340ba70e7b0915f94c8da08a87dcd480ebcfa71d166f1"
+      "sha256": "9e30b030dcfa99c1ec60fcdec078705b74a55d21afad9d3e23ac9a57a121f6e5"
     },
     {
       "added": 439,
@@ -396,7 +396,7 @@
       ],
       "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
       "removed": 19,
-      "sha256": "942494dc5599551ad85e1b58793cfe9be04d7f4e97e77c2f3317a7a547d38932"
+      "sha256": "937797d8d58fb3d697e601dcec1ef19b9d99c3134c0e6daf6976cedd979b5926"
     },
     {
       "added": 4,
@@ -421,7 +421,7 @@
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
-      "sha256": "d6de64ab8c44fa7235fd1330b330aab68d1a1aadc535de0ce38e7c7c78c885b4"
+      "sha256": "acd176fe8568aa9174b518d8c5019bf028bcc78f348880568777717704bc6a78"
     }
   ],
   "schema": 1,

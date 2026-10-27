@@ -104,7 +104,7 @@
 -jsonrpc_response $result
 --- a/www/webui/js/lang/de/translate.lang.extension.js
 +++ b/www/webui/js/lang/de/translate.lang.extension.js
-@@ -1085,10 +1085,6 @@
+@@ -1086,10 +1086,6 @@
      "stateDaliBus_2" : "<br/>%DCberlast",
      "btnSearchDaliDevices" : "Pr%FCfen",
      "titleSearchDaliDevices" : "Pr%FCfe Kan%E4le",
@@ -127,7 +127,7 @@
      "lblBreak" : "Pause",
 --- a/www/webui/js/lang/en/translate.lang.extension.js
 +++ b/www/webui/js/lang/en/translate.lang.extension.js
-@@ -1081,10 +1081,6 @@
+@@ -1082,10 +1082,6 @@
      "stateDaliBus_2" : "<br/>Overload",
      "btnSearchDaliDevices" : "Check",
      "titleSearchDaliDevices" : "Check channels",
