@@ -284,12 +284,42 @@ DEVICE_CONFIG_DIALOG_JST = "<div id=\"DeviceConfigDialog\">\n
         <table border=\"0\"  class=\"DeviceConfigDialogTable\" width=\"250px\">\n
           <tr>\n
             <td width=\"50%\"><div id=\"DeviceConfigDialogTestButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnFuncTest\" onclick=\"DeviceConfigDialog.startTest();\">Test starten<\/div><\/td>\n
-            <td width=\"50%\"><div id=\"DeviceConfigDialogTestResult\">--:--:--<\/div><\/td>\n
+            <td width=\"40%\"><div id=\"DeviceConfigDialogTestResult\">--:--:--<\/div><\/td>\n
+\n
+\t\t\t<td width=\"40%\"><div id=\"DeviceConfigDialogTestHint\"><img id=\"DeviceConfigDialogTestHintImg\" src=\"\/ise\/img\/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp(\'generalDeviceConfigHint\', \'400\', \'200\')\"><\/div><\/td>\n
+\n
           <\/tr>\n
         <\/table>\n
-        <div class=\"CLASS10805\" name=\"generalDeviceConfigHint\">\n
-          Im Rahmen des Funktionstests wird geprüft, ob die Kommunikation mit dem Gerät fehlerfrei funktioniert. Der Test gilt als bestanden, sobald die erste Rückmeldung von dem Gerät empfangen wurde. <br \/> Dazu werden an alle Aktoren des Geräts Schaltbefehle gesendet, die deren Zustand ändern. Sensoren, wie z.B. Fernbedienungen, melden sich im Allgemeinen erst dann, wenn sie durch ein entsprechendes Ereignis ausgelöst wurden.\n
-        <\/div>\n
+      <\/div>\n
+    <\/div>\n
+\t\n
+    <div id=\"deviceRenameChannelsPanel\" class=\"DeviceConfigDialogSection\">\n
+      <div class=\"CLASS10804\" name=\"generalDeviceChannelConfigLblRenameChannel\">Funktionstest<\/div>\n
+      <hr \/>\n
+      <div>\n
+        <table border=\"0\"  class=\"DeviceConfigDialogTable\" width=\"250px\">\n
+          <tr>\n
+\t\t    <td width=\"50%\"><div id=\"DeviceConfigDialogRenameChannelButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnRenameChannels\" onclick=\"DeviceConfigDialog.renameChannels();\">Kanäle umbenennen<\/div><\/td>\n
+\n
+\t\t\t<td width=\"40%\"><\/td>\n
+\n
+\t\t\t<td width=\"40%\"><div id=\"DeviceConfigDialogRenameChannelButtonHint\"><img id=\"DeviceConfigDialogRenameChannelButtonHintImg\" src=\"\/ise\/img\/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp(\'generalDeviceRenameChannelHint\', \'400\', \'100\')\"><\/div><\/td>\n
+\n
+          <\/tr>\n
+\n
+\t\t  <tr>\t\t\t\n
+\t\t    <td width=\"80%\" name=\"generalDeviceChannelConfigLblSeparator\">Trennzeichen:<\/td><td width=\"20%\"><input id=\"DeviceConfigDialog_DeviceChannelsRenameSeparator\" size=\"2\" type=\"text\" value=\":\"\/><\/td>\n
+          <\/tr>\n
+\n
+\t\t  <tr>\n
+\n
+\t\t    <td width=\"50%\" name=\"generalDeviceChannelConfigLblRenameChannelIncludingOwn\">inkl. eigener Namen:<\/td><td><input id=\"DeviceConfigDialog_renameChannelIncludingOwn\" type=\"checkbox\" \/><\/td>\n
+\n
+\t\t\t<td width=\"50%\"><div id=\"DeviceConfigDialogRenameIncludingOwnHint\"><img id=\"DeviceConfigDialogRenameIncludingOwnHintImg\" src=\"\/ise\/img\/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp(\'generalDeviceRenameChannelIncludingOwnHint\', \'400\', \'100\')\"><\/div><\/td>\n
+\n
+\t\t  <\/tr>\n
+\n
+        <\/table>\n
       <\/div>\n
     <\/div>\n
 \n
@@ -6062,6 +6092,7 @@ elvST['BOOST_MODE=FALSE'] = '${stringTableBoostModeFalse}';
 elvST['BOOST_MODE=TRUE'] = '${stringTableBoostModeTrue}';
 elvST['BOOST_STATE'] = '${stringTableBoostState}';
 elvST['BOOST_TIME'] = '${stringTableBoostTime}';
+elvST['QUICK_VETO_TIME'] = '${stringTableQuickVetoTime}';
 elvST['BOOTED=FALSE'] = '${stringTableBootedFalse}';
 elvST['BOOTED=TRUE'] = '${stringTableBootedTrue}';
 elvST['BRIGHTNESS'] = '${stringTableBrightness}';
@@ -15692,6 +15723,8 @@ ChannelConfigDialog = Singleton.create({
 DeviceConfigDialog = Singleton.create({
   LAYER_ID: "DeviceConfigDialogLayer",
   NAME_ID: "DeviceConfigDialog_DeviceName",
+  SEPARATOR_ID: "DeviceConfigDialog_DeviceChannelsRenameSeparator",
+  RENAME_OWN_ID: "DeviceConfigDialog_renameChannelIncludingOwn",
   USABLE_ID: "DeviceConfigDialog_isUsable",
   VISIBLE_ID: "DeviceConfigDialog_isVisible",
   LOGGED_ID: "DeviceConfigDialog_isLogged",
@@ -15744,6 +15777,9 @@ DeviceConfigDialog = Singleton.create({
       this.__hideLogging();
     }
     translateJSTemplate("#DeviceConfigDialog");
+	jQuery("#DeviceConfigDialogTestHintImg").attr('title', translateKey("generalDeviceConfigHintTooltip"));
+	jQuery("#DeviceConfigDialogRenameChannelButtonHintImg").attr('title', translateKey("generalDeviceRenameChannelHintTooltip"));
+	jQuery("#DeviceConfigDialogRenameIncludingOwnHintImg").attr('title', translateKey("generalDeviceRenameChannelIncludingOwnHint"));
   },
 
   __hideFunctionTest: function() {
@@ -15801,6 +15837,36 @@ DeviceConfigDialog = Singleton.create({
   abort: function()
   {
     this.close(this.RESULT_ABORT);
+  },
+  
+  /**
+  * Benennt alle Channel des Device um
+  **/
+
+  ready: function()
+  {
+    this.ok();
+  },
+  
+  renameChannels: function() {
+    var chNamePrefix = $(this.NAME_ID).value + $(this.SEPARATOR_ID).value;
+    if (!isTextAllowed(chNamePrefix)) return;
+
+    if (confirm(translateKey("generalDeviceRenameChannelsConfirm"))) {
+      var renameOwnChannelNames = $(this.RENAME_OWN_ID).checked;
+
+      this.device.channels.each(function(channel) {
+        var chNumber = channel.address.split(':')[1];
+        var origChName = this.device.name+":"+chNumber;
+
+        // Channel bereits umbenannt und Option "eigene Namen umbenennen" wurde deaktiviert
+        if (channel.name !== origChName && renameOwnChannelNames === false) return true;
+
+        var chName = chNamePrefix + chNumber;
+        channel.setName(chName);
+      }, this);
+      this.ok();
+    }
   },
   
   /**
