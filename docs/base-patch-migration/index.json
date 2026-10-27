@@ -367,13 +367,13 @@
       "sha256": "f12c2f17556e86b3c6332e5b4feeadd0add38b9cd99a6267cdf21fec5e67eed3"
     },
     {
-      "added": 86,
+      "added": 51,
       "files": [
         "www/webui/webui.js"
       ],
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
-      "removed": 11,
-      "sha256": "0fc96da87c6c715fcb4689706d05c6023dc7adc95dded49c1ce77386eb1cd258"
+      "removed": 6,
+      "sha256": "84400b37c05f614f6c8f4656719c290e0439a24ddbddad25995e4f23ee8c8d3e"
     },
     {
       "added": 120,
@@ -384,7 +384,7 @@
       ],
       "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
       "removed": 19,
-      "sha256": "1cdda09718073ae5e3282e36c109a53c27f51be121b89c648bff514f37c16e0b"
+      "sha256": "16902c85feee6d14e7ecfa7503a3ecf8d9145e170546eae7ff91122140e4660e"
     },
     {
       "added": 4,
@@ -409,7 +409,7 @@
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
       "removed": 96,
-      "sha256": "cdf9540f330296ca94569d29bc1906645dc00f6b3c32b2ad2e459c81ac0e5905"
+      "sha256": "f29e1271b22ab3203bd68a388b5c80e3820a8ef611732fc8f3feac3a27c28653"
     }
   ],
   "schema": 1,

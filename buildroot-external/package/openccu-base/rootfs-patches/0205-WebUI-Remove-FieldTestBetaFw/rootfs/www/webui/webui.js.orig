@@ -9708,13 +9708,18 @@ Cursor = {
 		document.body.style.cursor = cursorType;
 	}
 	
-};
-
+};/**
+ * stringfilter.js
+ **/
+ 
+/**
+ * Checks if a text is a valid regular expression.
+ **/
 const isValidRegex = function(possiblyValidRegex)
 {
   try
   {
-    const r = new RegExp(possiblyValidRegex);
+    new RegExp(possiblyValidRegex);
   }
   catch(err)
   {
@@ -9725,9 +9730,18 @@ const isValidRegex = function(possiblyValidRegex)
 }
 
 /**
- * stringfilter.js
+ * Checks if a text matches the filter as entered by the user, used as a
+ * case-insensitive regular expression. Callers also check the filter as
+ * plain text, so text with special characters like "(" or "+" still matches.
  **/
- 
+const matchesFilterRegex = function(text, filter)
+{
+  if ((typeof filter != "string") || (filter === "")) { return false; }
+  if (!isValidRegex(filter)) { return false; }
+
+  return new RegExp(filter, "i").test(text);
+}
+
 /**
  * Konstrukor. Filter für Zeichenketten
  **/
@@ -9808,25 +9822,16 @@ StringFilter = function(name, callback)
     
     var patternList = m_value.toLowerCase().split("|");
     //var patternList = m_value.split("|");
+    if (matchesFilterRegex(text, m_value)) { return true; }
+
     text            = text.toLowerCase();
     
-    let searchString = m_value.toLowerCase();
-    if(isValidRegex(searchString))
+    for (var i = 0, len = patternList.length; i < len; i++)
     {
-      var r = new RegExp(searchString);
-      if (r.test(text) === true) { return true; }
-
-      return false;
+      if (0 <= text.indexOf(patternList[i])) { return true; }
     }
-    else
-    {
-      for (var i = 0, len = patternList.length; i < len; i++)
-      {
-        if (0 <= text.indexOf(patternList[i])) { return true; }
-      }
-
-      return false;
-    }
+    
+    return false;
   };
   
   /**
@@ -37479,6 +37484,7 @@ iseFilter.prototype = {
     this.filName = "";
     this.filUnit = "";
     this.filChnLink = "";
+    this.filRaw = {};
     this.filVarTypes = "";
     this.filTime = "";
     this.filDate = "";
@@ -37563,7 +37569,18 @@ iseFilter.prototype = {
   },
 
   
+  /**
+   * Returns a string filter as entered by the user. Filters restored by
+   * the server are only available in lower case.
+   **/
+  getRawFilter: function(fId, s) {
+    var raw = this.filRaw[fId];
+    if ((typeof raw == "string") && (raw.toLowerCase() === s)) { return raw; }
+    return s;
+  },
+
   addStringFilter: function(fId, s) {
+    this.filRaw[fId] = s;
     s = s.toLowerCase();
     switch(fId) {
       case FIL_NAME:  this.filName    = s; break;
@@ -37651,15 +37668,7 @@ iseFilter.prototype = {
     {
       if (typeof obj['type'] != 'undefined') {
         if (obj['type'] === "")                      { return false; }
-        if (isValidRegex(this.filType))
-        {
-          var r = new RegExp(this.filType);
-          if (r.test(obj['type'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['type'].toLowerCase().indexOf(this.filType) == -1) { return false; }
-        }
+        if ((obj['type'].toLowerCase().indexOf(this.filType) == -1) && !matchesFilterRegex(obj['type'], this.getRawFilter(FIL_TYPE, this.filType))) { return false; }
       }
     }
     if (this.filDesc !== "")
@@ -37669,15 +37678,7 @@ iseFilter.prototype = {
       {
         //conInfo( "iseFilter: desc="+obj['desc'] );
         if (obj['desc'] === "")                      { return false; }
-        if (isValidRegex(this.filDesc))
-        {
-          var r = new RegExp(this.filDesc);
-          if (r.test(obj['desc'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['desc'].toLowerCase().indexOf(this.filDesc) == -1) { return false; }
-        }
+        if ((obj['desc'].toLowerCase().indexOf(this.filDesc) == -1) && !matchesFilterRegex(obj['desc'], this.getRawFilter(FIL_DESC, this.filDesc))) { return false; }
       }
     }
     if (this.filName !== "")
@@ -37686,15 +37687,7 @@ iseFilter.prototype = {
       {
         if (obj['name'] === "")                      { return false; }
         var transName = translateString(obj['name']);
-        if (isValidRegex(this.filName))
-        {
-          var r = new RegExp(this.filName);
-          if (r.test(transName.toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (transName.toLowerCase().indexOf(this.filName) == -1) { return false; }
-        }
+        if ((transName.toLowerCase().indexOf(this.filName) == -1) && !matchesFilterRegex(transName, this.getRawFilter(FIL_NAME, this.filName))) { return false; }
       }
     }
     if (this.filSn !== "")
@@ -37702,15 +37695,7 @@ iseFilter.prototype = {
       if (typeof obj['sn'] != 'undefined')
       {
         if (obj['sn'] === "")                     { return false; }
-        if (isValidRegex(this.filSn))
-        {
-          var r = new RegExp(this.filSn);
-          if (r.test(obj['sn'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['sn'].toLowerCase().indexOf(this.filSn) == -1) { return false; }
-        }
+        if ((obj['sn'].toLowerCase().indexOf(this.filSn) == -1) && !matchesFilterRegex(obj['sn'], this.getRawFilter(FIL_SN, this.filSn))) { return false; }
       }
     }
     if (this.filUnit !== "")
@@ -37718,15 +37703,7 @@ iseFilter.prototype = {
       if (typeof obj['unit'] != 'undefined')
       {
         if (obj['unit'] === "")                      { return false; }
-        if (isValidRegex(this.filUnit))
-        {
-          var r = new RegExp(this.filUnit);
-          if (r.test(obj['unit'].toLowerCase()) === false) { return false; }
-        }
-        else
-        {
-          if (obj['unit'].toLowerCase().indexOf(this.filUnit) == -1) { return false; }
-        }
+        if ((obj['unit'].toLowerCase().indexOf(this.filUnit) == -1) && !matchesFilterRegex(obj['unit'], this.getRawFilter(FIL_UNIT, this.filUnit))) { return false; }
       }
     }
 
@@ -37750,15 +37727,7 @@ iseFilter.prototype = {
     if (this.filChnLink !== "")
     {
       if (obj['chn'] === "")                         { return false; }
-      if (isValidRegex(this.filChnLink))
-      {
-        var r = new RegExp(this.filChnLink);
-        if (r.test(obj['chn'].toLowerCase()) === false) { return false; }
-      }
-      else
-      {
-        if (obj['chn'].toLowerCase().indexOf(this.filChnLink) == -1) { return false; }
-      }
+      if ((obj['chn'].toLowerCase().indexOf(this.filChnLink) == -1) && !matchesFilterRegex(obj['chn'], this.getRawFilter(FIL_CHN, this.filChnLink))) { return false; }
     }
 /*    
     if (this.filVarTypes !== "")
@@ -37924,6 +37893,7 @@ iseFilter.prototype = {
     this.filName = "";  
     this.filUnit = ""; 
     this.filChnLink = "";
+    this.filRaw = {};
     this.filVarTypes = "";
     this.filTime = "";
     this.filDate = "";
