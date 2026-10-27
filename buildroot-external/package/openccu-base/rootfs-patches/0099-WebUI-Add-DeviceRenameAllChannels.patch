@@ -1,18 +1,12 @@
 --- a/www/webui/js/lang/de/translate.lang.extension.js
 +++ b/www/webui/js/lang/de/translate.lang.extension.js
-@@ -60,13 +60,22 @@
-     "generalDeviceChannelConfigLblLogged" : "Protokolliert:",
-     "generalDeviceChannelConfigLblServiceMsg": "Servicemeldungen:",
-     "generalDeviceChannelConfigLblFuncTest" : "Funktionstest",
-+    "generalDeviceChannelConfigLblRenameChannel" : "Zugeh%F6rige Kan%E4le umbenennen",
-+    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "inklusive eigener Namen:",
-+    "generalDeviceChannelConfigLblSeparator": "Trennzeichen:",
-     "generalChannelConfigLblRooms" : "R%E4ume",
-     "generalChannelConfigLblFunctions" : "Gewerke",
-     "generalChannelConfigLblSender" : "Sender (Sensor)",
+@@ -66,7 +66,16 @@
      "generalChannelConfigLblReceiver" : "Empf%E4nger (Aktor)",
      "generalChannelConfigLblNone" : "nicht verkn%FCpfbar",
      "generalDeviceChannelConfigBtnFuncTest" : "Test starten",
++    "generalDeviceChannelConfigLblRenameChannel" : "Zugeh%F6rige Kan%E4le umbenennen",
++    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "inklusive eigener Namen:",
++    "generalDeviceChannelConfigLblSeparator": "Trennzeichen:",
 +    "generalDeviceChannelConfigBtnRenameChannels" : "Kan%E4le umbenennen",
 +    "generalDeviceRenameChannelHint" : "Benennt alle Kan%E4le des Ger%E4ts um.<br/><br/>Die Kanalnamen lauten anschlie%DFend: <i>Ger%E4tename%26lt;Trennzeichen%26gt;Kanalnummer</i>",
 +    "generalDeviceRenameChannelHintTooltip" : "Benennt alle Kan%E4le des Ger%E4ts um. Die Kanalnamen lauten anschlie%DFend: 'Ger%E4tename<Trennzeichen>Kanalnummer'",
@@ -25,19 +19,13 @@
      "generalChannelConfigHintReceiver" : "<p>Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgel%F6st.</p>",
 --- a/www/webui/js/lang/en/translate.lang.extension.js
 +++ b/www/webui/js/lang/en/translate.lang.extension.js
-@@ -60,13 +60,22 @@
-     "generalDeviceChannelConfigLblLogged": "Logged:",
-     "generalDeviceChannelConfigLblServiceMsg": "Service messages:",
-     "generalDeviceChannelConfigLblFuncTest": "Functional test",
-+    "generalDeviceChannelConfigLblRenameChannel" : "Rename associated channels",
-+    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "including own names:",
-+    "generalDeviceChannelConfigLblSeparator": "Separator:",
-     "generalChannelConfigLblRooms": "Rooms",
-     "generalChannelConfigLblFunctions": "Functions",
-     "generalChannelConfigLblSender": "Transmitter (sensor)",
+@@ -66,7 +66,16 @@
      "generalChannelConfigLblReceiver": "Receiver (actuator)",
      "generalChannelConfigLblNone": "no connection possible",
      "generalDeviceChannelConfigBtnFuncTest": "Start test",
++    "generalDeviceChannelConfigLblRenameChannel" : "Rename associated channels",
++    "generalDeviceChannelConfigLblRenameChannelIncludingOwn" : "including own names:",
++    "generalDeviceChannelConfigLblSeparator": "Separator:",
 +    "generalDeviceChannelConfigBtnRenameChannels" : "Rename channels",
 +    "generalDeviceRenameChannelHint" : "Renames all channels of the device according to a given pattern.<br/><br/>The new channel names will afterwards look like: <i>device_name%26lt;separator%26gt;channel_number</i>",
 +    "generalDeviceRenameChannelHintTooltip" : "Renames all channels of the device according to a given pattern. The new channel names will afterwards look like: 'device_name<separator>channel_number'",
@@ -59,7 +47,7 @@
    margin-left: -400px;
    margin-top: -225px;
    background-color: $_(black); /* black */
-@@ -3331,7 +3331,7 @@
+@@ -3331,16 +3331,15 @@
    top: 24px;
    left: 2px;
    width: 796px;
@@ -67,8 +55,10 @@
 +  height: 391px;
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
-   overflow: auto;
-@@ -3339,7 +3339,7 @@
+-/*  overflow: scroll;   */
+-  overflow: hidden;   
++  overflow: auto;
+ }
  
  #DeviceConfigDialogFooter {
    position: absolute;
@@ -86,38 +76,38 @@
 -            <td width=\"50%\"><div id=\"DeviceConfigDialogTestResult\">--:--:--<\/div><\/td>\n
 +            <td width=\"40%\"><div id=\"DeviceConfigDialogTestResult\">--:--:--<\/div><\/td>\n
 +\n
-+			<td width=\"40%\"><div id=\"DeviceConfigDialogTestHint\"><img id=\"DeviceConfigDialogTestHintImg\" src=\"/ise/img/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp('generalDeviceConfigHint', '400', '200')\"><\/div><\/td>\n
++\t\t\t<td width=\"40%\"><div id=\"DeviceConfigDialogTestHint\"><img id=\"DeviceConfigDialogTestHintImg\" src=\"\/ise\/img\/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp(\'generalDeviceConfigHint\', \'400\', \'200\')\"><\/div><\/td>\n
 +\n
 +          <\/tr>\n
 +        <\/table>\n
 +      <\/div>\n
 +    <\/div>\n
-+	\n
++\t\n
 +    <div id=\"deviceRenameChannelsPanel\" class=\"DeviceConfigDialogSection\">\n
 +      <div class=\"CLASS10804\" name=\"generalDeviceChannelConfigLblRenameChannel\">Funktionstest<\/div>\n
 +      <hr \/>\n
 +      <div>\n
 +        <table border=\"0\"  class=\"DeviceConfigDialogTable\" width=\"250px\">\n
 +          <tr>\n
-+		    <td width=\"50%\"><div id=\"DeviceConfigDialogRenameChannelButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnRenameChannels\" onclick=\"DeviceConfigDialog.renameChannels();\">Kanäle umbenennen<\/div><\/td>\n
++\t\t    <td width=\"50%\"><div id=\"DeviceConfigDialogRenameChannelButton\" class=\"StdButton\" name=\"generalDeviceChannelConfigBtnRenameChannels\" onclick=\"DeviceConfigDialog.renameChannels();\">Kanäle umbenennen<\/div><\/td>\n
 +\n
-+			<td width=\"40%\"><\/td>\n
++\t\t\t<td width=\"40%\"><\/td>\n
 +\n
-+			<td width=\"40%\"><div id=\"DeviceConfigDialogRenameChannelButtonHint\"><img id=\"DeviceConfigDialogRenameChannelButtonHintImg\" src=\"/ise/img/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp('generalDeviceRenameChannelHint', '400', '100')\"><\/div><\/td>\n
++\t\t\t<td width=\"40%\"><div id=\"DeviceConfigDialogRenameChannelButtonHint\"><img id=\"DeviceConfigDialogRenameChannelButtonHintImg\" src=\"\/ise\/img\/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp(\'generalDeviceRenameChannelHint\', \'400\', \'100\')\"><\/div><\/td>\n
 +\n
 +          <\/tr>\n
 +\n
-+		  <tr>			\n
-+		    <td width=\"80%\" name=\"generalDeviceChannelConfigLblSeparator\">Trennzeichen:<\/td><td width=\"20%\"><input id=\"DeviceConfigDialog_DeviceChannelsRenameSeparator\" size=\"2\" type=\"text\" value=\":\"\/><\/td>\n
++\t\t  <tr>\t\t\t\n
++\t\t    <td width=\"80%\" name=\"generalDeviceChannelConfigLblSeparator\">Trennzeichen:<\/td><td width=\"20%\"><input id=\"DeviceConfigDialog_DeviceChannelsRenameSeparator\" size=\"2\" type=\"text\" value=\":\"\/><\/td>\n
            <\/tr>\n
 +\n
-+		  <tr>\n
++\t\t  <tr>\n
 +\n
-+		    <td width=\"50%\" name=\"generalDeviceChannelConfigLblRenameChannelIncludingOwn\">inkl. eigener Namen:<\/td><td><input id=\"DeviceConfigDialog_renameChannelIncludingOwn\" type=\"checkbox\" \/><\/td>\n
++\t\t    <td width=\"50%\" name=\"generalDeviceChannelConfigLblRenameChannelIncludingOwn\">inkl. eigener Namen:<\/td><td><input id=\"DeviceConfigDialog_renameChannelIncludingOwn\" type=\"checkbox\" \/><\/td>\n
 +\n
-+			<td width=\"50%\"><div id=\"DeviceConfigDialogRenameIncludingOwnHint\"><img id=\"DeviceConfigDialogRenameIncludingOwnHintImg\" src=\"/ise/img/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp('generalDeviceRenameChannelIncludingOwnHint', '400', '100')\"><\/div><\/td>\n
++\t\t\t<td width=\"50%\"><div id=\"DeviceConfigDialogRenameIncludingOwnHint\"><img id=\"DeviceConfigDialogRenameIncludingOwnHintImg\" src=\"\/ise\/img\/help.png\" style=\"cursor: pointer; width:18px; height:18px; position:relative; top:2px\" onclick=\"showParamHelp(\'generalDeviceRenameChannelIncludingOwnHint\', \'400\', \'100\')\"><\/div><\/td>\n
 +\n
-+		  <\/tr>\n
++\t\t  <\/tr>\n
 +\n
          <\/table>\n
 -        <div class=\"CLASS10805\" name=\"generalDeviceConfigHint\">\n
@@ -126,20 +116,15 @@
        <\/div>\n
      <\/div>\n
  \n
-@@ -15715,11 +15745,13 @@
+@@ -15715,6 +15745,8 @@
  DeviceConfigDialog = Singleton.create({
    LAYER_ID: "DeviceConfigDialogLayer",
    NAME_ID: "DeviceConfigDialog_DeviceName",
 +  SEPARATOR_ID: "DeviceConfigDialog_DeviceChannelsRenameSeparator",
++  RENAME_OWN_ID: "DeviceConfigDialog_renameChannelIncludingOwn",
    USABLE_ID: "DeviceConfigDialog_isUsable",
    VISIBLE_ID: "DeviceConfigDialog_isVisible",
    LOGGED_ID: "DeviceConfigDialog_isLogged",
-   SERVICEMSG_ID: "DeviceConfigDialog_enabledServiceMsg",
-   TEST_RESULT_ID: "DeviceConfigDialogTestResult",
-+  RENAME_OWN_ID: "DeviceConfigDialog_renameChannelIncludingOwn",
-   RESULT_OK: 1,
-   RESULT_ABORT: 0,
-   POLL_INTERVAL: 3,
 @@ -15767,6 +15799,9 @@
        this.__hideLogging();
      }

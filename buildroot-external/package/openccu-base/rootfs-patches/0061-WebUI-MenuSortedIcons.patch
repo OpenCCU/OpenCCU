@@ -823,7 +823,7 @@
  #webuiloader_wrapper {
    width: 100%;
    height: 100%;
-@@ -7081,11 +7087,12 @@
+@@ -7082,11 +7088,12 @@
  /* rega\pages\tabs\admin\linkprog.htm */
  
  .CLASS05400 {
@@ -837,7 +837,7 @@
  }
  
  .CLASS05402 {
-@@ -7096,16 +7103,54 @@
+@@ -7097,16 +7104,54 @@
  	text-align:center ! important;
  }
  
@@ -893,7 +893,7 @@
  /* rega\pages\tabs\favorites.htm */
  
  .CLASS05600 {
-@@ -7185,11 +7230,26 @@
+@@ -7186,11 +7231,26 @@
  /* pages\tabs\statusview.htm */
  
  .CLASS05700 {
@@ -921,7 +921,7 @@
  }
  
  .CLASS05702 {
-@@ -7326,13 +7386,32 @@
+@@ -7327,13 +7387,32 @@
  /* rega\pages\tabs\user\systemConfigUser.htm */
  
  .CLASS06100 {

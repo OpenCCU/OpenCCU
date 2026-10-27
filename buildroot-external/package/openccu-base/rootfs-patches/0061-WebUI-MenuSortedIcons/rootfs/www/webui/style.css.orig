@@ -3328,7 +3328,8 @@ html, body {
   height: 371px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-  overflow: auto;
+/*  overflow: scroll;   */
+  overflow: hidden;   
 }
 
 #DeviceConfigDialogFooter {
