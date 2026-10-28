@@ -12,7 +12,6 @@
 0097-WebUI-SetSysvarValueByUser.patch
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
 0119-WebUI-Fix-ProofAndSetValue.patch
-0125-WebUI-ChannelHighlights.patch
 0131-WebUI-ShowAddonUpdatesOnStartpage.patch
 0132-WebUI-Fix-UnitDisplay.patch
 0149-WebUI-ImprovedErrorPages.patch

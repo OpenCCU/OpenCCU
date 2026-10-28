@@ -815,18 +815,24 @@
       "base_pr": 252,
       "cleanup_pr": 4559,
       "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch"
+    },
+    {
+      "base_merge_commit": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
+      "base_pr": 253,
+      "cleanup_pr": 4564,
+      "patch": "0170-WebUI-RegexSearchInDeviceLists.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
-    "base_pr": 253,
-    "cleanup_pr": 4564,
-    "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
+    "base_merge_commit": "2f2c3eba15efb622c24dd8cc11a87630d0fb3532",
+    "base_pr": 256,
+    "cleanup_pr": null,
+    "patch": "0125-WebUI-ChannelHighlights.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "4096d91a8aae70b5ae4bbb26f7377a68126eb06c",
-  "verified_base_pin": "87a32d295aa0e86c6432cce7ec83b79786528c46",
-  "verified_source_sha256": "669421911b3f00d808cc86479c638ade704c944d5187f567909b9d456f7b90dc"
+  "verified_at_openccu_commit": "fb8e43f105f6a01ef07a5abfe041ecff3bed80bb",
+  "verified_base_pin": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
+  "verified_source_sha256": "5045e7d51c27ddff0579ac039103974abfa68d3892b1e257b46f06516dce6139"
 }
