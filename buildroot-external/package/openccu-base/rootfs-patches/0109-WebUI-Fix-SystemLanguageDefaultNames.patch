@@ -554,7 +554,7 @@
          }
        }
      } else {
-@@ -26021,6 +26026,10 @@
+@@ -26053,6 +26058,10 @@
    
    this.leave = function()
    {
@@ -565,7 +565,7 @@
    };
  
    this.resize = function()
-@@ -32432,7 +32441,12 @@
+@@ -32464,7 +32473,12 @@
          this.setWidth(800);
          this.setFile( "/pages/msg/autoLoginConfig.htm" );
          break;
@@ -579,7 +579,7 @@
          this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
          this.addToPostBody( 'string type = "'+this.type+'";' );
          this.setWidth(800);
-@@ -33256,6 +33270,7 @@
+@@ -33288,6 +33302,7 @@
  ID_SET_OUCFM_MODE        = 1023;
  ID_SET_STATUS_DISPLAY    = 1024;
  ID_BIDCOS_INTERFACE = 1025;

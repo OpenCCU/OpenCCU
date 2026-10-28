@@ -3763,7 +3763,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -26241,7 +26241,7 @@
+@@ -26273,7 +26273,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3772,7 +3772,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -26249,7 +26249,7 @@
+@@ -26281,7 +26281,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3781,7 +3781,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -27763,7 +27763,7 @@
+@@ -27795,7 +27795,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3790,7 +3790,7 @@
          "</tr>" +
        "</table>";
  
-@@ -32143,13 +32143,11 @@
+@@ -32175,13 +32175,11 @@
        case ID_ROOMS:
          this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
          this.setWidth75Perc();
@@ -3804,7 +3804,7 @@
          this.setFile( "/pages/msg/popupPropEditor.htm" );
          break;
        case ID_TRANSFER_PARAMETERS:
-@@ -33733,7 +33731,7 @@
+@@ -33765,7 +33763,7 @@
    var opts = {
      evalScripts: true,
      onComplete: function(trans) {
@@ -3813,7 +3813,7 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
-@@ -46274,7 +46272,7 @@
+@@ -46319,7 +46317,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3822,7 +3822,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -46326,8 +46324,8 @@
+@@ -46371,8 +46369,8 @@
    
    if (!form) return;
  
@@ -3833,7 +3833,7 @@
  
    switch (form[gd_type])
    {
-@@ -46423,7 +46421,7 @@
+@@ -46468,7 +46466,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;

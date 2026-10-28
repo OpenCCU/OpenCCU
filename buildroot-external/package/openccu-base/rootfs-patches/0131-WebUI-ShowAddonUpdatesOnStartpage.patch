@@ -131,7 +131,7 @@
      "btnSelectRoomOrFunctionClose": "Close",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -26032,6 +26032,44 @@
+@@ -26064,6 +26064,44 @@
      msgBoxHeight
      );
    },
