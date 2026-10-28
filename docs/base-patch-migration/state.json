@@ -809,18 +809,24 @@
       "base_pr": 250,
       "cleanup_pr": 4551,
       "patch": "0164-WebUI-Add-HMIPServerLogConfiguration.patch"
+    },
+    {
+      "base_merge_commit": "c040d8151af0da0cdb6467e61756100e5437c74f",
+      "base_pr": 252,
+      "cleanup_pr": 4559,
+      "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "c040d8151af0da0cdb6467e61756100e5437c74f",
-    "base_pr": 252,
-    "cleanup_pr": 4559,
-    "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch",
+    "base_merge_commit": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
+    "base_pr": 253,
+    "cleanup_pr": null,
+    "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "7c95888616b3cbf81a21092eb864a54d647fe6ff",
-  "verified_base_pin": "f02781e1d8eb4556dec17e1bfeafb98d5caedf61",
-  "verified_source_sha256": "079dd562e749196ce094ccbec4634208db1ac0a6d3a1d2d18846ee228c539096"
+  "verified_at_openccu_commit": "4096d91a8aae70b5ae4bbb26f7377a68126eb06c",
+  "verified_base_pin": "87a32d295aa0e86c6432cce7ec83b79786528c46",
+  "verified_source_sha256": "669421911b3f00d808cc86479c638ade704c944d5187f567909b9d456f7b90dc"
 }

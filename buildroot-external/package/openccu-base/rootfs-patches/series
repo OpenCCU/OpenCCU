@@ -19,7 +19,6 @@
 0150-WebUI-Responsive-ControlPage.patch
 0154-WebUI-DynamicResizing.patch
 0163-WebUI-ImprovedFileUploadButton.patch
-0170-WebUI-RegexSearchInDeviceLists.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0203-WebUI-NoExpectCGI.patch
 0205-WebUI-Remove-FieldTestBetaFw.patch

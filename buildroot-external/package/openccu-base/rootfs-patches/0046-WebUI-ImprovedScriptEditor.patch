@@ -765,7 +765,7 @@
 +}
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -10532,7 +10532,13 @@
+@@ -10564,7 +10564,13 @@
      Element.setStyle(this.m_element, {"textAlign": alignment});
      return this;
    },
@@ -780,7 +780,7 @@
    /**
     * Setzt die Breite des Labels.
     * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
-@@ -10553,7 +10559,13 @@
+@@ -10585,7 +10591,13 @@
      if (height != "auto") { height = parseInt(height) + "px"; }
      Element.setStyle(this.m_element, { height    : height });
      return this;
@@ -795,7 +795,7 @@
  });
   
  /**
-@@ -10820,6 +10832,16 @@
+@@ -10852,6 +10864,16 @@
      return this;
    },
    
@@ -812,7 +812,7 @@
    setWrap: function(isWrap)
    {
      if (isWrap) { Element.writeAttribute(this.m_element, "wrap", "soft"); }
-@@ -16794,8 +16816,8 @@
+@@ -16826,8 +16848,8 @@
    {
      var screenWidth  = WebUI.getWidth();
      var screenHeight = WebUI.getHeight();
@@ -823,7 +823,7 @@
      var frameX       = parseInt((screenWidth  - frameWidth)  / 2);
      var frameY       = parseInt((screenHeight - frameHeight) / 2);
  
-@@ -16805,63 +16827,142 @@
+@@ -16837,63 +16859,142 @@
      
      this.m_layer = document.createElement("div");
      this.m_layer.className = "DialogLayer";
@@ -998,7 +998,7 @@
    },
    
    close: function()
-@@ -16871,8 +16972,8 @@
+@@ -16903,8 +17004,8 @@
    
  });
  
@@ -1009,7 +1009,7 @@
  
  /**
   * firewallconfigdialog.js
-@@ -32161,6 +32262,9 @@
+@@ -32193,6 +32294,9 @@
    },
    initPopup: function(id)
    {
@@ -1019,7 +1019,7 @@
      switch(this.id)
      {
        case ID_ROOMS:
-@@ -32218,9 +32322,10 @@
+@@ -32250,9 +32354,10 @@
          break;
        case ID_EDIT_SCRIPT:
          this.setTitle( translateKey("dialogEditScript") /*"Skript bearbeiten"*/ );
@@ -1032,7 +1032,7 @@
          this.setFile( "/pages/msg/editScript.htm" );
          break;
        case ID_CONTROL_TEST:
-@@ -32328,7 +32433,9 @@
+@@ -32360,7 +32465,9 @@
      }
  
      if (this.draggable) {
@@ -1043,7 +1043,7 @@
      }
  
    },
-@@ -32488,7 +32595,12 @@
+@@ -32520,7 +32627,12 @@
        onComplete: function(trans)
        {
          //$("messagebox").style.width = t.width + "px";
