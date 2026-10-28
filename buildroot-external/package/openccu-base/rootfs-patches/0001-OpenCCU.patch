@@ -1232,7 +1232,7 @@
  
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -25450,16 +25450,16 @@
+@@ -25500,16 +25500,16 @@
  
     // WebUI-Version
    showCurrentFirmware: function() {
@@ -1258,7 +1258,7 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -29630,7 +29630,7 @@
+@@ -29680,7 +29680,7 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
@@ -1267,7 +1267,7 @@
      this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
      this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
  
-@@ -29641,7 +29641,7 @@
+@@ -29691,7 +29691,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1276,7 +1276,7 @@
      $("body").appendChild(script);
    },
  
-@@ -35087,11 +35087,11 @@
+@@ -35137,11 +35137,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {
