@@ -826,7 +826,7 @@
   "in_progress": {
     "base_merge_commit": "2f2c3eba15efb622c24dd8cc11a87630d0fb3532",
     "base_pr": 256,
-    "cleanup_pr": null,
+    "cleanup_pr": 4573,
     "patch": "0125-WebUI-ChannelHighlights.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
