@@ -272,13 +272,13 @@
       "sha256": "d5a0d848938e3fd956e72321b601a1468a630936efc07ffca053f615b8cd404e"
     },
     {
-      "added": 76,
+      "added": 118,
       "files": [
         "www/webui/webui.js"
       ],
       "patch": "0125-WebUI-ChannelHighlights.patch",
-      "removed": 26,
-      "sha256": "a431b2d5159bd91f6e2500a8fdffc1667f3fd69828df0067ef5579a245ee9c3b"
+      "removed": 68,
+      "sha256": "2c31321b265e1013a9d800b825ea96218be477c0c493112f0287bd0ca533c491"
     },
     {
       "added": 123,
