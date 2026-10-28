@@ -1,6 +1,22 @@
 --- a/opt/HMServer/pages/StorageSettingsDialog.ftl
 +++ b/opt/HMServer/pages/StorageSettingsDialog.ftl
-@@ -104,10 +104,10 @@
+@@ -12,7 +12,6 @@
+   var tdMicroSDElm = jQuery("#tdMicroSD"),
+   tdUSBStorageElm = jQuery("#tdUSBStorage"),
+ 	tdLEDSElm = jQuery("#tdLEDS");
+-	trFieldTest = jQuery("#fieldTest");
+ 
+ 	var base_url = "/pages/jpages/system/StorageSettings/";
+     dlgResult = 0;
+@@ -20,7 +19,6 @@
+   if (product >= 3) {
+     tdUSBStorageElm.show();
+ 		tdLEDSElm.show();
+-		trFieldTest.show();
+   } else {
+     tdMicroSDElm.show();
+   }
+@@ -104,10 +102,10 @@
      var opt = {
        onComplete: function(t) {
          var arResponse = t.responseText.split(","),
@@ -15,7 +31,7 @@
          gasConditionNumber = arResponse[4];
  
          if ((arResponse.length == 6) && (t.responseText != "noConfig")) {
-@@ -277,7 +277,7 @@
+@@ -277,7 +275,7 @@
                      <b>${"$"}{lblCurrency}</b>
                    </td>
                    <td>
@@ -24,7 +40,7 @@
                    </td>
                  </tr>
                  <tr><td colspan="2"><hr></td></tr>
-@@ -356,25 +356,10 @@
+@@ -356,25 +354,10 @@
  			</td>
  		</tr>
  
@@ -51,7 +67,7 @@
        </td>
        <td class='CLASS21115'></td>
      </tr>
-@@ -397,9 +382,4 @@
+@@ -397,9 +380,4 @@
     if (setWebUIColor == true) {
       jQuery('#setWebUIColor').show();	
     }
