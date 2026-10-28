@@ -1258,16 +1258,18 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -29680,7 +29680,7 @@
+@@ -29680,9 +29680,8 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
 -    this.m_product ="HM-CCU" + this.m_ccuProduct;
 +    this.m_product = "HM-RASPBERRYMATIC";
      this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
-     this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
+-    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
  
-@@ -29691,7 +29691,7 @@
+     this.serial = homematic("CCU.getSerial");
+     this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
+@@ -29691,7 +29690,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1276,7 +1278,7 @@
      $("body").appendChild(script);
    },
  
-@@ -35137,11 +35137,11 @@
+@@ -35137,11 +35136,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {
