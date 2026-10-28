@@ -542,7 +542,7 @@
      "dialogRestartSafeModeTitle" : "Restart",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9376,6 +9376,11 @@
+@@ -9426,6 +9426,11 @@
              new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
              homematic("CCU.setUserAckInstallWizard");
            }
@@ -554,7 +554,7 @@
          }
        }
      } else {
-@@ -26053,6 +26058,10 @@
+@@ -26103,6 +26108,10 @@
    
    this.leave = function()
    {
@@ -565,7 +565,7 @@
    };
  
    this.resize = function()
-@@ -32464,7 +32473,12 @@
+@@ -32514,7 +32523,12 @@
          this.setWidth(800);
          this.setFile( "/pages/msg/autoLoginConfig.htm" );
          break;
@@ -579,7 +579,7 @@
          this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
          this.addToPostBody( 'string type = "'+this.type+'";' );
          this.setWidth(800);
-@@ -33288,6 +33302,7 @@
+@@ -33338,6 +33352,7 @@
  ID_SET_OUCFM_MODE        = 1023;
  ID_SET_STATUS_DISPLAY    = 1024;
  ID_BIDCOS_INTERFACE = 1025;
