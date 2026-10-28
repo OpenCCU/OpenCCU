@@ -37937,16 +37937,16 @@ selectFilters = function(fltObj, divToShow)
       $("cbStd").checked = fltObj.isFilterType(FIL_MODE_STD); 
       break;
     case "btnFilterNameSub":
-      $("ftName").value = fltObj.filName;
+      $("ftName").value = fltObj.getRawFilter(FIL_NAME, fltObj.filName);
       break;
     case "btnFilterTypeSub":
-      $("ftType").value = fltObj.filType;
+      $("ftType").value = fltObj.getRawFilter(FIL_TYPE, fltObj.filType);
       break;
     case "btnFilterDescSub":
-      $("ftDesc").value = fltObj.filDesc;
+      $("ftDesc").value = fltObj.getRawFilter(FIL_DESC, fltObj.filDesc);
       break;
     case "btnFilterSNSub":
-      $("ftSN").value = fltObj.filSn;
+      $("ftSN").value = fltObj.getRawFilter(FIL_SN, fltObj.filSn);
       break;
     case "btnFilterTimeSub":
       $("ftTime").value = fltObj.filTime;
@@ -37975,7 +37975,7 @@ selectFilters = function(fltObj, divToShow)
       }
       break;
     case "btnFilterChn":
-      $("ftChn").value = fltObj.filChnLink;
+      $("ftChn").value = fltObj.getRawFilter(FIL_CHN, fltObj.filChnLink);
       break;
     default:
       break;

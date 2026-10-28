@@ -367,13 +367,13 @@
       "sha256": "f12c2f17556e86b3c6332e5b4feeadd0add38b9cd99a6267cdf21fec5e67eed3"
     },
     {
-      "added": 51,
+      "added": 56,
       "files": [
         "www/webui/webui.js"
       ],
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
-      "removed": 6,
-      "sha256": "84400b37c05f614f6c8f4656719c290e0439a24ddbddad25995e4f23ee8c8d3e"
+      "removed": 11,
+      "sha256": "a36e8f518e6bea3f67ea5fcb2b537d86f6d804f1ff065b2062721cbd04a4f4c4"
     },
     {
       "added": 120,
