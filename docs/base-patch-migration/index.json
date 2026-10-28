@@ -390,8 +390,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
-      "removed": 96,
-      "sha256": "f29e1271b22ab3203bd68a388b5c80e3820a8ef611732fc8f3feac3a27c28653"
+      "removed": 98,
+      "sha256": "01fc7414da9d0111e50e1298b2871a94c5caa8e3a055b3fc2fff94e1d612cfbd"
     }
   ],
   "schema": 1,

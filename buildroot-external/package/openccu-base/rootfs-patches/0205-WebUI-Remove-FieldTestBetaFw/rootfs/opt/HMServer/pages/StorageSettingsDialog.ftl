@@ -12,7 +12,6 @@
   var tdMicroSDElm = jQuery("#tdMicroSD"),
   tdUSBStorageElm = jQuery("#tdUSBStorage"),
 	tdLEDSElm = jQuery("#tdLEDS");
-	trFieldTest = jQuery("#fieldTest");
 
 	var base_url = "/pages/jpages/system/StorageSettings/";
     dlgResult = 0;
@@ -20,7 +19,6 @@
   if (product >= 3) {
     tdUSBStorageElm.show();
 		tdLEDSElm.show();
-		trFieldTest.show();
   } else {
     tdMicroSDElm.show();
   }
