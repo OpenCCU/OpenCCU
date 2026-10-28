@@ -272,13 +272,14 @@
       "sha256": "d5a0d848938e3fd956e72321b601a1468a630936efc07ffca053f615b8cd404e"
     },
     {
-      "added": 118,
+      "added": 119,
       "files": [
+        "www/config/devdescr/DEVDB.tcl",
         "www/webui/webui.js"
       ],
       "patch": "0125-WebUI-ChannelHighlights.patch",
-      "removed": 68,
-      "sha256": "111968b83c68ac9e5e44696e59aa60de5cc78f900adfe41ab06352be33528717"
+      "removed": 69,
+      "sha256": "09f821a6c9ccc09cba45d3ff8c88fa03e3b8ff08ef9ee812cc88ca69f1b633c6"
     },
     {
       "added": 123,
