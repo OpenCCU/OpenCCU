@@ -131,7 +131,7 @@
       ],
       "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
       "removed": 19,
-      "sha256": "0b93d09819e03433f41b2ab394f40c85df7a5306603eb4518af4f85d34af3fcb"
+      "sha256": "540821783a5cf50f50dd196f99094094a942883ad49c5f28b1b223715a2002ab"
     },
     {
       "added": 128,

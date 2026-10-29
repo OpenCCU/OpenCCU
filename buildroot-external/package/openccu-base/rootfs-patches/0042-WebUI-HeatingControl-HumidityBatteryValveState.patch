@@ -165,7 +165,7 @@
 -    if ((oLevel) && (oLevel.State() >= 0)) {
 -      var level = oLevel.Value() * 100;
 -       WriteLine("<td id='"#chnId#"tdLEVEL' >");
-+    if (oValveLevel) {
++    if ((oValveLevel) && (oValveLevel.State() >= 0)) {
 +      WriteLine("<td id='"#chnId#"tdLEVEL'>");
          WriteLine("<table class='ControlBtnInfo' style='width:205px'>");
            WriteLine("<tr>");
@@ -198,7 +198,7 @@
 +      WriteLine("opts.batteryStateID = '"#oBatteryState.ID()#"';");
 +      WriteLine("opts.BATTERY_STATE = '"#oBatteryState.Value()#"';");
 +    }
-+    if (oValveLevel) {
++    if ((oValveLevel) && (oValveLevel.State() >= 0)) {
 +      WriteLine("opts.levelID = '"#oValveLevel.ID()#"';");
 +      WriteLine("opts.LEVEL = '" # (oValveLevel.Value()*100).ToInteger() # "';");
 +    }
@@ -218,7 +218,7 @@
      if (this.opts.stTemp) {
        this.showActualTemp();
      }
-+    if (this.opts.stHum) {                                            
++    if (this.opts.stHum !== undefined) {
 +      this.showActualHumidity();                                      
 +    }
 +    if (this.opts.stBat) {

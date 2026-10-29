@@ -425,7 +425,7 @@ function ::CreateHeatingControlHmIP() {
       WriteLine("</table>");
     WriteLine("</td>");
 
-    if (oValveLevel) {
+    if ((oValveLevel) && (oValveLevel.State() >= 0)) {
       WriteLine("<td id='"#chnId#"tdLEVEL'>");
         WriteLine("<table class='ControlBtnInfo' style='width:205px'>");
           WriteLine("<tr>");
@@ -633,7 +633,7 @@ function ::CreateHeatingControlHmIP() {
       WriteLine("opts.batteryStateID = '"#oBatteryState.ID()#"';");
       WriteLine("opts.BATTERY_STATE = '"#oBatteryState.Value()#"';");
     }
-    if (oValveLevel) {
+    if ((oValveLevel) && (oValveLevel.State() >= 0)) {
       WriteLine("opts.levelID = '"#oValveLevel.ID()#"';");
       WriteLine("opts.LEVEL = '" # (oValveLevel.Value()*100).ToInteger() # "';");
     }

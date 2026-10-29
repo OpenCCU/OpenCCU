@@ -39359,7 +39359,7 @@ iseThermostat_2ndGen = Class.create(iseThermostat, {
     if (this.opts.stTemp) {
       this.showActualTemp();
     }
-    if (this.opts.stHum) {                                            
+    if (this.opts.stHum !== undefined) {
       this.showActualHumidity();                                      
     }
     if (this.opts.stBat) {
