@@ -1086,10 +1086,6 @@ jQuery.extend(true,langJSON, {
     "stateDaliBus_2" : "<br/>%DCberlast",
     "btnSearchDaliDevices" : "Pr%FCfen",
     "titleSearchDaliDevices" : "Pr%FCfe Kan%E4le",
-    "showDeviceBetaFw" : "Zeige unver%F6ffentlichte Ger%E4te-Fw.",
-    "hintDeviceBetaFw" :
-      "Bei aktiviertem Parameter werden einer geschlossenen Benutzergruppe auf der Startseite unter dem Punkt 'Ger%E4te-Update' " +
-      "Vorabversionen geplanter Ger%E4te-Firmware Updates angeboten.",
     "btnSensorDetection" : "Sensorerkennung",
     "hintPressSysKeyTryAgain" : "Bet%E4tigen Sie die Systemtaste und versuchen Sie es noch einmal.",
     "hintProblemSensorIdent" : "Bei der Erkennung des Sensors ist ein Fehler aufgetreten.",

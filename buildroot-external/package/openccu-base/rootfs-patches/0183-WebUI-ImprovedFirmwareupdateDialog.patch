@@ -18,7 +18,7 @@
      "dialogShowDeviceFirmwareLinkDownload": "Zum Downloadbereich",
      "hintDevFwAlreadyUploaded" : "" +
        "Die aktuellste Firmware des Ger%E4tes befindet sich bereits auf der " + HMIdentifier.de.CCUShortName + ".\n"+
-@@ -1103,4 +1108,4 @@
+@@ -1099,4 +1104,4 @@
  });
  
  langJSON.de.hintActivateDetectorSelfTest += langJSON.de.checkSmokeDetectorSelfTest;
@@ -68,7 +68,7 @@
  StatusDisplayDialogAcousticEPaper = Class.create({
   
    initialize: function(title, content, value, callback, contentType) {
-@@ -25788,11 +25802,28 @@
+@@ -25782,11 +25796,28 @@
      return false;
    },*/
  
@@ -97,7 +97,7 @@
        this.newFwCounter = 0;
        this.devIndex = 0;
        if (this.devList.length == 0) {
-@@ -25902,12 +25933,23 @@
+@@ -25896,12 +25927,23 @@
          newFW = resultMajorMinor;
        }
  
@@ -123,7 +123,7 @@
          }
          self.newFwCounter++;
        }
-@@ -25916,6 +25958,40 @@
+@@ -25910,6 +25952,40 @@
      if (self.devIndex < self.devList.length) {
        self.fetchAndSetDeviceVersion();
      } else {
@@ -164,7 +164,7 @@
        self.fetchDeviceList = false;
        self.deleteScriptElements();
        if (self.newFwCounter > 0) {
-@@ -25942,26 +26018,41 @@
+@@ -25936,26 +26012,41 @@
    },
  
    showAvailableDeviceFirmware: function() {
