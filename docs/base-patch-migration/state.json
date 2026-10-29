@@ -832,7 +832,7 @@
   "in_progress": {
     "base_merge_commit": "170c2712f77d1a9811bcf2a3e27462f710f2db42",
     "base_pr": 259,
-    "cleanup_pr": null,
+    "cleanup_pr": 4578,
     "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
