@@ -16,7 +16,7 @@
 -        0  {set unit_temp  " &deg;C"; return 0}
 -        1  {set unit_temp  " &deg;F"; return 1}
 -      default {set unit_temp  " *"; return -1}
-+        0  {set unit_temp  "&nbsp;&deg;;C"; return 0}
++        0  {set unit_temp  "&nbsp;&deg;C"; return 0}
 +        1  {set unit_temp  "&nbsp;&deg;F"; return 1}
 +      default {set unit_temp  "&nbsp;*"; return -1}
      }
@@ -208,7 +208,7 @@
 +		temp_up_2   { set correctionValue "(+2&nbsp;&deg;C)" }
 +		temp_up_1   { set correctionValue "(+1&nbsp;&deg;C)" }
 +		temp_down_1 { set correctionValue "(-1&nbsp;&deg;C)" }
-+		temp_down_2 { set correctionValue "(-2&nbsp;&deg;C") }
++		temp_down_2 { set correctionValue "(-2&nbsp;&deg;C)" }
 +		temp_down_5 { set correctionValue "(-5&nbsp;&deg;C)" }
  		default     { set correctionValue "" }
  	}
