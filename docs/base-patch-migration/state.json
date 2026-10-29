@@ -844,7 +844,7 @@
   "in_progress": {
     "base_merge_commit": "061d52a5e0cf94f1367efe360c2b5241613dbd62",
     "base_pr": 262,
-    "cleanup_pr": null,
+    "cleanup_pr": 4588,
     "patch": "0132-WebUI-Fix-UnitDisplay.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
