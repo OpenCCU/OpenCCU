@@ -39389,7 +39389,7 @@ iseThermostat_2ndGen = Class.create(iseThermostat, {
     if (this.opts.stBat) {
       this.showActualBat();
     }
-    if (this.opts.stValve !== null) {
+    if (this.opts.stValve !== undefined) {
       this.showActualValve();
     }
     if (this.opts.idComfort && this.opts.idLowering) {
