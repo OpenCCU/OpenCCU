@@ -25702,8 +25702,6 @@ var preURL = (WEBUI_VERSION.split(".")[0] < 3) ? "" : "ccu3-";
 StartPage = Singleton.create(Page, {
   MAINMENU_ID: "MAINMENU_STARTPAGE",
   downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
-  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
-  fieldTestActive: "/etc/config/fieldTestActive",
   downloadURL : "",
   prevDownloadURL : "",
   devList: [],
@@ -25761,11 +25759,7 @@ StartPage = Singleton.create(Page, {
 
     this.serial = homematic("CCU.getSerial");
 
-    if (homematic('CCU.existsFile', {'file': this.fieldTestActive})) {
-      this.downloadURL = this.fieldTestURLServer;
-    } else {
-      this.downloadURL = this.downloadURLServer;
-    }
+    this.downloadURL = this.downloadURLServer;
 
     if (this.prevDownloadURL != this.downloadURL) {
       this.devList = [];
@@ -30074,19 +30068,13 @@ homematic.com =
   },
 
   getListOfAvailableFirmware: function(callback) {
-      var fieldTestActive = "/etc/config/fieldTestActive";
-
       // The server should return a string like "homematic.com.setDeviceFirmwareVersions([{"type":"HM-MOD-Re-8","version":"1.0.0"},{"type":"HM-MOD-Re-8","version":"1.0.0"}])"
       var script = document.createElement("script");
       script.id = "homematic_com_script_fw";
       script.type = "text/javascript";
       // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
 
-      if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
-        script.src = this.m_fieldTestURLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU"+getProduct()+"&version="+WEBUI_VERSION+"&serial=" + this.serial + "&ts=" + Date.now();
-      } else {
-        script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
-      }
+      script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
       $("body").appendChild(script);
       homematic.com.callback = callback;
   },
@@ -37298,22 +37286,6 @@ setColorWebUI = function() {
   dlg.run();
   dlg.resetHeight();
 };
-
-function activateDeviceBetaFw() {
-  var showBetaDevFw = jQuery("#inputShowBetaFw").is(":checked"),
-    fieldTestActive = "/etc/config/fieldTestActive";
-
-  if (showBetaDevFw) {
-    if (! homematic('CCU.existsFile', {'file': fieldTestActive})) {
-      homematic("CCU.createFile", {'file': fieldTestActive});
-    }
-  } else {
-    if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
-      homematic("CCU.removeFieldTestActive");
-    }
-  }
-};
-
 
 /**
  *

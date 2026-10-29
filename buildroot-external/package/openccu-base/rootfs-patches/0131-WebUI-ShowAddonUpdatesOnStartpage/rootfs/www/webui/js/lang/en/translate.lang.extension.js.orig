@@ -1075,10 +1075,6 @@ jQuery.extend(true, langJSON, {
     "stateDaliBus_2" : "<br/>Overload",
     "btnSearchDaliDevices" : "Check",
     "titleSearchDaliDevices" : "Check channels",
-    "showDeviceBetaFw" : "Show unpublished device firmware.",
-    "hintDeviceBetaFw" :
-      "When the parameter is activated, a closed user group is offered advance versions of planned "+
-      "device firmware updates on the start page under the heading 'Device Update'.",
     "btnSensorDetection" : "Sensor detection",
     "hintPressSysKeyTryAgain" : "Press the system button and try again.",
     "hintProblemSensorIdent" : "An error has occurred when detecting the sensor.",

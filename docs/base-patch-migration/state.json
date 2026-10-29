@@ -821,18 +821,24 @@
       "base_pr": 253,
       "cleanup_pr": 4564,
       "patch": "0170-WebUI-RegexSearchInDeviceLists.patch"
+    },
+    {
+      "base_merge_commit": "2f2c3eba15efb622c24dd8cc11a87630d0fb3532",
+      "base_pr": 256,
+      "cleanup_pr": 4573,
+      "patch": "0125-WebUI-ChannelHighlights.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "2f2c3eba15efb622c24dd8cc11a87630d0fb3532",
-    "base_pr": 256,
-    "cleanup_pr": 4573,
-    "patch": "0125-WebUI-ChannelHighlights.patch",
+    "base_merge_commit": "170c2712f77d1a9811bcf2a3e27462f710f2db42",
+    "base_pr": 259,
+    "cleanup_pr": 4578,
+    "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "fb8e43f105f6a01ef07a5abfe041ecff3bed80bb",
-  "verified_base_pin": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
-  "verified_source_sha256": "5045e7d51c27ddff0579ac039103974abfa68d3892b1e257b46f06516dce6139"
+  "verified_at_openccu_commit": "66e5e041beb7069c7910381153920020c25705a4",
+  "verified_base_pin": "2f2c3eba15efb622c24dd8cc11a87630d0fb3532",
+  "verified_source_sha256": "c29c094a751578b52cd2e750dc930010791a9b715a8887b232d39130337dc0a5"
 }
