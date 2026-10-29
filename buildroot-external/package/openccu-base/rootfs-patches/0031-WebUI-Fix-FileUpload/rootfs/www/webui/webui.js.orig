@@ -17545,7 +17545,7 @@ PartyModeDialog = Class.create({
     // Adds a selectbox for the temperature to the party mode dialog
     var selBox = "<select>";
     for (var loop = 5; loop <= 30; loop++) {
-      selBox += "<option value='"+loop+"'>"+loop+"°C</option>";
+      selBox += "<option value='"+loop+"'>"+loop+"&nbsp;&deg;C</option>";
     }
     selBox += "</select>";
 
@@ -31563,7 +31563,7 @@ ise.SingleDestination.prototype =
       value = min;
     }
 
-    if ((unit == "°C") && (value != min) && (value != max)) {
+    if ((unit == "°C" || unit == "&deg;C") && (value != min) && (value != max)) {
       value = roundValue05(value);
     }
 
@@ -38758,7 +38758,7 @@ iseThermostat.prototype = {
     this.min = min;
     this.max = max;
     this.factor = 100/(max-min);
-    this.unit = " &deg;C";
+    this.unit = "&nbsp;&deg;C";
     this.statusOFF = "OFF";
     this.statusON = "ON";
     this.opts = opts;
@@ -39258,7 +39258,7 @@ iseThermostatHMIP.prototype = {
     this.max = (this.confTempMax > 30) ? 30 : this.confTempMax;
     this.off = (this.confTempMin < 5) ? this.offTemp : this.confTempMin;
     this.on = (this.confTempMax > 30) ? this.onTemp : this.confTempMax;
-    this.unit = "°C";
+    this.unit = "&nbsp;&deg;C";
     this.factor = 100/(this.max-this.min);
     this.iViewOnly = false;
     this.bSliderPosFlag = false;
@@ -39792,7 +39792,7 @@ iseFrequency.prototype = {
     this.min = min;
     this.max = max;
     this.factor = 100/(max-min);
-    this.unit = " mHz";
+    this.unit = "&nbsp;mHz";
     if(bSliderPosFlag) 
     {
         this.bSliderPosFlag = bSliderPosFlag;
@@ -41871,11 +41871,18 @@ checkTemperatureMinMax = function(input, MinVal, MaxVal) {
   var isFarVal = false;
   if (!checkDecimal(tmpInput)) {
     // Zeichen für Temperaturangaben rausfiltern
+    if (tmpInput.indexOf('&deg;C') != -1) {
+      tmpInput = tmpInput.substr(0, tmpInput.indexOf('&deg;C'));
+    }
     if (tmpInput.indexOf('°C') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('°C'));
     }
     if (tmpInput.indexOf('C') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('C'));
+    }
+    if (tmpInput.indexOf('&deg;F') != -1) {
+      tmpInput = tmpInput.substr(0, tmpInput.indexOf('&deg;F'));
+      isFarVal = true;      
     }
     if (tmpInput.indexOf('°F') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('°F'));
@@ -42716,7 +42723,7 @@ isePowerMeterESI.prototype = {
   },
 
   changeToKilo: function() {
-    return (this.summedUpEnergy/1000).toFixed(3);
+    return (this.summedUpEnergy/1000);
   },
 
   setEnergyCounterPanel: function() {
@@ -42732,7 +42739,7 @@ isePowerMeterESI.prototype = {
       this.summedUpEnergy = this.changeToKilo();
     }
 
-    j_panel.html(this.summedUpEnergy + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
+    j_panel.html(((this.kiloPrefix == "k") ? this.summedUpEnergy.toFixed(2) : this.summedUpEnergy) + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
   },
 
   getEnergyConsumption: function(sType) {
@@ -42792,8 +42799,8 @@ isePowerMeterESI.prototype = {
           energyCostCCU = ((energyConsumptionCCU * this.EnergyPrice) / unitFactorCCU).toFixed(2) + " " + this.energyConfig.currency,
           energyCostDevice = ((energyConsumptionDevice * this.EnergyPrice) / unitFactorDevice).toFixed(2) + " " + this.energyConfig.currency;
         if (this.measurementType == this.sensorTypeID.gas) {
-          j_energyCostCCU.text(energyConsumptionCCU.toFixed(1) + kWh + " = " + energyCostCCU).show();
-          j_energyCostDevice.text(energyConsumptionDevice.toFixed(1) + kWh + " = " + energyCostDevice).show();
+          j_energyCostCCU.text(energyConsumptionCCU.toFixed(2) + kWh + " = " + energyCostCCU).show();
+          j_energyCostDevice.text(energyConsumptionDevice.toFixed(2) + kWh + " = " + energyCostDevice).show();
         } else {
           j_energyCostCCU.text(energyCostCCU).show();
           j_energyCostDevice.text(energyCostDevice).show();
@@ -50675,7 +50682,7 @@ TimeoutManager.prototype = Object.extend(new MsgBox(), {
       //msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\"starttime_"   +dayidx +"_"+i+"\" disabled=\"disabled\" type=\"text\" value=\""+ this.tom_toTime( endtime) +"\">Uhr</td>";
       msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\""+prgNr+"starttime_" + dayidx + "_" + i + "\" disabled=\"disabled\" type=\"text\" value=\"" + this.tom_toTime(endtime) + "\">" + translateKey('lblProgramTimeExtension') + "</td>";
       msg += "<td><input style=\"text-align: right;\" maxLength=\"5\" size=\"7\" id=\""+prgNr+"endtime_" + dayidx + "_" + i + "\" " + (i == timeouts.length - 1 ? 'disabled=\"disabled\"' : '') + " type=\"text\" value=\"" + this.tom_toTime(timeouts[i][tom_endtime]) + "\" onblur=\""+prgNr+"tom.tom_checkAndSetTime ('" + day + "', this, " + i + "); document.getElementById('"+prgNr+"starttime_" + dayidx + "_" + (i + 1) + "').value=this.value; \">" + translateKey('lblProgramTimeExtension') + "</td>";
-      msg += "<td><input style=\"text-align: right;\" maxLength=\"4\" size=\"3\" name=\""+prgNr+"temp_tmp\" id=\""+prgNr+"temperature_" + dayidx + "_" + i + "_tmp\" value=\"" + timeouts[i][tom_temperature].toFixed(1) + "\" onblur=\""+prgNr+"tom.tom_setDirty ('" + day + "', this, " + i + ");\">&deg;<span class=\"CF\">C</span></td>";
+      msg += "<td><input style=\"text-align: right;\" maxLength=\"4\" size=\"3\" name=\""+prgNr+"temp_tmp\" id=\""+prgNr+"temperature_" + dayidx + "_" + i + "_tmp\" value=\"" + timeouts[i][tom_temperature].toFixed(1) + "\" onblur=\""+prgNr+"tom.tom_setDirty ('" + day + "', this, " + i + ");\">&nbsp;&deg;<span class=\"CF\">C</span></td>";
       // im naechsten Input-Feld stehen versteckt die zum Aktor zu uebertragenden Werte. Da der Aktor Werte im Grad Celsius erwartet,
       // muss der im Kanalparameter evtl. in F angezeigte Wert immer in Celsius umgerechntet und zwischengespeichert werden.
       msg += "<td><input style=\"display:none\" size=\"3\" name=\""+prgNr+"temp\" id=\""+prgNr+ "temperature_" + dayidx + "_" + i + "\" value=\"" + timeouts[i][tom_temperature].toFixed(1) + "\"></td>";
