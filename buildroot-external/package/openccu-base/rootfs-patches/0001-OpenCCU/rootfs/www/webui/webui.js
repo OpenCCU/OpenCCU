@@ -38951,6 +38951,15 @@ iseThermostat_2ndGen = Class.create(iseThermostat, {
     if (this.opts.stTemp) {
       this.showActualTemp();
     }
+    if (this.opts.stHum !== undefined) {
+      this.showActualHumidity();                                      
+    }
+    if (this.opts.stBat) {
+      this.showActualBat();
+    }
+    if (this.opts.stValve !== undefined) {
+      this.showActualValve();
+    }
     if (this.opts.idComfort && this.opts.idLowering) {
       this.showComfortEco();
     }
@@ -39145,6 +39154,26 @@ iseThermostat_2ndGen = Class.create(iseThermostat, {
     jQuery("#"+this.id +"tblShowTemp").show();
   },
 
+  showActualHumidity: function() {
+    if (parseInt(this.opts.stHum) === 20) {
+      jQuery("#"+this.id +"actHumidity").text('n/a');
+    } else {
+      jQuery("#"+this.id +"actHumidity").text(this.opts.stHum);
+      jQuery("#"+this.id +"actHumidityUnit").show();
+    }
+    jQuery("#"+this.id +"tblShowHumidity").show();
+  }, 
+
+  showActualBat: function() {
+    jQuery("#"+this.id +"actBatteryState").text(this.opts.stBat);
+    jQuery("#"+this.id +"tblShowBatteryState").show();
+  },
+  
+  showActualValve: function() {
+    jQuery("#"+this.id +"actValveState").text(this.opts.stValve);
+    jQuery("#"+this.id +"tblShowValveState").show();
+  },
+  
   showHolidayEndTime: function() {
     var stopTime = this.getHolidayEndTime();
     if (stopTime) {
@@ -39260,6 +39289,8 @@ iseThermostatHMIP.prototype = {
     this.setSControl("ACTUAL_TEMPERATURE", this.ACTUAL_TEMPERATURE);
     this.setSControl("HUMIDITY", this.HUMIDITY);
     this.setSControl("WINDOW_STATE", this.WINDOW_STATE);
+    this.setSControl("BATTERY_STATE", this.BATTERY_STATE);
+    this.setSControl("LEVEL", this.LEVEL);
     this.setSlider();
     this.initElements();
     this.bindEvents();
@@ -39272,6 +39303,8 @@ iseThermostatHMIP.prototype = {
     this.BOOST_MODE = (this.checkBool(opts.BOOST_MODE, false) == "true") ? true : false;
     //this.FROST_PROTECTION = opts.FROST_PROTECTION;
     this.HUMIDITY = this.checkValue(opts.HUMIDITY, this.unknownState);
+    this.BATTERY_STATE = this.checkValue(opts.BATTERY_STATE, this.unknownState);
+    this.LEVEL = this.checkValue(opts.LEVEL, this.unknownState);
     //this.PARTY_MODE = opts.PARTY_MODE;
     this.SET_POINT_MODE = this.checkValue(opts.SET_POINT_MODE, 0);
     this.SET_POINT_TEMPERATURE = this.checkValue(opts.SET_POINT_TEMPERATURE, 4.5);

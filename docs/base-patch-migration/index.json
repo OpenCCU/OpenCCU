@@ -121,17 +121,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "e0b8fb6e5b9d976b5a0e1eb58da44c2fb521c9466cc6ea74637e0b6ffeeae998"
-    },
-    {
-      "added": 138,
-      "files": [
-        "www/rega/esp/controls/heating_control.fn",
-        "www/webui/webui.js"
-      ],
-      "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
-      "removed": 19,
-      "sha256": "540821783a5cf50f50dd196f99094094a942883ad49c5f28b1b223715a2002ab"
+      "sha256": "f688b06c3a65ab9bc9b5d24cd937f6805ddeb07b34399bfea37defcdd2b8d9c5"
     },
     {
       "added": 128,
@@ -379,5 +369,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "29242264a9568e6ac09acfbe9ac274c7b9773a6ffa406c163ec82563c2cd2ec3"
+  "series_sha256": "eb218cd2ae6305eee9ade25e3eb0eb98f4032cdff080388c578497152b7ad5cb"
 }
