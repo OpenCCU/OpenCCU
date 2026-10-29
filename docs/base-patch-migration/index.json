@@ -293,7 +293,7 @@
       ],
       "patch": "0132-WebUI-Fix-UnitDisplay.patch",
       "removed": 96,
-      "sha256": "f3e3351012fb4269996dd6a5f2687c8bcb002dda25c3174926a7e707247e8377"
+      "sha256": "9da49c3052d569bf8b3979a7bd6130e87931a57801d20819f286abbfc705eb6c"
     },
     {
       "added": 10,

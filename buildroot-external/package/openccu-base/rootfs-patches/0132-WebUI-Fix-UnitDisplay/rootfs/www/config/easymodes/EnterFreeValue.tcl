@@ -27,7 +27,7 @@ proc GetTempUnit {} {
   catch {
     switch $dev_ps(DISPLAY_TEMPERATUR_UNIT) {
 
-        0  {set unit_temp  "&nbsp;&deg;;C"; return 0}
+        0  {set unit_temp  "&nbsp;&deg;C"; return 0}
         1  {set unit_temp  "&nbsp;&deg;F"; return 1}
       default {set unit_temp  "&nbsp;*"; return -1}
     }

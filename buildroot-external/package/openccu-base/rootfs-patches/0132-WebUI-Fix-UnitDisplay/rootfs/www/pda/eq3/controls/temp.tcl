@@ -28,7 +28,7 @@ proc TempControl_getStatus {channelId dataPoint} {
 		temp_up_2   { set correctionValue "(+2&nbsp;&deg;C)" }
 		temp_up_1   { set correctionValue "(+1&nbsp;&deg;C)" }
 		temp_down_1 { set correctionValue "(-1&nbsp;&deg;C)" }
-		temp_down_2 { set correctionValue "(-2&nbsp;&deg;C") }
+		temp_down_2 { set correctionValue "(-2&nbsp;&deg;C)" }
 		temp_down_5 { set correctionValue "(-5&nbsp;&deg;C)" }
 		default     { set correctionValue "" }
 	}
