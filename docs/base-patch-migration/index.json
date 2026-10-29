@@ -276,7 +276,7 @@
       "sha256": "0fad5d26eeb1f1b7b2bae5bc8998e7c83223f9eea8a0d3aaad60059a4b67ef04"
     },
     {
-      "added": 102,
+      "added": 103,
       "files": [
         "www/config/easymodes/EnterFreeValue.tcl",
         "www/config/easymodes/cc_tc_ch_master.tcl",
@@ -292,8 +292,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0132-WebUI-Fix-UnitDisplay.patch",
-      "removed": 96,
-      "sha256": "9da49c3052d569bf8b3979a7bd6130e87931a57801d20819f286abbfc705eb6c"
+      "removed": 97,
+      "sha256": "3a3216c7e982adb7451d08d81913fb9bd3ec177dd55ec8cc696b88ed74fab410"
     },
     {
       "added": 10,

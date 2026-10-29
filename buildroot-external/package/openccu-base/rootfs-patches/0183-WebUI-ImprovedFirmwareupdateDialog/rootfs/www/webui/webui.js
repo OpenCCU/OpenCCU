@@ -43031,7 +43031,7 @@ isePowerMeterESI.prototype = {
   },
 
   changeToKilo: function() {
-    return (this.summedUpEnergy/1000).toFixed(2);
+    return (this.summedUpEnergy/1000);
   },
 
   setEnergyCounterPanel: function() {
@@ -43047,7 +43047,7 @@ isePowerMeterESI.prototype = {
       this.summedUpEnergy = this.changeToKilo();
     }
 
-    j_panel.html(this.summedUpEnergy + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
+    j_panel.html(((this.kiloPrefix == "k") ? this.summedUpEnergy.toFixed(2) : this.summedUpEnergy) + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
   },
 
   getEnergyConsumption: function(sType) {
