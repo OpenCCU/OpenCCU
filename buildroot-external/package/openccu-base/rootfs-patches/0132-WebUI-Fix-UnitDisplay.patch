@@ -518,10 +518,19 @@
  
    changeToKilo: function() {
 -    return (this.summedUpEnergy/1000).toFixed(3);
-+    return (this.summedUpEnergy/1000).toFixed(2);
++    return (this.summedUpEnergy/1000);
    },
  
    setEnergyCounterPanel: function() {
+@@ -43202,7 +43209,7 @@
+       this.summedUpEnergy = this.changeToKilo();
+     }
+ 
+-    j_panel.html(this.summedUpEnergy + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
++    j_panel.html(((this.kiloPrefix == "k") ? this.summedUpEnergy.toFixed(2) : this.summedUpEnergy) + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
+   },
+ 
+   getEnergyConsumption: function(sType) {
 @@ -43262,8 +43269,8 @@
            energyCostCCU = ((energyConsumptionCCU * this.EnergyPrice) / unitFactorCCU).toFixed(2) + " " + this.energyConfig.currency,
            energyCostDevice = ((energyConsumptionDevice * this.EnergyPrice) / unitFactorDevice).toFixed(2) + " " + this.energyConfig.currency;
