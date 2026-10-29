@@ -838,7 +838,7 @@
   "in_progress": {
     "base_merge_commit": "a10160eb1591aadeef3063e2f27c3f0eb3f082ef",
     "base_pr": 261,
-    "cleanup_pr": null,
+    "cleanup_pr": 4583,
     "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
