@@ -58,7 +58,7 @@ for initscript_pkg in \
   S49xinetd:BR2_PACKAGE_XINETD \
   S50ser2net:BR2_PACKAGE_SER2NET \
   S51nut:BR2_PACKAGE_NUT \
-  S59snmpd:BR2_PACKAGE_NETSNMP \
+  S59snmpd:BR2_PACKAGE_NETSNMP_SERVER \
   S60openvpn:BR2_PACKAGE_OPENVPN; do
   if ! grep -q "^${initscript_pkg#*:}=y$" "${BR2_CONFIG}"; then
     rm -f "${TARGET_DIR}/etc/init.d/${initscript_pkg%%:*}"
