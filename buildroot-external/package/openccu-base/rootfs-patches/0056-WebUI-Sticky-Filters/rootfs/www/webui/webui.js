@@ -9986,6 +9986,7 @@ ListFilter = Class.create({
     if(filterValues) {
       try {
         filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
         var values = $(this.formId).values;
         for (var i = 0, len = values.length; i < len; i++) {
          if(filterValues.indexOf(values[i].value) !== -1) {

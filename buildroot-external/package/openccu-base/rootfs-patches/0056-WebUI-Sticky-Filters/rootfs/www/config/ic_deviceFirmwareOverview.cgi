@@ -336,6 +336,7 @@ cgi_eval {
         puts "try {"
         puts "  storedFilters = JSON.parse(localStorage.getItem(\"hmFwPageFilter\")) || {};"
         puts "} catch(e) {}"
+        puts "delete storedFilters\[searchFilter\];"
         puts "storedFilters\[searchFilter\] = searchText;"
         puts "try { localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters)); } catch(e) {}"
         puts "jQuery(\"#\" + filter).parent().find(\".FilterCaption\").css(\"color\", searchText ? \"red\" : \"\");"
