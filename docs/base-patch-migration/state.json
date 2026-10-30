@@ -851,18 +851,24 @@
       "base_pr": 270,
       "cleanup_pr": 4589,
       "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch"
+    },
+    {
+      "base_merge_commit": "8f41e3046701a6e3470a21a3699d6138b2b42c5e",
+      "base_pr": 273,
+      "cleanup_pr": 4599,
+      "patch": "0056-WebUI-Sticky-Filters.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "8f41e3046701a6e3470a21a3699d6138b2b42c5e",
-    "base_pr": 273,
-    "cleanup_pr": 4599,
-    "patch": "0056-WebUI-Sticky-Filters.patch",
+    "base_merge_commit": "29067cb6c5d3fc470f898cb2095e4dbf4549fd1d",
+    "base_pr": 275,
+    "cleanup_pr": 4601,
+    "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "ec71de116fcda0528ca34f91f4f5cfcbb63714da",
-  "verified_base_pin": "022a35c662aaf3e9196628ec88ab031b74df2d16",
-  "verified_source_sha256": "d7d8b5c1d0ad04a0ea0cba05b6dc726e97931466bf00b2e6acb7043061a77227"
+  "verified_at_openccu_commit": "78b25b599ce224d3a563d27093bee56959295531",
+  "verified_base_pin": "8f41e3046701a6e3470a21a3699d6138b2b42c5e",
+  "verified_source_sha256": "05807f1c40d7517c205bb8b31e9abcf804d0468c32a206d8dffd65a8572d9e65"
 }

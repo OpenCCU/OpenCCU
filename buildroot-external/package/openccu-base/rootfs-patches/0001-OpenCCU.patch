@@ -1117,7 +1117,7 @@
 +</html>
 --- a/www/webui/js/lang/de/translate.lang.extension.js
 +++ b/www/webui/js/lang/de/translate.lang.extension.js
-@@ -836,7 +836,7 @@
+@@ -837,7 +837,7 @@
      "btnGarageClose" : "Schlie%DFen",
      "btnGarageVent" : "L%FCften",
      "btnGarageStop" : "Stopp",
@@ -1171,7 +1171,7 @@
  
 --- a/www/webui/js/lang/en/translate.lang.extension.js
 +++ b/www/webui/js/lang/en/translate.lang.extension.js
-@@ -833,7 +833,7 @@
+@@ -834,7 +834,7 @@
      "btnGarageClose" : "Closing",
      "btnGarageVent" : "Ventilation",
      "btnGarageStop" : "Stop",
@@ -1180,7 +1180,7 @@
      "dialogSettingsStorageHintUSBStorageP1" : "Storage of data only includes the diagrams.",
      "dialogSettingsSecurityTDAuth" : "Authentication",
      "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentication active: ",
-@@ -1092,4 +1092,4 @@
+@@ -1093,4 +1093,4 @@
  });
  
  langJSON.en.hintActivateDetectorSelfTest += langJSON.en.checkSmokeDetectorSelfTest;
@@ -1232,7 +1232,7 @@
  
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -25722,16 +25722,16 @@
+@@ -25745,16 +25745,16 @@
  
     // WebUI-Version
    showCurrentFirmware: function() {
@@ -1258,7 +1258,7 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -29905,9 +29905,8 @@
+@@ -29928,9 +29928,8 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
@@ -1269,7 +1269,7 @@
  
      this.serial = homematic("CCU.getSerial");
      this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
-@@ -29916,7 +29915,7 @@
+@@ -29939,7 +29938,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1278,7 +1278,7 @@
      $("body").appendChild(script);
    },
  
-@@ -35382,11 +35381,11 @@
+@@ -35405,11 +35404,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {

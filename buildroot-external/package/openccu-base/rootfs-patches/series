@@ -1,7 +1,6 @@
 0001-OpenCCU.patch
 0031-WebUI-Fix-FileUpload.patch
 0039-WebUI-Fix-Style-Glitches.patch
-0044-WebUI-DisableDeviceServiceMsg.patch
 0046-WebUI-ImprovedScriptEditor.patch
 0054-WebUI-AddTimeZones.patch
 0057-WebUI-ImprovedDutyCycleDisplay.patch

@@ -178,7 +178,7 @@ iseInitUpdateArrays();
     {
       if( oAlarm.IsTypeOf(OT_ALARMDP) )
       {
-        if( oAlarm.AlState() == asOncoming )
+        if( (oAlarm.Used() == true) && (oAlarm.Enabled() == true) && (oAlarm.AlState() == asOncoming) )
         {
           iSvcCount = iSvcCount + 1;
           string sTimestamp = oAlarm.AlOccurrenceTime();
