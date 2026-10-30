@@ -34,11 +34,34 @@ get_gzip_uncompressed_size()
   return 1
 }
 
+# size of the ext2/3/4 filesystem on a device in bytes (block count * block
+# size, from the superblock), empty if it cannot be read
+get_ext_fs_size()
+{
+  local dev="$1"
+  local count size
+
+  count=$(/sbin/tune2fs -l "${dev}" 2>/dev/null | awk -F: '/^Block count:/ { gsub(/ /,"",$2); print $2; exit }')
+  size=$(/sbin/tune2fs -l "${dev}" 2>/dev/null | awk -F: '/^Block size:/ { gsub(/ /,"",$2); print $2; exit }')
+  case "${count}${size}" in
+    ''|*[!0-9]*)
+      return 1
+      ;;
+  esac
+  if [[ -z "${count}" ]] || [[ -z "${size}" ]]; then
+    return 1
+  fi
+
+  echo $((count * size))
+  return 0
+}
+
 expand_userfs_to_max()
 {
   local USER_DEV DISK_DEV SECTOR_SIZE DISK_SIZE_BYTES DISK_LAST_SECTOR
   local SFDISK_DUMP LINE_USER USER_START USER_SIZE USER_END FREE_SECTORS
-  local USER_PARTNUM PARTED_ERR E2FSCK_RC RESIZE2FS_ERR RESIZE_THRESHOLD
+  local USER_PARTNUM PARTED_ERR E2FSCK_RC E2FSCK_OUT RESIZE2FS_ERR RESIZE_THRESHOLD
+  local PART_BYTES FS_BYTES RESIZE_PART
 
   USER_DEV=$(/sbin/blkid --label userfs 2>/dev/null || true)
   if [[ -z "${USER_DEV}" ]]; then
@@ -94,43 +117,78 @@ expand_userfs_to_max()
   USER_END=$((USER_START + USER_SIZE - 1))
   FREE_SECTORS=$((DISK_LAST_SECTOR - USER_END))
   RESIZE_THRESHOLD=2048
+
+  # compare the filesystem with its partition: a partition that already reaches
+  # the disk end but carries a smaller filesystem (a previous resize that was
+  # cut short after resizepart) is only expanded with resize2fs
+  PART_BYTES=$((USER_SIZE * SECTOR_SIZE))
+  FS_BYTES=$(get_ext_fs_size "${USER_DEV}")
+  RESIZE_PART=1
   if [[ "${FREE_SECTORS}" -le "${RESIZE_THRESHOLD}" ]]; then
-    echo -ne "userfs already maxed, "
-    return 1
+    if [[ -n "${FS_BYTES}" ]] && [[ $((PART_BYTES - FS_BYTES)) -gt $((RESIZE_THRESHOLD * SECTOR_SIZE)) ]]; then
+      RESIZE_PART=0
+    else
+      echo -ne "userfs already maxed, "
+      return 1
+    fi
   fi
 
-  USER_PARTNUM=$(/bin/lsblk -n -o PARTN "${USER_DEV}" 2>/dev/null | head -n 1 | tr -d '[:space:]')
-  if [[ -z "${USER_PARTNUM}" ]] || echo "${USER_PARTNUM}" | grep -q '[^0-9]'; then
-    echo "ERROR: (cannot determine userfs part number)"
-    return 2
+  if [[ ${RESIZE_PART} -eq 1 ]]; then
+    USER_PARTNUM=$(/bin/lsblk -n -o PARTN "${USER_DEV}" 2>/dev/null | head -n 1 | tr -d '[:space:]')
+    if [[ -z "${USER_PARTNUM}" ]]; then
+      # lsblk takes PARTN from udev; without udev properties sysfs has the number
+      USER_PARTNUM=$(cat "/sys/class/block/$(basename "${USER_DEV}")/partition" 2>/dev/null | tr -d '[:space:]')
+    fi
+    if [[ -z "${USER_PARTNUM}" ]] || echo "${USER_PARTNUM}" | grep -q '[^0-9]'; then
+      echo "ERROR: (cannot determine userfs part number)"
+      return 2
+    fi
+    echo -ne "resize userfs to disk end, "
+  else
+    echo -ne "userfs partition already at disk end, grow filesystem (${FS_BYTES} -> ${PART_BYTES} bytes), "
   fi
 
-  echo -ne "resize userfs to disk end, "
   umount -f /userfs 2>/dev/null || true
-
-  if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DISK_DEV}" resizepart "${USER_PARTNUM}" 100% 2>&1); then
-    echo "ERROR: (resizepart userfs failed: ${PARTED_ERR})"
-    mount -o rw /userfs 2>/dev/null || true
+  if grep -qs " /userfs " /proc/mounts; then
+    echo "ERROR: (umount /userfs failed, still mounted)"
     return 2
   fi
 
-  # set MBR disk signature in case we have a dos/mbr partitioning
-  PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DISK_DEV}" 2>/dev/null || true)"
-  case "${PTTYPE}" in
-    dos)
-      # MBR: required because parted resets disk signature, thus PARTUUID will be different
-      echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
-      ;;
-    gpt)
-      # GPT: not required; GPT-PARTUUID comes from unique partition GUID
-      ;;
-  esac
+  if [[ ${RESIZE_PART} -eq 1 ]]; then
+    if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DISK_DEV}" resizepart "${USER_PARTNUM}" 100% 2>&1); then
+      echo "ERROR: (resizepart userfs failed: ${PARTED_ERR})"
+      mount -o rw /userfs 2>/dev/null || true
+      return 2
+    fi
 
-  # use partprobe to query for updated parttable
-  partprobe "${DISK_DEV}" 2>/dev/null || true
+    # set MBR disk signature in case we have a dos/mbr partitioning
+    PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DISK_DEV}" 2>/dev/null || true)"
+    case "${PTTYPE}" in
+      dos)
+        # MBR: required because parted resets disk signature, thus PARTUUID will be different
+        echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+        ;;
+      gpt)
+        # GPT: not required; GPT-PARTUUID comes from unique partition GUID
+        ;;
+    esac
 
-  /sbin/e2fsck -pDf "${USER_DEV}" >/dev/null 2>&1
+    # use partprobe to query for updated parttable
+    partprobe "${DISK_DEV}" 2>/dev/null || true
+  fi
+
+  # preen first; what preen refuses to fix on its own (rc >= 4, e.g. a corrupted
+  # orphan list after a hard reboot with the userfs mounted read-write) gets a
+  # full run answering yes, and the update continues if that leaves the
+  # filesystem clean. Both results go to the log.
+  E2FSCK_OUT=$(/sbin/e2fsck -pDf "${USER_DEV}" 2>&1)
   E2FSCK_RC=$?
+  if [[ ${E2FSCK_RC} -ge 4 ]]; then
+    echo -ne "e2fsck -p rc=${E2FSCK_RC} ($(echo "${E2FSCK_OUT}" | grep -v '^$' | tr '\n' ';')), retrying with e2fsck -fy, "
+    E2FSCK_OUT=$(/sbin/e2fsck -fy "${USER_DEV}" 2>&1)
+    E2FSCK_RC=$?
+    echo -ne "rc=${E2FSCK_RC} ($(echo "${E2FSCK_OUT}" | grep -v '^$' | tr '\n' ';')), "
+  fi
   if [[ ${E2FSCK_RC} -ge 4 ]]; then
     echo "ERROR: (e2fsck userfs failed rc=${E2FSCK_RC})"
     mount -o rw /userfs 2>/dev/null || true

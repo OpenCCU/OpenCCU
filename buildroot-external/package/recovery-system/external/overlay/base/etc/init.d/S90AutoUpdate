@@ -5,6 +5,37 @@
 # waiting which we can perform during bootup automatically.
 #
 
+# keep the install log of an unattended update for the system that boots
+# next: a copy of /tmp/fwinstall.log on the userfs (mounted read-write by
+# the caller), named after the UTC time, the newest five kept. Best effort:
+# nothing here may fail the update or the reboot.
+save_install_log() {
+  if [[ -f /tmp/fwinstall.log ]] && mkdir -p /usr/local/var/recovery 2>/dev/null; then
+    chmod 0755 /usr/local/var/recovery 2>/dev/null
+    cp /tmp/fwinstall.log "/usr/local/var/recovery/$(date -u +%Y-%m-%dT%H-%M-%SZ).log" 2>/dev/null &&
+      chmod 0644 /usr/local/var/recovery/*.log 2>/dev/null
+    # the names sort by time: drop all but the newest five
+    set -- /usr/local/var/recovery/*.log
+    while [ $# -gt 5 ]; do
+      rm -f "$1"
+      shift
+    done
+  fi
+  return 0
+}
+
+# after an unattended update, whichever way it ended: the userfs read-write (the
+# update may have left it unmounted), both boot markers gone so that the next boot
+# is a normal one, the install log kept, the userfs read-only again. The reason of
+# a failure is in the log's last line.
+finish_update() {
+  mount -o rw,remount /userfs 2>/dev/null || mount -o rw /userfs 2>/dev/null
+  rm -f /usr/local/.recoveryMode
+  rm -f /usr/local/.firmwareUpdate
+  save_install_log
+  mount -o ro,remount /userfs
+}
+
 start() {
   echo -n "Checking for Auto-Update Jobs: "
 
@@ -25,23 +56,21 @@ start() {
       filename=$(mktemp -p /usr/local/tmp)
       if cp -a "${USB_DIR}/ccu-update.bin" "${filename}"; then
         # run unattended firmware update
-        if ! ( set -o pipefail; /bin/fwinstall.sh "${filename}" 2>&1 | tee /tmp/fwinstall.log ); then
-          cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
-
-          # firmware update failed, clean up pending update marker
+        ( set -o pipefail; /bin/fwinstall.sh "${filename}" 2>&1 | tee /tmp/fwinstall.log )
+        FWINSTALL_RC=$?
+        cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
+        if [[ ${FWINSTALL_RC} -ne 0 ]]; then
+          # firmware update failed, clean up pending update markers
           # and reboot into normal mode
           echo "ERROR!, rebooting"
+          echo "ERROR: unattended firmware update failed (rc=${FWINSTALL_RC}), rebooting into the normal system<br/>" >>/tmp/fwinstall.log
         else
-          cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
-
           # firmware update succeeded, lets reboot!
           echo "OK, rebooting"
         fi
 
         # firmware update done, lets reboot!
-        mount -o rw,remount /userfs
-        rm -f /usr/local/.firmwareUpdate
-        mount -o ro,remount /userfs
+        finish_update
 
         # reboot and exit
         /sbin/reboot
@@ -93,23 +122,21 @@ start() {
     # (remount userfs in rw mode so that
     #  fwinstall.sh can extract data if necessary)
     mount -o rw,remount /userfs
-    if ! ( set -o pipefail; /bin/fwinstall.sh "${FWINSTALL_PARAM}" 2>&1 | tee /tmp/fwinstall.log ); then
-      cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
-
-      # firmware update failed, clean up pending update marker
+    ( set -o pipefail; /bin/fwinstall.sh "${FWINSTALL_PARAM}" 2>&1 | tee /tmp/fwinstall.log )
+    FWINSTALL_RC=$?
+    cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
+    if [[ ${FWINSTALL_RC} -ne 0 ]]; then
+      # firmware update failed, clean up pending update markers
       # and reboot into normal mode
       echo "ERROR!, rebooting"
+      echo "ERROR: unattended firmware update failed (rc=${FWINSTALL_RC}), rebooting into the normal system<br/>" >>/tmp/fwinstall.log
     else
-      cat /tmp/fwinstall*.pid | xargs kill 2>/dev/null
-
       # firmware update succeeded, lets reboot!
       echo "OK, rebooting"
     fi
 
     # firmware update done, lets reboot!
-    mount -o rw,remount /userfs
-    rm -f /usr/local/.firmwareUpdate
-    mount -o ro,remount /userfs
+    finish_update
 
     # reboot and exit
     /sbin/reboot
