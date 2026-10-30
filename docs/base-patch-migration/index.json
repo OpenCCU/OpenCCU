@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "756ceed36f130464f0fed1b0ab2cca9de422a586b091d63b24c9c44e9a7052d8"
+      "sha256": "7ee98812c4c231bb8414fdefc9e5234add7306f0e13f1b21a7ba2f2e04c1ffb4"
     },
     {
       "added": 370,
@@ -109,7 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "48a653191d16f038798e03d5cc67c76f2a2791129d0b710bcb688b4eb6c7cabc"
+      "sha256": "5eb922f5065a6843726ef2adc779f4f85ce726a6675915179ec0fb6638b972ae"
     },
     {
       "added": 128,
@@ -126,7 +126,7 @@
       ],
       "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
       "removed": 3,
-      "sha256": "cdd345a76f3a712469793d3aad7010ef4cdb8a38cd5283b3c5744aad189ba418"
+      "sha256": "3cf96638bb095df38a3a9a30c7a1622c2308d376e24b7e0275698e85377a3602"
     },
     {
       "added": 305,
@@ -138,7 +138,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "7aa08bd92c3142221e4be5a80a4ec922d42d971b0db11d79584b81b9268aa6e4"
+      "sha256": "02d2786cafae85e7f5e09ff6d9a8a68810904e3ff49e014dc2dc906aeb167cd5"
     },
     {
       "added": 757,
@@ -149,18 +149,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "051c4fb411943a4e806c253bb127cbc78af7c07c0c916b32b42bc068f71ba421"
-    },
-    {
-      "added": 130,
-      "files": [
-        "www/config/ic_deviceFirmwareOverview.cgi",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0056-WebUI-Sticky-Filters.patch",
-      "removed": 6,
-      "sha256": "e256d961841ea0b11af1b0ca8e115f2915aea5b8ced5431bda00f263a38ae254"
+      "sha256": "19943bcfdbc9f9170724a3f58a95bcffdd4f5bd325733c3dbb63aa2f4238342a"
     },
     {
       "added": 257,
@@ -337,5 +326,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "a18271d5786ffb75cfaaebc0c5a1a181313e5783dc14741f41d73fd3668be1c8"
+  "series_sha256": "761fec3cf330e957aec95dfe340276d7b8fce6477c21b290dde06c41cf52bec4"
 }
