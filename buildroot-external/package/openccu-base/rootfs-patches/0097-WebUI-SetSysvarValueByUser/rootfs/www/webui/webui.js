@@ -9795,7 +9795,8 @@ StringFilter = function(name, callback)
   var m_callback = callback;
   
   var m_id     = name.replace(/\,/g, "_");
-  var m_value    = localStorage.getItem(m_id) || "";
+  var m_value    = "";
+  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
   var m_textId = m_id + "Text";
 
   var isSet = function()
@@ -9902,7 +9903,7 @@ StringFilter = function(name, callback)
       }
     }
     if ($(m_id))     { $(m_id).hide(); }
-    localStorage.setItem(m_id, $(m_textId).value);
+    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
     if (m_callback)  { m_callback(); }
   };
   
@@ -9921,7 +9922,7 @@ StringFilter = function(name, callback)
   this.reset = function()
   {
     m_value = "";
-    localStorage.removeItem(m_id);
+    try { localStorage.removeItem(m_id); } catch (e) {}
     this.close();
   };
 
@@ -9976,10 +9977,12 @@ ListFilter = Class.create({
   },
 
   restoreFilters: function() {
-    var filterValues = localStorage.getItem(this.id);
+    var filterValues = null;
+    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
     if(filterValues) {
       try {
         filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
         var values = $(this.formId).values;
         for (var i = 0, len = values.length; i < len; i++) {
          if(filterValues.indexOf(values[i].value) !== -1) {
@@ -10112,7 +10115,7 @@ ListFilter = Class.create({
         try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
       }
       // JSON.stringify encodes an array twice???
-      localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues)));
+      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
       if (this.callback) { this.callback(); }
     }
   },
@@ -10149,7 +10152,7 @@ ListFilter = Class.create({
       this.list[i]._selected = false;
     }
 
-    localStorage.removeItem(this.id);
+    try { localStorage.removeItem(this.id); } catch (e) {}
     this.close();
   }
   
@@ -32705,6 +32708,9 @@ iseMessageBox.prototype =
         centerMessageBox();
         iseRefr(true);
         translatePage("#messagebox");
+        setTimeout(function() {
+          eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+        }, 100);
       }
     };
     new Ajax.Updater('messagebox',url,opt);
@@ -37994,7 +38000,7 @@ iseFilter.prototype = {
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
     this.bTypeString = false;
-    localStorage.removeItem('iseSFilters_' + this.pageID);
+    try { localStorage.removeItem('iseSFilters_' + this.pageID); } catch (e) {}
     var filterButtons = document.querySelectorAll('.FilterSetButton[onclick*=' + this.pageID + ']');
     filterButtons.forEach(function(el) {
       try {

@@ -196,7 +196,7 @@
        <\/table>\n
      <\/div>\n
      \n
-@@ -12415,6 +12416,7 @@
+@@ -12445,6 +12446,7 @@
  
        this.interfaceName = data["interface"];
        this.isReadyConfig = data["isReady"];
@@ -204,7 +204,7 @@
        this.deviceType = deviceType;
        this.typeName = deviceType.name;
        this.typeDescription = deviceType.description;
-@@ -12691,6 +12693,23 @@
+@@ -12721,6 +12723,23 @@
    {
    },  
  
@@ -228,7 +228,7 @@
    setDeviceInputCheck: function() {
      this.deviceInputCheck = true;
    },
-@@ -15769,6 +15788,7 @@
+@@ -15799,6 +15818,7 @@
    USABLE_ID: "DeviceConfigDialog_isUsable",
    VISIBLE_ID: "DeviceConfigDialog_isVisible",
    LOGGED_ID: "DeviceConfigDialog_isLogged",
@@ -236,7 +236,7 @@
    TEST_RESULT_ID: "DeviceConfigDialogTestResult",
    RESULT_OK: 1,
    RESULT_ABORT: 0,
-@@ -15794,6 +15814,7 @@
+@@ -15824,6 +15844,7 @@
      this.isVisibilityChanged = false;
      this.isUsabilityChanged = false;
      this.isLoggingChanged = false;   
@@ -244,7 +244,7 @@
      this.callback = callback;
      this.layer = document.createElement("div");
      this.layer.id = this.LAYER_ID;
-@@ -15863,6 +15884,8 @@
+@@ -15893,6 +15914,8 @@
          if (this.isUsabilityChanged) { channel.setUsability(isUsable); }
          if (this.isLoggingChanged) { channel.setLogging(isLogged); }
        }, this);

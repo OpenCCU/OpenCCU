@@ -240,7 +240,7 @@
    padding-top: 5px;
    padding-bottom: 5px;
  }
-@@ -3699,7 +3693,14 @@
+@@ -3703,7 +3697,14 @@
    border: 0 none;
    margin: 0;
    padding: 0;
@@ -256,7 +256,7 @@
  }
  
  application {
-@@ -3898,11 +3899,6 @@
+@@ -3902,11 +3903,6 @@
  	cursor: pointer;
  }
  
@@ -268,7 +268,7 @@
  /* rega\pages\msg\editScript.htm */
  
  .CLASS00001 {
-@@ -3925,7 +3921,6 @@
+@@ -3929,7 +3925,6 @@
  
  .CLASS00004 {
  	width:75%;
@@ -276,7 +276,7 @@
  	background-color: $_(activeBackground); /* #dcdcdc */
  	text-align:left;
  }
-@@ -3964,7 +3959,6 @@
+@@ -3968,7 +3963,6 @@
  
  .CLASS00011 {
  	width:25%;
@@ -284,7 +284,7 @@
  	background-color: $_(white); /* white */
  }
  
-@@ -4196,7 +4190,6 @@
+@@ -4200,7 +4194,6 @@
  
  .CLASS00314 {
  	line-height:15px;
@@ -292,7 +292,7 @@
  	text-align:center
  }
  
-@@ -4386,7 +4379,6 @@
+@@ -4390,7 +4383,6 @@
  	text-align:left;
  	color: $_(textColorA) ! important; /* white */
  	font-weight:bold;
@@ -300,7 +300,7 @@
  }
  
  .CLASS00716 {
-@@ -4792,7 +4784,6 @@
+@@ -4796,7 +4788,6 @@
  	font-weight:bold;
  	color: $_(textColorB); /* black */
  	cursor:pointer;
@@ -308,7 +308,7 @@
  }
  
  .CLASS01217 {
-@@ -5195,7 +5186,6 @@
+@@ -5199,7 +5190,6 @@
  /* rega\esp\rule.inc */
  
  .CLASS02300 {
@@ -316,7 +316,7 @@
  	font-weight: bold;
  }
  
-@@ -5229,7 +5219,6 @@
+@@ -5233,7 +5223,6 @@
  
  .CLASS02501 {
  	background-color:$_(clickable);
@@ -324,7 +324,7 @@
  	padding:4px;
  	border:solid 1px $_(black); /* black */
  	text-align:center;
-@@ -5268,7 +5257,6 @@
+@@ -5272,7 +5261,6 @@
  
  .CLASS02507 {
  	background-color:$_(activeBackground);
@@ -332,7 +332,7 @@
  	padding:4px;
  	color: $_(textColorB); /* black */
  	height:30px;
-@@ -5450,7 +5438,6 @@
+@@ -5454,7 +5442,6 @@
  }
  
  .CLASS02532 {
@@ -340,7 +340,7 @@
  	width:220px;
  	/*height:25px;*/
  	height:auto;
-@@ -5461,14 +5448,12 @@
+@@ -5465,14 +5452,12 @@
  }
  
  .CLASS02532a {
@@ -355,7 +355,7 @@
  	width:220px;
  	height:30px;
    color: $_(white) ! important;
-@@ -5562,13 +5547,11 @@
+@@ -5566,13 +5551,11 @@
  
  .CLASS02542 {
  	border:solid 1px $_(black); /* black */
@@ -369,7 +369,7 @@
  	text-align:right;
  }
  
-@@ -6181,7 +6164,6 @@
+@@ -6185,7 +6168,6 @@
  
  .CLASS03306 {
  	line-height:15px;
@@ -377,7 +377,7 @@
  }
  
  .CLASS03307 {
-@@ -6317,7 +6299,6 @@
+@@ -6321,7 +6303,6 @@
  
  .CLASS03703 {
  	line-height:15px;
@@ -385,7 +385,7 @@
  }
  
  .CLASS03704 {
-@@ -6452,7 +6433,6 @@
+@@ -6456,7 +6437,6 @@
  
  .CLASS03911 {
  	line-height:15px;
@@ -393,7 +393,7 @@
  }
  
  /* rega\pages\tabs\handling\rooms.htm */
-@@ -6486,7 +6466,6 @@
+@@ -6490,7 +6470,6 @@
  
  .CLASS04005 {
  	line-height:15px;
@@ -401,7 +401,7 @@
  }
  
  .CLASS04006 {
-@@ -6537,7 +6516,6 @@
+@@ -6541,7 +6520,6 @@
  
  .CLASS04107 {
  	line-height:15px;
@@ -409,7 +409,7 @@
  }
  
  .CLASS04108 {
-@@ -6585,12 +6563,10 @@
+@@ -6589,12 +6567,10 @@
  }
  
  .CLASS04203 {
@@ -422,7 +422,7 @@
  }
  
  .CLASS04205 {
-@@ -6613,7 +6589,6 @@
+@@ -6617,7 +6593,6 @@
  
  .CLASS04209 {
  	line-height:15px;
@@ -430,7 +430,7 @@
  }
  
  .CLASS04210 {
-@@ -6667,7 +6642,6 @@
+@@ -6671,7 +6646,6 @@
  }
  
  .CLASS04304 {
@@ -438,7 +438,7 @@
  	height:40px;
  }
  
-@@ -6708,7 +6682,6 @@
+@@ -6712,7 +6686,6 @@
  
  .CLASS04312 {
  	line-height:15px;
@@ -446,7 +446,7 @@
  }
  
  .CLASS04313 {
-@@ -6809,7 +6782,6 @@
+@@ -6813,7 +6786,6 @@
  
  .CLASS04800 {
  	line-height:14px;
@@ -454,7 +454,7 @@
  	width:200px;
  }
  
-@@ -6861,12 +6833,10 @@
+@@ -6865,12 +6837,10 @@
  
  .CLASS04904 {
  	color: $_(textColorB); /* black */
@@ -467,7 +467,7 @@
  	width:180px;
  }
  
-@@ -6921,7 +6891,6 @@
+@@ -6925,7 +6895,6 @@
  
  .CLASS05007 {
  	color: $_(textColorB); /* black */
@@ -475,7 +475,7 @@
  }
  
  .CLASS05008 {
-@@ -6944,7 +6913,6 @@
+@@ -6948,7 +6917,6 @@
  
  .CLASS05010 {
  	color: $_(textColorB); /* black */
@@ -483,7 +483,7 @@
  	width:100%;
  }
  
-@@ -6954,7 +6922,6 @@
+@@ -6958,7 +6926,6 @@
  
  .CLASS05012 {
  	color: $_(textColorB); /* black */
@@ -491,7 +491,7 @@
  	width:100%;
  }
  
-@@ -7070,7 +7037,6 @@
+@@ -7074,7 +7041,6 @@
  
  .CLASS05207 {
  	line-height:15px;
@@ -499,7 +499,7 @@
  }
  
  .CLASS05208 {
-@@ -7123,7 +7089,6 @@
+@@ -7127,7 +7093,6 @@
  
  .CLASS05305 {
  	line-height:15px;
@@ -507,7 +507,7 @@
  }
  
  /* rega\pages\tabs\admin\linkprog.htm */
-@@ -7261,7 +7226,6 @@
+@@ -7265,7 +7230,6 @@
  
  .CLASS05705 {
  	width:572px;
@@ -515,7 +515,7 @@
  }
  
  .CLASS05706 {
-@@ -7274,7 +7238,6 @@
+@@ -7278,7 +7242,6 @@
  
  .CLASS05707 {
  	width:570px;
@@ -523,7 +523,7 @@
  }
  
  /* rega\pages\tabs\favViewer.htm  */
-@@ -7724,7 +7687,6 @@
+@@ -7728,7 +7691,6 @@
  
  .CLASS06413 {
    line-height:15px;
@@ -531,7 +531,7 @@
  }
  
  .CLASS06414 {
-@@ -8136,7 +8098,6 @@
+@@ -8140,7 +8102,6 @@
  }
  
  .CLASS20801 {
@@ -539,7 +539,7 @@
   	color: $_(textColorB); /* black */
  }
  
-@@ -8157,7 +8118,6 @@
+@@ -8161,7 +8122,6 @@
  }
  
  .CLASS20805 {
@@ -547,7 +547,7 @@
  }
  
  .CLASS20806 {
-@@ -8168,7 +8128,6 @@
+@@ -8172,7 +8132,6 @@
    background-color:$_(clickable);
   color: $_(textColorA); /* white */
    vertical-align: middle;
@@ -555,7 +555,7 @@
  }
  
  .CLASS20808 {
-@@ -8184,7 +8143,6 @@
+@@ -8188,7 +8147,6 @@
  .CLASS20810 {
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
@@ -563,7 +563,7 @@
  }
  
  .CLASS20811 {
-@@ -8219,7 +8177,6 @@
+@@ -8223,7 +8181,6 @@
  .CLASS20817 {
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
@@ -571,7 +571,7 @@
  }
  
  .CLASS20818 {
-@@ -8245,7 +8202,6 @@
+@@ -8249,7 +8206,6 @@
  }
  
  .CLASS20901 {
@@ -579,7 +579,7 @@
  }
  
  .CLASS20902 {
-@@ -8287,7 +8243,6 @@
+@@ -8291,7 +8247,6 @@
    color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
    width: 100%;
@@ -587,7 +587,7 @@
  }
  
  .CLASS20910 {
-@@ -8307,7 +8262,6 @@
+@@ -8311,7 +8266,6 @@
  .CLASS20913 {
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
@@ -595,7 +595,7 @@
    width: 100%;
  }
  
-@@ -8320,7 +8274,6 @@
+@@ -8324,7 +8278,6 @@
  }
  
  .CLASS20916 {
@@ -603,7 +603,7 @@
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
  }
-@@ -8383,7 +8336,6 @@
+@@ -8387,7 +8340,6 @@
  }
  
  .CLASS21101 {
@@ -611,7 +611,7 @@
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
  }
-@@ -8405,13 +8357,11 @@
+@@ -8409,13 +8361,11 @@
  }
  
  .CLASS21105 {
@@ -625,7 +625,7 @@
    width: 100%;
  }
  
-@@ -8443,7 +8393,6 @@
+@@ -8447,7 +8397,6 @@
  .CLASS21111 {
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
@@ -633,7 +633,7 @@
  }
  
  .CLASS21112 {
-@@ -8498,7 +8447,6 @@
+@@ -8502,7 +8451,6 @@
  }
  
  .CLASS21201 {
@@ -641,7 +641,7 @@
  }
  
  .CLASS21202 {
-@@ -8512,7 +8460,6 @@
+@@ -8516,7 +8464,6 @@
  }
  
  .CLASS21204 {
@@ -649,7 +649,7 @@
   	color: $_(textColorB); /* black */
  }
  
-@@ -8611,7 +8558,6 @@
+@@ -8615,7 +8562,6 @@
  
  .CLASS21302 {
   	color: $_(textColorB); /* black */
@@ -657,7 +657,7 @@
    text-align:center;
    margin: 5px;
  }
-@@ -8651,7 +8597,6 @@
+@@ -8655,7 +8601,6 @@
  }
  
  .CLASS21401 {
@@ -665,7 +665,7 @@
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
  }
-@@ -8673,7 +8618,6 @@
+@@ -8677,7 +8622,6 @@
  }
  
  .CLASS21405 {
@@ -673,7 +673,7 @@
  }
  
  .CLASS21406 {
-@@ -8702,7 +8646,6 @@
+@@ -8706,7 +8650,6 @@
  .CLASS21410 {
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
@@ -681,7 +681,7 @@
  }
  
  .CLASS21411 {
-@@ -8729,7 +8672,6 @@
+@@ -8733,7 +8676,6 @@
  }
  
  .CLASS21501 {
@@ -689,7 +689,7 @@
  }
  
  .CLASS21502 {
-@@ -8751,7 +8693,6 @@
+@@ -8755,7 +8697,6 @@
  .CLASS21505 {
   	color: $_(textColorB); /* black */
    background-color: $_(white); /* white */
@@ -697,7 +697,7 @@
  }
  
  .CLASS21506 {
-@@ -8787,7 +8728,6 @@
+@@ -8791,7 +8732,6 @@
  }
  
  .CLASS21601 {
@@ -705,7 +705,7 @@
  }
  
  .CLASS21602 {
-@@ -8801,7 +8741,6 @@
+@@ -8805,7 +8745,6 @@
  }
  
  .CLASS21604 {
@@ -713,7 +713,7 @@
   	color: $_(textColorB); /* black */
  }
  
-@@ -8854,7 +8793,6 @@
+@@ -8858,7 +8797,6 @@
  .CLASS21800 {
    width: 100%;
    font-weight: bold;
@@ -721,7 +721,7 @@
    cursor: pointer;
  }
  
-@@ -8903,7 +8841,6 @@
+@@ -8907,7 +8845,6 @@
  
  .CLASS21901 {
    line-height:15px;
@@ -729,7 +729,7 @@
  }
  
  .CLASS21902 {
-@@ -8936,7 +8873,7 @@
+@@ -8940,7 +8877,7 @@
  
  .CLASS21906 {
    color: $_(red);
@@ -738,7 +738,7 @@
    font-weight: bold;
  }
  
-@@ -9090,7 +9027,6 @@
+@@ -9094,7 +9031,6 @@
  
  .CLASS22100 {
    line-height:14px;
@@ -746,7 +746,7 @@
  }
  
  .CLASS22101 {
-@@ -9284,3 +9220,16 @@
+@@ -9288,3 +9224,16 @@
    border:solid 1px $_(black);
  }
  
@@ -765,7 +765,7 @@
 +}
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -10614,7 +10614,13 @@
+@@ -10644,7 +10644,13 @@
      Element.setStyle(this.m_element, {"textAlign": alignment});
      return this;
    },
@@ -780,7 +780,7 @@
    /**
     * Setzt die Breite des Labels.
     * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
-@@ -10635,7 +10641,13 @@
+@@ -10665,7 +10671,13 @@
      if (height != "auto") { height = parseInt(height) + "px"; }
      Element.setStyle(this.m_element, { height    : height });
      return this;
@@ -795,7 +795,7 @@
  });
   
  /**
-@@ -10902,6 +10914,16 @@
+@@ -10932,6 +10944,16 @@
      return this;
    },
    
@@ -812,7 +812,7 @@
    setWrap: function(isWrap)
    {
      if (isWrap) { Element.writeAttribute(this.m_element, "wrap", "soft"); }
-@@ -16876,8 +16898,8 @@
+@@ -16906,8 +16928,8 @@
    {
      var screenWidth  = WebUI.getWidth();
      var screenHeight = WebUI.getHeight();
@@ -823,7 +823,7 @@
      var frameX       = parseInt((screenWidth  - frameWidth)  / 2);
      var frameY       = parseInt((screenHeight - frameHeight) / 2);
  
-@@ -16887,63 +16909,142 @@
+@@ -16917,63 +16939,142 @@
      
      this.m_layer = document.createElement("div");
      this.m_layer.className = "DialogLayer";
@@ -998,7 +998,7 @@
    },
    
    close: function()
-@@ -16953,8 +17054,8 @@
+@@ -16983,8 +17084,8 @@
    
  });
  
@@ -1009,7 +1009,7 @@
  
  /**
   * firewallconfigdialog.js
-@@ -32230,6 +32331,9 @@
+@@ -32261,6 +32362,9 @@
    },
    initPopup: function(id)
    {
@@ -1019,7 +1019,7 @@
      switch(this.id)
      {
        case ID_ROOMS:
-@@ -32287,9 +32391,10 @@
+@@ -32318,9 +32422,10 @@
          break;
        case ID_EDIT_SCRIPT:
          this.setTitle( translateKey("dialogEditScript") /*"Skript bearbeiten"*/ );
@@ -1032,7 +1032,7 @@
          this.setFile( "/pages/msg/editScript.htm" );
          break;
        case ID_CONTROL_TEST:
-@@ -32397,7 +32502,9 @@
+@@ -32428,7 +32533,9 @@
      }
  
      if (this.draggable) {
@@ -1043,7 +1043,7 @@
      }
  
    },
-@@ -32557,7 +32664,12 @@
+@@ -32588,7 +32695,12 @@
        onComplete: function(trans)
        {
          //$("messagebox").style.width = t.width + "px";

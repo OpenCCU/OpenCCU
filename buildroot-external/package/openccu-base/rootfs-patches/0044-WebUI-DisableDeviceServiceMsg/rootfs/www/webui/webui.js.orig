@@ -9795,10 +9795,11 @@ StringFilter = function(name, callback)
   
   
   var m_name     = name;
-  var m_value    = "";
   var m_callback = callback;
   
   var m_id     = name.replace(/\,/g, "_");
+  var m_value    = "";
+  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
   var m_textId = m_id + "Text";
 
   var isSet = function()
@@ -9905,6 +9906,7 @@ StringFilter = function(name, callback)
       }
     }
     if ($(m_id))     { $(m_id).hide(); }
+    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
     if (m_callback)  { m_callback(); }
   };
   
@@ -9923,6 +9925,7 @@ StringFilter = function(name, callback)
   this.reset = function()
   {
     m_value = "";
+    try { localStorage.removeItem(m_id); } catch (e) {}
     this.close();
   };
 
@@ -9945,7 +9948,6 @@ StringFilter = function(name, callback)
   /*# Initialisierung #*/
   /*###################*/
   
-  this.reset();
   
 };
 
@@ -9969,7 +9971,30 @@ ListFilter = Class.create({
     this.callback = callback;
     this.id       = name.replace(/\./g, "_");
     this.formId   = this.id + "Form";
-    this.reset();
+    var self = this;
+    function fltrHandler() {
+      self.restoreFilters();
+      eQ3.HomeMatic.Event.unsubscribe('DeviceListPageLoaded', fltrHandler);
+    }
+    eQ3.HomeMatic.Event.subscribe('DeviceListPageLoaded', fltrHandler);
+  },
+
+  restoreFilters: function() {
+    var filterValues = null;
+    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
+    if(filterValues) {
+      try {
+        filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
+        var values = $(this.formId).values;
+        for (var i = 0, len = values.length; i < len; i++) {
+         if(filterValues.indexOf(values[i].value) !== -1) {
+            values[i].checked = true;
+          }
+        }
+        this.set();
+      } catch(e) { console.log(e); }
+    }
   },
 
   /**
@@ -10080,16 +10105,20 @@ ListFilter = Class.create({
     if ($(this.formId))
     {
       var values = $(this.formId).values;
+      var filterValues = [];
 
       for (var i = 0, len = values.length; i < len; i++)
       {
         this.select(values[i].value, values[i].checked);
+        if(values[i].checked) filterValues.push(values[i].value);
       }
 
       if ($(this.id))    {
         $(this.id).hide();
         try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
       }
+      // JSON.stringify encodes an array twice???
+      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
       if (this.callback) { this.callback(); }
     }
   },
@@ -10125,7 +10154,8 @@ ListFilter = Class.create({
     {
       this.list[i]._selected = false;
     }
-    
+
+    try { localStorage.removeItem(this.id); } catch (e) {}
     this.close();
   }
   
@@ -27002,6 +27032,7 @@ if (PLATFORM == "Central") {
     jQuery("#DeviceListPage_FuncFilter").draggable();
 
     DeviceList.updateDeviceStatus();
+    eQ3.HomeMatic.Event.fire({type: 'DeviceListPageLoaded'});
   },
   
   onRemoveDevice: function(whatEver)
@@ -32539,12 +32570,18 @@ iseMessageBox.prototype =
         centerMessageBox();
         iseRefr(true);
         translatePage("#messagebox");
+        setTimeout(function() {
+          eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+        }, 100);
       }
     };
     new Ajax.Updater('messagebox',url,opt);
   },  
   ShowPopup: function() {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   },
   
   restorePrevious: function() {
@@ -33450,11 +33487,31 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
     if (file.substring(0, UI_PATH.length) == UI_PATH)
     {
       //method: 'get' ist für die ELV-CGIs notwendig.
-      opts = {evalScripts: true, method: 'get', onComplete:function(){iseRefr(true);bUpdateContentRunning=false;}};
+      opts = {
+        evalScripts: true,
+        method: 'get',
+        onComplete:function(){
+          iseRefr(true);
+          bUpdateContentRunning=false;
+          setTimeout(function() {
+            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+          }, 100);
+        }
+      };
     }
     else
     {
-      opts = {postBody: ReGa.encode(pb),evalScripts: true, onComplete:function(){iseRefr(true);bUpdateContentRunning=false;}};
+      opts = {
+        postBody: ReGa.encode(pb),
+        evalScripts: true,
+        onComplete:function(){
+          iseRefr(true);
+          bUpdateContentRunning=false;
+          setTimeout(function() {
+            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+          }, 100);
+        }
+      };
     }
     /* ELV --> */
     
@@ -37408,6 +37465,28 @@ iseFilter.prototype = {
     this.fltObjType = 0;
     if (fltObjType)
       this.fltObjType = fltObjType;
+
+    var self = this;
+    function fltrHandler() {
+      eQ3.HomeMatic.Event.unsubscribe('ContentLoaded', fltrHandler);
+      self.restoreFilters();
+    }
+    eQ3.HomeMatic.Event.subscribe('ContentLoaded', fltrHandler);
+  },
+
+  restoreFilters: function() {
+    try {
+      var iseSFilters = JSON.parse(localStorage.getItem('iseSFilters_' + this.pageID)) || {};
+      Object.keys(iseSFilters).forEach(function(id) {
+        var val = iseSFilters[id];
+        if ($(id)) {
+          $(id).value = val;
+          $(id).nextSiblings()[0].click();
+        }
+      });
+    } catch(e) {
+      console.error(e);
+    }
   },
   
 
@@ -37791,6 +37870,15 @@ iseFilter.prototype = {
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
     this.bTypeString = false;
+    try { localStorage.removeItem('iseSFilters_' + this.pageID); } catch (e) {}
+    var filterButtons = document.querySelectorAll('.FilterSetButton[onclick*=' + this.pageID + ']');
+    filterButtons.forEach(function(el) {
+      try {
+        el.parentElement.parentElement.querySelector('.FilterBtn').style.color = '';
+      } catch(e) {
+        console.error(e);
+      }
+    });
     conInfo("Alle Filter wurden zurückgesetzt.");
   }
 };
@@ -37900,6 +37988,12 @@ setSFilter = function(fltObj, ctrlId, fId)
 {
   //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
   fltObj.addStringFilter(fId, $(ctrlId).value);
+  try {
+    var iseFilters = JSON.parse(localStorage.getItem('iseSFilters_' + fltObj.pageID)) || {};
+    iseFilters[ctrlId] = $(ctrlId).value;
+    localStorage.setItem('iseSFilters_' + fltObj.pageID, JSON.stringify(iseFilters));
+    $(ctrlId).parentElement.previous().style.color = $(ctrlId).value ? 'red' : 'black';
+  } catch(e) { console.error(e); }
 };
 
 // Integer-Filter (Modus, Iface)
@@ -51519,6 +51613,9 @@ cpMessageBox.prototype =
   
   ShowPopup: function() {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   }
 };
 
@@ -51650,6 +51747,9 @@ cpMessageBox2.prototype =
   ShowPopup: function()
   {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   }
 };
 /**

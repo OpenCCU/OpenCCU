@@ -301,7 +301,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35852,74 +35848,101 @@
+@@ -35858,74 +35854,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
