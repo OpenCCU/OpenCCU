@@ -219,7 +219,7 @@
       ],
       "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
       "removed": 70,
-      "sha256": "a4b3f34f4eb7d0d6998e75152a8ec0403833d5fb2a38b01db8a7cc05376557fa"
+      "sha256": "1928e0777b6a54ebe1efdcacc55aa9b2d9afa217739c748d39c796171bbb02a3"
     },
     {
       "added": 123,
