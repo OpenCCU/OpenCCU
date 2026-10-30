@@ -126,7 +126,7 @@
       ],
       "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
       "removed": 3,
-      "sha256": "3cf96638bb095df38a3a9a30c7a1622c2308d376e24b7e0275698e85377a3602"
+      "sha256": "beb5b5ecf41dc41bce7a47e8a2cc2fc4ad0f816b65e26eeb3376f53bf421f7d7"
     },
     {
       "added": 305,
