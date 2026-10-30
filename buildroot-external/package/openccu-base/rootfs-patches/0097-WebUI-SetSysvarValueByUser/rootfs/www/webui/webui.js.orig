@@ -37590,7 +37590,7 @@ iseFilter.prototype = {
 
   restoreFilters: function() {
     try {
-      var iseSFilters = JSON.parse(localStorage.getItem('iseSFilters_' + this.pageID));
+      var iseSFilters = JSON.parse(localStorage.getItem('iseSFilters_' + this.pageID)) || {};
       Object.keys(iseSFilters).forEach(function(id) {
         var val = iseSFilters[id];
         if ($(id)) {
