@@ -289,7 +289,7 @@
 +
    saveSysVars = function()
    {
-     if ( isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false ) return;
+     if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
 @@ -207,8 +349,18 @@
            break;
          case 1:
@@ -388,7 +388,7 @@
      
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -1104,6 +1104,13 @@
+@@ -1112,6 +1112,13 @@
      "optionNone" : "Keine",
      "optionNotActive" : "Nicht aktiv",
  
@@ -404,7 +404,7 @@
  });
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -1182,6 +1182,13 @@
+@@ -1190,6 +1190,13 @@
      "optionNone" : "None",
      "optionNotActive" : "Not active",
  

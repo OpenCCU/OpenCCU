@@ -469,7 +469,7 @@ function ::UpdateUI()
       boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
       Call( "/esp/system.fn::getSysVarValAsString()" );
       ! Escape unwanted chars
-      sSysVarVal = sSysVarVal.Replace(^\\^, ^\\\\^);
+      sSysVarVal = sSysVarVal.Replace("\\", "\\\\");
       sSysVarVal = sSysVarVal.Replace("`", "\\`");
       sSysVarVal = sSysVarVal.Replace("${", "\\${");
       WriteLine("if ($('SYSVAR_" # svId # "')) {");
@@ -1054,7 +1054,7 @@ function ::TmToString() {
       !sTm = sTm # "nachts ";
       sTm = sTm # "${ruleConditionLblTimeDuringNight} ";
     }
-    elseif (tm.CalDuration() != 0) {
+    if ((tm.SunOffsetType() == sotNone) && (tm.CalDuration() != 0)) {
       sTm = sTm # "${lblTo} ";
       sTm = sTm # (tm.TimeSeconds() + tm.CalDuration()).ToTime().Format("%H:%M");
       sTm = sTm # " ${ruleConditionLblTimeClock} ";
@@ -1144,7 +1144,13 @@ function ::saveUser() {
   user.UserFirstName(system.GetVar("firstName"));
   user.UserLastName(system.GetVar("lastName"));
   user.UserEasyLinkMode(system.GetVar("bEasy"));
-  user.UserLevel(system.GetVar("level"));
+  if (user.ID() == 1004) {
+    user.UserLevel(iulAdmin);
+  } else {
+    if (oUser.UserLevel() == iulAdmin) {
+      user.UserLevel(system.GetVar("level"));
+    }
+  }
   user.UserPhoneNumber(system.GetVar("phone"));
   user.UserMailAddress(system.GetVar("mail"));
   boolean bLogin = false;
@@ -1428,11 +1434,13 @@ function ::BuildUserSvTable() {
           }
         WriteLine("</td>");
         WriteLine("<td class='WhiteBkg CLASS02110'>");
-          !WriteLine("<table class='CLASS02108'>");                                                                                        
-          WriteLine("<table>");                                                                                        
-            WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
-            WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
-          WriteLine("</table>");
+          if (system.GetVar("userId") != 0) {
+            !WriteLine("<table class='CLASS02108'>");                                                                                        
+            WriteLine("<table>");                                                                                        
+              WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
+              WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
+            WriteLine("</table>");
+          }
         WriteLine("</td>");  
       WriteLine("</tr>");
     }
