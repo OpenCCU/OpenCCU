@@ -322,7 +322,7 @@ cgi_eval {
         puts "jQuery(\"\[name='invisible'\]\").show().attr(\"name\", \"\");"
         puts "jQuery(\"input.FilterText\").val(\"\");"
         puts "jQuery(\".FilterCaption\").css(\"color\", \"\");"
-        puts "localStorage.removeItem(\"hmFwPageFilter\");"
+        puts "try { localStorage.removeItem(\"hmFwPageFilter\"); } catch(e) {}"
       puts "};"
 
       puts "setFilter = function(filter) {"
@@ -337,7 +337,7 @@ cgi_eval {
         puts "  storedFilters = JSON.parse(localStorage.getItem(\"hmFwPageFilter\")) || {};"
         puts "} catch(e) {}"
         puts "storedFilters\[searchFilter\] = searchText;"
-        puts "localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters));"
+        puts "try { localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters)); } catch(e) {}"
         puts "jQuery(\"#\" + filter).parent().find(\".FilterCaption\").css(\"color\", searchText ? \"red\" : \"\");"
 
         # filterElem = NAME, TYPE or ADDRESS

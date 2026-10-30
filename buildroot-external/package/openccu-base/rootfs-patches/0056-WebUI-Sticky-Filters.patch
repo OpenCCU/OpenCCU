@@ -6,7 +6,7 @@
          puts "jQuery(\"\[name='invisible'\]\").show().attr(\"name\", \"\");"
 +        puts "jQuery(\"input.FilterText\").val(\"\");"
 +        puts "jQuery(\".FilterCaption\").css(\"color\", \"\");"
-+        puts "localStorage.removeItem(\"hmFwPageFilter\");"
++        puts "try { localStorage.removeItem(\"hmFwPageFilter\"); } catch(e) {}"
        puts "};"
  
        puts "setFilter = function(filter) {"
@@ -20,7 +20,7 @@
 +        puts "  storedFilters = JSON.parse(localStorage.getItem(\"hmFwPageFilter\")) || {};"
 +        puts "} catch(e) {}"
 +        puts "storedFilters\[searchFilter\] = searchText;"
-+        puts "localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters));"
++        puts "try { localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters)); } catch(e) {}"
 +        puts "jQuery(\"#\" + filter).parent().find(\".FilterCaption\").css(\"color\", searchText ? \"red\" : \"\");"
  
          # filterElem = NAME, TYPE or ADDRESS
@@ -92,7 +92,7 @@
    
  };
  
-@@ -9970,7 +9972,28 @@
+@@ -9970,7 +9972,29 @@
      this.callback = callback;
      this.id       = name.replace(/\./g, "_");
      this.formId   = this.id + "Form";
@@ -106,7 +106,8 @@
 +  },
 +
 +  restoreFilters: function() {
-+    var filterValues = localStorage.getItem(this.id);
++    var filterValues = null;
++    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
 +    if(filterValues) {
 +      try {
 +        filterValues = JSON.parse(filterValues);
@@ -122,7 +123,7 @@
    },
  
    /**
-@@ -10081,16 +10104,20 @@
+@@ -10081,16 +10105,20 @@
      if ($(this.formId))
      {
        var values = $(this.formId).values;
@@ -139,21 +140,21 @@
          try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
        }
 +      // JSON.stringify encodes an array twice???
-+      localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues)));
++      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
        if (this.callback) { this.callback(); }
      }
    },
-@@ -10126,7 +10153,8 @@
+@@ -10126,7 +10154,8 @@
      {
        this.list[i]._selected = false;
      }
 -    
 +
-+    localStorage.removeItem(this.id);
++    try { localStorage.removeItem(this.id); } catch (e) {}
      this.close();
    }
    
-@@ -27126,6 +27154,7 @@
+@@ -27126,6 +27155,7 @@
      jQuery("#DeviceListPage_FuncFilter").draggable();
  
      DeviceList.updateDeviceStatus();
@@ -161,11 +162,13 @@
    },
    
    onRemoveDevice: function(whatEver)
-@@ -32674,12 +32703,16 @@
+@@ -32674,12 +32704,18 @@
          centerMessageBox();
          iseRefr(true);
          translatePage("#messagebox");
-+        eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
++        setTimeout(function() {
++          eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
++        }, 100);
        }
      };
      new Ajax.Updater('messagebox',url,opt);
@@ -178,7 +181,7 @@
    },
    
    restorePrevious: function() {
-@@ -33585,11 +33618,31 @@
+@@ -33585,11 +33621,31 @@
      if (file.substring(0, UI_PATH.length) == UI_PATH)
      {
        //method: 'get' ist für die ELV-CGIs notwendig.
@@ -212,7 +215,7 @@
      }
      /* ELV --> */
      
-@@ -37506,6 +37559,28 @@
+@@ -37506,6 +37562,28 @@
      this.fltObjType = 0;
      if (fltObjType)
        this.fltObjType = fltObjType;
@@ -241,11 +244,11 @@
    },
    
  
-@@ -37889,6 +37964,15 @@
+@@ -37889,6 +37967,15 @@
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
      this.bTypeString = false;
-+    localStorage.removeItem('iseSFilters_' + this.pageID);
++    try { localStorage.removeItem('iseSFilters_' + this.pageID); } catch (e) {}
 +    var filterButtons = document.querySelectorAll('.FilterSetButton[onclick*=' + this.pageID + ']');
 +    filterButtons.forEach(function(el) {
 +      try {
@@ -257,7 +260,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -37998,6 +38082,12 @@
+@@ -37998,6 +38085,12 @@
  {
    //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
    fltObj.addStringFilter(fId, $(ctrlId).value);
@@ -270,7 +273,7 @@
  };
  
  // Integer-Filter (Modus, Iface)
-@@ -51617,6 +51707,9 @@
+@@ -51617,6 +51710,9 @@
    
    ShowPopup: function() {
      this.show();
@@ -280,7 +283,7 @@
    }
  };
  
-@@ -51748,6 +51841,9 @@
+@@ -51748,6 +51844,9 @@
    ShowPopup: function()
    {
      this.show();

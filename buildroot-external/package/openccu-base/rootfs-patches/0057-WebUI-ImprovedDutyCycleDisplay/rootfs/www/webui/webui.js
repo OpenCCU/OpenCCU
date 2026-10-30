@@ -9977,7 +9977,8 @@ ListFilter = Class.create({
   },
 
   restoreFilters: function() {
-    var filterValues = localStorage.getItem(this.id);
+    var filterValues = null;
+    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
     if(filterValues) {
       try {
         filterValues = JSON.parse(filterValues);
@@ -10113,7 +10114,7 @@ ListFilter = Class.create({
         try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
       }
       // JSON.stringify encodes an array twice???
-      localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues)));
+      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
       if (this.callback) { this.callback(); }
     }
   },
@@ -10150,7 +10151,7 @@ ListFilter = Class.create({
       this.list[i]._selected = false;
     }
 
-    localStorage.removeItem(this.id);
+    try { localStorage.removeItem(this.id); } catch (e) {}
     this.close();
   }
   
@@ -32699,7 +32700,9 @@ iseMessageBox.prototype =
         centerMessageBox();
         iseRefr(true);
         translatePage("#messagebox");
-        eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+        setTimeout(function() {
+          eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+        }, 100);
       }
     };
     new Ajax.Updater('messagebox',url,opt);
@@ -37987,7 +37990,7 @@ iseFilter.prototype = {
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
     this.bTypeString = false;
-    localStorage.removeItem('iseSFilters_' + this.pageID);
+    try { localStorage.removeItem('iseSFilters_' + this.pageID); } catch (e) {}
     var filterButtons = document.querySelectorAll('.FilterSetButton[onclick*=' + this.pageID + ']');
     filterButtons.forEach(function(el) {
       try {

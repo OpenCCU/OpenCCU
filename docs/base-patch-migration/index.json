@@ -152,7 +152,7 @@
       "sha256": "051c4fb411943a4e806c253bb127cbc78af7c07c0c916b32b42bc068f71ba421"
     },
     {
-      "added": 125,
+      "added": 128,
       "files": [
         "www/config/ic_deviceFirmwareOverview.cgi",
         "www/webui/style.css",
@@ -160,7 +160,7 @@
       ],
       "patch": "0056-WebUI-Sticky-Filters.patch",
       "removed": 6,
-      "sha256": "8b4945fdbc1d0e7e9b714645b0d80536156507df9a38fe3580db77abc9df315e"
+      "sha256": "bcd21c73d910663afda944e7b6f82121a9850e23b50dfd5a2cc55be22bb14c6f"
     },
     {
       "added": 257,
@@ -174,7 +174,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 99,
-      "sha256": "692c880a6a96584674eb3ef440a7abf5999174a70909556b600c694906b1f0d9"
+      "sha256": "159ac17296e353ccec186bb7cd5f06527e7aff02380a2f141341c5eb107418d9"
     },
     {
       "added": 357,
@@ -192,7 +192,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "df2b85b75568de74c53365f502a80085440596bd7f32116ed479e081a65e7307"
+      "sha256": "265861661f59d468e436ae36be15148ed02c852b385496fb487e7da33d5221c7"
     },
     {
       "added": 233,
@@ -207,7 +207,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 79,
-      "sha256": "c68a34e842f12c7e93afe6fc31e53ccffdd2463d5128fe57e9ff96e144b5ceff"
+      "sha256": "1bee56561118cd772a15e912f3126044c447b82d662c19ed00bb5f59e197e61f"
     },
     {
       "added": 439,
@@ -224,7 +224,7 @@
       ],
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
-      "sha256": "21395b95a783be74d75d615e571c5197623c5a14eb16cc01531cdd888eee7e84"
+      "sha256": "b7d403f30bf5abc36b929480902e5dd5cdf1efde9e7f24c635079951cd4c4e6a"
     },
     {
       "added": 211,
@@ -247,7 +247,7 @@
       ],
       "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
       "removed": 70,
-      "sha256": "4661279a60e83d01277cabf6da53e6e573286bf7948b6cf1d5d3023a94692d0e"
+      "sha256": "ee4402900b833c5e04a6957ab433cbe1d3378efeade14f2572a008487261cdd6"
     },
     {
       "added": 123,
@@ -261,7 +261,7 @@
       ],
       "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
       "removed": 0,
-      "sha256": "d0fdc61017ab2defb6706b8431b768296bceef6a1b1c4a4c292e7caa1ebbe64f"
+      "sha256": "af6085245e93cb8f2d5c6956d81906d361d92e8e6aec077efb9eb13f05704061"
     },
     {
       "added": 10,
@@ -297,7 +297,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "f70643b5769483976955aa06a654c2b88cdbee73e6730e59d62a4c8f9dff98ab"
+      "sha256": "10eb4e67c53821876c2c8cd266a67fe268bbff498a4e85fe42cf6d3ea23afb3f"
     },
     {
       "added": 74,
@@ -324,7 +324,7 @@
       ],
       "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
       "removed": 19,
-      "sha256": "9bda570488a833db471fa5aa14485d1044d02448810b6e067d1e1b4589635d94"
+      "sha256": "8bc1dd837c805fa1937ffbccfd07a6a2a1906a3c717c7893aadf362f6ca1b1d7"
     },
     {
       "added": 4,
