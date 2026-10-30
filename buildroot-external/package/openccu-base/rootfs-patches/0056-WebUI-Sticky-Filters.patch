@@ -10,7 +10,7 @@
        puts "};"
  
        puts "setFilter = function(filter) {"
-@@ -328,6 +331,14 @@
+@@ -328,6 +331,15 @@
          # searchFilter = NAME, TYPE or ADDRESS
          puts "var searchFilter = filter.split(\"_\")\[1\];"
          puts "var searchText = jQuery(\"#searchText_\" + searchFilter).val().toLowerCase();"
@@ -19,13 +19,14 @@
 +        puts "try {"
 +        puts "  storedFilters = JSON.parse(localStorage.getItem(\"hmFwPageFilter\")) || {};"
 +        puts "} catch(e) {}"
++        puts "delete storedFilters\[searchFilter\];"
 +        puts "storedFilters\[searchFilter\] = searchText;"
 +        puts "try { localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters)); } catch(e) {}"
 +        puts "jQuery(\"#\" + filter).parent().find(\".FilterCaption\").css(\"color\", searchText ? \"red\" : \"\");"
  
          # filterElem = NAME, TYPE or ADDRESS
          puts "arElements = jQuery(\"\[name='\"+searchFilter+\"'\]\");"
-@@ -343,6 +354,14 @@
+@@ -343,6 +355,14 @@
  
        puts "};"
  
@@ -92,7 +93,7 @@
    
  };
  
-@@ -9970,7 +9972,29 @@
+@@ -9970,7 +9972,30 @@
      this.callback = callback;
      this.id       = name.replace(/\./g, "_");
      this.formId   = this.id + "Form";
@@ -111,6 +112,7 @@
 +    if(filterValues) {
 +      try {
 +        filterValues = JSON.parse(filterValues);
++        if (!$(this.formId)) { return; }
 +        var values = $(this.formId).values;
 +        for (var i = 0, len = values.length; i < len; i++) {
 +         if(filterValues.indexOf(values[i].value) !== -1) {
@@ -123,7 +125,7 @@
    },
  
    /**
-@@ -10081,16 +10105,20 @@
+@@ -10081,16 +10106,20 @@
      if ($(this.formId))
      {
        var values = $(this.formId).values;
@@ -144,7 +146,7 @@
        if (this.callback) { this.callback(); }
      }
    },
-@@ -10126,7 +10154,8 @@
+@@ -10126,7 +10155,8 @@
      {
        this.list[i]._selected = false;
      }
@@ -154,7 +156,7 @@
      this.close();
    }
    
-@@ -27126,6 +27155,7 @@
+@@ -27126,6 +27156,7 @@
      jQuery("#DeviceListPage_FuncFilter").draggable();
  
      DeviceList.updateDeviceStatus();
@@ -162,7 +164,7 @@
    },
    
    onRemoveDevice: function(whatEver)
-@@ -32674,12 +32704,18 @@
+@@ -32674,12 +32705,18 @@
          centerMessageBox();
          iseRefr(true);
          translatePage("#messagebox");
@@ -181,7 +183,7 @@
    },
    
    restorePrevious: function() {
-@@ -33585,11 +33621,31 @@
+@@ -33585,11 +33622,31 @@
      if (file.substring(0, UI_PATH.length) == UI_PATH)
      {
        //method: 'get' ist für die ELV-CGIs notwendig.
@@ -215,7 +217,7 @@
      }
      /* ELV --> */
      
-@@ -37506,6 +37562,28 @@
+@@ -37506,6 +37563,28 @@
      this.fltObjType = 0;
      if (fltObjType)
        this.fltObjType = fltObjType;
@@ -244,7 +246,7 @@
    },
    
  
-@@ -37889,6 +37967,15 @@
+@@ -37889,6 +37968,15 @@
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
      this.bTypeString = false;
@@ -260,7 +262,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -37998,6 +38085,12 @@
+@@ -37998,6 +38086,12 @@
  {
    //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
    fltObj.addStringFilter(fId, $(ctrlId).value);
@@ -273,7 +275,7 @@
  };
  
  // Integer-Filter (Modus, Iface)
-@@ -51617,6 +51710,9 @@
+@@ -51617,6 +51711,9 @@
    
    ShowPopup: function() {
      this.show();
@@ -283,7 +285,7 @@
    }
  };
  
-@@ -51748,6 +51844,9 @@
+@@ -51748,6 +51845,9 @@
    ShowPopup: function()
    {
      this.show();
