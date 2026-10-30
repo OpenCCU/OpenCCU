@@ -7,21 +7,77 @@
   boolean svEditValueOnly = (system.GetVar("editValueOnly") == 1);
   if (svEditValueOnly) {hidden="hidden";}
   system.SetSessionVar("editValueOnly",0);
+  ! Programs that use this system variable, with the numbers they compare
+  ! with or set. svProgramRefs is a JavaScript array of {name, values}.
   boolean svUsed = false;
+  string svProgramRefs = "";
   if ((system.GetVar("createNew") == 0) && !svEditValueOnly) {
-    string itemId;
-    object item;
-    foreach(itemId, dom.GetObject(ID_SCONDITIONS).EnumIDs()) {
-      item = dom.GetObject(itemId);
-      if (item && (item.LeftValType() == ivtSystemId) && (item.LeftVal() == sv.ID())) {
-        svUsed = true;
-      }
-    }
-    if (!svUsed) {
-      foreach(itemId, dom.GetObject(ID_SDESTINATIONS).EnumIDs()) {
-        item = dom.GetObject(itemId);
-        if (item && (item.DestinationParam() == ivtSystemId) && (item.DestinationDP() == sv.ID())) {
+    boolean svRefEnum = (sv.ValueSubType() == istEnum);
+    boolean prgUsed;
+    string prgValues;
+    string prgName;
+    string prgId;
+    string condId;
+    integer singleNum;
+    integer conditions;
+    object prg;
+    object rule;
+    object cond;
+    object sc;
+    object dest;
+    object sd;
+    foreach(prgId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs()) {
+      prg = dom.GetObject(prgId);
+      if (prg) {
+        prgUsed = false;
+        prgValues = "";
+        rule = prg.Rule();
+        while (rule) {
+          conditions = rule.RuleConditions().Count();
+          if (conditions > 0) {
+            foreach(condId, system.GenerateEnum(0, conditions - 1)) {
+              cond = rule.RuleCondition(condId.ToInteger());
+              if (cond) {
+                singleNum = 0;
+                sc = cond.CndSingleCondition(singleNum);
+                while (sc) {
+                  if ((sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID())) {
+                    prgUsed = true;
+                    if ((sc.RightVal1ValType() == ivtInteger) || (sc.RightVal1ValType() == ivtFloat)) {
+                      prgValues = prgValues # sc.RightVal1() # ",";
+                    }
+                    ! Only value range conditions of numbers use the second value.
+                    if ((!svRefEnum) && (sc.ConditionType() == 6) && ((sc.RightVal2ValType() == ivtInteger) || (sc.RightVal2ValType() == ivtFloat))) {
+                      prgValues = prgValues # sc.RightVal2() # ",";
+                    }
+                  }
+                  singleNum = singleNum + 1;
+                  sc = cond.CndSingleCondition(singleNum);
+                }
+              }
+            }
+          }
+          dest = rule.RuleDestination();
+          if (dest) {
+            singleNum = 0;
+            sd = dest.DestSingleDestination(singleNum);
+            while (sd) {
+              if ((sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID())) {
+                prgUsed = true;
+                if ((sd.DestinationValueType() == ivtInteger) || (sd.DestinationValueType() == ivtFloat)) {
+                  prgValues = prgValues # sd.DestinationValue() # ",";
+                }
+              }
+              singleNum = singleNum + 1;
+              sd = dest.DestSingleDestination(singleNum);
+            }
+          }
+          rule = rule.RuleSubRule();
+        }
+        if (prgUsed) {
           svUsed = true;
+          prgName = prg.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C");
+          svProgramRefs = svProgramRefs # "{name:\"" # prgName # "\",values:[" # prgValues # "]},";
         }
       }
     }
@@ -190,9 +246,37 @@
   var svUsedInPrograms = <% Write(svUsed); %>;
   var svExisting = <% Write(system.GetVar("createNew") == 0); %>;
   var svAlarm = <% if (system.GetVar("createNew") == 0) { Write(sv.ValueSubType() == istAlarm); } else { Write(false); } %>;
-  var svOriginalMin = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write(sv.ValueMin()); } else { Write(0); } %>;
-  var svOriginalMax = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write(sv.ValueMax()); } else { Write(0); } %>;
-  var svOriginalValueListCount = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) { Write(web.webGetValueListCount(sv.ValueList())); } else { Write(0); } %>;
+  // Programs using this variable, with the numbers they compare with or set.
+  var svPrograms = [<% Write(svProgramRefs); %>];
+
+  // Split a value list into its entries like ReGa does.
+  svParseValueList = function(text) {
+    return String(text).replace(/(?:\r\n|\r|\n)/g, ";").split(";");
+  };
+
+  // Entries of the saved value list as shown in the dialog, empty for other types.
+  var svOldValueList = <%
+    if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) {
+      Write("svParseValueList(\"" # sv.ValueList().Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ").Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C") # "\")");
+    } else {
+      Write("[]");
+    }
+  %>;
+  // Range of the saved number, to warn only about values it allowed.
+  var svOldRange = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write("[" # sv.ValueMin() # "," # sv.ValueMax() # "]"); } else { Write("null"); } %>;
+  // Entries the value selection was last built from.
+  var svLastValueList = svOldValueList;
+
+  svEscapeHtml = function(value) {
+    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  };
+
+  // Names of the given programs, at most five.
+  svProgramNames = function(programs) {
+    var names = programs.slice(0, 5).map(function(prg) { return svEscapeHtml(prg.name); });
+    if (programs.length > 5) { names.push("&hellip;"); }
+    return names.join(", ");
+  };
 
   // Errors are shown in red, hints in the normal text color.
   showSvEditMessage = function(key, isHint) {
@@ -213,6 +297,7 @@
     }
     else if (svUsedInPrograms) {
       showSvEditMessage("svEditTypeUsed", true);
+      $("svEditMessage").innerHTML += "<br/>" + svProgramNames(svPrograms);
       $("selType").title = translateKey("svEditTypeUsed");
     }
     else {
@@ -237,92 +322,62 @@
   };
   
 
-  var svProgramMaxIndices = [<%
-    if ((system.GetVar("createNew") == 0) && !svEditValueOnly && (sv.ValueSubType() == istEnum))
-    {
-      string programId;
-      string conditionId;
-      object program;
-      object rule;
-      object condition;
-      object sc;
-      object destination;
-      object sd;
-      integer singleNum;
-      integer conditionCount;
-      integer maxIndex;
-      boolean first = true;
-      foreach(programId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs())
-      {
-        program = dom.GetObject(programId);
-        if( program )
-        {
-          maxIndex = -1;
-          rule = program.Rule();
-          while( rule )
-          {
-            conditionCount = rule.RuleConditions().Count();
-            if( conditionCount > 0 )
-            {
-              foreach(conditionId, system.GenerateEnum(0, conditionCount - 1))
-              {
-                condition = rule.RuleCondition(conditionId.ToInteger());
-                if( condition )
-                {
-                  singleNum = 0;
-                  sc = condition.CndSingleCondition(singleNum);
-                  while( sc )
-                  {
-                    if( (sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID()) )
-                    {
-                      if( (sc.RightVal1ValType() == ivtInteger) && (sc.RightVal1() > maxIndex) ) { maxIndex = sc.RightVal1(); }
-                    }
-                    singleNum = singleNum + 1;
-                    sc = condition.CndSingleCondition(singleNum);
-                  }
-                }
-              }
-            }
-            destination = rule.RuleDestination();
-            if( destination )
-            {
-              singleNum = 0;
-              sd = destination.DestSingleDestination(singleNum);
-              while( sd )
-              {
-                if( (sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID()) )
-                {
-                  if( (sd.DestinationValueType() == ivtInteger) && (sd.DestinationValue() > maxIndex) ) { maxIndex = sd.DestinationValue(); }
-                }
-                singleNum = singleNum + 1;
-                sd = destination.DestSingleDestination(singleNum);
-              }
-            }
-            rule = rule.RuleSubRule();
-          }
-          if( maxIndex >= 0 )
-          {
-            if( !first ) { Write(","); }
-            Write(maxIndex);
-            first = false;
-          }
-        }
-      }
-    }
-  %>];
-
-  svCheckValueListReduction = function(newCount, onConfirmed) {
-    var count = svProgramMaxIndices.filter(function(index) { return index >= newCount; }).length;
-    if (count > 0) {
-      var message = (count == 1 ? translateKey("svEditProgramConfirmOne") : translateKey("svEditProgramConfirmMany").replace("%d", count));
-      new YesNoDialog(translateKey("dialogSafetyCheck"), message, function(result) {
-        if (result == YesNoDialog.RESULT_YES) {
-          onConfirmed();
+  // Compares the value list entries that programs use with the new list.
+  // An entry found at another position is mapped there, an entry that is
+  // gone keeps its position or, behind the end of the list, gets the last one.
+  svValueListChanges = function(newVals) {
+    var result = {programs: [], map: {}, mapped: false};
+    jQuery.each(svPrograms, function(i, prg) {
+      var refs = [];
+      jQuery.each(prg.values, function(j, value) {
+        var index = parseInt(value, 10);
+        var oldText = svOldValueList[index];
+        if ((oldText === undefined) || (newVals[index] === oldText)) { return; }
+        if (refs.some(function(ref) { return ref.index == index; })) { return; }
+        var target = newVals.indexOf(oldText);
+        if (target < 0) { target = Math.min(index, newVals.length - 1); }
+        refs.push({index: index, oldText: oldText, target: target});
+        if (target != index) {
+          result.map[index] = target;
+          result.mapped = true;
         }
       });
-      return;
-    }
-    onConfirmed();
+      if (refs.length > 0) { result.programs.push({name: prg.name, refs: refs}); }
+    });
+    return result;
+  };
+
+  // List items with the entry each changed reference will point to.
+  svValueListChangesHtml = function(changes, newVals, adjust) {
+    var quote = function(text) { return "&quot;" + svEscapeHtml(translateString(text)) + "&quot;"; };
+    var s = "";
+    jQuery.each(changes.programs, function(i, prg) {
+      s += "<li>" + svEscapeHtml(prg.name) + ": ";
+      s += prg.refs.map(function(ref) {
+        var index = adjust ? ref.target : ref.index;
+        var newText = (index < newVals.length) ? quote(newVals[index]) : translateKey("svEditValueListNoEntry");
+        return quote(ref.oldText) + " &rarr; " + newText;
+      }).join(", ");
+      s += "</li>";
+    });
+    return s;
+  };
+
+  // Pending value list change of the confirmation dialog.
+  var svValueListPending = null;
+
+  svToggleAdjust = function(checked) {
+    svValueListPending.adjust = checked;
+    $("svValueListChanges").innerHTML = svValueListChangesHtml(svValueListPending.changes, svValueListPending.newVals, checked);
+  };
+
+  // Asks for confirmation; onConfirmed runs on OK.
+  svConfirm = function(html, onConfirmed) {
+    var dlg = new YesNoDialog(translateKey("dialogSafetyCheck"), html, function(result) {
+      if (result == YesNoDialog.RESULT_YES) { onConfirmed(); }
+    }, "html");
+    dlg.btnTextYes(translateKey("btnOk"));
+    dlg.btnTextNo(translateKey("btnCancel"));
   };
 
   saveSysVars = function()
@@ -348,6 +403,8 @@
       pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
       pb += "string sName = '"+name+"';";
       pb += "string sInfo = '"+$("inpDesc").value+"';";
+      var confirmHtml = null;
+      var refMap = "";
       switch(iSelIdx) {
         case 0:
           iSubType = SYSVAR_BOOL;
@@ -362,13 +419,33 @@
             showSvEditMessage("svEditEmptyValueList");
             return;
           }
-          var vals = $("txVals").value.replace(/(?:\r\n|\r|\n)/g,';');
-          var maxIndex = vals.split(";").length - 1;
+          updateValueList();
+          var valList = svParseValueList($("txVals").value);
+          var vals = valList.join(";");
+          var maxIndex = valList.length - 1;
           var value = parseInt($("selEnum").value, 10);
           if (isNaN(value) || value < 0) value = 0;
           if (value > maxIndex) value = maxIndex;
           pb += "string sValList = '"+svEscapeRegaString(vals)+"';";
           pb += "string sValue = '"+value+"';";
+          var changes = svValueListChanges(valList);
+          if (changes.programs.length > 0)
+          {
+            svValueListPending = {changes: changes, newVals: valList, adjust: changes.mapped};
+            confirmHtml = translateKey("svEditValueListPrograms");
+            confirmHtml += "<ul id='svValueListChanges'>" + svValueListChangesHtml(changes, valList, changes.mapped) + "</ul>";
+            if (changes.mapped)
+            {
+              confirmHtml += "<label><input type='checkbox' checked onclick='svToggleAdjust(this.checked);'/> " + translateKey("svEditValueListAdjust") + "</label><br/><br/>";
+              var mapEntries = [];
+              for (var mapIndex in changes.map)
+              {
+                if (changes.map.hasOwnProperty(mapIndex)) { mapEntries.push(mapIndex + ":" + changes.map[mapIndex]); }
+              }
+              refMap = mapEntries.join(";");
+            }
+            confirmHtml += translateKey("svEditCheckPrograms");
+          }
           break;
         case 2:
           iSubType = SYSVAR_GENERIC;
@@ -393,10 +470,18 @@
             showSvEditMessage("svEditInvalidRange");
             return;
           }
-          if (svUsedInPrograms && svExisting && ((itmpMinVal > svOriginalMin) || (itmpMaxVal < svOriginalMax)))
+          var outside = svPrograms.filter(function(prg) {
+            return prg.values.some(function(v) {
+              v = parseFloat(v);
+              var allowedBefore = !svOldRange || ((v >= svOldRange[0]) && (v <= svOldRange[1]));
+              return allowedBefore && ((v < itmpMinVal) || (v > itmpMaxVal));
+            });
+          });
+          if (outside.length > 0)
           {
-            showSvEditMessage("svEditRangeUsed");
-            return;
+            confirmHtml = translateKey("svEditRangePrograms") + "<ul>";
+            jQuery.each(outside, function(i, prg) { confirmHtml += "<li>" + svEscapeHtml(prg.name) + "</li>"; });
+            confirmHtml += "</ul>" + translateKey("svEditCheckPrograms") + " " + translateKey("svEditSaveAnyway");
           }
           pb += "integer iMinVal = '"+itmpMinVal+"';";
           pb += "integer iMaxVal = '"+itmpMaxVal+"';";
@@ -435,9 +520,15 @@
           if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
         }
       };
-      if (iSelIdx == 1 && svExisting && (svOriginalValueListCount > vals.split(";").length))
+      if (confirmHtml)
       {
-        svCheckValueListReduction(vals.split(";").length, function() { new Ajax.Request(url, opts); });
+        svConfirm(confirmHtml, function() {
+          if (refMap && svValueListPending.adjust)
+          {
+            opts.postBody = ReGa.encode(pb + "string sRefMap = '" + refMap + "';");
+          }
+          new Ajax.Request(url, opts);
+        });
         return;
       }
       new Ajax.Request(url, opts);
@@ -567,7 +658,7 @@
   {
     var selection = $("selEnum");
     var oldIndex = parseInt(selection.value, 10);
-    var vals = $("txVals").value.replace(/(?:\r\n|\r|\n)/g,';').split(";");
+    var vals = svParseValueList($("txVals").value);
 
     selection.options.length = 0;
     for (var i = 0; i < vals.length; i++)
@@ -578,9 +669,12 @@
       selection.add(option);
     }
 
+    // Keep the selected entry, also when it moved to another position.
     if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
-    if (oldIndex >= vals.length) oldIndex = vals.length - 1;
-    selection.selectedIndex = oldIndex;
+    var newIndex = vals.indexOf(svLastValueList[oldIndex]);
+    if (newIndex < 0) newIndex = Math.min(oldIndex, vals.length - 1);
+    selection.selectedIndex = newIndex;
+    svLastValueList = vals;
     var table = jQuery(selection).closest("table")[0];
     if (table) table.style.display = "";
   };

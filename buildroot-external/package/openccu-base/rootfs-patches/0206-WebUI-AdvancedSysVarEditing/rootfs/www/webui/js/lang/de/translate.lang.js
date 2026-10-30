@@ -1116,10 +1116,13 @@ jQuery.extend(true,langJSON, {
     "svEditTypeAlarm" : "Der Typ einer bestehenden Alarmvariable kann nicht ge%E4ndert werden.",
     "svEditTypeToAlarm" : "Eine bestehende Systemvariable kann nicht in eine Alarmvariable umgewandelt werden.",
     "svEditInvalidRange" : "Der Minimalwert darf nicht gr%F6%DFer als der Maximalwert sein.",
-    "svEditRangeUsed" : "Der Wertebereich kann nicht verkleinert werden, da diese Systemvariable in Programmen verwendet wird.",
     "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",
-    "svEditProgramConfirmOne" : "1 Programm muss an die reduzierte Werteliste angepasst werden. Soll das betroffene Programm automatisch angepasst werden? Bitte anschlie%DFend pr%FCfen.",
-    "svEditProgramConfirmMany" : "%d Programme m%FCssen an die reduzierte Werteliste angepasst werden. Sollen die betroffenen Programme automatisch angepasst werden? Bitte anschlie%DFend pr%FCfen.",
+    "svEditValueListPrograms" : "Die ge%E4nderte Werteliste betrifft Eintr%E4ge, die in folgenden Programmen verwendet werden:",
+    "svEditValueListAdjust" : "Programme automatisch anpassen: verschobene Eintr%E4ge erhalten ihre neue Position, Eintr%E4ge hinter dem Ende der Liste den letzten Eintrag.",
+    "svEditValueListNoEntry" : "(kein Eintrag)",
+    "svEditRangePrograms" : "Folgende Programme verwenden Werte au%DFerhalb des neuen Wertebereichs:",
+    "svEditCheckPrograms" : "Bitte die betroffenen Programme nach dem Speichern pr%FCfen.",
+    "svEditSaveAnyway" : "Trotzdem speichern?",
     "HelpTitle" : "Hilfe"
   }
 });

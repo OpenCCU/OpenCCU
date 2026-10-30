@@ -820,11 +820,6 @@ function ::saveSysVar()
   !sv.ValueSubType(ist);
   sv.DPInfo( system.GetVar("sInfo") );
   sv.ValueUnit( system.GetVar("sUnit") );
-  integer oldValueListCount = 0;
-  if( (system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum) )
-  {
-    oldValueListCount = web.webGetValueListCount(sv.ValueList());
-  }
   ! ReGa keeps range, value names and value list as metadata. Drop the
   ! entries of the previous type, the branches below set the current ones.
   sv.RemoveMetaData('MIN');
@@ -860,75 +855,82 @@ function ::saveSysVar()
   }
   elseif (ist == istEnum)
   {
-    if( system.GetVar("createNew") == 0 )
+    ! [sRefMap] "old:new;..." moves the program references to value list
+    ! entries to their new positions.
+    if( (system.GetVar("createNew") == 0) && (system.IsVar("sRefMap")) )
     {
-      integer newCount = web.webGetValueListCount(system.GetVar("sValList"));
-      if( (newCount > 0) && (newCount < oldValueListCount) )
+      string refMap = system.GetVar("sRefMap");
+      string mapEntry;
+      integer oldIndex;
+      integer newIndex;
+      string prgId;
+      string condId;
+      integer singleNum;
+      integer conditions;
+      object prg;
+      object rule;
+      object cond;
+      object sc;
+      object dest;
+      object sd;
+      foreach(prgId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs())
       {
-        integer maxIndex = newCount - 1;
-        string prgId;
-        string condId;
-        integer singleNum;
-        integer conditions;
-        object prg;
-        object rule;
-        object cond;
-        object sc;
-        object dest;
-        object sd;
-        foreach(prgId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs())
+        prg = dom.GetObject(prgId);
+        if( prg )
         {
-          prg = dom.GetObject(prgId);
-          if( prg )
+          rule = prg.Rule();
+          while( rule )
           {
-            rule = prg.Rule();
-            while( rule )
+            conditions = rule.RuleConditions().Count();
+            if( conditions > 0 )
             {
-              conditions = rule.RuleConditions().Count();
-              if( conditions > 0 )
+              foreach(condId, system.GenerateEnum(0, conditions - 1))
               {
-                foreach(condId, system.GenerateEnum(0, conditions - 1))
+                cond = rule.RuleCondition(condId.ToInteger());
+                if( cond )
                 {
-                  cond = rule.RuleCondition(condId.ToInteger());
-                  if( cond )
+                  singleNum = 0;
+                  sc = cond.CndSingleCondition(singleNum);
+                  while( sc )
                   {
-                    singleNum = 0;
-                    sc = cond.CndSingleCondition(singleNum);
-                    while( sc )
+                    if( (sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID()) && (sc.RightVal1ValType() == ivtInteger) )
                     {
-                      if( (sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID()) )
+                      oldIndex = sc.RightVal1();
+                      newIndex = oldIndex;
+                      foreach(mapEntry, refMap.Split(";"))
                       {
-                        if( (sc.RightVal1ValType() == ivtInteger) && (sc.RightVal1() > maxIndex) )
-                        {
-                          sc.RightVal1(maxIndex);
-                        }
+                        if( mapEntry.StrValueByIndex(":", 0).ToInteger() == oldIndex ) { newIndex = mapEntry.StrValueByIndex(":", 1).ToInteger(); }
                       }
-                      singleNum = singleNum + 1;
-                      sc = cond.CndSingleCondition(singleNum);
+                      if( newIndex != oldIndex ) { sc.RightVal1(newIndex); }
                     }
+                    singleNum = singleNum + 1;
+                    sc = cond.CndSingleCondition(singleNum);
                   }
                 }
               }
-              dest = rule.RuleDestination();
-              if( dest )
-              {
-                singleNum = 0;
-                sd = dest.DestSingleDestination(singleNum);
-                while( sd )
-                {
-                  if( (sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID()) )
-                  {
-                    if( (sd.DestinationValueType() == ivtInteger) && (sd.DestinationValue() > maxIndex) )
-                    {
-                      sd.DestinationValue(maxIndex);
-                    }
-                  }
-                  singleNum = singleNum + 1;
-                  sd = dest.DestSingleDestination(singleNum);
-                }
-              }
-              rule = rule.RuleSubRule();
             }
+            dest = rule.RuleDestination();
+            if( dest )
+            {
+              singleNum = 0;
+              sd = dest.DestSingleDestination(singleNum);
+              while( sd )
+              {
+                if( (sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID()) && (sd.DestinationValueType() == ivtInteger) )
+                {
+                  oldIndex = sd.DestinationValue();
+                  newIndex = oldIndex;
+                  foreach(mapEntry, refMap.Split(";"))
+                  {
+                    if( mapEntry.StrValueByIndex(":", 0).ToInteger() == oldIndex ) { newIndex = mapEntry.StrValueByIndex(":", 1).ToInteger(); }
+                  }
+                  if( newIndex != oldIndex ) { sd.DestinationValue(newIndex); }
+                }
+                singleNum = singleNum + 1;
+                sd = dest.DestSingleDestination(singleNum);
+              }
+            }
+            rule = rule.RuleSubRule();
           }
         }
       }
