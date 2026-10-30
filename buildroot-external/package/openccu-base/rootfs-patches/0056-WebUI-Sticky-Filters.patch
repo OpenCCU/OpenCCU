@@ -55,7 +55,7 @@
    color: $_(textColorA); /* white */
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9796,10 +9796,10 @@
+@@ -9796,10 +9796,11 @@
    
    
    var m_name     = name;
@@ -63,27 +63,28 @@
    var m_callback = callback;
    
    var m_id     = name.replace(/\,/g, "_");
-+  var m_value    = localStorage.getItem(m_id) || "";
++  var m_value    = "";
++  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
    var m_textId = m_id + "Text";
  
    var isSet = function()
-@@ -9906,6 +9906,7 @@
+@@ -9906,6 +9907,7 @@
        }
      }
      if ($(m_id))     { $(m_id).hide(); }
-+    localStorage.setItem(m_id, $(m_textId).value);
++    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
      if (m_callback)  { m_callback(); }
    };
    
-@@ -9924,6 +9925,7 @@
+@@ -9924,6 +9926,7 @@
    this.reset = function()
    {
      m_value = "";
-+    localStorage.removeItem(m_id);
++    try { localStorage.removeItem(m_id); } catch (e) {}
      this.close();
    };
  
-@@ -9946,7 +9948,6 @@
+@@ -9946,7 +9949,6 @@
    /*# Initialisierung #*/
    /*###################*/
    
@@ -91,7 +92,7 @@
    
  };
  
-@@ -9970,7 +9971,28 @@
+@@ -9970,7 +9972,28 @@
      this.callback = callback;
      this.id       = name.replace(/\./g, "_");
      this.formId   = this.id + "Form";
@@ -121,7 +122,7 @@
    },
  
    /**
-@@ -10081,16 +10103,20 @@
+@@ -10081,16 +10104,20 @@
      if ($(this.formId))
      {
        var values = $(this.formId).values;
@@ -142,7 +143,7 @@
        if (this.callback) { this.callback(); }
      }
    },
-@@ -10126,7 +10152,8 @@
+@@ -10126,7 +10153,8 @@
      {
        this.list[i]._selected = false;
      }
@@ -152,7 +153,7 @@
      this.close();
    }
    
-@@ -27126,6 +27153,7 @@
+@@ -27126,6 +27154,7 @@
      jQuery("#DeviceListPage_FuncFilter").draggable();
  
      DeviceList.updateDeviceStatus();
@@ -160,7 +161,14 @@
    },
    
    onRemoveDevice: function(whatEver)
-@@ -32680,6 +32708,9 @@
+@@ -32674,12 +32703,16 @@
+         centerMessageBox();
+         iseRefr(true);
+         translatePage("#messagebox");
++        eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+       }
+     };
+     new Ajax.Updater('messagebox',url,opt);
    },  
    ShowPopup: function() {
      this.show();
@@ -170,7 +178,7 @@
    },
    
    restorePrevious: function() {
-@@ -33585,11 +33616,31 @@
+@@ -33585,11 +33618,31 @@
      if (file.substring(0, UI_PATH.length) == UI_PATH)
      {
        //method: 'get' ist für die ELV-CGIs notwendig.
@@ -204,7 +212,7 @@
      }
      /* ELV --> */
      
-@@ -37506,6 +37557,28 @@
+@@ -37506,6 +37559,28 @@
      this.fltObjType = 0;
      if (fltObjType)
        this.fltObjType = fltObjType;
@@ -233,7 +241,7 @@
    },
    
  
-@@ -37889,6 +37962,15 @@
+@@ -37889,6 +37964,15 @@
      this.bTypeNumber = false;
      this.bTypeAlarm = false;
      this.bTypeString = false;
@@ -249,7 +257,7 @@
      conInfo("Alle Filter wurden zurückgesetzt.");
    }
  };
-@@ -37998,6 +38080,12 @@
+@@ -37998,6 +38082,12 @@
  {
    //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
    fltObj.addStringFilter(fId, $(ctrlId).value);
@@ -262,7 +270,7 @@
  };
  
  // Integer-Filter (Modus, Iface)
-@@ -51617,6 +51705,9 @@
+@@ -51617,6 +51707,9 @@
    
    ShowPopup: function() {
      this.show();
@@ -272,7 +280,7 @@
    }
  };
  
-@@ -51748,6 +51839,9 @@
+@@ -51748,6 +51841,9 @@
    ShowPopup: function()
    {
      this.show();
