@@ -1,6 +1,6 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -820,8 +820,16 @@
+@@ -820,6 +820,11 @@
    !sv.ValueSubType(ist);
    sv.DPInfo( system.GetVar("sInfo") );
    sv.ValueUnit( system.GetVar("sUnit") );
@@ -11,13 +11,8 @@
 +  }
    sv.RemoveMetaData('MIN');
    sv.RemoveMetaData('MAX');
-+  sv.RemoveMetaData('BV0');
-+  sv.RemoveMetaData('BV1');
-+  sv.RemoveMetaData('VALUE_LIST');
    var svValue;
-   if (ist == istAlarm)
-   {
-@@ -850,6 +858,79 @@
+@@ -850,6 +855,79 @@
    }
    elseif (ist == istEnum)
    {
@@ -152,15 +147,24 @@
              string sel = "";
              if (sv.ValueSubType() == istChar8859) { sel = "selected"; }
              Write("<option "#sel#">${lblString}</option>");
+@@ -96,7 +121,7 @@
+           if (system.GetVar("createNew") == 0) {
+             sUnit = sv.ValueUnit();
+           }
+-          Write("<input type='text' id='txtUnit' class='CLASS05011' value='"#sUnit#"' onblur='stringRemoveNonPrintableChars(this);'/>");
++          Write("<input type='text' id='txtUnit' class='CLASS05011' value='"#sUnit.Replace("'", "&#39;")#"' onblur='stringRemoveNonPrintableChars(this);'/>");
+         %>
+       </td>
+       
 @@ -146,6 +171,7 @@
    </table>
  </div>
  <div class="popupControls">
-+  <div id="svEditMessage" style="color: red; text-align: center; padding-bottom: 5px; display: none;"></div>
++  <div id="svEditMessage" style="text-align: center; padding-bottom: 5px; display: none;"></div>
    <table>
    <tr>
      <td>
-@@ -160,6 +186,33 @@
+@@ -160,6 +186,41 @@
  <script type="text/javascript">
    dlgResult = 0;
  
@@ -172,29 +176,37 @@
 +  var svOriginalMax = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write(sv.ValueMax()); } else { Write(0); } %>;
 +  var svOriginalValueListCount = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) { Write(web.webGetValueListCount(sv.ValueList())); } else { Write(0); } %>;
 +
-+  showSvEditMessage = function(key) {
++  // Errors are shown in red, hints in the normal text color.
++  showSvEditMessage = function(key, isHint) {
 +    $("svEditMessage").innerHTML = translateKey(key);
++    $("svEditMessage").style.color = isHint ? "" : "red";
 +    $("svEditMessage").style.display = "block";
 +  };
 +
-+  clearSvEditMessage = function() {
-+    $("svEditMessage").innerHTML = "";
-+    $("svEditMessage").style.display = "none";
++  // Escape a value for a single-quoted string in a ReGa script.
++  svEscapeRegaString = function(value) {
++    return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 +  };
 +
-+  if (!svEditValueOnly) {
++  if (svExisting && !svEditValueOnly) {
 +    if (svAlarm) {
-+      showSvEditMessage("svEditTypeAlarm");
++      showSvEditMessage("svEditTypeAlarm", true);
++      $("selType").title = translateKey("svEditTypeAlarm");
 +    }
 +    else if (svUsedInPrograms) {
-+      showSvEditMessage("svEditTypeUsed");
++      showSvEditMessage("svEditTypeUsed", true);
++      $("selType").title = translateKey("svEditTypeUsed");
++    }
++    else {
++      // Converting to an alarm variable recreates it with a new ID.
++      $("selType").title = translateKey("svEditTypeToAlarm");
 +    }
 +  }
 +
    var arrElem = ["#inpName", "#inpDesc"];
  
    jQuery.each(arrElem, function(index, elem){
-@@ -175,6 +228,95 @@
+@@ -175,6 +236,95 @@
      $("chnNameRow").hidden = true;
    };
    
@@ -273,24 +285,32 @@
 +    }
 +  %>];
 +
-+  svCheckValueListReduction = function(newCount, onNoChanges) {
++  svCheckValueListReduction = function(newCount, onConfirmed) {
 +    var count = svProgramMaxIndices.filter(function(index) { return index >= newCount; }).length;
 +    if (count > 0) {
 +      var message = (count == 1 ? translateKey("svEditProgramConfirmOne") : translateKey("svEditProgramConfirmMany").replace("%d", count));
 +      new YesNoDialog(translateKey("dialogSafetyCheck"), message, function(result) {
 +        if (result == YesNoDialog.RESULT_YES) {
-+          onNoChanges();
++          onConfirmed();
 +        }
 +      });
 +      return;
 +    }
-+    onNoChanges();
++    onConfirmed();
 +  };
 +
    saveSysVars = function()
    {
      if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
-@@ -207,8 +349,18 @@
+@@ -201,14 +351,24 @@
+       switch(iSelIdx) {
+         case 0:
+           iSubType = SYSVAR_BOOL;
+-          pb += "string sTrue = '"+$("inpLTrue").value+"';";
+-          pb += "string sFalse = '"+$("inpLFalse").value+"';";
++          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
++          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
+           pb += "string sValue = '"+$("selValue").value+"';";
            break;
          case 1:
            iSubType = SYSVAR_ENUM;
@@ -306,12 +326,12 @@
 +          var value = parseInt($("selEnum").value, 10);
 +          if (isNaN(value) || value < 0) value = 0;
 +          if (value > maxIndex) value = maxIndex;
-+          pb += "string sValList = '"+vals+"';";
++          pb += "string sValList = '"+svEscapeRegaString(vals)+"';";
 +          pb += "string sValue = '"+value+"';";
            break;
          case 2:
            iSubType = SYSVAR_GENERIC;
-@@ -228,6 +380,16 @@
+@@ -228,6 +388,16 @@
            var itmpMaxVal = parseFloat( $("inpMax").value );
            if( isNaN(itmpMinVal) ) itmpMinVal = 0;
            if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
@@ -328,7 +348,28 @@
            pb += "integer iMinVal = '"+itmpMinVal+"';";
            pb += "integer iMaxVal = '"+itmpMaxVal+"';";
            
-@@ -265,6 +427,11 @@
+@@ -243,16 +413,16 @@
+           break;
+         case 3: 
+           iSubType = SYSVAR_ALARM;
+-          pb += "string sTrue = '"+$("inpLTrue").value+"';";
+-          pb += "string sFalse = '"+$("inpLFalse").value+"';";
++          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
++          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
+           pb += "string sValue = '"+$("selValue").value+"';";
+           break;
+         case 4:
+           iSubType = SYSVAR_STRING;
+-          pb += "string sValue = '"+$("txValue").value.replace(/'/g,"\\'")+"';";
++          pb += "string sValue = '"+svEscapeRegaString($("txValue").value)+"';";
+           break;
+       }
+-      pb += "string sUnit = '"+$("txtUnit").value+"';";
++      pb += "string sUnit = '"+svEscapeRegaString($("txtUnit").value)+"';";
+       pb += "integer iSubType = "+iSubType+";";
+       pb += "integer iChnId = "+ $("chnId").value +";";
+       var opts = {
+@@ -265,6 +435,11 @@
            if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
          }
        };
@@ -340,7 +381,7 @@
        new Ajax.Request(url, opts);
      } else {
          // No name available
-@@ -316,6 +483,7 @@
+@@ -316,6 +491,7 @@
          break;
        case 1:
          loadValueEdit(translateKey("lblVal1Val2Val3"));
@@ -348,7 +389,7 @@
          break;
        case 2:
          loadIntEdit(0, 65000);
-@@ -387,6 +555,28 @@
+@@ -387,6 +563,28 @@
      $("tdValueEdit").innerHTML = s
    };
    
@@ -363,7 +404,7 @@
 +    {
 +      var option = document.createElement("option");
 +      option.value = i;
-+      option.text = vals[i];
++      option.text = translateString(vals[i]);
 +      selection.add(option);
 +    }
 +
@@ -377,7 +418,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -396,7 +586,7 @@
+@@ -396,7 +594,7 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -386,14 +427,41 @@
      s += "</table>";
      $("tdEdit").innerHTML = s;
      
+@@ -479,7 +677,7 @@
+         Write("loadChar8859Edit('"#sval.UriEncode()#"');");
+       }
+       if (sv.ValueSubType() == istAlarm) {
+-        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"', '"#sv.Value()#"');");
++        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
+       }
+       if (sv.ValueSubType() == istGeneric) {
+         Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
+@@ -494,13 +692,13 @@
+         foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
+         {
+          oVal = count.ToString(0);
+-         optionList = optionList # "<option value=\""#oVal#"\">"#web.webGetValueFromList( sv.ValueList(), sVLKey )#"</option>"; 
++         optionList = optionList # "<option value=\""#oVal#"\">"#web.webGetValueFromList( sv.ValueList(), sVLKey ).Replace("\\", "\\\\").Replace("'", "\\'")#"</option>"; 
+          count = count+1;
+         }
+-        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"', '"#sv.Value()#"', '"#optionList#"');");
++        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"', '"#optionList#"');");
+       }
+       if (sv.ValueSubType() == istBool) {
+-        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"', '"#sv.Value()#"');");
++        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
+       }
+     }
+   %>
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -1112,6 +1112,13 @@
+@@ -1112,6 +1112,14 @@
      "optionNone" : "Keine",
      "optionNotActive" : "Nicht aktiv",
  
 +    "svEditTypeUsed" : "Der Variablentyp kann nicht ge%E4ndert werden, da diese Systemvariable in Programmen verwendet wird.",
 +    "svEditTypeAlarm" : "Der Typ einer bestehenden Alarmvariable kann nicht ge%E4ndert werden.",
++    "svEditTypeToAlarm" : "Eine bestehende Systemvariable kann nicht in eine Alarmvariable umgewandelt werden.",
 +    "svEditInvalidRange" : "Der Minimalwert darf nicht gr%F6%DFer als der Maximalwert sein.",
 +    "svEditRangeUsed" : "Der Wertebereich kann nicht verkleinert werden, da diese Systemvariable in Programmen verwendet wird.",
 +    "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",
@@ -404,12 +472,13 @@
  });
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -1190,6 +1190,13 @@
+@@ -1190,6 +1190,14 @@
      "optionNone" : "None",
      "optionNotActive" : "Not active",
  
 +    "svEditTypeUsed" : "The variable type cannot be changed because this system variable is used in programs.",
 +    "svEditTypeAlarm" : "The type of an existing alarm variable cannot be changed.",
++    "svEditTypeToAlarm" : "An existing system variable cannot be converted into an alarm variable.",
 +    "svEditInvalidRange" : "The minimum value must not exceed the maximum value.",
 +    "svEditRangeUsed" : "The numeric range cannot be reduced because this system variable is used in programs.",
 +    "svEditEmptyValueList" : "The value list must contain at least one non-empty entry.",

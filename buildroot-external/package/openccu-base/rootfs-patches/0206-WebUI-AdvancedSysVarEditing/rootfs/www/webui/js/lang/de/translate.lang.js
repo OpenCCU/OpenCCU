@@ -1114,6 +1114,7 @@ jQuery.extend(true,langJSON, {
 
     "svEditTypeUsed" : "Der Variablentyp kann nicht ge%E4ndert werden, da diese Systemvariable in Programmen verwendet wird.",
     "svEditTypeAlarm" : "Der Typ einer bestehenden Alarmvariable kann nicht ge%E4ndert werden.",
+    "svEditTypeToAlarm" : "Eine bestehende Systemvariable kann nicht in eine Alarmvariable umgewandelt werden.",
     "svEditInvalidRange" : "Der Minimalwert darf nicht gr%F6%DFer als der Maximalwert sein.",
     "svEditRangeUsed" : "Der Wertebereich kann nicht verkleinert werden, da diese Systemvariable in Programmen verwendet wird.",
     "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",

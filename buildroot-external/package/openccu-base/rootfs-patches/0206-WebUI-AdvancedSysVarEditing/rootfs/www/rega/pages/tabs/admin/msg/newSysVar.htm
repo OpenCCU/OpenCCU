@@ -121,7 +121,7 @@
           if (system.GetVar("createNew") == 0) {
             sUnit = sv.ValueUnit();
           }
-          Write("<input type='text' id='txtUnit' class='CLASS05011' value='"#sUnit#"' onblur='stringRemoveNonPrintableChars(this);'/>");
+          Write("<input type='text' id='txtUnit' class='CLASS05011' value='"#sUnit.Replace("'", "&#39;")#"' onblur='stringRemoveNonPrintableChars(this);'/>");
         %>
       </td>
       
@@ -171,7 +171,7 @@
   </table>
 </div>
 <div class="popupControls">
-  <div id="svEditMessage" style="color: red; text-align: center; padding-bottom: 5px; display: none;"></div>
+  <div id="svEditMessage" style="text-align: center; padding-bottom: 5px; display: none;"></div>
   <table>
   <tr>
     <td>
@@ -194,22 +194,30 @@
   var svOriginalMax = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write(sv.ValueMax()); } else { Write(0); } %>;
   var svOriginalValueListCount = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) { Write(web.webGetValueListCount(sv.ValueList())); } else { Write(0); } %>;
 
-  showSvEditMessage = function(key) {
+  // Errors are shown in red, hints in the normal text color.
+  showSvEditMessage = function(key, isHint) {
     $("svEditMessage").innerHTML = translateKey(key);
+    $("svEditMessage").style.color = isHint ? "" : "red";
     $("svEditMessage").style.display = "block";
   };
 
-  clearSvEditMessage = function() {
-    $("svEditMessage").innerHTML = "";
-    $("svEditMessage").style.display = "none";
+  // Escape a value for a single-quoted string in a ReGa script.
+  svEscapeRegaString = function(value) {
+    return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
   };
 
-  if (!svEditValueOnly) {
+  if (svExisting && !svEditValueOnly) {
     if (svAlarm) {
-      showSvEditMessage("svEditTypeAlarm");
+      showSvEditMessage("svEditTypeAlarm", true);
+      $("selType").title = translateKey("svEditTypeAlarm");
     }
     else if (svUsedInPrograms) {
-      showSvEditMessage("svEditTypeUsed");
+      showSvEditMessage("svEditTypeUsed", true);
+      $("selType").title = translateKey("svEditTypeUsed");
+    }
+    else {
+      // Converting to an alarm variable recreates it with a new ID.
+      $("selType").title = translateKey("svEditTypeToAlarm");
     }
   }
 
@@ -303,18 +311,18 @@
     }
   %>];
 
-  svCheckValueListReduction = function(newCount, onNoChanges) {
+  svCheckValueListReduction = function(newCount, onConfirmed) {
     var count = svProgramMaxIndices.filter(function(index) { return index >= newCount; }).length;
     if (count > 0) {
       var message = (count == 1 ? translateKey("svEditProgramConfirmOne") : translateKey("svEditProgramConfirmMany").replace("%d", count));
       new YesNoDialog(translateKey("dialogSafetyCheck"), message, function(result) {
         if (result == YesNoDialog.RESULT_YES) {
-          onNoChanges();
+          onConfirmed();
         }
       });
       return;
     }
-    onNoChanges();
+    onConfirmed();
   };
 
   saveSysVars = function()
@@ -343,8 +351,8 @@
       switch(iSelIdx) {
         case 0:
           iSubType = SYSVAR_BOOL;
-          pb += "string sTrue = '"+$("inpLTrue").value+"';";
-          pb += "string sFalse = '"+$("inpLFalse").value+"';";
+          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
+          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
           pb += "string sValue = '"+$("selValue").value+"';";
           break;
         case 1:
@@ -359,7 +367,7 @@
           var value = parseInt($("selEnum").value, 10);
           if (isNaN(value) || value < 0) value = 0;
           if (value > maxIndex) value = maxIndex;
-          pb += "string sValList = '"+vals+"';";
+          pb += "string sValList = '"+svEscapeRegaString(vals)+"';";
           pb += "string sValue = '"+value+"';";
           break;
         case 2:
@@ -405,16 +413,16 @@
           break;
         case 3: 
           iSubType = SYSVAR_ALARM;
-          pb += "string sTrue = '"+$("inpLTrue").value+"';";
-          pb += "string sFalse = '"+$("inpLFalse").value+"';";
+          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
+          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
           pb += "string sValue = '"+$("selValue").value+"';";
           break;
         case 4:
           iSubType = SYSVAR_STRING;
-          pb += "string sValue = '"+$("txValue").value.replace(/'/g,"\\'")+"';";
+          pb += "string sValue = '"+svEscapeRegaString($("txValue").value)+"';";
           break;
       }
-      pb += "string sUnit = '"+$("txtUnit").value+"';";
+      pb += "string sUnit = '"+svEscapeRegaString($("txtUnit").value)+"';";
       pb += "integer iSubType = "+iSubType+";";
       pb += "integer iChnId = "+ $("chnId").value +";";
       var opts = {
@@ -566,7 +574,7 @@
     {
       var option = document.createElement("option");
       option.value = i;
-      option.text = vals[i];
+      option.text = translateString(vals[i]);
       selection.add(option);
     }
 
@@ -669,7 +677,7 @@
         Write("loadChar8859Edit('"#sval.UriEncode()#"');");
       }
       if (sv.ValueSubType() == istAlarm) {
-        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"', '"#sv.Value()#"');");
+        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
       }
       if (sv.ValueSubType() == istGeneric) {
         Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
@@ -684,13 +692,13 @@
         foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
         {
          oVal = count.ToString(0);
-         optionList = optionList # "<option value=\""#oVal#"\">"#web.webGetValueFromList( sv.ValueList(), sVLKey )#"</option>"; 
+         optionList = optionList # "<option value=\""#oVal#"\">"#web.webGetValueFromList( sv.ValueList(), sVLKey ).Replace("\\", "\\\\").Replace("'", "\\'")#"</option>"; 
          count = count+1;
         }
-        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"', '"#sv.Value()#"', '"#optionList#"');");
+        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"', '"#optionList#"');");
       }
       if (sv.ValueSubType() == istBool) {
-        Write("loadLogicEdit('"#sv.ValueName1()#"', '"#sv.ValueName0()#"', '"#sv.Value()#"');");
+        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
       }
     }
   %>
