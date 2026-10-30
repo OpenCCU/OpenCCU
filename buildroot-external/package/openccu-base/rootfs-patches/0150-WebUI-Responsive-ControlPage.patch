@@ -291,7 +291,7 @@
  }
 --- a/www/webui/style.css
 +++ b/www/webui/style.css
-@@ -8820,6 +8820,16 @@
+@@ -8831,6 +8831,16 @@
    margin: 10px;
  }
  

@@ -18,9 +18,21 @@
     object oSysVarArray = dom.GetObject( ID_SYSTEM_VARIABLES );
     if( oSysVarArray )
     {
-      oSysVarArray.SortByName();
+      oSysVarArray.SortByName(soAsc,stNatural);
+      
+      string sEnumSVIDs = oSysVarArray.EnumEnabledIDs();
+
+      if( system.IsSessionVar("sessionSISV") )
+      {
+        string sEnable = system.GetSessionVar("sessionSISV");
+        if( sEnable == "1" )
+        {
+          sEnumSVIDs = sEnumSVIDs#"\t"#oSysVarArray.EnumEnabledInternalIDs();
+        }
+      }
+      
       string sTmp;
-      foreach( sTmp, oSysVarArray.EnumEnabledIDs() )
+      foreach( sTmp, sEnumSVIDs )
       {
         object oTmp = dom.GetObject( sTmp );
         if( oTmp )
@@ -101,6 +113,7 @@
             <td>${lblAlarm}</td>
             <td><input type="checkbox" id="cbAlarm" /></td>
           </tr>
+          <tr>
             <td>${lblString}</td>
             <td><input type="checkbox" id="cbString" /></td>
           </tr>
@@ -141,15 +154,27 @@
     string sTrId = "sv"#sysvar;
     Write("<tr id='"#sTrId#"'>");
     object sv = dom.GetObject(sysvar);
-    Write("<td style='text-align:center;' class='GrayBkg CLASS05206' >");
-      Write(sv.Name());
+    string CellBkg = "GrayBkg";
+    if (sv.Internal() == true) { CellBkg = "LightGrayBkg"; }
+    string sHtml;
+    Write("<td style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
+      sHtml = sv.Name();
+      sHtml = sHtml.Replace("&", "&amp;");
+      sHtml = sHtml.Replace("<", "&lt;");
+      sHtml = sHtml.Replace(">", "&gt;");
+      Write(sHtml);
     Write("</td>");
     
-    Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
-      Write(sv.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>'));
+    Write("<td  style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
+      sHtml = sv.DPInfo();
+      sHtml = sHtml.Replace("&", "&amp;");
+      sHtml = sHtml.Replace("<", "&lt;");
+      sHtml = sHtml.Replace(">", "&gt;");
+      sHtml = sHtml.Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
+      Write(sHtml);
     Write("</td>");
     
-    Write("<td  style='text-align:center;' class='GrayBkg CLASS05206' >");
+    Write("<td  style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
       string s = "Unbekannt: " # sv.ValueSubType();
       if( sv.ValueSubType() == istPresent )
       {
@@ -178,46 +203,73 @@
       Write(s);
     Write("</td>");
     
-    Write("<td class='GrayBkg CLASS05209' >");
+    Write("<td class='"#CellBkg#" CLASS05209' >");
       if (sv.ValueSubType() == istPresent) {
       }
       if (sv.ValueSubType() == istChar8859) {
       }
       if (sv.ValueSubType() == istAlarm) {
-        Write("${lblTrue} = " # sv.ValueName1()#"<br />");
-        Write("${lblFalse} = " # sv.ValueName0());
+        sHtml = sv.ValueName1();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblTrue} = " # sHtml#"<br />");
+        sHtml = sv.ValueName0();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblFalse} = " # sHtml);
       }
       if (sv.ValueSubType() == istGeneric) {
         Write("${lblMinValue}: " # sv.ValueMin()#"<br />");
         Write("${lblMaxValue}: " # sv.ValueMax());
       }
       if (sv.ValueSubType() == istEnum) {
-        Write(sv.ValueList());
+        sHtml = sv.ValueList();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write(sHtml);
       }
       if (sv.ValueSubType() == istBool) {
-        Write("${lblTrue} = " # sv.ValueName1()#"<br />");
-        Write("${lblFalse} = " # sv.ValueName0());
+        sHtml = sv.ValueName1();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblTrue} = " # sHtml#"<br />");
+        sHtml = sv.ValueName0();
+        sHtml = sHtml.Replace("&", "&amp;");
+        sHtml = sHtml.Replace("<", "&lt;");
+        sHtml = sHtml.Replace(">", "&gt;");
+        Write("${lblFalse} = " # sHtml);
       }
       
     Write("</td>");
     
     
-    Write("<td class='GrayBkg CLASS05206' >");
-      Write(sv.ValueUnit());
+    Write("<td class='"#CellBkg#" CLASS05206' >");
+      sHtml = sv.ValueUnit();
+      sHtml = sHtml.Replace("&", "&amp;");
+      sHtml = sHtml.Replace("<", "&lt;");
+      sHtml = sHtml.Replace(">", "&gt;");
+      Write(sHtml);
     Write("</td>");
     
-    Write("<td class='GrayBkg CLASS05206' >");
+    Write("<td class='"#CellBkg#" CLASS05206' >");
       object svCH = dom.GetObject( sv.Channel() );
       if( svCH ) { Write( svCH.Name() ); }
     Write("</td>");
     
    
-    Write("<td class='WhiteBkg CLASS05206' >");
-      Write("<table>");
+    Write("<td class='"#CellBkg#" CLASS05206' >");
+      Write("<table cellspacing='0' cellpadding='0' border='0' style='width:100%;'>");
       Write("<tr>");
+      Write("<td>");
+        Write("<table cellspacing='0' cellpadding='0' style='width:100%;'><tr>");
         Write("<td class='CLASS05210'>");
           string sClassName = "StdButton";
-          string sOnclick = "DeleteSysVar("#sv.ID()#");";
+          string sDelName = sv.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
+          string sOnclick = "DeleteSysVar("#sv.ID()#",\""#sDelName#"\");";
           if( sv.Unerasable() )
           {
             sClassName = sClassName#"Inactive";
@@ -225,6 +277,22 @@
           }
           Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnRemove}</div>");
         Write("</td>");
+        Write("</tr><tr>");
+        Write("<td class='CLASS05210'>");
+          string sClassName = "StdButton";
+          string sOnclick = "editSysVar("#sv.ID()#")";
+          if( (sv.ID() == ID_GW_SYSALARM) || (sv.ID() == ID_GW_SYSSERVICE) )
+          {
+            sClassName = sClassName#"Inactive";
+            sOnclick = "";
+          }
+          Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnEdit}</div>");
+        Write("</td>");
+        Write("</tr></table>");
+      Write("</td>");
+      
+      Write("<td>");
+        Write("<table cellspacing='0' cellpadding='0'><tr>");
         Write("<td class='CLASS05211'>");
           string sChecked = "";
           if (sv.Visible()) {
@@ -232,24 +300,29 @@
           }
           Write("<input id='svvis"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpVisibility("#sv.ID()#", this)' />${lblVisible}");
         Write("</td>");
-      Write("</tr>");
-      
-      Write("<tr>");
-        Write("<td class='CLASS05210'>");
-          Write("<div class='StdButton' onclick='editSysVar("#sv.ID()#")'>${btnEdit}</div>");
-        Write("</td>");
+        Write("</tr><tr>");
         Write("<td class='CLASS05211'>");
-          sChecked = "";
+          string sChecked = "";
           if (sv.DPArchive()) {
             sChecked = "checked";
           }
           Write("<input id='svp"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpProto("#sv.ID()#", this)' />${lblRecorded}");
         Write("</td>");
+        Write("</tr><tr>");
+        Write("<td class='CLASS05211'>");
+          string sChecked = "";
+          if (sv.Internal()) {
+            sChecked = "checked";
+          }
+          Write("<input id='svinternal"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpInternal("#sv.ID()#", this);' />${lblSystemIntern}");
+        Write("</td>");
+        Write("</tr></table>");
+      Write("</td>");
       Write("</tr>");
       Write("</table>");
     Write("</td>");
     
-    Write("<td class='GrayBkg CLASS05206' >");
+    Write("<td class='"#CellBkg#" CLASS05206' >");
       string sJSTmp = "WebUI.enter(ProgramListPage, '"#sv.DPEnumUsagePrograms()#"');";
       Write( '<div class="StdButton" onclick="'#sJSTmp#'">${btnPrograms}</div>' );
     Write("</td>");
@@ -305,7 +378,39 @@
   new iseSubMenuControl("btnFilterVarType", "btnFilterVarTypeSub", "svOffset", {}, mouseOpts, false, true);  
   new iseSubMenuControl("btnFilterUnit", "btnFilterUnitSub", "svOffset", {}, mouseOpts, false, true);
   new iseSubMenuControl("btnFilterChn", "btnFilterChnSub", "svOffset", {}, mouseOpts, false, true);
- 
+  
+  ShowInternalSysVars = function()
+  {
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "ShowInternalSystemVars";';
+    var opt =
+    {
+      postBody: pb,
+      onComplete: function(t)
+      {
+        if(dbg){alert(t.responseText);}
+        reloadPage();
+      }
+    };
+    new Ajax.Request(url,opt);
+  };
+  
+  <%
+    string sInternalBtnText = "";
+    if( system.GetSessionVar("sessionSISV") == "1" )
+    {
+        !sInternalBtnText = "aus";
+        sInternalBtnText = "footerBtnHideInternalSystemVars";
+    }
+    else
+    {
+        !sInternalBtnText = "ein";
+        sInternalBtnText = "footerBtnShowInternalSystemVars";
+    }
+    Write("var internalBtnText = '"#sInternalBtnText#"';");
+  %>
+   
   var s = "";
   
   s += "<table cellspacing='8'>";
@@ -313,6 +418,7 @@
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='newSysVar()'>${footerBtnNew}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalSysVars()'>"+translateKey(internalBtnText)+"</div></td>";
   s += "</tr>";
   s += "</table>";
 
@@ -357,10 +463,11 @@
     }
   }
   
-  DeleteSysVar = function(id)
+  DeleteSysVar = function(id,name)
   {
     var _id_ = id;
-    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveSysVar"), function(result) {
+    var _name_ = String(name).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveSysVar").replace(/%s/, function() { return _name_; }), function(result) {
       if (result == YesNoDialog.RESULT_YES) { DeleteObject(_id_); }
     });    
   };

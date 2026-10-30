@@ -47,10 +47,12 @@
                   <td class="CLASS03304"></td>
                 </tr>
                 <%
+                  string sEnumDeviceIds = "";
+                  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
                   object obj = dom.GetObject(ID_DEVICES);
                   if ( obj )
                   {
-                    obj.SortByName();
+                    obj.SortByName(soAsc,stNatural);
                     string tmp = "";
                     string sFirstId = "";
                     foreach( tmp, obj.EnumEnabledIDs() )
@@ -90,7 +92,11 @@
                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                           Write(devs.Name());
                           Write("</td>");
-                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #");' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                          if( oUser && oUser.UserLevel() == iulAdmin ) {
+                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);if (DeviceList.getDevice("# devs.ID() #")) { DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
+                          } else {
+                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
+                          }
                           
                           string sPicDivId = "picDiv"#devs.ID();
                           Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
@@ -103,6 +109,7 @@
                             Write("InitGD(jg_0, 50);");
                             Write("Draw(jg_0, '"#devs.Label()#"', 50, '-1');");
                           Write("var tmp = new Object();");
+                          Write("tmp['id'] = '"#devs.ID()#"';");
                           Write("tmp['name'] = '"#devs.Name()#"';");
                           Write("tmp['trid'] = '"#trId#"';");
                           Write("arItems[arItems.length] = tmp;");
@@ -111,6 +118,7 @@
                           
                           Write("</td>");
                         Write("</tr>");
+                        sEnumDeviceIds = sEnumDeviceIds # devs.ID() # "\t";
                       }
                     }
                   }
@@ -181,8 +189,29 @@
     {
       system.SetSessionVar("sessionTAB1",sFirstId);
     }
+    else
+    {
+      string tmpID = system.GetSessionVar("sessionTAB1");
+      string tmp = "";
+      boolean bFound = false;
+      foreach (tmp, sEnumDeviceIds)
+      {
+        if (tmp == tmpID)
+        {
+          bFound = true;
+          break;
+        }
+      }
+      if (bFound == false)
+      {
+        system.SetSessionVar("sessionTAB1", sFirstId);
+      }
+    }
   %>
-  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  // to avoid a double channelload, perform only initial load if no room-filter is set
+  if(document.getElementById("ftDevName") && document.getElementById("ftDevName").value == "") {
+    loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  }
   
   filterOptions = new iseFilter();
 </script>
@@ -266,6 +295,8 @@
 
   updateDevTable = function()
   {
+    var sFirstId = "";
+    var bSelectedShown = false;
     colorFilterBtns(fltDL);
     for (var i = 0; i < arItems.length; i++)
     {
@@ -276,7 +307,30 @@
       else
       {
         show(arItems[i]['trid']);
+        if(sFirstId == "")
+        {
+          sFirstId = arItems[i]['id'];
+        }
+        if ($(arItems[i]['id'] + "name").hasClassName("ButtonStatusRoomsSelected"))
+        {
+          bSelectedShown = true;
+        }
       }
+    }
+    if (bSelectedShown)
+    {
+      // the selected entry is still shown: keep it and its channel list
+    }
+    else if (sFirstId != "")
+    {
+      loadChannels(sFirstId);
+    }
+    else
+    {
+      // no entry matches the filter: clear the selection and the channel list
+      iseInitUpdateArrays();
+      jQuery("#tblFunctionNames td").removeClass("ButtonStatusRoomsSelected ButtonStatusRoomsPicSelected");
+      jQuery("#chnList").empty();
     }
   };
 

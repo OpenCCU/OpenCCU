@@ -62,7 +62,7 @@ proc put_page {} {
     puts "<div id=\"id_body\">"
 
       puts "<script type=\"text/javascript\">"
-      puts "  setPath(\"<span onclick='WebUI.enter(LinksAndPrograms);'>\"+ translateKey('menuProgramsLinksPage') +\"</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>\" + translateKey('submenuDirectLinks') + \"</span>\");"
+      puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>\"+ translateKey('menuProgramsLinksPage') +\"</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>\" + translateKey('submenuDirectLinks') + \"</span>\");"
       puts "  var s = \"\";"
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
@@ -514,13 +514,19 @@ proc put_tablebody {} {
         set internalKeyCSS ""
         set this_sender $SENTRY(SENDERNAME)
 
+        if {[info exists SENDER_LINKCOUNTER($SENTRY(SENDERADDR))]} {
+          set rowSpan $SENDER_LINKCOUNTER($SENTRY(SENDERADDR))
+        } else {
+          set rowSpan 1
+        }
+
         puts "<tr>"
 
         #Zellen zusammenfassen -
         if {$this_sender != $prev_sender} then {
 
-          puts "<td class=\"LinkListTbl_img\" rowspan=\"$SENDER_LINKCOUNTER($SENTRY(SENDERADDR))\"><div class=\"CLASS22106\">$SENTRY(SENDERNAME_DISPLAY)</div>$SENTRY(SENDER_IMAGE)</td>"
-          puts "<td rowspan=\"$SENDER_LINKCOUNTER($SENTRY(SENDERADDR))\" class=\"CLASS22106\">$SENTRY(SENDERADDR_DISPLAY)"
+          puts "<td class=\"LinkListTbl_img\" rowspan=\"$rowSpan\"><div class=\"CLASS22106\">$SENTRY(SENDERNAME_DISPLAY)</div>$SENTRY(SENDER_IMAGE)</td>"
+          puts "<td rowspan=\"$rowSpan\" class=\"CLASS22106\">$SENTRY(SENDERADDR_DISPLAY)"
 
            # Under certain circumstances hide the button for adding more link partners (e. g. PS/PSM/PDT aren't allowed)
            if {([lindex [split $SENTRY(SENDERADDR) ":"] 0] != [lindex [split $SENTRY(RECEIVERADDR) ":"] 0]) || ([areMoreLinksAllowed $SENTRY(SENDER_PARENT_TYPE) $SENTRY(SENDER_TYPE)] == 1)} {
@@ -573,7 +579,11 @@ proc put_tablebody {} {
 
         set this_receiver $SENTRY(RECEIVERNAME)
         
-        set rowSpan $RECEIVER_LINKCOUNTER($SENTRY(RECEIVERADDR))
+        if {[info exists RECEIVER_LINKCOUNTER($SENTRY(RECEIVERADDR))]} {
+          set rowSpan $RECEIVER_LINKCOUNTER($SENTRY(RECEIVERADDR))
+        } else {
+          set rowSpan 1
+        }
 
        if {[string first "NO_DESCRIPTION" $SENTRY(LINKDESC)] == 0} {
           set senderParentAdr [lindex [split $SENTRY(SENDERADDR) ":"] 0]

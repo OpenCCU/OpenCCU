@@ -119,17 +119,7 @@ if { [catch {
         puts "ReadyConfig($dev_id)"
     }
 
-    proc conf_device_HmIP-RCV-50 { url dev_id desc_var } {
-        rega "dom.GetObject($dev_id).ReadyConfig(true);"
-        puts "ReadyConfig($dev_id)"
-    }
-
-    proc conf_device_RPI-RF-MOD { url dev_id desc_var } {
-        rega "dom.GetObject($dev_id).ReadyConfig(true);"
-        puts "ReadyConfig($dev_id)"
-    }
-	
-	proc conf_device_HmIP-CCU3 { url dev_id desc_var } {
+    proc conf_device_HmIP-RFUSB { url dev_id desc_var } {
         rega "dom.GetObject($dev_id).ReadyConfig(true);"
         puts "ReadyConfig($dev_id)"
     }
@@ -494,14 +484,22 @@ if { [catch {
         string func_id;
         string functions;
         foreach (func_id, dom.GetObject(ID_FUNCTIONS).EnumUsedIDs()){
-            functions = functions # " {" # dom.GetObject(func_id).Name() # "} " # func_id;
+            ! the system language selection renames the default functions and
+            ! keeps their untranslated name (e.g. funcLight) as trID metadata
+            object oFunc = dom.GetObject(func_id);
+            string func_name = oFunc.Name();
+            string func_trid = oFunc.MetaData("trID");
+            if(func_trid) { func_name = func_trid; }
+            functions = functions # " {" # func_name # "} " # func_id;
         }
     }]
     
     array set ifmap $result(ifaces)
     array set devmap $result(devs)
 
-    array set ise_functions $result(functions)
+    # A function name with unbalanced braces breaks the list; then no
+    # function is assigned automatically instead of aborting
+    catch {array set ise_functions $result(functions)}
 
     foreach func [array names FUNCTIONLIST] {
         if {[info exists ise_functions($FUNCTIONLIST($func))]} {
@@ -520,6 +518,11 @@ if { [catch {
           set dev $devmap($ise_dev_id)
           set dev_address [lindex $dev 0]
           set if_id [lindex $dev 1]
+          # skip devices of an interface without URL (not in ifmap), so
+          # that they do not abort the configuration of the other devices
+          if {![info exists ifmap($if_id)]} {
+              continue
+          }
           array_clear channels
           array set channels [lindex $dev 2]
           set if_info $ifmap($if_id)
@@ -549,13 +552,6 @@ if { [catch {
                   if [info exist FUNCTIONMAP($CHANNEL_FUNCTIONS($ch_descr(TYPE)))] {
                       catch {
                           rega "dom.GetObject($FUNCTIONMAP($CHANNEL_FUNCTIONS($ch_descr(TYPE)))).Add($ise_ch_id)"
-                      }
-                  }
-              }
-              if { [string equal $ch_descr(PARENT_TYPE) "HmIP-RCV-50"] == 1 } {
-                  if [info exist FUNCTIONMAP(CENTRAL)] {
-                      catch {
-                          rega "dom.GetObject($FUNCTIONMAP(CENTRAL)).Add($ise_ch_id)"
                       }
                   }
               }

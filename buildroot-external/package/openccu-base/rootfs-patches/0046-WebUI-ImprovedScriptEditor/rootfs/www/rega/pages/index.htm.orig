@@ -24,7 +24,7 @@
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/msdropdown/dd.css" />
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/spectrum.css" />
 
-    <title>HomeMatic WebUI</title>
+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name().Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;')); } %></title>
 
 
     <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
@@ -116,7 +116,6 @@
       /*# Globale Variablen                                                    #*/
       /*########################################################################*/
 
-      isHTTPS = window.location.protocol.startsWith("https:");
       forceUpdate = false;
       preventInterfaceCheck = (jQuery.url().param('preventInterfaceCheck') == "true") ? true : false;
       urlParamInterfaces = jQuery.url().param('showInterfaces');
@@ -142,7 +141,14 @@
         object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
         string sUserFullName = oUser.UserFirstName()#' '#oUser.UserLastName();
         if( sUserFullName == ' ' ){ sUserFullName = oUser.Name(); }
+        string sUserLevel = "lblGuest";
+        if (oUser.UserLevel() == iulAdmin) { sUserLevel = "lblAdmin"; }
+        elseif (oUser.UserLevel() == iulUser) { sUserLevel = "lblUser" ; }
+        string sUserEasyMode = "lblUIModeExpert";
+        if (oUser.UserEasyLinkMode()) { sUserEasyMode = "lblUIModeEasy"; }
         WriteLine('var userName = "' # sUserFullName # '";');
+        WriteLine('var userNameInfo = "' # sUserFullName # ' (" + translateKey("' # sUserLevel # '") + ") | " + translateKey("lblEasyModeActiveShort") + " " + translateKey("' # sUserEasyMode # '");');
+        WriteLine('var userLink = "CreatePopup(ID_USER_ACCOUNT_CONFIG_ADMIN, '#oUser.ID()#')"');
       %>
 
 

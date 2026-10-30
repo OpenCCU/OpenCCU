@@ -205,8 +205,9 @@ proc action_put_page {} {
   set dhcp ""
   set dns1 ""
   set dns2 ""
+  set vpn ""
   
-  read_config dhcp hostname ip mask gw dns1 dns2
+  read_config dhcp hostname ip mask gw dns1 dns2 vpn
   
   http_head
   
@@ -215,7 +216,8 @@ proc action_put_page {} {
     puts "\${dialogSettingsNetworkTitle}"
   }
   division {class="CLASS21114 j_translate"} {
-    table {class="popupTable"} {border=1} {width="100%"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable"} {border=1} {width="100%"} {height="100%"} {
       table_row {class="CLASS21115"} {
         table_data {class="CLASS21116"} {
           #puts "IP-<br/>Einstellungen"
@@ -333,6 +335,42 @@ proc action_put_page {} {
 
         }
       }
+      table_row {class="CLASS21115"} {
+        table_data {class="CLASS21116"} {
+          puts "\${dialogSettingsNetworkTDVPNSettings}"
+        }
+        table_data {align=left} {
+          table {
+            table_row {
+              set checked ""
+              if {$vpn == "1"} { set checked "checked=true" }
+              table_data {class="CLASS21112"} {colspan="2"} {
+                cgi_checkbox mode=vpn {id="check_vpn"} $checked
+                puts "\${dialogSettingsNetworkVPNLblActivate}"
+              }
+            }
+            table_row {
+              table_data {width="10"} { }
+              table_data {class="CLASS21112"} {
+                division {class="popupControls CLASS21107"} {
+                  if {$vpn == "1"} {
+                    division {class="CLASS21117"} {onClick="window.open('/tailscale/', '_blank').focus();"} {
+                      puts "\${dialogSettingsNetworkVPNLblAuth}"
+                    }
+                  } else {
+                    division {class="CLASS21117"} {style="color:grey"} {
+                      puts "\${dialogSettingsNetworkVPNLblAuth}"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        table_data {class="CLASS21113"} {align="center"} {
+          puts "<img src=\"/ise/img/help.png\" onclick=\"MessageBox.show(translateKey('dialogSettingsNetworkVPNLblActivate')+' - '+translateKey('HelpTitle'), translateKey('dialogSettingsNetworkVPNHelpP1')+'<br/><br/>'+translateKey('dialogSettingsNetworkVPNHelpP2'), '', 450, 320) ;\">"
+        }
+      }
       table_row {class="CLASS21119"} {
         table_data {class="CLASS21116"} {
           #puts "Zertifikat<br />erstellen"
@@ -420,6 +458,7 @@ proc action_put_page {} {
         }
       }
     }
+    }
   }
   division {class="popupControls"} {
     table {
@@ -468,11 +507,17 @@ proc action_put_page {} {
           postBody: pb,
           sendXML: false,
           onSuccess: function(transport) {
-            if (transport.responseText.match(/^Success/g))PopupClose();
+            if (transport.responseText.match(/^Success/g)) {
+              PopupClose();
+              if (transport.responseText.match(/^SuccessReboot/g)) {
+                MessageBox.show(translateKey("dialogSettingsNetworkTitle"), translateKey("dialogSettingsNetworkMessageRebootRequired"));
+              }
+            }
             //else alert("Netzwerkkonfiguration konnte nicht gespeichert werden:\n"+transport.responseText);
             else alert(translateKey("dialogSettingsNetworkMessageAlertMessageError1") + "\n" +transport.responseText);
           }
         };
+        opts.postBody += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
         new Ajax.Request(url, opts);
       }
     }
@@ -615,10 +660,15 @@ proc action_save_settings {} {
     import dhcp
     import dns1
     import dns2
-    if { [write_config $dhcp $hostname $ip $mask $gw $dns1 $dns2] } {
-      #activate the new settings
-    catch {exec "/etc/init.d/S40network" "restart" 2> &1 > /dev/null}
-      puts "Success"
+    import vpn
+    set rc [write_config $dhcp $hostname $ip $mask $gw $dns1 $dns2 $vpn]
+    if { $rc } {
+      # changed network settings only take effect after a reboot
+      if { $rc == 2 } {
+        puts "SuccessReboot"
+      } else {
+        puts "Success"
+      }
       # puts "\${dialogSettingsNetworkMessageSaveSettingsSucceed}"
       return
     } else {
@@ -651,8 +701,8 @@ proc set_property {s_var id value} {
   return 0
 }
 
-proc get_current_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var} {
-  upvar $dhcp_var dhcp $hostname_var hostname $ip_var ip $mask_var mask $gw_var gw $dns1_var dns1 $dns2_var dns2
+proc get_current_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var vpn_var} {
+  upvar $dhcp_var dhcp $hostname_var hostname $ip_var ip $mask_var mask $gw_var gw $dns1_var dns1 $dns2_var dns2 $vpn_var vpn
   set ifconfig_result [exec /sbin/ifconfig eth0]
   if {! [regexp -line {inet addr:([\d.]+).*Mask:([\d.]+)[^\d.]*$} $ifconfig_result dummy ip mask]} {return 0}
   set fd -1
@@ -676,8 +726,8 @@ proc get_current_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var d
   return 1
 }
 
-proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var} {
-  upvar $dhcp_var dhcp $hostname_var hostname $ip_var ip $mask_var mask $gw_var gw $dns1_var dns1 $dns2_var dns2
+proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var vpn_var} {
+  upvar $dhcp_var dhcp $hostname_var hostname $ip_var ip $mask_var mask $gw_var gw $dns1_var dns1 $dns2_var dns2 $vpn_var vpn
   set fd -1
   catch {set fd [open "/etc/config/netconfig" r]}
   if { $fd <0 } { return 0 }
@@ -686,21 +736,28 @@ proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var
   if {! [get_property $netconfig "HOSTNAME" hostname] } {return 0}
   if {! [get_property $netconfig "MODE" mode] } {return 0}
   set dhcp [expr {"$mode"=="DHCP"}]
-  if {! [get_property $netconfig "IP" ip] } {return 0}
-  if {! [get_property $netconfig "NETMASK" mask] } {return 0}
-  if {! [get_property $netconfig "GATEWAY" gw] } {return 0}
-  get_property $netconfig "NAMESERVER1" dns1
-  get_property $netconfig "NAMESERVER2" dns2
+  set current_prefix ""
+  if {$dhcp} { set current_prefix "CURRENT_" }
+  if {! [get_property $netconfig "${current_prefix}IP" ip] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}NETMASK" mask] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}GATEWAY" gw] } {return 0}
+  get_property $netconfig "${current_prefix}NAMESERVER1" dns1
+  get_property $netconfig "${current_prefix}NAMESERVER2" dns2
+
+  # check for vpn enable status
+  set vpn [file exists "/etc/config/tailscaleEnabled"]
+  
   return 1
 }
 
-proc write_config {dhcp hostname ip mask gw dns1 dns2} {
+proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
   set fd -1
   catch {set fd [open "/etc/config/netconfig" r]}
   if { $fd <0 } { return 0 }
   set netconfig [read $fd]
   close $fd
   set fd -1
+  set old_netconfig $netconfig
   
   if { $dhcp } {
     set_property netconfig "MODE" "DHCP"
@@ -708,19 +765,34 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2} {
     set_property netconfig "MODE" "MANUAL"
   }
   set_property netconfig "HOSTNAME" $hostname
-  set_property netconfig "IP" $ip
-  set_property netconfig "NETMASK" $mask
-  set_property netconfig "GATEWAY" $gw
-
-  set_property netconfig "NAMESERVER1" $dns1
-  set_property netconfig "NAMESERVER2" $dns2
+  if {! $dhcp} {
+    set_property netconfig "IP" $ip
+    set_property netconfig "NETMASK" $mask
+    set_property netconfig "GATEWAY" $gw
+    set_property netconfig "NAMESERVER1" $dns1
+    set_property netconfig "NAMESERVER2" $dns2
+  }
 
   catch {set fd [open "/etc/config/netconfig" w]}
   if { $fd <0 } { return 0 }
   
   puts -nonewline $fd $netconfig
   close $fd
+  set changed [expr {$netconfig ne $old_netconfig}]
 
+  # set vpn status
+  set cur_vpn [file exists "/etc/config/tailscaleEnabled"]
+  if { $vpn != $cur_vpn } {
+    if { $vpn == 1 } {
+      exec touch /etc/config/tailscaleEnabled
+      exec /etc/init.d/S46tailscaled restart >/dev/null 2>/dev/null
+    } else {
+      exec /etc/init.d/S46tailscaled stop >/dev/null 2>/dev/null
+      exec rm -f /etc/config/tailscaleEnabled
+    }
+  }
+
+  if { $changed } { return 2 }
   return 1
 }
 

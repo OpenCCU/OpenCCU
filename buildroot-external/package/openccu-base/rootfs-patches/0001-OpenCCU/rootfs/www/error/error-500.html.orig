@@ -10,8 +10,8 @@
       }
 
     </style>
-    <script type="text/javascript" src="/webui/js/extern/jquery.js?_version_=2.0pre1"></script>
-    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js?_version_=2.0pre1"></script>
+    <script type="text/javascript" src="/webui/js/extern/jquery.js"></script>
+    <script type="text/javascript" src="/webui/js/extern/jqueryURLPlugin.js"></script>
     <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
     <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
     <script type="text/javascript">

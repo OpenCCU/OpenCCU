@@ -45,7 +45,7 @@
                 object obj = dom.GetObject(ID_ROOMS);
                 if ( obj )
                 {
-                  obj.SortByName();
+                  obj.SortByName(soAsc,stNatural);
                   string tmp = "";
                   string sFirstId = "";
                   foreach( tmp, obj.EnumEnabledIDs() ) {
@@ -61,6 +61,7 @@
                         Write("</td>");
                         Write("<script type='text/javascript'>");
                         Write("var tmp = new Object();");
+                        Write("tmp['id'] = '"#room.ID()#"';");
                         Write("tmp['name'] = '"#room.Name()#"';");
                         Write("tmp['trid'] = '"#trId#"';");
                         Write("arItems[arItems.length] = tmp;");
@@ -137,29 +138,34 @@
   }
   
   // Beim laden der Seite ersten Raum anzeigen
-  
   <%
     if( system.GetSessionVar("sessionTAB1") == "" )
     {
       system.SetSessionVar("sessionTAB1",sLoadId);
     }
-    else {
-      !Fehlerhaftes Laden umgehen
-     
+    else
+    {
       string tmpID = system.GetSessionVar("sessionTAB1");
       string tmp = "";
       boolean bFound = false;
-      foreach (tmp, sEnumRoomIds) {
-        if (tmp == tmpID) {
+      foreach (tmp, sEnumRoomIds)
+      {
+        if (tmp == tmpID)
+        {
           bFound = true;
+          break;
         }
       }
-      if (!bFound) {
+      if (bFound == false)
+      {
         system.SetSessionVar("sessionTAB1",sLoadId);
       }
     }
   %>
-  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  // to avoid a double channelload, perform only initial load if no room-filter is set
+  if(document.getElementById("ftRoom") && document.getElementById("ftRoom").value == "") {
+    loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  }
   
   filterOptions = new iseFilter();
   translatePage("#tblRoomNames");
@@ -208,6 +214,8 @@
 
   updateRoomTable = function()
   {
+    var sFirstId = "";
+    var bSelectedShown = false;
     colorFilterBtns(fltRM);
     for (var i = 0; i < arItems.length; i++)
     {
@@ -218,7 +226,34 @@
       else
       {
         show(arItems[i]['trid']);
+        if(sFirstId == "")
+        {
+          sFirstId = arItems[i]['id'];
+        }
+        if ($(arItems[i]['id'] + "name").hasClassName("ButtonStatusRoomsSelected"))
+        {
+          bSelectedShown = true;
+        }
       }
+    }
+    if (bSelectedShown)
+    {
+      // the selected entry is still shown: keep it and its channel list
+    }
+    else if (sFirstId != "")
+    {
+      loadChannels(sFirstId);
+    }
+    else
+    {
+      // no entry matches the filter: clear the selection and the channel list
+      iseInitUpdateArrays();
+      jQuery("#tblRoomNames td").each(function() {
+        if (this.className == "ButtonStatusRoomsSelected") {
+          this.className = "ButtonStatusRooms";
+        }
+      });
+      jQuery("#chnList").empty();
     }
   };
 

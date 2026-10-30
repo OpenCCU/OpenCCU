@@ -5,9 +5,6 @@
     <title>HomeMatic WebUI</title>
     <meta http-equiv="Content-Language" content="de">
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <meta http-equiv="cache-control" content="no-cache">
-    <meta http-equiv="pragma"        content="no-cache">
-    <meta http-equiv="expires"       content="0">
 
     <%
       string devtype = "pc";

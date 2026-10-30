@@ -1,6 +1,11 @@
 <script type="text/javascript" language="javascript">
 
   <%
+    if( system.GetSessionVar("sessionTAB") != "programs" )
+    {
+      system.SetSessionVar("sessionPrgPrevTAB", system.GetSessionVar("sessionTAB"));
+    }
+    string prevPage = system.GetSessionVar("sessionPrgPrevTAB");
     system.SetSessionVar("sessionTAB", "programs");
     object oOrigPrg = dom.GetObject( system.GetSessionVar("sessionORIGPRGID") );
     object oPrg = dom.GetObject( system.GetSessionVar("sessionPRGID") );
@@ -809,7 +814,7 @@
       jQuery.each(jElm, function (index, elm) {
         var text = jQuery(elm).find("option:selected").text();
         // create test element
-        var _test = jQuery("<span>").html(text).css({
+        var _test = jQuery("<span>").text(text).css({
           "font-size": jQuery(elm).css("font-size"), // ensures same size text
           "visibility": "hidden"               // prevents FOUC
         });
@@ -852,7 +857,7 @@
   ShowSysVarChooser = function(scid)
   {
     dlgResult = "";
-    CreatePopup(ID_SYS_VARS_SELECTION,1);
+    CreatePopup(ID_SYS_VARS_SELECTION,0);
     PopupClose = function()
     {
       dlgPopup.hide();
@@ -975,15 +980,15 @@
   };
   CancelProgramEdit = function(copy)
   {
-    isePrograms.Delete(copy);
+    isePrograms.Delete(copy, '<% Write(prevPage); %>');
   };
   SaveProgramEdit = function(orig,copy)
   {
-    setTimeout( "isePrograms.Restore("+orig+","+copy+")", 500 );
+    setTimeout( "isePrograms.Restore("+orig+","+copy+", '<% Write(prevPage); %>')", 500 );
   };
   CopyToNewProgram = function(copy)
   {
-    setTimeout( "isePrograms.CopyToNewProgram("+copy+")", 500 );
+    setTimeout( "isePrograms.CopyToNewProgram("+copy+", '<% Write(prevPage); %>')", 500 );
   };
   AddSubRuleSelectChange = function(idx,rid)
   {
@@ -1114,7 +1119,7 @@
   var s = "";
   s += "<table cellspacing='8'>";
   s += "<tr>";
-    s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CancelProgramEdit(<% Write(oPrg.ID()); %>);'>${footerBtnCancel}</div></td>";
+    s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CancelProgramEdit(<% Write(oPrg.ID()); %>);'>${footerBtnPageBack}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='SaveProgramEdit(<% Write(oOrigPrg.ID()); %>,<% Write(oPrg.ID()); %>);'>${footerBtnOk}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04800' onclick='CopyToNewProgram(<% Write(oPrg.ID()); %>);' >${footerBtnSaveNewProgram}</div></td>";
     s += "<td style='text-align:center; vertical-align:middle;'><div class='FooterButton CLASS04801' onclick='new HMScriptExecutor();'>${footerBtnTestScript}</div></td>";
@@ -1137,7 +1142,7 @@
         <td class="thCell CLASS04802" >${thDescription}</td>
         <td class="thCell CLASS04802" >${thProgramCondition}</td>
         <td class="thCell CLASS04802" >${thProgramActivity}</td>
-        <td class="thCell CLASS04802" >${thAction}</td>
+        <td class="thCell CLASS04802" >${thProgramOptions}</td>
       </tr>
     </thead>
     <tbody>
@@ -1146,7 +1151,7 @@
         <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>
-        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label></td>
+        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label><br/><input type="checkbox" onchange="isePrograms.SetExecuteOnStartup(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_executeonstartup" <% if( oPrg.ExecuteOnStartup() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_executeonstartup">${lblExecuteOnStartup}</label></td>
       </tr>
       <tr>
         <td colspan="5">

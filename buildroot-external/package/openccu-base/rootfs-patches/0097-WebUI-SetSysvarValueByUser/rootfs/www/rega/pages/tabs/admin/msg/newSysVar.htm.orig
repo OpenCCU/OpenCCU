@@ -165,6 +165,7 @@
   
   saveSysVars = function()
   {
+    if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
     var name = $("inpName").value;
     name = name.replace(/[\r\n\t]/gi, "");
     name = name.strip();

@@ -22,7 +22,7 @@
     object oTmpArray = dom.GetObject( ID_ROOMS );
     if( oTmpArray )
     {
-      oTmpArray.SortByName();
+      oTmpArray.SortByName(soAsc,stNatural);
       string sTmp;
       foreach(sTmp,oTmpArray.EnumIDs())
       {
@@ -71,7 +71,14 @@
               if (devId != ID_ERROR)
               {
                 object dev = dom.GetObject(devId);
-                Write("tmp['desc'] = DEV_getDescription('"#dev.Label()#"');");
+                if (dev)
+                {
+                  Write("tmp['desc'] = DEV_getDescription('"#dev.Label()#"');");
+                }
+                else
+                {
+                  Write("tmp['desc'] = '';");
+                }
               }
               
               Write("tmp['type'] = '"#o3.Label()#"';");
@@ -330,7 +337,7 @@ if ( oUser )
       string sStyle = "";
       integer iReadyCount = 0;
       string rdytmp = "";
-      foreach (rdytmp, elem.EnumEnabledIDs()) {
+      foreach (rdytmp, elem.EnumIDs()) {
         object oChnTmp = dom.GetObject(rdytmp);
         if (oChnTmp.ReadyConfig()) {
           iReadyCount = iReadyCount + 1;
@@ -366,19 +373,12 @@ if ( oUser )
       Write("</td>");
       
       string sEnumPrgFilter = "";
-      integer iLinkCount = 0;
-      integer iProgCount = 0;
       string tmp = "";
-      foreach( tmp, elem.EnumEnabledIDs() )
+      foreach( tmp, elem.EnumIDs() )
       {
         object chnTmp = dom.GetObject(tmp);
         if( chnTmp )
         {
-          iLinkCount = iLinkCount + chnTmp.ChnLinkCount();
-          if( chnTmp.ChnDPUsageCount() != ID_ERROR )
-          {
-            iProgCount = iProgCount + chnTmp.ChnDPUsageCount();
-          }
           if( !sEnumPrgFilter.Length() )
           {
             sEnumPrgFilter = chnTmp.ChnEnumDPUsagePrograms();
@@ -406,7 +406,7 @@ if ( oUser )
       integer iCount = 0;
       integer iSubObjects = 0; ! Anzahl "Unter-Objekte" je Raum... als "Platzhalter" für Tabellen-Reihen
       string tmp = "";
-      foreach(tmp, elem.EnumEnabledIDs())
+      foreach(tmp, elem.EnumIDs())
       {
         iSubObjects = iSubObjects + 1;
       }

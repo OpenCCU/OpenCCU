@@ -40,15 +40,17 @@
 
 <table id="tblHDeviChannel" class="filterTable CLASS03500 j_translate" cellpadding="0" cellspacing="0" border="1" >
   <colgroup>
-     <col style="width:12%;"/>
-     <col style="width:10%;"/>
-     <col style="width:10%;"/>
-     <col style="width:10%;"/>
-     <col style="width:58%;"/>
+     <col />
+     <col style="width:55px;" />
+     <col />
+     <col />
+     <col style="width:100px;" />
+     <col />
   </colgroup>
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thChannel}</div></th>
+  <th>${thPicture}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
   <th><div id="room" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'room',true);">${thRoom}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
@@ -69,6 +71,8 @@
         <div id="ftSetNameBtn" class='FilterSetButton CLASS03504' onclick="setSFilter(fltHD, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
         <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
     </div>
+  </td>
+  <td class="CLASS03501">
   </td>
   <td class="CLASS03501">
     <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
@@ -130,13 +134,26 @@
     object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
     integer userID = oUser.ID();
     object user = dom.GetObject(userID);
-    integer virtChnCounter = 0;
 
     object device = dom.GetObject(system.GetVar("id"));
     if (device) {
       if (device.Visible()) {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = "";
+        if( system.IsSessionVar("sessionSIDC") ) {
+          if( system.GetSessionVar("sessionSIDC") == "1" ) {
+           sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+          }
+        }
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
         string tmp;
-        foreach(tmp, oUser.UserTempViewIDs().EnumIDs()) {
+        foreach(tmp, sEnumUserIDs) {
           object chn = dom.GetObject(tmp);
           object oDev = dom.GetObject(chn.Device());
           string oDevHssType = oDev.HssType();
@@ -174,12 +191,16 @@
           } else {
             Call("/esp/functions.fn::showHideHmIPChannel()");
           }
-          if( bShow && chn.ReadyConfig() && oDev.ReadyConfig() && bShowChannel )
+          if( bShow && oDev.ReadyConfig() && bShowChannel )
           {
             string trId = device.ID()#tmp;
             boolean showExtDesc = false;
             Write("<tr id='"#trId#"'>");
-            Write("<td class='GrayBkg' name='devName'>");
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("<td class='GrayBkg CLASS03905' name='devName' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
+            } else {
+              Write("<td class='GrayBkg' name='devName'>");
+            }
 
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
@@ -187,6 +208,18 @@
               Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+              string sPicDivId = "picDiv"#chn.ID();
+              Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
+                Write("onmouseover='picDivShow(jg_250, \""#chn.Label()#"\", 250, \""#chn.ChnNumber()#"\", this);'");
+                Write("onmouseout='picDivHide(jg_250);'");
+               Write("></div>");
+              Write("<script type='text/javascript'>");
+                Write("var jg_0 = new jsGraphics('"#sPicDivId#"');");
+                Write("InitGD(jg_0, 50);");
+                Write("Draw(jg_0, '"#chn.Label()#"', 50, '"#chn.ChnNumber()#"');");
+              Write("</script>");
             Write("</td>");
             Write("<td class='GrayBkg'>");
             string rooms = "";

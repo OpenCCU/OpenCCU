@@ -19,10 +19,10 @@ system.methodHelp {
   ARGUMENTS {name}
 }
 system.saveObjectModel {
-  LEVEL NONE
+  LEVEL USER
   SCRIPT_FILE system/saveobjectmodel.tcl
   INFO  {Speichert das Object Model}
-  ARGUMENTS {}
+  ARGUMENTS {_session_id_}
 }
 
 system.getPositionData {
@@ -1155,13 +1155,6 @@ CCU.existsFile {
   ARGUMENTS {_session_id_ file}
 }
 
-CCU.removeFieldTestActive {
-  LEVEL ADMIN
-  SCRIPT_FILE ccu/removeFieldTestActive.tcl
-  INFO {Entfernt die Datei /etc/config/fieldTestActive}
-  ARGUMENTS {_session_id_}
-}
-
 CCU.getAuthEnabled {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getauthenabled.tcl
@@ -1275,20 +1268,6 @@ User.setLanguage {
         SCRIPT_FILE user/setlanguage.tcl
         INFO {Setzt die gewählte Sprache des Benutzers}
         ARGUMENTS {_session_id_ userName userLang}
-}
-
-User.getReGaVersion {
-        LEVEL NONE
-        SCRIPT_FILE user/getregaversion.tcl
-        INFO {Ermittelt die gewählte ReGaVersion}
-        ARGUMENTS {}
-}
-
-User.setReGaVersion {
-        LEVEL USER
-        SCRIPT_FILE user/setregaversion.tcl
-        INFO {Speichert die gewählte ReGaVersion}
-        ARGUMENTS {_session_id_ ReGaVersion}
 }
 
 User.existsCertificate {

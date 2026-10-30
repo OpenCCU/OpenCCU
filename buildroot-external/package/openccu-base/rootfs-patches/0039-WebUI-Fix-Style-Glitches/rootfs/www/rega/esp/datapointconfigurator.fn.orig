@@ -812,7 +812,7 @@ function ::dcCreate()
               Call("/esp/controls/hap.fn::CreateHAP()");
             }
 
-            if ((ch.Label() == "RPI-RF-MOD") || (ch.Label() =="HmIP-CCU3")) {
+            if ((ch.Label() == "RPI-RF-MOD") || (ch.Label() == "HmIP-CCU3") || (ch.Label() == "HmIP-RFUSB")) {
               WriteLine( "<script>conInfo('Create CoPro Control.');</script>" );
               sLastControlName = CN_MAINTENANCE;
               isKnownControl = true;
@@ -1362,6 +1362,12 @@ function ::dcCreate()
         }
       }
     }
+    ! create device maintenance channel information
+    if (ictCH == ictMaintenance) {
+      WriteLine( '</tr></table><table cellspacing="0" class="ctrlTbl CLASS02510" border="0" ><tr>' );
+      Call("/esp/controls/maintenance.fn::CreateDeviceMaintenanceChannel()");
+      isKnownControl = true;                                                       
+    } 
     if (!isKnownControl)
     {
       WriteLine( '</tr></table><table cellspacing="0" class="ctrlTbl CLASS02510" border="0" ><tr>' );
@@ -1622,13 +1628,12 @@ function ::CreateUnknown()
             }
 
             string sValueUnit = oDP.ValueUnit();
-            string sSpace = " ";
-            if( sValueUnit == "degree" ) { sValueUnit = "&deg;"; sSpace = ""; }
+            string sSpace = "&nbsp;";
+            if( sValueUnit == "degree" ) { sValueUnit = "&deg;"; }
             if( sValueUnit == "100%" )
             {
               value = value * 100;
               sValueUnit = "%";
-              sSpace = "";
             }
 
             string sValue = "?";
@@ -1722,16 +1727,20 @@ function ::CreateUnknown()
                     tbWrite = false;
                   }
 
-                  WriteLine( '<span class="CLASS02535" style="color:white">' );
+                  WriteLine( '<span class="CLASS02535 j_translate" style="color:white">' );
 
                   if( !tbWrite )
                   {
-                    string sValueh = "";
                     if (oDP.HssType() == "WIND_DIRECTION")
                     {
+                      string sValueh = "";
                       Call("/esp/datapointconfigurator.fn::ConvWindDir()");
+                      WriteLine("${"#sValueh#"} "#sValue#sSpace#sValueUnit );
                     }
-                    WriteLine(sValueh#" "#sValue#sSpace#sValueUnit );
+                    else
+                    {
+                      WriteLine(sValue#sSpace#sValueUnit );
+                    }
                   }
                   else
                   {
@@ -1810,47 +1819,41 @@ function ::ConvWindDir() {
 
  integer iValue = sValue.ToInteger() ; 
  
- sValueh = "no value";
- 
  if ( (iValue >= 346) || (iValue <= 15) ) 
  { 
-  sValueh = "N";
-  return;
+  sValueh = "windDirectionAbbrevNorth";
  }
- if ( (iValue >= 16) && (iValue <= 75) )
+ elseif ( (iValue >= 16) && (iValue <= 75) )
  {
-  sValueh = "NO";
-  return;
+  sValueh = "windDirectionAbbrevNorthEast";
  }
- if ( (iValue >= 76) && (iValue <= 105) )
+ elseif ( (iValue >= 76) && (iValue <= 105) )
  {
-  sValueh = "O";
-  return;
+  sValueh = "windDirectionAbbrevEast";
  }
- if ( (iValue >= 106) && (iValue <= 165) )
+ elseif ( (iValue >= 106) && (iValue <= 165) )
  {
-  sValueh = "SO";
-  return;
+  sValueh = "windDirectionAbbrevSouthEast";
  }
- if ( (iValue >= 166) && (iValue <= 195) )
+ elseif ( (iValue >= 166) && (iValue <= 195) )
  {
-  sValueh = "S";
-  return;
+  sValueh = "windDirectionAbbrevSouth";
  }
- if ( (iValue >= 196) && (iValue <= 255) )
+ elseif ( (iValue >= 196) && (iValue <= 255) )
  {
-  sValueh = "SW";
-  return;
+  sValueh = "windDirectionAbbrevSouthWest";
  }
- if ( (iValue >= 256) && (iValue <= 285) )
+ elseif ( (iValue >= 256) && (iValue <= 285) )
  {
-  sValueh = "W";
-  return;
+  sValueh = "windDirectionAbbrevWest";
  }
- if ( (iValue >= 286) && (iValue <= 345) )
+ elseif ( (iValue >= 286) && (iValue <= 345) )
  {
-  sValueh = "NW";
-  return;
+  sValueh = "windDirectionAbbrevNorthWest";
+ }
+ else
+ {
+  sValueh = "windDirectionNoValue";
  }
 
  return;
@@ -1918,14 +1921,14 @@ function ::CreateSysVars()
 }
 
 function ::HideCertainParameters() {
-  string tmp;
+  string tmpHCP;
   string param2Exclude = "IDENTIFY_DURATION,IDENTIFICATION_MODE_KEY_VISUAL,IDENTIFICATION_MODE_LCD_BACKLIGHT,IDENTIFY_TARGET_LEVEL,STATUS_FLAG_ERROR,STATUS_FLAG_LOW_BAT,STATUS_FLAG_PLAYING_FILE_ACTIVE,STATUS_FLAG_PLAYLIST_ACTIVE,ERROR_CODE_STATUS";
 
   showParam = true;
   ! Check if datapoint is no sysvar
   if (! oDP.IsTypeOf( OT_VARDP )) {
-    foreach (tmp, param2Exclude.Split(",")) {
-      if (oDP.HSSID().Find(tmp) != -1) {
+    foreach (tmpHCP, param2Exclude.Split(",")) {
+      if (oDP.HSSID().Find(tmpHCP) != -1) {
         showParam = false;
         return;
       }

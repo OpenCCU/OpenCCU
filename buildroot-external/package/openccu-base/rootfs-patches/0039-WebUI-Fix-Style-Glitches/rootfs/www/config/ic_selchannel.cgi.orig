@@ -377,7 +377,8 @@ proc put_PreviousStep {} {
       #puts "descrElem.attr(\"value\",translateString(descrElem.val()));"
       puts "jQuery(descrElem).val(translateString(descrElem.val()));"
 
-      puts "groupDescrElem.attr(\"value\",translateString(groupDescrElem.val()));"
+      #puts "groupDescrElem.attr(\"value\",translateString(groupDescrElem.val()));"
+      puts "jQuery(groupDescrElem).val(translateString(groupDescrElem.val()));"
     puts "</script>"
 
     #Warnung vor dem Überschreiben von Verknüpfungen----------------------------------

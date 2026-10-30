@@ -208,6 +208,7 @@
             </tr>
 
             <%
+              object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
               if (oUser.UserPwd() == "")
               {
                 Write("<tr>");

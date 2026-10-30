@@ -1,6 +1,6 @@
 --- a/bin/hm_autoconf
 +++ b/bin/hm_autoconf
-@@ -241,14 +241,57 @@
+@@ -231,14 +231,57 @@
        # Erzeugt eine Systemvariable, bindet diese an einen Kanal und liefert ihre Id zurück
        ##
        proc _create_sv_ {name info channelId} {
@@ -58,6 +58,21 @@
            sv.ValueUnit("mm");
            sv.ValueType( ivtFloat );
            sv.ValueSubType( istGeneric );
+@@ -441,7 +484,13 @@
+         string func_id;
+         string functions;
+         foreach (func_id, dom.GetObject(ID_FUNCTIONS).EnumUsedIDs()){
+-            functions = functions # " {" # dom.GetObject(func_id).Name() # "} " # func_id;
++            ! the system language selection renames the default functions and
++            ! keeps their untranslated name (e.g. funcLight) as trID metadata
++            object oFunc = dom.GetObject(func_id);
++            string func_name = oFunc.Name();
++            string func_trid = oFunc.MetaData("trID");
++            if(func_trid) { func_name = func_trid; }
++            functions = functions # " {" # func_name # "} " # func_id;
+         }
+     }]
+     
 --- a/www/api/methods.conf
 +++ b/www/api/methods.conf
 @@ -1100,6 +1100,20 @@
@@ -434,7 +449,7 @@
 +</script>
 --- a/www/rega/pages/tabs/admin/userAdministration.htm
 +++ b/www/rega/pages/tabs/admin/userAdministration.htm
-@@ -173,6 +173,7 @@
+@@ -174,6 +174,7 @@
      s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
      s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton' onclick='newUser();'>${footerBtnNew}</div></td>";
      s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05305' onclick='showAutoLogin()'>${footerBtnAutoLogin}</div></td>";
@@ -442,7 +457,7 @@
    s += "</tr>";
    s += "</table>";
  
-@@ -210,6 +211,10 @@
+@@ -212,6 +213,10 @@
      CreatePopup(ID_AUTO_LOGIN_CONFIG);
    }
  
@@ -455,7 +470,7 @@
  
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -92,6 +92,7 @@
+@@ -99,6 +99,7 @@
      "footerBtnCloseTree" : "Baumstruktur<br/>schlie%DFen",
      "footerBtnEdit" : "Bearbeiten",
      "footerBtnAutoLogin" : "Automatisches<br/>Anmelden",
@@ -463,7 +478,7 @@
      "footerBtnVirtualChannelsShow" : "Virtuelle Kan%E4le anzeigen",
      "footerBtnVirtualChannelsHide" : "Virtuelle Kan%E4le ausblenden",
      "footerBtnSaveNewFav" : "Auswahl als neue<br />Favoritenseite speichern",
-@@ -162,6 +163,8 @@
+@@ -169,6 +170,8 @@
      "thPhoneNumber" : "Telefonnummer",
      "thAutomaticLogin" : "Automatisches<br/>Anmelden",
      "thChooseUser" : "Benutzerauswahl",
@@ -472,7 +487,7 @@
      "thSafetyNote" : "Sicherheitshinweis",
      "thGateway" : "Gateway",
      "thAccessCode" : "Zugriffscode",
-@@ -248,6 +251,8 @@
+@@ -258,6 +261,8 @@
      "hintUsrAutoLoginRow2" : "Eine automatische Anmeldung erm%F6glicht die Systemanmeldung ohne Eingabe von Benutzernamen und Passwort.<br/>",
      "hintUsrAutoLoginRow3" : "Der ausgew%E4hlte Benutzer wird automatisch ohne weitere Pr%FCfung angemeldet. Das System ist somit nicht mehr gegen externen Zugriff gesch%FCtzt.<br />",
      "hintUsrAutoLoginRow4" : "Der Zugriff auf andere Benutzerkonten erfolgt %FCber 'Abmelden' und entsprechender Neuanmeldung.<br />",
@@ -481,7 +496,7 @@
      "profileSettings" : "Profileinstellung",
      "profileSettingsSender" : "Profileinstellung - Sender",
      "profileSettingsReceiver" : "Profileinstellung - Empf%E4nger",
-@@ -428,6 +433,7 @@
+@@ -445,6 +450,7 @@
      "dialogStateInfoDataTransferToDeviceSuccess" : "Statusinfo: Daten%FCbertragung erfolgreich",
      "dialogWarningDataTransferToDeviceNotPossible" : "Achtung! Daten%FCbertragung nicht m%F6glich",
      "dialogConfigAutomaticLogin" : "Konfiguration - Automatisches Anmelden",
@@ -491,7 +506,7 @@
      "dialogRestartSafeModeTitle" : "Neustart",
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -91,6 +91,7 @@
+@@ -98,6 +98,7 @@
      "footerBtnCloseTree" : "Close tree structure",
      "footerBtnEdit" : "Edit",
      "footerBtnAutoLogin" : "Log in<br/>automatically",
@@ -499,7 +514,7 @@
      "footerBtnVirtualChannelsShow" : "Show virtual channels",
      "footerBtnVirtualChannelsHide" : "Hide virtual channels",
      "footerBtnSaveNewFav" : "Save selection as new<br/>favourites page",
-@@ -161,6 +162,8 @@
+@@ -168,6 +169,8 @@
      "thPhoneNumber" : "Phone number",
      "thAutomaticLogin" : "Log in<br/>automatically",
      "thChooseUser" : "User selection",
@@ -508,7 +523,7 @@
      "thSafetyNote" : "Security alert",
      "thGateway" : "Gateway",
      "thAccessCode" : "Access code",
-@@ -247,6 +250,8 @@
+@@ -257,6 +260,8 @@
      "hintUsrAutoLoginRow2" : "If automatic login is activated you will be logged-in to the system without entering your user name or password.<br/>",
      "hintUsrAutoLoginRow3" : "The selected user will be logged-in automatically without further validation. The system is no longer protected against external influences.<br />",
      "hintUsrAutoLoginRow4" : "You can access other user accounts with click on \"Login\". Afterwards, please login with the user name and password again.",
@@ -517,7 +532,7 @@
      "profileSettings" : "Profile setting",
      "profileSettingsSender" : "Profile settings - transmitter",
      "profileSettingsReceiver" : "Profile settings - receiver",
-@@ -427,6 +432,7 @@
+@@ -444,6 +449,7 @@
      "dialogStateInfoDataTransferToDeviceSuccess" : "Status info: Data transfer successful",
      "dialogWarningDataTransferToDeviceNotPossible" : "Attention! Unable to transfer data",
      "dialogConfigAutomaticLogin" : "Configuration - automatic login",
@@ -527,7 +542,7 @@
      "dialogRestartSafeModeTitle" : "Restart",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9327,6 +9327,11 @@
+@@ -9426,6 +9426,11 @@
              new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
              homematic("CCU.setUserAckInstallWizard");
            }
@@ -539,7 +554,7 @@
          }
        }
      } else {
-@@ -25794,6 +25799,10 @@
+@@ -26097,6 +26102,10 @@
    
    this.leave = function()
    {
@@ -550,7 +565,7 @@
    };
  
    this.resize = function()
-@@ -32194,7 +32203,12 @@
+@@ -32501,7 +32510,12 @@
          this.setWidth(800);
          this.setFile( "/pages/msg/autoLoginConfig.htm" );
          break;
@@ -564,7 +579,7 @@
          this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
          this.addToPostBody( 'string type = "'+this.type+'";' );
          this.setWidth(800);
-@@ -33018,6 +33032,7 @@
+@@ -33325,6 +33339,7 @@
  ID_SET_OUCFM_MODE        = 1023;
  ID_SET_STATUS_DISPLAY    = 1024;
  ID_BIDCOS_INTERFACE = 1025;

@@ -64,7 +64,7 @@
            append html "<input id='separate_CHANNEL_$chn\_$prn' name='$param' type='text' class='hidden'>"
          append html "</td>"
        append html "</tr>"
-@@ -4217,7 +4217,7 @@
+@@ -4375,7 +4375,7 @@
          append html "<td>\${stringTableCondThresholdLo}</td>"
          append html "<td>"
  
@@ -73,7 +73,7 @@
            append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
  
          append html "</td>"
-@@ -4231,7 +4231,7 @@
+@@ -4389,7 +4389,7 @@
          append html "<td>\${stringTableCondThresholdHi}</td>"
          append html "<td>"
  
@@ -521,7 +521,7 @@
  
 --- a/www/config/ic_common.tcl
 +++ b/www/config/ic_common.tcl
-@@ -1380,7 +1380,7 @@
+@@ -1382,7 +1382,7 @@
  
            append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
            append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
@@ -532,7 +532,7 @@
        "ENUM" {
 --- a/www/config/ic_deviceparameters.cgi
 +++ b/www/config/ic_deviceparameters.cgi
-@@ -406,7 +406,7 @@
+@@ -497,7 +497,7 @@
        set PROFILE_PNAME(DESCRIPTION) $param
        if {$param_descr(TYPE) != "ENUM" && $showOption == 0} {
          append s1 "<tr><td><span class=\"stringtable_value\">$dev_descr_sender(TYPE)|$PROFILE_PNAME(DESCRIPTION)</span></td>"
@@ -541,7 +541,7 @@
          append s1 "<td>$unit&nbsp;($min-$max)</td>"
          append s1 "<td><input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\"></td>"
        } elseif {$showOption == 1} { 
-@@ -440,7 +440,7 @@
+@@ -531,7 +531,7 @@
              append s1 "<option>\${stringTableEnterValue}</option>"
            append s1 "</select>"
            
@@ -552,7 +552,7 @@
            append s1 "</td>"
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -47532,50 +47532,65 @@
+@@ -47862,50 +47862,65 @@
      srcElm.value = value;
    }
  
@@ -632,7 +632,7 @@
      }
      srcElm.setAttribute("valvalid", "true");
    }
-@@ -47583,9 +47598,9 @@
+@@ -47913,9 +47928,9 @@
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";

@@ -52,10 +52,11 @@
                   <td class="CLASS03304"></td>
                 </tr>
                 <%
+                  string sEnumDeviceIds = "";
                   object obj = dom.GetObject(ID_DEVICES);
                   if ( obj )
                   {
-                    obj.SortByName();
+                    obj.SortByName(soAsc,stNatural);
                     string tmp = "";
                     string sFirstId = "";
                     foreach( tmp, obj.EnumEnabledIDs() )
@@ -108,6 +109,7 @@
                             Write("InitGD(jg_0, 50);");
                             Write("Draw(jg_0, '"#devs.Label()#"', 50, '-1');");
                           Write("var tmp = new Object();");
+                          Write("tmp['id'] = '"#devs.ID()#"';");
                           Write("tmp['name'] = '"#devs.Name()#"';");
                           Write("tmp['trid'] = '"#trId#"';");
                           Write("arItems[arItems.length] = tmp;");
@@ -116,6 +118,7 @@
                           
                           Write("</td>");
                         Write("</tr>");
+                        sEnumDeviceIds = sEnumDeviceIds # devs.ID() # "\t";
                       }
                     }
                   }
@@ -191,13 +194,66 @@
     {
       system.SetSessionVar("sessionTAB1",sFirstId);
     }
+    else
+    {
+      string tmpID = system.GetSessionVar("sessionTAB1");
+      string tmp = "";
+      boolean bFound = false;
+      foreach (tmp, sEnumDeviceIds)
+      {
+        if (tmp == tmpID)
+        {
+          bFound = true;
+          break;
+        }
+      }
+      if (bFound == false)
+      {
+        system.SetSessionVar("sessionTAB1", sFirstId);
+      }
+    }
   %>
-  loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  // to avoid a double channelload, perform only initial load if no room-filter is set
+  if(document.getElementById("ftDevName") && document.getElementById("ftDevName").value == "") {
+    loadChannels( <% Write( system.GetSessionVar("sessionTAB1") ); %> );
+  }
   
   filterOptions = new iseFilter();
 </script>
 
 <script type="text/javascript">
+  ShowInternalDeviceChannels = function()
+  {
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "ShowInternalDeviceChannels";';
+    var opt =
+    {
+      postBody: pb,
+      onComplete: function(t)
+      {
+        if(dbg){alert(t.responseText);}
+        reloadPage();
+      }
+    };
+    new Ajax.Request(url,opt);
+  };
+
+  <%
+    string sInternalBtnText = "";
+    if( system.GetSessionVar("sessionSIDC") == "1" )
+    {
+        !sInternalBtnText = "aus";
+        sInternalBtnText = "footerBtnHideInternalDeviceChannels";
+    }
+    else
+    {
+        !sInternalBtnText = "ein";
+        sInternalBtnText = "footerBtnShowInternalDeviceChannels";
+    }
+    Write("var internalBtnText = '"#sInternalBtnText#"';");
+  %>
+
   var s = "";
 
   var mouseOpts =
@@ -218,6 +274,7 @@
   s += "<tr>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey("footerBtnPageBack")+"</div></td>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalDeviceChannels()'>"+translateKey(internalBtnText)+"</div></td>";
   s += "</tr>";
   s += "</table>";
   
@@ -243,6 +300,8 @@
 
   updateDevTable = function()
   {
+    var sFirstId = "";
+    var bSelectedShown = false;
     colorFilterBtns(fltDL);
     for (var i = 0; i < arItems.length; i++)
     {
@@ -253,7 +312,30 @@
       else
       {
         show(arItems[i]['trid']);
+        if(sFirstId == "")
+        {
+          sFirstId = arItems[i]['id'];
+        }
+        if ($(arItems[i]['id'] + "name").hasClassName("ButtonStatusRoomsSelected"))
+        {
+          bSelectedShown = true;
+        }
       }
+    }
+    if (bSelectedShown)
+    {
+      // the selected entry is still shown: keep it and its channel list
+    }
+    else if (sFirstId != "")
+    {
+      loadChannels(sFirstId);
+    }
+    else
+    {
+      // no entry matches the filter: clear the selection and the channel list
+      iseInitUpdateArrays();
+      jQuery("#tblFunctionNames td").removeClass("ButtonStatusRoomsSelected ButtonStatusRoomsPicSelected");
+      jQuery("#chnList").empty();
     }
   };
 

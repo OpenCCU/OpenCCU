@@ -129,7 +129,10 @@ hss_ledctl --led rpi-rf-mod status
 Color/alternate commands return after acknowledgment and keep running in hss_led.
 `release` removes a manual override. `stop` and `off` override the display with off;
 they do not stop the daemon. Acknowledgment confirms acceptance of the command;
-`pending=1` means the hardware still needs to be updated.
+`pending=1` means the hardware still needs to be updated. `disabled=1` means
+`/etc/config/disableLED` exists ("LED-Nutzung (Funkmodul)" disabled in the WebUI):
+the radio LED then stays off, manual overrides included, although commands are
+still accepted.
 
 The socket and RGB state now reside in `/run/hss_led/`. The experimental old
 CLI name is not installed as an alias; its stale target-file entry is removed

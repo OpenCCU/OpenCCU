@@ -46,12 +46,14 @@ proc initJavascript {} {
         var thisSection = jQuery("body").data(section);
         if(thisSection) {
           jQuery('#section'+section).show();
+          jQuery('#sectionUNAVAIL').hide();
         } else {
           if (typeof thisSection == "undefined") {
             homematic('Interface.isPresent', {"interface": section}, function(result, error) {
               if (result == true)
               {
                 jQuery('#section'+section).show();
+                jQuery('#sectionUNAVAIL').hide();
                 dlgPopup.readaptSize();
               }
             });
@@ -60,6 +62,16 @@ proc initJavascript {} {
       }
     }
   }
+}
+
+proc putSectionUNAVAIL {} {
+  set html ""
+    append html "<tr id='sectionUNAVAIL' class='CLASS21202'>"
+      append html "<td class='CLASS21207' colspan='3'>"
+      append html "\${dialogNewDevicesUNAVAILWarn}"
+      append html "</td>"
+    append html "</tr>"
+  return $html
 }
 
 proc putSectionBidCosRF {} {
@@ -392,6 +404,10 @@ puts "<div class='CLASS21200 j_translate'>"
       puts "<col style='width:462px;'>"
     puts "</colgroup>"
 
+    # Start section UNAVAIL
+    puts [putSectionUNAVAIL]
+    # End section UNAVAIL
+
     # Start section BidCos-RF
     puts [putSectionBidCosRF]
     # End section BidCos-RF
@@ -712,8 +728,12 @@ puts "</div>"
     }
     puts {
       OnInbox = function() {
-        rf_install_mode(false);
-        hmip_install_mode_stop();
+        if (jQuery("body").data("BidCos-RF")) {
+          rf_install_mode(false);
+        }
+        if (jQuery("body").data("HmIP-RF")) {
+          hmip_install_mode_stop();
+        }
         PopupClose();
         WebUI.enter(NewDeviceListPage, {"fromTeachIn":true});
       }

@@ -185,7 +185,7 @@
      
 --- a/www/config/cp_add_device.cgi
 +++ b/www/config/cp_add_device.cgi
-@@ -224,7 +224,7 @@
+@@ -236,7 +236,7 @@
                    append html "<span>\${lblTeachInKEY}</span>"
                  append html "</td>"
                  append html "<td>"
@@ -194,7 +194,7 @@
                  append html "</td>"
                append html "</tr>"
  
-@@ -233,7 +233,7 @@
+@@ -245,7 +245,7 @@
                    append html "<span>\${lblTeachInSGTIN}</span>"
                  append html "</td>"
                  append html "<td>"
@@ -237,7 +237,7 @@
 +}
 --- a/www/config/ic_deviceparameters.cgi
 +++ b/www/config/ic_deviceparameters.cgi
-@@ -776,9 +776,9 @@
+@@ -867,9 +867,9 @@
    puts "<table id=\"id_channel_parameters_table\" class=\"parameters_table\" cellspacing=\"0\">"
    
    puts "<colgroup>"
@@ -250,7 +250,7 @@
    puts "</colgroup>"
  
    puts "<THEAD>"
-@@ -1296,19 +1296,19 @@
+@@ -1424,25 +1424,25 @@
  
    puts "<colgroup>"
    #Name
@@ -271,12 +271,19 @@
    #Interface
 -  puts "  <col style=\"width:5%;\"/>"
 +  puts "  <col />"
-   #Firmware
--  puts "  <col style=\"width:15%;\"/>"
-+  puts "  <col />"
+   if {$SHOWRESTORE} {
+     #Firmware
+-    puts "  <col style=\"width:15%;\"/>"
++    puts "  <col />"
+     #Restore Config
+     puts "  <col />"
+   } else {
+     #Firmware
+-    puts "  <col style=\"width:15%;\"/>"
++    puts "  <col />"
+   }
    puts "</colgroup>"
    
-   puts "<THEAD>"
 --- a/www/config/ic_linkpeerlist.cgi
 +++ b/www/config/ic_linkpeerlist.cgi
 @@ -110,7 +110,10 @@
@@ -291,7 +298,7 @@
  }
  
  proc _incr {p_arr address peer} {
-@@ -645,6 +648,15 @@
+@@ -655,6 +658,15 @@
  
    #cgi_debug -on
  
@@ -353,7 +360,7 @@
    puts "</colgroup>"
  }
  
-@@ -409,12 +409,12 @@
+@@ -410,12 +410,12 @@
    puts "<table border=\"1\" id=\"createLinkStep1\" cellspacing=\"0\" class=\"j_translate\" >"
  
    puts "<colgroup>"
@@ -372,7 +379,7 @@
    puts "</colgroup>"
    
    puts "<THEAD>"
-@@ -575,7 +575,7 @@
+@@ -576,7 +576,7 @@
      puts "<div class=\"CLASS21915\">&nbsp;"
    } else {
      puts "<td id=\"id_filtertd_$colNr\" class=\"unfiltered\">"
@@ -494,7 +501,7 @@
          WriteLine("</div>");
        WriteLine("</td>");
      WriteLine("</tr>");
-@@ -50,7 +50,7 @@
+@@ -78,7 +78,7 @@
      WriteLine("<tr>");
        WriteLine("<td class='CLASS02518'>");
          WriteLine("<div align='center'>");
@@ -503,7 +510,7 @@
          WriteLine("</div>");
        WriteLine("</td>");
      WriteLine("</tr>");
-@@ -67,7 +67,7 @@
+@@ -95,7 +95,7 @@
      WriteLine("<tr>");
        WriteLine("<td  class='CLASS02518'>");
          WriteLine("<div align='center'>");
@@ -829,7 +836,7 @@
            WriteLine("</table>")
 --- a/www/rega/esp/datapointconfigurator.fn
 +++ b/www/rega/esp/datapointconfigurator.fn
-@@ -1507,7 +1507,7 @@
+@@ -1513,7 +1513,7 @@
    string showParam = true;
  
    WriteLine( '<td class="CLASS02519">' );
@@ -840,7 +847,7 @@
      string sEnum = "";
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -1265,7 +1265,7 @@
+@@ -1293,7 +1293,7 @@
      Write("<tr>");
      Write("<td  class='CLASS02103'>");
          Write("<div align='center'>");
@@ -890,7 +897,7 @@
                  </table>
 --- a/www/rega/pages/tabs/admin/systemvars.htm
 +++ b/www/rega/pages/tabs/admin/systemvars.htm
-@@ -45,29 +45,29 @@
+@@ -57,29 +57,29 @@
    
  </script>
  <div id="svOffset" style="display:none"></div>
@@ -969,7 +976,7 @@
    <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="level"){sCssName="SortSelected";} %>
 --- a/www/rega/pages/tabs/admin/views/functionchannels.htm
 +++ b/www/rega/pages/tabs/admin/views/functionchannels.htm
-@@ -176,6 +176,7 @@
+@@ -164,6 +164,7 @@
      iInsIdx++;
      iElemsAdded++;
      tr.id = chnsTmp[i]['trid'];
@@ -977,7 +984,7 @@
      if (!fltSF.objPassFilter(chnsTmp[i]))
        tr.style.display = "none";
      else
-@@ -284,4 +285,4 @@
+@@ -272,4 +273,4 @@
  bEIP = false;
  Cursor.set(Cursor.NORMAL);
  translatePage("#tblsvr");
@@ -1407,7 +1414,7 @@
        <td class="thCell CLASS04900" >${thActivity}</td>
 --- a/www/rega/pages/tabs/admin/views/programs.htm
 +++ b/www/rega/pages/tabs/admin/views/programs.htm
-@@ -1131,6 +1131,13 @@
+@@ -1136,6 +1136,13 @@
  
  <div id="prgcontent">
    <table id="ProgramTable" class="filterTable tTable j_translate" border="0" cellpadding="0" cellspacing="0">
@@ -1421,7 +1428,7 @@
      <thead>
        <tr>
          <td class="thCell CLASS04802" >${thName}</td>
-@@ -1142,11 +1149,11 @@
+@@ -1147,11 +1154,11 @@
      </thead>
      <tbody>
        <tr class="CLASS04803">
@@ -1431,14 +1438,14 @@
 +        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
          <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
          <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>
--        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label></td>
-+        <td class="tBodyCell"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label></td>
+-        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label><br/><input type="checkbox" onchange="isePrograms.SetExecuteOnStartup(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_executeonstartup" <% if( oPrg.ExecuteOnStartup() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_executeonstartup">${lblExecuteOnStartup}</label></td>
++        <td class="tBodyCell"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label><br/><input type="checkbox" onchange="isePrograms.SetExecuteOnStartup(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_executeonstartup" <% if( oPrg.ExecuteOnStartup() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_executeonstartup">${lblExecuteOnStartup}</label></td>
        </tr>
        <tr>
          <td colspan="5">
 --- a/www/rega/pages/tabs/admin/views/roomchannels.htm
 +++ b/www/rega/pages/tabs/admin/views/roomchannels.htm
-@@ -169,6 +169,7 @@
+@@ -161,6 +161,7 @@
      iInsIdx++;
      iElemsAdded++;
      tr.id = chnsTmp[i]['trid'];
@@ -1448,7 +1455,7 @@
      else 
 --- a/www/rega/pages/tabs/admin/views/rooms.htm
 +++ b/www/rega/pages/tabs/admin/views/rooms.htm
-@@ -170,82 +170,82 @@
+@@ -177,82 +177,82 @@
  <table id="tblRoomList" class="tblList CLASS04100" style="display:none" cellpadding="0" cellspacing="0" >
  
  <colgroup>
@@ -1567,7 +1574,7 @@
      <div id="btnFilterIface" class="FilterBtn CLASS00203">${thFilter}</div>
      <div class="FilterSubMenu" id="btnFilterIfaceSub" style="display:none">
          <table class='CLASS04110'>
-@@ -261,8 +261,8 @@
+@@ -268,8 +268,8 @@
          <div class='FilterSetButton' onclick='setIFilter(fltSR, "iface");updateTable();$("btnFilterIfaceSub").hide();'>${filterSet}</div>
          <div class='FilterSetButton' onclick="$('btnFilterIfaceSub').hide();">${filterClose}</div>
      </div> 
@@ -1578,7 +1585,7 @@
      <div id="btnFilterMode" class="FilterBtn CLASS00203">${thFilter}</div>
      <div class="FilterSubMenu" id="btnFilterModeSub" style="display:none">
          <table class='CLASS04110'>
-@@ -278,8 +278,8 @@
+@@ -285,8 +285,8 @@
          <div class='FilterSetButton' onclick='setIFilter(fltSR, "mode");updateTable();$("btnFilterModeSub").hide();'>${filterSet}</div>
          <div class='FilterSetButton' onclick="$('btnFilterModeSub').hide();">${filterClose}</div>
      </div>
@@ -1589,7 +1596,7 @@
      <div id="btnFilterFunc" class="FilterBtn CLASS00203">${thFilter}</div>
      <div class="FilterSubMenu" id="btnFilterFuncSub" style="display:none">
        <% 
-@@ -303,9 +303,9 @@
+@@ -310,9 +310,9 @@
          Write("<div class='FilterSetButton' onclick='$(\"btnFilterFuncSub\").hide();'>${filterClose}</div>");
        %>
      </div>
@@ -1602,7 +1609,7 @@
  </tr>
  
  </thead>
-@@ -324,7 +324,7 @@
+@@ -331,7 +331,7 @@
      object elem = dom.GetObject(tmp);
      if (elem)
      {
@@ -1636,7 +1643,15 @@
                  </colgroup>
                  <tr>
                    <th>${thName}</th>
-@@ -92,10 +87,10 @@
+@@ -53,6 +48,7 @@
+                 </tr>
+                 <%
+                   string sEnumDeviceIds = "";
++                  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+                   object obj = dom.GetObject(ID_DEVICES);
+                   if ( obj )
+                   {
+@@ -93,10 +89,14 @@
                          }
                          string trId = "devices"#devs.ID();
                          WriteLine('<tr id="'#trId#'" class="CLASS03904">');
@@ -1645,11 +1660,15 @@
                            Write(devs.Name());
                            Write("</td>");
 -                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' style='height: 80px;'>");
-+                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
++                          if( oUser && oUser.UserLevel() == iulAdmin ) {
++                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);if (DeviceList.getDevice("# devs.ID() #")) { DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
++                          } else {
++                            Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906'>");
++                          }
                            
                            string sPicDivId = "picDiv"#devs.ID();
                            Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
-@@ -130,12 +125,7 @@
+@@ -133,12 +133,7 @@
      <!-- Rechte Spalte -->
      <td id="contentRight">
        <div id="divRTD" class="CLASS03908">
@@ -1683,7 +1702,7 @@
                <table id="tblFunctionNames" class="StatViewTbl CLASS04006 j_translate" cellpadding="0" cellspacing="0" style="width: 100%;">
                  <tr>
                    <th>${thFunc}</th>
-@@ -60,7 +55,7 @@
+@@ -61,7 +56,7 @@
                          }
                          string trId = "funcs"#func.ID();
                          Write("<tr id='"#trId#"'>");
@@ -1692,7 +1711,7 @@
                              Write(func.Name());
                            Write("</td>");
                            Write("<script type='text/javascript'>");
-@@ -89,12 +84,7 @@
+@@ -92,12 +87,7 @@
     <!-- Rechte Spalte -->
     <td id="contentRight">
       <div id="divHTF" class="CLASS04002">
@@ -1708,7 +1727,7 @@
             
 --- a/www/rega/pages/tabs/control/hdevichannels.htm
 +++ b/www/rega/pages/tabs/control/hdevichannels.htm
-@@ -212,7 +212,7 @@
+@@ -245,7 +245,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1719,7 +1738,7 @@
              integer cId = chn.ID();
 --- a/www/rega/pages/tabs/control/hfuncchannels.htm
 +++ b/www/rega/pages/tabs/control/hfuncchannels.htm
-@@ -162,7 +162,7 @@
+@@ -191,7 +191,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1730,7 +1749,7 @@
              integer cId = chn.ID();
 --- a/www/rega/pages/tabs/control/hroomchannels.htm
 +++ b/www/rega/pages/tabs/control/hroomchannels.htm
-@@ -168,7 +168,7 @@
+@@ -197,7 +197,7 @@
              Write("</td>");
              Write("<td class='GrayBkg'>");
              
@@ -1762,7 +1781,7 @@
          <th class="tHeaderCell CLASS03303" >${thDescription}</th>
          <th class="tHeaderCell CLASS03303" >${thActivity}</th>
          <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
-@@ -141,6 +148,7 @@
+@@ -148,6 +155,7 @@
  <script type="text/javascript">
  
    translatePage("#prgcontent");
@@ -1799,7 +1818,7 @@
                            Write(room.Name());     
                          Write("</td>");
                          Write("<script type='text/javascript'>");
-@@ -92,12 +87,7 @@
+@@ -93,12 +88,7 @@
       <!-- Rechte Spalte -->
       <td id="contentRight">
         <div id="divHTR" class="CLASS04002">
@@ -2022,13 +2041,14 @@
            Write( '<script type="text/javascript">');
 --- a/www/rega/pages/tabs/user/favOverview.htm
 +++ b/www/rega/pages/tabs/user/favOverview.htm
-@@ -63,30 +63,29 @@
+@@ -70,33 +70,32 @@
  <td class="CLASS06402"></td>
  </tr>
  </table>
--<table id="tblFavs" class="tMain filterTable" cellpadding="0" cellspacing="0" width="97%" style="display:none">
-+<table id="tblFavs" class="tMain filterTable" cellpadding="0" cellspacing="0" style="display:none">
+-<table id="tblFavs" class="tMain" cellpadding="0" cellspacing="0" width="97%" style="display:none">
++<table id="tblFavs" class="tMain" cellpadding="0" cellspacing="0" style="display:none">
    <colgroup>
+-  <col style="width:5%;"/>
 -  <col style="width:15%;"/>
 -  <col style="width:15%;"/>
 -  <col style="width:10%;"/>
@@ -2043,9 +2063,13 @@
 +  <col />
 +  <col />
 +  <col />
++  <col />
 +  <col style="width:100px;" />
    </colgroup>
    <tr>
+     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="pos"){sCssName="SortSelected";} %>
+-    <th><div class="pt11 CLASS06404 <%Write(sCssName);%>" onclick="IseSort(arFavs,'pos',true);" >${thPosition}</div></th>
++    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'pos',true);" >${thPosition}</div></th>
      <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
 -    <th><div class="pt11 CLASS06404 <%Write(sCssName);%>" onclick="IseSort(arFavs,'name',true);" >${thName}</div></th>
 -    <th><div class="pt11 Sort">${thDescription}</div></th>
@@ -2067,10 +2091,10 @@
 +    <th class="thCell CLASS02803"><div class="pt11">${thAction}</div></th>
    </tr>
    <tr>
-     <td class="CLASS06405">
+     <td class="CLASS06408">&nbsp;</td>
 --- a/www/webui/color.map
 +++ b/www/webui/color.map
-@@ -45,7 +45,7 @@
+@@ -48,7 +48,7 @@
  
  mainMenuBackground      #ebf1f2
  subMenuBackground       #ebf1f2
@@ -2079,7 +2103,7 @@
  
  messagesBackground      #ebf1f2
  logoutButton            #ebf1f2
-@@ -57,4 +57,4 @@
+@@ -60,4 +60,4 @@
  borderColor             #f0f0f0
  
  shutterOpeningDegree    #89989b
@@ -2118,7 +2142,7 @@
  			   this.htm += '<\/div>';
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -86,8 +86,8 @@
+@@ -94,8 +94,8 @@
      "footerBtnTransfer" : "%DCbernehmen",
      "footerBtnOk" : "OK",
      "footerBtnSaveNewProgram" : "Einstellungen als neues<br/>Programm speichern",
@@ -2153,7 +2177,7 @@
  .conditionEven
  {
    /*Wenn die Farbe nicht nur als Rahmen, sondern für die ganze Bedingung gelten soll,
-@@ -161,10 +169,32 @@
+@@ -174,10 +182,32 @@
  {
      background-color: $_(contentBackground);
      overflow: auto;
@@ -2186,7 +2210,7 @@
  /* Kopfzeile */
  #header {
    height: 15%;
-@@ -307,7 +337,7 @@
+@@ -320,7 +350,7 @@
  {
    /*position: absolute;*/
    margin-left: 0px;
@@ -2195,7 +2219,7 @@
    padding-left: 10px;
  }
  
-@@ -393,7 +423,9 @@
+@@ -406,7 +436,9 @@
    text-align:center;
    border:solid 1px $_(black); /* black */
    background-color:$_(clickable);
@@ -2206,7 +2230,7 @@
  }
  
  .filterTable td
-@@ -401,7 +433,6 @@
+@@ -414,7 +446,6 @@
    text-align:center;
    border:solid 1px $_(black); /* black */
    color: $_(textColorB); /* black */
@@ -2214,7 +2238,7 @@
  }
  
  .filterTable .leftAlign {
-@@ -596,37 +627,39 @@
+@@ -609,37 +640,39 @@
  
  /* Tabelle zur Listendarstellung von Elementen (z.B. Raumübersicht) */
  .tblList {
@@ -2264,7 +2288,7 @@
  }
  
  .tblList td {
-@@ -639,7 +672,6 @@
+@@ -652,7 +685,6 @@
  /* Kopfzeile eines Popup-Fenster */
  .popupTitle {
    color: $_(textColorB); /* black */
@@ -2272,7 +2296,7 @@
    background-color: $_(white); /* white */
    border: solid 1px $_(black); /* black */
    padding-left: 4px;
-@@ -668,12 +700,12 @@
+@@ -681,12 +713,12 @@
  .popupTableScript
  {
    width: 100%;
@@ -2286,7 +2310,7 @@
  }
  
  .popupTableRow
-@@ -708,7 +740,6 @@
+@@ -721,7 +753,6 @@
  
  .popupControls {
    background-color: $_(white); /* white */
@@ -2294,7 +2318,7 @@
    border: solid 1px $_(black); /* black */
  }
  
-@@ -737,8 +768,8 @@
+@@ -750,8 +781,8 @@
  
  /* KanalListe */
  .ChnListTbl {
@@ -2304,7 +2328,7 @@
  }
  
  .ChnListTbl td {
-@@ -948,7 +979,6 @@
+@@ -961,7 +992,6 @@
      border:1px solid $_(black); /* black */
      /* width:95%; */
      text-align:center;
@@ -2312,7 +2336,7 @@
      line-height:20px;
      vertical-align:middle;
      color: $_(textColorB); /* black */
-@@ -987,7 +1017,7 @@
+@@ -1000,7 +1030,7 @@
    background-image:url(/ise/img/gradientButton25px.png);
    /*background-image: linear-gradient(to bottom, white 40%, gray);*/
    background-image: var(--btnGradient);
@@ -2321,7 +2345,7 @@
    border: solid 1px $_(gray); /* silver */
    border-radius: 5px;
    margin:2%;
-@@ -1115,6 +1145,7 @@
+@@ -1128,6 +1158,7 @@
  
  .StatViewTbl td{
    border: solid 1px $_(black); /* black */
@@ -2329,7 +2353,7 @@
  }
  
  
-@@ -1275,13 +1306,10 @@
+@@ -1299,13 +1330,10 @@
  .tTable
  {
    text-align:center;
@@ -2345,7 +2369,7 @@
  }
  /*
  .tTable th
-@@ -1338,8 +1366,8 @@
+@@ -1362,8 +1390,8 @@
  .tMain
  {
    border:solid 1px $_(black); /* black */
@@ -2356,7 +2380,7 @@
  }
  
  .tHeader
-@@ -1377,7 +1405,6 @@
+@@ -1401,7 +1429,6 @@
  
  .bcWhitePic
  {
@@ -2364,7 +2388,7 @@
  }
  
  .bcWhite
-@@ -1421,12 +1448,8 @@
+@@ -1469,12 +1496,8 @@
  
  .oLine
  {
@@ -2378,7 +2402,7 @@
  }
  
  .sysConfigHeight
-@@ -1473,7 +1496,7 @@
+@@ -1521,7 +1544,7 @@
    border:solid 1px $_(black); /* black */
    height:40px;
    text-align:center;
@@ -2387,7 +2411,7 @@
  }
  
  .tdCellFilter
-@@ -1487,7 +1510,7 @@
+@@ -1535,7 +1558,7 @@
  
  /* Weisser Zellenhintergrund für Bilder (Geräteübersicht u.ä.) */
  .WhiteBkgPic {
@@ -2396,7 +2420,7 @@
    color: $_(textColorB); /* black */
  }
  
-@@ -1525,9 +1548,20 @@
+@@ -1577,9 +1600,20 @@
  /* Buttons incl. Hilfe-Img. */
  .cpButton {
      width:230px;
@@ -2419,7 +2443,7 @@
  	background-color: $_(background); /* #183473 */
  }
  
-@@ -1543,7 +1577,7 @@
+@@ -1595,7 +1629,7 @@
  
  #ic_deviceparameters #DeviceInformation
  {
@@ -2428,7 +2452,7 @@
  	color: $_(textColorA); /* white */
  	border: 1px solid $_(black); /* black */
  }
-@@ -1567,7 +1601,6 @@
+@@ -1619,7 +1653,6 @@
  
  #ic_deviceparameters #DeviceInformation #DeviceImage
  {
@@ -2436,7 +2460,7 @@
  	width: 52px;
  	height: 56px;
  	margin: 0;
-@@ -1598,7 +1631,7 @@
+@@ -1650,7 +1683,7 @@
  
  #ic_deviceparameters .parameter_area .parameters_table 
  {
@@ -2445,7 +2469,7 @@
  	color: $_(textColorA); /* white */
  	border: 1px solid $_(black); /* black */
  }
-@@ -1607,6 +1640,7 @@
+@@ -1659,6 +1692,7 @@
  
  	background-color: $_(clickable);
  	text-align:center;
@@ -2453,7 +2477,7 @@
  }
  
  #ic_deviceparameters .parameter_area .parameters_table tbody {
-@@ -1617,7 +1651,6 @@
+@@ -1669,7 +1703,6 @@
  
  #ic_deviceparameters .parameter_area .parameters_table td {
  	border: 1px solid $_(black); /* black */
@@ -2461,7 +2485,7 @@
  }
  
  #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl
-@@ -1625,6 +1658,7 @@
+@@ -1677,6 +1710,7 @@
  	border: 0;
  	height: auto;
  	background-color: $_(white); /* white */
@@ -2469,7 +2493,7 @@
  }
  
  #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl thead
-@@ -1639,8 +1673,6 @@
+@@ -1691,8 +1725,6 @@
  {
  	border: 0;
  	background-color: $_(white); /* white */
@@ -2478,7 +2502,7 @@
  }
  
  #ic_deviceparameters #Timeouts_Area .TimeoutTable,
-@@ -1702,6 +1734,14 @@
+@@ -1754,6 +1786,14 @@
  	border: 0;
  }/*LinkList-Tabelle*/
  /*--------------------------------------------*/
@@ -2493,7 +2517,7 @@
  #ic_linkpeerlist #head_wrapper {
    border-bottom: 0;
    margin: 0;
-@@ -1717,17 +1757,16 @@
+@@ -1769,17 +1809,16 @@
  #ic_linkpeerlist #body_wrapper {
    margin: 0;
    padding: 0;
@@ -2514,7 +2538,7 @@
  }
  
  #ic_linkpeerlist .LinkListTbl td {
-@@ -1764,9 +1803,7 @@
+@@ -1816,9 +1855,7 @@
  
  #ic_linkpeerlist .LinkListTbl .LinkListTbl_img
  {
@@ -2524,7 +2548,7 @@
  }
  /*--------------------------------------------*/
  #modalbox #id_messagebox
-@@ -1780,6 +1817,21 @@
+@@ -1832,6 +1869,21 @@
    z-index:90;
  }
  
@@ -2546,7 +2570,7 @@
  #messagebox #id_messagebox
  {
    position:absolute;
-@@ -1828,15 +1880,27 @@
+@@ -1880,15 +1932,27 @@
  {
    height: 40px;
    background-color: $_(activeBackground);
@@ -2577,7 +2601,7 @@
  }
  
  #ic_selchannel #createLinkStep1 thead {
-@@ -1859,13 +1923,14 @@
+@@ -1911,13 +1975,14 @@
  	background-color: $_(white); /* white */
  }
  #ic_selchannel #createLinkStep1 .WhiteHeader input {
@@ -2594,7 +2618,7 @@
  }
  
  #ic_selchannel .ChnListTbl tr td {
-@@ -1994,14 +2059,7 @@
+@@ -2046,14 +2111,7 @@
  {
  	visibility: hidden;
  }
@@ -2609,7 +2633,7 @@
  /*--------------------------------------------*/
  
  /*Tabellenkörper Virtuelle Tasten*/
-@@ -2020,7 +2078,6 @@
+@@ -2072,7 +2130,6 @@
  /*Tabellenkörper Bilderspalte*/
  #ic_selchannel .ChnListTbl .chnListTbl_dev_img 
  {
@@ -2617,7 +2641,7 @@
  	text-align: left;
  	height: 50px;  
  }
-@@ -2034,10 +2091,12 @@
+@@ -2086,10 +2143,12 @@
  	height: auto;
  }
  /*--------------------------------------------*/
@@ -2633,7 +2657,7 @@
  	color: $_(textColorA); /* white */
  	border: 1px solid $_(black); /* black */
  }
-@@ -2120,7 +2179,7 @@
+@@ -2172,7 +2231,7 @@
  #ic_setprofiles #body_wrapper
  {
  	background-color: $_(background); /* #183473 */
@@ -2642,7 +2666,7 @@
  }
  
  #ic_setprofiles  #id_sender_group_receiver_profiles_wrapper
-@@ -2354,9 +2413,10 @@
+@@ -2406,9 +2465,10 @@
    padding:0;
    background-color:$_(clickable);
    color: $_(textColorB); /* black */
@@ -2654,7 +2678,7 @@
  }
  
  .FilterHeight20 {
-@@ -2369,7 +2429,7 @@
+@@ -2421,7 +2481,7 @@
    padding:0;
    background-color:$_(active); /* #565657 */
    color: $_(textColorB); /* black */
@@ -2663,7 +2687,7 @@
    text-align:left;
    vertical-align:middle;  
  }
-@@ -2415,8 +2475,7 @@
+@@ -2467,8 +2527,7 @@
  }
  
  .FilterText {
@@ -2673,7 +2697,7 @@
  }
  
  .FilterButton {
-@@ -2426,8 +2485,7 @@
+@@ -2478,8 +2537,7 @@
    /*background-image: linear-gradient(to bottom, white 40%, gray );*/
    background-image: var(--btnGradient);
  
@@ -2683,7 +2707,7 @@
    border:1px solid $_(black); /* black */
    color: $_(textColorB); /* white */
    font-weight:normal;
-@@ -2523,8 +2581,7 @@
+@@ -2575,8 +2633,7 @@
    border-bottom:solid 5px $_(navBarSeparator); /* #ffffff */
    background-color: $_(background); /* #183473 */
    z-index: 189;
@@ -2693,7 +2717,7 @@
  }
  
  .MainMenuItem_Left {
-@@ -2544,7 +2601,7 @@
+@@ -2596,7 +2653,7 @@
  }
  
  .MainMenuItem_Help {
@@ -2702,7 +2726,7 @@
  }
  
  .MainMenuItem_Highlight {
-@@ -2625,6 +2682,7 @@
+@@ -2677,6 +2734,7 @@
    background-color: $_(subMenuBackground);
    overflow:hidden;
    z-index:189;
@@ -2710,7 +2734,7 @@
  }
  
  .MainMenuSubItem {
-@@ -2639,7 +2697,6 @@
+@@ -2691,7 +2749,6 @@
    line-height:20px;
    cursor: pointer;
    white-space: nowrap;
@@ -2718,7 +2742,7 @@
  }
  
  .MainMenuSubItem_Highlight {
-@@ -2729,9 +2786,9 @@
+@@ -2781,9 +2838,9 @@
    top: 24px;
    left: 2px;
    width: 996px;
@@ -2730,7 +2754,7 @@
  }
  
  #ChannelChooserFooter {
-@@ -2777,7 +2834,6 @@
+@@ -2829,7 +2886,6 @@
    width:100%;
    height:auto;
    margin:0;
@@ -2738,7 +2762,7 @@
    padding:0;
    empty-cells:show;
  }
-@@ -2789,7 +2845,7 @@
+@@ -2841,7 +2897,7 @@
    padding:0;
    background-color:$_(clickable);
    color: $_(textColorA); /* white */
@@ -2747,7 +2771,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2801,7 +2857,7 @@
+@@ -2853,7 +2909,7 @@
    padding:0;
    background-color:$_(active); /* #565657 */
    color: $_(textColorA); /* white */
@@ -2756,7 +2780,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2825,7 +2881,6 @@
+@@ -2877,7 +2933,6 @@
  
  .ChannelChooserThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2764,7 +2788,7 @@
    text-align:left;
    height:80px;
  }
-@@ -2873,7 +2928,7 @@
+@@ -2925,7 +2980,7 @@
    width: 996px;
    height: 520px;
    background-color: $_(white); /* white */
@@ -2773,7 +2797,7 @@
  }
  
  #MultiChannelChooserFooter {
-@@ -2980,40 +3035,38 @@
+@@ -3032,40 +3087,38 @@
  
  .MultiChannelChooserThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2821,7 +2845,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -3033,8 +3086,7 @@
+@@ -3085,8 +3138,7 @@
  }
  
  .DeviceListRow_Highlight {
@@ -2831,7 +2855,7 @@
    cursor:pointer;
  }
  
-@@ -3063,9 +3115,8 @@
+@@ -3115,9 +3167,8 @@
  
  .DeviceListThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2843,7 +2867,7 @@
  }
  
  .DeviceListButton {
-@@ -3126,7 +3177,7 @@
+@@ -3178,7 +3229,7 @@
    height: 520px;
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
@@ -2852,17 +2876,7 @@
  }
  
  #ChannelConfigDialogFooter {
-@@ -3248,8 +3299,7 @@
-   height: 371px;
-   background-color: $_(white); /* white */
-   color: $_(textColorB); /* black */
--/*  overflow: scroll;   */
--  overflow: hidden;   
-+  overflow: auto;
- }
- 
- #DeviceConfigDialogFooter {
-@@ -3524,18 +3574,12 @@
+@@ -3575,18 +3626,12 @@
      position: absolute;
      left: 4px
  }.bidcosrf_page {
@@ -2883,7 +2897,7 @@
  }
  
  .bidcosrf_button {
-@@ -3561,7 +3605,7 @@
+@@ -3612,7 +3657,7 @@
  .bidcosrf_table {
    border: 1px solid $_(black);
    border-spacing: 0px;
@@ -2892,7 +2906,7 @@
  }
  
  .bidcosrf_tableheader {
-@@ -3581,7 +3625,7 @@
+@@ -3632,7 +3677,7 @@
  }
  
  .bidcosrf_imagecell {
@@ -2901,7 +2915,7 @@
    border: 1px solid $_(black);
    empty-cells: show;
    text-align: center;
-@@ -3592,12 +3636,13 @@
+@@ -3643,12 +3688,13 @@
    border: 1px solid $_(black);
    empty-cells: show;
    text-align: center;
@@ -2917,7 +2931,7 @@
  html, body {
    border: 0 none;
    margin: 0;
-@@ -3980,7 +4025,6 @@
+@@ -4031,7 +4077,6 @@
  }
  
  .CLASS00203 {
@@ -2925,7 +2939,7 @@
  }
  
  .CLASS00204 {
-@@ -4033,10 +4077,10 @@
+@@ -4084,10 +4129,10 @@
  /* rega\pages\msg\sysVarsSelection.htm */
  
  .CLASS00300 {
@@ -2938,7 +2952,7 @@
  }
  
  .CLASS00301 {
-@@ -4047,6 +4091,7 @@
+@@ -4098,6 +4143,7 @@
  	text-align:center;
  	background-color:$_(clickable);
  	height: 40px;
@@ -2946,7 +2960,7 @@
  }
  
  .CLASS00303 {
-@@ -4300,7 +4345,7 @@
+@@ -4351,7 +4397,7 @@
  
  .CLASS00717 {
  	height:200px;
@@ -2955,7 +2969,7 @@
  	background-color:$_(white); /* white */
  }
  
-@@ -4714,7 +4759,7 @@
+@@ -4765,7 +4811,7 @@
  /* rega\pages\msg\programChooser.htm */
  
  .CLASS01300 {
@@ -2964,7 +2978,7 @@
  	width: 100%;
  	height: 400px;
  	background-color:$_(white); /* white */
-@@ -4952,13 +4997,13 @@
+@@ -5003,13 +5049,13 @@
  }
  
  .CLASS01805 {
@@ -2981,7 +2995,7 @@
  }
  
  .CLASS01807 {
-@@ -4977,9 +5022,7 @@
+@@ -5028,9 +5074,7 @@
  }
  
  .CLASS01809 {
@@ -2991,7 +3005,7 @@
  	height:100%;
  	overflow:hidden;
  }
-@@ -5197,6 +5240,7 @@
+@@ -5252,6 +5296,7 @@
  	color: $_(textColorB); /* black */
  	width:100%;
  	border:none;
@@ -2999,7 +3013,7 @@
  }
  
  .CLASS02511 {
-@@ -5218,6 +5262,7 @@
+@@ -5273,6 +5318,7 @@
  	border:1px Solid $_(black); /* black */
  	height:96px;
  	width:96px;
@@ -3007,7 +3021,7 @@
  }
  
  .CLASS02515 {
-@@ -5260,7 +5305,6 @@
+@@ -5315,7 +5361,6 @@
  
  .CLASS02520 {
  	color: $_(textColorB); /* black */
@@ -3015,7 +3029,7 @@
  	border:none;
  	background-color:$_(activeBackground);
  }
-@@ -5354,7 +5398,7 @@
+@@ -5409,7 +5454,7 @@
  	width:220px;
  	/*height:25px;*/
  	height:auto;
@@ -3024,7 +3038,7 @@
  	clear: both;
  	display: inline-block;
    /* line-height:25px; problem with controls with a long parameter name */
-@@ -5401,12 +5445,11 @@
+@@ -5456,12 +5501,11 @@
  }
  
  .CLASS02535 {
@@ -3037,10 +3051,10 @@
 +	word-wrap: anywhere;
  	display: inline-block;
 +	padding: 2px;
+ 	white-space: break-spaces;
  }
  
- .CLASS02535A {
-@@ -5422,6 +5465,7 @@
+@@ -5478,6 +5522,7 @@
  	word-wrap: break-word;
  	max-width: 480px;
  	display: inline-block;
@@ -3048,7 +3062,7 @@
  }
  
  .CLASS02536 {
-@@ -5430,20 +5474,13 @@
+@@ -5486,20 +5531,13 @@
  
  .CLASS02537 {
  	text-align: center;
@@ -3069,7 +3083,7 @@
  }
  
  .CLASS02539 {
-@@ -5480,6 +5517,7 @@
+@@ -5536,6 +5574,7 @@
  
  .CLASS02543 {
  	border:1px solid $_(black); /* black */
@@ -3077,7 +3091,7 @@
  }
  
  .CLASS02544 {
-@@ -5578,6 +5616,7 @@
+@@ -5634,6 +5673,7 @@
  
  .CLASS02552 {
  	border:solid 1px $_(black); /* black */
@@ -3085,7 +3099,7 @@
  }
  
  .CLASS02553 {
-@@ -5639,12 +5678,10 @@
+@@ -5695,12 +5735,10 @@
  
  .CLASS02601 {
  	text-align:center;
@@ -3099,7 +3113,7 @@
  }
  
  .CLASS02603 {
-@@ -5656,6 +5693,7 @@
+@@ -5712,6 +5750,7 @@
  
  .CLASS02604 {
  	height: 58px;
@@ -3107,7 +3121,7 @@
  }
  
  .CLASS02605 {
-@@ -5663,76 +5701,52 @@
+@@ -5719,76 +5758,52 @@
  	background-color: $_(activeBackground);
  	border: solid 1px $_(black); /* black */
  	color: $_(textColorB); /* black */
@@ -3193,7 +3207,7 @@
  }
  
  .CLASS02615 {
-@@ -5826,10 +5840,12 @@
+@@ -5882,10 +5897,12 @@
  	vertical-align:middle;
  	border:solid 1px $_(black); /* #000000 */
  	font-weight:bold;
@@ -3207,7 +3221,7 @@
  }
  
  .CLASS02804 {
-@@ -5895,7 +5911,6 @@
+@@ -5951,7 +5968,6 @@
  }
  
  .CLASS02815 {
@@ -3215,7 +3229,7 @@
  }
  
  /* rega\pages\tabs\statusviews\svroomchannels.htm */
-@@ -6080,18 +6095,13 @@
+@@ -6136,18 +6152,13 @@
  }
  
  .CLASS03301 {
@@ -3235,7 +3249,7 @@
  }
  
  .CLASS03303 {
-@@ -6170,8 +6180,7 @@
+@@ -6226,8 +6237,7 @@
  
  .CLASS03500 {
  	border:solid 1px $_(black); /* black */
@@ -3245,7 +3259,7 @@
  }
  
  .CLASS03501 {
-@@ -6204,8 +6213,7 @@
+@@ -6260,8 +6270,7 @@
  
  .CLASS03600 {
  	border:solid 1px $_(black); /* black */
@@ -3255,7 +3269,7 @@
  }
  
  .CLASS03601 {
-@@ -6294,8 +6302,7 @@
+@@ -6350,8 +6359,7 @@
  
  .CLASS03800 {
  	border:solid 1px $_(black); /* black */
@@ -3265,7 +3279,7 @@
  }
  
  .CLASS03801 {
-@@ -6338,15 +6345,15 @@
+@@ -6394,15 +6402,15 @@
  }
  
  .CLASS03902 {
@@ -3285,7 +3299,7 @@
  }
  
  .CLASS03904 {
-@@ -6361,7 +6368,6 @@
+@@ -6417,7 +6425,6 @@
  .CLASS03906 {
  	vertical-align:middle;
  	text-align:left;
@@ -3293,7 +3307,7 @@
  }
  
  .CLASS03907 {
-@@ -6371,13 +6377,15 @@
+@@ -6427,13 +6434,15 @@
  }
  
  .CLASS03908 {
@@ -3312,7 +3326,7 @@
  }
  
  .CLASS03910 {
-@@ -6403,13 +6411,15 @@
+@@ -6459,13 +6468,15 @@
  }
  
  .CLASS04002 {
@@ -3331,7 +3345,7 @@
  }
  
  .CLASS04004 {
-@@ -6424,7 +6434,8 @@
+@@ -6480,7 +6491,8 @@
  
  .CLASS04006 {
  	border:solid 1px $_(black); /* black */
@@ -3341,7 +3355,7 @@
  }
  
  .CLASS04007 {
-@@ -6435,7 +6446,6 @@
+@@ -6491,7 +6503,6 @@
  
  .CLASS04100 {
  	text-align:center;
@@ -3349,7 +3363,7 @@
  	empty-cells:show;
  }
  
-@@ -6446,17 +6456,18 @@
+@@ -6502,17 +6513,18 @@
  .CLASS04102 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3369,7 +3383,7 @@
  }
  
  .CLASS04105 {
-@@ -6479,6 +6490,7 @@
+@@ -6535,6 +6547,7 @@
  .CLASS04109 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3377,7 +3391,7 @@
    height:20px;
  }
  
-@@ -6502,10 +6514,15 @@
+@@ -6558,10 +6571,15 @@
  
  .CLASS04200 {
  	text-align:center;
@@ -3394,7 +3408,7 @@
  .CLASS04202 {
  	height:40px;
  }
-@@ -6521,10 +6538,12 @@
+@@ -6577,10 +6595,12 @@
  
  .CLASS04205 {
  	height:auto;
@@ -3407,7 +3421,7 @@
  }
  
  .CLASS04207 {
-@@ -6547,6 +6566,7 @@
+@@ -6603,6 +6623,7 @@
  .CLASS04211 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3415,7 +3429,7 @@
  }
  
  .CLASS04212 {
-@@ -6577,7 +6597,8 @@
+@@ -6633,7 +6654,8 @@
  .CLASS04301 {
  	width:100%;
  	height:100%;
@@ -3425,7 +3439,7 @@
  }
  
  .CLASS04302 {
-@@ -6754,7 +6775,7 @@
+@@ -6821,7 +6843,7 @@
  
  .CLASS04900 {
  	color: $_(textColorA); /* white */
@@ -3434,7 +3448,7 @@
  }
  
  .CLASS04901 {
-@@ -6778,7 +6799,7 @@
+@@ -6845,7 +6867,7 @@
  .CLASS04905 {
  	line-height:15px;
  	font-size:smaller;
@@ -3443,7 +3457,7 @@
  }
  
  .CLASS04906 {
-@@ -6865,6 +6886,7 @@
+@@ -6933,6 +6955,7 @@
  .CLASS05012 {
  	color: $_(textColorB); /* black */
  	font-size:9pt;
@@ -3451,7 +3465,7 @@
  }
  
  /* rega\pages\tabs\admin\msg\timemodule.htm */
-@@ -6903,6 +6925,10 @@
+@@ -6971,6 +6994,10 @@
  	color: $_(textColorB); /* black */
  }
  
@@ -3462,7 +3476,7 @@
  .CLASS05105 {
  	text-align:left;
  }
-@@ -6941,7 +6967,6 @@
+@@ -7009,7 +7036,6 @@
  .CLASS05200 {
  	text-align:center;
  	vertical-align:middle;
@@ -3470,7 +3484,7 @@
  	height: auto;
  }
  
-@@ -7007,10 +7032,10 @@
+@@ -7077,10 +7103,10 @@
  }
  
  .CLASS05301 {
@@ -3482,7 +3496,7 @@
  }
  
  .CLASS05302 {
-@@ -7183,6 +7208,10 @@
+@@ -7253,6 +7279,10 @@
  
  /* rega\pages\tabs\favViewer.htm  */
  
@@ -3493,7 +3507,7 @@
  .CLASS05800 {
  	width:100%;
  	text-align:center;
-@@ -7311,11 +7340,13 @@
+@@ -7381,11 +7411,13 @@
  /* rega\pages\tabs\user\newFav.htm */
  
  .CLASS06300 {
@@ -3509,7 +3523,7 @@
  }
  
  .CLASS06302 {
-@@ -7603,7 +7634,6 @@
+@@ -7673,7 +7705,6 @@
  }
  
  .CLASS06409 {
@@ -3517,7 +3531,7 @@
  }
  
  .CLASS06410 {
-@@ -7766,7 +7796,7 @@
+@@ -7836,7 +7867,7 @@
  
  .CLASS10902 {
    border:1px solid $_(gray); /* #999999 */
@@ -3526,7 +3540,7 @@
    background-color:$_(inactiveButton); /* rgb(192,192,192) */
    cursor:default;
  }
-@@ -7881,7 +7911,6 @@
+@@ -7951,7 +7982,6 @@
  }
  
  .CLASS11105 {
@@ -3534,7 +3548,7 @@
    padding-top: 7px;
  }
  
-@@ -7908,7 +7937,6 @@
+@@ -7978,7 +8008,6 @@
  /* config/ic_setprofiles */
  
  .CLASS20001 {
@@ -3542,7 +3556,7 @@
  }
  
  .CLASS20002 {
-@@ -7930,7 +7958,7 @@
+@@ -8000,7 +8029,7 @@
  }
  
  .CLASS20006 {
@@ -3551,7 +3565,7 @@
  }
  
  .CLASS20007 {
-@@ -7966,7 +7994,6 @@
+@@ -8036,7 +8065,6 @@
  }
  
  .CLASS20010 {
@@ -3559,7 +3573,7 @@
  }
  
  /* config\easymodes\DIMMER\MOTION_DETECTOR.tcl */
-@@ -8267,6 +8294,7 @@
+@@ -8337,6 +8365,7 @@
  
    padding: 3px;
    text-align:center;
@@ -3567,7 +3581,7 @@
    vertical-align:middle;
    margin:2px;
    cursor: pointer;
-@@ -8495,7 +8523,9 @@
+@@ -8565,7 +8594,9 @@
  /* config\help.cgi */
  
  .CLASS21300 {
@@ -3578,7 +3592,7 @@
  }
  
  .CLASS21301 {
-@@ -8721,8 +8751,11 @@
+@@ -8791,8 +8822,11 @@
  
  /* config\control_panel.cgi */
  
@@ -3591,7 +3605,7 @@
  }
  
  .CLASS21701 {
-@@ -8793,7 +8826,8 @@
+@@ -8863,7 +8897,8 @@
  /* config\ic_selchannel.cgi */
  
  .CLASS21900 {
@@ -3601,7 +3615,7 @@
  }
  
  .CLASS21901 {
-@@ -8818,9 +8852,11 @@
+@@ -8888,9 +8923,11 @@
  
    color: $_(textColorB); /* black */
    border: 1px solid $_(black); /* black */
@@ -3614,7 +3628,7 @@
  }
  
  .CLASS21905 {
-@@ -8843,7 +8879,6 @@
+@@ -8913,7 +8950,6 @@
  
  .CLASS21908 {
    overflow: auto;
@@ -3622,7 +3636,7 @@
    width:100%;
  }
  
-@@ -8900,13 +8935,17 @@
+@@ -8970,13 +9006,17 @@
  /* config\ic_deviceparameters.cgi */
  
  .CLASS22000 {
@@ -3642,7 +3656,7 @@
  }
  
  .CLASS22002 {
-@@ -8916,11 +8955,17 @@
+@@ -8986,11 +9026,17 @@
  
  .CLASS22003 {
    background-color: $_(white);
@@ -3660,7 +3674,7 @@
  }
  
  .CLASS22005 {
-@@ -8978,7 +9023,8 @@
+@@ -9048,7 +9094,8 @@
  }
  
  .CLASS22101 {
@@ -3670,7 +3684,7 @@
  }
  
  .CLASS22102 {
-@@ -9000,9 +9046,8 @@
+@@ -9070,9 +9117,8 @@
  .CLASS22104 {
    left:0px;
    top:0px;
@@ -3681,7 +3695,7 @@
    position:relative;
    width:50px;
    height:50px;
-@@ -9012,10 +9057,12 @@
+@@ -9082,10 +9128,12 @@
    position:relative;
    width:50px;
    height:50px;
@@ -3696,7 +3710,7 @@
  .CLASS22107 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -298,7 +298,7 @@
+@@ -344,7 +344,7 @@
      <\/th>\n
    {\/if}\n
  {\/macro}\n
@@ -3705,7 +3719,7 @@
    <colgroup>\n
      <col style=\"width:11%;\"\/>\n
      <col style=\"width:11%;\"\/>\n
-@@ -388,25 +388,25 @@
+@@ -434,25 +434,25 @@
  <\/table>\n
  \n
  ";
@@ -3749,7 +3763,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -25949,7 +25949,7 @@
+@@ -26317,7 +26317,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3758,7 +3772,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -25957,7 +25957,7 @@
+@@ -26325,7 +26325,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3767,7 +3781,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -27471,7 +27471,7 @@
+@@ -27839,7 +27839,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3776,7 +3790,7 @@
          "</tr>" +
        "</table>";
  
-@@ -31784,13 +31784,11 @@
+@@ -32212,13 +32212,11 @@
        case ID_ROOMS:
          this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
          this.setWidth75Perc();
@@ -3790,7 +3804,7 @@
          this.setFile( "/pages/msg/popupPropEditor.htm" );
          break;
        case ID_TRANSFER_PARAMETERS:
-@@ -33365,7 +33363,7 @@
+@@ -33802,7 +33800,7 @@
    var opts = {
      evalScripts: true,
      onComplete: function(trans) {
@@ -3799,7 +3813,7 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
-@@ -45923,7 +45921,7 @@
+@@ -46380,7 +46378,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3808,7 +3822,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -45975,8 +45973,8 @@
+@@ -46432,8 +46430,8 @@
    
    if (!form) return;
  
@@ -3819,7 +3833,7 @@
  
    switch (form[gd_type])
    {
-@@ -46072,7 +46070,7 @@
+@@ -46529,7 +46527,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;

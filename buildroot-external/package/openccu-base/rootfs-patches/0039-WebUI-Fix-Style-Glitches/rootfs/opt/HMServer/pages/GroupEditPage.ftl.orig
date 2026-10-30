@@ -305,7 +305,8 @@
         {
             ShowWaitAnim();
 
-            DeviceListPage.showConfiguration(false, 'DEVICE', selfGroup.device.id);
+            var virtualDevice = new GroupDevice(self.virtualDeviceSerialNumber(),self.virtualDeviceSerialNumber(), "VirtualDevice");
+            DeviceListPage.showConfiguration(false, 'DEVICE', virtualDevice.device.id);
             HideWaitAnim();
 
             /*
@@ -544,7 +545,9 @@
         });
 
         ko.utils.arrayForEach(viewModel.assignableDevices(), function(item) {
-            homematic("Interface.setMetadata", {"objectId":item.device.id, "dataId": "inHeatingGroup", "value" : "false"});
+            if(item.device != undefined) {
+              homematic("Interface.setMetadata", {"objectId":item.device.id, "dataId": "inHeatingGroup", "value" : "false"});
+            }
         });
 
         pb = JSON.stringify(data);

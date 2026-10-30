@@ -6793,6 +6793,17 @@ color: $_(textColorA); /* white */
 	height: 40px;
 }
 
+/* keep each program option (systemintern, run at startup, ...) on one line */
+/* in the program editor and in the program list (CLASS04904) */
+.CLASS04803 > td:last-child,
+.CLASS04904 {
+	white-space: nowrap;
+}
+
+.CLASS04803 > td:last-child {
+	text-align: left;
+}
+
 /* rega\pages\tabs\admin\views\programlist.htm */
 
 .CLASS04900 {
@@ -9285,7 +9296,8 @@ color: $_(textColorA); /* white */
   border:solid 1px $_(black);
 }
 
-.CodeMirror {
+.CodeMirror,
+.cm-editor {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   text-align: left;
@@ -9293,6 +9305,7 @@ color: $_(textColorA); /* white */
   resize: vertical;
 }
 
-.CodeMirror-gutter-wrapper {
+.CodeMirror-gutter-wrapper,
+.cm-gutters {
   font-family: monospace;
 }

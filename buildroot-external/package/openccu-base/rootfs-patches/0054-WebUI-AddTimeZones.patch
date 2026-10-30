@@ -1,6 +1,6 @@
 --- a/www/api/methods/system/getpositiondata.tcl
 +++ b/www/api/methods/system/getpositiondata.tcl
-@@ -22,18 +22,26 @@
+@@ -22,18 +22,32 @@
      return $var
  }
  
@@ -21,17 +21,23 @@
 -jsonrpc_response $posData
 \ No newline at end of file
 +# get utcOffset and utcOffsetDST using clock command
++# converts a %z value such as +0100, +0000 or -0330 to minutes
 +proc tz2offset {tstr} {
-+  regsub {^(\+|-)0*(.*)} [string range $tstr 0 2] {\1} sign
-+  regsub {^(\+|-)0*(.*)} [string range $tstr 0 2] {\2} hour
-+  regsub {^0?(.*)} [string range $tstr 3 4] {\1} min
-+  set h [expr $hour * 60]
-+  set m [expr $min * 1]
-+  set time [expr $sign ($h + $m)]
++  if {![regexp {^([+-])([0-9]{2})([0-9]{2})$} $tstr -> sign hour min]} { return 0 }
++  set time [expr {[scan $hour %d] * 60 + [scan $min %d]}]
++  if {$sign eq "-"} { set time [expr {-$time}] }
 +  return $time
 +}
-+set utcOffset [tz2offset [clock format [clock scan "01 Jan"] -format "%z"]]
-+set utcOffsetDST [tz2offset [clock format [clock scan "01 Jul"] -format "%z"]]
++set offsetJan [tz2offset [clock format [clock scan "01 Jan"] -format "%z"]]
++set offsetJul [tz2offset [clock format [clock scan "01 Jul"] -format "%z"]]
++# daylight saving time has the larger offset, in the southern hemisphere it is in January
++if {$offsetJan <= $offsetJul} {
++  set utcOffset $offsetJan
++  set utcOffsetDST $offsetJul
++} else {
++  set utcOffset $offsetJul
++  set utcOffsetDST $offsetJan
++}
 +
 +# append the utcOffset and utcOffsetDST
 +append posData ",'utcOffset:$utcOffset','utcOffsetDST:$utcOffsetDST']"
@@ -879,7 +885,7 @@
                MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionSucceed"));
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -36688,51 +36688,14 @@
+@@ -37086,51 +37086,14 @@
    }
  };
  
@@ -937,7 +943,7 @@
  
      jQuery.each(DeviceList.devices, function (index, device) {
        var iFace = device.interfaceName;
-@@ -36740,7 +36703,7 @@
+@@ -37138,7 +37101,7 @@
          // Check if the device has the channel *_WEEK_PROFILE
          jQuery.each(device.channels, function (index, channel) {
            if (channel.channelType.indexOf("_WEEK_PROFILE") != -1) {
@@ -946,7 +952,7 @@
  
              homematic("Interface.putParamset", {
                'interface': iFace,
-@@ -36757,7 +36720,7 @@
+@@ -37155,7 +37118,7 @@
                conInfo(result);
              });
            } else if (channel.channelType == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
@@ -955,7 +961,7 @@
  
              homematic("Interface.putParamset", {
                'interface': iFace,
-@@ -36775,12 +36738,13 @@
+@@ -37173,12 +37136,13 @@
          });
        }
      });
@@ -970,7 +976,7 @@
        }
      }, 2500);
    }
-@@ -36790,9 +36754,8 @@
+@@ -37188,9 +37152,8 @@
    homematic("system.getPositionData", {}, function(posData) {
      var lon = posData[0].split(":")[1],
        lat = posData[1].split(":")[1],

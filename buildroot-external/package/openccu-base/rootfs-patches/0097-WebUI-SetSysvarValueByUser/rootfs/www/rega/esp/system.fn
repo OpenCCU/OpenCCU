@@ -28,6 +28,7 @@ function ::TestRunning()
       Call("/esp/TimeStamp.fn::TimeStampToString3()");
       Write( sTimestamp );
     }    
+  }
 }
 
 function ::SetScreenSize()
@@ -301,7 +302,7 @@ function ::UpdateUI()
 
   string sTime = system.Date( "%H:%M" );
   string sDate = system.Date( "%d.%m.%Y" );
-  WriteLine('setTime("' # sTime # '");');
+  WriteLine('setTime("' # sDate # ',&nbsp;' # sTime #'");');
   WriteLine('setDate("' # sDate # '");');
 !  Write( 'if( $("maintime") ) $("maintime").innerHTML = "'#sTime#'";' );
 !  Write( 'if( $("maindate") ) $("maindate").innerHTML = "'#sDate#'";' );
@@ -443,7 +444,7 @@ function ::UpdateUI()
 
 
   Write( 'if(urlParamInterfaces == "true") showInterfaces();');
-  Write( 'if(showAPITools == "true" || (homematic("system.getTweak",{"key" : "showAPITools"}))) showHmAPITools();');
+  Write( 'if(showAPITools == "true") showHmAPITools();');
 
   !###################
   !# Systemvariablen #
@@ -682,7 +683,7 @@ function ::getChnNameById()
 
 ![sPageId], [sType], [sFilter]
 function ::saveSFilter() {
-  object uidata = dom.GetObject(system.GetSessionVar("sessionUiDataId");
+  object uidata = dom.GetObject(system.GetSessionVar("sessionUiDataId"));
   string s = system.GetVar("sFilter");
   Write(system.GetVar("sType"));
   uidata.DataValue(system.GetVar("sPageId"), system.GetVar("sType"), s);
@@ -1053,7 +1054,7 @@ function ::TmToString() {
       !sTm = sTm # "nachts ";
       sTm = sTm # "${ruleConditionLblTimeDuringNight} ";
     }
-    elseif (tm.CalDuration() != 0) {
+    if ((tm.SunOffsetType() == sotNone) && (tm.CalDuration() != 0)) {
       sTm = sTm # "${lblTo} ";
       sTm = sTm # (tm.TimeSeconds() + tm.CalDuration()).ToTime().Format("%H:%M");
       sTm = sTm # " ${ruleConditionLblTimeClock} ";
@@ -1214,7 +1215,7 @@ function ::deleteUser()
   }
 }
 
-function ExecuteProgram()
+function ::ExecuteProgram()
 {
   object obj = dom.GetObject( system.GetVar("dpid") );
   if (obj)
@@ -1288,7 +1289,13 @@ function ::writeProgCtrl()
   Write("<td>");
   string sClass = "ControlBtnOff";
   if( objProg.Active() ) { sClass = "ControlBtnOn"; }
-    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' >"); 
+  integer uid = system.GetSessionVar("sessionUserID");
+  object oUser = dom.GetObject(uid);
+  if(oUser.UserLevel() == iulAdmin) {
+    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' onclick='isePrograms.SetActive("#pid#",!" #objProg.Active() # ")'>");
+  } else {
+    Write("<table class='"#sClass#" CLASS02102' style='cursor: default; border-top: solid 1px black; border-right: solid 1px black;' id='"#pid#"Act' >");
+  }
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
@@ -1297,7 +1304,11 @@ function ::writeProgCtrl()
       Write("</td>");
     Write("</tr>");
     !Write("<tr><td>Aktiv</td></tr>");
-    Write("<tr><td>${actionStatusControlLblActive}</td></tr>");
+    if( objProg.Active() ) {
+      Write("<tr><td>${actionStatusControlLblActive}</td></tr>");
+    } else {
+      Write("<tr><td>${actionStatusControlLblNotActive}</td></tr>");
+    }
     Write("</table>");
   Write("</td>");
   if (system.GetVar("iStatusOnly") == 0)
@@ -1306,15 +1317,17 @@ function ::writeProgCtrl()
     !Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>Start</div>");
     Write("<div id='"#pid#"Start' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStart}</div>");
     Write("<script type='text/javascript'>");
-    Write("new iseButtonProg("#pid#", "#objProg.Active()#");");
+    Write("new iseButtonProg("#pid#", "#objProg.Active()#", false);");
     Write("</script>");
     Write("</td>");
+    Write("<td><div id='"#pid#"StartThenOnly' class='ControlBtnOff CLASS02104'>${actionStatusControlLblStartThenOnly}</div>");
+    Write("<script type='text/javascript'> new iseButtonProg("#pid#", "#objProg.Active()#", true);</script></td>");
   }
   else
   {
-    Write("<td></td>");
+    Write("<td></td><td></td>");
   }
-  Write("<td></td><td></td><td></td>");
+  Write("<td></td><td></td>");
   
   Write("</tr>");
   Write("</table>");
@@ -1421,11 +1434,13 @@ function ::BuildUserSvTable() {
           }
         WriteLine("</td>");
         WriteLine("<td class='WhiteBkg CLASS02110'>");
-          !WriteLine("<table class='CLASS02108'>");                                                                                        
-          WriteLine("<table>");                                                                                        
-            WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
-            WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
-          WriteLine("</table>");
+          if (system.GetVar("userId") != 0) {
+            !WriteLine("<table class='CLASS02108'>");                                                                                        
+            WriteLine("<table>");                                                                                        
+              WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
+              WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
+            WriteLine("</table>");
+          }
         WriteLine("</td>");  
       WriteLine("</tr>");
     }
@@ -1594,4 +1609,61 @@ function ::writeWarnStateJS()
 
 function ::keepAlive()
 {
+}
+
+function ::ShowInternalSystemVars()
+{
+  if( system.IsSessionVar("sessionSISV") )
+  {
+    string sEnable = system.GetSessionVar("sessionSISV");
+    if( sEnable == "1" )
+    {
+      system.SetSessionVar("sessionSISV","0");
+    }
+    else
+    {
+      system.SetSessionVar("sessionSISV","1");
+    }
+  }
+  else
+  {
+    system.SetSessionVar("sessionSISV","1");
+  }
+}
+
+function ::ShowInternalDeviceChannels()
+{
+  if( system.IsSessionVar("sessionSIDC") )
+  {
+    string sEnable = system.GetSessionVar("sessionSIDC");
+    if( sEnable == "1" )
+    {
+      system.SetSessionVar("sessionSIDC","0");
+    }
+    else
+    {
+      system.SetSessionVar("sessionSIDC","1");
+    }
+  }
+  else
+  {
+    system.SetSessionVar("sessionSIDC","1");
+  }
+}
+
+! [id], [iInternal]                                 
+function ::saveDpInternal() {
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )           
+  {                                                   
+    object obj = dom.GetObject(system.GetVar("dpId"));
+    if (obj) {
+      boolean b = false;
+      if (system.GetVar("iInternal") == 1) {
+        b = true;         
+      }
+      obj.Internal(b);            
+    }
+  }                                                                        
+  return;
 }

@@ -26,9 +26,37 @@ function ::CreateKeyShortOnly() {
 
     WriteLine("</table>");
   WriteLine("</td>");
-  WriteLine("<td></td><td></td><td></td><td></td>");
+  
+  string devType = (dom.GetObject(cObj.Device())).HssType();
+  if (devType == "HM-OU-LED16") {
+    WriteLine("<td>");
+      WriteLine("<table class='ControlBtnOff CLASS02514' >");
+      WriteLine("<tr>");
+        WriteLine("<td class='CLASS02513'>");
+          WriteLine("<div align='center'>");
+            WriteLine("<img id='led_grey"  #cObj.ID()#"' src='/ise/img/dot/grey.png'   width='80' height='80' />");
+            WriteLine("<img id='led_green" #cObj.ID()#"' src='/ise/img/dot/green.png'  width='80' height='80' style='display:none' />");
+            WriteLine("<img id='led_red"   #cObj.ID()#"' src='/ise/img/dot/red.png'    width='80' height='80' style='display:none' />");
+            WriteLine("<img id='led_yellow"#cObj.ID()#"' src='/ise/img/dot/yellow.png' width='80' height='80' style='display:none' />");
+          WriteLine("</div>");
+        WriteLine("</td>");
+      WriteLine("</tr>");
+      WriteLine("</table>");
+    WriteLine("</td>");
+  } else {
+    WriteLine("<td></td>");
+  }
+
+  WriteLine("<td></td><td></td><td></td>");
   WriteLine("<script type='text/javascript'>");
   WriteLine("ibk"#cObj.ID()#" = new iseButtonsKey("#cObj.ID()#", "#iShortId#", "#iLongId#", "#system.GetVar("iStatusOnly")#");");
+  if (devType == "HM-OU-LED16") {
+    integer objValue = cObj.DPByHssDP("LED_STATUS").Value();    
+    WriteLine("document.getElementById('led_grey"  #cObj.ID()#"').style.display = ("#objValue#" === 0) ? 'inline':'none';"); 
+    WriteLine("document.getElementById('led_red"   #cObj.ID()#"').style.display = ("#objValue#" === 1) ? 'inline':'none';");
+    WriteLine("document.getElementById('led_green" #cObj.ID()#"').style.display = ("#objValue#" === 2) ? 'inline':'none';");
+    WriteLine("document.getElementById('led_yellow"#cObj.ID()#"').style.display = ("#objValue#" === 3) ? 'inline':'none';");
+  }
   WriteLine("</script>");
   return;
 }

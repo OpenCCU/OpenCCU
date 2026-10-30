@@ -117,9 +117,19 @@ iseInitUpdateArrays();
 </tr>
 <%
   integer iAlCount = 0;
-    
+
+  string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+  string sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+  if( sEnumUserInternalIDs != "" ) {
+    if( sEnumUserIDs != "" ) {
+      sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+    } else {
+      sEnumUserIDs = sEnumUserInternalIDs;
+    }
+  }
+
   string sSVID;
-  foreach( sSVID, oUser.UserTempViewIDs().EnumIDs() )
+  foreach( sSVID, sEnumUserIDs )
   {
     object oSV = dom.GetObject( sSVID );
     if( oSV )
@@ -215,17 +225,28 @@ iseInitUpdateArrays();
             }
           }
         }
-      }
-      else
-      {
-        if (oSV.IsTypeOf(OT_ALARMDP)) 
+        else
         {
-          if ((oSV.Value() == false) || (oSV.Value() == "")) {
-            sAlarmMessage = oSV.ValueName0();
+          ! triggered by a system variable without a channel or a time module
+          if( oLastTrigger.IsTypeOf( OT_CALENDARDP ) )
+          {
+            sLastTriggerName = "${alarmTriggerTimeModule}";
           }
-          else {
-            sAlarmMessage = oSV.ValueName1();
+          else
+          {
+            sLastTriggerName = oLastTrigger.Name();
           }
+        }
+      }
+
+      ! the message of the alarm, if the trigger has none
+      if( (!sAlarmMessage.Length()) && oSV.IsTypeOf(OT_ALARMDP) )
+      {
+        if ((oSV.Value() == false) || (oSV.Value() == "")) {
+          sAlarmMessage = oSV.ValueName0();
+        }
+        else {
+          sAlarmMessage = oSV.ValueName1();
         }
       }
       

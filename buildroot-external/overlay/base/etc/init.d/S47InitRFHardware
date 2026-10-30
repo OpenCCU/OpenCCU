@@ -159,6 +159,32 @@ query_rf_parameters() {
 
     echo -n "."
 
+    # In an OCI/HA environment the host grants device-cgroup access to a
+    # device node that only appeared after the container was started
+    # (e.g. /dev/raw-uart of the hb_rf_eth module loaded above) with a
+    # delay (HA supervisor: >= 2s after the udev event). Thus wait until
+    # the node can actually be opened read-write (as detect_radio_module
+    # does). This also catches a not (yet) connected HB-RF-ETH, for which
+    # open() fails with ENODEV. The subshell is required: a failing
+    # redirection on the ':' special builtin would abort the whole script.
+    # As '<>' implies O_CREAT (no shell redirection opens O_RDWR without
+    # it), the node is re-checked before every attempt. This narrows, but
+    # cannot close, the window in which a node vanishing between check
+    # and open leaves an empty regular file on a writable /dev (in the HA
+    # app /dev is mounted read-only, so the open fails there instead).
+    if [[ "${HM_HOST}" == "oci" ]] && [[ -c "/dev/${dev}" ]]; then
+      for try in $(seq 1 40); do
+        [[ -c "/dev/${dev}" ]] || break
+        ( : <>"/dev/${dev}" ) 2>/dev/null && break
+        if [[ ${try} -eq 40 ]]; then
+          echo -n "ERROR: /dev/${dev} not accessible, "
+          break
+        fi
+        [[ $((try % 4)) -eq 0 ]] && echo -n "."
+        sleep 0.25
+      done
+    fi
+
     # use detect_radio_module to retrieve all relevant info from
     # the rf-module
     if [[ -c /dev/${dev} ]]; then

@@ -40,10 +40,16 @@ replace_numeric_highlights() {
   cat >"$desired_file"
 
   if ! awk -v device_type="$device_type" -v desired_file="$desired_file" '
+    function highlight_key(line) {
+      sub(/^DEV_HIGHLIGHT\[[^]]*\]\[/, "", line)
+      sub(/\].*$/, "", line)
+      return line
+    }
     BEGIN {
       target = "DEV_HIGHLIGHT[\"" device_type "\"] = new Object();"
       while ((getline desired_line < desired_file) > 0) {
         desired[++desired_count] = desired_line
+        desired_keys[highlight_key(desired_line)] = 1
       }
       close(desired_file)
     }
@@ -56,7 +62,9 @@ replace_numeric_highlights() {
       inside_device = 1
       next
     }
-    inside_device && $0 ~ ("^DEV_HIGHLIGHT\\[\"" device_type "\"\\]\\[\"[0-9]+\"\\]") {
+    # Replace only the channels listed above; keep other channels from Base.
+    inside_device && $0 ~ ("^DEV_HIGHLIGHT\\[\"" device_type "\"\\]\\[\"[0-9]+\"\\]") &&
+        highlight_key($0) in desired_keys {
       next
     }
     inside_device && /^DEV_LIST\.push/ {

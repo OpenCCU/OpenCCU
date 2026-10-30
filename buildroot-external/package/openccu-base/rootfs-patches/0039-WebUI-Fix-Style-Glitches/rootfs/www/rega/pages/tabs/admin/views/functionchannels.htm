@@ -10,7 +10,7 @@
   if( func )
   {
     bListAll = false;
-    sEnum = func.EnumEnabledIDs();
+    sEnum = func.EnumIDs();
     sID = system.GetVar("id");
   }
   else
@@ -90,11 +90,6 @@
           rooms = rooms # objTmp.Name() # ";";
         }
         
-        integer iProgCount = 0;
-        if (chn.ChnDPUsageCount() != ID_ERROR) {
-          iProgCount = chn.ChnDPUsageCount();
-        }
-
         object dev = dom.GetObject(chn.Device());
 
         Write("tmp = new Object();");
@@ -109,13 +104,6 @@
         Write("tmp['iface'] = '"#category#"';");
         Write("tmp['chnnr'] = '"#chn.ChnNumber()#"';");
         Write("tmp['trans'] = ("#chn.ChnAESActive()#" ? translateKey('lblSecured') : translateKey('lblStandard') );");
-        integer iProgCount = 0;
-        if( chn.ChnDPUsageCount() != ID_ERROR )
-        {
-          iProgCount = chn.ChnDPUsageCount();
-        }
-        Write("tmp['progC'] = "#iProgCount#";");
-        Write("tmp['devC'] = "#(chn.ChnLinkCount())#";");
         Write("tmp['desc'] = DEV_getDescription('"#sDevLbl#"');");
         Write("tmp['devlbl'] = '"#sDevLbl#"';");
         

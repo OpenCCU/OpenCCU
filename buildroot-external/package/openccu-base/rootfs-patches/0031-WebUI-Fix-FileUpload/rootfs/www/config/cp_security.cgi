@@ -946,7 +946,8 @@ proc action_put_page {} {
   }
 
   division {class="CLASS20815"} {
-    table {class="popupTable j_translate"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable j_translate"} {border="1"} {height="100%"} {
       table_row {class="CLASS20806"} {
         table_data {class="CLASS20807"} {
           puts "\${dialogSettingsSecurityTDKey}"
@@ -1321,6 +1322,7 @@ proc action_put_page {} {
         }
       }
     }
+    }
   }
   division {class="popupControls"} {
     table {
@@ -1515,7 +1517,7 @@ proc action_put_page {} {
         }
       };
     }
-    puts "translatePage();"
+    puts "translatePage('#messagebox');"
     puts "dlgPopup.readaptSize();"
   }
 }
@@ -1562,7 +1564,7 @@ proc read_version { filename } {
 
 proc action_reboot {} {
   puts ""
-  exec /sbin/reboot
+  exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
 }
 
 proc _version_compare { v1 v2 } {

@@ -23,7 +23,7 @@ ResetGAC();
     object oTmpArray = dom.GetObject(ID_PROGRAMS);
     if( oTmpArray )
     {
-      oTmpArray.SortByName();
+      oTmpArray.SortByName(soAsc,stNatural);
       string sTmp;
       foreach(sTmp,oTmpArray.EnumIDs())
       {
@@ -58,7 +58,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
         <th class="tHeaderCell CLASS03303" >${thDescription}</th>
         <th class="tHeaderCell CLASS03303" >${thActivity}</th>
         <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
-        <th class="tHeaderCell CLASS03303" >${thAction}</th>
+        <th class="tHeaderCell CLASS03303" ><div><span>${thAction}</span><img src="/ise/img/help.png" style="cursor: pointer; width:24px; height:24px; vertical-align:middle;" onclick="MessageBox.show(translateKey('HelpTitle'), translateKey('actionStatusControlLblStartHelp'), '', 400, 250);"></div></th>
       </tr>
     </thead>
       <tbody>
@@ -80,6 +80,9 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
           object oPrograms = dom.GetObject( ID_PROGRAMS );
           if(oPrograms)
           {
+            if (oUser.UserLevel() == iulAdmin) {
+              WriteLine("<script type='text/javascript'>EditProgram = function(id) { var opt={postBody: 'string action = \"SetProgram\"; string id = \"'+id+'\";',onComplete: function(t){if(t.responseText=='true') { loadPrograms(); }}};new Ajax.Request('/esp/programs.htm?sid='+SessionId,opt);};</script>");
+            }
             string sPID;
             foreach( sPID, oUser.UserTempViewIDs().EnumIDs() )
             {
@@ -90,7 +93,11 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                 {
                   string trId = "pr"#o.ID();
                   WriteLine( '<tr id="'#trId#'" class="CLASS03702">' );
-                  WriteLine( '<td class="tBodyCell">'#o.Name()#'</td>' );
+                  if (oUser.UserLevel() == iulAdmin) {
+                    WriteLine( '<td class="tBodyCell CLASS03905" onclick="EditProgram('#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">'#o.Name()#'</td>' );
+                  } else {
+                    WriteLine( '<td class="tBodyCell">'#o.Name()#'</td>' );
+                  }
                   WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
                   object oPrgID = o.ID();
                   WriteLine( '<td class="tBodyCell">' );

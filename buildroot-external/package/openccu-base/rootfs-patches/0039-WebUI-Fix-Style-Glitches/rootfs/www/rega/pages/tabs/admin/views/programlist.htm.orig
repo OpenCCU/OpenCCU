@@ -19,7 +19,7 @@
       object oTmpArray = dom.GetObject(ID_PROGRAMS);
       if( oTmpArray )
       {
-        oTmpArray.SortByName();
+        oTmpArray.SortByName(soAsc,stNatural);
         string sTmp;
         foreach(sTmp,oTmpArray.EnumEnabledIDs())
         {
@@ -122,15 +122,16 @@
             {
               string trId = "program"#o.ID();
               WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
-              WriteLine( '<td class="tBodyCell">'#o.Name()#'</td>' );
-              WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
-              WriteLine( '<td class="tBodyCell">' );
+              string sInactive = ""; if( !o.Active() ) { sInactive = "Inactive"; }
+              WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name()#'</td>' );
+              WriteLine( '<td id="'#trId#'_info" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
+              WriteLine( '<td id="'#trId#'_cond" class="tBodyCell'#sInactive#'">' );
               object oPrgID = o.ID();
               string sRet = "";
               Call( "/esp/programs.fn::WriteConditionText()" );
               Write (sRet);
               WriteLine( '</td>' );
-              WriteLine( '<td class="tBodyCell">' );
+              WriteLine( '<td id="'#trId#'_dest" class="tBodyCell'#sInactive#'">' );
               string sRet = "";
               Call( "/esp/programs.fn::WriteDestinationText()" );
               Write(sRet);
@@ -142,7 +143,7 @@
                       WriteLine( '<table cellpadding="0" cellspacing="0" border="0">' );
                         WriteLine( '<tr>' );
                           WriteLine( '<td class="CLASS04903">' );
-                            WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#');" />' );
+                            WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#',\''#o.Name()#'\');" />' );
                           WriteLine( '</td>' );
                         WriteLine( '</tr>' );
                         WriteLine( '<tr>' );
@@ -161,7 +162,7 @@
                         WriteLine( '<tr>' );
                           WriteLine( '<td class="CLASS04903">' );
                             string sChecked = ""; if( o.Active() ) { sChecked = "checked"; }
-                            WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetActive('#o.ID()#',this.checked);" />${lblActiv}</label>' );
+                            WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetActive('#o.ID()#',this.checked);updateActiveStatus('#o.ID()#',this.checked);" />${lblActiv}</label>' );
                           WriteLine( '</td>' );
                         WriteLine( '</tr>' );
                         WriteLine( '<tr>' );
@@ -174,6 +175,12 @@
                           WriteLine( '<td class="CLASS04903">' );
                             string sChecked = ""; if( o.Visible() ) { sChecked = "checked"; }
                             WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetVisible('#o.ID()#',this.checked);" />${lblVisible}</label>' );
+                          WriteLine( '</td>' );
+                        WriteLine( '</tr>' );
+                        WriteLine( '<tr>' );
+                          WriteLine( '<td class="CLASS04903">' );
+                            string sChecked = ""; if( o.ExecuteOnStartup() ) { sChecked = "checked"; }
+                            WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetExecuteOnStartup('#o.ID()#',this.checked);" />${lblExecuteOnStartup}</label>' );
                           WriteLine( '</td>' );
                         WriteLine( '</tr>' );
                       WriteLine( '</table>' );
@@ -215,16 +222,17 @@
               if( (o.IsTypeOf( OT_PROGRAM )) && (o.ProgramCopyID()==ID_ERROR) )
               {
                 string trId = "program"#o.ID();
+                string sInactive = ""; if( !o.Active() ) { sInactive = "Inactive"; }
                 WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
-                WriteLine( '<td class="tBodyCell">'#o.Name()#'</td>' );
-                WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
-                WriteLine( '<td class="tBodyCell">' );
+                WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name()#'</td>' );
+                WriteLine( '<td id="'#trId#'_info" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
+                WriteLine( '<td id="'#trId#'_cond" class="tBodyCell'#sInactive#'">' );
                 object oPrgID = o.ID();
                 string sRet = "";
                 Call( "/esp/programs.fn::WriteConditionText()" );
                 Write (sRet);
                 WriteLine( '</td>' );
-                WriteLine( '<td class="tBodyCell">' );
+                WriteLine( '<td id="'#trId#'_dest" class="tBodyCell'#sInactive#'">' );
                 string sRet = "";
                 Call( "/esp/programs.fn::WriteDestinationText()" );
                 Write(sRet);
@@ -236,7 +244,7 @@
                         WriteLine( '<table cellpadding="0" cellspacing="0" border="0">' );
                           WriteLine( '<tr>' );
                             WriteLine( '<td class="CLASS04903">' );
-                              WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#');" />' );
+                              WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#',\''#o.Name()#'\');" />' );
                             WriteLine( '</td>' );
                           WriteLine( '</tr>' );
                           WriteLine( '<tr>' );
@@ -255,7 +263,7 @@
                           WriteLine( '<tr>' );
                             WriteLine( '<td class="CLASS04903">' );
                               string sChecked = ""; if( o.Active() ) { sChecked = "checked"; }
-                              WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetActive('#o.ID()#',this.checked);" />${lblActiv}</label>' );
+                              WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetActive('#o.ID()#',this.checked);updateActiveStatus('#o.ID()#',this.checked);" />${lblActiv}</label>' );
                             WriteLine( '</td>' );
                           WriteLine( '</tr>' );
                           WriteLine( '<tr>' );
@@ -268,6 +276,12 @@
                             WriteLine( '<td class="CLASS04903">' );
                               string sChecked = ""; if( o.Visible() ) { sChecked = "checked"; }
                               WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetVisible('#o.ID()#',this.checked);" />${lblVisible}</label>' );
+                            WriteLine( '</td>' );
+                          WriteLine( '</tr>' );
+                          WriteLine( '<tr>' );
+                            WriteLine( '<td class="CLASS04903">' );
+                              string sChecked = ""; if( o.ExecuteOnStartup() ) { sChecked = "checked"; }
+                              WriteLine( '<label class="CLASS04904"><input type="checkbox" '#sChecked#' onclick="isePrograms.SetExecuteOnStartup('#o.ID()#',this.checked);" />${lblExecuteOnStartup}</label>' );
                             WriteLine( '</td>' );
                           WriteLine( '</tr>' );
                         WriteLine( '</table>' );
@@ -296,11 +310,12 @@
 </div>
 
 <script type="text/javascript">
-  DeleteProgram = function(id)
+  DeleteProgram = function(id,name)
   {
     var _id_ = id;
+    var _name_ = name;
     //new YesNoDialog("Sicherheitsabfrage", "Möchten Sie das Programm wirklich löschen?", function(result) {
-      new YesNoDialog(translateKey('dialogSafetyCheck'), translateKey('dialogQuestionRemoveProgram'), function(result) {
+      new YesNoDialog(translateKey('dialogSafetyCheck'), translateKey('dialogQuestionRemoveProgram').replace(/%s/, _name_), function(result) {
       if (result == YesNoDialog.RESULT_YES)
       {
         var url = '/esp/programs.htm?sid='+SessionId;
@@ -447,6 +462,14 @@
         show(arItems[i]['trid']);
       }
     }
+  };
+  updateActiveStatus = function(id,active)
+  {
+    var state = (active === true) ? "" : "Inactive";
+    jQuery("#program" + id + "_name").attr("class", "tBodyCell" + state);
+    jQuery("#program" + id + "_info").attr("class", "tBodyCell" + state);
+    jQuery("#program" + id + "_cond").attr("class", "tBodyCell" + state);
+    jQuery("#program" + id + "_dest").attr("class", "tBodyCell" + state);
   };
   translatePage("#ProgramListTable");
   jQuery("#ProgramListTable").removeClass("hidden");

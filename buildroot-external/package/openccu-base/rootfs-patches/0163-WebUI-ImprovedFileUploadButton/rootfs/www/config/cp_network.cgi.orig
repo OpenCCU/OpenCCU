@@ -503,16 +503,21 @@ proc action_put_page {} {
         pb += "&dns2=0.0.0.0";
         }
         
-        pb += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
         var opts = {
           postBody: pb,
           sendXML: false,
           onSuccess: function(transport) {
-            if (transport.responseText.match(/^Success/g))PopupClose();
+            if (transport.responseText.match(/^Success/g)) {
+              PopupClose();
+              if (transport.responseText.match(/^SuccessReboot/g)) {
+                MessageBox.show(translateKey("dialogSettingsNetworkTitle"), translateKey("dialogSettingsNetworkMessageRebootRequired"));
+              }
+            }
             //else alert("Netzwerkkonfiguration konnte nicht gespeichert werden:\n"+transport.responseText);
             else alert(translateKey("dialogSettingsNetworkMessageAlertMessageError1") + "\n" +transport.responseText);
           }
         };
+        opts.postBody += "&vpn="+(document.getElementById("check_vpn").checked?"1":"0");
         new Ajax.Request(url, opts);
       }
     }
@@ -656,9 +661,14 @@ proc action_save_settings {} {
     import dns1
     import dns2
     import vpn
-    if { [write_config $dhcp $hostname $ip $mask $gw $dns1 $dns2 $vpn] } {
-      #activate the new settings
-      puts "Success"
+    set rc [write_config $dhcp $hostname $ip $mask $gw $dns1 $dns2 $vpn]
+    if { $rc } {
+      # changed network settings only take effect after a reboot
+      if { $rc == 2 } {
+        puts "SuccessReboot"
+      } else {
+        puts "Success"
+      }
       # puts "\${dialogSettingsNetworkMessageSaveSettingsSucceed}"
       return
     } else {
@@ -726,11 +736,13 @@ proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var
   if {! [get_property $netconfig "HOSTNAME" hostname] } {return 0}
   if {! [get_property $netconfig "MODE" mode] } {return 0}
   set dhcp [expr {"$mode"=="DHCP"}]
-  if {! [get_property $netconfig "IP" ip] } {return 0}
-  if {! [get_property $netconfig "NETMASK" mask] } {return 0}
-  if {! [get_property $netconfig "GATEWAY" gw] } {return 0}
-  get_property $netconfig "NAMESERVER1" dns1
-  get_property $netconfig "NAMESERVER2" dns2
+  set current_prefix ""
+  if {$dhcp} { set current_prefix "CURRENT_" }
+  if {! [get_property $netconfig "${current_prefix}IP" ip] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}NETMASK" mask] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}GATEWAY" gw] } {return 0}
+  get_property $netconfig "${current_prefix}NAMESERVER1" dns1
+  get_property $netconfig "${current_prefix}NAMESERVER2" dns2
 
   # check for vpn enable status
   set vpn [file exists "/etc/config/tailscaleEnabled"]
@@ -745,6 +757,7 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
   set netconfig [read $fd]
   close $fd
   set fd -1
+  set old_netconfig $netconfig
   
   if { $dhcp } {
     set_property netconfig "MODE" "DHCP"
@@ -752,18 +765,20 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
     set_property netconfig "MODE" "MANUAL"
   }
   set_property netconfig "HOSTNAME" $hostname
-  set_property netconfig "IP" $ip
-  set_property netconfig "NETMASK" $mask
-  set_property netconfig "GATEWAY" $gw
-
-  set_property netconfig "NAMESERVER1" $dns1
-  set_property netconfig "NAMESERVER2" $dns2
+  if {! $dhcp} {
+    set_property netconfig "IP" $ip
+    set_property netconfig "NETMASK" $mask
+    set_property netconfig "GATEWAY" $gw
+    set_property netconfig "NAMESERVER1" $dns1
+    set_property netconfig "NAMESERVER2" $dns2
+  }
 
   catch {set fd [open "/etc/config/netconfig" w]}
   if { $fd <0 } { return 0 }
   
   puts -nonewline $fd $netconfig
   close $fd
+  set changed [expr {$netconfig ne $old_netconfig}]
 
   # set vpn status
   set cur_vpn [file exists "/etc/config/tailscaleEnabled"]
@@ -777,6 +792,7 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
     }
   }
 
+  if { $changed } { return 2 }
   return 1
 }
 

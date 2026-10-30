@@ -2,7 +2,7 @@
 
 <html lang="de">
   <head>
-    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name()); } %></title>
+    <title><% if ((system.Name() == 'ReGaRA Demo') || (system.Name() == '')) { Write('OpenCCU WebUI'); } else { Write(system.Name().Replace('&','&amp;').Replace('<','&lt;').Replace('>','&gt;')); } %></title>
 
     <link rel="icon" type="image/png" href="/ise/img/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/ise/img/favicon.svg" />

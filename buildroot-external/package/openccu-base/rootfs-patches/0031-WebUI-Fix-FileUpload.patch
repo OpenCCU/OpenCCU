@@ -1,6 +1,6 @@
 --- a/www/config/cp_maintenance.cgi
 +++ b/www/config/cp_maintenance.cgi
-@@ -62,10 +62,14 @@
+@@ -70,10 +70,14 @@
        puts "conInfo(\"EULA found\");"
        puts "jQuery('#fwUpload').hide();"
        puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
@@ -18,7 +18,7 @@
          puts "} else {"
            puts "jQuery('#fwUpload').hide();"
            puts "dlgPopup.hide();"
-@@ -78,16 +82,19 @@
+@@ -86,16 +90,19 @@
  
      puts "req.fail(function(data) {"
        puts "conInfo(\"EULA not available\");"
@@ -42,7 +42,7 @@
    http_head
    division {class="popupTitle"} {
      #puts "Softwareupdate - Best&auml;tigung"
-@@ -256,7 +263,7 @@
+@@ -264,7 +271,7 @@
  }
  
  proc action_firmware_update_cancel {} {
@@ -51,7 +51,7 @@
  
    if {[getProduct] < 3} {
      catch {exec rm /var/new_firmware.tar.gz}
-@@ -423,9 +430,7 @@
+@@ -462,9 +469,7 @@
              table_row {
                td {width="20"} {}
                table_data {colspan="2"} {
@@ -62,7 +62,7 @@
                    file_button firmware_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
-@@ -945,7 +950,7 @@
+@@ -1020,7 +1025,7 @@
  
  proc action_firmware_upload {} {
  
@@ -71,7 +71,7 @@
  
    if { [catch { import directDownload } error] } {
      set directDownload false
-@@ -954,10 +959,7 @@
+@@ -1029,10 +1034,7 @@
    http_head
    
    if { $directDownload } {
@@ -83,7 +83,7 @@
    }
  
    if {[getProduct] < 3} {
-@@ -1072,10 +1074,14 @@
+@@ -1147,10 +1149,14 @@
  
    cgi_javascript {
      puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
@@ -102,7 +102,7 @@
    }
  }
  
-@@ -1360,10 +1366,10 @@
+@@ -1454,10 +1460,10 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -190,7 +190,7 @@
        }
      }
    }
-@@ -354,8 +352,7 @@
+@@ -392,8 +390,7 @@
              table_row {
                table_data {width="20"} {}
                table_data {colspan="2"} {
@@ -200,7 +200,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -730,13 +727,15 @@
+@@ -802,13 +799,15 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -231,7 +231,7 @@
    http_head
    division {class="popupTitle j_translate"} {
      puts "\${dialogSettingsSecurityTitle}"
-@@ -1043,8 +1041,7 @@
+@@ -1044,8 +1042,7 @@
              table_row {
                td {width="20"} {}
                table_data {align="left"} {colspan="2"} {
@@ -241,7 +241,7 @@
                    file_button backup_file size=20 maxlength=1000000
                  }
                  puts {<iframe name="config_upload_iframe" class="CLASS20820" style="display: none;"></iframe>}
-@@ -1528,19 +1525,21 @@
+@@ -1530,19 +1527,21 @@
  }
  
  proc action_backup_upload {} {
@@ -271,7 +271,7 @@
      }
    }
  }
-@@ -1610,14 +1609,16 @@
+@@ -1612,14 +1611,16 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -294,7 +294,7 @@
  }
 --- a/www/config/cp_software.cgi
 +++ b/www/config/cp_software.cgi
-@@ -353,8 +353,7 @@
+@@ -386,8 +386,7 @@
                  puts "\${dialogSettingsExtraSoftwareLblSelectExtraSoftware}"
                }
                table_data {
@@ -304,7 +304,7 @@
                    file_button firmware_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="image_upload_iframe" style="display: none;"></iframe>}
-@@ -500,24 +499,27 @@
+@@ -541,24 +540,27 @@
  }
  
  proc action_image_upload {} {
@@ -340,7 +340,7 @@
      }
    }
  }
-@@ -536,14 +538,16 @@
+@@ -570,14 +572,16 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -1129,7 +1129,7 @@
 +package provide cgi 1.10.0
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9376,6 +9376,7 @@
+@@ -9519,6 +9519,7 @@
      this.currentPageOptions  = options;
      
      this.currentPage.enter(options);

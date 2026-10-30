@@ -16,7 +16,7 @@
     object oTmpArray = dom.GetObject(system.GetVar("id"));
     if( oTmpArray )
     {
-      oTmpArray.SortByName();
+      oTmpArray.SortByName(soAsc,stNatural);
       string sTmp;
       foreach(sTmp,oTmpArray.EnumIDs())
       {
@@ -51,14 +51,16 @@
 
 <table id="tblHRoomChannels" class="filterTable CLASS03600 j_translate" cellpadding="0" cellspacing="0" border="1" >
   <colgroup>
-     <col style="width:15%;"/>
-     <col style="width:15%;"/>
-     <col style="width:15%;"/>
-     <col style="width:55%;"/>
+     <col />
+     <col style="width:55px;" />
+     <col />
+     <col style="width:100px;" />
+     <col />
   </colgroup>
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
+  <th>${thPicture}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
   <th><div id="func" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'func',true);">${thFunc}</div></th>
   <th>${thLastChange}</th>
@@ -73,6 +75,8 @@
         <div id="ftSetNameBtn" class='FilterSetButton CLASS03604' onclick="setSFilter(fltHR, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
         <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
     </div>
+  </td>
+  <td class='CLASS03601'>
   </td>
   <td class='CLASS03601'>
     <div id="btnFilterFunc" class="FilterBtn">${thFilter}</div>
@@ -121,8 +125,17 @@
     {
       if (room.Visible())
       {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
         string tmp;
-        foreach(tmp, oUser.UserTempViewIDs().EnumEnabledIDs()) 
+        foreach(tmp, sEnumUserIDs)
         {
           object chn = dom.GetObject(tmp);
           object oDev = dom.GetObject(chn.Device());
@@ -145,7 +158,11 @@
             string trId = room.ID()#tmp;
             boolean showExtDesc = false;
             Write("<tr id='"#trId#"'>");
-            Write("<td class='GrayBkg'>");
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("<td class='GrayBkg CLASS04007' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
+            } else {
+              Write("<td class='GrayBkg'>");
+            }
 
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
@@ -154,6 +171,18 @@
             }
 
 
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+              string sPicDivId = "picDiv"#chn.ID();
+              Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
+                Write("onmouseover='picDivShow(jg_250, \""#chn.Label()#"\", 250, \""#chn.ChnNumber()#"\", this);'");
+                Write("onmouseout='picDivHide(jg_250);'");
+               Write("></div>");
+              Write("<script type='text/javascript'>");
+                Write("var jg_0 = new jsGraphics('"#sPicDivId#"');");
+                Write("InitGD(jg_0, 50);");
+                Write("Draw(jg_0, '"#chn.Label()#"', 50, '"#chn.ChnNumber()#"');");
+              Write("</script>");
             Write("</td>");
             Write("<td class='GrayBkg'>");
             string functions = "";

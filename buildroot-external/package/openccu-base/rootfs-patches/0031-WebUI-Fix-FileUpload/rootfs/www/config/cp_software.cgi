@@ -117,7 +117,31 @@ proc action_install_go {} {
   #  Nach der Installation wird die Zentrale automatisch neu gestartet. Sie k&ouml;nnen sich dann &uuml;ber die Schaltfl&auml;che unten neu anmelden.
   #} {"Neu anmelden" "window.location.href='/';"}
 
-  put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+  if {[getProduct] == 3} {
+    set result 0
+    if { [catch {exec /bin/install_addon 2>/dev/null} results] } {
+      if { [lindex $::errorCode 0] == "CHILDSTATUS" } {
+        set result [lindex $::errorCode 2]
+      } else {
+        # Some kind of unexpected failure
+        set result 100
+      }
+    } else {
+      set result 0
+    }
+
+    if { $result == 0 } {
+      put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContentNoReboot}" {"\${btnOk}" "window.location.href='/';"}
+    } elseif { $result == 10 } {
+      put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+      exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+    } else {
+      put_message "Error ($result)" "\${dialogSettingsExtraSoftwareHintPerformInstallationFailure}"
+    }
+  } else {
+    put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+  }
 
   puts ""
   cgi_javascript {
@@ -243,11 +267,20 @@ proc action_put_page {} {
     puts "\${dialogSettingsExtraSoftwareTitle}"
   }
   division {class="CLASS21406"} {
-    table {class="popupTable"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable"} {border="1"} {height="100%"} {
       set scripts ""
       set loop -1
       catch { set scripts [glob /etc/config/rc.d/*] }
+      set scriptsList {}
       foreach s $scripts {
+        array set sw_info ""
+        if { [catch { get_info $s sw_info }] } continue
+        if { ![info exists sw_info(Name)] } continue
+        lappend scriptsList [list $sw_info(Name) $s]
+      }
+      foreach entry [lsort -index 0 -nocase $scriptsList] {
+        set s [lindex $entry 1]
         incr loop;
         catch {
           if { ! [file executable $s] } continue
@@ -286,7 +319,7 @@ proc action_put_page {} {
                         table {
                           table_row {
                             table_data {
-                              division {class="CLASS21404"} "onClick=\"window.location.href='$sw_info(Update)?cmd=download&version=$sw_info(Version)';\"" {
+                              division {class="CLASS21404"} "onClick=\"openUrl('$sw_info(Update)?cmd=download&version=$sw_info(Version)');\"" {
                                 #puts "Herunterladen"
                                 puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"
                               }
@@ -366,7 +399,7 @@ proc action_put_page {} {
                   table {
                     table_row {
                       table_data {
-                        division {class="CLASS21412"} {onClick="installAddon();"} {
+                        division {class="CLASS21412"} {onClick="document.upload_form.submit();"} {
                           #puts "Installieren"
                           puts "\${dialogSettingsExtraSoftwareBtnInstallSoftware}"
                         }
@@ -382,6 +415,7 @@ proc action_put_page {} {
           puts "\${dialogSettingsExtraSoftwareHintSelectExtraSoftware}"
         }
       }
+    }
     }
   }
   division {class="popupControls"} {
@@ -419,11 +453,11 @@ proc action_put_page {} {
           sendXML: false,
           onSuccess: function(transport) {
             if (!transport.responseText.match(/^Success/g)){
-              alert(translateString(op_name) + translateKey('btnSysConfAdditionalSoftRemoveFailure') + transport.responseText);
+              alert(translateString(op_name) + translateKey('btnSysConfAdditionalSoftRemoveFailure') + transport.responseText.replace(/^Failure\n/, ''));
             }else{
               alert(translateString(op_name) + translateKey('btnSysConfAdditionalSoftRemoveSuccess'));
-              showSoftwareCP();
             }
+            showSoftwareCP();
           }
         };
         if ("uninstall" == op) 
@@ -451,14 +485,14 @@ proc action_put_page {} {
   if { $loop > -1 } {
     translatePage $loop
   } else {
-    puts "<script type=\"text/javascript\">translatePage('#messagebox')</script>"
+    puts "<script type=\"text/javascript\">translatePage('#messagebox');dlgPopup.readaptSize();</script>"
   }
 }
 
 proc translatePage {loop} {
 
 
-  puts "<script type=\"text/javascript\">translatePage('#messagebox')</script>"
+  puts "<script type=\"text/javascript\">translatePage('#messagebox');dlgPopup.readaptSize();</script>"
   global swVersion swUpdate
   cgi_javascript {
     puts "function getVersion(url, callback) {"
@@ -473,7 +507,7 @@ proc translatePage {loop} {
     for {set i 0} {$i <= $loop} {incr i} {
       if { [info exists swUpdate($i)] } {
         puts "getVersion(\"$swUpdate($i)?cmd=check_version&version=$swVersion($i)\", function(contents) {"
-        puts "  document.getElementById(\"availableSWVersion_$i\").innerHTML = contents;"
+        puts " if (document.getElementById(\"availableSWVersion_$i\") !== null) document.getElementById(\"availableSWVersion_$i\").innerHTML = contents;"
         puts "});"
         puts "document.getElementById(\"availableSWVersion_$i\").innerHTML = \"n/a\";"
       }
@@ -489,13 +523,20 @@ proc action_operation {} {
   import script
   import op
   
-  if {[catch {exec $script $op}]} {
-    puts "Failure"
+  if {[catch {exec $script $op} result] && [lindex $::errorCode 0] ne "NONE"} {
+    set errorfile /var/log/addon-uninstall-error.log
+    if {[catch {exec echo $result >>$errorfile}]} {
+      set result "Failure\nThe error details could not be written to $errorfile."
+    } else {
+      set result "Failure\nPlease see $errorfile on the central for more details."
+    }
+  } else {
+    set result "Success"
+    if { "$op" == "uninstall" } {
+      exec rm -rf $script
+    }
   }
-  if { "$op" == "uninstall" } {
-    exec rm -rf $script
-  }
-  puts "Success"
+  puts $result
 }
 
 proc action_image_upload {} {
@@ -525,14 +566,7 @@ proc action_image_upload {} {
 }
 
 proc action_install_start {} {
-  if {[getProduct] == 3} {
-     exec touch /usr/local/.doAddonInstall
-     exec /sbin/reboot
-  } else {
-    # CCU 2
-    exec /bin/kill -SIGQUIT 1
-  }
-  
+  puts ""
 }
 
 cgi_eval {

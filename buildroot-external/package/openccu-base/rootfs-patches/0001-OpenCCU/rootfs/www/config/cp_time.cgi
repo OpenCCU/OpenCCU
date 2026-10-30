@@ -642,6 +642,7 @@ proc action_put_page {} {
       });
 
       translatePage('#messagebox');
+      dlgPopup.readaptSize();
     }
   }
   puts "</div><script type=\"text/javascript\">new Draggable(\"dragTime\");</script>" 

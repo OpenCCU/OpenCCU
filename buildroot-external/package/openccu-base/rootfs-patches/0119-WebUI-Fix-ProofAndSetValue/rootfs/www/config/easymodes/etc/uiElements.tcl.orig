@@ -265,7 +265,7 @@ proc getTextField {param value chn prn {extraparam ""} {superExtra ""}} {
 
   # exec echo "getTextField: $extraparam" >> /tmp/textField.log
 
-  if {[string equal $value ""] == 1} {set value ''}
+  if {[string equal $value ""] == 1} {set value ""}
 
   global psDescr dev_descr
   upvar psDescr descr

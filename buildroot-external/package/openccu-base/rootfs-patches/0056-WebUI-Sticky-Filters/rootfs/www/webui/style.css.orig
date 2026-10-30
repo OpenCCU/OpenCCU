@@ -89,6 +89,19 @@ input[type=checkbox], input[type=radio] {
   padding: 4px;*/
 }
 
+.startPageInfo td:nth-child(1) {
+  word-wrap: break-word;
+}
+
+.startPageInfo td {
+  word-wrap: anywhere;
+  vertical-align: top;
+}
+
+tr.UserSysVars:nth-child(odd) {
+  background-color: $_(activeBackground);
+}
+
 html,body
 {
   margin:0;
@@ -456,7 +469,7 @@ a img {
 
   color: $_(textColorB); /* black */
   font-weight: bold;
-  width: 165px;
+  width: 190px;
   /* height: 52px; */
   /* line-height: 52px; */
   text-align: center;
@@ -1275,6 +1288,7 @@ a img {
   background-color: $_(active); /* #565657 */
   text-align: center;
   vertical-align: middle;
+  box-sizing: border-box;
 }
 
 .tBodyCell
@@ -1283,6 +1297,16 @@ a img {
   height: 40px;
   border: solid 1px $_(black); /* black */
   color: $_(textColorB); /* black */
+  padding: 4px;
+  text-align: left;
+}
+
+.tBodyCellInactive
+{
+  background-color: $_(pgmBackColorInactive); /* #f0f0f0 */
+  height: 40px;
+  border: solid 1px $_(black); /* black */
+  color: $_(pgmTextColorInactive); /* #bcc7cb */
   padding: 4px;
   text-align: left;
 }
@@ -1440,6 +1464,30 @@ div.caption  { display: table-caption; }
   cursor:pointer;
 }
 
+.tSysvarMoveUp
+{
+  background-image: url(/ise/img/up.png);
+  background-position: center;
+  height: 15px;
+  width: 20px;
+  background-size: contain;
+  background-repeat: round;
+  cursor: pointer;
+  mix-blend-mode: darken;
+}
+
+.tSysvarMoveDown
+{
+  background-image: url(/ise/img/down.png);
+  background-position: center;
+  height: 15px;
+  width: 20px;
+  background-size: contain;
+  background-repeat: round;
+  cursor: pointer;
+  mix-blend-mode: darken;
+}
+
 .oLine
 {
   width: 100%;
@@ -1520,6 +1568,10 @@ div.caption  { display: table-caption; }
   color: $_(textColorB); /* black */
 }
 
+.LightGrayBkg {
+  background-color: #DDD;
+  color: $_(textColorB); /* black */
+}
 
 .OUCFMprop {
   text-align:left;
@@ -3264,7 +3316,7 @@ html, body {
   top: 50%;
   left: 50%;
   width: 800px;
-  height: 450px;
+  height: 470px;
   margin-left: -400px;
   margin-top: -225px;
   background-color: $_(black); /* black */
@@ -3290,7 +3342,7 @@ html, body {
   top: 24px;
   left: 2px;
   width: 796px;
-  height: 371px;
+  height: 391px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
   overflow: auto;
@@ -3298,7 +3350,7 @@ html, body {
 
 #DeviceConfigDialogFooter {
   position: absolute;
-  top: 398px;
+  top: 418px;
   left: 2px;
   width: 796px;
   height: 50px;
@@ -5082,14 +5134,18 @@ application {
 
 .CLASS02104 {
 	cursor:pointer;
-	line-height: 100px;
 	height:100px;
 	width:100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .CLASS02105 {
 	text-align:center;
 	background-color: $_(black); /* #000000 */
+	table-layout: fixed;
+	word-wrap:break-word;
 }
 
 .CLASS02106 {
@@ -5435,6 +5491,7 @@ application {
 	word-wrap: anywhere;
 	display: inline-block;
 	padding: 2px;
+	white-space: break-spaces;
 }
 
 .CLASS02535A {
@@ -6743,6 +6800,17 @@ color: $_(textColorA); /* white */
 	height: 40px;
 }
 
+/* keep each program option (systemintern, run at startup, ...) on one line */
+/* in the program editor and in the program list (CLASS04904) */
+.CLASS04803 > td:last-child,
+.CLASS04904 {
+	white-space: nowrap;
+}
+
+.CLASS04803 > td:last-child {
+	text-align: left;
+}
+
 /* rega\pages\tabs\admin\views\programlist.htm */
 
 .CLASS04900 {
@@ -6808,6 +6876,7 @@ color: $_(textColorA); /* white */
 
 .CLASS05004 {
 	background-color:$_(white); /* white */
+	cursor:pointer;
 }
 
 .CLASS05005 {
@@ -6945,6 +7014,7 @@ color: $_(textColorA); /* white */
 	height:20px ! important;
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS05203 {
@@ -6958,6 +7028,7 @@ color: $_(textColorA); /* white */
 .CLASS05205 {
 	height:20px ! important;
 	background-color:$_(clickable);
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS05206 {
@@ -6973,7 +7044,7 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS05209 {
-	text-align:left;
+	text-align: center;
 	padding-left:5px;
 	border:solid 1px $_(black); /* black */
 -ms-word-break: break-all;
@@ -9149,7 +9220,8 @@ color: $_(textColorA); /* white */
   border:solid 1px $_(black);
 }
 
-.CodeMirror {
+.CodeMirror,
+.cm-editor {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   text-align: left;
@@ -9157,6 +9229,7 @@ color: $_(textColorA); /* white */
   resize: vertical;
 }
 
-.CodeMirror-gutter-wrapper {
+.CodeMirror-gutter-wrapper,
+.cm-gutters {
   font-family: monospace;
 }

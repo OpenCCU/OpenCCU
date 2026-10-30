@@ -20,7 +20,7 @@
       object oTmpArray = dom.GetObject(ID_SYSTEM_VARIABLES);
       if( oTmpArray )
       { 
-        oTmpArray.SortByName();
+        oTmpArray.SortByName(soAsc,stNatural);
         string sTmp;
         foreach(sTmp,oTmpArray.EnumEnabledVisibleIDs())
         {
