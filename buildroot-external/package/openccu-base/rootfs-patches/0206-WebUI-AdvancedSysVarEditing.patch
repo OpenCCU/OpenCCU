@@ -1,6 +1,6 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -820,6 +820,11 @@
+@@ -820,8 +820,18 @@
    !sv.ValueSubType(ist);
    sv.DPInfo( system.GetVar("sInfo") );
    sv.ValueUnit( system.GetVar("sUnit") );
@@ -9,10 +9,17 @@
 +  {
 +    oldValueListCount = web.webGetValueListCount(sv.ValueList());
 +  }
++  ! ReGa keeps range, value names and value list as metadata. Drop the
++  ! entries of the previous type, the branches below set the current ones.
    sv.RemoveMetaData('MIN');
    sv.RemoveMetaData('MAX');
++  sv.RemoveMetaData('BV0');
++  sv.RemoveMetaData('BV1');
++  sv.RemoveMetaData('VALUE_LIST');
    var svValue;
-@@ -850,6 +855,79 @@
+   if (ist == istAlarm)
+   {
+@@ -850,6 +860,79 @@
    }
    elseif (ist == istEnum)
    {
