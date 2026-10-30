@@ -850,7 +850,7 @@
   "in_progress": {
     "base_merge_commit": "022a35c662aaf3e9196628ec88ab031b74df2d16",
     "base_pr": 270,
-    "cleanup_pr": null,
+    "cleanup_pr": 4589,
     "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
