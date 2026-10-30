@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "7ee98812c4c231bb8414fdefc9e5234add7306f0e13f1b21a7ba2f2e04c1ffb4"
+      "sha256": "deb4379c6b1e8320765a8454bb2d39ecc2727f4268ee1466eafc62fca0c10c12"
     },
     {
       "added": 370,
@@ -44,7 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "4aff96b929134569678cbf522dcf1455da36f092785e7c162a9d9441aedf51f2"
+      "sha256": "767331d52b11e4733181153fc2e3f04624b41b84dd7f2da6a0a190f5f8fb8a80"
     },
     {
       "added": 786,
@@ -109,24 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "5eb922f5065a6843726ef2adc779f4f85ce726a6675915179ec0fb6638b972ae"
-    },
-    {
-      "added": 128,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/device/get.tcl",
-        "www/api/methods/device/listalldetail.tcl",
-        "www/api/methods/device/setenabledservicemsg.tcl",
-        "www/rega/esp/system.fn",
-        "www/rega/pages/tabs/statusviews/serviceMessages.htm",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
-      "removed": 3,
-      "sha256": "beb5b5ecf41dc41bce7a47e8a2cc2fc4ad0f816b65e26eeb3376f53bf421f7d7"
+      "sha256": "cbed4d72c8cec41fa629edcd2185574642f92a77de55dbc47bf28762d8f38d3b"
     },
     {
       "added": 305,
@@ -338,5 +321,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "6dd7f47430ade2b4e7cb4324eb08b9696e5b7ffee166af3c648d304728cc562e"
+  "series_sha256": "36e70c0336224ec82598162a48aef9a120dfdd1682ced4166ce52317396a8407"
 }

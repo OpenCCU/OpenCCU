@@ -273,6 +273,7 @@ DEVICE_CONFIG_DIALOG_JST = "<div id=\"DeviceConfigDialog\">\n
         <tr id=\"btnEnableDeviceLogging\"><td name=\"generalDeviceChannelConfigLblLogged\">Protokolliert:<\/td><td><input id=\"DeviceConfigDialog_isLogged\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isLoggingChanged=true;\" {if device.isLogged} checked=\"checked\" {\/if} {if !device.isLogable} disabled=\"disabled\" readonly=\"readonly\" {\/if}\/><\/td><\/tr>\n
 \n
         <tr id=\"trAllChnVisible\" class=\"hidden\"><td name=\"lblAllChannelsVisible\">Alle Kan%E4le sichtbar:<\/td><td><input id=\"DeviceConfigDialog_isVisible\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isVisibilityChanged=true;\"\/><\/td><\/tr>\n
+        <tr id=\"btnEnableDeviceServiceMsg\"><td name=\"generalDeviceChannelConfigLblServiceMsg\">Servicemeldungen:<\/td><td><input id=\"DeviceConfigDialog_enabledServiceMsg\" type=\"checkbox\" onclick=\"DeviceConfigDialog.enabledServiceMsgChanged=true;\" {if device.enabledServiceMsg} checked=\"checked\" {\/if} \/><\/td><\/tr>\n
       <\/table>\n
     <\/div>\n
     \n
@@ -12445,6 +12446,7 @@ Device = Class.create({
 
       this.interfaceName = data["interface"];
       this.isReadyConfig = data["isReady"];
+      this.enabledServiceMsg = (data["enabledServiceMsg"] == "true") ? true : false;
       this.deviceType = deviceType;
       this.typeName = deviceType.name;
       this.typeDescription = deviceType.description;
@@ -12720,6 +12722,23 @@ Device = Class.create({
   setLogging: function(isLogged)
   {
   },  
+
+  /**
+   * Legt fest, ob das Geraet Servicemeldungen auslöst oder nicht
+   **/
+  setEnabledServiceMsg: function(enabledServiceMsg)
+  {
+    if (this.enabledServiceMsg != enabledServiceMsg)
+    {
+      var result = homematic("Device.setEnabledServiceMsg", {id: this.id, isEnabled: enabledServiceMsg});
+      if (typeof(result) == "boolean" && result === true)
+      {
+        this.enabledServiceMsg = enabledServiceMsg;
+      }
+    }
+    
+    return this.enabledServiceMsg;
+  },
 
   setDeviceInputCheck: function() {
     this.deviceInputCheck = true;
@@ -15799,6 +15818,7 @@ DeviceConfigDialog = Singleton.create({
   USABLE_ID: "DeviceConfigDialog_isUsable",
   VISIBLE_ID: "DeviceConfigDialog_isVisible",
   LOGGED_ID: "DeviceConfigDialog_isLogged",
+  SERVICEMSG_ID: "DeviceConfigDialog_enabledServiceMsg",
   TEST_RESULT_ID: "DeviceConfigDialogTestResult",
   RESULT_OK: 1,
   RESULT_ABORT: 0,
@@ -15824,6 +15844,7 @@ DeviceConfigDialog = Singleton.create({
     this.isVisibilityChanged = false;
     this.isUsabilityChanged = false;
     this.isLoggingChanged = false;   
+    this.enabledServiceMsgChanged = false;
     this.callback = callback;
     this.layer = document.createElement("div");
     this.layer.id = this.LAYER_ID;
@@ -15893,6 +15914,8 @@ DeviceConfigDialog = Singleton.create({
         if (this.isUsabilityChanged) { channel.setUsability(isUsable); }
         if (this.isLoggingChanged) { channel.setLogging(isLogged); }
       }, this);
+      var enabledServiceMsg = $(this.SERVICEMSG_ID).checked;
+      if (this.enabledServiceMsgChanged) { this.device.setEnabledServiceMsg(enabledServiceMsg); }
 
       this.close(this.RESULT_OK);
     }
