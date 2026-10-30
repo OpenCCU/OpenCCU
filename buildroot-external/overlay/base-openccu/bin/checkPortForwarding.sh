@@ -1,7 +1,7 @@
 #!/bin/sh
 # shellcheck shell=dash disable=SC2169,SC3010,SC3001
 #
-# Port Forwarding check script v2.1
+# Port Forwarding check script v2.2
 # Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,6 +84,46 @@ checkCCU() {
       ;;
   esac
   progress "probe did not match OpenCCU API response"
+  return 1
+}
+
+# isCGNAT <ipv4>
+# Returns 0 if the given IPv4 address lies within the shared address space
+# 100.64.0.0/10 (RFC 6598) used for carrier-grade NAT (CGNAT), 1 otherwise.
+isCGNAT() {
+  case "${1}" in
+    *[!0-9.]*|"") return 1 ;;
+  esac
+  _o1=${1%%.*}
+  _rest=${1#*.}
+  _o2=${_rest%%.*}
+  [[ "${_o1}" -eq 100 ]] && [[ "${_o2}" -ge 64 ]] && [[ "${_o2}" -le 127 ]]
+}
+
+# behindCGNAT <public ipv4>
+# Returns 0 if this CCU is (most likely) connected to the internet via a
+# carrier-grade NAT. In that case a port forwarding in the local router can
+# not make the CCU reachable from the internet and the detected public IPv4
+# belongs to a NAT gateway of the provider, so scanning it is pointless (and
+# means scanning a third party system). Detection is done by
+#  a) the detected public IPv4 itself being in 100.64.0.0/10, or
+#  b) one of the first network hops lying in 100.64.0.0/10.
+behindCGNAT() {
+  if isCGNAT "${1}"; then
+    progress "check 3/3: detected public IPv4 ${1} is a CGNAT address"
+    return 0
+  fi
+
+  if [[ -x /usr/bin/traceroute ]] || [[ -x /bin/traceroute ]]; then
+    progress "check 3/3: checking first network hops for CGNAT addresses"
+    for _hop in $(traceroute -n -m 4 -q 1 -w 2 "${1}" 2>/dev/null | /usr/bin/awk '$1 ~ /^[0-9]+$/ { print $2 }'); do
+      if isCGNAT "${_hop}"; then
+        progress "check 3/3: CGNAT hop ${_hop} detected"
+        return 0
+      fi
+    done
+  fi
+
   return 1
 }
 
@@ -302,6 +342,12 @@ if [[ ! -e "${OVERRIDE_FILE}" ]]; then
     # NOT an all-clear, so we log it to avoid a false sense of security.
     log notice "could not determine public IPv4 address - external port scan skipped"
     progress "check 3/3: skipped (public IPv4 could not be determined)"
+  elif behindCGNAT "${PUBLIC_IP4}"; then
+    # connection via carrier-grade NAT (e.g. many mobile/LTE/5G, fiber or
+    # cable providers): a router port forwarding can not expose the CCU on
+    # the shared public IPv4, so the external scan is skipped.
+    log notice "carrier-grade NAT (CGNAT) detected - external port scan skipped"
+    progress "check 3/3: skipped (CGNAT connection detected)"
   elif [[ ! -x /usr/bin/nmap ]]; then
     log notice "nmap not available - external port scan skipped"
     progress "check 3/3: skipped (nmap not available)"
