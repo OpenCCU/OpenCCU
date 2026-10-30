@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "f7c64bdb4fc358764c86c4fa415a18a5d6139458fc3a5804b9b3de471e97af93"
+      "sha256": "756ceed36f130464f0fed1b0ab2cca9de422a586b091d63b24c9c44e9a7052d8"
     },
     {
       "added": 370,
@@ -44,19 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "4b54568dde51d504475b6686028cc525a3560784130fcbab4aea9a4da3eaef9b"
-    },
-    {
-      "added": 277,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/device/liststatus.tcl",
-        "www/api/methods/interface/rssiinfo.tcl",
-        "www/webui/webui.js"
-      ],
-      "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
-      "removed": 3,
-      "sha256": "7f2f5c96b311414fa60466b23c0a2cbfb9fa6eacdac37d7037164b75d4785a27"
+      "sha256": "4aff96b929134569678cbf522dcf1455da36f092785e7c162a9d9441aedf51f2"
     },
     {
       "added": 786,
@@ -349,5 +337,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "0d9be510d2118c8f5e84792ef12890db0f2f2242956e4d9caf73ab6cb0c162a5"
+  "series_sha256": "a18271d5786ffb75cfaaebc0c5a1a181313e5783dc14741f41d73fd3668be1c8"
 }

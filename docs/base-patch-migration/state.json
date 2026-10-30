@@ -839,18 +839,24 @@
       "base_pr": 261,
       "cleanup_pr": 4583,
       "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch"
+    },
+    {
+      "base_merge_commit": "061d52a5e0cf94f1367efe360c2b5241613dbd62",
+      "base_pr": 262,
+      "cleanup_pr": 4588,
+      "patch": "0132-WebUI-Fix-UnitDisplay.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "061d52a5e0cf94f1367efe360c2b5241613dbd62",
-    "base_pr": 262,
-    "cleanup_pr": 4588,
-    "patch": "0132-WebUI-Fix-UnitDisplay.patch",
+    "base_merge_commit": "022a35c662aaf3e9196628ec88ab031b74df2d16",
+    "base_pr": 270,
+    "cleanup_pr": null,
+    "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "b9c1d230c950ad06be7ce897159e8246bf51ff9a",
-  "verified_base_pin": "a10160eb1591aadeef3063e2f27c3f0eb3f082ef",
-  "verified_source_sha256": "e7c21bd852277aca662be24de943815844b62fe0ee59ff03c56df859cbe84a1c"
+  "verified_at_openccu_commit": "cfd2925d3c2714ad8973b37060efd82b89617b2d",
+  "verified_base_pin": "061d52a5e0cf94f1367efe360c2b5241613dbd62",
+  "verified_source_sha256": "e7395abf5929c2023c76b89f24841a0376826846715a52293eb44f91d1ff18a7"
 }

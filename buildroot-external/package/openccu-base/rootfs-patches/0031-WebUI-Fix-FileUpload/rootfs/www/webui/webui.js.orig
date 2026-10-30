@@ -451,6 +451,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
     <col style=\"width:25px;\"\/>\n
     <col style=\"width:25px;\"\/>\n
     <col style=\"width:25px;\"\/>\n
+    <col style=\"width:25px;\"\/>\n
     <col style=\"width:11%;\"\/>\n
   <\/colgroup>\n
   <thead>\n
@@ -466,6 +467,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
       <th class=\"DeviceListHead clickable\" name=\"thTransmitMode\" onclick=\"DeviceListPage.sortBy(\'NAME\');\">&Uuml;bertragungsmodus<\/th>\n
       <th class=\"DeviceListHead clickable\" name=\"thFuncs\" onclick=\"DeviceListPage.sortBy(\'NAME\');\">Gewerke<\/th>\n
       <th class=\"DeviceListHead clickable\" name=\"thRooms\" onclick=\"DeviceListPage.sortBy(\'NAME\');\">R&auml;ume<\/th>\n
+      <th class=\"DeviceListHead\"><img name=\"lblRSSI\" src=\"\/ise\/img\/rssi-icon.png\" width=\"24px\" height=\"24px\" alt=\"RSSI\" title=\"RSSI\"\/><\/th>\n
       <th class=\"DeviceListHead\"><img name=\"lblVisible\" src=\"\/ise\/img\/visible.png\" width=\"24px\" height=\"24px\" alt=\"sichtbar\" title=\"sichtbar\"\/><\/th>\n
       <th class=\"DeviceListHead\"><img name=\"lblUsable\" src=\"\/ise\/img\/usable.png\" width=\"24px\" height=\"24px\" alt=\"bedienbar\" title=\"bedienbar\"\/><\/th>\n
       <th class=\"DeviceListHead\"><img name=\"lblRecorded\" src=\"\/ise\/img\/logged.png\" width=\"24px\" height=\"24px\" alt=\"protokolliert\" title=\"protokolliert\"\/><\/th>\n
@@ -482,6 +484,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
       ${modeFilter.getHTML()}\n
       ${funcFilter.getHTML()}\n
       ${roomFilter.getHTML()}\n
+      <th class=\"Filter CLASS10901\">&nbsp;<\/th>\n
       <th class=\"Filter CLASS10901\">&nbsp;<\/th>\n
       <th class=\"Filter CLASS10901\">&nbsp;<\/th>\n
       <th class=\"Filter CLASS10901\">&nbsp;<\/th>\n
@@ -505,6 +508,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
           <td class=\"DeviceListCell j_chMode\" >{for name in device.modes}${name}<br \/>{forelse}&#160;{\/for}<\/td>\n
           <td class=\"DeviceListCell j_functions\" >{for subsection in device.subsections}${subsection.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
           <td class=\"DeviceListCell j_rooms\" >{for room in device.rooms}${room.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
+          <td class=\"DeviceListCell\" id=\"DeviceStatus${device.id}\" ><\/td>\n
           <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if device.isVisible}checked=\"checked\"{\/if}\/><\/td>\n
           <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if device.isUsable}checked=\"checked\"{\/if}\/><\/td>\n
           <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if device.isLogged}checked=\"checked\"{\/if}\/><\/td>\n
@@ -535,6 +539,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
             <td class=\"DeviceListCell j_chMode\" >{for name in group.modes}${name}<br \/>{forelse}&#160;{\/for}<\/td>\n
             <td class=\"DeviceListCell\" >{for subsection in group.subsections}${subsection.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
             <td class=\"DeviceListCell\" >{for room in group.rooms}${room.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
+            <td class=\"DeviceListCell\" ><\/td>\n
             <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if group.isVisible}checked=\"checked\"{\/if}\/><\/td>\n
             <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if group.isUsable}checked=\"checked\"{\/if}\/><\/td>\n
             <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if group.isLogged}checked=\"checked\"{\/if}\/><\/td>\n
@@ -556,6 +561,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
               <td class=\"DeviceListCell j_chMode\" >${channel.mode}<\/td>\n
               <td class=\"DeviceListCell\" >{for subsection in channel.subsections}${subsection.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
               <td class=\"DeviceListCell\" >{for room in channel.rooms}${room.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
+              <td class=\"DeviceListCell\" ><\/td>\n
               <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if channel.isVisible}checked=\"checked\"{\/if} \/><\/td>\n
               <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if channel.isUsable}checked=\"checked\"{\/if} \/><\/td>\n
               <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if channel.isLogged}checked=\"checked\"{\/if} \/><\/td>\n
@@ -586,6 +592,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
               <td class=\"DeviceListCell j_chMode\" >${channel.mode}<\/td>\n
               <td class=\"DeviceListCell\" >{for subsection in channel.subsections}${subsection.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
               <td class=\"DeviceListCell\" >{for room in channel.rooms}${room.name}<br \/>{forelse}&#160;{\/for}<\/td>\n
+              <td class=\"DeviceListCell\" ><\/td>\n
               <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if channel.isVisible}checked=\"checked\"{\/if} \/><\/td>\n
               <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if channel.isUsable}checked=\"checked\"{\/if} \/><\/td>\n
               <td class=\"DeviceListCell\"><input type=\"checkbox\" disabled=\"disabled\" readonly=\"readyonly\" {if channel.isLogged}checked=\"checked\"{\/if} \/><\/td>\n
@@ -601,7 +608,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
     {forelse}\n
       <tr class=\"DeviceListRow\">\n
         <td class=\"DeviceListCell_Invisible\">&#160;<\/td>\n
-        <td class=\"DeviceListCell\" name=\"noDevicesAvailable\" colspan=\"15\">Keine Ger&auml;te verf&uuml;gbar<\/td>\n
+        <td class=\"DeviceListCell\" name=\"noDevicesAvailable\" colspan=\"16\">Keine Ger&auml;te verf&uuml;gbar<\/td>\n
       <\/tr>\n
     {\/for}\n
   <\/tbody>\n
@@ -619,6 +626,7 @@ DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" 
       <td class=\"DeviceListFoot\"><div class=\"CLASS10905\" \/><\/td>\n
       <td class=\"DeviceListFoot\"><div class=\"CLASS10905\" \/><\/td>\n
       <td class=\"DeviceListFoot\"><div class=\"CLASS10905\" \/><\/td>\n
+      <td class=\"DeviceListFoot\"><div class=\"CLASS10904\" \/><\/td>\n
       <td class=\"DeviceListFoot\"><div class=\"CLASS10904\" \/><\/td>\n
       <td class=\"DeviceListFoot\"><div class=\"CLASS10904\" \/><\/td>\n
       <td class=\"DeviceListFoot\"><div class=\"CLASS10904\" \/><\/td>\n
@@ -12498,6 +12506,162 @@ Device = Class.create({
   },
 
   /**
+   * Startet die Aktualisierung der Werte des Gerätestatus
+   **/
+  updateStatus:function(deviceStatus, rssiListHmRF)
+  {
+    // catch DUTY_CYCLE or DUTYCYCLE
+    if (typeof(deviceStatus.DUTY_CYCLE) !== "undefined")
+      this.DUTY_CYCLE = !!+deviceStatus.DUTY_CYCLE;
+    if (typeof(deviceStatus.DUTYCYCLE) !== "undefined")
+      this.DUTY_CYCLE = !!+deviceStatus.DUTYCYCLE;
+
+    // catch OPERATING_VOLTAGE
+    if (typeof(deviceStatus.OPERATING_VOLTAGE) !== "undefined")
+      this.OPERATING_VOLTAGE = deviceStatus.OPERATING_VOLTAGE;
+
+    // catch SABOTAGE
+    if (typeof(deviceStatus.SABOTAGE) !== "undefined")
+      this.SABOTAGE = !!+deviceStatus.SABOTAGE;
+
+    // catch UNREACH
+    if (typeof(deviceStatus.UNREACH) !== "undefined")
+      this.UNREACH = !!+deviceStatus.UNREACH;
+
+    // catch ERROR_OVERHEAT
+    if (typeof(deviceStatus.ERROR_OVERHEAT) !== "undefined")
+      this.ERROR_OVERHEAT = !!+deviceStatus.ERROR_OVERHEAT;
+
+    // catch LOWBAT or LOW_BAT
+    if (typeof(deviceStatus.LOWBAT) !== "undefined")
+      this.LOWBAT = !!+deviceStatus.LOWBAT;
+    if (typeof(deviceStatus.LOW_BAT) !== "undefined")
+      this.LOWBAT = !!+deviceStatus.LOW_BAT;
+
+    // catch CONFIG_PENDING
+    if (typeof(deviceStatus.CONFIG_PENDING) !== "undefined")
+      this.CONFIG_PENDING = !!+deviceStatus.CONFIG_PENDING;
+
+    // catch UPDATE_PENDING
+    if (typeof(deviceStatus.UPDATE_PENDING) !== "undefined")
+      this.UPDATE_PENDING = !!+deviceStatus.UPDATE_PENDING;
+
+    // catch RSSI_DEVICE and RSSI_PEER
+    // in case of a BidCos-RF device we take the RSSI
+    // values fron the supplied rssiListHmRF
+    if (this.interfaceName === 'BidCos-RF')
+    {
+      if (rssiListHmRF !== null)
+      {
+        var address = this.address;
+        var rssiInfo = rssiListHmRF.find(function(x) { return x.name === address });
+
+        if (rssiInfo !== null && typeof(rssiInfo) !== 'undefined' &&
+            rssiInfo.partner !== null && typeof(rssiInfo.partner) !== 'undefined')
+        {
+          var rssiData = rssiInfo.partner[0].rssiData;
+          this.RSSI_DEVICE = rssiData[0];
+          this.RSSI_PEER = rssiData[1];
+          if(this.RSSI_DEVICE === 65536)
+            this.RSSI_DEVICE = -65535;
+          if(this.RSSI_PEER === 65536)
+            this.RSSI_PEER = -65535;
+        }
+      }
+    }
+    else
+    {
+      if (typeof(deviceStatus.RSSI_DEVICE) !== "undefined")
+        this.RSSI_DEVICE = deviceStatus.RSSI_DEVICE;
+
+      if (typeof(deviceStatus.RSSI_PEER) !== "undefined")
+        this.RSSI_PEER = deviceStatus.RSSI_PEER;
+    }
+
+    // update/calculate the web colors for displaying
+    // the RSSI values like in devconfig
+    if (this.RSSI_DEVICE !== null || this.RSSI_PEER !== null)
+      this.updateRssiColors();
+
+    // now we update the table cell with a pregenerated HTML
+    var cell = document.getElementById('DeviceStatus' + this.id);
+    if (cell !== null && typeof(cell) !== 'undefined')
+    {
+      var html = '';
+
+      if (this.enabledServiceMsg === false)
+        html += '<span style="background-color: #FFFF00;">NO&nbsp;SERVICEMSG</span><br/>';
+
+      if (this.CONFIG_PENDING === true)
+        html += '<span style="background-color: #FFFF00;">CONFIG</span><br/>';
+
+      if (this.UPDATE_PENDING === true)
+        html += '<span style="background-color: #FFFF00;">UPDATE</span><br/>';
+
+      if (this.LOWBAT === true)
+        html += '<span style="background-color: #FFFF00;">LOWBAT</span><br/>';
+
+      if (this.UNREACH === true)
+        html += '<span style="background-color: #FFFF00;">UNREACH</span><br/>';
+
+      if (this.ERROR_OVERHEAT === true)
+        html += '<span style="background-color: #FF0000;">OVERHEAT</span><br/>';
+
+      if (this.SABOTAGE === true)
+        html += '<span style="background-color: #FF0000;">SABOTAGE</span><br/>';
+
+      if (this.OPERATING_VOLTAGE && parseFloat(this.OPERATING_VOLTAGE) > 0)
+        html += parseFloat(this.OPERATING_VOLTAGE).toFixed(1) + '&nbsp;V<br/>';
+
+      if (this.RSSI_DEVICE && this.RSSI_DEVICE > -65535)
+        html += this.RSSI_DEVICE + '&nbsp;dBm&nbsp;<span style="background-color: ' + this.rssiDeviceColor + '">&darr;</span><br/>';
+
+      if (this.RSSI_PEER && this.RSSI_PEER > -65535)
+        html += this.RSSI_PEER + '&nbsp;dBm&nbsp;<span style="background-color: ' + this.rssiPeerColor + '">&uarr;</span><br/>';
+
+      if (this.DUTY_CYCLE === true)
+        html += '<span style="background-color: #FFFF00;">DUTYCYCLE</span><br/>';
+
+      cell.innerHTML = html;
+    }
+  },
+
+  /**
+   * Startet die Aktualisierung der RSSI Werte
+   **/
+  updateRssiColors:function()
+  {
+    var getColorCode = function(rssi)
+    {
+      var RSSI_BAD = -120.0;
+      var RSSI_MEDIUM = -100.0;
+      var RSSI_GOOD = -20.0;
+
+      var rssi_color = function(lower_bound, upper_bound, rssi)
+      {
+        var result = 256 * (rssi - lower_bound) / (upper_bound - lower_bound);
+        if (result < 0)   result = 0;
+        if (result > 255) result = 255;
+        return Math.round(result);
+      };
+
+      if (rssi > -65535)
+      {
+        var red = rssi_color(RSSI_GOOD, RSSI_MEDIUM, rssi);
+        var green = rssi_color(RSSI_BAD, RSSI_MEDIUM, rssi);
+        return "#" + ('00'+(red).toString(16)).substr(-2)
+                   + ('00'+(green).toString(16)).substr(-2)
+                   + "00";
+      }
+      else
+        return "#000000";
+    };
+
+    this.rssiDeviceColor = getColorCode(this.RSSI_DEVICE);
+    this.rssiPeerColor = getColorCode(this.RSSI_PEER);
+  },
+
+  /**
    * Legt den Namen des Geräts fest.
    **/
   setName: function(name)
@@ -12981,6 +13145,36 @@ DeviceList = Singleton.create({
   */
   },
   
+  /**
+   * Startet die Aktualisierung des Status aller Geräte.
+   **/
+  updateDeviceStatus:function()
+  {
+    var _this_ = this;
+
+    homematic("Interface.rssiInfo", {"interface": "BidCos-RF"}, function(rssiInfo) {
+      for (var id in _this_.devices)
+      {
+        var device = _this_.devices[id];
+        if (device !== null && typeof(device) !== 'undefined' && device.interfaceName !== 'VirtualDevices')
+        {
+          homematic("Device.listStatus", {"id": device.id, "address": device.address, "interface": device.interfaceName}, function(data) {
+            if (data !== null && typeof(data) !== 'undefined')
+            {
+              var id = data["ID"];
+              if (id !== null && typeof(id) !== 'undefined')
+              {
+                var device = _this_.devices[id];
+                if (device !== null && typeof(device) !== 'undefined')
+                  device.updateStatus(data, rssiInfo);
+              }
+            }
+          });
+        }
+      }
+    });
+  },
+
   /**
    * Startet die Akualisierung eines Geräts.
    **/
@@ -14792,6 +14986,8 @@ ChannelChooser = Singleton.create({
         conInfo(e);
       }
     });
+
+    DeviceList.updateDeviceStatus();
   }
 });
 /**
@@ -15265,6 +15461,8 @@ MultiChannelChooser = Singleton.create({
 
     translateJSTemplate("#MultiChannelChooserDialog");
     translatePage(".MultiChannelChooserRow");
+
+    DeviceList.updateDeviceStatus();
   }
     
 });
@@ -26801,6 +26999,8 @@ if (PLATFORM == "Central") {
     translatePage(".j_rooms, .j_functions"); // this translates the room name as well the function name within the main devicelist (Settings > Devices)
     jQuery("#DeviceListPage_RoomFilter").draggable();
     jQuery("#DeviceListPage_FuncFilter").draggable();
+
+    DeviceList.updateDeviceStatus();
   },
   
   onRemoveDevice: function(whatEver)
