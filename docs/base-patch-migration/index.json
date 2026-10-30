@@ -323,8 +323,20 @@
       "patch": "0203-WebUI-NoExpectCGI.patch",
       "removed": 246,
       "sha256": "7cacbe5740bcd99ff525c8b08c290b90d0fcdb5f77f1a16f73477d57e5c44317"
+    },
+    {
+      "added": 447,
+      "files": [
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/admin/msg/newSysVar.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
+      ],
+      "patch": "0206-WebUI-AdvancedSysVarEditing.patch",
+      "removed": 20,
+      "sha256": "9795635c43e99ff82e2531f1549d42b274739e3265d99439ff3c56a054a1497b"
     }
   ],
   "schema": 1,
-  "series_sha256": "761fec3cf330e957aec95dfe340276d7b8fce6477c21b290dde06c41cf52bec4"
+  "series_sha256": "6dd7f47430ade2b4e7cb4324eb08b9696e5b7ffee166af3c648d304728cc562e"
 }
