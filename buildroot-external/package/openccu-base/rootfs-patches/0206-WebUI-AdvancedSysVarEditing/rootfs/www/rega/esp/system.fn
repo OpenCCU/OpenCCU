@@ -768,7 +768,14 @@ function ::checkFilter() {
 function ::saveSysVar()
 {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
-  if( oUser.UserLevel() == iulAdmin )
+  ! Reject a value list without any entry, like the dialog does.
+  boolean bValidValueList = true;
+  if( system.GetVar("iSubType") == istEnum )
+  {
+    string sCheckValList = system.GetVar("sValList");
+    if( sCheckValList.Replace(";", "").Trim() == "" ) { bValidValueList = false; }
+  }
+  if( (oUser.UserLevel() == iulAdmin) && bValidValueList )
   {
   integer ist = system.GetVar("iSubType"); 
   object oChn = dom.GetObject( system.GetVar("iChnId") );

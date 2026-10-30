@@ -254,6 +254,14 @@
     return String(text).replace(/(?:\r\n|\r|\n)/g, ";").split(";");
   };
 
+  // Entries of an edited value list, without empty entries at its end, which
+  // a final newline or separator would add.
+  svNormalizeValueList = function(text) {
+    var vals = svParseValueList(text);
+    while ((vals.length > 1) && (vals[vals.length - 1].strip().length == 0)) { vals.pop(); }
+    return vals;
+  };
+
   // Entries of the saved value list as shown in the dialog, empty for other types.
   var svOldValueList = <%
     if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) {
@@ -420,7 +428,7 @@
             return;
           }
           updateValueList();
-          var valList = svParseValueList($("txVals").value);
+          var valList = svNormalizeValueList($("txVals").value);
           var vals = valList.join(";");
           var maxIndex = valList.length - 1;
           var value = parseInt($("selEnum").value, 10);
@@ -658,7 +666,7 @@
   {
     var selection = $("selEnum");
     var oldIndex = parseInt(selection.value, 10);
-    var vals = svParseValueList($("txVals").value);
+    var vals = svNormalizeValueList($("txVals").value);
 
     selection.options.length = 0;
     for (var i = 0; i < vals.length; i++)

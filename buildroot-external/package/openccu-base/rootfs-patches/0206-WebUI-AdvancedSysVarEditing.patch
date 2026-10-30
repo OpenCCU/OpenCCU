@@ -1,6 +1,22 @@
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -820,8 +820,13 @@
+@@ -768,7 +768,14 @@
+ function ::saveSysVar()
+ {
+   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+-  if( oUser.UserLevel() == iulAdmin )
++  ! Reject a value list without any entry, like the dialog does.
++  boolean bValidValueList = true;
++  if( system.GetVar("iSubType") == istEnum )
++  {
++    string sCheckValList = system.GetVar("sValList");
++    if( sCheckValList.Replace(";", "").Trim() == "" ) { bValidValueList = false; }
++  }
++  if( (oUser.UserLevel() == iulAdmin) && bValidValueList )
+   {
+   integer ist = system.GetVar("iSubType"); 
+   object oChn = dom.GetObject( system.GetVar("iChnId") );
+@@ -820,8 +827,13 @@
    !sv.ValueSubType(ist);
    sv.DPInfo( system.GetVar("sInfo") );
    sv.ValueUnit( system.GetVar("sUnit") );
@@ -14,7 +30,7 @@
    var svValue;
    if (ist == istAlarm)
    {
-@@ -850,6 +855,86 @@
+@@ -850,6 +862,86 @@
    }
    elseif (ist == istEnum)
    {
@@ -229,7 +245,7 @@
    <table>
    <tr>
      <td>
-@@ -160,6 +242,70 @@
+@@ -160,6 +242,78 @@
  <script type="text/javascript">
    dlgResult = 0;
  
@@ -243,6 +259,14 @@
 +  // Split a value list into its entries like ReGa does.
 +  svParseValueList = function(text) {
 +    return String(text).replace(/(?:\r\n|\r|\n)/g, ";").split(";");
++  };
++
++  // Entries of an edited value list, without empty entries at its end, which
++  // a final newline or separator would add.
++  svNormalizeValueList = function(text) {
++    var vals = svParseValueList(text);
++    while ((vals.length > 1) && (vals[vals.length - 1].strip().length == 0)) { vals.pop(); }
++    return vals;
 +  };
 +
 +  // Entries of the saved value list as shown in the dialog, empty for other types.
@@ -300,7 +324,7 @@
    var arrElem = ["#inpName", "#inpDesc"];
  
    jQuery.each(arrElem, function(index, elem){
-@@ -175,6 +321,65 @@
+@@ -175,6 +329,65 @@
      $("chnNameRow").hidden = true;
    };
    
@@ -366,7 +390,7 @@
    saveSysVars = function()
    {
      if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
-@@ -198,17 +403,49 @@
+@@ -198,17 +411,49 @@
        pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
        pb += "string sName = '"+name+"';";
        pb += "string sInfo = '"+$("inpDesc").value+"';";
@@ -391,7 +415,7 @@
 +            return;
 +          }
 +          updateValueList();
-+          var valList = svParseValueList($("txVals").value);
++          var valList = svNormalizeValueList($("txVals").value);
 +          var vals = valList.join(";");
 +          var maxIndex = valList.length - 1;
 +          var value = parseInt($("selEnum").value, 10);
@@ -420,7 +444,7 @@
            break;
          case 2:
            iSubType = SYSVAR_GENERIC;
-@@ -228,6 +465,24 @@
+@@ -228,6 +473,24 @@
            var itmpMaxVal = parseFloat( $("inpMax").value );
            if( isNaN(itmpMinVal) ) itmpMinVal = 0;
            if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
@@ -445,7 +469,7 @@
            pb += "integer iMinVal = '"+itmpMinVal+"';";
            pb += "integer iMaxVal = '"+itmpMaxVal+"';";
            
-@@ -243,16 +498,16 @@
+@@ -243,16 +506,16 @@
            break;
          case 3: 
            iSubType = SYSVAR_ALARM;
@@ -466,7 +490,7 @@
        pb += "integer iSubType = "+iSubType+";";
        pb += "integer iChnId = "+ $("chnId").value +";";
        var opts = {
-@@ -265,6 +520,17 @@
+@@ -265,6 +528,17 @@
            if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
          }
        };
@@ -484,7 +508,7 @@
        new Ajax.Request(url, opts);
      } else {
          // No name available
-@@ -316,6 +582,7 @@
+@@ -316,6 +590,7 @@
          break;
        case 1:
          loadValueEdit(translateKey("lblVal1Val2Val3"));
@@ -492,7 +516,7 @@
          break;
        case 2:
          loadIntEdit(0, 65000);
-@@ -387,6 +654,31 @@
+@@ -387,6 +662,31 @@
      $("tdValueEdit").innerHTML = s
    };
    
@@ -500,7 +524,7 @@
 +  {
 +    var selection = $("selEnum");
 +    var oldIndex = parseInt(selection.value, 10);
-+    var vals = svParseValueList($("txVals").value);
++    var vals = svNormalizeValueList($("txVals").value);
 +
 +    selection.options.length = 0;
 +    for (var i = 0; i < vals.length; i++)
@@ -524,7 +548,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -396,7 +688,7 @@
+@@ -396,7 +696,7 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -533,7 +557,7 @@
      s += "</table>";
      $("tdEdit").innerHTML = s;
      
-@@ -479,7 +771,7 @@
+@@ -479,7 +779,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -542,7 +566,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
          Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
-@@ -494,13 +786,13 @@
+@@ -494,13 +794,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);
