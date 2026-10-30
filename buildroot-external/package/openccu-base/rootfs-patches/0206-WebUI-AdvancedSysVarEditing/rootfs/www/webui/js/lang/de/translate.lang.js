@@ -1119,7 +1119,6 @@ jQuery.extend(true,langJSON, {
     "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",
     "svEditValueListPrograms" : "Die ge%E4nderte Werteliste betrifft Eintr%E4ge, die in folgenden Programmen verwendet werden:",
     "svEditValueListAdjust" : "Programme automatisch anpassen: verschobene Eintr%E4ge erhalten ihre neue Position, Eintr%E4ge hinter dem Ende der Liste den letzten Eintrag.",
-    "svEditValueListNoEntry" : "(kein Eintrag)",
     "svEditRangePrograms" : "Folgende Programme verwenden Werte au%DFerhalb des neuen Wertebereichs:",
     "svEditCheckPrograms" : "Bitte die betroffenen Programme nach dem Speichern pr%FCfen.",
     "svEditSaveAnyway" : "Trotzdem speichern?",

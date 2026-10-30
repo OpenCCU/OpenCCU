@@ -324,16 +324,18 @@
    var arrElem = ["#inpName", "#inpDesc"];
  
    jQuery.each(arrElem, function(index, elem){
-@@ -175,6 +329,65 @@
+@@ -175,6 +329,73 @@
      $("chnNameRow").hidden = true;
    };
    
 +
 +  // Compares the value list entries that programs use with the new list.
-+  // An entry found at another position is mapped there, an entry that is
-+  // gone keeps its position or, behind the end of the list, gets the last one.
++  // With the adjustment an entry found at another position is mapped there,
++  // an entry that is gone keeps its position or, behind the end of the list,
++  // gets the last one. Without it only references behind the end change, to
++  // the first entry, which the WebUI shows for them anyway.
 +  svValueListChanges = function(newVals) {
-+    var result = {programs: [], map: {}, mapped: false};
++    var result = {programs: [], adjustMap: {}, keepMap: {}};
 +    jQuery.each(svPrograms, function(i, prg) {
 +      var refs = [];
 +      jQuery.each(prg.values, function(j, value) {
@@ -343,11 +345,10 @@
 +        if (refs.some(function(ref) { return ref.index == index; })) { return; }
 +        var target = newVals.indexOf(oldText);
 +        if (target < 0) { target = Math.min(index, newVals.length - 1); }
-+        refs.push({index: index, oldText: oldText, target: target});
-+        if (target != index) {
-+          result.map[index] = target;
-+          result.mapped = true;
-+        }
++        var keep = (index < newVals.length) ? index : 0;
++        refs.push({index: index, oldText: oldText, target: target, keep: keep});
++        if (target != index) { result.adjustMap[index] = target; }
++        if (keep != index) { result.keepMap[index] = keep; }
 +      });
 +      if (refs.length > 0) { result.programs.push({name: prg.name, refs: refs}); }
 +    });
@@ -361,13 +362,20 @@
 +    jQuery.each(changes.programs, function(i, prg) {
 +      s += "<li>" + svEscapeHtml(prg.name) + ": ";
 +      s += prg.refs.map(function(ref) {
-+        var index = adjust ? ref.target : ref.index;
-+        var newText = (index < newVals.length) ? quote(newVals[index]) : translateKey("svEditValueListNoEntry");
-+        return quote(ref.oldText) + " &rarr; " + newText;
++        return quote(ref.oldText) + " &rarr; " + quote(newVals[adjust ? ref.target : ref.keep]);
 +      }).join(", ");
 +      s += "</li>";
 +    });
 +    return s;
++  };
++
++  // "old:new;..." index map for saveSysVar.
++  svRefMapString = function(map) {
++    var entries = [];
++    for (var index in map) {
++      if (map.hasOwnProperty(index)) { entries.push(index + ":" + map[index]); }
++    }
++    return entries.join(";");
 +  };
 +
 +  // Pending value list change of the confirmation dialog.
@@ -390,12 +398,12 @@
    saveSysVars = function()
    {
      if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
-@@ -198,17 +411,49 @@
+@@ -198,17 +419,46 @@
        pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
        pb += "string sName = '"+name+"';";
        pb += "string sInfo = '"+$("inpDesc").value+"';";
 +      var confirmHtml = null;
-+      var refMap = "";
++      var refMaps = null;
        switch(iSelIdx) {
          case 0:
            iSubType = SYSVAR_BOOL;
@@ -426,25 +434,22 @@
 +          var changes = svValueListChanges(valList);
 +          if (changes.programs.length > 0)
 +          {
-+            svValueListPending = {changes: changes, newVals: valList, adjust: changes.mapped};
++            refMaps = {adjust: svRefMapString(changes.adjustMap), keep: svRefMapString(changes.keepMap)};
++            // Offer the adjustment only when it changes something.
++            var choice = (refMaps.adjust != refMaps.keep);
++            svValueListPending = {changes: changes, newVals: valList, adjust: choice};
 +            confirmHtml = translateKey("svEditValueListPrograms");
-+            confirmHtml += "<ul id='svValueListChanges'>" + svValueListChangesHtml(changes, valList, changes.mapped) + "</ul>";
-+            if (changes.mapped)
++            confirmHtml += "<ul id='svValueListChanges'>" + svValueListChangesHtml(changes, valList, choice) + "</ul>";
++            if (choice)
 +            {
 +              confirmHtml += "<label><input type='checkbox' checked onclick='svToggleAdjust(this.checked);'/> " + translateKey("svEditValueListAdjust") + "</label><br/><br/>";
-+              var mapEntries = [];
-+              for (var mapIndex in changes.map)
-+              {
-+                if (changes.map.hasOwnProperty(mapIndex)) { mapEntries.push(mapIndex + ":" + changes.map[mapIndex]); }
-+              }
-+              refMap = mapEntries.join(";");
 +            }
 +            confirmHtml += translateKey("svEditCheckPrograms");
 +          }
            break;
          case 2:
            iSubType = SYSVAR_GENERIC;
-@@ -228,6 +473,24 @@
+@@ -228,6 +478,24 @@
            var itmpMaxVal = parseFloat( $("inpMax").value );
            if( isNaN(itmpMinVal) ) itmpMinVal = 0;
            if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
@@ -469,7 +474,7 @@
            pb += "integer iMinVal = '"+itmpMinVal+"';";
            pb += "integer iMaxVal = '"+itmpMaxVal+"';";
            
-@@ -243,16 +506,16 @@
+@@ -243,16 +511,16 @@
            break;
          case 3: 
            iSubType = SYSVAR_ALARM;
@@ -490,14 +495,15 @@
        pb += "integer iSubType = "+iSubType+";";
        pb += "integer iChnId = "+ $("chnId").value +";";
        var opts = {
-@@ -265,6 +528,17 @@
+@@ -265,6 +533,18 @@
            if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
          }
        };
 +      if (confirmHtml)
 +      {
 +        svConfirm(confirmHtml, function() {
-+          if (refMap && svValueListPending.adjust)
++          var refMap = refMaps ? (svValueListPending.adjust ? refMaps.adjust : refMaps.keep) : "";
++          if (refMap)
 +          {
 +            opts.postBody = ReGa.encode(pb + "string sRefMap = '" + refMap + "';");
 +          }
@@ -508,7 +514,7 @@
        new Ajax.Request(url, opts);
      } else {
          // No name available
-@@ -316,6 +590,7 @@
+@@ -316,6 +596,7 @@
          break;
        case 1:
          loadValueEdit(translateKey("lblVal1Val2Val3"));
@@ -516,7 +522,35 @@
          break;
        case 2:
          loadIntEdit(0, 65000);
-@@ -387,6 +662,31 @@
+@@ -356,16 +637,25 @@
+     $("tdValueEdit").innerHTML = "";
+   };
+   
++  // Show the edited value names in the value selection right away.
++  svUpdateLogicValues = function()
++  {
++    var selection = $("selValue");
++    if (!selection) { return; }
++    selection.options[0].text = translateString($("inpLFalse").value);
++    selection.options[1].text = translateString($("inpLTrue").value);
++  };
++
+   loadLogicEdit = function(sTrue, sFalse, sValue) 
+   {
+     var s = "";
+     s += "<table class='CLASS05010'>";
+     s += "<tr><td colspan='2'>"+ translateKey("lblValueDescription") +":</td></tr>";
+     s += "<tr>";
+-      s += "<td>"+translateKey("lblTrue")+"&nbsp;=</td><td class='CLASS05011'> <input id='inpLTrue' type='text' size='15' value='"+translateString(sTrue)+"' onblur='stringRemoveNonPrintableChars(this);' />  </td>";
++      s += "<td>"+translateKey("lblTrue")+"&nbsp;=</td><td class='CLASS05011'> <input id='inpLTrue' type='text' size='15' value='"+translateString(sTrue)+"' oninput='svUpdateLogicValues();' onblur='stringRemoveNonPrintableChars(this); svUpdateLogicValues();' />  </td>";
+     s += "</tr>";
+     s += "<tr>";
+-      s += "<td>"+ translateKey("lblFalse") +"&nbsp;=</td><td class='CLASS05011'> <input id='inpLFalse' type='text' size='15' value='"+translateString(sFalse)+"' onblur='stringRemoveNonPrintableChars(this);'/>  </td>";
++      s += "<td>"+ translateKey("lblFalse") +"&nbsp;=</td><td class='CLASS05011'> <input id='inpLFalse' type='text' size='15' value='"+translateString(sFalse)+"' oninput='svUpdateLogicValues();' onblur='stringRemoveNonPrintableChars(this); svUpdateLogicValues();'/>  </td>";
+     s += "</tr>";
+     s += "</table>";
+     $("tdEdit").innerHTML = s;
+@@ -387,6 +677,31 @@
      $("tdValueEdit").innerHTML = s
    };
    
@@ -548,7 +582,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -396,7 +696,7 @@
+@@ -396,7 +711,7 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -557,7 +591,7 @@
      s += "</table>";
      $("tdEdit").innerHTML = s;
      
-@@ -479,7 +779,7 @@
+@@ -479,7 +794,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -566,7 +600,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
          Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
-@@ -494,13 +794,13 @@
+@@ -494,13 +809,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);
@@ -585,7 +619,7 @@
    %>
 --- a/www/webui/js/lang/de/translate.lang.js
 +++ b/www/webui/js/lang/de/translate.lang.js
-@@ -1112,6 +1112,17 @@
+@@ -1112,6 +1112,16 @@
      "optionNone" : "Keine",
      "optionNotActive" : "Nicht aktiv",
  
@@ -596,7 +630,6 @@
 +    "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",
 +    "svEditValueListPrograms" : "Die ge%E4nderte Werteliste betrifft Eintr%E4ge, die in folgenden Programmen verwendet werden:",
 +    "svEditValueListAdjust" : "Programme automatisch anpassen: verschobene Eintr%E4ge erhalten ihre neue Position, Eintr%E4ge hinter dem Ende der Liste den letzten Eintrag.",
-+    "svEditValueListNoEntry" : "(kein Eintrag)",
 +    "svEditRangePrograms" : "Folgende Programme verwenden Werte au%DFerhalb des neuen Wertebereichs:",
 +    "svEditCheckPrograms" : "Bitte die betroffenen Programme nach dem Speichern pr%FCfen.",
 +    "svEditSaveAnyway" : "Trotzdem speichern?",
@@ -605,7 +638,7 @@
  });
 --- a/www/webui/js/lang/en/translate.lang.js
 +++ b/www/webui/js/lang/en/translate.lang.js
-@@ -1190,6 +1190,17 @@
+@@ -1190,6 +1190,16 @@
      "optionNone" : "None",
      "optionNotActive" : "Not active",
  
@@ -616,7 +649,6 @@
 +    "svEditEmptyValueList" : "The value list must contain at least one non-empty entry.",
 +    "svEditValueListPrograms" : "The changed value list affects entries used by the following programs:",
 +    "svEditValueListAdjust" : "Adjust the programs automatically: moved entries get their new position, entries behind the end of the list get the last entry.",
-+    "svEditValueListNoEntry" : "(no entry)",
 +    "svEditRangePrograms" : "The following programs use values outside the new range:",
 +    "svEditCheckPrograms" : "Please review the affected programs after saving.",
 +    "svEditSaveAnyway" : "Save anyway?",

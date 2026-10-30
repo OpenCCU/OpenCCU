@@ -1197,7 +1197,6 @@ jQuery.extend(true,langJSON, {
     "svEditEmptyValueList" : "The value list must contain at least one non-empty entry.",
     "svEditValueListPrograms" : "The changed value list affects entries used by the following programs:",
     "svEditValueListAdjust" : "Adjust the programs automatically: moved entries get their new position, entries behind the end of the list get the last entry.",
-    "svEditValueListNoEntry" : "(no entry)",
     "svEditRangePrograms" : "The following programs use values outside the new range:",
     "svEditCheckPrograms" : "Please review the affected programs after saving.",
     "svEditSaveAnyway" : "Save anyway?",
