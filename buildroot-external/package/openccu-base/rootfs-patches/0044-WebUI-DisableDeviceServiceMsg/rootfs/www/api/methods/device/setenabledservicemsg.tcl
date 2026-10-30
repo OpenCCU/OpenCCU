@@ -29,6 +29,7 @@ set script {
     {
       oDevice.MetaData("enabledServiceMsg", bEnabled);
     }
+    bResult = true;
 
     object oLastAlarmDP = null;
     object oServices = dom.GetObject(ID_SERVICES);
@@ -59,7 +60,6 @@ set script {
     {
       oLastAlarmDP.State(oLastAlarmDP.Value());
       dom.RTUpdate(0);
-      bResult = true;
     }
   }
   Write(bResult);
