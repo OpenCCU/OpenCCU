@@ -47709,7 +47709,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   if (ok)
   {
     srcElm.style.backgroundColor = "#fffffe";
-    dstElm.value = (parsedValue.toFixed(digits) * dstValueFactor);
+    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
     if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
       srcElm.value = parsedValue.toFixed(digits);
     }
@@ -47719,7 +47719,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   {
     srcElm.setAttribute("valvalid", "false");
     srcElm.style.backgroundColor = "red";
-    dstElm.value = (finalVal.toFixed(digits) * dstValueFactor);
+    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
     if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
       srcElm.value = finalVal.toFixed(digits);
     }
