@@ -851,6 +851,10 @@ a img {
   z-index:501;
 }
 
+.Filter_Active .FilterCaption {
+  color: red;
+}
+
 .ControlBtnOff {
   background-color: $_(clickable);
   color: $_(textColorA); /* white */
