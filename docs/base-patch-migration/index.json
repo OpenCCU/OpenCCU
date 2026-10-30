@@ -160,7 +160,7 @@
       ],
       "patch": "0056-WebUI-Sticky-Filters.patch",
       "removed": 6,
-      "sha256": "5911187cd1c062fe78a68149f6a8694ec7ffe1bfad83318daf719357ab4934da"
+      "sha256": "d10d204d915e5e1e75779ef82a61eabe57a0547d3355213c339fbcc2a51e8bf9"
     },
     {
       "added": 257,
