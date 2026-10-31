@@ -199,7 +199,7 @@
       "sha256": "091001fabf1300642b0f36af177197ee58dff8c639706050f34ea29ba06244d1"
     },
     {
-      "added": 211,
+      "added": 213,
       "files": [
         "www/config/easymodes/cc_rt_dev_master.tcl",
         "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl",
@@ -218,8 +218,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
-      "removed": 72,
-      "sha256": "b3cef823411dd4837646bc549ee1f3c37df93d1b284286d9cb0a8dd10ce91404"
+      "removed": 74,
+      "sha256": "a6d4ae0511ccf6280a42d8adb934de13c96b47dc7ebf810a0240d50ba6946e15"
     },
     {
       "added": 123,

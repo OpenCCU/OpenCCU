@@ -4375,7 +4375,7 @@ proc getCondSwitchTransmitter {chn p descr} {
         append html "<td>\${stringTableCondThresholdLo}</td>"
         append html "<td>"
 
-          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
 
         append html "</td>"
@@ -4389,7 +4389,7 @@ proc getCondSwitchTransmitter {chn p descr} {
         append html "<td>\${stringTableCondThresholdHi}</td>"
         append html "<td>"
 
-          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
 
        append html "</td>"
@@ -4591,7 +4591,7 @@ proc getLevelCommandTransmitter_CO2 {chn p descr} {
         append html "<td>\${stringTableCondThresholdLo}</td>"
         append html "<td>"
 
-          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
 
         append html "</td>"
@@ -4605,7 +4605,7 @@ proc getLevelCommandTransmitter_CO2 {chn p descr} {
         append html "<td>\${stringTableCondThresholdHi}</td>"
         append html "<td>"
 
-          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
 
        append html "</td>"
