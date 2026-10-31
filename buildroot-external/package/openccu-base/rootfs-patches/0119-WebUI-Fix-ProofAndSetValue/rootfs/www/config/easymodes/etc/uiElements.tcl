@@ -143,7 +143,7 @@ proc getMinMaxValueDescr {param {extraparam ""}} {
 
   # Limit float to 1 decimal places
   if {([llength [split $min "."]] == 2) || ([llength [split $max "."]] == 2)} {
-    if {($param != "METER_CONSTANT_VOLUME") && ($param != "METER_CONSTANT_ENERGY")} {
+    if {$param != "METER_CONSTANT_VOLUME"} {
       set min [format {%1.1f} $min]
       set max [format {%1.1f} $max]
     } else {
@@ -349,7 +349,7 @@ set comment {
 
   # Limit float to 2 decimal places
   if {[llength [split $value "."]] == 2} {
-    if {($param != "METER_CONSTANT_VOLUME") && ($param != "METER_CONSTANT_ENERGY")} {
+    if {$param != "METER_CONSTANT_VOLUME"} {
       catch {set value [format {%1.1f} $value]}
     } else {
       catch {set value [format {%1.3f} $value]}
