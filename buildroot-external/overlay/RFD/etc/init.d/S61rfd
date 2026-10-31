@@ -128,16 +128,14 @@ start() {
 }
 stop() {
   echo -n "Stopping rfd: "
-  STOPPID=$(cat ${PIDFILE} 2>/dev/null)
-  start-stop-daemon -K -q -p ${PIDFILE}
-  # rfd shuts down cleanly on SIGTERM (saves pending device files, closes
-  # the radio module), so wait for it to exit before e.g. restarting it
-  if [[ -n "${STOPPID}" ]]; then
+  if start-stop-daemon -K -q -p ${PIDFILE} --exec /bin/rfd; then
+    # rfd shuts down cleanly on SIGTERM (saves pending device files, closes
+    # the radio module), so wait for it to exit before e.g. restarting it
     for _ in $(seq 1 20); do
-      kill -0 "${STOPPID}" 2>/dev/null || break
+      start-stop-daemon -K -t -q -p ${PIDFILE} --exec /bin/rfd || break
       sleep 1
     done
-    kill -0 "${STOPPID}" 2>/dev/null && kill -9 "${STOPPID}"
+    start-stop-daemon -K -q -s KILL -p ${PIDFILE} --exec /bin/rfd
   fi
   rm -f ${PIDFILE}
   echo "OK"
