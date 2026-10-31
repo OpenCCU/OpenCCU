@@ -181,15 +181,6 @@
       default {return "<span class=\"attention\">max value not available</span>"}
      }
    }
-@@ -133,7 +143,7 @@
- 
-   # Limit float to 1 decimal places
-   if {([llength [split $min "."]] == 2) || ([llength [split $max "."]] == 2)} {
--    if {$param != "METER_CONSTANT_VOLUME"} {
-+    if {($param != "METER_CONSTANT_VOLUME") && ($param != "METER_CONSTANT_ENERGY")} {
-       set min [format {%1.1f} $min]
-       set max [format {%1.1f} $max]
-     } else {
 @@ -255,7 +265,7 @@
        hmip-usbsm
         {
@@ -212,15 +203,6 @@
      }
    }
  
-@@ -333,7 +349,7 @@
- 
-   # Limit float to 2 decimal places
-   if {[llength [split $value "."]] == 2} {
--    if {$param != "METER_CONSTANT_VOLUME"} {
-+    if {($param != "METER_CONSTANT_VOLUME") && ($param != "METER_CONSTANT_ENERGY")} {
-       catch {set value [format {%1.1f} $value]}
-     } else {
-       catch {set value [format {%1.3f} $value]}
 @@ -429,7 +445,7 @@
    }
  
