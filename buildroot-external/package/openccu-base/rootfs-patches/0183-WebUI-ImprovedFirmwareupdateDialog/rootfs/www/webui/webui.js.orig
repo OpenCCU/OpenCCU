@@ -47710,9 +47710,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   {
     srcElm.style.backgroundColor = "#fffffe";
     dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = parsedValue.toFixed(digits);
-    }
+    srcElm.value = parsedValue.toFixed(digits);
     srcElm.setAttribute("valvalid", "true");
   }
   else
@@ -47720,9 +47718,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
     srcElm.setAttribute("valvalid", "false");
     srcElm.style.backgroundColor = "red";
     dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = finalVal.toFixed(digits);
-    }
+    srcElm.value = finalVal.toFixed(digits);
     window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
   }
 };

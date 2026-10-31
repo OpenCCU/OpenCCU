@@ -514,27 +514,40 @@
        "ENUM" {
 --- a/www/config/ic_deviceparameters.cgi
 +++ b/www/config/ic_deviceparameters.cgi
-@@ -497,7 +497,7 @@
+@@ -483,10 +483,12 @@
+       set value [format $fvalue $ch_ps($param)]
+       set value_tmp $value
+       set factor 1
++      set convInt2Float false
+   
+       if {$unit == "100\%"} {
+         set unit "\%"
+         set factor 0.01
++        set convInt2Float true
+         set f "%.0f"
+ 
+         set min [format $f [expr $min * 100]]
+@@ -497,7 +499,7 @@
        set PROFILE_PNAME(DESCRIPTION) $param
        if {$param_descr(TYPE) != "ENUM" && $showOption == 0} {
          append s1 "<tr><td><span class=\"stringtable_value\">$dev_descr_sender(TYPE)|$PROFILE_PNAME(DESCRIPTION)</span></td>"
 -        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', $min, $max, $factor, event)\"></td>"
-+        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, event)\"></td>"
++        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, $convInt2Float, event)\"></td>"
          append s1 "<td>$unit&nbsp;($min-$max)</td>"
          append s1 "<td><input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\"></td>"
        } elseif {$showOption == 1} { 
-@@ -531,7 +531,7 @@
+@@ -531,7 +533,7 @@
              append s1 "<option>\${stringTableEnterValue}</option>"
            append s1 "</select>"
            
 -          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', $min, $max, $factor, event)\">"
-+          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, event)\">"
++          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, $convInt2Float, event)\">"
            append s1 "<td>$unit&nbsp;($min-$max)</td>"
            append s1 "<input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\">"
            append s1 "</td>"
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -47868,50 +47868,65 @@
+@@ -47868,61 +47868,72 @@
      srcElm.value = value;
    }
  
@@ -607,22 +620,23 @@
    {
      srcElm.style.backgroundColor = "#fffffe";
 -    dstElm.value = value * dstValueFactor;
-+    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
-     if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
+-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
 -      srcElm.value = dstElm.value;
-+      srcElm.value = parsedValue.toFixed(digits);
-     }
+-    }
++    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
++    srcElm.value = parsedValue.toFixed(digits);
      srcElm.setAttribute("valvalid", "true");
    }
-@@ -47919,9 +47934,9 @@
+   else
    {
      srcElm.setAttribute("valvalid", "false");
      srcElm.style.backgroundColor = "red";
 -    dstElm.value = finalVal * dstValueFactor;
-+    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
-     if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
+-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
 -      srcElm.value = dstElm.value;
-+      srcElm.value = finalVal.toFixed(digits);
-     }
+-    }
++    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
++    srcElm.value = finalVal.toFixed(digits);
      window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
    }
+ };
