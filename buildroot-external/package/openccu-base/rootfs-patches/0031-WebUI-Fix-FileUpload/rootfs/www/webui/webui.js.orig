@@ -25959,6 +25959,45 @@ StartPage = Singleton.create(Page, {
     msgBoxHeight
     );
   },
+  
+  showAddonUpdate: function() {
+    homematic('CCU.getAddonVersions', {}, function(addonversions) {
+      var addonUpdateList = "";
+      if (addonversions && addonversions !== "false") {
+        var localaddonversions = addonversions.local;
+        var onlineaddonversions = addonversions.online;
+        for(var l_obj in localaddonversions) {
+          if (typeof localaddonversions[l_obj] === "object") {
+        
+             for(var o_obj in onlineaddonversions) {
+               if (typeof onlineaddonversions[o_obj] === "object") {
+             
+                 if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
+                    //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
+                    if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
+                      addonUpdateList += "<br/>&#183; "+String(onlineaddonversions[o_obj].name).escapeHTML()+" ("+String(onlineaddonversions[o_obj].webversion).escapeHTML()+")";
+                    }
+                 }
+             
+               }
+             }
+          }
+        }
+      }
+    
+      if (addonUpdateList !== "") {
+        var self = this,
+        rowShowAddonUpdates = jQuery("#addonUpdatesAvailable"),
+        btnShowAddonUpdates = jQuery("#addonUpdatesAvailable .firmwareAvailable");
+        btnShowAddonUpdates.unbind("click").click(function () {
+          showSoftwareCP();
+        });
+        jQuery("#addonUpdatesAvailableList").html(addonUpdateList);
+        rowShowAddonUpdates.show();
+      }
+    });
+  },
+  
 
   showUpdate: function() {
     var fn = function() {

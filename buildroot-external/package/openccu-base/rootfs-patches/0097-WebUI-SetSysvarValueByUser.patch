@@ -505,7 +505,7 @@
                    integer cId = oEntry.ID();
                    integer iStatusOnly = 0;
                    boolean bInStatusList = false;
-@@ -210,11 +215,17 @@
+@@ -216,11 +221,17 @@
                
                if (oUser) {
                  string tmp;
@@ -563,7 +563,7 @@
      "dialogEnterValue" : "Enter value",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -32399,14 +32399,22 @@
+@@ -32438,14 +32438,22 @@
          this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
          this.addToPostBody( 'integer varid = 0;' );
          this.addToPostBody( 'integer createNew = 1;' );
@@ -588,7 +588,7 @@
          this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
          break;
        case ID_CREATE_SCRIPT:
-@@ -33294,6 +33302,8 @@
+@@ -33333,6 +33341,8 @@
  dbg = false;
  rfr = true;
  
