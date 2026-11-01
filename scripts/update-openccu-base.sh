@@ -89,11 +89,13 @@ fi
 
 REPO_ROOT=$(pwd -P)
 mkdir -p "${REPO_ROOT}/build-rpi3/build"
+# Buildroot archives the checked-out working tree, so a local core.autocrlf
+# setting would change the archive and the hashes taken from it.
 (
   cd "${BUILDROOT_TOPDIR}"
   BUILD_DIR="${REPO_ROOT}/build-rpi3/build" \
   BR_NO_CHECK_HASH_FOR="${ARCHIVE_FILE}" \
-  GIT=git \
+  GIT="git -c core.autocrlf=false" \
   TAR=tar \
   ./support/download/dl-wrapper \
     -q \

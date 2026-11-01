@@ -435,7 +435,10 @@ def canonical_archive(repo, base_repo, buildroot, commit, cache):
     download = work / 'download'
     name = f'openccu-base-{commit}-git4.tar.gz'
     env = os.environ.copy()
-    env.update(BUILD_DIR=str(work / 'build'), BR_NO_CHECK_HASH_FOR=name, GIT='git', TAR='tar')
+    # Buildroot archives the checked-out working tree, so a local core.autocrlf
+    # setting would change the archive and the hashes taken from it.
+    env.update(BUILD_DIR=str(work / 'build'), BR_NO_CHECK_HASH_FOR=name,
+               GIT='git -c core.autocrlf=false', TAR='tar')
     (work / 'build').mkdir()
     run([buildroot.resolve() / 'support/download/dl-wrapper', '-q', '-c', commit,
          '-d', download, '-D', work, '-f', name, '-H', repo / PACKAGE / 'openccu-base.hash',
