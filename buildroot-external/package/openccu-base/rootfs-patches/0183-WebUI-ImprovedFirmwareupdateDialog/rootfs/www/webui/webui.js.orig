@@ -25964,7 +25964,7 @@ StartPage = Singleton.create(Page, {
   },
   
   showAddonUpdate: function() {
-    addonUpdateList = "";
+    var addonUpdateList = "";
     var addonversions = homematic('CCU.getAddonVersions');
     if (addonversions && addonversions !== "false") {
       var localaddonversions = addonversions.local;
@@ -25978,7 +25978,7 @@ StartPage = Singleton.create(Page, {
                if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
                   //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
                   if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
-                    addonUpdateList += "<br/>&#183; "+onlineaddonversions[o_obj].name+" ("+onlineaddonversions[o_obj].webversion+")";
+                    addonUpdateList += "<br/>&#183; "+String(onlineaddonversions[o_obj].name).escapeHTML()+" ("+String(onlineaddonversions[o_obj].webversion).escapeHTML()+")";
                   }
                }
              
@@ -25992,7 +25992,7 @@ StartPage = Singleton.create(Page, {
       var self = this,
       rowShowAddonUpdates = jQuery("#addonUpdatesAvailable"),
       btnShowAddonUpdates = jQuery("#addonUpdatesAvailable .firmwareAvailable");
-      btnShowAddonUpdates.click(function () {
+      btnShowAddonUpdates.unbind("click").click(function () {
         showSoftwareCP();
       });
       jQuery("#addonUpdatesAvailableList").html(addonUpdateList);
