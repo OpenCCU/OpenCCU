@@ -9,8 +9,8 @@ if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
   # write to a temporary file and replace the list at the end, so that
   # CCU.getAddonVersions never reads a partially written list
   tmpfile=$(mktemp "${jsonfile}.XXXXXX") || exit 1
-  chmod 644 "${tmpfile}"
   failed=0
+  chmod 644 "${tmpfile}" || failed=1
   echo "[" > "${tmpfile}" || failed=1
   first=1
   for filename in /etc/config/rc.d/*; do
