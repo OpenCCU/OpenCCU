@@ -199,7 +199,7 @@
       "sha256": "091001fabf1300642b0f36af177197ee58dff8c639706050f34ea29ba06244d1"
     },
     {
-      "added": 123,
+      "added": 112,
       "files": [
         "www/api/methods.conf",
         "www/api/methods/ccu/getaddonversions.tcl",
@@ -210,7 +210,7 @@
       ],
       "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
       "removed": 0,
-      "sha256": "06a8a589d1b65c64f3e2c6cbee583aebf0d08df0c3ccd4d3f635a4465552908a"
+      "sha256": "46c8cea39326eec823fbe8f958a1ea1193f3d1374be6c6545a3118a2aca9c7b3"
     },
     {
       "added": 10,
@@ -246,7 +246,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "0e5f530f79635adb7c7e4b3a20fc2bdf74fae74cad22b0f0ed493c8b87194f88"
+      "sha256": "e61572c707c5823b35ab9309f3039fa1cbc9c7d1ff3895fc410908cee5bce469"
     },
     {
       "added": 74,
