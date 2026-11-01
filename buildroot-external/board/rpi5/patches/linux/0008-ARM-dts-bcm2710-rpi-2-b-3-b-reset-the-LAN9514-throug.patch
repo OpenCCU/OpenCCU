@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Fri, 30 Oct 2026 15:00:00 +0100
+Subject: [PATCH] ARM: dts: bcm2710-rpi-2-b/3-b: reset the LAN9514 through
+ LAN_RUN
+
+The onboard LAN9514 USB hub and Ethernet controller of the Raspberry
+Pi 2 Model B and 3 Model B stays powered across a warm reboot. When
+the firmware does not reset it, it sometimes does not come back: no
+hub, no eth0 and no USB devices until a power cycle.
+
+Its nRESET input is driven by LAN_RUN, which is GPIO 31 on the 2 B
+and line 3 of the firmware GPIO expander on the 3 B. Describe it as
+the reset GPIO of the hub node, so that onboard_usb_dev pulses it
+whenever the kernel boots.
+---
+ arch/arm/boot/dts/broadcom/bcm2710-rpi-2-b.dts | 7 +++++++
+ arch/arm/boot/dts/broadcom/bcm2710-rpi-3-b.dts | 7 +++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/broadcom/bcm2710-rpi-2-b.dts b/arch/arm/boot/dts/broadcom/bcm2710-rpi-2-b.dts
+index ce48eb6..c0bfd0b 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2710-rpi-2-b.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2710-rpi-2-b.dts
+@@ -202,3 +202,10 @@ i2c_csi_dsi0: &i2c0 {
+ 		pwr_led_trigger = <&led_pwr>,"linux,default-trigger";
+ 	};
+ };
++
++&usb {
++	usb1@1 {
++		/* LAN_RUN (GPIO 31) drives the LAN9514 nRESET */
++		reset-gpios = <&gpio 31 GPIO_ACTIVE_LOW>;
++	};
++};
+diff --git a/arch/arm/boot/dts/broadcom/bcm2710-rpi-3-b.dts b/arch/arm/boot/dts/broadcom/bcm2710-rpi-3-b.dts
+index 35e6e99..c018fb8 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2710-rpi-3-b.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2710-rpi-3-b.dts
+@@ -291,3 +291,10 @@ i2c_csi_dsi0: &i2c0 {
+ 		pwr_led_trigger = <&led_pwr>,"linux,default-trigger";
+ 	};
+ };
++
++&usb {
++	usb1@1 {
++		/* LAN_RUN on the firmware GPIO expander drives the LAN9514 nRESET */
++		reset-gpios = <&expgpio 3 GPIO_ACTIVE_LOW>;
++	};
++};
+-- 
+2.43.0
+
