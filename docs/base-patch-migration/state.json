@@ -845,18 +845,36 @@
       "base_pr": 262,
       "cleanup_pr": 4588,
       "patch": "0132-WebUI-Fix-UnitDisplay.patch"
+    },
+    {
+      "base_merge_commit": "022a35c662aaf3e9196628ec88ab031b74df2d16",
+      "base_pr": 270,
+      "cleanup_pr": 4589,
+      "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch"
+    },
+    {
+      "base_merge_commit": "8f41e3046701a6e3470a21a3699d6138b2b42c5e",
+      "base_pr": 273,
+      "cleanup_pr": 4599,
+      "patch": "0056-WebUI-Sticky-Filters.patch"
+    },
+    {
+      "base_merge_commit": "29067cb6c5d3fc470f898cb2095e4dbf4549fd1d",
+      "base_pr": 275,
+      "cleanup_pr": 4601,
+      "patch": "0044-WebUI-DisableDeviceServiceMsg.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "022a35c662aaf3e9196628ec88ab031b74df2d16",
-    "base_pr": 270,
-    "cleanup_pr": 4589,
-    "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
+    "base_merge_commit": "49d75204c9d195e0bb3f3d674ab4398f42a932cf",
+    "base_pr": 289,
+    "cleanup_pr": 4616,
+    "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "cfd2925d3c2714ad8973b37060efd82b89617b2d",
-  "verified_base_pin": "061d52a5e0cf94f1367efe360c2b5241613dbd62",
-  "verified_source_sha256": "e7395abf5929c2023c76b89f24841a0376826846715a52293eb44f91d1ff18a7"
+  "verified_at_openccu_commit": "407389ac30fa8e9ee0eb08ccb52af5c0b6e5e913",
+  "verified_base_pin": "29067cb6c5d3fc470f898cb2095e4dbf4549fd1d",
+  "verified_source_sha256": "23775ea6921b421b1849faafd834254ec48f8df7079c6ca9a99b5a4c17df62a0"
 }

@@ -58,6 +58,7 @@ jQuery.extend(true, langJSON, {
     "generalDeviceChannelConfigLblUsable": "Operable:",
     "generalDeviceChannelConfigLblVisible": "Visible:",
     "generalDeviceChannelConfigLblLogged": "Logged:",
+    "generalDeviceChannelConfigLblServiceMsg": "Service messages:",
     "generalDeviceChannelConfigLblFuncTest": "Functional test",
     "generalChannelConfigLblRooms": "Rooms",
     "generalChannelConfigLblFunctions": "Functions",

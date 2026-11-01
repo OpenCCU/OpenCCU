@@ -323,6 +323,9 @@ check process HMIPServer with pidfile /var/run/HMIPServer.pid
       exec "/bin/triggerAlarm.tcl 'HMIPServer restarted' 'WatchDog: hmipserver-restart' true"
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'HMIPServer: high filedescriptor usage (>95%)' 'WatchDog: hmipserver-highfd' true"
+    # HMIPServer leaks descriptors with every XML-RPC init (OpenCCU/OpenCCU-Base#36) and stops
+    # answering once it runs out of them, while its ports still accept connections
+    if filedescriptors > 98% for 5 cycles then restart
     depends on hmlangwDisabled
 
 # restart HMIPServer if it still holds a /dev/mmd_hmip removed by a multimacd restart

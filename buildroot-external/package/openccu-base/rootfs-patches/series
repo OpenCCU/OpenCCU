@@ -1,15 +1,12 @@
 0001-OpenCCU.patch
 0031-WebUI-Fix-FileUpload.patch
 0039-WebUI-Fix-Style-Glitches.patch
-0044-WebUI-DisableDeviceServiceMsg.patch
 0046-WebUI-ImprovedScriptEditor.patch
 0054-WebUI-AddTimeZones.patch
-0056-WebUI-Sticky-Filters.patch
 0057-WebUI-ImprovedDutyCycleDisplay.patch
 0061-WebUI-MenuSortedIcons.patch
 0097-WebUI-SetSysvarValueByUser.patch
 0109-WebUI-Fix-SystemLanguageDefaultNames.patch
-0119-WebUI-Fix-ProofAndSetValue.patch
 0131-WebUI-ShowAddonUpdatesOnStartpage.patch
 0149-WebUI-ImprovedErrorPages.patch
 0150-WebUI-Responsive-ControlPage.patch
@@ -17,3 +14,4 @@
 0163-WebUI-ImprovedFileUploadButton.patch
 0183-WebUI-ImprovedFirmwareupdateDialog.patch
 0203-WebUI-NoExpectCGI.patch
+0206-WebUI-AdvancedSysVarEditing.patch

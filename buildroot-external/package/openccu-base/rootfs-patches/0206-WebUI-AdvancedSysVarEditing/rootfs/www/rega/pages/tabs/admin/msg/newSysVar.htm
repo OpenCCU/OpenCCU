@@ -1,0 +1,822 @@
+<div class="popupTitle"><%
+  Write(system.GetVar("title"));
+  if (system.GetVar("createNew") == 0) {
+    object sv = dom.GetObject(system.GetVar("varid"));
+  }
+  string hidden = "";
+  boolean svEditValueOnly = (system.GetVar("editValueOnly") == 1);
+  if (svEditValueOnly) {hidden="hidden";}
+  system.SetSessionVar("editValueOnly",0);
+  ! Programs that use this system variable, with the numbers they compare
+  ! with or set. svProgramRefs is a JavaScript array of {name, values}.
+  boolean svUsed = false;
+  string svProgramRefs = "";
+  if ((system.GetVar("createNew") == 0) && !svEditValueOnly) {
+    boolean svRefEnum = (sv.ValueSubType() == istEnum);
+    boolean prgUsed;
+    string prgValues;
+    string prgName;
+    string prgId;
+    string condId;
+    integer singleNum;
+    integer conditions;
+    object prg;
+    object rule;
+    object cond;
+    object sc;
+    object dest;
+    object sd;
+    foreach(prgId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs()) {
+      prg = dom.GetObject(prgId);
+      if (prg) {
+        prgUsed = false;
+        prgValues = "";
+        rule = prg.Rule();
+        while (rule) {
+          conditions = rule.RuleConditions().Count();
+          if (conditions > 0) {
+            foreach(condId, system.GenerateEnum(0, conditions - 1)) {
+              cond = rule.RuleCondition(condId.ToInteger());
+              if (cond) {
+                singleNum = 0;
+                sc = cond.CndSingleCondition(singleNum);
+                while (sc) {
+                  if ((sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID())) {
+                    prgUsed = true;
+                    if ((sc.RightVal1ValType() == ivtInteger) || (sc.RightVal1ValType() == ivtFloat)) {
+                      prgValues = prgValues # sc.RightVal1() # ",";
+                    }
+                    ! Only value range conditions of numbers use the second value.
+                    if ((!svRefEnum) && (sc.ConditionType() == 6) && ((sc.RightVal2ValType() == ivtInteger) || (sc.RightVal2ValType() == ivtFloat))) {
+                      prgValues = prgValues # sc.RightVal2() # ",";
+                    }
+                  }
+                  singleNum = singleNum + 1;
+                  sc = cond.CndSingleCondition(singleNum);
+                }
+              }
+            }
+          }
+          dest = rule.RuleDestination();
+          if (dest) {
+            singleNum = 0;
+            sd = dest.DestSingleDestination(singleNum);
+            while (sd) {
+              if ((sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID())) {
+                prgUsed = true;
+                if ((sd.DestinationValueType() == ivtInteger) || (sd.DestinationValueType() == ivtFloat)) {
+                  prgValues = prgValues # sd.DestinationValue() # ",";
+                }
+              }
+              singleNum = singleNum + 1;
+              sd = dest.DestSingleDestination(singleNum);
+            }
+          }
+          rule = rule.RuleSubRule();
+        }
+        if (prgUsed) {
+          svUsed = true;
+          prgName = prg.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C");
+          svProgramRefs = svProgramRefs # "{name:\"" # prgName # "\",values:[" # prgValues # "]},";
+        }
+      }
+    }
+  }
+%></div>
+
+<div class="CLASS05000">
+  <table class="popupTable hidden"  border="1">
+  <% 
+    if (hidden == "") {
+    Write('<colgroup>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:23%;"/>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:23%;"/>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:10%;"/>');
+      Write('<col style="width:13%;"/>');
+    Write('</colgroup>');
+    Write('<tr class="CLASS05001">');
+      Write('<th>${thName}</th>');
+      Write('<th>${thDescription}</th>');
+      Write('<th>${thTypeOfVariable}</th>');
+      Write('<th>${thValues}</th>');
+      Write('<th>${thUnit}</th>');
+      Write('<th>${thValue}</th>');
+      Write('<th>${thCannelMapping}</th>');
+    Write('</tr>');
+    }
+%>
+    <tr class="CLASS05002">
+    <td id="tdName" class="CLASS05003 "<%Write(hidden)%> >
+    <%
+      var svName = "";
+      if(system.GetVar("createNew") == 0)
+      {
+        svName = sv.Name();
+      }
+      else
+      {
+        string sUniqueName;
+        dom.CheckName( "Systemvariable", &sUniqueName, ID_SYSTEM_VARIABLES );
+        svName =  sUniqueName;
+      }
+    %>
+      <input id="inpName" type="text" value="<%Write(svName)%>" onblur="stringRemoveNonPrintableChars(this);" />
+    </td>
+    <td id="tdDesc" class="CLASS05003"<%Write(hidden)%> >
+      <%
+        var svDesc = "";
+        if (system.GetVar("createNew") == 0) 
+        { 
+          svDesc =  sv.DPInfo(); 
+        } 
+      %>
+      <input id="inpDesc" type="text" value="<%Write(svDesc)%>" onblur="stringRemoveNonPrintableChars(this);"/>
+    </td>
+      <td class="CLASS05004" <%Write(hidden)%> >
+        <select id="selType" onchange="onTypeChange()" <% if (svUsed || ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istAlarm))) { Write("disabled"); } %> >
+        <% 
+          if (system.GetVar("createNew") == 1) {
+            Write("<option selected>${lblLogicValue}</option><option>${lblValueList}</option><option>${lblNumber}</option><option>${lblAlarm}</option><option>${lblString}</option>");
+          }
+          else {
+            string sel = "";
+            if (sv.ValueSubType() == istBool) { sel = "selected"; }
+            Write("<option "#sel#" >${lblLogicValue}</option>");
+            string sel = "";
+            if (sv.ValueSubType() == istEnum) { sel = "selected"; }
+            Write("<option "#sel#" >${lblValueList}</option>");
+            string sel = "";
+            if (sv.ValueSubType() == istGeneric) { sel = "selected"; }
+            Write("<option "#sel#">${lblNumber}</option>");
+            string sel = "";
+            if (sv.ValueSubType() == istAlarm) { sel = "selected"; }
+            if (sv.ValueSubType() == istAlarm) {
+              Write("<option "#sel#">${lblAlarm}</option>");
+            }
+            else {
+              Write("<option disabled>${lblAlarm}</option>");
+            }
+            string sel = "";
+            if (sv.ValueSubType() == istChar8859) { sel = "selected"; }
+            Write("<option "#sel#">${lblString}</option>");
+          }
+        %>
+        </select>
+      </td>
+      <td id="tdEdit" class="CLASS05004"<%Write(hidden)%>>
+      </td>
+
+           
+    
+      <td class="CLASS05004"<%Write(hidden)%>>
+        <% 
+          string sUnit = "";
+          if (system.GetVar("createNew") == 0) {
+            sUnit = sv.ValueUnit();
+          }
+          Write("<input type='text' id='txtUnit' class='CLASS05011' value='"#sUnit.Replace("'", "&#39;")#"' onblur='stringRemoveNonPrintableChars(this);'/>");
+        %>
+      </td>
+      
+            
+      <td id="tdValueEdit" class="CLASS05004">
+      </td>
+      
+      <td class="CLASS05004"<%Write(hidden)%>>
+        <table width="100%" class="CLASS05005">
+        <tr>
+          <td class="CLASS05006">
+            <input id="ckAssignedChn" type="checkbox" name="chnMapping" onclick="channelChooser2()" />
+          </td>
+        </tr>
+        <tr id="chnNameRow" hidden>
+          <td class="CLASS05006" onclick="channelChooser2()">
+            <% 
+              string sChn = "";
+              if (system.GetVar("createNew") == 0) 
+              {
+                integer iChnId = 0;
+                if (sv.Channel() != ID_ERROR) 
+                {
+                  iChnId = sv.Channel();
+                  object obj = dom.GetObject(iChnId);
+                  if( obj )
+                  {
+                    sChn = obj.Name();
+                  }
+                  if (sChn == "null")
+                  {
+                    sChn = "";
+                  }
+                }
+                Write('<input id="chnId" type="hidden" value="'#iChnId#'" />'); 
+              }
+              else {
+                Write('<input id="chnId" type="hidden" value="0" />');
+              }
+              Write('<div style="cursor: pointer;" id="chnName">' #sChn # '</div>');
+            %>
+          </td>
+        <tr/>  
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="popupControls">
+  <div id="svEditMessage" style="text-align: center; padding-bottom: 5px; display: none;"></div>
+  <table>
+  <tr>
+    <td>
+      <div onclick="PopupClose()" class="CLASS05009">${btnCancel}</div>
+    </td>
+    <td>
+      <div onclick="saveSysVars();" class="CLASS05009">${btnOk}</div>
+    </td>
+  </tr>
+  </table>
+</div>
+<script type="text/javascript">
+  dlgResult = 0;
+
+  var svEditValueOnly = <% Write(svEditValueOnly); %>;
+  var svUsedInPrograms = <% Write(svUsed); %>;
+  var svExisting = <% Write(system.GetVar("createNew") == 0); %>;
+  var svAlarm = <% if (system.GetVar("createNew") == 0) { Write(sv.ValueSubType() == istAlarm); } else { Write(false); } %>;
+  // Programs using this variable, with the numbers they compare with or set.
+  var svPrograms = [<% Write(svProgramRefs); %>];
+
+  // Split a value list into its entries like ReGa does.
+  svParseValueList = function(text) {
+    return String(text).replace(/(?:\r\n|\r|\n)/g, ";").split(";");
+  };
+
+  // Entries of an edited value list, without empty entries at its end, which
+  // a final newline or separator would add.
+  svNormalizeValueList = function(text) {
+    var vals = svParseValueList(text);
+    while ((vals.length > 1) && (vals[vals.length - 1].strip().length == 0)) { vals.pop(); }
+    return vals;
+  };
+
+  // Entries of the saved value list as shown in the dialog, empty for other types.
+  var svOldValueList = <%
+    if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) {
+      Write("svParseValueList(\"" # sv.ValueList().Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ").Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C") # "\")");
+    } else {
+      Write("[]");
+    }
+  %>;
+  // Range of the saved number, to warn only about values it allowed.
+  var svOldRange = <% if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istGeneric)) { Write("[" # sv.ValueMin() # "," # sv.ValueMax() # "]"); } else { Write("null"); } %>;
+  // Entries the value selection was last built from.
+  var svLastValueList = svOldValueList;
+
+  svEscapeHtml = function(value) {
+    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  };
+
+  // Names of the given programs, at most five.
+  svProgramNames = function(programs) {
+    var names = programs.slice(0, 5).map(function(prg) { return svEscapeHtml(prg.name); });
+    if (programs.length > 5) { names.push("&hellip;"); }
+    return names.join(", ");
+  };
+
+  // Errors are shown in red, hints in the normal text color.
+  showSvEditMessage = function(key, isHint) {
+    $("svEditMessage").innerHTML = translateKey(key);
+    $("svEditMessage").style.color = isHint ? "" : "red";
+    $("svEditMessage").style.display = "block";
+  };
+
+  // Escape a value for a single-quoted string in a ReGa script.
+  svEscapeRegaString = function(value) {
+    return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  };
+
+  if (svExisting && !svEditValueOnly) {
+    if (svAlarm) {
+      showSvEditMessage("svEditTypeAlarm", true);
+      $("selType").title = translateKey("svEditTypeAlarm");
+    }
+    else if (svUsedInPrograms) {
+      showSvEditMessage("svEditTypeUsed", true);
+      $("svEditMessage").innerHTML += "<br/>" + svProgramNames(svPrograms);
+      $("selType").title = translateKey("svEditTypeUsed");
+    }
+    else {
+      // Converting to an alarm variable recreates it with a new ID.
+      $("selType").title = translateKey("svEditTypeToAlarm");
+    }
+  }
+
+  var arrElem = ["#inpName", "#inpDesc"];
+
+  jQuery.each(arrElem, function(index, elem){
+    var elem = jQuery(elem);
+    elem.val(translateString(elem.val()));
+  });
+
+  jQuery("#messagebox .popupTable").show();
+
+  noChannel = function() {
+    $("chnId").value = -1;
+    $("chnName").innerHTML = "";
+    $("chnNameRow").hidden = true;
+  };
+  
+
+  // Compares the value list entries that programs use with the new list.
+  // With the adjustment an entry found at another position is mapped there,
+  // an entry that is gone keeps its position or, behind the end of the list,
+  // gets the last one. Without it only references behind the end change, to
+  // the first entry, which the WebUI shows for them anyway.
+  svValueListChanges = function(newVals) {
+    var result = {programs: [], adjustMap: {}, keepMap: {}};
+    jQuery.each(svPrograms, function(i, prg) {
+      var refs = [];
+      jQuery.each(prg.values, function(j, value) {
+        var index = parseInt(value, 10);
+        var oldText = svOldValueList[index];
+        if ((oldText === undefined) || (newVals[index] === oldText)) { return; }
+        if (refs.some(function(ref) { return ref.index == index; })) { return; }
+        var target = newVals.indexOf(oldText);
+        if (target < 0) { target = Math.min(index, newVals.length - 1); }
+        var keep = (index < newVals.length) ? index : 0;
+        refs.push({index: index, oldText: oldText, target: target, keep: keep});
+        if (target != index) { result.adjustMap[index] = target; }
+        if (keep != index) { result.keepMap[index] = keep; }
+      });
+      if (refs.length > 0) { result.programs.push({name: prg.name, refs: refs}); }
+    });
+    return result;
+  };
+
+  // List items with the entry each changed reference will point to.
+  svValueListChangesHtml = function(changes, newVals, adjust) {
+    var quote = function(text) { return "&quot;" + svEscapeHtml(translateString(text)) + "&quot;"; };
+    var s = "";
+    jQuery.each(changes.programs, function(i, prg) {
+      s += "<li>" + svEscapeHtml(prg.name) + ": ";
+      s += prg.refs.map(function(ref) {
+        return quote(ref.oldText) + " &rarr; " + quote(newVals[adjust ? ref.target : ref.keep]);
+      }).join(", ");
+      s += "</li>";
+    });
+    return s;
+  };
+
+  // "old:new;..." index map for saveSysVar.
+  svRefMapString = function(map) {
+    var entries = [];
+    for (var index in map) {
+      if (map.hasOwnProperty(index)) { entries.push(index + ":" + map[index]); }
+    }
+    return entries.join(";");
+  };
+
+  // Pending value list change of the confirmation dialog.
+  var svValueListPending = null;
+
+  svToggleAdjust = function(checked) {
+    svValueListPending.adjust = checked;
+    $("svValueListChanges").innerHTML = svValueListChangesHtml(svValueListPending.changes, svValueListPending.newVals, checked);
+  };
+
+  // Asks for confirmation; onConfirmed runs on OK.
+  svConfirm = function(html, onConfirmed) {
+    var dlg = new YesNoDialog(translateKey("dialogSafetyCheck"), html, function(result) {
+      if (result == YesNoDialog.RESULT_YES) { onConfirmed(); }
+    }, "html");
+    dlg.btnTextYes(translateKey("btnOk"));
+    dlg.btnTextNo(translateKey("btnCancel"));
+  };
+
+  saveSysVars = function()
+  {
+    if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
+    var name = $("inpName").value;
+    name = name.replace(/[\r\n\t]/gi, "");
+    name = name.strip();
+    conInfo( "saveSysVars[name='"+name+"']" );
+    if( name.length > 0 )
+    {
+      if (name.toLowerCase().indexOf('<input') > -1) {
+        //alert("Bitte geben Sie einen Namen für die Systemvariable ein, \nund bestätigen Sie mit ENTER.");
+        alert(translateKey("alertNoNameSysVar"));
+        return;
+      }
+      var channelId = $("chnId").value;
+      var iSelIdx = $("selType").selectedIndex;
+      var iSubType = 0;
+      var url = "/esp/system.htm?sid=" + SessionId;
+      var pb = "action = 'saveSysVar';";
+      pb += "integer createNew = " + <% Write(system.GetVar("createNew")); %> + ";";
+      pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
+      pb += "string sName = '"+name+"';";
+      pb += "string sInfo = '"+$("inpDesc").value+"';";
+      var confirmHtml = null;
+      var refMaps = null;
+      switch(iSelIdx) {
+        case 0:
+          iSubType = SYSVAR_BOOL;
+          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
+          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
+          pb += "string sValue = '"+$("selValue").value+"';";
+          break;
+        case 1:
+          iSubType = SYSVAR_ENUM;
+          if (!$("txVals").value.split(/[;\r\n]+/).some(function(v) { return v.strip().length > 0; }))
+          {
+            showSvEditMessage("svEditEmptyValueList");
+            return;
+          }
+          updateValueList();
+          var valList = svNormalizeValueList($("txVals").value);
+          var vals = valList.join(";");
+          var maxIndex = valList.length - 1;
+          var value = parseInt($("selEnum").value, 10);
+          if (isNaN(value) || value < 0) value = 0;
+          if (value > maxIndex) value = maxIndex;
+          pb += "string sValList = '"+svEscapeRegaString(vals)+"';";
+          pb += "string sValue = '"+value+"';";
+          var changes = svValueListChanges(valList);
+          if (changes.programs.length > 0)
+          {
+            refMaps = {adjust: svRefMapString(changes.adjustMap), keep: svRefMapString(changes.keepMap)};
+            // Offer the adjustment only when it changes something.
+            var choice = (refMaps.adjust != refMaps.keep);
+            svValueListPending = {changes: changes, newVals: valList, adjust: choice};
+            confirmHtml = translateKey("svEditValueListPrograms");
+            confirmHtml += "<ul id='svValueListChanges'>" + svValueListChangesHtml(changes, valList, choice) + "</ul>";
+            if (choice)
+            {
+              confirmHtml += "<label><input type='checkbox' checked onclick='svToggleAdjust(this.checked);'/> " + translateKey("svEditValueListAdjust") + "</label><br/><br/>";
+            }
+            confirmHtml += translateKey("svEditCheckPrograms");
+          }
+          break;
+        case 2:
+          iSubType = SYSVAR_GENERIC;
+          if (isNaN($("inpMin").value)) 
+          {
+            //alert("Der Minimalwert ist keine Zahl.");
+            alert(translateKey("alertNoNumberMinVal"));
+            return;
+          }
+          if (isNaN($("inpMax").value)) 
+          {
+            //alert("Der Maximalwert ist keine Zahl.");
+            alert(translateKey("alertNoNumberMaxVal"));
+            return;
+          }
+          var itmpMinVal = parseFloat( $("inpMin").value );
+          var itmpMaxVal = parseFloat( $("inpMax").value );
+          if( isNaN(itmpMinVal) ) itmpMinVal = 0;
+          if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
+          if (itmpMinVal > itmpMaxVal)
+          {
+            showSvEditMessage("svEditInvalidRange");
+            return;
+          }
+          var outside = svPrograms.filter(function(prg) {
+            return prg.values.some(function(v) {
+              v = parseFloat(v);
+              var allowedBefore = !svOldRange || ((v >= svOldRange[0]) && (v <= svOldRange[1]));
+              return allowedBefore && ((v < itmpMinVal) || (v > itmpMaxVal));
+            });
+          });
+          if (outside.length > 0)
+          {
+            confirmHtml = translateKey("svEditRangePrograms") + "<ul>";
+            jQuery.each(outside, function(i, prg) { confirmHtml += "<li>" + svEscapeHtml(prg.name) + "</li>"; });
+            confirmHtml += "</ul>" + translateKey("svEditCheckPrograms") + " " + translateKey("svEditSaveAnyway");
+          }
+          pb += "integer iMinVal = '"+itmpMinVal+"';";
+          pb += "integer iMaxVal = '"+itmpMaxVal+"';";
+          
+          if (isNaN($("inpValue").value)) 
+          {
+            alert(translateKey("alertValOutOfRange"));
+            return;
+          }
+          var value = $("inpValue").value;
+          if (value > itmpMaxVal) value = itmpMaxVal;
+          if (value < itmpMinVal) value = itmpMinVal;
+          pb += "string sValue = '"+value+"';";
+          break;
+        case 3: 
+          iSubType = SYSVAR_ALARM;
+          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
+          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
+          pb += "string sValue = '"+$("selValue").value+"';";
+          break;
+        case 4:
+          iSubType = SYSVAR_STRING;
+          pb += "string sValue = '"+svEscapeRegaString($("txValue").value)+"';";
+          break;
+      }
+      pb += "string sUnit = '"+svEscapeRegaString($("txtUnit").value)+"';";
+      pb += "integer iSubType = "+iSubType+";";
+      pb += "integer iChnId = "+ $("chnId").value +";";
+      var opts = {
+        postBody: ReGa.encode(pb),
+        onComplete: function(t) {
+          if(dbg){alert( t.responseText );}
+          reloadSysVars();
+
+          var channel = DeviceList.getChannel(channelId);
+          if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
+        }
+      };
+      if (confirmHtml)
+      {
+        svConfirm(confirmHtml, function() {
+          var refMap = refMaps ? (svValueListPending.adjust ? refMaps.adjust : refMaps.keep) : "";
+          if (refMap)
+          {
+            opts.postBody = ReGa.encode(pb + "string sRefMap = '" + refMap + "';");
+          }
+          new Ajax.Request(url, opts);
+        });
+        return;
+      }
+      new Ajax.Request(url, opts);
+    } else {
+        // No name available
+        alert(translateKey("alertNoNameSysVar"));
+        return;
+    }
+  };
+
+  channelChooser2 = function()
+  {
+    if ($("ckAssignedChn").checked == true) {
+      ChannelChooser.show(function(result) {
+        if (result)
+        {
+          $("chnId").value = result;
+          var pb = "string action = 'getChnNameById';";
+          pb += "integer id = '" + result + "';";
+          var opts =  
+          {
+            postBody: pb
+          };
+          new Ajax.Updater("chnName", "/esp/system.htm?sid=" + SessionId, opts);
+          $("ckAssignedChn").checked = true;
+          $("chnNameRow").hidden = false;
+        }
+        else if ($(chnName).innerHTML != "")
+        {
+          $("ckAssignedChn").checked = true;
+          $("chnNameRow").hidden = false;
+        }
+        else
+        {
+          $("ckAssignedChn").checked = true;
+          $("chnNameRow").hidden = false;
+        }
+      }, ChannelChooser.SHOW_ALL);
+    } else {
+      noChannel();
+    }
+  };
+  
+  onTypeChange = function() 
+  {
+    var iType = $("selType").selectedIndex;
+    switch(iType) 
+    {
+      case 0:
+        loadLogicEdit(translateKey("lblIsTrue"), translateKey("lblIsFalse"));
+        break;
+      case 1:
+        loadValueEdit(translateKey("lblVal1Val2Val3"));
+        updateValueList();
+        break;
+      case 2:
+        loadIntEdit(0, 65000);
+        break;
+      case 3:
+        loadLogicEdit(translateKey("lblTriggered"), translateKey("lblNotTriggered"));
+        break;
+      case 4:
+        loadChar8859Edit("");
+        break;
+    }
+  };
+
+  stringRemoveNonPrintableChars = function(elm) {
+    var elmVal = elm.value;
+    //elm.value = elmVal.replace(/\\n|\\r|\\t/g, "");
+    elm.value = elmVal.replace(/\\/g, "");
+  };
+  
+  checkInpValue = function() {
+   var itmpValue = parseFloat( $("inpValue").value );
+
+   var itmpMinVal = parseFloat( $("inpMin").value );
+   var itmpMaxVal = parseFloat( $("inpMax").value );
+   
+   if (isNaN(itmpValue)) {
+     // Popup erscheint beim Speichern; doppeltes alert() ist nervig
+     // alert(translateKey("alertValOutOfRange"));
+   } else {
+     if (itmpValue > itmpMaxVal) document.getElementById('inpValue').value = itmpMaxVal;
+     if (itmpValue < itmpMinVal) document.getElementById('inpValue').value = itmpMinVal;
+   }
+  }
+  
+  loadNoneEdit = function()
+  {
+    $("tdEdit").innerHTML = "";
+    $("tdValueEdit").innerHTML = "";
+  };
+  
+  // Show the edited value names in the value selection right away.
+  svUpdateLogicValues = function()
+  {
+    var selection = $("selValue");
+    if (!selection) { return; }
+    selection.options[0].text = translateString($("inpLFalse").value);
+    selection.options[1].text = translateString($("inpLTrue").value);
+  };
+
+  loadLogicEdit = function(sTrue, sFalse, sValue) 
+  {
+    var s = "";
+    s += "<table class='CLASS05010'>";
+    s += "<tr><td colspan='2'>"+ translateKey("lblValueDescription") +":</td></tr>";
+    s += "<tr>";
+      s += "<td>"+translateKey("lblTrue")+"&nbsp;=</td><td class='CLASS05011'> <input id='inpLTrue' type='text' size='15' value='"+translateString(sTrue)+"' oninput='svUpdateLogicValues();' onblur='stringRemoveNonPrintableChars(this); svUpdateLogicValues();' />  </td>";
+    s += "</tr>";
+    s += "<tr>";
+      s += "<td>"+ translateKey("lblFalse") +"&nbsp;=</td><td class='CLASS05011'> <input id='inpLFalse' type='text' size='15' value='"+translateString(sFalse)+"' oninput='svUpdateLogicValues();' onblur='stringRemoveNonPrintableChars(this); svUpdateLogicValues();'/>  </td>";
+    s += "</tr>";
+    s += "</table>";
+    $("tdEdit").innerHTML = s;
+    
+    
+    s = "";
+    var isSelFalse = "selected";
+    var isSelTrue = "";
+    if (sValue === "true") {
+      isSelFalse = "";
+      isSelTrue = "selected";
+    } 
+    s += "<table class='CLASS05010'>";
+    s += "<tr>";
+      s += "<td class='CLASS05011'><select id='selValue'><option "+isSelFalse+" value='0'>"+translateString(sFalse)+"</option><option "+isSelTrue+" value='1'>"+translateString(sTrue)+"</option></select> </td>";
+    s += "</tr>";
+    s += "</table>";   
+
+    $("tdValueEdit").innerHTML = s
+  };
+  
+  updateValueList = function()
+  {
+    var selection = $("selEnum");
+    var oldIndex = parseInt(selection.value, 10);
+    var vals = svNormalizeValueList($("txVals").value);
+
+    selection.options.length = 0;
+    for (var i = 0; i < vals.length; i++)
+    {
+      var option = document.createElement("option");
+      option.value = i;
+      option.text = translateString(vals[i]);
+      selection.add(option);
+    }
+
+    // Keep the selected entry, also when it moved to another position.
+    if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
+    var newIndex = vals.indexOf(svLastValueList[oldIndex]);
+    if (newIndex < 0) newIndex = Math.min(oldIndex, vals.length - 1);
+    selection.selectedIndex = newIndex;
+    svLastValueList = vals;
+    var table = jQuery(selection).closest("table")[0];
+    if (table) table.style.display = "";
+  };
+
+  loadValueEdit = function(vals, sValue, optionList) 
+  {
+    if( vals == "" )
+    {
+      vals = 'A;B;C';
+    }
+    var s = "";
+    s += "<table class='CLASS05012'>";
+    s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
+    s += "<tr><td> <textarea id='txVals' rows='2' onblur='updateValueList()'>"+vals+"</textarea> </td></tr>";
+    s += "</table>";
+    $("tdEdit").innerHTML = s;
+    
+    s = "";
+    var hidden = (sValue) ? "" : "style='display: none;'";
+    s += "<table class='CLASS05010' "+hidden+">";
+    s += "<tr>";
+    s += "<td class='CLASS05011'><select id='selEnum'>";
+    s+=optionList;
+    s+="</select> </td>";
+    s += "</tr>";
+    s += "</table>";   
+
+    $("tdValueEdit").innerHTML = s
+    
+    if (sValue) document.getElementById("selEnum").options[sValue].selected=true;
+  };
+  
+  loadIntEdit = function(val1, val2, sValue, sUnit='')
+  {
+    var s = "";
+    s += "<table class='CLASS05010'>";
+    s += "<tr><td colspan='2'>"+ translateKey("lblValueRange") +":</td></tr>";
+    s += "<tr>";
+      s += "<td>"+ translateKey("lblMinValue") +"&nbsp;=</td><td class='CLASS05011'> <input id='inpMin' type='text' size='12' value='"+translateString(val1.toString())+"' />  </td>";
+    s += "</tr>";
+    s += "<tr>";
+      s += "<td>"+ translateKey("lblMaxValue") +"&nbsp;=</td><td class='CLASS05011'> <input id='inpMax' type='text' size='12' value='"+translateString(val2.toString())+"' />  </td>";
+    s += "</tr>";
+    s += "</table>";
+    $("tdEdit").innerHTML = s;
+    
+    s = "";
+    var val = val1;
+    if (sValue) val = sValue;
+    s += "<table class='CLASS05012'>";
+    s += "<tr><td style='white-space:nowrap;'><input id='inpValue' type='text' size='12' value='"+translateString(val.toString())+"'  onblur='checkInpValue();'/>&nbsp;" + sUnit + "</td></tr>";
+    s += "</table>";
+    $("tdValueEdit").innerHTML = s;
+    
+  }
+  
+  function decodeURIComponentSafe(s) {
+    if (!s) {
+        return s;
+    }
+    return decodeURIComponent(s.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25'));
+  }
+    
+  loadChar8859Edit = function(sValue) 
+  {
+    var s = "";
+    s += "<table class='CLASS05012'>";
+    s += "<tr><td> <textarea id='txValue' rows='5'>"+decodeURIComponentSafe(unescape(sValue))+"</textarea> </td></tr>";
+    s += "</table>";
+    $("tdValueEdit").innerHTML = s;
+    $("tdEdit").innerHTML = "";
+  };
+
+  <% 
+    if (system.GetVar("createNew") == 1) {
+      Write("loadLogicEdit(translateKey('lblIsTrue'), translateKey('lblIsFalse') );");
+    }
+    else {
+      if ( (sv.Channel() != ID_ERROR) && (sv.Channel() != 0)) {
+        object oChn = dom.GetObject(sv.Channel());
+        if (oChn) {
+          Write("$('ckAssignedChn').checked = true;");
+          Write("$('chnNameRow').hidden = false;");
+        }
+      }
+      else {
+        Write("$('ckAssignedChn').checked = false;");
+        Write("$('chnNameRow').hidden = true;");
+      }
+      if (sv.ValueSubType() == istPresent) {
+      }
+      if (sv.ValueSubType() == istChar8859) {
+        string sval = sv.Value();
+        Write("loadChar8859Edit('"#sval.UriEncode()#"');");
+      }
+      if (sv.ValueSubType() == istAlarm) {
+        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
+      }
+      if (sv.ValueSubType() == istGeneric) {
+        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
+      }
+      if (sv.ValueSubType() == istEnum) {
+        integer iVLCount = web.webGetValueListCount( sv.ValueList() );
+        iVLCount = iVLCount - 1;
+        string sVLKey;
+        string optionList = "";
+        string oVal = "";
+        integer count = 0;
+        foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
+        {
+         oVal = count.ToString(0);
+         optionList = optionList # "<option value=\""#oVal#"\">"#web.webGetValueFromList( sv.ValueList(), sVLKey ).Replace("\\", "\\\\").Replace("'", "\\'")#"</option>"; 
+         count = count+1;
+        }
+        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"', '"#optionList#"');");
+      }
+      if (sv.ValueSubType() == istBool) {
+        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
+      }
+    }
+  %>
+</script>

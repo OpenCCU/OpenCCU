@@ -128,7 +128,15 @@ start() {
 }
 stop() {
   echo -n "Stopping rfd: "
-  start-stop-daemon -K -q -p ${PIDFILE}
+  if start-stop-daemon -K -q -p ${PIDFILE} --exec /bin/rfd; then
+    # rfd shuts down cleanly on SIGTERM (saves pending device files, closes
+    # the radio module), so wait for it to exit before e.g. restarting it
+    for _ in $(seq 1 20); do
+      start-stop-daemon -K -t -q -p ${PIDFILE} --exec /bin/rfd || break
+      sleep 1
+    done
+    start-stop-daemon -K -q -s KILL -p ${PIDFILE} --exec /bin/rfd
+  fi
   rm -f ${PIDFILE}
   echo "OK"
 }

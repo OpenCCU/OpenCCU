@@ -273,6 +273,7 @@ DEVICE_CONFIG_DIALOG_JST = "<div id=\"DeviceConfigDialog\">\n
         <tr id=\"btnEnableDeviceLogging\"><td name=\"generalDeviceChannelConfigLblLogged\">Protokolliert:<\/td><td><input id=\"DeviceConfigDialog_isLogged\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isLoggingChanged=true;\" {if device.isLogged} checked=\"checked\" {\/if} {if !device.isLogable} disabled=\"disabled\" readonly=\"readonly\" {\/if}\/><\/td><\/tr>\n
 \n
         <tr id=\"trAllChnVisible\" class=\"hidden\"><td name=\"lblAllChannelsVisible\">Alle Kan%E4le sichtbar:<\/td><td><input id=\"DeviceConfigDialog_isVisible\" type=\"checkbox\" onclick=\"DeviceConfigDialog.isVisibilityChanged=true;\"\/><\/td><\/tr>\n
+        <tr id=\"btnEnableDeviceServiceMsg\"><td name=\"generalDeviceChannelConfigLblServiceMsg\">Servicemeldungen:<\/td><td><input id=\"DeviceConfigDialog_enabledServiceMsg\" type=\"checkbox\" onclick=\"DeviceConfigDialog.enabledServiceMsgChanged=true;\" {if device.enabledServiceMsg} checked=\"checked\" {\/if} \/><\/td><\/tr>\n
       <\/table>\n
     <\/div>\n
     \n
@@ -9795,10 +9796,11 @@ StringFilter = function(name, callback)
   
   
   var m_name     = name;
-  var m_value    = "";
   var m_callback = callback;
   
   var m_id     = name.replace(/\,/g, "_");
+  var m_value    = "";
+  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
   var m_textId = m_id + "Text";
 
   var isSet = function()
@@ -9905,6 +9907,7 @@ StringFilter = function(name, callback)
       }
     }
     if ($(m_id))     { $(m_id).hide(); }
+    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
     if (m_callback)  { m_callback(); }
   };
   
@@ -9923,6 +9926,7 @@ StringFilter = function(name, callback)
   this.reset = function()
   {
     m_value = "";
+    try { localStorage.removeItem(m_id); } catch (e) {}
     this.close();
   };
 
@@ -9945,7 +9949,6 @@ StringFilter = function(name, callback)
   /*# Initialisierung #*/
   /*###################*/
   
-  this.reset();
   
 };
 
@@ -9969,7 +9972,30 @@ ListFilter = Class.create({
     this.callback = callback;
     this.id       = name.replace(/\./g, "_");
     this.formId   = this.id + "Form";
-    this.reset();
+    var self = this;
+    function fltrHandler() {
+      self.restoreFilters();
+      eQ3.HomeMatic.Event.unsubscribe('DeviceListPageLoaded', fltrHandler);
+    }
+    eQ3.HomeMatic.Event.subscribe('DeviceListPageLoaded', fltrHandler);
+  },
+
+  restoreFilters: function() {
+    var filterValues = null;
+    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
+    if(filterValues) {
+      try {
+        filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
+        var values = $(this.formId).values;
+        for (var i = 0, len = values.length; i < len; i++) {
+         if(filterValues.indexOf(values[i].value) !== -1) {
+            values[i].checked = true;
+          }
+        }
+        this.set();
+      } catch(e) { console.log(e); }
+    }
   },
 
   /**
@@ -10080,16 +10106,20 @@ ListFilter = Class.create({
     if ($(this.formId))
     {
       var values = $(this.formId).values;
+      var filterValues = [];
 
       for (var i = 0, len = values.length; i < len; i++)
       {
         this.select(values[i].value, values[i].checked);
+        if(values[i].checked) filterValues.push(values[i].value);
       }
 
       if ($(this.id))    {
         $(this.id).hide();
         try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
       }
+      // JSON.stringify encodes an array twice???
+      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
       if (this.callback) { this.callback(); }
     }
   },
@@ -10125,7 +10155,8 @@ ListFilter = Class.create({
     {
       this.list[i]._selected = false;
     }
-    
+
+    try { localStorage.removeItem(this.id); } catch (e) {}
     this.close();
   }
   
@@ -12415,6 +12446,7 @@ Device = Class.create({
 
       this.interfaceName = data["interface"];
       this.isReadyConfig = data["isReady"];
+      this.enabledServiceMsg = (data["enabledServiceMsg"] == "true") ? true : false;
       this.deviceType = deviceType;
       this.typeName = deviceType.name;
       this.typeDescription = deviceType.description;
@@ -12690,6 +12722,23 @@ Device = Class.create({
   setLogging: function(isLogged)
   {
   },  
+
+  /**
+   * Legt fest, ob das Geraet Servicemeldungen auslöst oder nicht
+   **/
+  setEnabledServiceMsg: function(enabledServiceMsg)
+  {
+    if (this.enabledServiceMsg != enabledServiceMsg)
+    {
+      var result = homematic("Device.setEnabledServiceMsg", {id: this.id, isEnabled: enabledServiceMsg});
+      if (typeof(result) == "boolean" && result === true)
+      {
+        this.enabledServiceMsg = enabledServiceMsg;
+      }
+    }
+    
+    return this.enabledServiceMsg;
+  },
 
   setDeviceInputCheck: function() {
     this.deviceInputCheck = true;
@@ -15769,6 +15818,7 @@ DeviceConfigDialog = Singleton.create({
   USABLE_ID: "DeviceConfigDialog_isUsable",
   VISIBLE_ID: "DeviceConfigDialog_isVisible",
   LOGGED_ID: "DeviceConfigDialog_isLogged",
+  SERVICEMSG_ID: "DeviceConfigDialog_enabledServiceMsg",
   TEST_RESULT_ID: "DeviceConfigDialogTestResult",
   RESULT_OK: 1,
   RESULT_ABORT: 0,
@@ -15794,6 +15844,7 @@ DeviceConfigDialog = Singleton.create({
     this.isVisibilityChanged = false;
     this.isUsabilityChanged = false;
     this.isLoggingChanged = false;   
+    this.enabledServiceMsgChanged = false;
     this.callback = callback;
     this.layer = document.createElement("div");
     this.layer.id = this.LAYER_ID;
@@ -15863,6 +15914,8 @@ DeviceConfigDialog = Singleton.create({
         if (this.isUsabilityChanged) { channel.setUsability(isUsable); }
         if (this.isLoggingChanged) { channel.setLogging(isLogged); }
       }, this);
+      var enabledServiceMsg = $(this.SERVICEMSG_ID).checked;
+      if (this.enabledServiceMsgChanged) { this.device.setEnabledServiceMsg(enabledServiceMsg); }
 
       this.close(this.RESULT_OK);
     }
@@ -27002,6 +27055,7 @@ if (PLATFORM == "Central") {
     jQuery("#DeviceListPage_FuncFilter").draggable();
 
     DeviceList.updateDeviceStatus();
+    eQ3.HomeMatic.Event.fire({type: 'DeviceListPageLoaded'});
   },
   
   onRemoveDevice: function(whatEver)
@@ -32539,12 +32593,18 @@ iseMessageBox.prototype =
         centerMessageBox();
         iseRefr(true);
         translatePage("#messagebox");
+        setTimeout(function() {
+          eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+        }, 100);
       }
     };
     new Ajax.Updater('messagebox',url,opt);
   },  
   ShowPopup: function() {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   },
   
   restorePrevious: function() {
@@ -33450,11 +33510,31 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
     if (file.substring(0, UI_PATH.length) == UI_PATH)
     {
       //method: 'get' ist für die ELV-CGIs notwendig.
-      opts = {evalScripts: true, method: 'get', onComplete:function(){iseRefr(true);bUpdateContentRunning=false;}};
+      opts = {
+        evalScripts: true,
+        method: 'get',
+        onComplete:function(){
+          iseRefr(true);
+          bUpdateContentRunning=false;
+          setTimeout(function() {
+            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+          }, 100);
+        }
+      };
     }
     else
     {
-      opts = {postBody: ReGa.encode(pb),evalScripts: true, onComplete:function(){iseRefr(true);bUpdateContentRunning=false;}};
+      opts = {
+        postBody: ReGa.encode(pb),
+        evalScripts: true,
+        onComplete:function(){
+          iseRefr(true);
+          bUpdateContentRunning=false;
+          setTimeout(function() {
+            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+          }, 100);
+        }
+      };
     }
     /* ELV --> */
     
@@ -37408,6 +37488,28 @@ iseFilter.prototype = {
     this.fltObjType = 0;
     if (fltObjType)
       this.fltObjType = fltObjType;
+
+    var self = this;
+    function fltrHandler() {
+      eQ3.HomeMatic.Event.unsubscribe('ContentLoaded', fltrHandler);
+      self.restoreFilters();
+    }
+    eQ3.HomeMatic.Event.subscribe('ContentLoaded', fltrHandler);
+  },
+
+  restoreFilters: function() {
+    try {
+      var iseSFilters = JSON.parse(localStorage.getItem('iseSFilters_' + this.pageID)) || {};
+      Object.keys(iseSFilters).forEach(function(id) {
+        var val = iseSFilters[id];
+        if ($(id)) {
+          $(id).value = val;
+          $(id).nextSiblings()[0].click();
+        }
+      });
+    } catch(e) {
+      console.error(e);
+    }
   },
   
 
@@ -37791,6 +37893,15 @@ iseFilter.prototype = {
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
     this.bTypeString = false;
+    try { localStorage.removeItem('iseSFilters_' + this.pageID); } catch (e) {}
+    var filterButtons = document.querySelectorAll('.FilterSetButton[onclick*=' + this.pageID + ']');
+    filterButtons.forEach(function(el) {
+      try {
+        el.parentElement.parentElement.querySelector('.FilterBtn').style.color = '';
+      } catch(e) {
+        console.error(e);
+      }
+    });
     conInfo("Alle Filter wurden zurückgesetzt.");
   }
 };
@@ -37900,6 +38011,12 @@ setSFilter = function(fltObj, ctrlId, fId)
 {
   //conInfo("iseFilter: setSFilter "+fId+" to "+$(ctrlId).value);
   fltObj.addStringFilter(fId, $(ctrlId).value);
+  try {
+    var iseFilters = JSON.parse(localStorage.getItem('iseSFilters_' + fltObj.pageID)) || {};
+    iseFilters[ctrlId] = $(ctrlId).value;
+    localStorage.setItem('iseSFilters_' + fltObj.pageID, JSON.stringify(iseFilters));
+    $(ctrlId).parentElement.previous().style.color = $(ctrlId).value ? 'red' : 'black';
+  } catch(e) { console.error(e); }
 };
 
 // Integer-Filter (Modus, Iface)
@@ -47629,61 +47746,72 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
     srcElm.value = value;
   }
 
+  var parsedValue;
+  var parsedMin = parseFloat(min);
+  var parsedMax = parseFloat(max);
+
+  var minSplit = min.toString().split(".");
+  var maxSplit = max.toString().split(".");
+  var digits = 0;
+
+  if(minSplit.length === 2) {
+    digits = Math.max(digits, minSplit[1].length);
+  }
+  if(maxSplit.length === 2) {
+    digits = Math.max(digits, maxSplit[1].length);
+  }
+
   // Check if float is allowed
   try {
     if (min.toString().indexOf(".") == -1 && max.toString().indexOf(".") == -1) {
       min = parseInt(min);
       max = parseInt(max);
-      value = (roundValue05(parseInt(value)));
+      value = Math.round(parseFloat(value));
     } else {
-      min = parseFloat(parseFloat(min).toFixed(fixedDecimalPoint));
-      max = parseFloat(parseFloat(max).toFixed(fixedDecimalPoint));
-      value = parseFloat(parseFloat(value).toFixed(fixedDecimalPoint));
+      min = parseFloat(parseFloat(min).toFixed(digits));
+      max = parseFloat(parseFloat(max).toFixed(digits));
+      var roundFactor = Math.pow(10, digits);
+      value = Math.round(parseFloat((parseFloat(value) * roundFactor).toPrecision(12))) / roundFactor;
 
       if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
-
-      srcElm.value = parseFloat(value);
     }
+    parsedValue = parseFloat(value);
   } catch(e) {conInfo(e);}
 
   if (typeof value == "undefined")
   {
-    finalVal = min;
+    finalVal = parsedMin;
     ok = false;
   }
   else if (isNaN(value))
   {
-    finalVal = min;
+    finalVal = parsedMin;
     ok = false;
   }
-  else if (value < min)
+  else if (parsedValue < parsedMin)
   {
-    finalVal = min;
+    finalVal = parsedMin;
     ok = false;
   }
-  else if (value > max)
+  else if (parsedValue > parsedMax)
   {
-    finalVal = max;
+    finalVal = parsedMax;
     ok = false;
   }
 
   if (ok)
   {
     srcElm.style.backgroundColor = "#fffffe";
-    dstElm.value = value * dstValueFactor;
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = dstElm.value;
-    }
+    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = parsedValue.toFixed(digits);
     srcElm.setAttribute("valvalid", "true");
   }
   else
   {
     srcElm.setAttribute("valvalid", "false");
     srcElm.style.backgroundColor = "red";
-    dstElm.value = finalVal * dstValueFactor;
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = dstElm.value;
-    }
+    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = finalVal.toFixed(digits);
     window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
   }
 };
@@ -51519,6 +51647,9 @@ cpMessageBox.prototype =
   
   ShowPopup: function() {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   }
 };
 
@@ -51650,6 +51781,9 @@ cpMessageBox2.prototype =
   ShowPopup: function()
   {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   }
 };
 /**

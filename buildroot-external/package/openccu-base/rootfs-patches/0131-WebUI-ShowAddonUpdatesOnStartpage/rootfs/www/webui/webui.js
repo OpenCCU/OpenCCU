@@ -9987,6 +9987,7 @@ ListFilter = Class.create({
     if(filterValues) {
       try {
         filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
         var values = $(this.formId).values;
         for (var i = 0, len = values.length; i < len; i++) {
          if(filterValues.indexOf(values[i].value) !== -1) {
@@ -47930,7 +47931,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
       min = parseFloat(parseFloat(min).toFixed(digits));
       max = parseFloat(parseFloat(max).toFixed(digits));
       var roundFactor = Math.pow(10, digits);
-      value = Math.round(parseFloat(value) * roundFactor) / roundFactor;
+      value = Math.round(parseFloat((parseFloat(value) * roundFactor).toPrecision(12))) / roundFactor;
 
       if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
     }
@@ -47961,20 +47962,16 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   if (ok)
   {
     srcElm.style.backgroundColor = "#fffffe";
-    dstElm.value = (parsedValue.toFixed(digits) * dstValueFactor);
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = parsedValue.toFixed(digits);
-    }
+    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = parsedValue.toFixed(digits);
     srcElm.setAttribute("valvalid", "true");
   }
   else
   {
     srcElm.setAttribute("valvalid", "false");
     srcElm.style.backgroundColor = "red";
-    dstElm.value = (finalVal.toFixed(digits) * dstValueFactor);
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = finalVal.toFixed(digits);
-    }
+    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = finalVal.toFixed(digits);
     window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
   }
 };
