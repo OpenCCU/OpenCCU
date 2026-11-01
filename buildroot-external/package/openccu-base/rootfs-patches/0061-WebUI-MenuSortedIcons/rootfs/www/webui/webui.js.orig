@@ -36003,7 +36003,7 @@ showDutyCycle = function() {
             carrierSenseValElm = jQuery("#carrierSenseVal"+index),
             carrierSenseBar = jQuery("[name='carrierSenseBar"+index+"']"),
             carrierSenseCol = jQuery("[name='carrierSenseCol"+index+"']"),
-            trPartingLineElm = jQuery("#partingLine1"),
+            trPartingLineElm = jQuery("#partingLine0, #partingLine1"),
             csVal,
             dcVal;
 
@@ -36085,7 +36085,7 @@ showDutyCycle = function() {
           }
         });
         if (!showPartingLine) {
-          jQuery("#partingLine1").hide();
+          jQuery("#partingLine0, #partingLine1").hide();
         }
       }
     });

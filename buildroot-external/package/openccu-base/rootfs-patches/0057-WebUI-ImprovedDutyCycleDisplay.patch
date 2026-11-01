@@ -58,7 +58,7 @@
 -
 -              <td id="iFaceShowAll">${lblDutyCycle}</td>
 -              <td> <div id="dutyCycleProgress" class="dutyCycleProgress"><div id="dutyCycleProgressBar" class="dutyCycleProgressBar" style='width:auto;'></div></div> </td>
-+            <tr>
++            <tr id="partingLine0" style="display:none;">
 +              <td colspan="3"><hr/></td>
              </tr>
 -
@@ -341,7 +341,7 @@
 +            carrierSenseValElm = jQuery("#carrierSenseVal"+index),
 +            carrierSenseBar = jQuery("[name='carrierSenseBar"+index+"']"),
 +            carrierSenseCol = jQuery("[name='carrierSenseCol"+index+"']"),
-+            trPartingLineElm = jQuery("#partingLine1"),
++            trPartingLineElm = jQuery("#partingLine0, #partingLine1"),
 +            csVal,
 +            dcVal;
 +
@@ -461,7 +461,7 @@
 +          }
 +        });
 +        if (!showPartingLine) {
-+          jQuery("#partingLine1").hide();
++          jQuery("#partingLine0, #partingLine1").hide();
 +        }
        }
 -      showDutyCycleHmIP();
