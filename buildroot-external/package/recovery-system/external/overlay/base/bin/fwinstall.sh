@@ -39,21 +39,33 @@ get_gzip_uncompressed_size()
 get_ext_fs_size()
 {
   local dev="$1"
-  local count size
+  local info count size v
 
-  count=$(/sbin/tune2fs -l "${dev}" 2>/dev/null | awk -F: '/^Block count:/ { gsub(/ /,"",$2); print $2; exit }')
-  size=$(/sbin/tune2fs -l "${dev}" 2>/dev/null | awk -F: '/^Block size:/ { gsub(/ /,"",$2); print $2; exit }')
-  case "${count}${size}" in
-    ''|*[!0-9]*)
-      return 1
-      ;;
-  esac
-  if [[ -z "${count}" ]] || [[ -z "${size}" ]]; then
-    return 1
-  fi
+  # one superblock read for both values: "<block count> <block size>"
+  info=$(/sbin/tune2fs -l "${dev}" 2>/dev/null | awk -F: '
+    /^Block count:/ { gsub(/[[:space:]]/,"",$2); c=$2 }
+    /^Block size:/  { gsub(/[[:space:]]/,"",$2); s=$2 }
+    END { print c " " s }')
+  count=${info% *}
+  size=${info#* }
+  for v in "${count}" "${size}"; do
+    case "${v}" in
+      ''|*[!0-9]*)
+        return 1
+        ;;
+    esac
+  done
 
   echo $((count * size))
   return 0
+}
+
+# last lines of a tool's output joined into one line for the install log,
+# which the recovery WebUI shows as HTML: at most 10 lines, without the HTML
+# special characters (e2fsck prints e.g. "<The journal inode>" and file names)
+log_excerpt()
+{
+  printf '%s\n' "$1" | grep -v '^[[:space:]]*$' | tail -n 10 | tr -d '<>&' | tr '\n' ';'
 }
 
 expand_userfs_to_max()
@@ -177,20 +189,25 @@ expand_userfs_to_max()
     partprobe "${DISK_DEV}" 2>/dev/null || true
   fi
 
-  # preen first; what preen refuses to fix on its own (rc >= 4, e.g. a corrupted
-  # orphan list after a hard reboot with the userfs mounted read-write) gets a
-  # full run answering yes, and the update continues if that leaves the
-  # filesystem clean. Both results go to the log.
+  # preen first; errors preen refuses to fix on its own (rc bit 4, e.g. a
+  # corrupted orphan list after a hard reboot with the userfs mounted
+  # read-write) get a full run answering yes, and the update continues if that
+  # leaves the filesystem clean. The exit code is a bit mask: an operational
+  # error (8) or worse, e.g. I/O errors of a failing card, is not retried,
+  # since -y would also answer "ignore error" and "force rewrite" with yes.
+  # Both results go to the log.
   E2FSCK_OUT=$(/sbin/e2fsck -pDf "${USER_DEV}" 2>&1)
   E2FSCK_RC=$?
-  if [[ ${E2FSCK_RC} -ge 4 ]]; then
-    echo -ne "e2fsck -p rc=${E2FSCK_RC} ($(echo "${E2FSCK_OUT}" | grep -v '^$' | tr '\n' ';')), retrying with e2fsck -fy, "
+  if [[ $((E2FSCK_RC & 4)) -ne 0 ]] && [[ ${E2FSCK_RC} -lt 8 ]]; then
+    echo -ne "e2fsck -p rc=${E2FSCK_RC} ($(log_excerpt "${E2FSCK_OUT}")), retrying with e2fsck -fy, "
     E2FSCK_OUT=$(/sbin/e2fsck -fy "${USER_DEV}" 2>&1)
     E2FSCK_RC=$?
-    echo -ne "rc=${E2FSCK_RC} ($(echo "${E2FSCK_OUT}" | grep -v '^$' | tr '\n' ';')), "
+    if [[ ${E2FSCK_RC} -lt 4 ]]; then
+      echo -ne "rc=${E2FSCK_RC} ($(log_excerpt "${E2FSCK_OUT}")), "
+    fi
   fi
   if [[ ${E2FSCK_RC} -ge 4 ]]; then
-    echo "ERROR: (e2fsck userfs failed rc=${E2FSCK_RC})"
+    echo "ERROR: (e2fsck userfs failed rc=${E2FSCK_RC}: $(log_excerpt "${E2FSCK_OUT}"))"
     mount -o rw /userfs 2>/dev/null || true
     return 2
   fi

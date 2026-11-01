@@ -5,20 +5,51 @@
 # waiting which we can perform during bootup automatically.
 #
 
+# the saved logs as "<sequence number> <path>" lines, oldest first
+list_install_logs() {
+  local f seq
+
+  for f in "$1"/[0-9]*_*.log; do
+    [[ -f "${f}" ]] || continue
+    seq=${f##*/}
+    seq=${seq%%_*}
+    case "${seq}" in
+      *[!0-9]*)
+        continue
+        ;;
+    esac
+    # strip leading zeros, ash arithmetic reads them as octal
+    while [[ "${seq}" != "${seq#0}" ]] && [[ -n "${seq#0}" ]]; do
+      seq=${seq#0}
+    done
+    echo "${seq} ${f}"
+  done | sort -n
+}
+
 # keep the install log of an unattended update for the system that boots
 # next: a copy of /tmp/fwinstall.log on the userfs (mounted read-write by
-# the caller), named after the UTC time, the newest five kept. Best effort:
+# the caller), named <sequence number>_<UTC time>.log, the newest five kept.
+# The order comes from the sequence number, not from the time: without an RTC
+# and without network the recovery runs with a clock near 1970, and such a
+# name would neither be unique nor sort after the older logs. Best effort:
 # nothing here may fail the update or the reboot.
 save_install_log() {
-  if [[ -f /tmp/fwinstall.log ]] && mkdir -p /usr/local/var/recovery 2>/dev/null; then
-    chmod 0755 /usr/local/var/recovery 2>/dev/null
-    cp /tmp/fwinstall.log "/usr/local/var/recovery/$(date -u +%Y-%m-%dT%H-%M-%SZ).log" 2>/dev/null &&
-      chmod 0644 /usr/local/var/recovery/*.log 2>/dev/null
-    # the names sort by time: drop all but the newest five
-    set -- /usr/local/var/recovery/*.log
-    while [ $# -gt 5 ]; do
-      rm -f "$1"
-      shift
+  local dir=/usr/local/var/recovery
+  local last log n seq f
+
+  if [[ -f /tmp/fwinstall.log ]] && mkdir -p "${dir}" 2>/dev/null; then
+    chmod 0755 "${dir}" 2>/dev/null
+
+    last=$(list_install_logs "${dir}" | tail -n 1 | cut -d' ' -f1)
+    log="${dir}/$((${last:-0} + 1))_$(date -u +%Y-%m-%dT%H-%M-%SZ).log"
+    cp /tmp/fwinstall.log "${log}" 2>/dev/null && chmod 0644 "${log}" 2>/dev/null
+
+    # drop all but the newest five, oldest sequence number first
+    n=$(list_install_logs "${dir}" | wc -l)
+    list_install_logs "${dir}" | while read -r seq f; do
+      [[ ${n} -gt 5 ]] || break
+      rm -f "${f}"
+      n=$((n - 1))
     done
   fi
   return 0
@@ -63,7 +94,7 @@ start() {
           # firmware update failed, clean up pending update markers
           # and reboot into normal mode
           echo "ERROR!, rebooting"
-          echo "ERROR: unattended firmware update failed (rc=${FWINSTALL_RC}), rebooting into the normal system<br/>" >>/tmp/fwinstall.log
+          echo "ERROR: unattended firmware update failed (rc=${FWINSTALL_RC}), rebooting<br/>" >>/tmp/fwinstall.log
         else
           # firmware update succeeded, lets reboot!
           echo "OK, rebooting"
@@ -129,7 +160,7 @@ start() {
       # firmware update failed, clean up pending update markers
       # and reboot into normal mode
       echo "ERROR!, rebooting"
-      echo "ERROR: unattended firmware update failed (rc=${FWINSTALL_RC}), rebooting into the normal system<br/>" >>/tmp/fwinstall.log
+      echo "ERROR: unattended firmware update failed (rc=${FWINSTALL_RC}), rebooting<br/>" >>/tmp/fwinstall.log
     else
       # firmware update succeeded, lets reboot!
       echo "OK, rebooting"
