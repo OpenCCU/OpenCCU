@@ -53,9 +53,9 @@ if { [file exists $file] == 1 } {
         if { [info exists sw_info(Version) ] } {
           if {1 != $first} then { append result "," } else { set first 0 }
           append result "\{\"name\":"
-          append result "\"$sw_info(Name)\","
+          append result "[json_toString $sw_info(Name)],"
           append result "\"localversion\":"
-          append result "\"$sw_info(Version)\""
+          append result "[json_toString $sw_info(Version)]"
           append result "\}"
         }
       }
