@@ -6,13 +6,27 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/utils/utils.sh"
 
-function resolve_stable_rpi_eeprom_firmware() {
-  local archive_file=${1}
+# Resolve the real directory behind the "stable" symlink of a SoC, e.g.
+# firmware-2711/latest. The package downloads single files from
+# raw.githubusercontent.com, which does not resolve symlinks.
+function resolve_stable_rpi_eeprom_dir() {
+  local source_dir=${1}
   local firmware_dir=${2}
-  local firmware_name
 
-  firmware_name=$(tar -tf "${archive_file}" | sed -nE "s#^.*/${firmware_dir}/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" | sort -V | tail -n1)
-  echo "${firmware_name}"
+  realpath --relative-to="${source_dir}" "${source_dir}/${firmware_dir}/stable"
+}
+
+# Find the newest image matching a pattern (e.g. pieeprom-*.bin) in a directory.
+function resolve_latest_rpi_eeprom_image() {
+  local source_dir=${1}
+  local image_dir=${2}
+  local pattern=${3}
+
+  find "${source_dir}/${image_dir}" -maxdepth 1 -type f -name "${pattern}" -printf '%f\n' | sort -V | tail -n1
+}
+
+function rpi_eeprom_file_hash() {
+  sha256sum "${1}" | awk '{ print $1 }'
 }
 
 # Build a human readable version label from the release dates of the changed
@@ -74,31 +88,61 @@ fi
 PACKAGE_NAME="rpi-eeprom"
 PROJECT_URL="https://github.com/raspberrypi/rpi-eeprom"
 ARCHIVE_URL="${PROJECT_URL}/archive/${ID}/${PACKAGE_NAME}-${ID}.tar.gz"
-CURRENT_ID=$(sed -nE 's/^RPI_EEPROM_VERSION = (.*)$/\1/p' "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+PACKAGE_DIR="buildroot-external/package/${PACKAGE_NAME}"
+PACKAGE_MK="${PACKAGE_DIR}/${PACKAGE_NAME}.mk"
+CURRENT_ID=$(sed -nE 's/^RPI_EEPROM_VERSION = (.*)$/\1/p' "${PACKAGE_MK}" | head -n1)
 BR_PACKAGE_NAME=${PACKAGE_NAME^^}
 BR_PACKAGE_NAME=${BR_PACKAGE_NAME//-/_}
-CURRENT_RPI4_FIRMWARE_PATH=$(sed -nE "s#^[[:space:]]*${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
-CURRENT_RPI5_FIRMWARE_PATH=$(sed -nE "s#^[[:space:]]*${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\2#p" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk" | head -n1)
+CURRENT_RPI4_FIRMWARE_PATH=$(sed -nE "s#^[[:space:]]*${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/[^/]+/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\1#p" "${PACKAGE_MK}" | head -n1)
+CURRENT_RPI5_FIRMWARE_PATH=$(sed -nE "s#^[[:space:]]*${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/[^/]+/(pieeprom-[0-9]{4}-[0-9]{2}-[0-9]{2}\\.bin)\$#\\1#p" "${PACKAGE_MK}" | head -n1)
 
 if [[ -z "${1}" ]]; then
   exit_if_version_unchanged "${CURRENT_ID}" "${ID}" "${PACKAGE_NAME}"
 fi
 
-ARCHIVE_TMP=$(mktemp)
-trap 'rm -f "${ARCHIVE_TMP}"' EXIT
+# The package only downloads single files, but the whole archive is needed
+# here to resolve the stable firmware images of the new revision.
+WORK_DIR=$(mktemp -d)
+trap 'rm -rf "${WORK_DIR}"' EXIT
+ARCHIVE_TMP="${WORK_DIR}/${PACKAGE_NAME}.tar.gz"
+SOURCE_DIR="${WORK_DIR}/src"
 
 if ! wget -nd -t 3 -O "${ARCHIVE_TMP}" "${ARCHIVE_URL}"; then
   echo "Failed to download archive for ${PACKAGE_NAME}" >&2
   exit 1
 fi
+mkdir -p "${SOURCE_DIR}"
+tar -xzf "${ARCHIVE_TMP}" -C "${SOURCE_DIR}" --strip-components=1
+
+RPI4_DIR=$(resolve_stable_rpi_eeprom_dir "${SOURCE_DIR}" "firmware-2711")
+RPI5_DIR=$(resolve_stable_rpi_eeprom_dir "${SOURCE_DIR}" "firmware-2712")
 
 if [[ -z "${RPI4_FIRMWARE_PATH}" ]]; then
-  RPI4_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2711")
+  RPI4_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_image "${SOURCE_DIR}" "${RPI4_DIR}" "pieeprom-*.bin")
 fi
 
 if [[ -z "${RPI5_FIRMWARE_PATH}" ]]; then
-  RPI5_FIRMWARE_PATH=$(resolve_stable_rpi_eeprom_firmware "${ARCHIVE_TMP}" "firmware-2712")
+  RPI5_FIRMWARE_PATH=$(resolve_latest_rpi_eeprom_image "${SOURCE_DIR}" "${RPI5_DIR}" "pieeprom-*.bin")
 fi
+
+RPI4_VL805_PATH=$(resolve_latest_rpi_eeprom_image "${SOURCE_DIR}" "${RPI4_DIR}" "vl805-*.bin")
+
+if [[ -z "${RPI4_FIRMWARE_PATH}" || -z "${RPI5_FIRMWARE_PATH}" || -z "${RPI4_VL805_PATH}" ]]; then
+  echo "Failed to resolve the firmware images in archive for ${PACKAGE_NAME}" >&2
+  exit 1
+fi
+
+for file in \
+  "${RPI4_DIR}/${RPI4_FIRMWARE_PATH}" \
+  "${RPI4_DIR}/recovery.bin" \
+  "${RPI4_DIR}/${RPI4_VL805_PATH}" \
+  "${RPI5_DIR}/${RPI5_FIRMWARE_PATH}" \
+  "${RPI5_DIR}/recovery.bin"; do
+  if [[ ! -f "${SOURCE_DIR}/${file}" ]]; then
+    echo "Failed to find ${file} in archive for ${PACKAGE_NAME}" >&2
+    exit 1
+  fi
+done
 
 if [[ -n "${CURRENT_RPI4_FIRMWARE_PATH}" && -n "${CURRENT_RPI5_FIRMWARE_PATH}" \
   && "${RPI4_FIRMWARE_PATH}" == "${CURRENT_RPI4_FIRMWARE_PATH}" \
@@ -107,33 +151,39 @@ if [[ -n "${CURRENT_RPI4_FIRMWARE_PATH}" && -n "${CURRENT_RPI5_FIRMWARE_PATH}" \
   exit 0
 fi
 
-ARCHIVE_HASH=$(sha256sum "${ARCHIVE_TMP}" | awk '{ print $1 }')
-if [[ -n "${ARCHIVE_HASH}" ]]; then
-  # update package info
-  sed -i "s/${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  if [[ -n "${RPI4_FIRMWARE_PATH}" ]]; then
-    sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/stable/${RPI4_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  else
-    echo "No firmware image found in archive for firmware-2711, keeping existing firmware path unchanged"
-  fi
-  if [[ -n "${RPI5_FIRMWARE_PATH}" ]]; then
-    sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/(stable|latest)/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/stable/${RPI5_FIRMWARE_PATH}#g" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.mk"
-  else
-    echo "No firmware image found in archive for firmware-2712, keeping existing firmware path unchanged"
-  fi
-  # update package hash
-  sed -i "$ d" "buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
-  echo "sha256  ${ARCHIVE_HASH}  ${PACKAGE_NAME}-${ID}.tar.gz" >>"buildroot-external/package/${PACKAGE_NAME}/${PACKAGE_NAME}.hash"
+# update package info
+sed -i "s/^${BR_PACKAGE_NAME}_VERSION = .*/${BR_PACKAGE_NAME}_VERSION = ${ID}/g" "${PACKAGE_MK}"
+sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2711/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = ${RPI4_DIR}/${RPI4_FIRMWARE_PATH}#g" "${PACKAGE_MK}"
+sed -Ei "s#${BR_PACKAGE_NAME}_RECOVERY_PATH = firmware-2711/.*#${BR_PACKAGE_NAME}_RECOVERY_PATH = ${RPI4_DIR}/recovery.bin#g" "${PACKAGE_MK}"
+sed -Ei "s#${BR_PACKAGE_NAME}_VL805_PATH = firmware-2711/.*#${BR_PACKAGE_NAME}_VL805_PATH = ${RPI4_DIR}/${RPI4_VL805_PATH}#g" "${PACKAGE_MK}"
+sed -Ei "s#${BR_PACKAGE_NAME}_FIRMWARE_PATH = firmware-2712/.*#${BR_PACKAGE_NAME}_FIRMWARE_PATH = ${RPI5_DIR}/${RPI5_FIRMWARE_PATH}#g" "${PACKAGE_MK}"
+sed -Ei "s#${BR_PACKAGE_NAME}_RECOVERY_PATH = firmware-2712/.*#${BR_PACKAGE_NAME}_RECOVERY_PATH = ${RPI5_DIR}/recovery.bin#g" "${PACKAGE_MK}"
 
-  # report firmware versions to the dependency update workflow
-  report_update_version_label "$(rpi_eeprom_version_label "${RPI4_FIRMWARE_PATH}" "${RPI5_FIRMWARE_PATH}" "${CURRENT_RPI4_FIRMWARE_PATH}" "${CURRENT_RPI5_FIRMWARE_PATH}")"
-  report_update_details "$(cat <<EOF
+# update package hashes: one file for the common files and one per SoC,
+# because the firmware images of both SoCs share their file names
+cat >"${PACKAGE_DIR}/${PACKAGE_NAME}.hash" <<EOF
+# Locally computed
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/LICENSE")  LICENSE
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/rpi-eeprom-config")  rpi-eeprom-config
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/rpi-eeprom-digest")  rpi-eeprom-digest
+EOF
+cat >"${PACKAGE_DIR}/${PACKAGE_NAME}-2711.hash" <<EOF
+# Locally computed
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/${RPI4_DIR}/${RPI4_FIRMWARE_PATH}")  ${RPI4_FIRMWARE_PATH}
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/${RPI4_DIR}/recovery.bin")  recovery.bin
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/${RPI4_DIR}/${RPI4_VL805_PATH}")  ${RPI4_VL805_PATH}
+EOF
+cat >"${PACKAGE_DIR}/${PACKAGE_NAME}-2712.hash" <<EOF
+# Locally computed
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/${RPI5_DIR}/${RPI5_FIRMWARE_PATH}")  ${RPI5_FIRMWARE_PATH}
+sha256  $(rpi_eeprom_file_hash "${SOURCE_DIR}/${RPI5_DIR}/recovery.bin")  recovery.bin
+EOF
+
+# report firmware versions to the dependency update workflow
+report_update_version_label "$(rpi_eeprom_version_label "${RPI4_FIRMWARE_PATH}" "${RPI5_FIRMWARE_PATH}" "${CURRENT_RPI4_FIRMWARE_PATH}" "${CURRENT_RPI5_FIRMWARE_PATH}")"
+report_update_details "$(cat <<EOF
 - Changes........: ${PROJECT_URL}/compare/${CURRENT_ID:0:7}...${ID:0:7}
-- RPi4 pieeprom..: \`${CURRENT_RPI4_FIRMWARE_PATH:-n/a}\` → \`${RPI4_FIRMWARE_PATH:-${CURRENT_RPI4_FIRMWARE_PATH:-n/a}}\`
-- RPi5 pieeprom..: \`${CURRENT_RPI5_FIRMWARE_PATH:-n/a}\` → \`${RPI5_FIRMWARE_PATH:-${CURRENT_RPI5_FIRMWARE_PATH:-n/a}}\`
+- RPi4 pieeprom..: \`${CURRENT_RPI4_FIRMWARE_PATH:-n/a}\` → \`${RPI4_FIRMWARE_PATH}\`
+- RPi5 pieeprom..: \`${CURRENT_RPI5_FIRMWARE_PATH:-n/a}\` → \`${RPI5_FIRMWARE_PATH}\`
 EOF
 )"
-else
-  echo "Failed to retrieve archive hash for ${PACKAGE_NAME}" >&2
-  exit 1
-fi

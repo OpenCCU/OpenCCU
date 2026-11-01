@@ -89,11 +89,13 @@ fi
 
 REPO_ROOT=$(pwd -P)
 mkdir -p "${REPO_ROOT}/build-rpi3/build"
+# Buildroot archives the checked-out working tree, so a local core.autocrlf
+# setting would change the archive and the hashes taken from it.
 (
   cd "${BUILDROOT_TOPDIR}"
   BUILD_DIR="${REPO_ROOT}/build-rpi3/build" \
   BR_NO_CHECK_HASH_FOR="${ARCHIVE_FILE}" \
-  GIT=git \
+  GIT="git -c core.autocrlf=false" \
   TAR=tar \
   ./support/download/dl-wrapper \
     -q \
@@ -108,13 +110,20 @@ mkdir -p "${REPO_ROOT}/build-rpi3/build"
     -u "git+${PACKAGE_SITE}"
 )
 
-ARCHIVE_HASH=$(sha256sum "${ARCHIVE_PATH}" | awk '{ print $1 }')
-LICENSES_MD_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/licenses.md" | awk '{ print $1 }')
-HMSL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/HMSL2.txt" | awk '{ print $1 }')
-GPL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/gpl-2.0.txt" | awk '{ print $1 }')
-LGPL21_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/lgpl-2.1.txt" | awk '{ print $1 }')
+# Hash the files from the selected archive: if it was already downloaded, the
+# download wrapper returns early and the git cache can hold another revision.
+function archive_file_hash() {
+  tar -xzOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}-${ID}/${1}" | sha256sum | awk '{ print $1 }'
+}
 
-if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" ]]; then
+ARCHIVE_HASH=$(sha256sum "${ARCHIVE_PATH}" | awk '{ print $1 }')
+LICENSES_MD_HASH=$(archive_file_hash licenses/licenses.md)
+HMSL2_HASH=$(archive_file_hash licenses/HMSL2.txt)
+GPL2_HASH=$(archive_file_hash licenses/gpl-2.0.txt)
+LGPL21_HASH=$(archive_file_hash licenses/lgpl-2.1.txt)
+EQ3_CHAR_LOOP_HASH=$(archive_file_hash src/eq3_char_loop/eq3_char_loop.c)
+
+if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" || -z "${EQ3_CHAR_LOOP_HASH}" ]]; then
   echo "Failed to retrieve one or more hashes for ${PACKAGE_NAME}" >&2
   exit 1
 fi
@@ -126,6 +135,14 @@ sha256  ${HMSL2_HASH}  licenses/HMSL2.txt
 sha256  ${GPL2_HASH}  licenses/gpl-2.0.txt
 sha256  ${LGPL21_HASH}  licenses/lgpl-2.1.txt
 sha256  ${ARCHIVE_HASH}  ${ARCHIVE_FILE}
+EOF
+
+# eq3_char_loop follows the OpenCCU-Base revision, but only downloads its
+# driver source and license as single files
+cat >"buildroot-external/package/eq3_char_loop/eq3_char_loop.hash" <<EOF
+# Locally computed
+sha256  ${EQ3_CHAR_LOOP_HASH}  eq3_char_loop.c
+sha256  ${GPL2_HASH}  gpl-2.0.txt
 EOF
 
 # report upstream version to the dependency update workflow. As OpenCCU-Base
