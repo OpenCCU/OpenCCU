@@ -135,7 +135,7 @@
       "sha256": "53270281443b5c8300f5a3d9bb7bd0c8d95764ff0e703254ec7ac00d1fa092bc"
     },
     {
-      "added": 257,
+      "added": 270,
       "files": [
         "www/api/methods.conf",
         "www/api/methods/interface/getdutycycle.tcl",
@@ -146,7 +146,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 99,
-      "sha256": "dd579e7cfa92319b01cc6536b0b2c3d2e62224c6fc95e58f0e2c2083f62fd67d"
+      "sha256": "649bddebda91703ce38db12ae6814a33efe6c845081efd7726febb4da7c7d86a"
     },
     {
       "added": 357,

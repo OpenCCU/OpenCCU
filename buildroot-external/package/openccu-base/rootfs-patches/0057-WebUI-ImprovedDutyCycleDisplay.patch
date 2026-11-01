@@ -16,7 +16,7 @@
    SCRIPT_FILE interface/dispatch.tcl
 --- /dev/null
 +++ b/www/api/methods/interface/getdutycycle.tcl
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,27 @@
 +##
 +# Interface.getDutyCycle
 +# Gibt ein JSON array mit den DutyCycle Werten aller interfaces zurueck.
@@ -24,12 +24,15 @@
 +# Parameter: 
 +#   keine
 +#
-+# Rückgabewert: [array]
++# Rückgabewert: [array], null ohne /tmp/dutycycle.json
 +#   Jedes Element ist ein Objekt mit den folgenden Elementen:
-+#   sysvar:      [string]  Name der Systemvariable
-+#   address:     [string]  Seriennummer
-+#   dutyCycle:   [integer] Duty Cycle (0 - 100)
-+#   type:        [string]  Typ ("CCU2") des interfaces
++#   address:      [string] Seriennummer
++#   name:         [string] Name des Gateways ("CCU" für die CCU)
++#   sysVar:       [string] Name der Systemvariable
++#   dutyCycle:    [string] Duty Cycle (0 - 100, -1 wenn nicht verbunden)
++#   carrierSense: [string] Carrier Sense (0 - 100, -1 wenn nicht verfügbar)
++#   type:         [string] Typ des interfaces ("CCU2", "HMIP-HAP" oder
++#                          der Typ des LAN-Gateways)
 +##
 +
 +set result ""
@@ -301,7 +304,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35987,74 +35983,101 @@
+@@ -35987,74 +35983,111 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
@@ -433,7 +436,7 @@
              } else {
 -              trDutyCycle.css("visibility", "hidden");
 +              carrierSenseValElm.text("n/a");
-+              carrierSenseBar.css("width", "0%");
++              carrierSenseBar.css("width", "0%").removeAttr("aria-valuenow");
              }
 +            trPartingLineElm.show();
 +            showPartingLine = true;
@@ -450,6 +453,16 @@
 +            trPartingLineElm.hide();
            }
          });
++
++        // hide the rows of interfaces that are missing in this response
++        jQuery("[name^='trDutyCycle']").each(function() {
++          if (parseInt(jQuery(this).attr("name").substr(11), 10) >= dcArray.length) {
++            jQuery(this).css("display", "none");
++          }
++        });
++        if (!showPartingLine) {
++          jQuery("#partingLine1").hide();
++        }
        }
 -      showDutyCycleHmIP();
      });
