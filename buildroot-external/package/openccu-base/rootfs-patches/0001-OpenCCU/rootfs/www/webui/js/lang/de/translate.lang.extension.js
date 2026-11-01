@@ -9,6 +9,8 @@ jQuery.extend(true,langJSON, {
     "ruleConditionLblIsEqual" : "gleich ",
     "ruleDescrHexString" : "Parameterzeichenkette",
     "btnChoice" : "Auswahl",
+    "addonUpdate" : "Zusatzsoftware-Updates:",
+    "lblNewAddonUpdatesAvailable" : "Neue Zusatzsoftware verf%FCgbar",
     "btnAutoDetect" : "Automatisch ermitteln",
     "btnSelectRoomOrFunctionNew" : "Neu...",
     "btnSelectRoomOrFunctionClose" : "Schlie%DFen",

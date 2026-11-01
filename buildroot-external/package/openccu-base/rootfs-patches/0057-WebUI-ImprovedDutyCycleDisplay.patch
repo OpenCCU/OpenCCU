@@ -43,7 +43,7 @@
 +jsonrpc_response "$result"
 --- a/www/rega/pages/tabs/startpage.htm
 +++ b/www/rega/pages/tabs/startpage.htm
-@@ -232,22 +232,134 @@
+@@ -238,22 +238,134 @@
                }
               %>
  
@@ -192,7 +192,7 @@
              </tr>
  
            </table>
-@@ -287,14 +399,7 @@
+@@ -294,14 +406,7 @@
        } else {
          WEBUI_VERSION = "0.0.0";
        }
@@ -301,7 +301,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35858,74 +35854,101 @@
+@@ -35897,74 +35893,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},

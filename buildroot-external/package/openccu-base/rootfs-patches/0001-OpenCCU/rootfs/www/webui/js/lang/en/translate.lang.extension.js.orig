@@ -9,6 +9,8 @@ jQuery.extend(true, langJSON, {
     "ruleConditionLblIsEqual" : "equal to ",
     "ruleDescrHexString" : "parameter string",
     "btnChoice": "Selection",
+    "addonUpdate" : "Addon-Updates:",
+    "lblNewAddonUpdatesAvailable" : "New addons available",
     "btnAutoDetect": "Auto discover",
     "btnSelectRoomOrFunctionNew": "New...",
     "btnSelectRoomOrFunctionClose": "Close",

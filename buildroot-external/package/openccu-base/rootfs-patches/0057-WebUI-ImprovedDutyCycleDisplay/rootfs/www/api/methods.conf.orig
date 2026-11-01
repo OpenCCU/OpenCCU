@@ -1040,6 +1040,13 @@ CCU.getHmIPAddress {
   ARGUMENTS {_session_id_}
 }
 
+CCU.getAddonVersions {
+  LEVEL ADMIN
+  SCRIPT_FILE ccu/getaddonversions.tcl
+  INFO {Liefert die Firmware-Version der Zusatzsoftware}
+  ARGUMENTS {_session_id_}
+}
+
 CCU.getVersion {
   LEVEL ADMIN
   SCRIPT_FILE ccu/getversion.tcl

@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "deb4379c6b1e8320765a8454bb2d39ecc2727f4268ee1466eafc62fca0c10c12"
+      "sha256": "e15ee9e073ba7f85ee6c3de2646e99544483d7a8832e283639989262abaa790e"
     },
     {
       "added": 370,
@@ -109,7 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "84175dcd291a58cc3b49b889727f9955e7073f92afd1d3d0e8db567acd6ccb2c"
+      "sha256": "ab875eda81ad8f1d2020556d851eb05120e3a0ad8087467610605d9b65fbe809"
     },
     {
       "added": 305,
@@ -121,7 +121,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "02d2786cafae85e7f5e09ff6d9a8a68810904e3ff49e014dc2dc906aeb167cd5"
+      "sha256": "744bc8f8525a7f3a064d66e162352685438ad735ed8f3b2c03ba1c58b380d466"
     },
     {
       "added": 757,
@@ -132,7 +132,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "19943bcfdbc9f9170724a3f58a95bcffdd4f5bd325733c3dbb63aa2f4238342a"
+      "sha256": "48cb54b941679ad4b78710a57e6cb066b4b7fa58f4899accf767107ba7b97ce7"
     },
     {
       "added": 257,
@@ -146,7 +146,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 99,
-      "sha256": "25e65470460520c97b868c049499b04abb8fa1861258ab7f30895103a8f73172"
+      "sha256": "2be458df5fa6d29583562b2febae4252f6abecb59d0daa1638724657e5cdd186"
     },
     {
       "added": 357,
@@ -179,7 +179,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 79,
-      "sha256": "720b71468a7d932d9762d614489b5cece57ee69c21736fd9e14f0f54fbe4a1bf"
+      "sha256": "5d75b806eed59b1a045460ac751a0a79252f2ffcabc6fe805c585888665dffdf"
     },
     {
       "added": 439,
@@ -196,21 +196,7 @@
       ],
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
-      "sha256": "091001fabf1300642b0f36af177197ee58dff8c639706050f34ea29ba06244d1"
-    },
-    {
-      "added": 112,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/ccu/getaddonversions.tcl",
-        "www/rega/pages/tabs/startpage.htm",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
-      "removed": 0,
-      "sha256": "46c8cea39326eec823fbe8f958a1ea1193f3d1374be6c6545a3118a2aca9c7b3"
+      "sha256": "5b876588e5f4852991f8bfaadf9b1da5fb14928b0496b074b14e0c44a396e677"
     },
     {
       "added": 10,
@@ -298,5 +284,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "84a621a5d1b1c1c7b4e1868aebaad54212fc420293781e8fe79d2c432a9b459d"
+  "series_sha256": "af04cefd738e4c7046e43022fd211ade5e7e1b73752ec02ae9e40d1893e773ca"
 }

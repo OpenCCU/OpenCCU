@@ -75,7 +75,7 @@
      
 --- a/www/api/methods.conf
 +++ b/www/api/methods.conf
-@@ -1100,6 +1100,20 @@
+@@ -1107,6 +1107,20 @@
    ARGUMENTS {_session_id_}
  }
  
@@ -554,7 +554,7 @@
          }
        }
      } else {
-@@ -26100,6 +26105,10 @@
+@@ -26139,6 +26144,10 @@
    
    this.leave = function()
    {
@@ -565,7 +565,7 @@
    };
  
    this.resize = function()
-@@ -32504,7 +32513,12 @@
+@@ -32543,7 +32552,12 @@
          this.setWidth(800);
          this.setFile( "/pages/msg/autoLoginConfig.htm" );
          break;
@@ -579,7 +579,7 @@
          this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
          this.addToPostBody( 'string type = "'+this.type+'";' );
          this.setWidth(800);
-@@ -33331,6 +33345,7 @@
+@@ -33370,6 +33384,7 @@
  ID_SET_OUCFM_MODE        = 1023;
  ID_SET_STATUS_DISPLAY    = 1024;
  ID_BIDCOS_INTERFACE = 1025;
