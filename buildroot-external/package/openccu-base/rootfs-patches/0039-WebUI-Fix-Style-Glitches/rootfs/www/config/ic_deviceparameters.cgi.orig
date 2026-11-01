@@ -483,10 +483,12 @@ proc put_orig_channel_parameter {address ch} {
       set value [format $fvalue $ch_ps($param)]
       set value_tmp $value
       set factor 1
+      set convInt2Float false
   
       if {$unit == "100\%"} {
         set unit "\%"
         set factor 0.01
+        set convInt2Float true
         set f "%.0f"
 
         set min [format $f [expr $min * 100]]
@@ -497,7 +499,7 @@ proc put_orig_channel_parameter {address ch} {
       set PROFILE_PNAME(DESCRIPTION) $param
       if {$param_descr(TYPE) != "ENUM" && $showOption == 0} {
         append s1 "<tr><td><span class=\"stringtable_value\">$dev_descr_sender(TYPE)|$PROFILE_PNAME(DESCRIPTION)</span></td>"
-        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', $min, $max, $factor, event)\"></td>"
+        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, $convInt2Float, event)\"></td>"
         append s1 "<td>$unit&nbsp;($min-$max)</td>"
         append s1 "<td><input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\"></td>"
       } elseif {$showOption == 1} { 
@@ -531,7 +533,7 @@ proc put_orig_channel_parameter {address ch} {
             append s1 "<option>\${stringTableEnterValue}</option>"
           append s1 "</select>"
           
-          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', $min, $max, $factor, event)\">"
+          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, $convInt2Float, event)\">"
           append s1 "<td>$unit&nbsp;($min-$max)</td>"
           append s1 "<input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\">"
           append s1 "</td>"

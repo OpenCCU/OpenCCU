@@ -237,7 +237,7 @@
 +}
 --- a/www/config/ic_deviceparameters.cgi
 +++ b/www/config/ic_deviceparameters.cgi
-@@ -867,9 +867,9 @@
+@@ -869,9 +869,9 @@
    puts "<table id=\"id_channel_parameters_table\" class=\"parameters_table\" cellspacing=\"0\">"
    
    puts "<colgroup>"
@@ -250,7 +250,7 @@
    puts "</colgroup>"
  
    puts "<THEAD>"
-@@ -1424,25 +1424,25 @@
+@@ -1426,25 +1426,25 @@
  
    puts "<colgroup>"
    #Name

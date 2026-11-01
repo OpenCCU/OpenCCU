@@ -109,7 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "cbed4d72c8cec41fa629edcd2185574642f92a77de55dbc47bf28762d8f38d3b"
+      "sha256": "3249aee94e6498aba58e434e92655654f56ddf0bcbb5ccf1659a5c6ce0fe8b1c"
     },
     {
       "added": 305,
@@ -197,29 +197,6 @@
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
       "sha256": "091001fabf1300642b0f36af177197ee58dff8c639706050f34ea29ba06244d1"
-    },
-    {
-      "added": 213,
-      "files": [
-        "www/config/easymodes/cc_rt_dev_master.tcl",
-        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl",
-        "www/config/easymodes/etc/profile_cond_x_ch_master.tcl",
-        "www/config/easymodes/etc/uiElements.tcl",
-        "www/config/easymodes/hm-cc-vg-1_master.tcl",
-        "www/config/easymodes/powermeter_iec_ch1_master.tcl",
-        "www/config/easymodes/powermeter_iec_ch2_master.tcl",
-        "www/config/easymodes/powermeter_igl_ch_master.tcl",
-        "www/config/easymodes/powermeter_v2_iec_ch1_master.tcl",
-        "www/config/easymodes/powermeter_v2_iec_ch2_master.tcl",
-        "www/config/easymodes/tc_it_dev_master.tcl",
-        "www/config/easymodes/wa_od_ch_master.tcl",
-        "www/config/ic_common.tcl",
-        "www/config/ic_deviceparameters.cgi",
-        "www/webui/webui.js"
-      ],
-      "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
-      "removed": 74,
-      "sha256": "a6d4ae0511ccf6280a42d8adb934de13c96b47dc7ebf810a0240d50ba6946e15"
     },
     {
       "added": 123,
@@ -321,5 +298,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "36e70c0336224ec82598162a48aef9a120dfdd1682ced4166ce52317396a8407"
+  "series_sha256": "84a621a5d1b1c1c7b4e1868aebaad54212fc420293781e8fe79d2c432a9b459d"
 }
