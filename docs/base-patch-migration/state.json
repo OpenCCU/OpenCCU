@@ -880,7 +880,7 @@
   "in_progress": {
     "base_merge_commit": "01e400772731935043a472057fe7709f8dd5d5d2",
     "base_pr": 292,
-    "cleanup_pr": null,
+    "cleanup_pr": 4628,
     "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
