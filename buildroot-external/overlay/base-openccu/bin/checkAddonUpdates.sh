@@ -10,7 +10,8 @@ if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
   # CCU.getAddonVersions never reads a partially written list
   tmpfile=$(mktemp "${jsonfile}.XXXXXX") || exit 1
   chmod 644 "${tmpfile}"
-  echo "[" > "${tmpfile}"
+  failed=0
+  echo "[" > "${tmpfile}" || failed=1
   first=1
   for filename in /etc/config/rc.d/*; do
     if [[ -f ${filename} ]]; then
@@ -23,9 +24,9 @@ if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
         if [[ ${first} -eq 1 ]]; then
           first=0
         else
-          echo "," >> "${tmpfile}"
+          echo "," >> "${tmpfile}" || failed=1
         fi
-        echo "{\"name\":\"${DNAME}\",\"webversion\":\"${WEBRESULT}\"}" >> "${tmpfile}"
+        echo "{\"name\":\"${DNAME}\",\"webversion\":\"${WEBRESULT}\"}" >> "${tmpfile}" || failed=1
         if [[ -n "${WEBRESULT}" ]] && [[ "${WEBRESULT}" != "n/a" ]] &&
            [[ "${DVERSION}" != "${WEBRESULT}" ]]; then
           echo "Update available for ${DNAME} (${DVERSION} / ${WEBRESULT})"
@@ -33,8 +34,12 @@ if [[ -n "$(ls -A /etc/config/rc.d)" ]]; then
       fi
     fi
   done
-  echo "]" >> "${tmpfile}"
-  mv -f "${tmpfile}" "${jsonfile}"
+  echo "]" >> "${tmpfile}" || failed=1
+  # keep the previous list if the new one could not be written completely
+  if [[ ${failed} -ne 0 ]] || ! mv -f "${tmpfile}" "${jsonfile}"; then
+    rm -f "${tmpfile}"
+    exit 1
+  fi
 else
   [[ -f ${jsonfile} ]] && rm -f ${jsonfile}
 fi
