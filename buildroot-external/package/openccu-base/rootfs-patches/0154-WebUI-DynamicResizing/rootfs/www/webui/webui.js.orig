@@ -36088,7 +36088,7 @@ showDutyCycle = function() {
               }
             } else {
               carrierSenseValElm.text("n/a");
-              carrierSenseBar.css("width", "0%");
+              carrierSenseBar.css("width", "0%").removeAttr("aria-valuenow");
             }
             trPartingLineElm.show();
             showPartingLine = true;

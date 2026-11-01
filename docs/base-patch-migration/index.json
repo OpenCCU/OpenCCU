@@ -146,7 +146,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 99,
-      "sha256": "282b7526409aebcb3b2d1f4fe8a4c62b0904c90ae268270b671195599e9544e8"
+      "sha256": "649bddebda91703ce38db12ae6814a33efe6c845081efd7726febb4da7c7d86a"
     },
     {
       "added": 357,
