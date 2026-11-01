@@ -113,8 +113,9 @@ LICENSES_MD_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/licenses.md" | awk '{
 HMSL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/HMSL2.txt" | awk '{ print $1 }')
 GPL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/gpl-2.0.txt" | awk '{ print $1 }')
 LGPL21_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/lgpl-2.1.txt" | awk '{ print $1 }')
+EQ3_CHAR_LOOP_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/src/eq3_char_loop/eq3_char_loop.c" | awk '{ print $1 }')
 
-if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" ]]; then
+if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" || -z "${EQ3_CHAR_LOOP_HASH}" ]]; then
   echo "Failed to retrieve one or more hashes for ${PACKAGE_NAME}" >&2
   exit 1
 fi
@@ -126,6 +127,14 @@ sha256  ${HMSL2_HASH}  licenses/HMSL2.txt
 sha256  ${GPL2_HASH}  licenses/gpl-2.0.txt
 sha256  ${LGPL21_HASH}  licenses/lgpl-2.1.txt
 sha256  ${ARCHIVE_HASH}  ${ARCHIVE_FILE}
+EOF
+
+# eq3_char_loop follows the OpenCCU-Base revision, but only downloads its
+# driver source and license as single files
+cat >"buildroot-external/package/eq3_char_loop/eq3_char_loop.hash" <<EOF
+# Locally computed
+sha256  ${EQ3_CHAR_LOOP_HASH}  eq3_char_loop.c
+sha256  ${GPL2_HASH}  gpl-2.0.txt
 EOF
 
 # report upstream version to the dependency update workflow. As OpenCCU-Base

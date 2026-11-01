@@ -19,6 +19,10 @@ import tempfile
 
 
 PACKAGE = Path('buildroot-external/package/openccu-base')
+# eq3_char_loop follows the Base pin, but downloads its driver source as a
+# single file, so its hash has to be updated together with the pin.
+EQ3_CHAR_LOOP_HASH = Path('buildroot-external/package/eq3_char_loop/eq3_char_loop.hash')
+EQ3_CHAR_LOOP_SOURCE = Path('src/eq3_char_loop/eq3_char_loop.c')
 INDEX = Path('docs/base-patch-migration/index.json')
 STATE = Path('docs/base-patch-migration/state.json')
 SHA = re.compile(r'[0-9a-f]{40}')
@@ -485,6 +489,11 @@ def cleanup(repo, args):
         for name, value in hashes(repo).items():
             if name.startswith('licenses/'):
                 require(digest(source / name) == value, f'license hash changed: {name}')
+        eq3_hash = None
+        if (repo / EQ3_CHAR_LOOP_HASH).is_file():
+            require((source / EQ3_CHAR_LOOP_SOURCE).is_file(),
+                    f'missing in archive: {EQ3_CHAR_LOOP_SOURCE}')
+            eq3_hash = digest(source / EQ3_CHAR_LOOP_SOURCE)
     directory, names = series(repo)
     workspace = directory / selected['patch'][:-6]
     require(workspace.is_dir() and not workspace.is_symlink(), 'missing or unsafe workspace')
@@ -509,8 +518,18 @@ def cleanup(repo, args):
                         for s in hashfile.read_text().splitlines()) + '\n'
     updated_mk = mk.read_text().replace(
         'OPENCCU_BASE_VERSION = ' + old, 'OPENCCU_BASE_VERSION = ' + new)
+    eq3_lines = None
+    if eq3_hash:
+        eq3_lines = (repo / EQ3_CHAR_LOOP_HASH).read_text().splitlines()
+        require(sum(s.split()[-1:] == [EQ3_CHAR_LOOP_SOURCE.name] for s in eq3_lines) == 1,
+                'eq3_char_loop source hash missing')
     mk.write_text(updated_mk)
     hashfile.write_text(newhash)
+    if eq3_lines is not None:
+        (repo / EQ3_CHAR_LOOP_HASH).write_text('\n'.join(
+            f'sha256  {eq3_hash}  {EQ3_CHAR_LOOP_SOURCE.name}'
+            if s.split()[-1:] == [EQ3_CHAR_LOOP_SOURCE.name] else s
+            for s in eq3_lines) + '\n')
     (directory / 'series').write_text('\n'.join(
         line for line in (directory / 'series').read_text().splitlines()
         if line != selected['patch']) + '\n')

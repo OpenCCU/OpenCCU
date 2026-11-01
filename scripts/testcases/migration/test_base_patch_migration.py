@@ -207,20 +207,33 @@ class MigrationTest(unittest.TestCase):
         migration.git(repo, 'commit', '-qm', 'Test fixture')
         return migration.git(repo, 'rev-parse', 'HEAD')
 
-    def cleanup_fixture(self):
+    def cleanup_fixture(self, eq3_char_loop=False):
         base = self.root / 'base'
         base.mkdir()
         self.init_git(base)
         (base / 'licenses').mkdir()
         (base / 'licenses/test.txt').write_text('license')
         (base / 'data').write_text('old')
+        files = ['data', 'licenses/test.txt']
+        if eq3_char_loop:
+            (base / migration.EQ3_CHAR_LOOP_SOURCE).parent.mkdir(parents=True)
+            (base / migration.EQ3_CHAR_LOOP_SOURCE).write_text('old driver')
+            files.append(migration.EQ3_CHAR_LOOP_SOURCE.as_posix())
         old = self.commit(base)
         (base / 'data').write_text('new')
+        if eq3_char_loop:
+            (base / migration.EQ3_CHAR_LOOP_SOURCE).write_text('new driver')
         new = self.commit(base)
         archive = self.root / 'source.tar.gz'
         with tarfile.open(archive, 'w:gz') as tar:
-            for file in ('data', 'licenses/test.txt'):
+            for file in files:
                 tar.add(base / file, arcname=f'openccu-base-{new}/{file}')
+        if eq3_char_loop:
+            (self.repo / migration.EQ3_CHAR_LOOP_HASH).parent.mkdir(parents=True)
+            (self.repo / migration.EQ3_CHAR_LOOP_HASH).write_text(
+                '# Locally computed\n'
+                'sha256  ' + 'f' * 64 + '  eq3_char_loop.c\n'
+                'sha256  ' + 'e' * 64 + '  gpl-2.0.txt\n')
         (self.package / 'openccu-base.mk').write_text('OPENCCU_BASE_VERSION = ' + old + '\n')
         (self.package / 'openccu-base.hash').write_text(
             'sha256  ' + migration.digest(base / 'licenses/test.txt') + '  licenses/test.txt\n'
@@ -259,6 +272,16 @@ class MigrationTest(unittest.TestCase):
         self.assertEqual(migration.inventory(self.repo)['patches'], [])
         self.assertEqual(json.loads((self.repo / migration.STATE).read_text())['in_progress']['base_pr'], 40)
         self.assertEqual(migration.git(self.repo, 'log', '-1', '--format=%s'), 'Test fixture')
+
+    def test_cleanup_updates_eq3_char_loop_hash(self):
+        args, old, new = self.cleanup_fixture(eq3_char_loop=True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.run_cleanup(args)
+        source = args.base_repo / migration.EQ3_CHAR_LOOP_SOURCE
+        self.assertEqual((self.repo / migration.EQ3_CHAR_LOOP_HASH).read_text(),
+                         '# Locally computed\n'
+                         'sha256  ' + migration.digest(source) + '  eq3_char_loop.c\n'
+                         'sha256  ' + 'e' * 64 + '  gpl-2.0.txt\n')
 
     def test_cleanup_unmerged_is_nonmutating(self):
         args, old, new = self.cleanup_fixture()
