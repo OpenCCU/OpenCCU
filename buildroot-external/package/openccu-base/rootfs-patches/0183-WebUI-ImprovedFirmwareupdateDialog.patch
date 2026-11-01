@@ -34,7 +34,7 @@
 -    "dialogShowDeviceFirmwareTHDevice": "Device",
 -    "dialogShowDeviceFirmwareTHCurFw": "Current",
 -    "dialogShowDeviceFirmwareTHNewFw": "New",
-+    "dialogShowDeviceFirmwareTHDevice": "Devicetype",
++    "dialogShowDeviceFirmwareTHDevice": "Device type",
 +    "dialogShowDeviceFirmwareTHSerials": "Serial numbers",
 +    "dialogShowDeviceFirmwareTHCurFw": "Current Version",
 +    "dialogShowDeviceFirmwareTHNewFw": "Recommended Version",
@@ -47,7 +47,7 @@
        "The latest firmware version of the device is alreay installed on the  " + HMIdentifier.en.CCUShortName + ".\n"+
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -18835,6 +18835,20 @@
+@@ -18835,6 +18835,18 @@
    MessageBox.show(title, content,'', 475, 450);
  };
  
@@ -55,20 +55,18 @@
 +  var tb = document.getElementById("fwUpdates");
 +  if (tb) {
 +    var th = tb.getElementsByTagName("th")[2];
-+    if (th.style.display === "none") {
-+      th.style.display = "block";
-+      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'block')
-+    } else {
-+      th.style.display = "none";
-+      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'none')
-+    }
++    // an empty value restores the default table-cell/table-column display
++    var display = (th.style.display === "none") ? "" : "none";
++    th.style.display = display;
++    tb.getElementsByTagName("col")[2].style.display = display;
++    document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = display)
 +  }
 +};
 +
  StatusDisplayDialogAcousticEPaper = Class.create({
   
    initialize: function(title, content, value, callback, contentType) {
-@@ -25785,11 +25799,28 @@
+@@ -25785,11 +25797,28 @@
      return false;
    },*/
  
@@ -97,7 +95,7 @@
        this.newFwCounter = 0;
        this.devIndex = 0;
        if (this.devList.length == 0) {
-@@ -25899,12 +25930,23 @@
+@@ -25899,12 +25928,23 @@
          newFW = resultMajorMinor;
        }
  
@@ -123,12 +121,12 @@
          }
          self.newFwCounter++;
        }
-@@ -25913,6 +25955,40 @@
+@@ -25913,6 +25953,40 @@
      if (self.devIndex < self.devList.length) {
        self.fetchAndSetDeviceVersion();
      } else {
 +      for (const Typ of Object.keys(this.DeviceUpdateList).sort()) {
-+        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort()) {
++        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort(this.cmpVersion)) {
 +          let Obj = this.DeviceUpdateList[Typ][curFw];
 +          let curVersion = Obj.curVersion;
 +          let color = "black";
@@ -164,7 +162,7 @@
        self.fetchDeviceList = false;
        self.deleteScriptElements();
        if (self.newFwCounter > 0) {
-@@ -25939,26 +26015,41 @@
+@@ -25939,26 +26013,42 @@
    },
  
    showAvailableDeviceFirmware: function() {
@@ -208,6 +206,7 @@
 +        quoteOpen + "<div class='UILink' style='display: inline;' onclick='MessageBox.close();WebUI.enter(DeviceFirmware);'>"+translateKey('submenuDeviceFirmware')+"</div>" +
 +        " => " + translateKey('footerBtnNew') + quoteClose + "&nbsp;" +
 +        translateKey('dialogShowDeviceFirmwareDownloadInfo3') +
++      "</td></tr>" +
        //"<tr><td colspan='3' align='center'><a href='http://www.eq-3.de/downloads.html' target='_blank'>"+translateKey('dialogShowDeviceFirmwareLinkDownload')+"</a></td></tr>" +
      "</table>",
      "",

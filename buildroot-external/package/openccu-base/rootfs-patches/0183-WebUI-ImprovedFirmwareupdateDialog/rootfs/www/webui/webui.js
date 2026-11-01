@@ -18839,13 +18839,11 @@ function toggleSerialNumberDisplay() {
   var tb = document.getElementById("fwUpdates");
   if (tb) {
     var th = tb.getElementsByTagName("th")[2];
-    if (th.style.display === "none") {
-      th.style.display = "block";
-      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'block')
-    } else {
-      th.style.display = "none";
-      document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = 'none')
-    }
+    // an empty value restores the default table-cell/table-column display
+    var display = (th.style.display === "none") ? "" : "none";
+    th.style.display = display;
+    tb.getElementsByTagName("col")[2].style.display = display;
+    document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = display)
   }
 };
 
@@ -25956,7 +25954,7 @@ StartPage = Singleton.create(Page, {
       self.fetchAndSetDeviceVersion();
     } else {
       for (const Typ of Object.keys(this.DeviceUpdateList).sort()) {
-        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort()) {
+        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort(this.cmpVersion)) {
           let Obj = this.DeviceUpdateList[Typ][curFw];
           let curVersion = Obj.curVersion;
           let color = "black";
@@ -26046,6 +26044,7 @@ StartPage = Singleton.create(Page, {
         quoteOpen + "<div class='UILink' style='display: inline;' onclick='MessageBox.close();WebUI.enter(DeviceFirmware);'>"+translateKey('submenuDeviceFirmware')+"</div>" +
         " => " + translateKey('footerBtnNew') + quoteClose + "&nbsp;" +
         translateKey('dialogShowDeviceFirmwareDownloadInfo3') +
+      "</td></tr>" +
       //"<tr><td colspan='3' align='center'><a href='http://www.eq-3.de/downloads.html' target='_blank'>"+translateKey('dialogShowDeviceFirmwareLinkDownload')+"</a></td></tr>" +
     "</table>",
     "",
