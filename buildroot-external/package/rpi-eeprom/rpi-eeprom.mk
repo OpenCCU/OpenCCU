@@ -36,9 +36,10 @@ RPI_EEPROM_EXTRA_DOWNLOADS = \
 	$(RPI_EEPROM_RECOVERY_PATH) \
 	$(RPI_EEPROM_VL805_PATH)
 
-# The firmware images of both SoCs share their file names (e.g.
-# recovery.bin), so they are kept in a separate download directory per SoC.
-RPI_EEPROM_DL_SUBDIR = rpi-eeprom-$(RPI_EEPROM_SOC)
+# The firmware images of both SoCs, and of different revisions, share their
+# file names (e.g. recovery.bin), so they are kept in a separate download
+# directory per SoC and revision to never reuse a cached file of another one.
+RPI_EEPROM_DL_SUBDIR = rpi-eeprom/$(RPI_EEPROM_SOC)-$(RPI_EEPROM_VERSION)
 
 define RPI_EEPROM_EXTRACT_CMDS
 	$(INSTALL) -m 0644 $(RPI_EEPROM_DL_DIR)/LICENSE $(@D)/LICENSE

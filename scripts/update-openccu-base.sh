@@ -108,12 +108,18 @@ mkdir -p "${REPO_ROOT}/build-rpi3/build"
     -u "git+${PACKAGE_SITE}"
 )
 
+# Hash the files from the selected archive: if it was already downloaded, the
+# download wrapper returns early and the git cache can hold another revision.
+function archive_file_hash() {
+  tar -xzOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}-${ID}/${1}" | sha256sum | awk '{ print $1 }'
+}
+
 ARCHIVE_HASH=$(sha256sum "${ARCHIVE_PATH}" | awk '{ print $1 }')
-LICENSES_MD_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/licenses.md" | awk '{ print $1 }')
-HMSL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/HMSL2.txt" | awk '{ print $1 }')
-GPL2_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/gpl-2.0.txt" | awk '{ print $1 }')
-LGPL21_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/licenses/lgpl-2.1.txt" | awk '{ print $1 }')
-EQ3_CHAR_LOOP_HASH=$(sha256sum "${DOWNLOAD_DIR}/git/src/eq3_char_loop/eq3_char_loop.c" | awk '{ print $1 }')
+LICENSES_MD_HASH=$(archive_file_hash licenses/licenses.md)
+HMSL2_HASH=$(archive_file_hash licenses/HMSL2.txt)
+GPL2_HASH=$(archive_file_hash licenses/gpl-2.0.txt)
+LGPL21_HASH=$(archive_file_hash licenses/lgpl-2.1.txt)
+EQ3_CHAR_LOOP_HASH=$(archive_file_hash src/eq3_char_loop/eq3_char_loop.c)
 
 if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" || -z "${EQ3_CHAR_LOOP_HASH}" ]]; then
   echo "Failed to retrieve one or more hashes for ${PACKAGE_NAME}" >&2

@@ -18,6 +18,9 @@ EQ3_CHAR_LOOP_SOURCE = eq3_char_loop.c
 EQ3_CHAR_LOOP_EXTRA_DOWNLOADS = $(EQ3_CHAR_LOOP_BASE_SITE)/licenses/gpl-2.0.txt
 EQ3_CHAR_LOOP_LICENSE = GPL-2.0+
 EQ3_CHAR_LOOP_LICENSE_FILES = gpl-2.0.txt
+# The file names do not change between revisions, so each revision gets its
+# own download directory to never reuse a cached file of another revision.
+EQ3_CHAR_LOOP_DL_SUBDIR = eq3_char_loop/$(EQ3_CHAR_LOOP_VERSION)
 
 define EQ3_CHAR_LOOP_EXTRACT_CMDS
 	$(INSTALL) -m 0644 $(EQ3_CHAR_LOOP_DL_DIR)/eq3_char_loop.c $(@D)/eq3_char_loop.c
