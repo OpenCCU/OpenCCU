@@ -195,6 +195,12 @@
               <td>${deviceUpdate}</td>
               <td class="firmwareAvailable">${lblNewDeviceFirmwareAvailable}&nbsp;<span id="devFwAvailableCounter"></span></td>
             </tr>
+            
+            <!-- Addons -->
+            <tr id="addonUpdatesAvailable" class="hidden">
+              <td>${addonUpdate}</td>
+              <td class="firmwareAvailable">${lblNewAddonUpdatesAvailable}&nbsp;<span id="addonUpdatesAvailableList"></span></td>                        
+            </tr>
 
             <%
               object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
@@ -274,6 +280,7 @@
       jQuery("#favSelector").show();
       jQuery("#favView").show();
       StartPage.showUpdate();
+      StartPage.showAddonUpdate();
       StartPage.showCurrentFirmware();
       StartPage.showAllDeviceFirmware();
       jQuery("#forceUpdate").remove();

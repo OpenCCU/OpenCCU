@@ -1628,13 +1628,12 @@ function ::CreateUnknown()
             }
 
             string sValueUnit = oDP.ValueUnit();
-            string sSpace = " ";
-            if( sValueUnit == "degree" ) { sValueUnit = "&deg;"; sSpace = ""; }
+            string sSpace = "&nbsp;";
+            if( sValueUnit == "degree" ) { sValueUnit = "&deg;"; }
             if( sValueUnit == "100%" )
             {
               value = value * 100;
               sValueUnit = "%";
-              sSpace = "";
             }
 
             string sValue = "?";

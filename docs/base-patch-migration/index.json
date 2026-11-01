@@ -28,8 +28,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0001-OpenCCU.patch",
-      "removed": 253,
-      "sha256": "72bbdb6a86a70294a6dd4c4b34583dbc7182f20faf72010d4daecf434fac3b1a"
+      "removed": 254,
+      "sha256": "a5f271dabcb7cb5e0d79c055451ab69f6bc63a6e06cfca04abeb33e6d34deac7"
     },
     {
       "added": 370,
@@ -44,19 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "7a7d941480d134196f59cfd50dca67eac99bba79f74175466a1c77cf267d9954"
-    },
-    {
-      "added": 277,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/device/liststatus.tcl",
-        "www/api/methods/interface/rssiinfo.tcl",
-        "www/webui/webui.js"
-      ],
-      "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch",
-      "removed": 3,
-      "sha256": "18b5533877cfea25e0475714be7cd16a11595610872b1807a4ee00593587929d"
+      "sha256": "767331d52b11e4733181153fc2e3f04624b41b84dd7f2da6a0a190f5f8fb8a80"
     },
     {
       "added": 786,
@@ -121,34 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "b205f652861987a3338e896138460000ddc66ba3208db20785a242eb2a7f2729"
-    },
-    {
-      "added": 138,
-      "files": [
-        "www/rega/esp/controls/heating_control.fn",
-        "www/webui/webui.js"
-      ],
-      "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch",
-      "removed": 19,
-      "sha256": "e97fbc7c5f5515d37c92f439710b473dd12ef5cb663e2c17c5d43351a0a18ee5"
-    },
-    {
-      "added": 128,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/device/get.tcl",
-        "www/api/methods/device/listalldetail.tcl",
-        "www/api/methods/device/setenabledservicemsg.tcl",
-        "www/rega/esp/system.fn",
-        "www/rega/pages/tabs/statusviews/serviceMessages.htm",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0044-WebUI-DisableDeviceServiceMsg.patch",
-      "removed": 3,
-      "sha256": "2e8f5737f11b7be547ccd07251eca47967cd5eb894c0dbf1316c96d6b1b01a3e"
+      "sha256": "837be42a216c86213581c96fff4d3993a1489e1bc0c6be9853cc8bb2e0b8439a"
     },
     {
       "added": 305,
@@ -160,7 +121,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "c7976febe9561620344e1a80c7409eef104272be69387104e60a67d4cb090336"
+      "sha256": "cb0b354b02420b7b9a27470b291e911f3b8cff8edaee615a18eb67aabb294c89"
     },
     {
       "added": 757,
@@ -171,18 +132,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "146283b18fe183f439e2bc827fdf33c211a68398032c676d26dddf86fb0e66b2"
-    },
-    {
-      "added": 123,
-      "files": [
-        "www/config/ic_deviceFirmwareOverview.cgi",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0056-WebUI-Sticky-Filters.patch",
-      "removed": 6,
-      "sha256": "198377c012e37d1f3c536df393f811d4e4b9e077ed450a637dac0268ae8784b8"
+      "sha256": "53270281443b5c8300f5a3d9bb7bd0c8d95764ff0e703254ec7ac00d1fa092bc"
     },
     {
       "added": 257,
@@ -196,7 +146,7 @@
       ],
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
       "removed": 99,
-      "sha256": "41b922b7729bcd4876123fd0d7b1aec00264831fa9942e9adcf821d3ce4b29d9"
+      "sha256": "dd579e7cfa92319b01cc6536b0b2c3d2e62224c6fc95e58f0e2c2083f62fd67d"
     },
     {
       "added": 357,
@@ -214,7 +164,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "1b6213151cca479714d1da5daa09b87d59eb0cc67af70516fa506874f33fd37e"
+      "sha256": "57eb3d69fefee7ed0cc639ca0d144cc2031286a88a892596be36043597289069"
     },
     {
       "added": 233,
@@ -229,7 +179,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 79,
-      "sha256": "6a020b20e8b9c45e93f15576815da5392b2413d0e6cb206201700dad7f506650"
+      "sha256": "56a0c9bcd2bfece3e9fff31ce736a689559252a1f945fcb360cc392b496885a4"
     },
     {
       "added": 439,
@@ -246,73 +196,7 @@
       ],
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
-      "sha256": "06b9a02033af72760f392944c8cdd3d7f31d6396a18d69614c2d4770ad8b878b"
-    },
-    {
-      "added": 211,
-      "files": [
-        "www/config/easymodes/cc_rt_dev_master.tcl",
-        "www/config/easymodes/etc/hmipChannelConfigDialogs.tcl",
-        "www/config/easymodes/etc/profile_cond_x_ch_master.tcl",
-        "www/config/easymodes/etc/uiElements.tcl",
-        "www/config/easymodes/hm-cc-vg-1_master.tcl",
-        "www/config/easymodes/powermeter_iec_ch1_master.tcl",
-        "www/config/easymodes/powermeter_iec_ch2_master.tcl",
-        "www/config/easymodes/powermeter_igl_ch_master.tcl",
-        "www/config/easymodes/powermeter_v2_iec_ch1_master.tcl",
-        "www/config/easymodes/powermeter_v2_iec_ch2_master.tcl",
-        "www/config/easymodes/tc_it_dev_master.tcl",
-        "www/config/easymodes/wa_od_ch_master.tcl",
-        "www/config/ic_common.tcl",
-        "www/config/ic_deviceparameters.cgi",
-        "www/webui/webui.js"
-      ],
-      "patch": "0119-WebUI-Fix-ProofAndSetValue.patch",
-      "removed": 70,
-      "sha256": "d5a0d848938e3fd956e72321b601a1468a630936efc07ffca053f615b8cd404e"
-    },
-    {
-      "added": 76,
-      "files": [
-        "www/webui/webui.js"
-      ],
-      "patch": "0125-WebUI-ChannelHighlights.patch",
-      "removed": 26,
-      "sha256": "a431b2d5159bd91f6e2500a8fdffc1667f3fd69828df0067ef5579a245ee9c3b"
-    },
-    {
-      "added": 123,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/ccu/getaddonversions.tcl",
-        "www/rega/pages/tabs/startpage.htm",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
-      "removed": 0,
-      "sha256": "1851072ab0df0c5ffee458c4b74cbb64ee26a3b5b5175309a82e4b926b3ec40a"
-    },
-    {
-      "added": 102,
-      "files": [
-        "www/config/easymodes/EnterFreeValue.tcl",
-        "www/config/easymodes/cc_tc_ch_master.tcl",
-        "www/config/easymodes/cc_tc_ch_master_le_v1_9.tcl",
-        "www/config/easymodes/etc/localization/de/HmIP_DEVICES.txt",
-        "www/config/easymodes/etc/localization/en/HmIP_DEVICES.txt",
-        "www/pda/eq3/controls/generic.tcl",
-        "www/pda/eq3/controls/temp.tcl",
-        "www/rega/esp/controls/heating_control.fn",
-        "www/rega/esp/controls/thermostat.fn",
-        "www/rega/esp/datapointconfigurator.fn",
-        "www/rega/esp/programs.fn",
-        "www/webui/webui.js"
-      ],
-      "patch": "0132-WebUI-Fix-UnitDisplay.patch",
-      "removed": 96,
-      "sha256": "23fc753f601ba580adbfd12928cdd505cd379f9e6a79ba33e3e679d7e31eb9a6"
+      "sha256": "95347761409a09e7cabb09d8d5ed95cd433ae8b934550127107c623b372579a5"
     },
     {
       "added": 10,
@@ -348,7 +232,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "cbddf241396abad7f284b1ebd570d73f774962635d43b52a2e5d4494811f397d"
+      "sha256": "71487cf97a1cdd2fda792700ad30d280a0a90e0c0e5b8b315ac950910f667396"
     },
     {
       "added": 74,
@@ -367,17 +251,6 @@
       "sha256": "f12c2f17556e86b3c6332e5b4feeadd0add38b9cd99a6267cdf21fec5e67eed3"
     },
     {
-      "added": 120,
-      "files": [
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
-      "removed": 19,
-      "sha256": "16902c85feee6d14e7ecfa7503a3ecf8d9145e170546eae7ff91122140e4660e"
-    },
-    {
       "added": 4,
       "files": [
         "www/tcl/extern/cgi.tcl"
@@ -387,22 +260,18 @@
       "sha256": "7cacbe5740bcd99ff525c8b08c290b90d0fcdb5f77f1a16f73477d57e5c44317"
     },
     {
-      "added": 8,
+      "added": 447,
       "files": [
-        "opt/HMServer/pages/StorageSettingsDialog.ftl",
-        "www/api/methods.conf",
-        "www/api/methods/ccu/removeFieldTestActive.tcl",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/de/translate.lang.label.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.label.js",
-        "www/webui/webui.js"
+        "www/rega/esp/system.fn",
+        "www/rega/pages/tabs/admin/msg/newSysVar.htm",
+        "www/webui/js/lang/de/translate.lang.js",
+        "www/webui/js/lang/en/translate.lang.js"
       ],
-      "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch",
-      "removed": 96,
-      "sha256": "f29e1271b22ab3203bd68a388b5c80e3820a8ef611732fc8f3feac3a27c28653"
+      "patch": "0206-WebUI-AdvancedSysVarEditing.patch",
+      "removed": 20,
+      "sha256": "9795635c43e99ff82e2531f1549d42b274739e3265d99439ff3c56a054a1497b"
     }
   ],
   "schema": 1,
-  "series_sha256": "a8af365d89d982713b6a274bfae0eb3a8c5b4e18527e551d9133ccd1f6e7e125"
+  "series_sha256": "2c92108ca2c141febb4c83c6a2e1e47b21a3cc31b2dfc0e98d607a5c772990ec"
 }

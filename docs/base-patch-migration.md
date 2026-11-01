@@ -131,7 +131,8 @@ requires `--archive` to have exactly the same SHA256. It then checks the Base
 repository/branch, merge state, patch name, ancestry, archive contents against
 the actual Git commit, unchanged license hashes and clean worktree. It removes
 only the selected patch and its tracked workspace,
-updates pin/hash/series/index and records an in-progress cleanup in the state.
+updates pin/hash/series/index (including the `eq3_char_loop` source hash,
+which follows the pin) and records an in-progress cleanup in the state.
 Deleted patch files remain recoverable from Git. It refuses a second active
 migration. Its success means **prepared, not validated**.
 

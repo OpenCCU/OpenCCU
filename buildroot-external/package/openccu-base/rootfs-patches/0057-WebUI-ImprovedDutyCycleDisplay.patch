@@ -43,7 +43,7 @@
 +jsonrpc_response "$result"
 --- a/www/rega/pages/tabs/startpage.htm
 +++ b/www/rega/pages/tabs/startpage.htm
-@@ -232,22 +232,134 @@
+@@ -238,22 +238,134 @@
                }
               %>
  
@@ -192,7 +192,7 @@
              </tr>
  
            </table>
-@@ -287,14 +399,7 @@
+@@ -294,14 +406,7 @@
        } else {
          WEBUI_VERSION = "0.0.0";
        }
@@ -276,7 +276,7 @@
  .CLASS01812 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -8902,8 +8902,6 @@
+@@ -8952,8 +8952,6 @@
        window.setTimeout(function() {jQuery("#PagePath").css('color',"white");},100);
        ConfigData.isPresent = true;
        if (ConfigData.showMessage) { this.hideMessage(); }
@@ -285,7 +285,7 @@
        if (ConfigData.callback) { ConfigData.callback(); }
      });
    },
-@@ -9042,7 +9040,6 @@
+@@ -9092,7 +9090,6 @@
      if(typeof dcTimeout == "undefined") {
        dcTimeout = window.setTimeout(function () {
          showDutyCycle();
@@ -293,7 +293,7 @@
          delete dcTimeout;
        }, 10);
      }
-@@ -9277,7 +9274,6 @@
+@@ -9327,7 +9324,6 @@
        // Check the dutyCycle and carrierSense periodically
        new PeriodicalExecuter(function () {
          showDutyCycle();
@@ -301,7 +301,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35815,74 +35811,101 @@
+@@ -35987,74 +35983,101 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},

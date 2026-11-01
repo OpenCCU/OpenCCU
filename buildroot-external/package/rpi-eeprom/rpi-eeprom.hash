@@ -1,3 +1,4 @@
 # Locally computed
 sha256  594b7565fd3ccf8acd4711a2ec1b199181aafbc3426d0bacaa50ef40edbf7c4a  LICENSE
-sha256  9f2fae59aef130f14b016b8fc822a6a738c40a8a4f1c2fa91f034259b6e9aa3c  rpi-eeprom-6acb16d8d28deba486eee2e68d5915c3e47668d7.tar.gz
+sha256  1374a5ac161fca898b1010a882c71e10153ac2723258c3b9d2e34d5cc1a7ee74  rpi-eeprom-config
+sha256  2885e3603f9d89995cf5b033f2a616bd1e932547c1d3cffff1ad98e427996a03  rpi-eeprom-digest

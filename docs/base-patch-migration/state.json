@@ -815,18 +815,78 @@
       "base_pr": 252,
       "cleanup_pr": 4559,
       "patch": "0099-WebUI-Add-DeviceRenameAllChannels.patch"
+    },
+    {
+      "base_merge_commit": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
+      "base_pr": 253,
+      "cleanup_pr": 4564,
+      "patch": "0170-WebUI-RegexSearchInDeviceLists.patch"
+    },
+    {
+      "base_merge_commit": "2f2c3eba15efb622c24dd8cc11a87630d0fb3532",
+      "base_pr": 256,
+      "cleanup_pr": 4573,
+      "patch": "0125-WebUI-ChannelHighlights.patch"
+    },
+    {
+      "base_merge_commit": "170c2712f77d1a9811bcf2a3e27462f710f2db42",
+      "base_pr": 259,
+      "cleanup_pr": 4578,
+      "patch": "0205-WebUI-Remove-FieldTestBetaFw.patch"
+    },
+    {
+      "base_merge_commit": "a10160eb1591aadeef3063e2f27c3f0eb3f082ef",
+      "base_pr": 261,
+      "cleanup_pr": 4583,
+      "patch": "0042-WebUI-HeatingControl-HumidityBatteryValveState.patch"
+    },
+    {
+      "base_merge_commit": "061d52a5e0cf94f1367efe360c2b5241613dbd62",
+      "base_pr": 262,
+      "cleanup_pr": 4588,
+      "patch": "0132-WebUI-Fix-UnitDisplay.patch"
+    },
+    {
+      "base_merge_commit": "022a35c662aaf3e9196628ec88ab031b74df2d16",
+      "base_pr": 270,
+      "cleanup_pr": 4589,
+      "patch": "0038-WebUI-DeviceOverview-StatusColumn.patch"
+    },
+    {
+      "base_merge_commit": "8f41e3046701a6e3470a21a3699d6138b2b42c5e",
+      "base_pr": 273,
+      "cleanup_pr": 4599,
+      "patch": "0056-WebUI-Sticky-Filters.patch"
+    },
+    {
+      "base_merge_commit": "29067cb6c5d3fc470f898cb2095e4dbf4549fd1d",
+      "base_pr": 275,
+      "cleanup_pr": 4601,
+      "patch": "0044-WebUI-DisableDeviceServiceMsg.patch"
+    },
+    {
+      "base_merge_commit": "49d75204c9d195e0bb3f3d674ab4398f42a932cf",
+      "base_pr": 289,
+      "cleanup_pr": 4616,
+      "patch": "0119-WebUI-Fix-ProofAndSetValue.patch"
+    },
+    {
+      "base_merge_commit": "641809a7b3be6645e53b2f1ea43a18ba006daf11",
+      "base_pr": 290,
+      "cleanup_pr": 4624,
+      "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "93ad0de29c17cdb3a01bcedc7567705d8b4b80a5",
-    "base_pr": 253,
-    "cleanup_pr": 4564,
-    "patch": "0170-WebUI-RegexSearchInDeviceLists.patch",
+    "base_merge_commit": "01e400772731935043a472057fe7709f8dd5d5d2",
+    "base_pr": 292,
+    "cleanup_pr": 4628,
+    "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "4096d91a8aae70b5ae4bbb26f7377a68126eb06c",
-  "verified_base_pin": "87a32d295aa0e86c6432cce7ec83b79786528c46",
-  "verified_source_sha256": "669421911b3f00d808cc86479c638ade704c944d5187f567909b9d456f7b90dc"
+  "verified_at_openccu_commit": "4d1d123a6a9365d4907572b370ea2cb80c694b9f",
+  "verified_base_pin": "641809a7b3be6645e53b2f1ea43a18ba006daf11",
+  "verified_source_sha256": "e86969664ab7678eb7a14e104276f5478a5e1f91820146614ce1fff263a50150"
 }

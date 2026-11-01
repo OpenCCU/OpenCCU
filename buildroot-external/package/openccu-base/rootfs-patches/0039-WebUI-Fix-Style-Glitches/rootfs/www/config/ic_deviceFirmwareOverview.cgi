@@ -320,6 +320,9 @@ cgi_eval {
 
       puts "resetFilter = function() {"
         puts "jQuery(\"\[name='invisible'\]\").show().attr(\"name\", \"\");"
+        puts "jQuery(\"input.FilterText\").val(\"\");"
+        puts "jQuery(\".FilterCaption\").css(\"color\", \"\");"
+        puts "try { localStorage.removeItem(\"hmFwPageFilter\"); } catch(e) {}"
       puts "};"
 
       puts "setFilter = function(filter) {"
@@ -328,6 +331,15 @@ cgi_eval {
         # searchFilter = NAME, TYPE or ADDRESS
         puts "var searchFilter = filter.split(\"_\")\[1\];"
         puts "var searchText = jQuery(\"#searchText_\" + searchFilter).val().toLowerCase();"
+        
+        puts "var storedFilters = {};"
+        puts "try {"
+        puts "  storedFilters = JSON.parse(localStorage.getItem(\"hmFwPageFilter\")) || {};"
+        puts "} catch(e) {}"
+        puts "delete storedFilters\[searchFilter\];"
+        puts "storedFilters\[searchFilter\] = searchText;"
+        puts "try { localStorage.setItem(\"hmFwPageFilter\", JSON.stringify(storedFilters)); } catch(e) {}"
+        puts "jQuery(\"#\" + filter).parent().find(\".FilterCaption\").css(\"color\", searchText ? \"red\" : \"\");"
 
         # filterElem = NAME, TYPE or ADDRESS
         puts "arElements = jQuery(\"\[name='\"+searchFilter+\"'\]\");"
@@ -342,6 +354,14 @@ cgi_eval {
           puts "})"
 
       puts "};"
+
+      puts "(function() { try {"
+      puts "  var storedFilters = JSON.parse(localStorage.getItem(\"hmFwPageFilter\")) || {};"
+      puts "  Object.keys(storedFilters).forEach(function(searchFilter) {"
+      puts "    jQuery(\"#searchText_\" + searchFilter).val(storedFilters\[searchFilter\]);"
+      puts "    setFilter(\"filter_\" + searchFilter);"
+      puts "  });"
+      puts "} catch(e) {} })()"
 
       set footerHtml  ""
       append footerHtml "<table style='backgroud-color:white' border='0' cellspacing='8'>"

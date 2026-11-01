@@ -11,7 +11,6 @@ occu-logo_small_gray.png
 occu-logo_small_red.png
 occu-logo_small.png
 occu-logo.png
-rssi-icon.png
 web-app-manifest-192x192.png
 web-app-manifest-512x512.png
 ```

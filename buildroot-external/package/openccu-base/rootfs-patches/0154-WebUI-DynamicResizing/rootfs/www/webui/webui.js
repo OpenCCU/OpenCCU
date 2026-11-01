@@ -1445,12 +1445,12 @@ DEV_PATHS["HmIP-WRC6-A"] = new Object();
 DEV_PATHS["HmIP-WRC6-A"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
 DEV_PATHS["HmIP-WRC6-A"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
 DEV_HIGHLIGHT["HmIP-WRC6-A"] = new Object();
-DEV_HIGHLIGHT["HmIP-WRC6-A"]["1"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-A"]["2"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-A"]["3"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-A"]["4"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-A"]["5"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-A"]["6"] = [1, 0.705, 0.671, 0.025];
+DEV_HIGHLIGHT["HmIP-WRC6-A"]["1"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-A"]["2"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-A"]["3"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-A"]["4"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-A"]["5"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-A"]["6"] = [1, 0.675, 0.671, 0.050];
 DEV_HIGHLIGHT["HmIP-WRC6-A"]["1+2"] = [5, '1', '2'];
 DEV_HIGHLIGHT["HmIP-WRC6-A"]["3+4"] = [5, '3', '4'];
 DEV_HIGHLIGHT["HmIP-WRC6-A"]["5+6"] = [5, '5', '6'];
@@ -4564,10 +4564,10 @@ DEV_PATHS["HmIP-BSL"] = new Object();
 DEV_PATHS["HmIP-BSL"]["50"] = "/config/img/devices/50/173_hmip-bsl_thumb.png";
 DEV_PATHS["HmIP-BSL"]["250"] = "/config/img/devices/250/173_hmip-bsl.png";
 DEV_HIGHLIGHT["HmIP-BSL"] = new Object();
-DEV_HIGHLIGHT["HmIP-BSL"]["1"]  = [1, 0.505, 0.635, 0.050];
-DEV_HIGHLIGHT["HmIP-BSL"]["2"]  = [1, 0.505, 0.360, 0.050];
-DEV_HIGHLIGHT["HmIP-BSL"]["8"]  = [1, 0.505, 0.360, 0.050];
-DEV_HIGHLIGHT["HmIP-BSL"]["9"]  = [1, 0.505, 0.360, 0.050];
+DEV_HIGHLIGHT["HmIP-BSL"]["1"] = [1, 0.505, 0.635, 0.050];
+DEV_HIGHLIGHT["HmIP-BSL"]["2"] = [1, 0.505, 0.360, 0.050];
+DEV_HIGHLIGHT["HmIP-BSL"]["8"] = [1, 0.505, 0.360, 0.050];
+DEV_HIGHLIGHT["HmIP-BSL"]["9"] = [1, 0.505, 0.360, 0.050];
 DEV_HIGHLIGHT["HmIP-BSL"]["10"] = [1, 0.505, 0.360, 0.050];
 DEV_HIGHLIGHT["HmIP-BSL"]["12"] = [1, 0.505, 0.635, 0.050];
 DEV_HIGHLIGHT["HmIP-BSL"]["13"] = [1, 0.505, 0.635, 0.050];
@@ -5296,38 +5296,38 @@ DEV_PATHS["HmIPW-DRS8"] = new Object();
 DEV_PATHS["HmIPW-DRS8"]["50"] = "/config/img/devices/50/161_hmipw-drs8_thumb.png";
 DEV_PATHS["HmIPW-DRS8"]["250"] = "/config/img/devices/250/161_hmipw-drs8.png";
 DEV_HIGHLIGHT["HmIPW-DRS8"] = new Object();
-DEV_HIGHLIGHT["HmIPW-DRS8"]["1"]   = [1, 0.208, 0.080, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["2"]   = [1, 0.208, 0.080, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["3"]   = [1, 0.208, 0.080, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["4"]   = [1, 0.208, 0.080, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["5"]   = [1, 0.422, 0.075, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["6"]   = [1, 0.422, 0.075, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["7"]   = [1, 0.422, 0.075, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["8"]   = [1, 0.422, 0.075, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["9"]   = [1, 0.636, 0.070, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["10"]  = [1, 0.636, 0.070, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["11"]  = [1, 0.636, 0.070, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["12"]  = [1, 0.636, 0.070, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["13"]  = [1, 0.205, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["14"]  = [1, 0.205, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["15"]  = [1, 0.205, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["16"]  = [1, 0.205, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["17"]  = [1, 0.425, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["18"]  = [1, 0.425, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["19"]  = [1, 0.425, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["20"]  = [1, 0.425, 0.910, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["21"]  = [1, 0.645, 0.900, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["22"]  = [1, 0.645, 0.900, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["23"]  = [1, 0.645, 0.900, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["24"]  = [1, 0.645, 0.900, 0.040];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["25"]  = [1, 0.275, 0.242, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["26"]  = [1, 0.275, 0.242, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["27"]  = [1, 0.275, 0.242, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["28"]  = [1, 0.275, 0.242, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["29"]  = [1, 0.485, 0.230, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["30"]  = [1, 0.485, 0.230, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["31"]  = [1, 0.485, 0.230, 0.050];
-DEV_HIGHLIGHT["HmIPW-DRS8"]["32"]  = [1, 0.485, 0.230, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["1"] = [1, 0.208, 0.080, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["2"] = [1, 0.208, 0.080, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["3"] = [1, 0.208, 0.080, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["4"] = [1, 0.208, 0.080, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["5"] = [1, 0.422, 0.075, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["6"] = [1, 0.422, 0.075, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["7"] = [1, 0.422, 0.075, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["8"] = [1, 0.422, 0.075, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["9"] = [1, 0.636, 0.070, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["10"] = [1, 0.636, 0.070, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["11"] = [1, 0.636, 0.070, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["12"] = [1, 0.636, 0.070, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["13"] = [1, 0.205, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["14"] = [1, 0.205, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["15"] = [1, 0.205, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["16"] = [1, 0.205, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["17"] = [1, 0.425, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["18"] = [1, 0.425, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["19"] = [1, 0.425, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["20"] = [1, 0.425, 0.910, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["21"] = [1, 0.645, 0.900, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["22"] = [1, 0.645, 0.900, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["23"] = [1, 0.645, 0.900, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["24"] = [1, 0.645, 0.900, 0.040];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["25"] = [1, 0.275, 0.242, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["26"] = [1, 0.275, 0.242, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["27"] = [1, 0.275, 0.242, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["28"] = [1, 0.275, 0.242, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["29"] = [1, 0.485, 0.230, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["30"] = [1, 0.485, 0.230, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["31"] = [1, 0.485, 0.230, 0.050];
+DEV_HIGHLIGHT["HmIPW-DRS8"]["32"] = [1, 0.485, 0.230, 0.050];
 DEV_LIST.push('HmIPW-FIO6');
 DEV_DESCRIPTION["HmIPW-FIO6"] = "HmIPW-FIO6";
 DEV_PATHS["HmIPW-FIO6"] = new Object();
@@ -5410,18 +5410,18 @@ DEV_PATHS["HmIP-WRC6-230-A"] = new Object();
 DEV_PATHS["HmIP-WRC6-230-A"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
 DEV_PATHS["HmIP-WRC6-230-A"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
 DEV_HIGHLIGHT["HmIP-WRC6-230-A"] = new Object();
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["1"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["2"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["3"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["4"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["5"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["6"] = [1, 0.705, 0.671, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["12"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["13"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["14"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["15"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["16"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["17"] = [1, 0.705, 0.671, 0.025];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["1"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["2"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["3"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["4"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["5"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["6"] = [1, 0.675, 0.671, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["12"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["13"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["14"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["15"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["16"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["17"] = [1, 0.675, 0.671, 0.050];
 DEV_HIGHLIGHT["HmIP-WRC6-230-A"]["18"] = [5, '1', '2', '3', '4', '5', '6'];
 DEV_LIST.push('HmIP-WRC6-230');
 DEV_DESCRIPTION["HmIP-WRC6-230"] = "WRC6-230";
@@ -5429,18 +5429,18 @@ DEV_PATHS["HmIP-WRC6-230"] = new Object();
 DEV_PATHS["HmIP-WRC6-230"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
 DEV_PATHS["HmIP-WRC6-230"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
 DEV_HIGHLIGHT["HmIP-WRC6-230"] = new Object();
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["1"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["2"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["3"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["4"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["5"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["6"] = [1, 0.705, 0.671, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["12"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["13"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["14"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["15"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["16"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIP-WRC6-230"]["17"] = [1, 0.705, 0.671, 0.025];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["1"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["2"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["3"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["4"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["5"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["6"] = [1, 0.675, 0.671, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["12"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["13"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["14"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["15"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["16"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIP-WRC6-230"]["17"] = [1, 0.675, 0.671, 0.050];
 DEV_HIGHLIGHT["HmIP-WRC6-230"]["18"] = [5, '1', '2', '3', '4', '5', '6'];
 DEV_LIST.push('HmIP-WRCC2');
 DEV_DESCRIPTION["HmIP-WRCC2"] = "HmIP-WRCC2";
@@ -5569,18 +5569,18 @@ DEV_PATHS["HmIPW-WRC6-A"] = new Object();
 DEV_PATHS["HmIPW-WRC6-A"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
 DEV_PATHS["HmIPW-WRC6-A"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
 DEV_HIGHLIGHT["HmIPW-WRC6-A"] = new Object();
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["1"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["2"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["3"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["4"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["5"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["6"] = [1, 0.705, 0.671, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["7"] = [1, 0.3, 0.358, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["8"] = [1, 0.705, 0.315, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["9"] = [1, 0.3, 0.53, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["10"] = [1, 0.705, 0.495, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["11"] = [1, 0.3, 0.706, 0.025];
-DEV_HIGHLIGHT["HmIPW-WRC6-A"]["12"] = [1, 0.705, 0.671, 0.025];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["1"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["2"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["3"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["4"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["5"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["6"] = [1, 0.675, 0.671, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["7"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["8"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["9"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["10"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["11"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6-A"]["12"] = [1, 0.675, 0.671, 0.050];
 DEV_HIGHLIGHT["HmIPW-WRC6-A"]["13"] = [5, '1', '2', '3', '4', '5', '6'];
 DEV_HIGHLIGHT["HmIPW-WRC6-A"]["1+2"] = [5, '1', '2'];
 DEV_HIGHLIGHT["HmIPW-WRC6-A"]["3+4"] = [5, '3', '4'];
@@ -5594,15 +5594,15 @@ DEV_PATHS["HmIPW-WRC6"] = new Object();
 DEV_PATHS["HmIPW-WRC6"]["50"] = "/config/img/devices/50/131_hmip-wrc6_thumb.png";
 DEV_PATHS["HmIPW-WRC6"]["250"] = "/config/img/devices/250/131_hmip-wrc6.png";
 DEV_HIGHLIGHT["HmIPW-WRC6"] = new Object();
-DEV_HIGHLIGHT["HmIPW-WRC6"]["1"]  = [1, 0.270, 0.310, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["2"]  = [1, 0.675, 0.285, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["3"]  = [1, 0.270, 0.510, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["4"]  = [1, 0.675, 0.480, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["5"]  = [1, 0.270, 0.706, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["6"]  = [1, 0.675, 0.671, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["7"]  = [1, 0.270, 0.310, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["8"]  = [1, 0.675, 0.285, 0.050];
-DEV_HIGHLIGHT["HmIPW-WRC6"]["9"]  = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["1"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["2"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["3"] = [1, 0.270, 0.510, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["4"] = [1, 0.675, 0.480, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["5"] = [1, 0.270, 0.706, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["6"] = [1, 0.675, 0.671, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["7"] = [1, 0.270, 0.310, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["8"] = [1, 0.675, 0.285, 0.050];
+DEV_HIGHLIGHT["HmIPW-WRC6"]["9"] = [1, 0.270, 0.510, 0.050];
 DEV_HIGHLIGHT["HmIPW-WRC6"]["10"] = [1, 0.675, 0.480, 0.050];
 DEV_HIGHLIGHT["HmIPW-WRC6"]["11"] = [1, 0.270, 0.706, 0.050];
 DEV_HIGHLIGHT["HmIPW-WRC6"]["12"] = [1, 0.675, 0.671, 0.050];
@@ -9756,7 +9756,8 @@ StringFilter = function(name, callback)
   var m_callback = callback;
   
   var m_id     = name.replace(/\,/g, "_");
-  var m_value    = localStorage.getItem(m_id) || "";
+  var m_value    = "";
+  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
   var m_textId = m_id + "Text";
 
   var isSet = function()
@@ -9863,7 +9864,7 @@ StringFilter = function(name, callback)
       }
     }
     if ($(m_id))     { $(m_id).hide(); }
-    localStorage.setItem(m_id, $(m_textId).value);
+    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
     if (m_callback)  { m_callback(); }
   };
   
@@ -9882,7 +9883,7 @@ StringFilter = function(name, callback)
   this.reset = function()
   {
     m_value = "";
-    localStorage.removeItem(m_id);
+    try { localStorage.removeItem(m_id); } catch (e) {}
     this.close();
   };
 
@@ -9937,10 +9938,12 @@ ListFilter = Class.create({
   },
 
   restoreFilters: function() {
-    var filterValues = localStorage.getItem(this.id);
+    var filterValues = null;
+    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
     if(filterValues) {
       try {
         filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
         var values = $(this.formId).values;
         for (var i = 0, len = values.length; i < len; i++) {
          if(filterValues.indexOf(values[i].value) !== -1) {
@@ -10073,7 +10076,7 @@ ListFilter = Class.create({
         try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
       }
       // JSON.stringify encodes an array twice???
-      localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues)));
+      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
       if (this.callback) { this.callback(); }
     }
   },
@@ -10110,7 +10113,7 @@ ListFilter = Class.create({
       this.list[i]._selected = false;
     }
 
-    localStorage.removeItem(this.id);
+    try { localStorage.removeItem(this.id); } catch (e) {}
     this.close();
   }
   
@@ -18832,6 +18835,18 @@ function showDisplayConfigTextHelp() {
   MessageBox.show(title, content,'', 475, 450);
 };
 
+function toggleSerialNumberDisplay() {
+  var tb = document.getElementById("fwUpdates");
+  if (tb) {
+    var th = tb.getElementsByTagName("th")[2];
+    // an empty value restores the default table-cell/table-column display
+    var display = (th.style.display === "none") ? "" : "none";
+    th.style.display = display;
+    tb.getElementsByTagName("col")[2].style.display = display;
+    document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = display)
+  }
+};
+
 StatusDisplayDialogAcousticEPaper = Class.create({
  
   initialize: function(title, content, value, callback, contentType) {
@@ -25673,8 +25688,6 @@ var preURL = (WEBUI_VERSION.split(".")[0] < 3) ? "" : "ccu3-";
 StartPage = Singleton.create(Page, {
   MAINMENU_ID: "MAINMENU_STARTPAGE",
   downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
-  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
-  fieldTestActive: "/etc/config/fieldTestActive",
   downloadURL : "",
   prevDownloadURL : "",
   devList: [],
@@ -25718,11 +25731,7 @@ StartPage = Singleton.create(Page, {
 
     this.serial = homematic("CCU.getSerial");
 
-    if (homematic('CCU.existsFile', {'file': this.fieldTestActive})) {
-      this.downloadURL = this.fieldTestURLServer;
-    } else {
-      this.downloadURL = this.downloadURLServer;
-    }
+    this.downloadURL = this.downloadURLServer;
 
     if (this.prevDownloadURL != this.downloadURL) {
       this.devList = [];
@@ -25788,11 +25797,28 @@ StartPage = Singleton.create(Page, {
     return false;
   },*/
 
+  cmpVersion: function (aa, bb) {
+    // 0   Version equal 
+    // >0  Version aa newer 
+    // <0  Version bb newer  
+    const aArr = aa.split(".");
+    const bArr = bb.split(".");
+    const max = Math.max(aArr.length, bArr.length);
+    for (let index = 0; index < max; index++) {
+        const a = Number(aArr[index] || 0);
+        const b = Number(bArr[index] || 0);
+        if (a != b)
+            return (a - b);
+    }
+    return 0;
+  },
+
   showAllDeviceFirmware: function() {
     var self = this;
     if (!this.fetchDeviceList) {
       this.fetchDeviceList = true; // prevents this to be called multiple times (when clicking the start page)
       this.messageBoxHTML = "";
+      this.DeviceUpdateList = {};
       this.newFwCounter = 0;
       this.devIndex = 0;
       if (this.devList.length == 0) {
@@ -25902,12 +25928,23 @@ StartPage = Singleton.create(Page, {
         newFW = resultMajorMinor;
       }
 
+      // generate RefUpdateList with detailed Information per DeviceType for grouped list
       if (devIsUpdatable && fwVersion && (fwVersion != "n/a") && (newFW != curFw)) {
+        if (!this.DeviceUpdateList[deviceType]) {
+          this.DeviceUpdateList[deviceType] = {};
+        }
+        var RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
+        if (!RefUpdateList) {
+          this.DeviceUpdateList[deviceType][curFw] = { DevCnt: 0, FWAvailable: 0, FWUpload: 0, Address: [], downloadURL: this.downloadURL, deviceTypeForUrl: deviceTypeForUrl, fwVersion: fwVersion, curVersion: curFw, availableFirmware: availableFW };
+          RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
+        }
+        RefUpdateList.DevCnt++;
+        RefUpdateList.Address.push(self.devList[self.devIndex].address);
         // FW not yet available on the CCU
         if (availableFW != newFW) {
-          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + devAddress + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=\"window.location.href='" + self.downloadURL + "&serial="+self.serial+"&product=" + deviceTypeForUrl + "'\">" + fwVersion + "</td></tr>";
+          RefUpdateList.FWUpload++;
         } else {
-          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + self.devList[self.devIndex].address + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=alert(translateKey('hintDevFwAlreadyUploaded'));>" + fwVersion + "</td></tr>";
+          RefUpdateList.FWAvailable++;
         }
         self.newFwCounter++;
       }
@@ -25916,6 +25953,40 @@ StartPage = Singleton.create(Page, {
     if (self.devIndex < self.devList.length) {
       self.fetchAndSetDeviceVersion();
     } else {
+      for (const Typ of Object.keys(this.DeviceUpdateList).sort()) {
+        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort(this.cmpVersion)) {
+          let Obj = this.DeviceUpdateList[Typ][curFw];
+          let curVersion = Obj.curVersion;
+          let color = "black";
+          if (this.cmpVersion(Obj.curVersion, Obj.fwVersion) > 0) {
+            curVersion = "<b>" + Obj.curVersion + "</b>";
+            color = "orange";
+          }
+          this.messageBoxHTML += "<tr>" +
+                                   "<td style='text-align:left;vertical-align:top;' height='15px'>" +
+                                     Typ +
+                                   "</td>" +
+                                   "<td style='text-align:center;vertical-align:top;' class='UILink' " +
+                                     "onClick='toggleSerialNumberDisplay()'>" +
+                                     Obj.DevCnt +
+                                   "</td>" +
+                                   "<td style='text-align:left;vertical-align:top;display:none;'>" +
+                                     Obj.Address.join('<br/>') +
+                                   "</td>" +
+                                   "<td style='text-align:left;vertical-align:top;color:" + color + "'>" +
+                                     curVersion +
+                                   "</td>" +
+                                   "<td style='text-align:left;vertical-align:top;' class='UILink' " +
+                                     ((Obj.FWUpload > 0) ?
+                                       "onClick=\"window.location.href='" +
+                                         Obj.downloadURL +
+                                         "&serial=0&product=" + Obj.deviceTypeForUrl + "'\">" :
+                                       "onClick=\"alert(translateKey('hintDevFwAlreadyUploaded'));\">") +
+                                         Obj.fwVersion +
+                                   "</td>" +
+                                   "</tr>";
+        }
+      }
       self.fetchDeviceList = false;
       self.deleteScriptElements();
       if (self.newFwCounter > 0) {
@@ -25942,65 +26013,82 @@ StartPage = Singleton.create(Page, {
   },
 
   showAvailableDeviceFirmware: function() {
+    var groupCounter = 0;
+    for (const Typ of Object.keys(this.DeviceUpdateList)) {
+      groupCounter += Object.keys(this.DeviceUpdateList[Typ]).length;
+    }
+    var quoteOpen = (getLang() == "de") ? "&bdquo;" : "&ldquo;",
+    quoteClose = (getLang() == "de") ? "&ldquo;" : "&rdquo;";
     var contentHeight = jQuery("#content").innerHeight(),
-    maxMessageBoxHeight = (this.newFwCounter * 20) + 50,
+    maxMessageBoxHeight = (groupCounter + 5) * 20,
     msgBoxHeight = (maxMessageBoxHeight < contentHeight) ? maxMessageBoxHeight : contentHeight;
 
     MessageBox.show(translateKey("dialogShowDeviceFirmwareTitle"),
-    "<table>"+
+    "<table id='fwUpdates' style='width:100%;'>"+
       "<colgroup>" +
-      "<col style='width:200px;'>" +
-      "<col style='width:100px;'>" +
-      "<col style='width:100px;'>" +
+      "<col style='width:40%;'>" +
+      "<col style='width:19%;'>" +
+      "<col style='display:none;'>" +
+      "<col style='width:19%;'>" +
+      "<col style='width:19%;'>" +
       "</colgroup>" +
-      "<th align='left'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
-      "<th align='left'>"+translateKey('thSerialNumber')+"</th>"+
-      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
-      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
+      "<th style='text-align:center;vertical-align:top;'>"+translateKey('lblQuantity')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;display:none;'>"+translateKey('dialogShowDeviceFirmwareTHSerials')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
       this.messageBoxHTML +
+      "<tr><td colspan='5' align='left'><br/><b>"+translateKey('dialogShowDeviceFirmwareDescription')+":</b><br/>" +
+      translateKey('dialogShowDeviceFirmwareDownloadInfo1') + "<br/>" +
+      translateKey('dialogShowDeviceFirmwareDownloadInfo2') + "&nbsp;" +
+        quoteOpen + "<div class='UILink' style='display: inline;' onclick='MessageBox.close();WebUI.enter(DeviceFirmware);'>"+translateKey('submenuDeviceFirmware')+"</div>" +
+        " => " + translateKey('footerBtnNew') + quoteClose + "&nbsp;" +
+        translateKey('dialogShowDeviceFirmwareDownloadInfo3') +
+      "</td></tr>" +
       //"<tr><td colspan='3' align='center'><a href='http://www.eq-3.de/downloads.html' target='_blank'>"+translateKey('dialogShowDeviceFirmwareLinkDownload')+"</a></td></tr>" +
     "</table>",
     "",
-    400,
+    450,
     msgBoxHeight
     );
   },
   
   showAddonUpdate: function() {
-    addonUpdateList = "";
-    var addonversions = homematic('CCU.getAddonVersions');
-    if (addonversions && addonversions !== "false") {
-      var localaddonversions = addonversions.local;
-      var onlineaddonversions = addonversions.online;
-      for(var l_obj in localaddonversions) {
-        if (typeof localaddonversions[l_obj] === "object") {
+    homematic('CCU.getAddonVersions', {}, function(addonversions) {
+      var addonUpdateList = "";
+      if (addonversions && addonversions !== "false") {
+        var localaddonversions = addonversions.local;
+        var onlineaddonversions = addonversions.online;
+        for(var l_obj in localaddonversions) {
+          if (typeof localaddonversions[l_obj] === "object") {
         
-           for(var o_obj in onlineaddonversions) {
-             if (typeof onlineaddonversions[o_obj] === "object") {
+             for(var o_obj in onlineaddonversions) {
+               if (typeof onlineaddonversions[o_obj] === "object") {
              
-               if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
-                  //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
-                  if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
-                    addonUpdateList += "<br/>&#183; "+onlineaddonversions[o_obj].name+" ("+onlineaddonversions[o_obj].webversion+")";
-                  }
+                 if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
+                    //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
+                    if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
+                      addonUpdateList += "<br/>&#183; "+String(onlineaddonversions[o_obj].name).escapeHTML()+" ("+String(onlineaddonversions[o_obj].webversion).escapeHTML()+")";
+                    }
+                 }
+             
                }
-             
              }
-           }
+          }
         }
-      } 
-    }
+      }
     
-    if (addonUpdateList !== "") {
-      var self = this,
-      rowShowAddonUpdates = jQuery("#addonUpdatesAvailable"),
-      btnShowAddonUpdates = jQuery("#addonUpdatesAvailable .firmwareAvailable");
-      btnShowAddonUpdates.click(function () {
-        showSoftwareCP();
-      });
-      jQuery("#addonUpdatesAvailableList").html(addonUpdateList);
-      rowShowAddonUpdates.show();
-    }
+      if (addonUpdateList !== "") {
+        var self = this,
+        rowShowAddonUpdates = jQuery("#addonUpdatesAvailable"),
+        btnShowAddonUpdates = jQuery("#addonUpdatesAvailable .firmwareAvailable");
+        btnShowAddonUpdates.unbind("click").click(function () {
+          showSoftwareCP();
+        });
+        jQuery("#addonUpdatesAvailableList").html(addonUpdateList);
+        rowShowAddonUpdates.show();
+      }
+    });
   },
   
 
@@ -29824,7 +29912,6 @@ homematic.com =
     this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
     this.m_product = "HM-RASPBERRYMATIC";
     this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
-    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
 
     this.serial = homematic("CCU.getSerial");
     this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
@@ -29892,19 +29979,13 @@ homematic.com =
   },
 
   getListOfAvailableFirmware: function(callback) {
-      var fieldTestActive = "/etc/config/fieldTestActive";
-
       // The server should return a string like "homematic.com.setDeviceFirmwareVersions([{"type":"HM-MOD-Re-8","version":"1.0.0"},{"type":"HM-MOD-Re-8","version":"1.0.0"}])"
       var script = document.createElement("script");
       script.id = "homematic_com_script_fw";
       script.type = "text/javascript";
       // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
 
-      if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
-        script.src = this.m_fieldTestURLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU"+getProduct()+"&version="+WEBUI_VERSION+"&serial=" + this.serial + "&ts=" + Date.now();
-      } else {
-        script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
-      }
+      script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
       $("body").appendChild(script);
       homematic.com.callback = callback;
   },
@@ -32517,6 +32598,9 @@ iseMessageBox.prototype =
         centerMessageBox();
         iseRefr(true);
         translatePage("#messagebox");
+        setTimeout(function() {
+          eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+        }, 100);
       }
     };
     new Ajax.Updater('messagebox',url,opt);
@@ -37146,22 +37230,6 @@ setColorWebUI = function() {
   dlg.resetHeight();
 };
 
-function activateDeviceBetaFw() {
-  var showBetaDevFw = jQuery("#inputShowBetaFw").is(":checked"),
-    fieldTestActive = "/etc/config/fieldTestActive";
-
-  if (showBetaDevFw) {
-    if (! homematic('CCU.existsFile', {'file': fieldTestActive})) {
-      homematic("CCU.createFile", {'file': fieldTestActive});
-    }
-  } else {
-    if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
-      homematic("CCU.removeFieldTestActive");
-    }
-  }
-};
-
-
 /**
  *
  * Tmporarily introduced with the HmIP-RGBW - this may not be the best place here
@@ -37429,7 +37497,7 @@ iseFilter.prototype = {
 
   restoreFilters: function() {
     try {
-      var iseSFilters = JSON.parse(localStorage.getItem('iseSFilters_' + this.pageID));
+      var iseSFilters = JSON.parse(localStorage.getItem('iseSFilters_' + this.pageID)) || {};
       Object.keys(iseSFilters).forEach(function(id) {
         var val = iseSFilters[id];
         if ($(id)) {
@@ -37823,7 +37891,7 @@ iseFilter.prototype = {
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
     this.bTypeString = false;
-    localStorage.removeItem('iseSFilters_' + this.pageID);
+    try { localStorage.removeItem('iseSFilters_' + this.pageID); } catch (e) {}
     var filterButtons = document.querySelectorAll('.FilterSetButton[onclick*=' + this.pageID + ']');
     filterButtons.forEach(function(el) {
       try {
@@ -39197,13 +39265,13 @@ iseThermostat_2ndGen = Class.create(iseThermostat, {
     if (this.opts.stTemp) {
       this.showActualTemp();
     }
-    if (this.opts.stHum) {                                            
+    if (this.opts.stHum !== undefined) {
       this.showActualHumidity();                                      
     }
     if (this.opts.stBat) {
       this.showActualBat();
     }
-    if (this.opts.stValve !== null) {
+    if (this.opts.stValve !== undefined) {
       this.showActualValve();
     }
     if (this.opts.idComfort && this.opts.idLowering) {
@@ -42969,7 +43037,7 @@ isePowerMeterESI.prototype = {
   },
 
   changeToKilo: function() {
-    return (this.summedUpEnergy/1000).toFixed(2);
+    return (this.summedUpEnergy/1000);
   },
 
   setEnergyCounterPanel: function() {
@@ -42985,7 +43053,7 @@ isePowerMeterESI.prototype = {
       this.summedUpEnergy = this.changeToKilo();
     }
 
-    j_panel.html(this.summedUpEnergy + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
+    j_panel.html(((this.kiloPrefix == "k") ? this.summedUpEnergy.toFixed(2) : this.summedUpEnergy) + " " + this.kiloPrefix + this.opts.unitEnergyCounter);
   },
 
   getEnergyConsumption: function(sType) {
@@ -47701,7 +47769,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
       min = parseFloat(parseFloat(min).toFixed(digits));
       max = parseFloat(parseFloat(max).toFixed(digits));
       var roundFactor = Math.pow(10, digits);
-      value = Math.round(parseFloat(value) * roundFactor) / roundFactor;
+      value = Math.round(parseFloat((parseFloat(value) * roundFactor).toPrecision(12))) / roundFactor;
 
       if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
     }
@@ -47732,20 +47800,16 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   if (ok)
   {
     srcElm.style.backgroundColor = "#fffffe";
-    dstElm.value = (parsedValue.toFixed(digits) * dstValueFactor);
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = parsedValue.toFixed(digits);
-    }
+    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = parsedValue.toFixed(digits);
     srcElm.setAttribute("valvalid", "true");
   }
   else
   {
     srcElm.setAttribute("valvalid", "false");
     srcElm.style.backgroundColor = "red";
-    dstElm.value = (finalVal.toFixed(digits) * dstValueFactor);
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = finalVal.toFixed(digits);
-    }
+    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = finalVal.toFixed(digits);
     window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
   }
 };

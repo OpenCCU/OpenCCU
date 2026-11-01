@@ -1129,7 +1129,7 @@
 +package provide cgi 1.10.0
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -9469,6 +9469,7 @@
+@@ -9528,6 +9528,7 @@
      this.currentPageOptions  = options;
      
      this.currentPage.enter(options);
