@@ -18776,6 +18776,18 @@ function showDisplayConfigTextHelp() {
   MessageBox.show(title, content,'', 475, 450);
 };
 
+function toggleSerialNumberDisplay() {
+  var tb = document.getElementById("fwUpdates");
+  if (tb) {
+    var th = tb.getElementsByTagName("th")[2];
+    // an empty value restores the default table-cell/table-column display
+    var display = (th.style.display === "none") ? "" : "none";
+    th.style.display = display;
+    tb.getElementsByTagName("col")[2].style.display = display;
+    document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = display)
+  }
+};
+
 StatusDisplayDialogAcousticEPaper = Class.create({
  
   initialize: function(title, content, value, callback, contentType) {
@@ -25782,11 +25794,28 @@ StartPage = Singleton.create(Page, {
     return false;
   },*/
 
+  cmpVersion: function (aa, bb) {
+    // 0   Version equal 
+    // >0  Version aa newer 
+    // <0  Version bb newer  
+    const aArr = aa.split(".");
+    const bArr = bb.split(".");
+    const max = Math.max(aArr.length, bArr.length);
+    for (let index = 0; index < max; index++) {
+        const a = Number(aArr[index] || 0);
+        const b = Number(bArr[index] || 0);
+        if (a != b)
+            return (a - b);
+    }
+    return 0;
+  },
+
   showAllDeviceFirmware: function() {
     var self = this;
     if (!this.fetchDeviceList) {
       this.fetchDeviceList = true; // prevents this to be called multiple times (when clicking the start page)
       this.messageBoxHTML = "";
+      this.DeviceUpdateList = {};
       this.newFwCounter = 0;
       this.devIndex = 0;
       if (this.devList.length == 0) {
@@ -25896,12 +25925,23 @@ StartPage = Singleton.create(Page, {
         newFW = resultMajorMinor;
       }
 
+      // generate RefUpdateList with detailed Information per DeviceType for grouped list
       if (devIsUpdatable && fwVersion && (fwVersion != "n/a") && (newFW != curFw)) {
+        if (!this.DeviceUpdateList[deviceType]) {
+          this.DeviceUpdateList[deviceType] = {};
+        }
+        var RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
+        if (!RefUpdateList) {
+          this.DeviceUpdateList[deviceType][curFw] = { DevCnt: 0, FWAvailable: 0, FWUpload: 0, Address: [], downloadURL: this.downloadURL, deviceTypeForUrl: deviceTypeForUrl, fwVersion: fwVersion, curVersion: curFw, availableFirmware: availableFW };
+          RefUpdateList = this.DeviceUpdateList[deviceType][curFw];
+        }
+        RefUpdateList.DevCnt++;
+        RefUpdateList.Address.push(self.devList[self.devIndex].address);
         // FW not yet available on the CCU
         if (availableFW != newFW) {
-          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + devAddress + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=\"window.location.href='" + self.downloadURL + "&serial="+self.serial+"&product=" + deviceTypeForUrl + "'\">" + fwVersion + "</td></tr>";
+          RefUpdateList.FWUpload++;
         } else {
-          self.messageBoxHTML += "<tr><td  style='text-align:left;' height='15px'>" + deviceType + "</td><td>" + self.devList[self.devIndex].address + "</td></td><td style='text-align:center;'>" + curFw + "</td><td style='text-align:center;' class='UILink' onClick=alert(translateKey('hintDevFwAlreadyUploaded'));>" + fwVersion + "</td></tr>";
+          RefUpdateList.FWAvailable++;
         }
         self.newFwCounter++;
       }
@@ -25910,6 +25950,40 @@ StartPage = Singleton.create(Page, {
     if (self.devIndex < self.devList.length) {
       self.fetchAndSetDeviceVersion();
     } else {
+      for (const Typ of Object.keys(this.DeviceUpdateList).sort()) {
+        for (const curFw of Object.keys(this.DeviceUpdateList[Typ]).sort(this.cmpVersion)) {
+          let Obj = this.DeviceUpdateList[Typ][curFw];
+          let curVersion = Obj.curVersion;
+          let color = "black";
+          if (this.cmpVersion(Obj.curVersion, Obj.fwVersion) > 0) {
+            curVersion = "<b>" + Obj.curVersion + "</b>";
+            color = "orange";
+          }
+          this.messageBoxHTML += "<tr>" +
+                                   "<td style='text-align:left;vertical-align:top;' height='15px'>" +
+                                     Typ +
+                                   "</td>" +
+                                   "<td style='text-align:center;vertical-align:top;' class='UILink' " +
+                                     "onClick='toggleSerialNumberDisplay()'>" +
+                                     Obj.DevCnt +
+                                   "</td>" +
+                                   "<td style='text-align:left;vertical-align:top;display:none;'>" +
+                                     Obj.Address.join('<br/>') +
+                                   "</td>" +
+                                   "<td style='text-align:left;vertical-align:top;color:" + color + "'>" +
+                                     curVersion +
+                                   "</td>" +
+                                   "<td style='text-align:left;vertical-align:top;' class='UILink' " +
+                                     ((Obj.FWUpload > 0) ?
+                                       "onClick=\"window.location.href='" +
+                                         Obj.downloadURL +
+                                         "&serial=0&product=" + Obj.deviceTypeForUrl + "'\">" :
+                                       "onClick=\"alert(translateKey('hintDevFwAlreadyUploaded'));\">") +
+                                         Obj.fwVersion +
+                                   "</td>" +
+                                   "</tr>";
+        }
+      }
       self.fetchDeviceList = false;
       self.deleteScriptElements();
       if (self.newFwCounter > 0) {
@@ -25936,26 +26010,42 @@ StartPage = Singleton.create(Page, {
   },
 
   showAvailableDeviceFirmware: function() {
+    var groupCounter = 0;
+    for (const Typ of Object.keys(this.DeviceUpdateList)) {
+      groupCounter += Object.keys(this.DeviceUpdateList[Typ]).length;
+    }
+    var quoteOpen = (getLang() == "de") ? "&bdquo;" : "&ldquo;",
+    quoteClose = (getLang() == "de") ? "&ldquo;" : "&rdquo;";
     var contentHeight = jQuery("#content").innerHeight(),
-    maxMessageBoxHeight = (this.newFwCounter * 20) + 50,
+    maxMessageBoxHeight = (groupCounter + 5) * 20,
     msgBoxHeight = (maxMessageBoxHeight < contentHeight) ? maxMessageBoxHeight : contentHeight;
 
     MessageBox.show(translateKey("dialogShowDeviceFirmwareTitle"),
-    "<table>"+
+    "<table id='fwUpdates' style='width:100%;'>"+
       "<colgroup>" +
-      "<col style='width:200px;'>" +
-      "<col style='width:100px;'>" +
-      "<col style='width:100px;'>" +
+      "<col style='width:40%;'>" +
+      "<col style='width:19%;'>" +
+      "<col style='display:none;'>" +
+      "<col style='width:19%;'>" +
+      "<col style='width:19%;'>" +
       "</colgroup>" +
-      "<th align='left'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
-      "<th align='left'>"+translateKey('thSerialNumber')+"</th>"+
-      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
-      "<th align='center'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHDevice')+"</th>"+
+      "<th style='text-align:center;vertical-align:top;'>"+translateKey('lblQuantity')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;display:none;'>"+translateKey('dialogShowDeviceFirmwareTHSerials')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHCurFw')+"</th>"+
+      "<th style='text-align:left;vertical-align:top;'>"+translateKey('dialogShowDeviceFirmwareTHNewFw')+"</th>"+
       this.messageBoxHTML +
+      "<tr><td colspan='5' align='left'><br/><b>"+translateKey('dialogShowDeviceFirmwareDescription')+":</b><br/>" +
+      translateKey('dialogShowDeviceFirmwareDownloadInfo1') + "<br/>" +
+      translateKey('dialogShowDeviceFirmwareDownloadInfo2') + "&nbsp;" +
+        quoteOpen + "<div class='UILink' style='display: inline;' onclick='MessageBox.close();WebUI.enter(DeviceFirmware);'>"+translateKey('submenuDeviceFirmware')+"</div>" +
+        " => " + translateKey('footerBtnNew') + quoteClose + "&nbsp;" +
+        translateKey('dialogShowDeviceFirmwareDownloadInfo3') +
+      "</td></tr>" +
       //"<tr><td colspan='3' align='center'><a href='http://www.eq-3.de/downloads.html' target='_blank'>"+translateKey('dialogShowDeviceFirmwareLinkDownload')+"</a></td></tr>" +
     "</table>",
     "",
-    400,
+    450,
     msgBoxHeight
     );
   },

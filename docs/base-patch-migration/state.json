@@ -869,18 +869,24 @@
       "base_pr": 289,
       "cleanup_pr": 4616,
       "patch": "0119-WebUI-Fix-ProofAndSetValue.patch"
+    },
+    {
+      "base_merge_commit": "641809a7b3be6645e53b2f1ea43a18ba006daf11",
+      "base_pr": 290,
+      "cleanup_pr": 4624,
+      "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "641809a7b3be6645e53b2f1ea43a18ba006daf11",
-    "base_pr": 290,
-    "cleanup_pr": 4624,
-    "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
+    "base_merge_commit": "01e400772731935043a472057fe7709f8dd5d5d2",
+    "base_pr": 292,
+    "cleanup_pr": 4628,
+    "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "8761aa54d5278d2544c4e34b79ed03e4691bc7cc",
-  "verified_base_pin": "49d75204c9d195e0bb3f3d674ab4398f42a932cf",
-  "verified_source_sha256": "4e123bf3871233bffd38fd7d0bde80f9462981d80054c87fd02b6c2bfb320915"
+  "verified_at_openccu_commit": "4d1d123a6a9365d4907572b370ea2cb80c694b9f",
+  "verified_base_pin": "641809a7b3be6645e53b2f1ea43a18ba006daf11",
+  "verified_source_sha256": "e86969664ab7678eb7a14e104276f5478a5e1f91820146614ce1fff263a50150"
 }

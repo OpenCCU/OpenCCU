@@ -646,9 +646,14 @@ jQuery.extend(true, langJSON, {
     "dialogRenameVirtualGroupDeviceTitle" : "Rename the virtual device",
     "dialogVirtualGroupDeviceContent" : "Would you like to rename the virtual device of the group and its channels to the group name?",
     "dialogShowDeviceFirmwareTitle" : "There are new device firmware updates available",
-    "dialogShowDeviceFirmwareTHDevice": "Device",
-    "dialogShowDeviceFirmwareTHCurFw": "Current",
-    "dialogShowDeviceFirmwareTHNewFw": "New",
+    "dialogShowDeviceFirmwareTHDevice": "Device type",
+    "dialogShowDeviceFirmwareTHSerials": "Serial numbers",
+    "dialogShowDeviceFirmwareTHCurFw": "Current Version",
+    "dialogShowDeviceFirmwareTHNewFw": "Recommended Version",
+    "dialogShowDeviceFirmwareDescription": "Instruction",
+    "dialogShowDeviceFirmwareDownloadInfo1": "1. Download recommended version",
+    "dialogShowDeviceFirmwareDownloadInfo2": "2. Upload firmware file via",
+    "dialogShowDeviceFirmwareDownloadInfo3": "",
     "dialogShowDeviceFirmwareLinkDownload": "To download area",
     "hintDevFwAlreadyUploaded" : "" +
       "The latest firmware version of the device is alreay installed on the  " + HMIdentifier.en.CCUShortName + ".\n"+
