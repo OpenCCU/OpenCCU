@@ -16,26 +16,14 @@
    SCRIPT_FILE ccu/getversion.tcl
 --- /dev/null
 +++ b/www/api/methods/ccu/getaddonversions.tcl
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,55 @@
 +proc get_info {script array_var} {
 +  upvar $array_var arr
 +  foreach key [array names arr] { unset arr($key) }
-+  set lang "de"
++  # Read the unlocalized info like checkAddonUpdates.sh, which writes the
++  # online versions, and stop an addon script that does not answer.
 +  catch {
-+    set fd [open "|$script info.$lang" r]
-+
-+   while { ! [eof $fd] } {
-+    set line [gets $fd]
-+    if { [regexp {^([^:]+): (.*)$} $line dummy key value] } {
-+      if { [info exists arr($key)] } {append arr($key) "\n"}
-+      append arr($key) $value
-+    }
-+  }
-+    close $fd
-+  }
-+
-+  catch {
-+   set fd [open "|$script info" r]
++   set fd [open "|timeout 5 $script info" r]
 +   while { ! [eof $fd] } {
 +    set line [gets $fd]
 +    if { [regexp {^([^:]+): (.*)$} $line dummy key value] } {
@@ -131,46 +119,47 @@
      "btnSelectRoomOrFunctionClose": "Close",
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -26061,6 +26061,44 @@
+@@ -26061,6 +26061,45 @@
      msgBoxHeight
      );
    },
 +  
 +  showAddonUpdate: function() {
-+    var addonUpdateList = "";
-+    var addonversions = homematic('CCU.getAddonVersions');
-+    if (addonversions && addonversions !== "false") {
-+      var localaddonversions = addonversions.local;
-+      var onlineaddonversions = addonversions.online;
-+      for(var l_obj in localaddonversions) {
-+        if (typeof localaddonversions[l_obj] === "object") {
++    homematic('CCU.getAddonVersions', {}, function(addonversions) {
++      var addonUpdateList = "";
++      if (addonversions && addonversions !== "false") {
++        var localaddonversions = addonversions.local;
++        var onlineaddonversions = addonversions.online;
++        for(var l_obj in localaddonversions) {
++          if (typeof localaddonversions[l_obj] === "object") {
 +        
-+           for(var o_obj in onlineaddonversions) {
-+             if (typeof onlineaddonversions[o_obj] === "object") {
++             for(var o_obj in onlineaddonversions) {
++               if (typeof onlineaddonversions[o_obj] === "object") {
 +             
-+               if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
-+                  //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
-+                  if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
-+                    addonUpdateList += "<br/>&#183; "+String(onlineaddonversions[o_obj].name).escapeHTML()+" ("+String(onlineaddonversions[o_obj].webversion).escapeHTML()+")";
-+                  }
++                 if (onlineaddonversions[o_obj].name == localaddonversions[l_obj].name) {
++                    //console.log(onlineaddonversions[o_obj].name +" local: "+localaddonversions[l_obj].localversion+", online: "+onlineaddonversions[o_obj].webversion);
++                    if (localaddonversions[l_obj].localversion != onlineaddonversions[o_obj].webversion && onlineaddonversions[o_obj].webversion != '' && onlineaddonversions[o_obj].webversion != 'n/a') {
++                      addonUpdateList += "<br/>&#183; "+String(onlineaddonversions[o_obj].name).escapeHTML()+" ("+String(onlineaddonversions[o_obj].webversion).escapeHTML()+")";
++                    }
++                 }
++             
 +               }
-+             
 +             }
-+           }
++          }
 +        }
-+      } 
-+    }
++      }
 +    
-+    if (addonUpdateList !== "") {
-+      var self = this,
-+      rowShowAddonUpdates = jQuery("#addonUpdatesAvailable"),
-+      btnShowAddonUpdates = jQuery("#addonUpdatesAvailable .firmwareAvailable");
-+      btnShowAddonUpdates.unbind("click").click(function () {
-+        showSoftwareCP();
-+      });
-+      jQuery("#addonUpdatesAvailableList").html(addonUpdateList);
-+      rowShowAddonUpdates.show();
-+    }
++      if (addonUpdateList !== "") {
++        var self = this,
++        rowShowAddonUpdates = jQuery("#addonUpdatesAvailable"),
++        btnShowAddonUpdates = jQuery("#addonUpdatesAvailable .firmwareAvailable");
++        btnShowAddonUpdates.unbind("click").click(function () {
++          showSoftwareCP();
++        });
++        jQuery("#addonUpdatesAvailableList").html(addonUpdateList);
++        rowShowAddonUpdates.show();
++      }
++    });
 +  },
 +  
  

@@ -1,22 +1,10 @@
 proc get_info {script array_var} {
   upvar $array_var arr
   foreach key [array names arr] { unset arr($key) }
-  set lang "de"
+  # Read the unlocalized info like checkAddonUpdates.sh, which writes the
+  # online versions, and stop an addon script that does not answer.
   catch {
-    set fd [open "|$script info.$lang" r]
-
-   while { ! [eof $fd] } {
-    set line [gets $fd]
-    if { [regexp {^([^:]+): (.*)$} $line dummy key value] } {
-      if { [info exists arr($key)] } {append arr($key) "\n"}
-      append arr($key) $value
-    }
-  }
-    close $fd
-  }
-
-  catch {
-   set fd [open "|$script info" r]
+   set fd [open "|timeout 5 $script info" r]
    while { ! [eof $fd] } {
     set line [gets $fd]
     if { [regexp {^([^:]+): (.*)$} $line dummy key value] } {
