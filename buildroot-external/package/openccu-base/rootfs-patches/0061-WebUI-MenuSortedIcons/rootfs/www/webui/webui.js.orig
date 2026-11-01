@@ -36077,6 +36077,16 @@ showDutyCycle = function() {
             trPartingLineElm.hide();
           }
         });
+
+        // hide the rows of interfaces that are missing in this response
+        jQuery("[name^='trDutyCycle']").each(function() {
+          if (parseInt(jQuery(this).attr("name").substr(11), 10) >= dcArray.length) {
+            jQuery(this).css("display", "none");
+          }
+        });
+        if (!showPartingLine) {
+          jQuery("#partingLine1").hide();
+        }
       }
     });
   }

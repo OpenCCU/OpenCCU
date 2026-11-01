@@ -349,7 +349,7 @@ if {$portFound == 0} {
         append jsonResult "\"address\":[json_toString $gateway(ADDRESS)]"
         append jsonResult ",\"name\":[json_toString $name]"
         append jsonResult ",\"sysVar\":[json_toString $sysVarName]"
-        append jsonResult ",\"dutyCycle\":[json_toString $gateway(DUTY_CYCLE)]"
+        append jsonResult ",\"dutyCycle\":[json_toString $dutycycle]"
         append jsonResult ",\"carrierSense\":[json_toString $carriersense]"
         append jsonResult ",\"type\":[json_toString $gateway(TYPE)]"
         append jsonResult "\}"

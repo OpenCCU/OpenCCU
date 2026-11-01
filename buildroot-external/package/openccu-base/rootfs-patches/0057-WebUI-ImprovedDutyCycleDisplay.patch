@@ -301,7 +301,7 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35987,74 +35983,101 @@
+@@ -35987,74 +35983,111 @@
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
@@ -450,6 +450,16 @@
 +            trPartingLineElm.hide();
            }
          });
++
++        // hide the rows of interfaces that are missing in this response
++        jQuery("[name^='trDutyCycle']").each(function() {
++          if (parseInt(jQuery(this).attr("name").substr(11), 10) >= dcArray.length) {
++            jQuery(this).css("display", "none");
++          }
++        });
++        if (!showPartingLine) {
++          jQuery("#partingLine1").hide();
++        }
        }
 -      showDutyCycleHmIP();
      });
