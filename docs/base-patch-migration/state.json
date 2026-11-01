@@ -874,7 +874,7 @@
   "in_progress": {
     "base_merge_commit": "641809a7b3be6645e53b2f1ea43a18ba006daf11",
     "base_pr": 290,
-    "cleanup_pr": null,
+    "cleanup_pr": 4624,
     "patch": "0131-WebUI-ShowAddonUpdatesOnStartpage.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
