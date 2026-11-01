@@ -109,7 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "3249aee94e6498aba58e434e92655654f56ddf0bcbb5ccf1659a5c6ce0fe8b1c"
+      "sha256": "84175dcd291a58cc3b49b889727f9955e7073f92afd1d3d0e8db567acd6ccb2c"
     },
     {
       "added": 305,

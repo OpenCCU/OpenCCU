@@ -1298,6 +1298,7 @@ proc put_Header {} {
   set HmIPIdentifier "HmIP-RF"
   set HmIPWIdentifier "HmIP-Wired"
   set HMRFIdentifier "BidCos-RF"
+  set HMWIdentifier "BidCos-Wired"
   set type $dev_descr(TYPE)
 
   array set SENTRY ""
@@ -1318,10 +1319,10 @@ proc put_Header {} {
     set SENTRY(IFACE)       $iface_descr($iface)
   }
   # Interface.restoreConfigToDevice needs admin rights and is only
-  # implemented by rfd (BidCos-RF), not by hs485d or the HmIP server
+  # implemented by rfd (BidCos-RF) and hs485d (BidCos-Wired), not by the HmIP server
   global REGA_SESSION
   set SHOWRESTORE 0
-  if {[info exists REGA_SESSION(UPL)] && $REGA_SESSION(UPL) >= 8 && $iface eq $HMRFIdentifier} then {
+  if {[info exists REGA_SESSION(UPL)] && $REGA_SESSION(UPL) >= 8 && ($iface eq $HMRFIdentifier || $iface eq $HMWIdentifier)} then {
     set SHOWRESTORE [expr {[get_user_easylinkmode] == "false"}]
   }
   set SENTRY(IMAGE) "<div id=\"picDiv_thumb\" class=\"CLASS22005\" onmouseover=\"picDivShow(jg_250, '$dev_descr(TYPE)', 250, '-1', this);\" onmouseout=\"picDivHide(jg_250);\"></div>"
