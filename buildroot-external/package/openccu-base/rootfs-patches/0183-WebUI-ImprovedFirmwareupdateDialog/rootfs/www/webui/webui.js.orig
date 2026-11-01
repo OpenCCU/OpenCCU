@@ -47678,7 +47678,7 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
       min = parseFloat(parseFloat(min).toFixed(digits));
       max = parseFloat(parseFloat(max).toFixed(digits));
       var roundFactor = Math.pow(10, digits);
-      value = Math.round(parseFloat(value) * roundFactor) / roundFactor;
+      value = Math.round(parseFloat((parseFloat(value) * roundFactor).toPrecision(12))) / roundFactor;
 
       if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
     }

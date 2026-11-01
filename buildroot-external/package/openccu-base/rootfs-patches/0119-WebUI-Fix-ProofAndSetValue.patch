@@ -69,7 +69,7 @@
          append html "<td>"
  
 -          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
-+          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
++          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
            append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
  
          append html "</td>"
@@ -78,7 +78,25 @@
          append html "<td>"
  
 -          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
-+          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
++          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
+ 
+        append html "</td>"
+@@ -4591,7 +4591,7 @@
+         append html "<td>\${stringTableCondThresholdLo}</td>"
+         append html "<td>"
+ 
+-          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
++          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
+ 
+         append html "</td>"
+@@ -4605,7 +4605,7 @@
+         append html "<td>\${stringTableCondThresholdHi}</td>"
+         append html "<td>"
+ 
+-          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
++          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(Math.round(this.value * 100))\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
            append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
  
         append html "</td>"
@@ -580,7 +598,7 @@
 +      min = parseFloat(parseFloat(min).toFixed(digits));
 +      max = parseFloat(parseFloat(max).toFixed(digits));
 +      var roundFactor = Math.pow(10, digits);
-+      value = Math.round(parseFloat(value) * roundFactor) / roundFactor;
++      value = Math.round(parseFloat((parseFloat(value) * roundFactor).toPrecision(12))) / roundFactor;
  
        if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
 -
