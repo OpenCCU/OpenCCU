@@ -47868,61 +47868,72 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
     srcElm.value = value;
   }
 
+  var parsedValue;
+  var parsedMin = parseFloat(min);
+  var parsedMax = parseFloat(max);
+
+  var minSplit = min.toString().split(".");
+  var maxSplit = max.toString().split(".");
+  var digits = 0;
+
+  if(minSplit.length === 2) {
+    digits = Math.max(digits, minSplit[1].length);
+  }
+  if(maxSplit.length === 2) {
+    digits = Math.max(digits, maxSplit[1].length);
+  }
+
   // Check if float is allowed
   try {
     if (min.toString().indexOf(".") == -1 && max.toString().indexOf(".") == -1) {
       min = parseInt(min);
       max = parseInt(max);
-      value = (roundValue05(parseInt(value)));
+      value = Math.round(parseFloat(value));
     } else {
-      min = parseFloat(parseFloat(min).toFixed(fixedDecimalPoint));
-      max = parseFloat(parseFloat(max).toFixed(fixedDecimalPoint));
-      value = parseFloat(parseFloat(value).toFixed(fixedDecimalPoint));
+      min = parseFloat(parseFloat(min).toFixed(digits));
+      max = parseFloat(parseFloat(max).toFixed(digits));
+      var roundFactor = Math.pow(10, digits);
+      value = Math.round(parseFloat((parseFloat(value) * roundFactor).toPrecision(12))) / roundFactor;
 
       if (value < min || isNaN(min)) {value = min;} else if (value > max) {value = max;}
-
-      srcElm.value = parseFloat(value);
     }
+    parsedValue = parseFloat(value);
   } catch(e) {conInfo(e);}
 
   if (typeof value == "undefined")
   {
-    finalVal = min;
+    finalVal = parsedMin;
     ok = false;
   }
   else if (isNaN(value))
   {
-    finalVal = min;
+    finalVal = parsedMin;
     ok = false;
   }
-  else if (value < min)
+  else if (parsedValue < parsedMin)
   {
-    finalVal = min;
+    finalVal = parsedMin;
     ok = false;
   }
-  else if (value > max)
+  else if (parsedValue > parsedMax)
   {
-    finalVal = max;
+    finalVal = parsedMax;
     ok = false;
   }
 
   if (ok)
   {
     srcElm.style.backgroundColor = "#fffffe";
-    dstElm.value = value * dstValueFactor;
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = dstElm.value;
-    }
+    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = parsedValue.toFixed(digits);
     srcElm.setAttribute("valvalid", "true");
   }
   else
   {
     srcElm.setAttribute("valvalid", "false");
     srcElm.style.backgroundColor = "red";
-    dstElm.value = finalVal * dstValueFactor;
-    if ((typeof _iface == "undefined") || (_iface != "BidCos-RF")) {
-      srcElm.value = dstElm.value;
-    }
+    dstElm.value = parseFloat((finalVal.toFixed(digits) * dstValueFactor).toPrecision(12));
+    srcElm.value = finalVal.toFixed(digits);
     window.setTimeout(function(){srcElm.style.backgroundColor = "white";},1000);
   }
 };
