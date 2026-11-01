@@ -646,7 +646,7 @@ jQuery.extend(true, langJSON, {
     "dialogRenameVirtualGroupDeviceTitle" : "Rename the virtual device",
     "dialogVirtualGroupDeviceContent" : "Would you like to rename the virtual device of the group and its channels to the group name?",
     "dialogShowDeviceFirmwareTitle" : "There are new device firmware updates available",
-    "dialogShowDeviceFirmwareTHDevice": "Devicetype",
+    "dialogShowDeviceFirmwareTHDevice": "Device type",
     "dialogShowDeviceFirmwareTHSerials": "Serial numbers",
     "dialogShowDeviceFirmwareTHCurFw": "Current Version",
     "dialogShowDeviceFirmwareTHNewFw": "Recommended Version",
