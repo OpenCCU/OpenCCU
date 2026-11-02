@@ -1,6 +1,6 @@
 --- a/www/tcl/extern/cgi.tcl
 +++ b/www/tcl/extern/cgi.tcl
-@@ -1272,11 +1272,11 @@
+@@ -1265,11 +1265,11 @@
  	} else {
  	    set fid stdin
  	}
@@ -16,7 +16,7 @@
      } else {
  	if {![info exists env(REQUEST_METHOD)]} {
  	    set input $fakeinput
-@@ -1497,248 +1497,6 @@
+@@ -1490,248 +1490,6 @@
      if {[info exists dbg_fout]} {close $dbg_fout}
  }
  

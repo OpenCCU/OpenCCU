@@ -1621,8 +1621,8 @@ cgi_eval {
 
   catch { import action }
   catch { import filename }
-  # accept only a file that /config/fileupload.ccc has written
-  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename]} {
+  # accept only a regular file that /config/fileupload.ccc has written
+  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
     set filename ""
   }
 
