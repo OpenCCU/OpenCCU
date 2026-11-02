@@ -381,17 +381,21 @@ if {$portFound == 0} {
     # finish jsonResult array
     append jsonResult "\]"
 
-    # write to a temporary file first and rename it into place, so that
-    # Interface.getDutyCycle never reads a partially written file
+    # write to an exclusively created temporary file first and rename it
+    # into place, so that Interface.getDutyCycle never reads a partially
+    # written file
     set jsonFile "/tmp/dutycycle.json"
-    set jsonTmpFile "$jsonFile.[pid]"
+    set jsonTmpFile ""
     if {[catch {
-      set jsonOutputFile [open $jsonTmpFile w]
+      set jsonOutputFile [file tempfile jsonTmpFile $jsonFile]
       puts $jsonOutputFile $jsonResult
       close $jsonOutputFile
+      file attributes $jsonTmpFile -permissions 0644
       file rename -force $jsonTmpFile $jsonFile
     }]} {
-      catch {file delete $jsonTmpFile}
+      if {$jsonTmpFile != ""} {
+        catch {file delete $jsonTmpFile}
+      }
     }
   }
 } else {
