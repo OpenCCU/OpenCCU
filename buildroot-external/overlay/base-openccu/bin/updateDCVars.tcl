@@ -392,10 +392,11 @@ if {$portFound == 0} {
       close $jsonOutputFile
       file attributes $jsonTmpFile -permissions 0644
       file rename -force $jsonTmpFile $jsonFile
-    }]} {
+    } err]} {
       if {$jsonTmpFile != ""} {
         catch {file delete $jsonTmpFile}
       }
+      catch {exec logger -t watchdog -p error "DutyCycle: failed to write $jsonFile: $err"}
     }
   }
 } else {
