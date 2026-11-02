@@ -2666,7 +2666,7 @@
  }
  
  #ic_setprofiles  #id_sender_group_receiver_profiles_wrapper
-@@ -2410,9 +2469,10 @@
+@@ -2389,9 +2448,10 @@
    padding:0;
    background-color:$_(clickable);
    color: $_(textColorB); /* black */
@@ -2678,7 +2678,7 @@
  }
  
  .FilterHeight20 {
-@@ -2425,7 +2485,7 @@
+@@ -2404,7 +2464,7 @@
    padding:0;
    background-color:$_(active); /* #565657 */
    color: $_(textColorB); /* black */
@@ -2687,7 +2687,7 @@
    text-align:left;
    vertical-align:middle;  
  }
-@@ -2471,8 +2531,7 @@
+@@ -2450,8 +2510,7 @@
  }
  
  .FilterText {
@@ -2697,7 +2697,7 @@
  }
  
  .FilterButton {
-@@ -2482,8 +2541,7 @@
+@@ -2461,8 +2520,7 @@
    /*background-image: linear-gradient(to bottom, white 40%, gray );*/
    background-image: var(--btnGradient);
  
@@ -2707,7 +2707,7 @@
    border:1px solid $_(black); /* black */
    color: $_(textColorB); /* white */
    font-weight:normal;
-@@ -2579,8 +2637,7 @@
+@@ -2558,8 +2616,7 @@
    border-bottom:solid 5px $_(navBarSeparator); /* #ffffff */
    background-color: $_(background); /* #183473 */
    z-index: 189;
@@ -2717,7 +2717,7 @@
  }
  
  .MainMenuItem_Left {
-@@ -2600,7 +2657,7 @@
+@@ -2579,7 +2636,7 @@
  }
  
  .MainMenuItem_Help {
@@ -2726,7 +2726,7 @@
  }
  
  .MainMenuItem_Highlight {
-@@ -2681,6 +2738,7 @@
+@@ -2660,6 +2717,7 @@
    background-color: $_(subMenuBackground);
    overflow:hidden;
    z-index:189;
@@ -2734,7 +2734,7 @@
  }
  
  .MainMenuSubItem {
-@@ -2695,7 +2753,6 @@
+@@ -2674,7 +2732,6 @@
    line-height:20px;
    cursor: pointer;
    white-space: nowrap;
@@ -2742,7 +2742,7 @@
  }
  
  .MainMenuSubItem_Highlight {
-@@ -2785,9 +2842,9 @@
+@@ -2764,9 +2821,9 @@
    top: 24px;
    left: 2px;
    width: 996px;
@@ -2754,7 +2754,7 @@
  }
  
  #ChannelChooserFooter {
-@@ -2833,7 +2890,6 @@
+@@ -2812,7 +2869,6 @@
    width:100%;
    height:auto;
    margin:0;
@@ -2762,7 +2762,7 @@
    padding:0;
    empty-cells:show;
  }
-@@ -2845,7 +2901,7 @@
+@@ -2824,7 +2880,7 @@
    padding:0;
    background-color:$_(clickable);
    color: $_(textColorA); /* white */
@@ -2771,7 +2771,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2857,7 +2913,7 @@
+@@ -2836,7 +2892,7 @@
    padding:0;
    background-color:$_(active); /* #565657 */
    color: $_(textColorA); /* white */
@@ -2780,7 +2780,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -2881,7 +2937,6 @@
+@@ -2860,7 +2916,6 @@
  
  .ChannelChooserThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2788,7 +2788,7 @@
    text-align:left;
    height:80px;
  }
-@@ -2929,7 +2984,7 @@
+@@ -2908,7 +2963,7 @@
    width: 996px;
    height: 520px;
    background-color: $_(white); /* white */
@@ -2797,7 +2797,7 @@
  }
  
  #MultiChannelChooserFooter {
-@@ -3036,40 +3091,38 @@
+@@ -3015,40 +3070,38 @@
  
  .MultiChannelChooserThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2845,7 +2845,7 @@
    text-align:center;
    vertical-align:middle;
  }
-@@ -3089,8 +3142,7 @@
+@@ -3068,8 +3121,7 @@
  }
  
  .DeviceListRow_Highlight {
@@ -2855,7 +2855,7 @@
    cursor:pointer;
  }
  
-@@ -3119,9 +3171,8 @@
+@@ -3098,9 +3150,8 @@
  
  .DeviceListThumbnail {
    border: 1px solid $_(black); /* black */
@@ -2867,7 +2867,7 @@
  }
  
  .DeviceListButton {
-@@ -3182,7 +3233,7 @@
+@@ -3161,7 +3212,7 @@
    height: 520px;
    background-color: $_(white); /* white */
    color: $_(textColorB); /* black */
@@ -2876,7 +2876,7 @@
  }
  
  #ChannelConfigDialogFooter {
-@@ -3579,18 +3630,12 @@
+@@ -3558,18 +3609,12 @@
      position: absolute;
      left: 4px
  }.bidcosrf_page {
@@ -2897,7 +2897,7 @@
  }
  
  .bidcosrf_button {
-@@ -3616,7 +3661,7 @@
+@@ -3595,7 +3640,7 @@
  .bidcosrf_table {
    border: 1px solid $_(black);
    border-spacing: 0px;
@@ -2906,7 +2906,7 @@
  }
  
  .bidcosrf_tableheader {
-@@ -3636,7 +3681,7 @@
+@@ -3615,7 +3660,7 @@
  }
  
  .bidcosrf_imagecell {
@@ -2915,7 +2915,7 @@
    border: 1px solid $_(black);
    empty-cells: show;
    text-align: center;
-@@ -3647,12 +3692,13 @@
+@@ -3626,12 +3671,13 @@
    border: 1px solid $_(black);
    empty-cells: show;
    text-align: center;
@@ -2931,7 +2931,7 @@
  html, body {
    border: 0 none;
    margin: 0;
-@@ -4035,7 +4081,6 @@
+@@ -4014,7 +4060,6 @@
  }
  
  .CLASS00203 {
@@ -2939,7 +2939,7 @@
  }
  
  .CLASS00204 {
-@@ -4088,10 +4133,10 @@
+@@ -4067,10 +4112,10 @@
  /* rega\pages\msg\sysVarsSelection.htm */
  
  .CLASS00300 {
@@ -2952,7 +2952,7 @@
  }
  
  .CLASS00301 {
-@@ -4102,6 +4147,7 @@
+@@ -4081,6 +4126,7 @@
  	text-align:center;
  	background-color:$_(clickable);
  	height: 40px;
@@ -2960,7 +2960,7 @@
  }
  
  .CLASS00303 {
-@@ -4355,7 +4401,7 @@
+@@ -4334,7 +4380,7 @@
  
  .CLASS00717 {
  	height:200px;
@@ -2969,7 +2969,7 @@
  	background-color:$_(white); /* white */
  }
  
-@@ -4769,7 +4815,7 @@
+@@ -4748,7 +4794,7 @@
  /* rega\pages\msg\programChooser.htm */
  
  .CLASS01300 {
@@ -2978,7 +2978,7 @@
  	width: 100%;
  	height: 400px;
  	background-color:$_(white); /* white */
-@@ -5007,13 +5053,13 @@
+@@ -4986,13 +5032,13 @@
  }
  
  .CLASS01805 {
@@ -2995,7 +2995,7 @@
  }
  
  .CLASS01807 {
-@@ -5032,9 +5078,7 @@
+@@ -5011,9 +5057,7 @@
  }
  
  .CLASS01809 {
@@ -3005,7 +3005,7 @@
  	height:100%;
  	overflow:hidden;
  }
-@@ -5256,6 +5300,7 @@
+@@ -5239,6 +5283,7 @@
  	color: $_(textColorB); /* black */
  	width:100%;
  	border:none;
@@ -3013,7 +3013,7 @@
  }
  
  .CLASS02511 {
-@@ -5277,6 +5322,7 @@
+@@ -5260,6 +5305,7 @@
  	border:1px Solid $_(black); /* black */
  	height:96px;
  	width:96px;
@@ -3021,7 +3021,7 @@
  }
  
  .CLASS02515 {
-@@ -5319,7 +5365,6 @@
+@@ -5302,7 +5348,6 @@
  
  .CLASS02520 {
  	color: $_(textColorB); /* black */
@@ -3029,7 +3029,7 @@
  	border:none;
  	background-color:$_(activeBackground);
  }
-@@ -5413,7 +5458,7 @@
+@@ -5396,7 +5441,7 @@
  	width:220px;
  	/*height:25px;*/
  	height:auto;
@@ -3038,7 +3038,7 @@
  	clear: both;
  	display: inline-block;
    /* line-height:25px; problem with controls with a long parameter name */
-@@ -5460,12 +5505,11 @@
+@@ -5443,12 +5488,11 @@
  }
  
  .CLASS02535 {
@@ -3054,7 +3054,7 @@
  	white-space: break-spaces;
  }
  
-@@ -5482,6 +5526,7 @@
+@@ -5465,6 +5509,7 @@
  	word-wrap: break-word;
  	max-width: 480px;
  	display: inline-block;
@@ -3062,7 +3062,7 @@
  }
  
  .CLASS02536 {
-@@ -5490,20 +5535,13 @@
+@@ -5473,20 +5518,13 @@
  
  .CLASS02537 {
  	text-align: center;
@@ -3083,7 +3083,7 @@
  }
  
  .CLASS02539 {
-@@ -5540,6 +5578,7 @@
+@@ -5523,6 +5561,7 @@
  
  .CLASS02543 {
  	border:1px solid $_(black); /* black */
@@ -3091,7 +3091,7 @@
  }
  
  .CLASS02544 {
-@@ -5638,6 +5677,7 @@
+@@ -5621,6 +5660,7 @@
  
  .CLASS02552 {
  	border:solid 1px $_(black); /* black */
@@ -3099,7 +3099,7 @@
  }
  
  .CLASS02553 {
-@@ -5699,12 +5739,10 @@
+@@ -5682,12 +5722,10 @@
  
  .CLASS02601 {
  	text-align:center;
@@ -3113,7 +3113,7 @@
  }
  
  .CLASS02603 {
-@@ -5716,6 +5754,7 @@
+@@ -5699,6 +5737,7 @@
  
  .CLASS02604 {
  	height: 58px;
@@ -3121,7 +3121,7 @@
  }
  
  .CLASS02605 {
-@@ -5723,76 +5762,52 @@
+@@ -5706,76 +5745,52 @@
  	background-color: $_(activeBackground);
  	border: solid 1px $_(black); /* black */
  	color: $_(textColorB); /* black */
@@ -3207,7 +3207,7 @@
  }
  
  .CLASS02615 {
-@@ -5886,10 +5901,12 @@
+@@ -5869,10 +5884,12 @@
  	vertical-align:middle;
  	border:solid 1px $_(black); /* #000000 */
  	font-weight:bold;
@@ -3221,7 +3221,7 @@
  }
  
  .CLASS02804 {
-@@ -5955,7 +5972,6 @@
+@@ -5938,7 +5955,6 @@
  }
  
  .CLASS02815 {
@@ -3229,7 +3229,7 @@
  }
  
  /* rega\pages\tabs\statusviews\svroomchannels.htm */
-@@ -6140,18 +6156,13 @@
+@@ -6123,18 +6139,13 @@
  }
  
  .CLASS03301 {
@@ -3249,7 +3249,7 @@
  }
  
  .CLASS03303 {
-@@ -6230,8 +6241,7 @@
+@@ -6213,8 +6224,7 @@
  
  .CLASS03500 {
  	border:solid 1px $_(black); /* black */
@@ -3259,7 +3259,7 @@
  }
  
  .CLASS03501 {
-@@ -6264,8 +6274,7 @@
+@@ -6247,8 +6257,7 @@
  
  .CLASS03600 {
  	border:solid 1px $_(black); /* black */
@@ -3269,7 +3269,7 @@
  }
  
  .CLASS03601 {
-@@ -6354,8 +6363,7 @@
+@@ -6337,8 +6346,7 @@
  
  .CLASS03800 {
  	border:solid 1px $_(black); /* black */
@@ -3279,7 +3279,7 @@
  }
  
  .CLASS03801 {
-@@ -6398,15 +6406,15 @@
+@@ -6381,15 +6389,15 @@
  }
  
  .CLASS03902 {
@@ -3299,7 +3299,7 @@
  }
  
  .CLASS03904 {
-@@ -6421,7 +6429,6 @@
+@@ -6404,7 +6412,6 @@
  .CLASS03906 {
  	vertical-align:middle;
  	text-align:left;
@@ -3307,7 +3307,7 @@
  }
  
  .CLASS03907 {
-@@ -6431,13 +6438,15 @@
+@@ -6414,13 +6421,15 @@
  }
  
  .CLASS03908 {
@@ -3326,7 +3326,7 @@
  }
  
  .CLASS03910 {
-@@ -6463,13 +6472,15 @@
+@@ -6446,13 +6455,15 @@
  }
  
  .CLASS04002 {
@@ -3345,7 +3345,7 @@
  }
  
  .CLASS04004 {
-@@ -6484,7 +6495,8 @@
+@@ -6467,7 +6478,8 @@
  
  .CLASS04006 {
  	border:solid 1px $_(black); /* black */
@@ -3355,7 +3355,7 @@
  }
  
  .CLASS04007 {
-@@ -6495,7 +6507,6 @@
+@@ -6478,7 +6490,6 @@
  
  .CLASS04100 {
  	text-align:center;
@@ -3363,7 +3363,7 @@
  	empty-cells:show;
  }
  
-@@ -6506,17 +6517,18 @@
+@@ -6489,17 +6500,18 @@
  .CLASS04102 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3383,7 +3383,7 @@
  }
  
  .CLASS04105 {
-@@ -6539,6 +6551,7 @@
+@@ -6522,6 +6534,7 @@
  .CLASS04109 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3391,7 +3391,7 @@
    height:20px;
  }
  
-@@ -6562,10 +6575,15 @@
+@@ -6545,10 +6558,15 @@
  
  .CLASS04200 {
  	text-align:center;
@@ -3408,7 +3408,7 @@
  .CLASS04202 {
  	height:40px;
  }
-@@ -6581,10 +6599,12 @@
+@@ -6564,10 +6582,12 @@
  
  .CLASS04205 {
  	height:auto;
@@ -3421,7 +3421,7 @@
  }
  
  .CLASS04207 {
-@@ -6607,6 +6627,7 @@
+@@ -6590,6 +6610,7 @@
  .CLASS04211 {
  	background-color:$_(clickable);
  	color: $_(textColorA) ! important; /* white */
@@ -3429,7 +3429,7 @@
  }
  
  .CLASS04212 {
-@@ -6637,7 +6658,8 @@
+@@ -6620,7 +6641,8 @@
  .CLASS04301 {
  	width:100%;
  	height:100%;
@@ -3439,7 +3439,7 @@
  }
  
  .CLASS04302 {
-@@ -6825,7 +6847,7 @@
+@@ -6808,7 +6830,7 @@
  
  .CLASS04900 {
  	color: $_(textColorA); /* white */
@@ -3448,7 +3448,7 @@
  }
  
  .CLASS04901 {
-@@ -6849,7 +6871,7 @@
+@@ -6832,7 +6854,7 @@
  .CLASS04905 {
  	line-height:15px;
  	font-size:smaller;
@@ -3457,7 +3457,7 @@
  }
  
  .CLASS04906 {
-@@ -6937,6 +6959,7 @@
+@@ -6920,6 +6942,7 @@
  .CLASS05012 {
  	color: $_(textColorB); /* black */
  	font-size:9pt;
@@ -3465,7 +3465,7 @@
  }
  
  /* rega\pages\tabs\admin\msg\timemodule.htm */
-@@ -6975,6 +6998,10 @@
+@@ -6958,6 +6981,10 @@
  	color: $_(textColorB); /* black */
  }
  
@@ -3476,7 +3476,7 @@
  .CLASS05105 {
  	text-align:left;
  }
-@@ -7013,7 +7040,6 @@
+@@ -6996,7 +7023,6 @@
  .CLASS05200 {
  	text-align:center;
  	vertical-align:middle;
@@ -3484,7 +3484,7 @@
  	height: auto;
  }
  
-@@ -7081,10 +7107,10 @@
+@@ -7064,10 +7090,10 @@
  }
  
  .CLASS05301 {
@@ -3496,7 +3496,7 @@
  }
  
  .CLASS05302 {
-@@ -7257,6 +7283,10 @@
+@@ -7240,6 +7266,10 @@
  
  /* rega\pages\tabs\favViewer.htm  */
  
@@ -3507,7 +3507,7 @@
  .CLASS05800 {
  	width:100%;
  	text-align:center;
-@@ -7385,11 +7415,13 @@
+@@ -7368,11 +7398,13 @@
  /* rega\pages\tabs\user\newFav.htm */
  
  .CLASS06300 {
@@ -3523,7 +3523,7 @@
  }
  
  .CLASS06302 {
-@@ -7677,7 +7709,6 @@
+@@ -7660,7 +7692,6 @@
  }
  
  .CLASS06409 {
@@ -3531,7 +3531,7 @@
  }
  
  .CLASS06410 {
-@@ -7840,7 +7871,7 @@
+@@ -7823,7 +7854,7 @@
  
  .CLASS10902 {
    border:1px solid $_(gray); /* #999999 */
@@ -3540,7 +3540,7 @@
    background-color:$_(inactiveButton); /* rgb(192,192,192) */
    cursor:default;
  }
-@@ -7955,7 +7986,6 @@
+@@ -7938,7 +7969,6 @@
  }
  
  .CLASS11105 {
@@ -3548,7 +3548,7 @@
    padding-top: 7px;
  }
  
-@@ -7982,7 +8012,6 @@
+@@ -7965,7 +7995,6 @@
  /* config/ic_setprofiles */
  
  .CLASS20001 {
@@ -3556,7 +3556,7 @@
  }
  
  .CLASS20002 {
-@@ -8004,7 +8033,7 @@
+@@ -7987,7 +8016,7 @@
  }
  
  .CLASS20006 {
@@ -3565,7 +3565,7 @@
  }
  
  .CLASS20007 {
-@@ -8040,7 +8069,6 @@
+@@ -8023,7 +8052,6 @@
  }
  
  .CLASS20010 {
@@ -3573,7 +3573,7 @@
  }
  
  /* config\easymodes\DIMMER\MOTION_DETECTOR.tcl */
-@@ -8341,6 +8369,7 @@
+@@ -8324,6 +8352,7 @@
  
    padding: 3px;
    text-align:center;
@@ -3581,7 +3581,7 @@
    vertical-align:middle;
    margin:2px;
    cursor: pointer;
-@@ -8569,7 +8598,9 @@
+@@ -8552,7 +8581,9 @@
  /* config\help.cgi */
  
  .CLASS21300 {
@@ -3592,7 +3592,7 @@
  }
  
  .CLASS21301 {
-@@ -8795,8 +8826,11 @@
+@@ -8778,8 +8809,11 @@
  
  /* config\control_panel.cgi */
  
@@ -3605,7 +3605,7 @@
  }
  
  .CLASS21701 {
-@@ -8867,7 +8901,8 @@
+@@ -8850,7 +8884,8 @@
  /* config\ic_selchannel.cgi */
  
  .CLASS21900 {
@@ -3615,7 +3615,7 @@
  }
  
  .CLASS21901 {
-@@ -8892,9 +8927,11 @@
+@@ -8875,9 +8910,11 @@
  
    color: $_(textColorB); /* black */
    border: 1px solid $_(black); /* black */
@@ -3628,7 +3628,7 @@
  }
  
  .CLASS21905 {
-@@ -8917,7 +8954,6 @@
+@@ -8900,7 +8937,6 @@
  
  .CLASS21908 {
    overflow: auto;
@@ -3636,7 +3636,7 @@
    width:100%;
  }
  
-@@ -8974,13 +9010,17 @@
+@@ -8957,13 +8993,17 @@
  /* config\ic_deviceparameters.cgi */
  
  .CLASS22000 {
@@ -3656,7 +3656,7 @@
  }
  
  .CLASS22002 {
-@@ -8990,11 +9030,17 @@
+@@ -8973,11 +9013,17 @@
  
  .CLASS22003 {
    background-color: $_(white);
@@ -3674,7 +3674,7 @@
  }
  
  .CLASS22005 {
-@@ -9052,7 +9098,8 @@
+@@ -9035,7 +9081,8 @@
  }
  
  .CLASS22101 {
@@ -3684,7 +3684,7 @@
  }
  
  .CLASS22102 {
-@@ -9074,9 +9121,8 @@
+@@ -9057,9 +9104,8 @@
  .CLASS22104 {
    left:0px;
    top:0px;
@@ -3695,7 +3695,7 @@
    position:relative;
    width:50px;
    height:50px;
-@@ -9086,10 +9132,12 @@
+@@ -9069,10 +9115,12 @@
    position:relative;
    width:50px;
    height:50px;
@@ -3763,7 +3763,7 @@
    <\/colgroup>\n
    <thead>\n
      <tr>\n
-@@ -26499,7 +26499,7 @@
+@@ -26495,7 +26495,7 @@
    TREE_EXPANDED_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3772,7 +3772,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
        "</tr>" +
-@@ -26507,7 +26507,7 @@
+@@ -26503,7 +26503,7 @@
    FLAT_FOOTER_HTML: "" +
      "<table border='0' cellspacing='8'>" +
        "<tr>" + 
@@ -3781,7 +3781,7 @@
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
          "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
        "</tr>" +
-@@ -28022,7 +28022,7 @@
+@@ -28018,7 +28018,7 @@
      FOOTER_HTML= "" +
        "<table border='0' cellspacing='8'>" +
          "<tr>" +
@@ -3790,7 +3790,7 @@
          "</tr>" +
        "</table>";
  
-@@ -32395,13 +32395,11 @@
+@@ -32391,13 +32391,11 @@
        case ID_ROOMS:
          this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
          this.setWidth75Perc();
@@ -3804,7 +3804,7 @@
          this.setFile( "/pages/msg/popupPropEditor.htm" );
          break;
        case ID_TRANSFER_PARAMETERS:
-@@ -34011,7 +34009,7 @@
+@@ -34007,7 +34005,7 @@
    var opts = {
      evalScripts: true,
      onComplete: function(trans) {
@@ -3813,7 +3813,7 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
-@@ -46626,7 +46624,7 @@
+@@ -46664,7 +46662,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
  HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
@@ -3822,7 +3822,7 @@
  HL_STROKE = 4;//Background
  //-----
  
-@@ -46678,8 +46676,8 @@
+@@ -46716,8 +46714,8 @@
    
    if (!form) return;
  
@@ -3833,7 +3833,7 @@
  
    switch (form[gd_type])
    {
-@@ -46775,7 +46773,7 @@
+@@ -46813,7 +46811,7 @@
      previewPicTimer = window.setTimeout(function () {
        HideElement('picDiv');
        delete previewPicTimer;
