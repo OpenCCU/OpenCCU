@@ -886,7 +886,7 @@
   "in_progress": {
     "base_merge_commit": "62753fc9320fb0c5122daab36f4f08c26902160d",
     "base_pr": 293,
-    "cleanup_pr": null,
+    "cleanup_pr": 4631,
     "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
