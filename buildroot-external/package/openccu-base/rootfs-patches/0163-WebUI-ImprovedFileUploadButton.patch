@@ -154,7 +154,7 @@
                  }
 --- a/www/tcl/extern/cgi.tcl
 +++ b/www/tcl/extern/cgi.tcl
-@@ -2086,7 +2086,12 @@
+@@ -2079,7 +2079,12 @@
      if {[info exists _cgi(formtype)] && ("multipart/form-data" != $_cgi(form,enctype))} {
  	error "cgi_file_button requires that cgi_form have the argument enctype=multipart/form-data"
      }

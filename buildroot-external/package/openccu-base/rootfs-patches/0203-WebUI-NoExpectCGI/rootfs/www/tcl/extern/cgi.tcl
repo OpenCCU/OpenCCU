@@ -287,13 +287,6 @@ proc cgi_eval {cmd} {
 				cgi_puts ""
 				cgi_puts "<u>Backtrace:</u>"
 				cgi_puts [cgi_quote_html $_cgi(errorInfo)]
-				cgi_puts ""
-				cgi_puts "<u>CGI info:</u>"
-				cgi_puts "_cgi(input): $_cgi(input)"
-				cgi_puts "_cgi(queryencoding): $_cgi(queryencoding)"
-				cgi_puts ""
-				cgi_puts "<u>Environment info:</u>"
-				catch {cgi_parray env}
 			}
 			# output in file/mail
 			cgi_mail_start $_cgi(admin_email)

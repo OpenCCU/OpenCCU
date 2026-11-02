@@ -117,6 +117,17 @@
  
    set action "put_page"
    set downloadOnly 0
+@@ -1465,6 +1471,10 @@
+   catch {import action}
+   catch {import downloadOnly}
+   catch {import filename}
++  # accept only a regular file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
++    set filename ""
++  }
+ 
+   if {[session_requestisvalid 8] > 0} then action_$action
+ }
 --- a/www/config/cp_network.cgi
 +++ b/www/config/cp_network.cgi
 @@ -148,45 +148,43 @@
@@ -200,7 +211,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -802,13 +799,15 @@
+@@ -802,13 +799,19 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -217,6 +228,10 @@
  
    catch { import action }
 +  catch { import filename }
++  # accept only a regular file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
++    set filename ""
++  }
    if {[session_requestisvalid 8] > 0} then action_$action
  }
  
@@ -271,7 +286,7 @@
      }
    }
  }
-@@ -1612,14 +1611,16 @@
+@@ -1612,14 +1611,20 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -289,6 +304,10 @@
  
    catch { import action }
 +  catch { import filename }
++  # accept only a regular file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
++    set filename ""
++  }
  
    if {[session_requestisvalid 8] > 0} then action_$action
  }
@@ -340,7 +359,7 @@
      }
    }
  }
-@@ -570,14 +572,16 @@
+@@ -570,14 +572,20 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -358,12 +377,16 @@
  
    catch { import action }
 +  catch { import filename }
++  # accept only a regular file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
++    set filename ""
++  }
  
    if {[session_requestisvalid 8] > 0} then action_$action
  }
 --- /dev/null
 +++ b/www/config/fileupload.ccc
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,125 @@
 +#!/bin/sh
 +# shellcheck shell=dash disable=SC3036,SC3010,SC2034,SC3060,SC2116,SC3045 source=/dev/null
 +
@@ -421,6 +444,22 @@
 +  echo "ERROR: missing required URL parameters"
 +  exit 1
 +fi
++
++# accept only known values, as they end up in the script below
++case "${url}" in
++  /config/cp_maintenance.cgi|/config/cp_network.cgi|/config/cp_security.cgi|/config/cp_software.cgi) ;;
++  *) echo "ERROR: invalid url parameter"; exit 1 ;;
++esac
++case "${action}" in
++  *[!a-z_]*) echo "ERROR: invalid action parameter"; exit 1 ;;
++esac
++case "${downloadOnly}" in
++  ""|0|1) ;;
++  *) echo "ERROR: invalid downloadOnly parameter"; exit 1 ;;
++esac
++case "${sid}" in
++  *[!@A-Za-z0-9]*) echo "ERROR: invalid session id"; exit 1 ;;
++esac
 +
 +# check for a valid ADMIN session id
 +if [[ "${#sid}" -eq 12 ]]; then
@@ -504,7 +543,7 @@
  	}
      }
      cgi_puts ""
-@@ -281,44 +275,48 @@
+@@ -281,44 +275,41 @@
  	    cgi_html {
  		cgi_body {
  		    if {[info exists _cgi(client_error)]} {
@@ -553,13 +592,6 @@
 -			    cgi_mail_add "errorInfo:"
 -			    cgi_mail_add "$_cgi(errorInfo)"
 -			    cgi_mail_end
-+				cgi_puts ""
-+				cgi_puts "<u>CGI info:</u>"
-+				cgi_puts "_cgi(input): $_cgi(input)"
-+				cgi_puts "_cgi(queryencoding): $_cgi(queryencoding)"
-+				cgi_puts ""
-+				cgi_puts "<u>Environment info:</u>"
-+				catch {cgi_parray env}
  			}
 +			# output in file/mail
 +			cgi_mail_start $_cgi(admin_email)
@@ -586,7 +618,7 @@
  		    }
  		} ;# end cgi_body
  	    } ;# end cgi_html
-@@ -472,10 +470,9 @@
+@@ -472,10 +463,9 @@
      foreach a [lrange $args 1 end] {
          append buf " $a"
      }
@@ -598,7 +630,7 @@
  # generate an image reference (<img ...>)
  # first arg is image url
  # other args are passed through into <img> tag
-@@ -497,7 +494,7 @@
+@@ -497,7 +487,7 @@
  
  # names an anchor so that it can be linked to
  proc cgi_anchor_name {name} {
@@ -607,7 +639,7 @@
  }
  
  proc cgi_base {args} {
-@@ -513,7 +510,7 @@
+@@ -513,7 +503,7 @@
  	    cgi_put " $a"
  	}
      }
@@ -616,7 +648,7 @@
  }
  
  ##################################################
-@@ -531,7 +528,8 @@
+@@ -531,7 +521,8 @@
  	regsub -all -nocase {%([a-f0-9][a-f0-9])} $buf {\\u00\1} buf
  
  	# process \u unicode mapped chars
@@ -626,7 +658,7 @@
      }
  } elseif {[info tclversion] >= 8.1} {
      proc cgi_unquote_input buf {
-@@ -982,7 +980,7 @@
+@@ -982,7 +973,7 @@
  # from cgi_http_head.
  proc cgi_http_equiv {type contents} {
      _cgi_http_head_implicit
@@ -635,7 +667,7 @@
  }
  
  # Do whatever you want with meta tags.
-@@ -1010,7 +1008,7 @@
+@@ -1010,7 +1001,7 @@
  	    cgi_put " $a"
  	}
      }
@@ -644,7 +676,7 @@
  }
  
  proc cgi_name {args} {
-@@ -1114,7 +1112,7 @@
+@@ -1114,7 +1105,7 @@
  
  proc cgi_noscript {args} {
      cgi_puts "<noscript[_cgi_lrange $args 0 [expr [llength $args]-2]]>"
@@ -653,7 +685,7 @@
  
      uplevel 1 [lindex $args end]
  
-@@ -1135,7 +1133,7 @@
+@@ -1135,7 +1126,7 @@
      if {$q != "="} {
  	set value ""
      }
@@ -662,7 +694,7 @@
  }
  
  # record any proc's that must be called prior to displaying an error
-@@ -1254,7 +1252,7 @@
+@@ -1254,7 +1245,7 @@
  	    cgi_put " $a"
  	}
      }
@@ -671,7 +703,7 @@
  }
  
  ##################################################
-@@ -1294,15 +1292,31 @@
+@@ -1294,15 +1285,31 @@
  	} else {
  	    set length $env(CONTENT_LENGTH)
  	    if {0!=[string compare $length "-1"]} {
@@ -708,7 +740,7 @@
  	}
  	# save input for possible diagnostics later
  	set _cgi(input) $input
-@@ -1345,30 +1359,6 @@
+@@ -1345,30 +1352,6 @@
      }
  }
  
@@ -739,7 +771,7 @@
  proc _cgi_input_multipart {fin} {
      global env _cgi _cgi_uservar _cgi_userfile
  
-@@ -1379,121 +1369,7 @@
+@@ -1379,121 +1362,7 @@
  	# can hang and we won't get to the termination code
  	set dbg_fout [open $dbg_filename w]
  	set _cgi(input) $dbg_filename
@@ -862,7 +894,7 @@
      }
  
      # figure out boundary
-@@ -1513,24 +1389,28 @@
+@@ -1513,24 +1382,28 @@
      set boundary --$boundary
  
      # don't corrupt or modify uploads yet allow Tcl 7.4 to work
@@ -898,7 +930,7 @@
  	}	    
  	# Lame-o encoding (on Netscape at least) doesn't escape field
  	# delimiters (like quotes)!!  Since all we've ever seen is filename=
-@@ -1548,14 +1428,18 @@
+@@ -1548,14 +1421,18 @@
  	}
  
  	if {[info exists filename]} {
@@ -920,7 +952,7 @@
  	    #
  	    # Look for a boundary line preceded by \r\n.
  	    #
-@@ -1583,10 +1467,13 @@
+@@ -1583,10 +1460,13 @@
  		    puts -nonewline $fout $leftover$buf
  		    set leftover "\n"
  		}
@@ -935,7 +967,7 @@
  	} else {
  	    # read the part into a variable
  	    set val ""
-@@ -1672,7 +1559,8 @@
+@@ -1672,7 +1552,8 @@
  	}
      }
  
@@ -945,7 +977,7 @@
      while {1} {
  	# process Content-Disposition:
  	expect {
-@@ -1684,9 +1572,7 @@
+@@ -1684,9 +1565,7 @@
  	    eof break
  	}
  	catch {unset filename}
@@ -956,7 +988,7 @@
  	if {0==[info exists varname]} {
  	    set _cgi(client_error) 1
  	    error "In response to a request for a multipart form, your browser generated a part header without a name field.  Please upgrade (or fix) your browser."
-@@ -1712,8 +1598,12 @@
+@@ -1712,8 +1591,12 @@
  	}
  
  	if {[info exists filename]} {
@@ -970,7 +1002,7 @@
  	    spawn -open [open $foutname w]
  	    set fout_sid $spawn_id
  
-@@ -1967,6 +1857,23 @@
+@@ -1967,6 +1850,23 @@
      }
  }
  
@@ -994,7 +1026,7 @@
  ##################################################
  # button support
  ##################################################
-@@ -2088,7 +1995,7 @@
+@@ -2088,7 +1988,7 @@
  	    cgi_put " $a"
  	}
      }
@@ -1003,7 +1035,7 @@
  }
  
  ##################################################
-@@ -2182,6 +2089,15 @@
+@@ -2182,6 +2082,15 @@
      cgi_put "<input type=file name=\"$name\"[_cgi_list_to_string $args]/>"
  }
  
@@ -1019,7 +1051,7 @@
  ##################################################
  # select support
  ##################################################
-@@ -2224,7 +2140,7 @@
+@@ -2224,7 +2133,7 @@
      }
      if {[info exists selected_if_equal]} {
  	if {0 == [string compare $selected_if_equal $value]} {
@@ -1028,7 +1060,7 @@
  	}
      }
      cgi_puts ">[cgi_quote_html $o]</option>"
-@@ -2251,7 +2167,7 @@
+@@ -2251,7 +2160,7 @@
  	    }
  	}
      }
@@ -1037,7 +1069,7 @@
  }
  
  ##################################################
-@@ -2525,7 +2441,7 @@
+@@ -2525,7 +2434,7 @@
  ##################################################
  
  proc cgi_stylesheet {href} {
@@ -1046,7 +1078,7 @@
  }
  
  proc cgi_span {args} {
-@@ -2584,7 +2500,7 @@
+@@ -2584,7 +2493,7 @@
  	    cgi_put " $a"
  	}
      }
@@ -1055,7 +1087,7 @@
  }
  
  proc cgi_noframes {args} {
-@@ -2672,33 +2588,50 @@
+@@ -2672,33 +2581,50 @@
  
  # User-defined procedure to generate DOCTYPE declaration
  proc cgi_doctype {} {
@@ -1121,7 +1153,7 @@
      } macintosh {
  	set _cgi(tmpdir) [pwd]
      } default {
-@@ -2711,4 +2644,4 @@
+@@ -2711,4 +2637,4 @@
  # regexp for matching attr=val
  set _cgi(attr,regexp) "^(\[^=]*)=(\[^\"].*)"
  

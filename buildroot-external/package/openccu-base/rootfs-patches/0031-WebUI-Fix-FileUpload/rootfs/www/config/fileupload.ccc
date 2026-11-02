@@ -56,6 +56,22 @@ if [[ -z "${url}" ]] || [[ -z "${action}" ]]; then
   exit 1
 fi
 
+# accept only known values, as they end up in the script below
+case "${url}" in
+  /config/cp_maintenance.cgi|/config/cp_network.cgi|/config/cp_security.cgi|/config/cp_software.cgi) ;;
+  *) echo "ERROR: invalid url parameter"; exit 1 ;;
+esac
+case "${action}" in
+  *[!a-z_]*) echo "ERROR: invalid action parameter"; exit 1 ;;
+esac
+case "${downloadOnly}" in
+  ""|0|1) ;;
+  *) echo "ERROR: invalid downloadOnly parameter"; exit 1 ;;
+esac
+case "${sid}" in
+  *[!@A-Za-z0-9]*) echo "ERROR: invalid session id"; exit 1 ;;
+esac
+
 # check for a valid ADMIN session id
 if [[ "${#sid}" -eq 12 ]]; then
   # parse the current version

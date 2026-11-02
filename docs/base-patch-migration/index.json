@@ -32,7 +32,7 @@
       "sha256": "1ba20b58e964ef4b73767701a7eeb6a6a8dc80b8538e57f8c48498ef626cabde"
     },
     {
-      "added": 370,
+      "added": 395,
       "files": [
         "www/config/cp_maintenance.cgi",
         "www/config/cp_network.cgi",
@@ -44,7 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "a41483be17ef52e59682c410827cec864d1e74f3c5fdb4d3f41c53bb4109e674"
+      "sha256": "8b411c7e728543d1add47601b34a1d9aa6628052fd38b9e44fbdbf129fbca9ce"
     },
     {
       "added": 786,
@@ -234,7 +234,7 @@
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
-      "sha256": "f12c2f17556e86b3c6332e5b4feeadd0add38b9cd99a6267cdf21fec5e67eed3"
+      "sha256": "b64a344d75591c8e22c41df6f3e83d05e18e5bc864fb9de9c7f00c0ea13f027c"
     },
     {
       "added": 4,
@@ -243,7 +243,7 @@
       ],
       "patch": "0203-WebUI-NoExpectCGI.patch",
       "removed": 246,
-      "sha256": "7cacbe5740bcd99ff525c8b08c290b90d0fcdb5f77f1a16f73477d57e5c44317"
+      "sha256": "80fe24258b86c6b5435aa4fc8c29ead7c554b1ff4921bb2c5017dbda4cbc124d"
     },
     {
       "added": 447,
