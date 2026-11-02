@@ -35978,6 +35978,8 @@ changeRoomOrSubsection = function(id)
 };
 
 
+var dutyCycleRequestId = 0;
+
 showDutyCycle = function() {
   if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
     var ifaceBidCosRF = "BidCos-RF",
@@ -35993,7 +35995,10 @@ showDutyCycle = function() {
       csWarn  = 10,  // Warning when cs >= 11%
       csAlarm = 19;  // Attention when cs >= 20%
 
+    var requestId = ++dutyCycleRequestId;
     homematic("Interface.getDutyCycle", {}, function(dcArray) {
+      // ignore the response of a request that a newer one has superseded
+      if (requestId !== dutyCycleRequestId) { return; }
       if(jQuery.isArray(dcArray)) {
         jQuery.each(dcArray, function(index, iface) {
           var dutyCycleValElm = jQuery("#dutyCycleVal"+index),
@@ -36003,7 +36008,7 @@ showDutyCycle = function() {
             carrierSenseValElm = jQuery("#carrierSenseVal"+index),
             carrierSenseBar = jQuery("[name='carrierSenseBar"+index+"']"),
             carrierSenseCol = jQuery("[name='carrierSenseCol"+index+"']"),
-            trPartingLineElm = jQuery("#partingLine1"),
+            trPartingLineElm = jQuery("#partingLine0, #partingLine1"),
             csVal,
             dcVal;
 
@@ -36064,7 +36069,7 @@ showDutyCycle = function() {
               }
             } else {
               carrierSenseValElm.text("n/a");
-              carrierSenseBar.css("width", "0%");
+              carrierSenseBar.css("width", "0%").removeAttr("aria-valuenow");
             }
             trPartingLineElm.show();
             showPartingLine = true;
@@ -36077,6 +36082,16 @@ showDutyCycle = function() {
             trPartingLineElm.hide();
           }
         });
+
+        // hide the rows of interfaces that are missing in this response
+        jQuery("[name^='trDutyCycle']").each(function() {
+          if (parseInt(jQuery(this).attr("name").substr(11), 10) >= dcArray.length) {
+            jQuery(this).css("display", "none");
+          }
+        });
+        if (!showPartingLine) {
+          jQuery("#partingLine0, #partingLine1").hide();
+        }
       }
     });
   }

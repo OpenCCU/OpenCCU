@@ -349,7 +349,7 @@ if {$portFound == 0} {
         append jsonResult "\"address\":[json_toString $gateway(ADDRESS)]"
         append jsonResult ",\"name\":[json_toString $name]"
         append jsonResult ",\"sysVar\":[json_toString $sysVarName]"
-        append jsonResult ",\"dutyCycle\":[json_toString $gateway(DUTY_CYCLE)]"
+        append jsonResult ",\"dutyCycle\":[json_toString $dutycycle]"
         append jsonResult ",\"carrierSense\":[json_toString $carriersense]"
         append jsonResult ",\"type\":[json_toString $gateway(TYPE)]"
         append jsonResult "\}"
@@ -381,10 +381,23 @@ if {$portFound == 0} {
     # finish jsonResult array
     append jsonResult "\]"
 
-    # write to file
-    set jsonOutputFile [open /tmp/dutycycle.json w]
-    puts $jsonOutputFile $jsonResult
-    close $jsonOutputFile
+    # write to an exclusively created temporary file first and rename it
+    # into place, so that Interface.getDutyCycle never reads a partially
+    # written file
+    set jsonFile "/tmp/dutycycle.json"
+    set jsonTmpFile ""
+    if {[catch {
+      set jsonOutputFile [file tempfile jsonTmpFile $jsonFile]
+      puts $jsonOutputFile $jsonResult
+      close $jsonOutputFile
+      file attributes $jsonTmpFile -permissions 0644
+      file rename -force $jsonTmpFile $jsonFile
+    } err]} {
+      if {$jsonTmpFile != ""} {
+        catch {file delete $jsonTmpFile}
+      }
+      catch {exec logger -t watchdog -p error "DutyCycle: failed to write $jsonFile: $err"}
+    }
   }
 } else {
   setDutyCycleSV "" "DutyCycle CCU" -1 ""
