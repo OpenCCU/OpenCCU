@@ -381,10 +381,18 @@ if {$portFound == 0} {
     # finish jsonResult array
     append jsonResult "\]"
 
-    # write to file
-    set jsonOutputFile [open /tmp/dutycycle.json w]
-    puts $jsonOutputFile $jsonResult
-    close $jsonOutputFile
+    # write to a temporary file first and rename it into place, so that
+    # Interface.getDutyCycle never reads a partially written file
+    set jsonFile "/tmp/dutycycle.json"
+    set jsonTmpFile "$jsonFile.[pid]"
+    if {[catch {
+      set jsonOutputFile [open $jsonTmpFile w]
+      puts $jsonOutputFile $jsonResult
+      close $jsonOutputFile
+      file rename -force $jsonTmpFile $jsonFile
+    }]} {
+      catch {file delete $jsonTmpFile}
+    }
   }
 } else {
   setDutyCycleSV "" "DutyCycle CCU" -1 ""
