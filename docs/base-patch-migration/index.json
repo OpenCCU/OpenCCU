@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "a5f271dabcb7cb5e0d79c055451ab69f6bc63a6e06cfca04abeb33e6d34deac7"
+      "sha256": "1ba20b58e964ef4b73767701a7eeb6a6a8dc80b8538e57f8c48498ef626cabde"
     },
     {
       "added": 370,
@@ -44,7 +44,7 @@
       ],
       "patch": "0031-WebUI-Fix-FileUpload.patch",
       "removed": 317,
-      "sha256": "767331d52b11e4733181153fc2e3f04624b41b84dd7f2da6a0a190f5f8fb8a80"
+      "sha256": "a41483be17ef52e59682c410827cec864d1e74f3c5fdb4d3f41c53bb4109e674"
     },
     {
       "added": 786,
@@ -109,7 +109,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "837be42a216c86213581c96fff4d3993a1489e1bc0c6be9853cc8bb2e0b8439a"
+      "sha256": "4f533ab4ecbf95fcc95b54855d0f72b1d1b5b2cfd895d8d230bba33bb4a0d1f5"
     },
     {
       "added": 305,
@@ -121,7 +121,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "cb0b354b02420b7b9a27470b291e911f3b8cff8edaee615a18eb67aabb294c89"
+      "sha256": "4ed734d312e1ee8b4f7adcbc1b6bbbdb3a56609dd481128090483dbf4d439d01"
     },
     {
       "added": 757,
@@ -132,21 +132,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "53270281443b5c8300f5a3d9bb7bd0c8d95764ff0e703254ec7ac00d1fa092bc"
-    },
-    {
-      "added": 275,
-      "files": [
-        "www/api/methods.conf",
-        "www/api/methods/interface/getdutycycle.tcl",
-        "www/rega/pages/tabs/startpage.htm",
-        "www/webui/css/extern/hmBootstrap.css",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
-      "removed": 99,
-      "sha256": "a5726c8b5d7fc8f2f7fc3aba2c953d2df03393a5922b9a1c84b2dc25bb0abfe1"
+      "sha256": "36028aa941ff3ee6561bbc1fb4a3c2ecf67adcf5f45e96d67eb67e68bf6c2168"
     },
     {
       "added": 357,
@@ -273,5 +259,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "2c92108ca2c141febb4c83c6a2e1e47b21a3cc31b2dfc0e98d607a5c772990ec"
+  "series_sha256": "84aeaa26b18f6575ed7e3b7991b6e402656494acb065b2c940b4929eb46f4f9e"
 }

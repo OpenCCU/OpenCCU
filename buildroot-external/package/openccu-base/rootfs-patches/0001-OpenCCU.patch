@@ -1232,7 +1232,7 @@
  
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -25757,16 +25757,16 @@
+@@ -25753,16 +25753,16 @@
  
     // WebUI-Version
    showCurrentFirmware: function() {
@@ -1258,7 +1258,7 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -30057,9 +30057,8 @@
+@@ -30053,9 +30053,8 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
@@ -1269,7 +1269,7 @@
  
      this.serial = homematic("CCU.getSerial");
      this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
-@@ -30068,7 +30067,7 @@
+@@ -30064,7 +30063,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1278,7 +1278,7 @@
      $("body").appendChild(script);
    },
  
-@@ -35534,11 +35533,11 @@
+@@ -35530,11 +35529,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {

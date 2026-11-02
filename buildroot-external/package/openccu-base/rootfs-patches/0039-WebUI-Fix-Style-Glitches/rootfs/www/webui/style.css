@@ -2442,27 +2442,6 @@ progress[value] {
 progress::-moz-progress-bar { background: #3678c9; }
 progress::-webkit-progress-value { background: #3678c9; }
 
-.dutyCycleProgress {
-  width: 75%;
-
-  background: -moz-linear-gradient(0deg, rgba(13,255,0,1) 0%, rgba(255,255,0,1) 63%, rgba(255,0,0,1) 100%); /* ff3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(13,255,0,1)), color-stop(63%, rgba(255,255,0,1)), color-stop(100%, rgba(255,0,0,1))); /* safari4+,chrome */
-  background: -webkit-linear-gradient(0deg, rgba(13,255,0,1) 0%, rgba(255,255,0,1) 63%, rgba(255,0,0,1) 100%); /* safari5.1+,chrome10+ */
-  background: -o-linear-gradient(0deg, rgba(13,255,0,1) 0%, rgba(255,255,0,1) 63%, rgba(255,0,0,1) 100%); /* opera 11.10+ */
-  background: -ms-linear-gradient(0deg, rgba(13,255,0,1) 0%, rgba(255,255,0,1) 63%, rgba(255,0,0,1) 100%); /* ie10+ */
-  background: linear-gradient(90deg, rgba(13,255,0,1) 0%, rgba(255,255,0,1) 63%, rgba(255,0,0,1) 100%); /* w3c */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0DFF00', endColorstr='#ff0000',GradientType=1 ); /* ie6-9 */
-
-
-}
-
-.dutyCycleProgressBar {
-  width: 1%;
-  height: 12px;
-  background-color: #d9d9d9;
-}
-
-
 .Filter {
   margin:0;
   border:1px solid $_(black); /* black */
@@ -5087,9 +5066,13 @@ application {
 	height:50%;
 }
 
+#partingLine1 {
+  display: table-row;
+}
+
 .CLASS01811 {
-	padding-top: 5px;
     color: $_(textColorB); /* black */
+	border-collapse: collapse;
 }
 
 .CLASS01812 {
