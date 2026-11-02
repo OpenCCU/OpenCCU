@@ -36002,6 +36002,8 @@ changeRoomOrSubsection = function(id)
 };
 
 
+var dutyCycleRequestId = 0;
+
 showDutyCycle = function() {
   if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
     var ifaceBidCosRF = "BidCos-RF",
@@ -36017,7 +36019,10 @@ showDutyCycle = function() {
       csWarn  = 10,  // Warning when cs >= 11%
       csAlarm = 19;  // Attention when cs >= 20%
 
+    var requestId = ++dutyCycleRequestId;
     homematic("Interface.getDutyCycle", {}, function(dcArray) {
+      // ignore the response of a request that a newer one has superseded
+      if (requestId !== dutyCycleRequestId) { return; }
       if(jQuery.isArray(dcArray)) {
         jQuery.each(dcArray, function(index, iface) {
           var dutyCycleValElm = jQuery("#dutyCycleVal"+index),

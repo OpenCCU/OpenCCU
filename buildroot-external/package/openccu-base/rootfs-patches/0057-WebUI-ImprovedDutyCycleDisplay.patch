@@ -304,7 +304,14 @@
        }, checkDutyCycleInterval);
  
        if (getProduct() >= 3) {
-@@ -35987,74 +35983,111 @@
+@@ -35982,79 +35978,121 @@
+ };
+ 
+ 
++var dutyCycleRequestId = 0;
++
+ showDutyCycle = function() {
+   if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
      var ifaceBidCosRF = "BidCos-RF",
        ifaceHmIPRF = "HmIP-RF",
        arInterfaceDutyCycle = {},
@@ -331,7 +338,10 @@
 +      csWarn  = 10,  // Warning when cs >= 11%
 +      csAlarm = 19;  // Attention when cs >= 20%
 +
++    var requestId = ++dutyCycleRequestId;
 +    homematic("Interface.getDutyCycle", {}, function(dcArray) {
++      // ignore the response of a request that a newer one has superseded
++      if (requestId !== dutyCycleRequestId) { return; }
 +      if(jQuery.isArray(dcArray)) {
 +        jQuery.each(dcArray, function(index, iface) {
 +          var dutyCycleValElm = jQuery("#dutyCycleVal"+index),
