@@ -117,6 +117,17 @@
  
    set action "put_page"
    set downloadOnly 0
+@@ -1465,6 +1471,10 @@
+   catch {import action}
+   catch {import downloadOnly}
+   catch {import filename}
++  # accept only a file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename]} {
++    set filename ""
++  }
+ 
+   if {[session_requestisvalid 8] > 0} then action_$action
+ }
 --- a/www/config/cp_network.cgi
 +++ b/www/config/cp_network.cgi
 @@ -148,45 +148,43 @@
@@ -200,7 +211,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -802,13 +799,15 @@
+@@ -802,13 +799,19 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -217,6 +228,10 @@
  
    catch { import action }
 +  catch { import filename }
++  # accept only a file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename]} {
++    set filename ""
++  }
    if {[session_requestisvalid 8] > 0} then action_$action
  }
  
@@ -271,7 +286,7 @@
      }
    }
  }
-@@ -1612,14 +1611,16 @@
+@@ -1612,14 +1611,20 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -289,6 +304,10 @@
  
    catch { import action }
 +  catch { import filename }
++  # accept only a file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename]} {
++    set filename ""
++  }
  
    if {[session_requestisvalid 8] > 0} then action_$action
  }
@@ -340,7 +359,7 @@
      }
    }
  }
-@@ -570,14 +572,16 @@
+@@ -570,14 +572,20 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -358,12 +377,16 @@
  
    catch { import action }
 +  catch { import filename }
++  # accept only a file that /config/fileupload.ccc has written
++  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename]} {
++    set filename ""
++  }
  
    if {[session_requestisvalid 8] > 0} then action_$action
  }
 --- /dev/null
 +++ b/www/config/fileupload.ccc
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,125 @@
 +#!/bin/sh
 +# shellcheck shell=dash disable=SC3036,SC3010,SC2034,SC3060,SC2116,SC3045 source=/dev/null
 +
@@ -421,6 +444,22 @@
 +  echo "ERROR: missing required URL parameters"
 +  exit 1
 +fi
++
++# accept only known values, as they end up in the script below
++case "${url}" in
++  /config/cp_maintenance.cgi|/config/cp_network.cgi|/config/cp_security.cgi|/config/cp_software.cgi) ;;
++  *) echo "ERROR: invalid url parameter"; exit 1 ;;
++esac
++case "${action}" in
++  *[!a-z_]*) echo "ERROR: invalid action parameter"; exit 1 ;;
++esac
++case "${downloadOnly}" in
++  ""|0|1) ;;
++  *) echo "ERROR: invalid downloadOnly parameter"; exit 1 ;;
++esac
++case "${sid}" in
++  *[!@A-Za-z0-9]*) echo "ERROR: invalid session id"; exit 1 ;;
++esac
 +
 +# check for a valid ADMIN session id
 +if [[ "${#sid}" -eq 12 ]]; then
