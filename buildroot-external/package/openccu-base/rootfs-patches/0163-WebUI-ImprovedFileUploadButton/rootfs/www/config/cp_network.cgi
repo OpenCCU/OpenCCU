@@ -152,20 +152,10 @@ proc action_cert_upload {} {
   cd /usr/local/tmp/
   
   http_head
-  # accept only a file with a private key and a certificate
-  set beginPrivateKeyFound 0
-  set beginCertificateFound 0
-  set fp [open "$filename" r]
-  while { [gets $fp line] >= 0 } {
-    set line [string trimright $line "\r"]
-    if { [regexp {^-----BEGIN (RSA |EC )?PRIVATE KEY-----$} $line] } {
-      set beginPrivateKeyFound 1
-    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] } {
-      set beginCertificateFound 1
-    }
-  }
-  close $fp
-  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
+  # accept only a readable certificate with its matching, unencrypted private key
+  set certValid [expr {![catch {exec /usr/bin/openssl x509 -noout -pubkey -in $filename 2>/dev/null} certPubKey]}]
+  set keyValid [expr {![catch {exec /usr/bin/openssl pkey -pubout -passin pass: -in $filename 2>/dev/null </dev/null} keyPubKey]}]
+  if { $certValid && $keyValid && $certPubKey eq $keyPubKey } {
     catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
     file rename -force -- $filename "/etc/config/server.pem"
     

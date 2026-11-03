@@ -88,7 +88,7 @@
                }
 --- a/www/config/cp_network.cgi
 +++ b/www/config/cp_network.cgi
-@@ -398,9 +398,9 @@
+@@ -388,9 +388,9 @@
              }
              table_row {
                table_data {width="20"} {}
@@ -100,7 +100,7 @@
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
                }
-@@ -411,17 +411,14 @@
+@@ -401,17 +401,14 @@
                  #puts "Schritt 3: Zertifikat auf Zentrale laden"
                  puts "\${dialogSettingsNetworkCertificateLblStep3}"
                }
