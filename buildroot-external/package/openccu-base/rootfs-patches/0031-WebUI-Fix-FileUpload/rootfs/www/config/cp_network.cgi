@@ -152,11 +152,20 @@ proc action_cert_upload {} {
   cd /usr/local/tmp/
   
   http_head
+  # accept only a file with a private key and a certificate
+  set beginPrivateKeyFound 0
+  set beginCertificateFound 0
   set fp [open "$filename" r]
-  gets $fp line
+  while { [gets $fp line] >= 0 } {
+    set line [string trimright $line "\r"]
+    if { [regexp {^-----BEGIN (RSA |EC )?PRIVATE KEY-----$} $line] } {
+      set beginPrivateKeyFound 1
+    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] } {
+      set beginCertificateFound 1
+    }
+  }
   close $fp
-  #puts $line;
-  if { [string first "-----BEGIN " $line] != -1 } {
+  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
     catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
     file rename -force -- $filename "/etc/config/server.pem"
     

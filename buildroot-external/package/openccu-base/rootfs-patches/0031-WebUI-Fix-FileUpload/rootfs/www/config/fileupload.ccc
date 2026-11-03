@@ -76,6 +76,10 @@ esac
 if [[ "${#sid}" -eq 12 ]]; then
   # parse the current version
   [[ -r /VERSION ]] && . /VERSION
+  if [[ -z "${VERSION}" ]]; then
+    echo "ERROR: unknown firmware version"
+    exit 1
+  fi
 
   # use CCU.getVersion which is allowed only for Admins
   RES=$(/usr/bin/curl http://127.0.0.1/api/homematic.cgi \
@@ -84,7 +88,7 @@ if [[ "${#sid}" -eq 12 ]]; then
 
   # check the curl result contains the current
   # version number or not
-  if ! echo "${RES}" | grep -q "${VERSION}"; then
+  if ! echo "${RES}" | grep -qF -- "${VERSION}"; then
     echo "ERROR: no valid admin session id"
     exit 1
   fi
@@ -96,6 +100,7 @@ fi
 # write out the data
 filename=$(mktemp -p /usr/local/tmp)
 if ! /usr/bin/head -q -c ${SIZE} >"${filename}"; then
+  rm -f -- "${filename}"
   echo "ERROR: head failure"
   exit 1
 fi

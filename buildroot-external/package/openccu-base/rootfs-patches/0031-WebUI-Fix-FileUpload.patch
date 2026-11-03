@@ -83,6 +83,15 @@
    }
  
    if {[getProduct] < 3} {
+@@ -1048,7 +1050,7 @@
+       file rename -force -- $filename "/var/new_firmware.tar.gz"
+       set action "askCreateBackup"
+     } else {
+-      file delete -force -- [lindex $firmware_file 0]
++      file delete -force -- $filename
+       cgi_javascript {
+         puts {
+           startHmIPServer();
 @@ -1147,10 +1149,14 @@
  
    cgi_javascript {
@@ -130,7 +139,7 @@
  }
 --- a/www/config/cp_network.cgi
 +++ b/www/config/cp_network.cgi
-@@ -148,45 +148,43 @@
+@@ -148,45 +148,52 @@
  }
  
  proc action_cert_upload {} {
@@ -145,25 +154,27 @@
 -  
 -  set filename [open "/var/server.pem" r]
 -  
--  set beginPrivateKeyFound 0
--  set beginCertificateFound 0
++  # accept only a file with a private key and a certificate
+   set beginPrivateKeyFound 0
+   set beginCertificateFound 0
 -
 -  while { [gets $filename line] >= 0 } {
 -    if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
--      set beginPrivateKeyFound 1
++  set fp [open "$filename" r]
++  while { [gets $fp line] >= 0 } {
++    set line [string trimright $line "\r"]
++    if { [regexp {^-----BEGIN (RSA |EC )?PRIVATE KEY-----$} $line] } {
+       set beginPrivateKeyFound 1
 -    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] == 1 } {
--      set beginCertificateFound 1
--    }
--  }
++    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] } {
+       set beginCertificateFound 1
+     }
+   }
 -  close $filename
--  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
++  close $fp
+   if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
 -    file copy -force -- "/var/server.pem" "/etc/config/server.pem"
 -    file delete "/var/server.pem"
-+  set fp [open "$filename" r]
-+  gets $fp line
-+  close $fp
-+  #puts $line;
-+  if { [string first "-----BEGIN " $line] != -1 } {
 +    catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
 +    file rename -force -- $filename "/etc/config/server.pem"
      
@@ -201,7 +212,7 @@
        }
      }
    }
-@@ -392,8 +390,7 @@
+@@ -392,8 +399,7 @@
              table_row {
                table_data {width="20"} {}
                table_data {colspan="2"} {
@@ -211,7 +222,7 @@
                    file_button cert_file size=30 maxlength=1000000
                  }
                  puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
-@@ -802,13 +799,19 @@
+@@ -802,13 +808,19 @@
  cgi_eval {
    #cgi_debug -on
    cgi_input
@@ -386,7 +397,7 @@
  }
 --- /dev/null
 +++ b/www/config/fileupload.ccc
-@@ -0,0 +1,125 @@
+@@ -0,0 +1,130 @@
 +#!/bin/sh
 +# shellcheck shell=dash disable=SC3036,SC3010,SC2034,SC3060,SC2116,SC3045 source=/dev/null
 +
@@ -465,6 +476,10 @@
 +if [[ "${#sid}" -eq 12 ]]; then
 +  # parse the current version
 +  [[ -r /VERSION ]] && . /VERSION
++  if [[ -z "${VERSION}" ]]; then
++    echo "ERROR: unknown firmware version"
++    exit 1
++  fi
 +
 +  # use CCU.getVersion which is allowed only for Admins
 +  RES=$(/usr/bin/curl http://127.0.0.1/api/homematic.cgi \
@@ -473,7 +488,7 @@
 +
 +  # check the curl result contains the current
 +  # version number or not
-+  if ! echo "${RES}" | grep -q "${VERSION}"; then
++  if ! echo "${RES}" | grep -qF -- "${VERSION}"; then
 +    echo "ERROR: no valid admin session id"
 +    exit 1
 +  fi
@@ -485,6 +500,7 @@
 +# write out the data
 +filename=$(mktemp -p /usr/local/tmp)
 +if ! /usr/bin/head -q -c ${SIZE} >"${filename}"; then
++  rm -f -- "${filename}"
 +  echo "ERROR: head failure"
 +  exit 1
 +fi
