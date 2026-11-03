@@ -1044,7 +1044,7 @@ proc action_firmware_upload {} {
       file rename -force -- $filename "/var/new_firmware.tar.gz"
       set action "askCreateBackup"
     } else {
-      file delete -force -- [lindex $firmware_file 0]
+      file delete -force -- $filename
       cgi_javascript {
         puts {
           startHmIPServer();

@@ -152,11 +152,10 @@ proc action_cert_upload {} {
   cd /usr/local/tmp/
   
   http_head
-  set fp [open "$filename" r]
-  gets $fp line
-  close $fp
-  #puts $line;
-  if { [string first "-----BEGIN " $line] != -1 } {
+  # accept only a readable certificate with its matching, unencrypted private key
+  set certValid [expr {![catch {exec /usr/bin/openssl x509 -noout -pubkey -in $filename 2>/dev/null} certPubKey]}]
+  set keyValid [expr {![catch {exec /usr/bin/openssl pkey -pubout -passin pass: -in $filename 2>/dev/null </dev/null} keyPubKey]}]
+  if { $certValid && $keyValid && $certPubKey eq $keyPubKey } {
     catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
     file rename -force -- $filename "/etc/config/server.pem"
     
