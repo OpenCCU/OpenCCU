@@ -904,7 +904,7 @@
   "in_progress": {
     "base_merge_commit": "4dd1eeabe219f7f9b67bd3fc22a48e268c6e0ab8",
     "base_pr": 308,
-    "cleanup_pr": null,
+    "cleanup_pr": 4645,
     "patch": "0061-WebUI-MenuSortedIcons.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
