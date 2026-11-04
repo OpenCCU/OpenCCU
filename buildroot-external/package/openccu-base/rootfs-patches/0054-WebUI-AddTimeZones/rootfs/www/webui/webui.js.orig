@@ -25520,19 +25520,20 @@ MainMenu = Singleton.create({
     var _submenuItem_ = submenuItem;
     var _menuItem_ = menuItem;
     
-    var row = document.createElement("tr");
-
-    var cell = document.createElement("td");
+    var cell = document.createElement("div");
+    var img = document.createElement("img");
+    img.src="../ise/img/menuicons/"+submenuItem.id+".png";
+    img.alt = "";
+    cell.appendChild(img);
     cell.className = "MainMenuSubItem";
     cell.id = submenuItem.id;
     //cell.appendChild(document.createTextNode("${"+submenuItem.id+"}"));  
-    cell.appendChild(document.createTextNode(translateKey(submenuItem.id)));
+    cell.appendChild(document.createTextNode(" "+translateKey(submenuItem.id)));
     Event.observe(cell, "mouseover", function() { MainMenu.highlightOn(this); });
     Event.observe(cell, "mouseout", function()  { MainMenu.highlightOff(this); });
     Event.observe(cell, "click", function() { MainMenu.beginHideSubmenu(_menuItem_); _submenuItem_.action.defer(); });
-    row.appendChild(cell);
     
-    return row;
+    return cell;
   },
   
   /**
@@ -25568,12 +25569,11 @@ MainMenu = Singleton.create({
       submenuElement.className = "MainMenuSubMenu";
       Element.setStyle(submenuElement, {display: "none"});
       
-      var table = document.createElement("table");
-      table.border = "0";
-      submenuElement.appendChild(table);
       
-      var tbody =  document.createElement("tbody");
-      table.appendChild(tbody);
+      var tbody =  document.createElement("div");
+      Element.setStyle(tbody, {"display": "flex"});
+      Element.setStyle(tbody, {"flex-direction": "column"});
+      submenuElement.appendChild(tbody);
       
       for (var i = 0, len = submenu.length; i < len; i++)
       {
