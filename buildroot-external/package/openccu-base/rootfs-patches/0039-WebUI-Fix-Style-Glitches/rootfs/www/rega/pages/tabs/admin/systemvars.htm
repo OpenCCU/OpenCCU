@@ -332,14 +332,14 @@
       Write("var tmp = new Object();");
       Write("tmp['trid'] = '"#sTrId#"';");
       Write("tmp['id'] = '"#sv.ID()#"';");
-      Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
-      Write("tmp['name'] = '"#sv.Name()#"';");
-      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
+      Write("tmp['unit'] = '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['name'] = '"#sv.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C")#"';");
       Write("tmp['chn'] = '';");
       object obj = dom.GetObject( sv.Channel() );
       if( obj )
       {
-        Write("tmp['chn'] = '"#obj.Name()#"';");
+        Write("tmp['chn'] = '"#obj.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       }
       
       if (sv.ValueSubType() == istAlarm) { 

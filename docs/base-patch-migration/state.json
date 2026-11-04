@@ -881,18 +881,24 @@
       "base_pr": 292,
       "cleanup_pr": 4628,
       "patch": "0183-WebUI-ImprovedFirmwareupdateDialog.patch"
+    },
+    {
+      "base_merge_commit": "62753fc9320fb0c5122daab36f4f08c26902160d",
+      "base_pr": 293,
+      "cleanup_pr": 4631,
+      "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "62753fc9320fb0c5122daab36f4f08c26902160d",
-    "base_pr": 293,
-    "cleanup_pr": 4631,
-    "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch",
+    "base_merge_commit": "778884db91933c140c9369436ce6bb31c59ce951",
+    "base_pr": 301,
+    "cleanup_pr": 4640,
+    "patch": "0031-WebUI-Fix-FileUpload.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "9093a309a8252d7f26e8beb4c6ab79805ab2f415",
-  "verified_base_pin": "01e400772731935043a472057fe7709f8dd5d5d2",
-  "verified_source_sha256": "2f74926fd77b887c4b9948835d4069b7fbae8203d9a2a3f1bedbfd94e5280518"
+  "verified_at_openccu_commit": "2c832ecbc7b7896409ec50381555f084f569df4b",
+  "verified_base_pin": "62753fc9320fb0c5122daab36f4f08c26902160d",
+  "verified_source_sha256": "0de798c9f9847b11943132dc9cbd289474ce1c0f97b720ec1e8e190863bae9f7"
 }

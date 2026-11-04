@@ -148,45 +148,42 @@ proc read_var { filename varname} {
 }
 
 proc action_cert_upload {} {
-  global env sid
-  cd /tmp/
+  global env sid filename
+  cd /usr/local/tmp/
   
   http_head
-  import_file -client cert_file
-  file rename -force -- [lindex $cert_file 0] "/var/server.pem"
-  
-  set filename [open "/var/server.pem" r]
-  
-  set beginPrivateKeyFound 0
-  set beginCertificateFound 0
-
-  while { [gets $filename line] >= 0 } {
-    if { [string equal $line "-----BEGIN RSA PRIVATE KEY-----"] == 1 || [string equal $line "-----BEGIN PRIVATE KEY-----"] == 1} {
-      set beginPrivateKeyFound 1
-    } elseif { [string equal $line "-----BEGIN CERTIFICATE-----"] == 1 } {
-      set beginCertificateFound 1
-    }
-  }
-  close $filename
-  if { $beginCertificateFound == 1 && $beginPrivateKeyFound == 1 } {
-    file copy -force -- "/var/server.pem" "/etc/config/server.pem"
-    file delete "/var/server.pem"
+  # accept only a readable certificate with its matching, unencrypted private key
+  set certValid [expr {![catch {exec /usr/bin/openssl x509 -noout -pubkey -in $filename 2>/dev/null} certPubKey]}]
+  set keyValid [expr {![catch {exec /usr/bin/openssl pkey -pubout -passin pass: -in $filename 2>/dev/null </dev/null} keyPubKey]}]
+  if { $certValid && $keyValid && $certPubKey eq $keyPubKey } {
+    catch { file copy -force -- "/etc/config/server.pem" "/etc/config/server.pem.bak" }
+    file rename -force -- $filename "/etc/config/server.pem"
     
     cgi_javascript {
       puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
       puts {
-        parent.top.dlgPopup.hide();
-        parent.top.dlgPopup.setWidth(600);
-        parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_go");
+        var dlgPopup = parent.top.dlgPopup;
+        if (dlgPopup === undefined) {
+          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+        }
+        dlgPopup.hide();
+        dlgPopup.setWidth(600);
+        dlgPopup.LoadFromFile(url, "action=cert_update_go");
       }
     }
   } else {
+    file delete -force -- $filename
+
     cgi_javascript {
       puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
       puts {
-        parent.top.dlgPopup.hide();
-        parent.top.dlgPopup.setWidth(600);
-        parent.top.dlgPopup.LoadFromFile(url, "action=cert_update_failed");
+        var dlgPopup = parent.top.dlgPopup;
+        if (dlgPopup === undefined) {
+          dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+        }
+        dlgPopup.hide();
+        dlgPopup.setWidth(600);
+        dlgPopup.LoadFromFile(url, "action=cert_update_failed");
       }
     }
   }
@@ -392,8 +389,7 @@ proc action_put_page {} {
             table_row {
               table_data {width="20"} {}
               table_data {colspan="2"} {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=cert_form {target=cert_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=cert_upload
+                form "/config/fileupload.ccc?sid=$sid&action=cert_upload&url=$env(SCRIPT_NAME)" name=cert_form {target=cert_upload_iframe} enctype=multipart/form-data method=post {
                   file_button cert_file size=30 maxlength=1000000
                 }
                 puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
@@ -802,13 +798,19 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2 vpn} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
   set action "put_page"
+  set filename ""
 
   catch { import action }
+  catch { import filename }
+  # accept only a regular file that /config/fileupload.ccc has written
+  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
+    set filename ""
+  }
   if {[session_requestisvalid 8] > 0} then action_$action
 }
 
