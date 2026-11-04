@@ -70,7 +70,7 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@83f26fea93bc7efcbca2eb5591f5eaaf66b8f206  # v2.1.0
 
       # The OpenCCU-Base revisions of the previous and of this release, for the
-      # changes of its components (scripts/openccu-base-changes.sh)
+      # changes of its components (scripts/openccu-base-changes.py)
       - name: Determine OpenCCU-Base revisions
         id: base
         shell: bash
@@ -119,13 +119,14 @@ jobs:
           export PREVIOUS_TAG=${{ steps.previoustag.outputs.tag }}
           envsubst <.github/release-template.md >/tmp/release-template.md
 
-          # OpenCCU-Base changes in the space left of 120000 characters
-          # (GitHub limits a release text to 125000)
+          # OpenCCU-Base changes (scripts/openccu-base-changes.py) in the space
+          # left of 120000 characters (GitHub limits a release text to 125000)
           LIMIT=$((120000 - $(wc -c < /tmp/release-template.md)))
-          scripts/openccu-base-changes.sh openccu-base "${BASE_OLD}" \
+          python3 scripts/openccu-base-changes.py openccu-base "${BASE_OLD}" \
             "${BASE_NEW}" "${LIMIT}" >/tmp/openccu-base-changes.md
           if [[ -s /tmp/openccu-base-changes.md ]]; then
-            export BASE_CHANGELOG="$(cat /tmp/openccu-base-changes.md)"
+            BASE_CHANGELOG="$(cat /tmp/openccu-base-changes.md)"
+            export BASE_CHANGELOG="${BASE_CHANGELOG}"$'\n\n'
             envsubst <.github/release-template.md >/tmp/release-template.md
           fi
           echo "Release notes: $(wc -c < /tmp/release-template.md) characters"
@@ -139,7 +140,7 @@ jobs:
           )
 
           # one line for the OpenCCU-Base components with changes
-          BASE_COMPONENTS=$(sed -n 's/^### \([A-Za-z0-9_.-]*\)$/\1/p' /tmp/openccu-base-changes.md | paste -sd , - | sed 's/,/, /g')
+          BASE_COMPONENTS=$(sed -n 's/^- \([A-Za-z0-9_.-]*\): .*/\1/p' /tmp/openccu-base-changes.md | awk '!seen[$0]++' | paste -sd , - | sed 's/,/, /g')
 
           mkdir -p /tmp/changelog-summary
 
@@ -161,13 +162,13 @@ jobs:
             esac
             {
               echo '<ul>'
+              if [[ -n "${BASE_COMPONENTS}" ]]; then
+                echo "<li>${label_base} ${BASE_COMPONENTS} ${label_base_end}</li>"
+              fi
               if [[ -n "${CHANGE_ITEMS}" ]]; then
                 printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
               else
                 echo "<li>${label_fallback}</li>"
-              fi
-              if [[ -n "${BASE_COMPONENTS}" ]]; then
-                echo "<li>${label_base} ${BASE_COMPONENTS} ${label_base_end}</li>"
               fi
               echo '</ul>'
               echo '<hr/>'
