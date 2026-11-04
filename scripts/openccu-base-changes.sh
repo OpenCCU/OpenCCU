@@ -26,14 +26,20 @@ fi
 
 HEADING="## 🧩 OpenCCU-Base Changes:
 <sub>For all changes, see the [full commit log](${URL}/compare/${OLD}...${NEW}).</sub>"
-LIMIT=$((LIMIT - ${#HEADING}))
-if [[ ${LIMIT} -lt 0 ]]; then
-  LIMIT=0
+if [[ ${#HEADING} -ge ${LIMIT} ]]; then
+  exit 0
 fi
 
 # drop the "## Component changes" heading of changelog-sections.py
-COMPONENTS=$(cd "${BASE_DIR}" && python3 "${SCRIPT}" --limit "${LIMIT}" \
-  --link-base "${URL}/blob/${NEW}" "${OLD}" "${NEW}" | tail -n +2)
-if [[ -n "${COMPONENTS}" ]]; then
-  printf '%s\n%s\n' "${HEADING}" "${COMPONENTS}"
+COMPONENTS=$(cd "${BASE_DIR}" && python3 "${SCRIPT}" \
+  --limit "$((LIMIT - ${#HEADING} - 1))" --link-base "${URL}/blob/${NEW}" \
+  "${OLD}" "${NEW}" | tail -n +2)
+if [[ -z "${COMPONENTS}" ]]; then
+  exit 0
 fi
+# even the links to the changelogs may not fit: then only the heading with the
+# link to the full commit log remains
+if [[ $((${#HEADING} + 1 + ${#COMPONENTS})) -gt ${LIMIT} ]]; then
+  COMPONENTS=""
+fi
+printf '%s\n%s\n' "${HEADING}" "${COMPONENTS}"
