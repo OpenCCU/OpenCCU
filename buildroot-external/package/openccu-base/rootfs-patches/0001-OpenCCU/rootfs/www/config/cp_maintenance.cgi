@@ -70,10 +70,14 @@ proc action_acceptEula {} {
       puts "conInfo(\"EULA found\");"
       puts "jQuery('#fwUpload').hide();"
       puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
+        puts "var dlgPopup = parent.top.dlgPopup;"
+        puts "if (dlgPopup === undefined) {"
+          puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+        puts "}"
         puts "if (result == 1) {"
-          puts "parent.top.dlgPopup.hide();"
-          puts "parent.top.dlgPopup.setWidth(450);"
-          puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+          puts "dlgPopup.hide();"
+          puts "dlgPopup.setWidth(450);"
+          puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
         puts "} else {"
           puts "jQuery('#fwUpload').hide();"
           puts "dlgPopup.hide();"
@@ -86,16 +90,19 @@ proc action_acceptEula {} {
 
     puts "req.fail(function(data) {"
       puts "conInfo(\"EULA not available\");"
-      puts "parent.top.dlgPopup.hide();"
-      puts "parent.top.dlgPopup.setWidth(450);"
-      puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+      puts "var dlgPopup = parent.top.dlgPopup;"
+      puts "if (dlgPopup === undefined) {"
+        puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+      puts "}"
+      puts "dlgPopup.hide();"
+      puts "dlgPopup.setWidth(450);"
+      puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
     puts "});"
   }
 }
 
 proc action_firmware_update_confirm {} {
   global env
-   cgi_debug -on
   http_head
   division {class="popupTitle"} {
     #puts "Softwareupdate - Best&auml;tigung"
@@ -264,7 +271,7 @@ proc action_firmware_update_go {} {
 }
 
 proc action_firmware_update_cancel {} {
-  global env
+  global env filename
 
   if {[getProduct] < 3} {
     catch {exec rm /var/new_firmware.tar.gz}
@@ -462,9 +469,7 @@ proc action_put_page {} {
             table_row {
               td {width="20"} {}
               table_data {colspan="2"} {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=firmware_form {target=firmware_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=firmware_upload
-                  export downloadOnly=$downloadOnly
+                form "/config/fileupload.ccc?sid=$sid&action=firmware_upload&downloadOnly=$downloadOnly&url=$env(SCRIPT_NAME)" {target=firmware_upload_iframe} name=firmware_form enctype=multipart/form-data method=post {
                   file_button firmware_file size=30 maxlength=1000000
                 }
                 puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
@@ -1020,7 +1025,7 @@ proc action_createBackup {} {
 
 proc action_firmware_upload {} {
 
-  global env sid downloadOnly
+  global env sid downloadOnly filename
 
   if { [catch { import directDownload } error] } {
     set directDownload false
@@ -1029,10 +1034,7 @@ proc action_firmware_upload {} {
   http_head
   
   if { $directDownload } {
-    set filename "/tmp/fup.tgz"
-  } else {
-    import_file -client firmware_file
-    set filename [lindex $firmware_file 0]
+    set filename "/usr/local/tmp/firmwareUpdateFile"
   }
 
   if {[getProduct] < 3} {
@@ -1048,7 +1050,7 @@ proc action_firmware_upload {} {
       file rename -force -- $filename "/var/new_firmware.tar.gz"
       set action "askCreateBackup"
     } else {
-      file delete -force -- [lindex $firmware_file 0]
+      file delete -force -- $filename
       cgi_javascript {
         puts {
           startHmIPServer();
@@ -1147,10 +1149,14 @@ proc action_firmware_upload {} {
 
   cgi_javascript {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-    puts "parent.top.dlgPopup.hide();"
-    puts "parent.top.dlgPopup.setWidth(450);"
-    puts "parent.top.dlgPopup.downloadOnly = $downloadOnly;"
-    puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+    puts "var dlgPopup = parent.top.dlgPopup;"
+    puts "if (dlgPopup === undefined) {"
+      puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+    puts "}"
+    puts "dlgPopup.hide();"
+    puts "dlgPopup.setWidth(450);"
+    puts "dlgPopup.downloadOnly = $downloadOnly;"
+    puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
   }
 }
 
@@ -1454,10 +1460,10 @@ proc action_download_logfile {} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
 
   set action "put_page"
   set downloadOnly 0
@@ -1465,6 +1471,10 @@ cgi_eval {
   catch {import action}
   catch {import downloadOnly}
   catch {import filename}
+  # accept only a regular file that /config/fileupload.ccc has written
+  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
+    set filename ""
+  }
 
   if {[session_requestisvalid 8] > 0} then action_$action
 }

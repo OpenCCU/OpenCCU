@@ -29,22 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "1ba20b58e964ef4b73767701a7eeb6a6a8dc80b8538e57f8c48498ef626cabde"
-    },
-    {
-      "added": 400,
-      "files": [
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_network.cgi",
-        "www/config/cp_security.cgi",
-        "www/config/cp_software.cgi",
-        "www/config/fileupload.ccc",
-        "www/tcl/extern/cgi.tcl",
-        "www/webui/webui.js"
-      ],
-      "patch": "0031-WebUI-Fix-FileUpload.patch",
-      "removed": 318,
-      "sha256": "2f121657814e6b4df213ebd37f422313dd1af611ea69a2268cfc776d56548650"
+      "sha256": "39598a56a610fe2e661b99e134965a35b8e1090e48f7ae9b322d2647aaf7601f"
     },
     {
       "added": 786,
@@ -259,5 +244,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "84aeaa26b18f6575ed7e3b7991b6e402656494acb065b2c940b4929eb46f4f9e"
+  "series_sha256": "71cbc67c11eb9c03968b3f5e3635fa7e3ff6e2012c70afdcd14604c6b7e2ac70"
 }

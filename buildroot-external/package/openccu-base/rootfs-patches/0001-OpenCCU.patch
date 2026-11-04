@@ -28,7 +28,7 @@
  }
 --- a/www/config/cp_maintenance.cgi
 +++ b/www/config/cp_maintenance.cgi
-@@ -389,20 +389,21 @@
+@@ -396,20 +396,21 @@
                table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                  puts "\${dialogSettingsCMLblActualSoftwareVersion}"
                }
@@ -53,7 +53,7 @@
              table_row {
                table_data {align="left"} {colspan="3"} {
                  #puts "[bold "Software-Update durchf�hren"]"
-@@ -421,7 +422,7 @@
+@@ -428,7 +429,7 @@
                      table_row {
                        table_data {
                          division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
@@ -62,7 +62,7 @@
                        }
                      }
                    }
-@@ -445,7 +446,7 @@
+@@ -452,7 +453,7 @@
                      table_row {
                        table_data {
                          division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
@@ -71,7 +71,7 @@
                        }
                      }
                    }
-@@ -494,30 +495,18 @@
+@@ -499,30 +500,18 @@
                  puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
                }
              }
@@ -114,7 +114,7 @@
        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
 --- a/www/config/cp_network.cgi
 +++ b/www/config/cp_network.cgi
-@@ -236,6 +236,7 @@
+@@ -233,6 +233,7 @@
                  cgi_text hostname=$hostname {id="text_hostname"}
                }
              }
@@ -122,7 +122,7 @@
              table_row {
                set checked ""
                if {! $dhcp} { set checked "checked=true" }
-@@ -326,6 +327,7 @@
+@@ -323,6 +324,7 @@
                }
  
              }
@@ -130,7 +130,7 @@
            }
          }
          table_data {class="CLASS21113"} {align="left"} {
-@@ -488,12 +490,21 @@
+@@ -484,12 +486,21 @@
        OnOK = function() {
          var pb = "action=save_settings";
          pb += "&hostname="+document.getElementById("text_hostname").value;
@@ -152,7 +152,7 @@
          
          var opts = {
            postBody: pb,
-@@ -600,7 +611,9 @@
+@@ -596,7 +607,9 @@
          },timeDelay);
        };
      }
@@ -1232,7 +1232,7 @@
  
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -25753,16 +25753,16 @@
+@@ -25754,16 +25754,16 @@
  
     // WebUI-Version
    showCurrentFirmware: function() {
@@ -1258,7 +1258,7 @@
    },
  
    /*evalVersionAGreaterThanB: function(a, b) {
-@@ -30053,9 +30053,8 @@
+@@ -30054,9 +30054,8 @@
    {
      this.m_ccuProduct = getProduct();
      this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
@@ -1269,7 +1269,7 @@
  
      this.serial = homematic("CCU.getSerial");
      this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
-@@ -30064,7 +30063,7 @@
+@@ -30065,7 +30064,7 @@
      var script = document.createElement("script");
      script.id = "homematic_com_script";
      script.type = "text/javascript";
@@ -1278,7 +1278,7 @@
      $("body").appendChild(script);
    },
  
-@@ -35530,11 +35529,11 @@
+@@ -35531,11 +35530,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {
