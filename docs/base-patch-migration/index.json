@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "39598a56a610fe2e661b99e134965a35b8e1090e48f7ae9b322d2647aaf7601f"
+      "sha256": "ddbddc30128cc7d8d29d2dacde9ae30441e8e2573bc30946c442d93fb6573422"
     },
     {
       "added": 786,
@@ -94,7 +94,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "4f533ab4ecbf95fcc95b54855d0f72b1d1b5b2cfd895d8d230bba33bb4a0d1f5"
+      "sha256": "4cc8db551f629922de7603f06a34be5267d4868fe328ca3d667e7c9cff5356f9"
     },
     {
       "added": 305,
@@ -106,7 +106,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "4ed734d312e1ee8b4f7adcbc1b6bbbdb3a56609dd481128090483dbf4d439d01"
+      "sha256": "b998bcb113a4e4ed949bd02c8c8a34b58215b7afe3b9e030c633ab83b4695b4e"
     },
     {
       "added": 757,
@@ -118,24 +118,6 @@
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
       "sha256": "36028aa941ff3ee6561bbc1fb4a3c2ecf67adcf5f45e96d67eb67e68bf6c2168"
-    },
-    {
-      "added": 358,
-      "files": [
-        "www/rega/pages/tabs/admin/linkprog.htm",
-        "www/rega/pages/tabs/admin/systemconfig.htm",
-        "www/rega/pages/tabs/control.htm",
-        "www/rega/pages/tabs/user/systemConfigUser.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/js/mainmenu/admin.js",
-        "www/webui/js/mainmenu/user.js",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0061-WebUI-MenuSortedIcons.patch",
-      "removed": 327,
-      "sha256": "7463cddd1aaa5eba1ac794a152f74af1442111fcbd412140838b360a210a9b00"
     },
     {
       "added": 233,
@@ -235,5 +217,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "76b1d4ac08ef9688f17e8d0629c1ce15e9ddc11907ca54c1a53a2c460656fd7b"
+  "series_sha256": "9dea2768859efbf06d7683850f083a11eabb5c24b28bbac6251f4f61d271ef63"
 }
