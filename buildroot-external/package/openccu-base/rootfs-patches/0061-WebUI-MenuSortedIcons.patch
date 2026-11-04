@@ -957,7 +957,7 @@
  .CLASS06200 {
 --- a/www/webui/webui.js
 +++ b/www/webui/webui.js
-@@ -25520,19 +25520,19 @@
+@@ -25520,19 +25520,20 @@
      var _submenuItem_ = submenuItem;
      var _menuItem_ = menuItem;
      
@@ -967,6 +967,7 @@
 +    var cell = document.createElement("div");
 +    var img = document.createElement("img");
 +    img.src="../ise/img/menuicons/"+submenuItem.id+".png";
++    img.alt = "";
 +    cell.appendChild(img);
      cell.className = "MainMenuSubItem";
      cell.id = submenuItem.id;
@@ -983,7 +984,7 @@
    },
    
    /**
-@@ -25568,12 +25568,11 @@
+@@ -25568,12 +25569,11 @@
        submenuElement.className = "MainMenuSubMenu";
        Element.setStyle(submenuElement, {display: "none"});
        
