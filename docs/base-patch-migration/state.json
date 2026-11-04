@@ -887,18 +887,24 @@
       "base_pr": 293,
       "cleanup_pr": 4631,
       "patch": "0057-WebUI-ImprovedDutyCycleDisplay.patch"
+    },
+    {
+      "base_merge_commit": "778884db91933c140c9369436ce6bb31c59ce951",
+      "base_pr": 301,
+      "cleanup_pr": 4640,
+      "patch": "0031-WebUI-Fix-FileUpload.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "778884db91933c140c9369436ce6bb31c59ce951",
-    "base_pr": 301,
-    "cleanup_pr": 4640,
-    "patch": "0031-WebUI-Fix-FileUpload.patch",
+    "base_merge_commit": "06f805b53c600355414984fc115e7cdc7c209be2",
+    "base_pr": 307,
+    "cleanup_pr": null,
+    "patch": "0203-WebUI-NoExpectCGI.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "2c832ecbc7b7896409ec50381555f084f569df4b",
-  "verified_base_pin": "62753fc9320fb0c5122daab36f4f08c26902160d",
-  "verified_source_sha256": "0de798c9f9847b11943132dc9cbd289474ce1c0f97b720ec1e8e190863bae9f7"
+  "verified_at_openccu_commit": "d8746b79143401fbac67277785bbc54144e20fb9",
+  "verified_base_pin": "778884db91933c140c9369436ce6bb31c59ce951",
+  "verified_source_sha256": "46171d86f903538ef986e6d8ee8c6961b4d5dd5de29046e7121d6b934dabaa13"
 }

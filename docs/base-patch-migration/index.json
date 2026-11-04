@@ -219,16 +219,7 @@
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
-      "sha256": "e21657bb5da1d89fee194464000099bb797aaf1cd097d6e33be1f0845be9365e"
-    },
-    {
-      "added": 4,
-      "files": [
-        "www/tcl/extern/cgi.tcl"
-      ],
-      "patch": "0203-WebUI-NoExpectCGI.patch",
-      "removed": 246,
-      "sha256": "80fe24258b86c6b5435aa4fc8c29ead7c554b1ff4921bb2c5017dbda4cbc124d"
+      "sha256": "5031d94c607821097d0010f5562b7f89afb4b8842e04c9eaffd03c17ebc110ea"
     },
     {
       "added": 447,
@@ -244,5 +235,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "71cbc67c11eb9c03968b3f5e3635fa7e3ff6e2012c70afdcd14604c6b7e2ac70"
+  "series_sha256": "76b1d4ac08ef9688f17e8d0629c1ce15e9ddc11907ca54c1a53a2c460656fd7b"
 }
