@@ -765,9 +765,11 @@
   {
     var s = "";
     s += "<table class='CLASS05012'>";
-    s += "<tr><td> <textarea id='txValue' rows='5'>"+decodeURIComponentSafe(unescape(sValue))+"</textarea> </td></tr>";
+    s += "<tr><td> <textarea id='txValue' rows='5'></textarea> </td></tr>";
     s += "</table>";
     $("tdValueEdit").innerHTML = s;
+    // set the value as text, so that HTML in it is neither interpreted nor changed
+    $("txValue").value = decodeURIComponentSafe(unescape(sValue));
     $("tdEdit").innerHTML = "";
   };
 
@@ -797,7 +799,7 @@
         Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
       }
       if (sv.ValueSubType() == istGeneric) {
-        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
+        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
       }
       if (sv.ValueSubType() == istEnum) {
         integer iVLCount = web.webGetValueListCount( sv.ValueList() );

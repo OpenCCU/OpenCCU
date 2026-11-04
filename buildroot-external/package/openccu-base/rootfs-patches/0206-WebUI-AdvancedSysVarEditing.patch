@@ -591,7 +591,7 @@
      s += "</table>";
      $("tdEdit").innerHTML = s;
      
-@@ -479,7 +794,7 @@
+@@ -481,7 +796,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -599,8 +599,8 @@
 +        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'")#"', '"#sv.Value()#"');");
        }
        if (sv.ValueSubType() == istGeneric) {
-         Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
-@@ -494,13 +809,13 @@
+         Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
+@@ -496,13 +811,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);

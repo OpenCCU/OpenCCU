@@ -389,7 +389,7 @@
    {
      var s = "";
      s += "<table class='CLASS05010'>";
-@@ -352,7 +428,33 @@
+@@ -352,7 +428,35 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
@@ -415,15 +415,17 @@
 +  {
 +    var s = "";
 +    s += "<table class='CLASS05012'>";
-+    s += "<tr><td> <textarea id='txValue' rows='5'>"+decodeURIComponentSafe(unescape(sValue))+"</textarea> </td></tr>";
++    s += "<tr><td> <textarea id='txValue' rows='5'></textarea> </td></tr>";
 +    s += "</table>";
 +    $("tdValueEdit").innerHTML = s;
++    // set the value as text, so that HTML in it is neither interpreted nor changed
++    $("txValue").value = decodeURIComponentSafe(unescape(sValue));
 +    $("tdEdit").innerHTML = "";
 +  };
  
    <% 
      if (system.GetVar("createNew") == 1) {
-@@ -362,27 +464,43 @@
+@@ -362,27 +466,43 @@
        if ( (sv.Channel() != ID_ERROR) && (sv.Channel() != 0)) {
          object oChn = dom.GetObject(sv.Channel());
          if (oChn) {
@@ -449,7 +451,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
 -        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"');");
-+        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit()#"');");
++        Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
        }
        if (sv.ValueSubType() == istEnum) {
 -        Write("loadValueEdit('"#sv.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"');");
