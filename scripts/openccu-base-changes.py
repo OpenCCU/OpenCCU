@@ -12,8 +12,9 @@ and the GitHub user names of the authors given at the end of the entry:
 
   - rfd: fix a request to the radio module getting the answer of another one (OpenCCU-Base#282, @jens-maus)
 
-Entries that do not fit into <limit> characters are replaced by a link to
-the full commit log. Nothing is printed if both revisions are equal, one of
+If the category does not fit into <limit> characters, the components with
+the most text are replaced by one line each with a link to their changelog,
+so every changed component keeps a line. Nothing is printed if both revisions are equal, one of
 them is unknown or the OpenCCU-Base checkout does not have that script yet.
 """
 
@@ -137,16 +138,29 @@ def main():
     body = lines(markdown, url)
     if not body:
         return
-    compare = f"[full commit log]({url}/compare/{old}...{new})"
-    # drop the last entries until the category fits, with a line for them
-    kept = len(body)
+    # the lines of each component, to replace the largest components by a
+    # line with a link to their changelog until the category fits
+    groups = {}
+    for line in body:
+        groups.setdefault(line[2:line.index(":")], []).append(line)
+    linked = set()
     while True:
-        rest = len(body) - kept
-        more = [f"- … and {rest} more, see the {compare}"] if rest else []
-        text = "\n".join([TITLE, ""] + body[:kept] + more) + "\n"
-        if len(text) <= limit or kept == 0:
+        text = "\n".join([TITLE, "", *(l for g in groups.values() for l in g)])
+        text += "\n"
+        if len(text) <= limit:
+            print(text, end="")
+            return
+        rest = [c for c in groups if c not in linked]
+        if not rest:
             break
-        kept -= 1
+        component = max(rest, key=lambda c: len("\n".join(groups[c])))
+        count = len(groups[component])
+        groups[component] = [
+            f"- {component}: {count} change{'s' if count > 1 else ''}, see its "
+            f"[changelog]({url}/blob/{new}/src/{component}/CHANGELOG.md)"]
+        linked.add(component)
+    # not even one line per component fits
+    text = f"{TITLE}\n\n- see the [full commit log]({url}/compare/{old}...{new})\n"
     if len(text) <= limit:
         print(text, end="")
 
