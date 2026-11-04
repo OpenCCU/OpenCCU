@@ -7,6 +7,8 @@ This is release ${VERSION} of OpenCCU-LTS (the LTS variant of [OpenCCU](http://g
 
 ${CHANGELOG}
 
+${BASE_CHANGELOG}
+
 ## 📝 Support:
 For support on installation and help please visit the following web pages:
 

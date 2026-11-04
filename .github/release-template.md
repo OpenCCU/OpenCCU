@@ -9,6 +9,8 @@ This is release ${VERSION} of OpenCCU which is a **XXXXX** release with the foll
 
 ${CHANGELOG}
 
+${BASE_CHANGELOG}
+
 ## 📝 Support:
 For support on installation and help please visit the following web pages:
 

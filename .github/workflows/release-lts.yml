@@ -241,6 +241,33 @@ jobs:
             fh.write(f"previous_openccu_ref={previous_openccu_ref}\n")
           PY
 
+      # The OpenCCU-Base revisions of the previous and of this release, for the
+      # changes of its components (scripts/openccu-base-changes.sh)
+      - name: Determine OpenCCU-Base revisions
+        id: base
+        shell: bash
+        env:
+          PREVIOUS_REF: ${{ steps.previous_base.outputs.previous_openccu_ref }}
+        run: |
+          MK=buildroot-external/package/openccu-base/openccu-base.mk
+          base_version() { sed -n 's/^OPENCCU_BASE_VERSION = //p'; }
+          if [[ -f "${MK}" ]]; then
+            echo "new=$(base_version < "${MK}")" >> "${GITHUB_OUTPUT}"
+          fi
+          if git cat-file -e "${PREVIOUS_REF}:${MK}" 2>/dev/null; then
+            echo "old=$(git show "${PREVIOUS_REF}:${MK}" | base_version)" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Checkout OpenCCU-Base
+        if: steps.base.outputs.new != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: OpenCCU/OpenCCU-Base
+          ref: ${{ steps.base.outputs.new }}
+          path: openccu-base
+          fetch-depth: 0
+          persist-credentials: false
+
       - name: Generate changelog
         id: changelog_final
         env:
@@ -428,6 +455,9 @@ jobs:
 
       - name: Generate release notes
         shell: bash
+        env:
+          BASE_OLD: ${{ steps.base.outputs.old }}
+          BASE_NEW: ${{ steps.base.outputs.new }}
         run: |
           export CHANGELOG="$(cat <<'EOF' | sed 's/@Copilot/@jens-maus/g'
           ${{ steps.changelog_final.outputs.changelog }}
@@ -437,6 +467,17 @@ jobs:
           export PREVIOUS_TAG=${{ steps.previous_base.outputs.previous_lts_tag }}
           envsubst <.github/release-template-lts.md >/tmp/release-template.md
 
+          # OpenCCU-Base changes in the space left of 120000 characters
+          # (GitHub limits a release text to 125000)
+          LIMIT=$((120000 - $(wc -c < /tmp/release-template.md)))
+          scripts/openccu-base-changes.sh openccu-base "${BASE_OLD}" \
+            "${BASE_NEW}" "${LIMIT}" >/tmp/openccu-base-changes.md
+          if [[ -s /tmp/openccu-base-changes.md ]]; then
+            export BASE_CHANGELOG="$(cat /tmp/openccu-base-changes.md)"
+            envsubst <.github/release-template-lts.md >/tmp/release-template.md
+          fi
+          echo "Release notes: $(wc -c < /tmp/release-template.md) characters"
+
       - name: Generate ChangeLog summary
         shell: bash
         run: |
@@ -445,18 +486,25 @@ jobs:
           EOF
           )
 
+          # one line for the OpenCCU-Base components with changes
+          BASE_COMPONENTS=$(sed -n 's/^### \([A-Za-z0-9_.-]*\)$/\1/p' /tmp/openccu-base-changes.md | paste -sd , - | sed 's/,/, /g')
+
           mkdir -p /tmp/changelog-summary
 
           generate_summary() {
             local lang="$1"
             local outfile="$2"
-            local label_fallback
+            local label_fallback label_base label_base_end
             case "${lang}" in
               de)
                 label_fallback='Siehe Release-Seite f&uuml;r den vollst&auml;ndigen Changelog.'
+                label_base='OpenCCU-Base: &Auml;nderungen in'
+                label_base_end='(siehe Release-Seite)'
                 ;;
               *)
                 label_fallback='See release page for the full changelog.'
+                label_base='OpenCCU-Base: changes in'
+                label_base_end='(see release page)'
                 ;;
             esac
             {
@@ -465,6 +513,9 @@ jobs:
                 printf '%s\n' "${CHANGE_ITEMS}" | python3 -c "import html,sys; [print('<li>' + html.escape(line.strip(), quote=True).encode('ascii', 'xmlcharrefreplace').decode('ascii') + '</li>') for line in sys.stdin if line.strip()]"
               else
                 echo "<li>${label_fallback}</li>"
+              fi
+              if [[ -n "${BASE_COMPONENTS}" ]]; then
+                echo "<li>${label_base} ${BASE_COMPONENTS} ${label_base_end}</li>"
               fi
               echo '</ul>'
               echo '<hr/>'
