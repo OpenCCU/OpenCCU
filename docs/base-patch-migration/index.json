@@ -120,7 +120,7 @@
       "sha256": "36028aa941ff3ee6561bbc1fb4a3c2ecf67adcf5f45e96d67eb67e68bf6c2168"
     },
     {
-      "added": 357,
+      "added": 358,
       "files": [
         "www/rega/pages/tabs/admin/linkprog.htm",
         "www/rega/pages/tabs/admin/systemconfig.htm",
@@ -135,7 +135,7 @@
       ],
       "patch": "0061-WebUI-MenuSortedIcons.patch",
       "removed": 327,
-      "sha256": "57eb3d69fefee7ed0cc639ca0d144cc2031286a88a892596be36043597289069"
+      "sha256": "7463cddd1aaa5eba1ac794a152f74af1442111fcbd412140838b360a210a9b00"
     },
     {
       "added": 233,
@@ -150,7 +150,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 79,
-      "sha256": "56a0c9bcd2bfece3e9fff31ce736a689559252a1f945fcb360cc392b496885a4"
+      "sha256": "06dc393b85c3a4adbf13090f66b28ab7e5919981c4e89c8fd4b89074ddc4ba5e"
     },
     {
       "added": 439,
@@ -167,7 +167,7 @@
       ],
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
-      "sha256": "95347761409a09e7cabb09d8d5ed95cd433ae8b934550127107c623b372579a5"
+      "sha256": "5a46970fb54239715a6e5370122e5fadeb238e29cc271e392bf7a4e3ea82da50"
     },
     {
       "added": 10,
@@ -203,7 +203,7 @@
       ],
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
-      "sha256": "71487cf97a1cdd2fda792700ad30d280a0a90e0c0e5b8b315ac950910f667396"
+      "sha256": "424532238b27ac71514c5333cfb2cf719f3f3098e924b5711d3b6113c807020a"
     },
     {
       "added": 74,
