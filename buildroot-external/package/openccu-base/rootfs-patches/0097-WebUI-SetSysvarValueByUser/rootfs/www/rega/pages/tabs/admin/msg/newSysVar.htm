@@ -231,7 +231,7 @@
           pb += "integer iMinVal = '"+itmpMinVal+"';";
           pb += "integer iMaxVal = '"+itmpMaxVal+"';";
           
-          if (isNaN($("inpValue").value)) 
+          if (($("inpValue").value.strip() == "") || isNaN($("inpValue").value))
           {
             alert(translateKey("alertValOutOfRange"));
             return;

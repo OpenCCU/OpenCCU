@@ -247,7 +247,7 @@
    loadChannels = function(id)
 --- a/www/rega/pages/tabs/startpage.htm
 +++ b/www/rega/pages/tabs/startpage.htm
-@@ -394,7 +394,6 @@
+@@ -399,7 +399,6 @@
  
  <script type="text/javascript">
    var product = 0;
@@ -255,7 +255,7 @@
    StartPage.showUpdate();
    if (forceUpdate) {
        StartPage.showCurrentFirmware();
-@@ -406,6 +405,7 @@
+@@ -411,6 +410,7 @@
        StartPage.showAddonUpdate();
        StartPage.showCurrentFirmware();
        StartPage.showAllDeviceFirmware();
