@@ -204,7 +204,7 @@
       "sha256": "5031d94c607821097d0010f5562b7f89afb4b8842e04c9eaffd03c17ebc110ea"
     },
     {
-      "added": 447,
+      "added": 455,
       "files": [
         "www/rega/esp/system.fn",
         "www/rega/pages/tabs/admin/msg/newSysVar.htm",
@@ -212,8 +212,8 @@
         "www/webui/js/lang/en/translate.lang.js"
       ],
       "patch": "0206-WebUI-AdvancedSysVarEditing.patch",
-      "removed": 20,
-      "sha256": "033fa16590f6c64966219edb68066d720bb1292f44b6643093eb7f36950611ab"
+      "removed": 21,
+      "sha256": "2d9c82be4d81eac2035853dc0f043ab01ea712503fe409df6f70884b29feab52"
     }
   ],
   "schema": 1,
