@@ -398,7 +398,7 @@
 +    var val = val1;
 +    if (sValue) val = sValue;
 +    s += "<table class='CLASS05012'>";
-+    s += "<tr><td style='white-space:nowrap;'><input id='inpValue' type='text' size='12' value='"+translateString(val.toString())+"'  onblur='checkInpValue();'/>&nbsp;" + sUnit + "</td></tr>";
++    s += "<tr><td style='white-space:nowrap;'><input id='inpValue' type='text' size='12' value='"+translateString(val.toString())+"'  onblur='checkInpValue();'/>&nbsp;" + String(sUnit).escapeHTML() + "</td></tr>";
 +    s += "</table>";
 +    $("tdValueEdit").innerHTML = s;
 +    
