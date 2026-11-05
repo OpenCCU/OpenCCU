@@ -5,7 +5,7 @@ This is release ${VERSION} of OpenCCU-LTS (the LTS variant of [OpenCCU](http://g
 ## 🚧 Changes:
 <sub>For all changes, see the [full commit log](https://github.com/homematicip/OpenCCU-LTS/compare/${PREVIOUS_TAG}...${VERSION}).</sub>
 
-${CHANGELOG}
+${BASE_CHANGELOG}${CHANGELOG}
 
 ## 📝 Support:
 For support on installation and help please visit the following web pages:
