@@ -91,7 +91,7 @@
                 string sTimestamp = o.Timestamp();
                 Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
                 WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
-                if( oUser.UserLevel() == iulAdmin ) {
+                if( (oUser.UserLevel() == iulAdmin) && (o.ValueSubType() != istPresent) ) {
                   WriteLine( '<td class="tBodyCell CLASS03905" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">' );
                 } else {
                   WriteLine( '<td class="tBodyCell">' );
