@@ -1516,7 +1516,7 @@
 -  <td class="CLASS04102 DeviceListCell"><div id="func" class="pt11 <%Write(sCssName); %>" onclick="SortMe('func');"><b>${thFunc}</b></div></td>
 -  <td class="CLASS04102 DeviceListCell"><div class="pt11 Sort"><b>${thAction}</b></div></td>
 -  <td class="CLASS04102 DeviceListCell"><div class="pt11 Sort"><b>${thLinks}</b></div></td>
-+  <th class="CLASS04102 DeviceListHead"><div id="func" class="pt11 <%Write(sCssName); %>" onclick="SortMe('func');">${thFunc}</div></td>
++  <th class="CLASS04102 DeviceListHead"><div id="func" class="pt11 <%Write(sCssName); %>" onclick="SortMe('func');">${thFunc}</div></th>
 +  <th class="CLASS04102 DeviceListHead"><div class="pt11 Sort">${thAction}</div></th>
 +  <th class="CLASS04102 DeviceListHead"><div class="pt11 Sort">${thLinks}</div></th>
  </tr>
@@ -3813,6 +3813,15 @@
      }
    };
    var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
+@@ -35380,7 +35378,7 @@
+     iseUpdateTMArray.push( lastTimestamp );
+   }
+ 
+-  translatePage("#tblfav");
++  translatePage("#tblfav, #tblfavViewer");
+ 
+ };
+ 
 @@ -46647,7 +46645,7 @@
  //Defines
  BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
