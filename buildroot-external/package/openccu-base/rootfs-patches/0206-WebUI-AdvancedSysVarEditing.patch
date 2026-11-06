@@ -519,7 +519,7 @@
        new Ajax.Request(url, opts);
      } else {
          // No name available
-@@ -316,6 +601,7 @@
+@@ -317,6 +602,7 @@
          break;
        case 1:
          loadValueEdit(translateKey("lblVal1Val2Val3"));
@@ -527,7 +527,7 @@
          break;
        case 2:
          loadIntEdit(0, 65000);
-@@ -356,16 +642,25 @@
+@@ -357,16 +643,25 @@
      $("tdValueEdit").innerHTML = "";
    };
    
@@ -555,7 +555,7 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
-@@ -380,13 +675,38 @@
+@@ -381,13 +676,38 @@
      } 
      s += "<table class='CLASS05010'>";
      s += "<tr>";
@@ -595,7 +595,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -396,9 +716,11 @@
+@@ -397,9 +717,11 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -608,7 +608,7 @@
      
      s = "";
      var hidden = (sValue) ? "" : "style='display: none;'";
-@@ -481,7 +803,7 @@
+@@ -482,7 +804,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -617,7 +617,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
          Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
-@@ -496,13 +818,13 @@
+@@ -497,13 +819,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);

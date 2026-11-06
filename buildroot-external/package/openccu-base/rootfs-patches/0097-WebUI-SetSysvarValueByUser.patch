@@ -237,7 +237,7 @@
            break;
        }
        pb += "string sUnit = '"+$("txtUnit").value+"';";
-@@ -249,31 +275,35 @@
+@@ -249,31 +275,36 @@
  
    channelChooser2 = function()
    {
@@ -287,8 +287,9 @@
 +        }
 +        else
 +        {
-+          $("ckAssignedChn").checked = true;
-+          $("chnNameRow").hidden = false;
++          // the chooser was cancelled without a channel
++          $("ckAssignedChn").checked = false;
++          noChannel();
 +        }
 +      }, ChannelChooser.SHOW_ALL);
 +    } else {
@@ -297,7 +298,7 @@
    };
    
    onTypeChange = function() 
-@@ -294,7 +324,7 @@
+@@ -294,7 +325,7 @@
          loadLogicEdit(translateKey("lblTriggered"), translateKey("lblNotTriggered"));
          break;
        case 4:
@@ -306,7 +307,7 @@
          break;
      }
    };
-@@ -304,13 +334,29 @@
+@@ -304,13 +335,29 @@
      //elm.value = elmVal.replace(/\\n|\\r|\\t/g, "");
      elm.value = elmVal.replace(/\\/g, "");
    };
@@ -337,7 +338,7 @@
    {
      var s = "";
      s += "<table class='CLASS05010'>";
-@@ -323,9 +369,25 @@
+@@ -323,9 +370,25 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
@@ -364,7 +365,7 @@
    {
      if( vals == "" )
      {
-@@ -337,9 +399,23 @@
+@@ -337,9 +400,23 @@
      s += "<tr><td> <textarea id='txVals' rows='2'>"+vals+"</textarea> </td></tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
@@ -389,7 +390,7 @@
    {
      var s = "";
      s += "<table class='CLASS05010'>";
-@@ -352,7 +428,35 @@
+@@ -352,7 +429,35 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
@@ -425,7 +426,7 @@
  
    <% 
      if (system.GetVar("createNew") == 1) {
-@@ -362,27 +466,43 @@
+@@ -362,27 +467,43 @@
        if ( (sv.Channel() != ID_ERROR) && (sv.Channel() != 0)) {
          object oChn = dom.GetObject(sv.Channel());
          if (oChn) {

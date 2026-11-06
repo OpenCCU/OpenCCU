@@ -582,8 +582,9 @@
         }
         else
         {
-          $("ckAssignedChn").checked = true;
-          $("chnNameRow").hidden = false;
+          // the chooser was cancelled without a channel
+          $("ckAssignedChn").checked = false;
+          noChannel();
         }
       }, ChannelChooser.SHOW_ALL);
     } else {
