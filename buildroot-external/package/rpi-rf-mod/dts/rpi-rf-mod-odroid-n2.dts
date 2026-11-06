@@ -43,7 +43,9 @@
         __overlay__ {
             compatible = "pivccu,meson";
             status = "okay";
-            pivccu,reset-gpios = <&gpio 81 0>, <&gpio 84 0>; // HM-MOD-RPI-PCB, RPI-RF-MOD
+            // GPIOX_16 (pin 12): HM-MOD-RPI-PCB reset
+            // GPIOX_6 (pin 35): RPI-RF-MOD reset (unlike ODROID-C4, GPIOX_19 is pin 36 here)
+            pivccu,reset-gpios = <&gpio 81 0>, <&gpio 71 0>; // HM-MOD-RPI-PCB, RPI-RF-MOD
             pivccu,rtc = <&rpi_rf_mod_rtc>;     // RPI-RF-MOD
         };
     };
