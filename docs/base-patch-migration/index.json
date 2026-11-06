@@ -109,15 +109,15 @@
       "sha256": "ff76cf4923ab4707786367a3d211fa2905ab47d80ac28ec5be2e9c523be83ace"
     },
     {
-      "added": 757,
+      "added": 779,
       "files": [
         "www/api/methods/system/getpositiondata.tcl",
         "www/config/cp_time.cgi",
         "www/webui/webui.js"
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
-      "removed": 155,
-      "sha256": "cd1d198428fca3f74ed8e8be1d2d7ddcedb2509fc1a2a9c6950b01309fe44f50"
+      "removed": 156,
+      "sha256": "ff5f459119a58508db9abb10c052ad0f95748ec45475615e9c525ec1b4236281"
     },
     {
       "added": 439,

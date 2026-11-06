@@ -765,8 +765,26 @@ set LOCATIONS {
   {- "Ho Chi Minh" "10.80" "106.65" "Asia/Ho_Chi_Minh" default}
 }
 
+# Time zones of the location list that tzdata renamed: a saved TIMEZONE
+# with an old name selects the current one.
+array set TIMEZONES_RENAMED {
+  "America/Godthab" "America/Nuuk"
+  "America/Nipigon" "America/Toronto"
+  "America/Pangnirtung" "America/Iqaluit"
+  "America/Rainy_River" "America/Winnipeg"
+  "America/Thunder_Bay" "America/Toronto"
+  "America/Yellowknife" "America/Edmonton"
+  "Asia/Choibalsan" "Asia/Ulaanbaatar"
+  "Australia/Currie" "Australia/Hobart"
+  "Europe/Kiev" "Europe/Kyiv"
+  "Europe/Nicosia" "Asia/Nicosia"
+  "Europe/Uzhgorod" "Europe/Kyiv"
+  "Europe/Zaporozhye" "Europe/Kyiv"
+  "Pacific/Enderbury" "Pacific/Kanton"
+}
+
 proc action_put_page {} {
-  global env LOCATIONS TIMEZONES
+  global env LOCATIONS TIMEZONES TIMEZONES_RENAMED
   
   set iso8601_date [exec date -Iseconds]
   regexp {^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)([+-].+)$} $iso8601_date dummy year month day hour minute second zone
@@ -904,6 +922,9 @@ proc action_put_page {} {
         }
       }
       get_location_config country city lat lon timezone
+      if { [info exists TIMEZONES_RENAMED($timezone)] } {
+        set timezone $TIMEZONES_RENAMED($timezone)
+      }
       
       table_row {class="CLASS21502"} {
         table_data {class="CLASS21503"} {
