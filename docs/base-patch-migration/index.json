@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "32c09a1aa5ccf09167cf5109f86cdcb3ba09c6d7121084762626ff4f917969d2"
+      "sha256": "1e3a86e7600faf267788957fddd30f4d625e0106e868166b8e2502385296da54"
     },
     {
       "added": 786,
@@ -94,7 +94,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "99dd79023a735a90911a85c5706b7d94b2ef85c846bbbfdbb0799ceea54a9f9d"
+      "sha256": "32b328d699812019b430d0f38aa21e0bc05ce26b572967e12350ae5f0e213d5c"
     },
     {
       "added": 305,
@@ -107,17 +107,6 @@
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
       "sha256": "ff76cf4923ab4707786367a3d211fa2905ab47d80ac28ec5be2e9c523be83ace"
-    },
-    {
-      "added": 779,
-      "files": [
-        "www/api/methods/system/getpositiondata.tcl",
-        "www/config/cp_time.cgi",
-        "www/webui/webui.js"
-      ],
-      "patch": "0054-WebUI-AddTimeZones.patch",
-      "removed": 156,
-      "sha256": "ff5f459119a58508db9abb10c052ad0f95748ec45475615e9c525ec1b4236281"
     },
     {
       "added": 439,
@@ -190,5 +179,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "6201e4baa88d0fab3909923fe462ea1a78cfda7ea6492e1e6097dd06fa9ae30b"
+  "series_sha256": "c231bf529e93f33a955e3ac3f5b93543c48e51a892cf76230d0bb1b87b281eea"
 }
