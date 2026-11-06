@@ -275,8 +275,9 @@
   // Entries the value selection was last built from.
   var svLastValueList = svOldValueList;
 
+  // Escape a text for HTML content or a quoted HTML attribute.
   svEscapeHtml = function(value) {
-    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   };
 
   // Names of the given programs, at most five.
@@ -296,11 +297,6 @@
   // Escape a value for a single-quoted string in a ReGa script.
   svEscapeRegaString = function(value) {
     return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-  };
-
-  // Escape a text for HTML content or a quoted HTML attribute.
-  svEscapeHtml = function(value) {
-    return String(value).escapeHTML().replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   };
 
   if (svExisting && !svEditValueOnly) {

@@ -245,7 +245,7 @@
    <table>
    <tr>
      <td>
-@@ -160,6 +242,83 @@
+@@ -160,6 +242,79 @@
  <script type="text/javascript">
    dlgResult = 0;
  
@@ -282,8 +282,9 @@
 +  // Entries the value selection was last built from.
 +  var svLastValueList = svOldValueList;
 +
++  // Escape a text for HTML content or a quoted HTML attribute.
 +  svEscapeHtml = function(value) {
-+    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
++    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 +  };
 +
 +  // Names of the given programs, at most five.
@@ -305,11 +306,6 @@
 +    return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 +  };
 +
-+  // Escape a text for HTML content or a quoted HTML attribute.
-+  svEscapeHtml = function(value) {
-+    return String(value).escapeHTML().replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-+  };
-+
 +  if (svExisting && !svEditValueOnly) {
 +    if (svAlarm) {
 +      showSvEditMessage("svEditTypeAlarm", true);
@@ -329,7 +325,7 @@
    var arrElem = ["#inpName", "#inpDesc"];
  
    jQuery.each(arrElem, function(index, elem){
-@@ -175,6 +334,73 @@
+@@ -175,6 +330,73 @@
      $("chnNameRow").hidden = true;
    };
    
@@ -403,7 +399,7 @@
    saveSysVars = function()
    {
      if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
-@@ -198,17 +424,46 @@
+@@ -198,17 +420,46 @@
        pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
        pb += "string sName = '"+name+"';";
        pb += "string sInfo = '"+$("inpDesc").value+"';";
@@ -454,7 +450,7 @@
            break;
          case 2:
            iSubType = SYSVAR_GENERIC;
-@@ -228,6 +483,24 @@
+@@ -228,6 +479,24 @@
            var itmpMaxVal = parseFloat( $("inpMax").value );
            if( isNaN(itmpMinVal) ) itmpMinVal = 0;
            if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
@@ -479,7 +475,7 @@
            pb += "integer iMinVal = '"+itmpMinVal+"';";
            pb += "integer iMaxVal = '"+itmpMaxVal+"';";
            
-@@ -243,16 +516,16 @@
+@@ -243,16 +512,16 @@
            break;
          case 3: 
            iSubType = SYSVAR_ALARM;
@@ -500,7 +496,7 @@
        pb += "integer iSubType = "+iSubType+";";
        pb += "integer iChnId = "+ $("chnId").value +";";
        var opts = {
-@@ -265,6 +538,18 @@
+@@ -265,6 +534,18 @@
            if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
          }
        };
@@ -519,7 +515,7 @@
        new Ajax.Request(url, opts);
      } else {
          // No name available
-@@ -317,6 +602,7 @@
+@@ -317,6 +598,7 @@
          break;
        case 1:
          loadValueEdit(translateKey("lblVal1Val2Val3"));
@@ -527,7 +523,7 @@
          break;
        case 2:
          loadIntEdit(0, 65000);
-@@ -357,16 +643,25 @@
+@@ -357,16 +639,25 @@
      $("tdValueEdit").innerHTML = "";
    };
    
@@ -555,7 +551,7 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
-@@ -381,13 +676,38 @@
+@@ -381,13 +672,38 @@
      } 
      s += "<table class='CLASS05010'>";
      s += "<tr>";
@@ -595,7 +591,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -397,9 +717,11 @@
+@@ -397,9 +713,11 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -608,7 +604,7 @@
      
      s = "";
      var hidden = (sValue) ? "" : "style='display: none;'";
-@@ -482,7 +804,7 @@
+@@ -482,7 +800,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -617,7 +613,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
          Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
-@@ -497,13 +819,13 @@
+@@ -497,13 +815,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);
