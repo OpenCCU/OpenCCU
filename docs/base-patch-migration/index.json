@@ -117,7 +117,7 @@
       ],
       "patch": "0054-WebUI-AddTimeZones.patch",
       "removed": 155,
-      "sha256": "75f84ba2956def9cd4d5e3067bdf1e3f4b13841f81e78fc62a801e212beea2fa"
+      "sha256": "cd1d198428fca3f74ed8e8be1d2d7ddcedb2509fc1a2a9c6950b01309fe44f50"
     },
     {
       "added": 439,

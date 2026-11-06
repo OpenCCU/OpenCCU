@@ -173,7 +173,7 @@
 +  {- "Broken Hill" "-31.96" "141.47" "Australia/Broken_Hill" }
 +  {- "Christmas" "-10.48" "105.63" "Indian/Christmas" }
 +  {- "Cocos" "-12.12" "96.90" "Indian/Cocos" }
-+  {- "Currie" "-39.93" "143.85" "Australia/Currie" }
++  {- "Currie" "-39.93" "143.85" "Australia/Hobart" }
 +  {- "Darwin" "-12.42" "130.89" "Australia/Darwin" }
 +  {- "Eucla" "-31.68" "128.88" "Australia/Eucla" }
 +  {- "Hobart" "-42.88" "147.33" "Australia/Hobart" }
@@ -263,20 +263,20 @@
 +  {- "Inuvik" "68.36" "-133.73" "America/Inuvik" }
 +  {- "Iqaluit" "63.75" "-68.52" "America/Iqaluit" }
 +  {- "Moncton" "46.13" "-64.77" "America/Moncton" }
-+  {- "Nipigon" "49.02" "-88.27" "America/Nipigon" }
-+  {- "Pangnirtung" "66.15" "-65.69" "America/Pangnirtung" }
-+  {- "Rainy River" "48.72" "-94.57" "America/Rainy_River" }
++  {- "Nipigon" "49.02" "-88.27" "America/Toronto" }
++  {- "Pangnirtung" "66.15" "-65.69" "America/Iqaluit" }
++  {- "Rainy River" "48.72" "-94.57" "America/Winnipeg" }
 +  {- "Rankin Inlet" "62.81" "-92.10" "America/Rankin_Inlet" }
 +  {- "Regina" "50.45" "-104.61" "America/Regina" }
 +  {- "Resolute" "74.70" "-94.83" "America/Resolute" }
 +  {- "St Johns" "47.56" "-52.71" "America/St_Johns" }
 +  {- "Swift Current" "50.29" "-107.80" "America/Swift_Current" }
-+  {- "Thunder Bay" "48.38" "-89.25" "America/Thunder_Bay" }
++  {- "Thunder Bay" "48.38" "-89.25" "America/Toronto" }
 +  {- "Toronto" "43.74" "-79.37" "America/Toronto" }
 +  {- "Vancouver" "49.25" "-123.10" "America/Vancouver" default}
 +  {- "Whitehorse" "60.72" "-135.03" "America/Whitehorse" }
 +  {- "Winnipeg" "49.90" "-97.14" "America/Winnipeg" }
-+  {- "Yellowknife" "62.44" "-114.40" "America/Yellowknife" }
++  {- "Yellowknife" "62.44" "-114.40" "America/Edmonton" }
 +
 +  {"Cape Verde"}
 +  {- "Cape Verde" "15.11" "-23.62" "Atlantic/Cape_Verde" default}
@@ -313,7 +313,7 @@
 +
 +  {"Cyprus"}
 +  {- "Famagusta" "35.13" "33.94" "Asia/Famagusta" }
-+  {- "Nicosia" "35.17" "33.35" "Europe/Nicosia" default}
++  {- "Nicosia" "35.17" "33.35" "Asia/Nicosia" default}
 +
 +  {"Czech Republic"}
 +  {- "Prague" "50.09" "14.42" "Europe/Prague" default}
@@ -420,7 +420,7 @@
 +  {- "Athens" "37.98" "23.73" "Europe/Athens" default}
 +
 +  {"Greenland"}
-+  {- "Godthab" "64.18" "-51.74" "America/Godthab" default}
++  {- "Godthab" "64.18" "-51.74" "America/Nuuk" default}
 +  {- "Danmarkshavn" "76.77" "-18.67" "America/Danmarkshavn" }
 +  {- "Scoresbysund" "70.49" "-21.97" "America/Scoresbysund" }
 +  {- "Thule" "76.53" "-68.70" "America/Thule" }
@@ -496,7 +496,7 @@
 +  {- "Nairobi" "-1.29" "36.82" "Africa/Nairobi" default}
 +
 +  {"Kiribati"}
-+  {- "Enderbury" "-3.13" "-171.08" "Pacific/Enderbury" default}
++  {- "Enderbury" "-3.13" "-171.08" "Pacific/Kanton" default}
 +  {- "Kiritimati" "1.87" "-157.40" "Pacific/Kiritimati" }
 +
 +  {"Kyrgyzstan"}
@@ -569,7 +569,7 @@
 +  {- "Monaco" "43.73" "7.42" "Europe/Monaco" default}
 +
 +  {"Mongolia"}
-+  {- "Choibalsan" "48.08" "114.54" "Asia/Choibalsan" }
++  {- "Choibalsan" "48.08" "114.54" "Asia/Ulaanbaatar" }
 +  {- "Hovd" "48.00" "91.64" "Asia/Hovd" }
 +  {- "Ulaanbaatar" "47.92" "106.92" "Asia/Ulaanbaatar" default}
 +
@@ -810,10 +810,10 @@
 +  {- "Funafuti" "-8.52" "179.20" "Pacific/Funafuti" default}
 +
 +  {"Ukraine"}
-+  {- "Kiev" "50.45" "30.52" "Europe/Kiev" default}
++  {- "Kiev" "50.45" "30.52" "Europe/Kyiv" default}
 +  {- "Simferopol" "44.95" "34.10" "Europe/Simferopol" }
-+  {- "Uzhgorod" "48.62" "22.30" "Europe/Uzhgorod" }
-+  {- "Zaporozhye" "47.83" "35.17" "Europe/Zaporozhye" }
++  {- "Uzhgorod" "48.62" "22.30" "Europe/Kyiv" }
++  {- "Zaporozhye" "47.83" "35.17" "Europe/Kyiv" }
 +
 +  {"United Arab Emirates"}
 +  {- "Dubai" "25.26" "55.30" "Asia/Dubai" default}
