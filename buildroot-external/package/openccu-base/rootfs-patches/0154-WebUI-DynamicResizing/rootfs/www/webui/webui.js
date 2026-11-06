@@ -30085,6 +30085,16 @@ ReGa = {
   encode: function(data) 
   {
     return "<prototypejs><![CDATA[" + escape(data) + "]]></prototypejs>";
+  },
+
+  /**
+   * Escapes a value for a double-quoted string literal of a ReGa script,
+   * e.g. pb += 'string value = "' + ReGa.escapeString(value) + '";';
+   * ReGa removes the escaping again when it parses the literal.
+   **/
+  escapeString: function(value)
+  {
+    return String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/\r/g, "\\r").replace(/\n/g, "\\n");
   }
 };
 /**
@@ -31583,7 +31593,7 @@ ise.SingleCondition.prototype =
     var pb = '';
     pb += 'string action = "SetRightValue";';
     pb += 'string scid = "'+scid+'";';
-    pb += 'string rv = "'+rv+'";';
+    pb += 'string rv = "'+ReGa.escapeString(rv)+'";';
     var opts =
     {
       postBody: ReGa.encode(pb),
@@ -31769,11 +31779,11 @@ ise.SingleDestination.prototype =
     var pb = '';
     pb += 'string action = "SetValue";';
     pb += 'string id = "'+id+'";';
-    pb += 'string value = "'+value+'";';
+    pb += 'string value = "'+ReGa.escapeString(value)+'";';
     pb += 'boolean isSysVar = "'+isSysVar+'";';
     if( typeof( unit ) != "undefined" )
     {
-      pb += 'string unit = "'+unit+'";';
+      pb += 'string unit = "'+ReGa.escapeString(unit)+'";';
     }
     var opts =
     {
@@ -31818,7 +31828,7 @@ ise.SingleDestination.prototype =
     pb += 'string value = "'+value+'";';
     if( typeof( unit ) != "undefined" )
     {
-      pb += 'string unit = "'+unit+'";';
+      pb += 'string unit = "'+ReGa.escapeString(unit)+'";';
     }
     var opts =
     {

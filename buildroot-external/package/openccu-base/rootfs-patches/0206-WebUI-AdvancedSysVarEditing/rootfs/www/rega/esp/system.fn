@@ -310,7 +310,7 @@ function ::UpdateUI()
   object oPresence = dom.GetObject( ID_PRESENT );
   if( oPresence )
   {
-    Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName()#'";' );
+    Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n")#'";' );
   }
   
   WriteLine("resetReGaSaveButton();");
@@ -1480,8 +1480,8 @@ function ::BuildUserSvTable() {
     {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
       WriteLine("<tr id='"#trid#"'>");
-        WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name()#"</td>");
-        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
+        WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
         
         WriteLine("<td class='GrayBkg'>");
         string s = "Unbekannt: " # sysvar.ValueSubType();
@@ -1498,24 +1498,24 @@ function ::BuildUserSvTable() {
         !if (sysvar.ValueSubType() == istPresent) {} !#### Auskommentierung z.Z. nicht erwünscht. Später KW.
         
         if (sysvar.ValueSubType() == istAlarm) {
-          WriteLine("${lblTrue} = " # sysvar.ValueName1()#"<br/>");
-          WriteLine("${lblFalse} = " # sysvar.ValueName0());
+          WriteLine("${lblTrue} = " # sysvar.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/>");
+          WriteLine("${lblFalse} = " # sysvar.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
         }
         if (sysvar.ValueSubType() == istGeneric) {
           WriteLine("${lblMinValue}: " # sysvar.ValueMin()#"<br/>");
           WriteLine("${lblMaxValue}: " # sysvar.ValueMax());
         }
         if (sysvar.ValueSubType() == istEnum) {
-          WriteLine(sysvar.ValueList());
+          WriteLine(sysvar.ValueList().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
         }
         if (sysvar.ValueSubType() == istBool) {
-          WriteLine("${lblTrue} = " # sysvar.ValueName1()#"<br/>");
-          WriteLine("${lblFalse} = " # sysvar.ValueName0());
+          WriteLine("${lblTrue} = " # sysvar.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/>");
+          WriteLine("${lblFalse} = " # sysvar.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
         }
         if (sysvar.ValueSubType() == istChar8859) { }
         WriteLine("</td>");
         
-        WriteLine("<td class='GrayBkg'>"#sysvar.ValueUnit()#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
         WriteLine("<td class='WhiteBkg'>");
           WriteLine("<div class='CLASS02108' ");
           if (system.GetVar("userId") != 0)  {
@@ -1611,11 +1611,11 @@ function ::getSysVarValAsString()
   {
     if ( (cObjTmp.Value() == 0) || (cObjTmp.Value() == "") )
     {
-      sSysVarVal = cObjTmp.ValueName0();
+      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
     else
     {
-      sSysVarVal = cObjTmp.ValueName1();
+      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
   }
   
@@ -1623,11 +1623,11 @@ function ::getSysVarValAsString()
   {
     if( cObjTmp.AlState() == asOncoming )
     {
-      sSysVarVal = cObjTmp.ValueName1();
+      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
     else
     {
-      sSysVarVal = cObjTmp.ValueName0();
+      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }    
   }
   
@@ -1635,15 +1635,15 @@ function ::getSysVarValAsString()
   { 
     if( cObjTmp.Value() == "" )
     {
-      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),0);
+      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),0).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
     else
     {
-      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),cObjTmp.Value());
+      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),cObjTmp.Value()).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
     if( cObjTmp.ValueUnit() != "" )
     {
-      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit();
+      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
   }
   
@@ -1659,10 +1659,23 @@ function ::getSysVarValAsString()
     }
     if( cObjTmp.ValueUnit() != "" )
     {
-      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit();
+      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
     }
   }
   
+  ! the presence variable shows the name of its value, like a logic value
+  if( (cObjTmp.ValueType() == ivtBinary) && (cObjTmp.ValueSubType() == istPresent) )
+  {
+    if ( (cObjTmp.Value() == 0) || (cObjTmp.Value() == "") )
+    {
+      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+    }
+    else
+    {
+      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+    }
+  }
+
   if ( bString )
   {
     sSysVarVal = cObjTmp.Value();

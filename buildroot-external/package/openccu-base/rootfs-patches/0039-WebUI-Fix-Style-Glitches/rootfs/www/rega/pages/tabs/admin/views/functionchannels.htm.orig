@@ -95,11 +95,11 @@
         Write("tmp = new Object();");
         Write("tmp['id'] = "#chn.ID()#";");
         Write("tmp['trid'] = '"#trId#"';");
-        Write("tmp['parentName'] = '"#dev.Name()#"';");
-        Write("tmp['name'] = '"#chn.Name()#"';");
+        Write("tmp['parentName'] = '"#dev.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+        Write("tmp['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
         Write("tmp['type'] = '"#chn.Label()#"';");
-        Write("tmp['rooms'] = '"#rooms#"';");
-        Write("tmp['func'] = '"#functions#"';");
+        Write("tmp['rooms'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+        Write("tmp['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
         Write("tmp['sn'] = '"#chn.Address()#"';");
         Write("tmp['iface'] = '"#category#"';");
         Write("tmp['chnnr'] = '"#chn.ChnNumber()#"';");

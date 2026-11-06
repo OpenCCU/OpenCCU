@@ -125,7 +125,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                   Write("<script type='text/javascript'>");
                   Write("var tmp = new Object();");
                   Write("tmp['id'] = '"#o.ID()#"';");
-                  Write("tmp['name'] = '"#o.Name()#"';");
+                  Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['trid'] = '"#trId#"';");
                   Write("arProgs[arProgs.length] = tmp;");
                   Write("</script>");

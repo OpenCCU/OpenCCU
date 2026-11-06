@@ -75,7 +75,8 @@ function ::dcCreate()
     boolean bNumber = ( (iVT==ivtFloat)   && (iST==istGeneric) );
     boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
     boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
-    boolean bSysVar = ( bLogic || bList || bNumber || bAlarm || bString);
+    boolean bPresent = ( (iVT==ivtBinary) && (iST==istPresent) );
+    boolean bSysVar = ( bLogic || bList || bNumber || bAlarm || bString || bPresent);
     if( bSysVar )
     {
       WriteLine( '<table id="ctrl'#chnId#'tbl" cellspacing="0" class="ctrlTbl CLASS02510" border="0">' );
@@ -1786,11 +1787,11 @@ function ::CreateUnknown()
                       {
                         if (oDP.Value())
                         {
-                          WriteLine(oDP.ValueName1());
+                          WriteLine(oDP.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                         }
                         else
                         {
-                          WriteLine(oDP.ValueName0());
+                          WriteLine(oDP.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                         }
                       }
                     }

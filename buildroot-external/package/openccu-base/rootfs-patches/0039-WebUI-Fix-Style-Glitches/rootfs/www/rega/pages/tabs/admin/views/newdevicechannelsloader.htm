@@ -21,7 +21,7 @@ chns = new Array();
             sIface = dom.GetObject(iface).Name();
           }
           Write("var tmp = new Object();");
-          Write("tmp['name'] = '"#chn.Name()#"';");
+          Write("tmp['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           Write("tmp['id'] = "#chn.ID()#";");
           Write("tmp['type'] = '"#chn.Label()#"';");
           Write("tmp['devtype'] = '"#dev.Label()#"';");
@@ -49,7 +49,7 @@ chns = new Array();
             object objTmp = dom.GetObject(roomTmp);
             rooms = rooms # objTmp.Name() # ";";
           }
-          Write("tmp['room'] = '"#rooms#"';");
+          Write("tmp['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           Write("tmp['action'] = '';");
           Write("tmp['links'] = '';");
           Write("tmp['ready'] = "#chn.ReadyConfig()#";");

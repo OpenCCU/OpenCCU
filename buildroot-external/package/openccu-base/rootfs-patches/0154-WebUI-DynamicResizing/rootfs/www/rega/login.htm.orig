@@ -114,7 +114,7 @@
                               if (sUserFullName.Length() > 15) {
                                 sStyle = "line-height:30px;";
                               }
-                              Write('<div id="btn-user-'#uId#'" class="Button colorGradient" style="'#sStyle#'" onclick=\'UserButtonClick("'#sUserFullName#'", "'#uObj.Name()#'");\'>');
+                              Write('<div id="btn-user-'#uId#'" class="Button colorGradient" style="'#sStyle#'" onclick=\'UserButtonClick("'#sUserFullName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&#39;")#'", "'#uObj.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&#39;")#'");\'>');
                               Write(sUserFullName);
                               Write('</div>');
                             Write('</td>');

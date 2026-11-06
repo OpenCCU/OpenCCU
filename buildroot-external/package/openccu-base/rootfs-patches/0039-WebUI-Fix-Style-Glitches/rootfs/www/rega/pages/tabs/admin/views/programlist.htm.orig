@@ -143,7 +143,7 @@
                       WriteLine( '<table cellpadding="0" cellspacing="0" border="0">' );
                         WriteLine( '<tr>' );
                           WriteLine( '<td class="CLASS04903">' );
-                            WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#',\''#o.Name()#'\');" />' );
+                            WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#',\''#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\');" />' );
                           WriteLine( '</td>' );
                         WriteLine( '</tr>' );
                         WriteLine( '<tr>' );
@@ -192,8 +192,8 @@
               Write("<script type='text/javascript'>");
                 Write("var tmp = new Object();");
                 Write("tmp['id'] = '"#o.ID()#"';");
-                Write("tmp['name'] = '"#o.Name()#"';");
-                Write("tmp['desc'] = '"#o.PrgInfo()#"';");
+                Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+                Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                 Write("tmp['trid'] = '"#trId#"';");
                 Write("arItems[arItems.length] = tmp;");
                 Write("Cursor.set(Cursor.NORMAL);");
@@ -244,7 +244,7 @@
                         WriteLine( '<table cellpadding="0" cellspacing="0" border="0">' );
                           WriteLine( '<tr>' );
                             WriteLine( '<td class="CLASS04903">' );
-                              WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#',\''#o.Name()#'\');" />' );
+                              WriteLine( '<input type="button" name="btnRemove" value="btnRemove" class="StdButton CLASS04907" onclick="DeleteProgram('#o.ID()#',\''#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\');" />' );
                             WriteLine( '</td>' );
                           WriteLine( '</tr>' );
                           WriteLine( '<tr>' );
@@ -293,8 +293,8 @@
                 Write("<script type='text/javascript'>");
                   Write("var tmp = new Object();");
                   Write("tmp['id'] = '"#o.ID()#"';");
-                  Write("tmp['name'] = '"#o.Name()#"';");
-                  Write("tmp['desc'] = '"#o.PrgInfo()#"';");
+                  Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+                  Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['trid'] = '"#trId#"';");
                   Write("arItems[arItems.length] = tmp;");
                   Write("Cursor.set(Cursor.NORMAL);");

@@ -67,7 +67,7 @@
                         Write("<script type='text/javascript'>");
                         Write("var tmp = new Object();");
                         Write("tmp['id'] = '"#room.ID()#"';");
-                        Write("tmp['name'] = '"#room.Name()#"';");
+                        Write("tmp['name'] = '"#room.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                         Write("tmp['trid'] = '"#trId#"';");
                         Write("arItems[arItems.length] = tmp;");
                         Write("Cursor.set(Cursor.NORMAL);");

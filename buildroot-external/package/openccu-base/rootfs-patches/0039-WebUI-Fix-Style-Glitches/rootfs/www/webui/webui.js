@@ -30228,6 +30228,16 @@ ReGa = {
   encode: function(data) 
   {
     return "<prototypejs><![CDATA[" + escape(data) + "]]></prototypejs>";
+  },
+
+  /**
+   * Escapes a value for a double-quoted string literal of a ReGa script,
+   * e.g. pb += 'string value = "' + ReGa.escapeString(value) + '";';
+   * ReGa removes the escaping again when it parses the literal.
+   **/
+  escapeString: function(value)
+  {
+    return String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/\r/g, "\\r").replace(/\n/g, "\\n");
   }
 };
 /**
@@ -31726,7 +31736,7 @@ ise.SingleCondition.prototype =
     var pb = '';
     pb += 'string action = "SetRightValue";';
     pb += 'string scid = "'+scid+'";';
-    pb += 'string rv = "'+rv+'";';
+    pb += 'string rv = "'+ReGa.escapeString(rv)+'";';
     var opts =
     {
       postBody: ReGa.encode(pb),
@@ -31912,11 +31922,11 @@ ise.SingleDestination.prototype =
     var pb = '';
     pb += 'string action = "SetValue";';
     pb += 'string id = "'+id+'";';
-    pb += 'string value = "'+value+'";';
+    pb += 'string value = "'+ReGa.escapeString(value)+'";';
     pb += 'boolean isSysVar = "'+isSysVar+'";';
     if( typeof( unit ) != "undefined" )
     {
-      pb += 'string unit = "'+unit+'";';
+      pb += 'string unit = "'+ReGa.escapeString(unit)+'";';
     }
     var opts =
     {
@@ -31961,7 +31971,7 @@ ise.SingleDestination.prototype =
     pb += 'string value = "'+value+'";';
     if( typeof( unit ) != "undefined" )
     {
-      pb += 'string unit = "'+unit+'";';
+      pb += 'string unit = "'+ReGa.escapeString(unit)+'";';
     }
     var opts =
     {
@@ -32425,14 +32435,22 @@ iseMessageBox.prototype =
         this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
         this.addToPostBody( 'integer varid = 0;' );
         this.addToPostBody( 'integer createNew = 1;' );
-        this.setWidth(900);
+        this.setWidth(1100);
         this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
         break;
       case ID_EDIT_SYSVAR:
         this.setTitle( translateKey("dialogEditSysVar") /*"Systemvariable bearbeiten"*/ );
         this.addToPostBody( 'integer varid = '+this.type+';' );
         this.addToPostBody( 'integer createNew = 0;' );
-        this.setWidth(900);
+        this.setWidth(1100);
+        this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
+        break;
+      case ID_EDIT_SYSVAR_VALUE:
+        this.setTitle( translateKey("dialogEditSysVarValue") /*"Systemvariablenwert bearbeiten"*/ );
+        this.addToPostBody( 'integer varid = '+this.type+';' );
+        this.addToPostBody( 'integer createNew = 0;' );
+        this.addToPostBody( 'boolean editValueOnly = 1;' );
+        this.setWidth(240);
         this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
         break;
       case ID_CREATE_SCRIPT:
@@ -33311,6 +33329,8 @@ iseEventLog.prototype = {
 iseDOM_BuildLabel = "R1.00.0381.0100";
 dbg = false;
 rfr = true;
+
+ID_EDIT_SYSVAR_VALUE   = 9921;
 
 ID_ROOMS     = 101;  // Rooms collection ID.
 ID_FUNCTIONS = 151;  // Functions collection ID.
