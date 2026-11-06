@@ -164,7 +164,7 @@
    }
 --- a/www/config/cp_time.cgi
 +++ b/www/config/cp_time.cgi
-@@ -190,6 +190,7 @@
+@@ -833,6 +833,7 @@
                        puts "."
                        cgi_text year=$year {size="4"} {maxlength="4"} {id="text_year"}
                      }
@@ -172,7 +172,7 @@
                      table_data {align="left"} {
                        division {class="popupControls CLASS21506"} {
                          division {class="CLASS21507"} {onClick="apply_time()"} {
-@@ -198,7 +199,9 @@
+@@ -841,7 +842,9 @@
                          }
                        }
                      }
@@ -182,7 +182,7 @@
                    table_row {
                      table_data {colspan="2"} {}
                      table_data {align="left"} {class="CLASS21510"} {
-@@ -210,12 +213,14 @@
+@@ -853,12 +856,14 @@
                        }
                      }
                    }
@@ -197,7 +197,7 @@
        table_row {class="CLASS21502"} {
          table_data {class="CLASS21503"} {
            #puts "NTP-Server"
-@@ -249,6 +254,7 @@
+@@ -892,6 +897,7 @@
            }
          }
        }
@@ -205,7 +205,7 @@
        set country ""
        foreach location $LOCATIONS {
          if { [lindex $location 0] == "-" } {
-@@ -682,6 +688,8 @@
+@@ -1328,6 +1334,8 @@
    puts $fd "$TIMEZONES($timezone)"
    close $fd
    
