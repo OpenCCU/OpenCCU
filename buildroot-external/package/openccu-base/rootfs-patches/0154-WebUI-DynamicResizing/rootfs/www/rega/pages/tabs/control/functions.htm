@@ -52,7 +52,7 @@
                         string trId = "funcs"#func.ID();
                         Write("<tr id='"#trId#"'>");
                           Write("<td id='"#func.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHF.clearFilters();updateTable();loadChannels("#func.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-                            Write(func.Name());
+                            Write(func.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                           Write("</td>");
                           Write("<script type='text/javascript'>");
                           Write("var tmp = new Object();");

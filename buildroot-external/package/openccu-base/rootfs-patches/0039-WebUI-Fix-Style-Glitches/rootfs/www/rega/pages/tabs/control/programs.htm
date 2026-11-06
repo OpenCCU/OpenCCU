@@ -94,9 +94,9 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                   string trId = "pr"#o.ID();
                   WriteLine( '<tr id="'#trId#'" class="CLASS03702">' );
                   if (oUser.UserLevel() == iulAdmin) {
-                    WriteLine( '<td class="tBodyCell CLASS03905" onclick="EditProgram('#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">'#o.Name()#'</td>' );
+                    WriteLine( '<td class="tBodyCell CLASS03905" onclick="EditProgram('#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
                   } else {
-                    WriteLine( '<td class="tBodyCell">'#o.Name()#'</td>' );
+                    WriteLine( '<td class="tBodyCell">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
                   }
                   WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
                   object oPrgID = o.ID();

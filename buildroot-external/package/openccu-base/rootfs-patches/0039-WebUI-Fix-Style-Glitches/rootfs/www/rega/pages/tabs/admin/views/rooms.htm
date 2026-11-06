@@ -299,7 +299,7 @@ arSortRObj[arSortRObj.length] = tmpRoom;
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS04111'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS04111'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS04111'><input type='checkbox' id='ff"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -355,7 +355,7 @@ if ( oUser )
       Write("</script>");
       Write("</td>"); 
       
-      Write("<td id='rn"#elem.ID()#"' class='WhiteBkg DeviceListCell' onclick='textEdit(id, "#elem.ID()#", false, textEditCallback);'>"#elem.Name()#"</td>"); !Raum
+      Write("<td id='rn"#elem.ID()#"' class='WhiteBkg DeviceListCell' onclick='textEdit(id, "#elem.ID()#", false, textEditCallback);'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>"); !Raum
       Write("<td class='GrayBkg DeviceListCell'></td>"); !Name
       Write("<td class='GrayBkg DeviceListCell'></td>"); !Typenbezeichnung
       Write("<td class='GrayBkg DeviceListCell'></td>"); !Bild

@@ -836,7 +836,7 @@
            WriteLine("</table>")
 --- a/www/rega/esp/datapointconfigurator.fn
 +++ b/www/rega/esp/datapointconfigurator.fn
-@@ -1514,7 +1514,7 @@
+@@ -1518,7 +1518,7 @@
    string showParam = true;
  
    WriteLine( '<td class="CLASS02519">' );
@@ -1432,9 +1432,9 @@
      </thead>
      <tbody>
        <tr class="CLASS04803">
--        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name() ); %></td>
+-        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); %></td>
 -        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
-+        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name() ); %></td>
++        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); %></td>
 +        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
          <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
          <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>
@@ -1657,7 +1657,7 @@
                          WriteLine('<tr id="'#trId#'" class="CLASS03904">');
 -                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' style='height: 80px;' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
 +                          Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-                           Write(devs.Name());
+                           Write(devs.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                            Write("</td>");
 -                          Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' style='height: 80px;'>");
 +                          if( oUser && oUser.UserLevel() == iulAdmin ) {
@@ -1708,7 +1708,7 @@
                          Write("<tr id='"#trId#"'>");
 -                          Write("<td id='"#func.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHF.clearFilters();updateTable();loadChannels("#func.ID()#")'>");
 +                          Write("<td id='"#func.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHF.clearFilters();updateTable();loadChannels("#func.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-                             Write(func.Name());
+                             Write(func.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                            Write("</td>");
                            Write("<script type='text/javascript'>");
 @@ -92,12 +87,7 @@
@@ -1815,7 +1815,7 @@
                        Write("<tr id='"#trId#"'>");
 -                        Write("<td id='"#room.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHR.clearFilters();updateTable();loadChannels("#room.ID()#")'>");
 +                        Write("<td id='"#room.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHR.clearFilters();updateTable();loadChannels("#room.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-                           Write(room.Name());     
+                           Write(room.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));     
                          Write("</td>");
                          Write("<script type='text/javascript'>");
 @@ -93,12 +88,7 @@
@@ -1873,7 +1873,7 @@
          <th class="tHeaderCell CLASS03303" >${thState}</th>
 --- a/www/rega/pages/tabs/favViewer.htm
 +++ b/www/rega/pages/tabs/favViewer.htm
-@@ -69,17 +69,17 @@
+@@ -68,17 +68,17 @@
      {
        WriteLine('<div class="CLASS05800">');
        WriteLine('<div id="loadingGif"><img style="margin: 30px;" src="/ise/img/loading.gif" /></div>');
@@ -1894,7 +1894,7 @@
      WriteLine('</colgroup>');  
      WriteLine('<tr>');  
  
-@@ -273,6 +273,6 @@
+@@ -272,6 +272,6 @@
    setFooter(s);
    translatePage();
    jQuery("#loadingGif").hide();
@@ -2002,7 +2002,7 @@
 @@ -297,13 +309,13 @@
              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sFirstTimestamp#'</td>' );
              Write( '<td id="sla'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastTimestamp#'</td>' );
-             Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName#'</td>' );
+             Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
 -            Write( '<td style="text-align:center; vertical-align: middle; background-color:white;" class="CLASS02607">');
 +            Write( '<td class="DeviceListThumbnail">');
              if (oLastTriggerChannel)

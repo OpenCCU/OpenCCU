@@ -1147,7 +1147,7 @@
     </thead>
     <tbody>
       <tr class="CLASS04803">
-        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name() ); %></td>
+        <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); %></td>
         <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>

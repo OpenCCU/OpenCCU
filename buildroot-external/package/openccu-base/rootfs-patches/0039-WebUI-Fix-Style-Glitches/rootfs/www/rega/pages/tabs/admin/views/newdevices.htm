@@ -322,7 +322,7 @@ foreach(devId, oUser.UserTempViewIDs().EnumEnabledIDs())
       Write("deviceData['handle'] = 'READONLY';");
     }
     Write("deviceData['vis'] = "#(dev.Visible())#";");
-    Write('conInfo( "Device '#(dev.Name())#' : '#(dev.Visible())#'" );');
+    Write('conInfo( "Device '#(dev.Name()).Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#' : '#(dev.Visible())#'" );');
     Write("deviceData['readyconfig'] = "#(dev.ReadyConfigChns())#";");
     Write("deviceData['loaded'] = false;");
 

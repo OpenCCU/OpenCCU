@@ -85,7 +85,7 @@
                         string trId = "devices"#devs.ID();
                         WriteLine('<tr id="'#trId#'" class="CLASS03904">');
                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
-                          Write(devs.Name());
+                          Write(devs.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                           Write("</td>");
                           if( oUser && oUser.UserLevel() == iulAdmin ) {
                             Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' onclick='picDivHide(jg_250);if (DeviceList.getDevice("# devs.ID() #")) { DeviceListPage.showConfiguration(event, \"DEVICE\", "# devs.ID() #"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");

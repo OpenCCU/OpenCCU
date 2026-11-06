@@ -123,7 +123,7 @@
               string trId = "program"#o.ID();
               WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
               string sInactive = ""; if( !o.Active() ) { sInactive = "Inactive"; }
-              WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name()#'</td>' );
+              WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
               WriteLine( '<td id="'#trId#'_info" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
               WriteLine( '<td id="'#trId#'_cond" class="tBodyCell'#sInactive#'">' );
               object oPrgID = o.ID();
@@ -224,7 +224,7 @@
                 string trId = "program"#o.ID();
                 string sInactive = ""; if( !o.Active() ) { sInactive = "Inactive"; }
                 WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
-                WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name()#'</td>' );
+                WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
                 WriteLine( '<td id="'#trId#'_info" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
                 WriteLine( '<td id="'#trId#'_cond" class="tBodyCell'#sInactive#'">' );
                 object oPrgID = o.ID();

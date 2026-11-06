@@ -92,7 +92,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03806'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03806'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS03806'><input type='checkbox' id='hr"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -162,7 +162,7 @@
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
             if (showExtDesc == false) {
-              Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+              Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
             Write("</td>");
@@ -184,7 +184,7 @@
             string roomIDs = "";
             foreach(roomTmp, chn.ChnRoom()) {
               object objTmp = dom.GetObject(roomTmp);
-              rooms = rooms # objTmp.Name() # "<br />";
+              rooms = rooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
               roomIDs = roomIDs # objTmp.ID() # '\t';
             }
             Write(rooms);

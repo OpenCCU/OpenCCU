@@ -163,7 +163,7 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
               if (elem && elem.Visible()) {
                 string divId = "udiv"#tmp;
                   Write("<tr>");
-                    Write("<td  class='CLASS06407 leftAlign jCheckBox'>"#elem.Name()#"</td>");
+                    Write("<td  class='CLASS06407 leftAlign jCheckBox'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                     Write("<td  class='CLASS06407'><input type='checkbox' id='uf"#elem.ID()#"'/></td>");
                   Write("</tr>");
               }

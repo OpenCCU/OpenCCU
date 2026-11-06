@@ -132,7 +132,7 @@ iseInitUpdateArrays();
           if (elem) {
             string divId = "rdiv"#tmp;
               Write("<tr>");
-                Write("<td  class='CLASS02619'>"#elem.Name()#"</td>");
+                Write("<td  class='CLASS02619'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                 Write("<td  class='CLASS02619'><input type='checkbox' id='ff"#elem.ID()#"'/></td>");
               Write("</tr>");
           }
@@ -157,7 +157,7 @@ iseInitUpdateArrays();
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS02619'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS02619'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS02619'><input type='checkbox' id='fr"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -249,7 +249,7 @@ iseInitUpdateArrays();
                 string roomIDs = "";
                 if( oRoom )
                 {
-                  sRoom = sRoom#oRoom.Name()#"<br />";
+                  sRoom = sRoom#oRoom.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br />";
                   roomIDs = roomIDs#sRID# "\t";
                 }
               }
@@ -261,7 +261,7 @@ iseInitUpdateArrays();
                 string funcIDs = "";
                 if( oFunc )
                 {
-                  sFunction = sFunction#oFunc.Name()#"<br />";
+                  sFunction = sFunction#oFunc.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br />";
                   funcIDs = funcIDs#sFID# "\t";
                 }
               }
@@ -308,7 +308,7 @@ iseInitUpdateArrays();
           Write( '<tr id="'#sTrId#'" class="CLASS02604">' );
             Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sFirstTimestamp#'</td>' );
             Write( '<td id="sla'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastTimestamp#'</td>' );
-            Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName#'</td>' );
+            Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
             Write( '<td class="DeviceListThumbnail">');
             if (oLastTriggerChannel)
             {
@@ -356,7 +356,7 @@ iseInitUpdateArrays();
             ! Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut("'#sAlarmName#'", false, true);');
             ! Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut("'#sServiceMessage#'", false, true);');
 
-            Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sAlarmName#'"), false, true);');
+            Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sAlarmName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n")#'"), false, true);');
             Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sServiceMessage#'"), false, true);');
             
           Write( '}');
