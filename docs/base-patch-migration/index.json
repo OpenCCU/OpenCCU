@@ -32,7 +32,7 @@
       "sha256": "1e3a86e7600faf267788957fddd30f4d625e0106e868166b8e2502385296da54"
     },
     {
-      "added": 787,
+      "added": 786,
       "files": [
         "opt/HMServer/pages/AvailableFirmware.ftl",
         "opt/HMServer/pages/DiagramSettingsDetailPage.ftl",
@@ -93,8 +93,8 @@
         "www/webui/webui.js"
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
-      "removed": 655,
-      "sha256": "6571d28449e4fb356cc01a9da382e3eabeb91045e74fc3c466e12d731cb7a309"
+      "removed": 654,
+      "sha256": "63d3bb05da55cfc8d0776a0010e0b5fa630c9a4384e559c7ce72a2e4024f8ca0"
     },
     {
       "added": 305,

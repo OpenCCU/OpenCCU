@@ -35490,7 +35490,7 @@ updateChannelControl = function( chnId, lastTimestamp )
     iseUpdateTMArray.push( lastTimestamp );
   }
 
-  translatePage("#tblfav, #tblfavViewer");
+  translatePage("#tblfav");
 
 };
 
