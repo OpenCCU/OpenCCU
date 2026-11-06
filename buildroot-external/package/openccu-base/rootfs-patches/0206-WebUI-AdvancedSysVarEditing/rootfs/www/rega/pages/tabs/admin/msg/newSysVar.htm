@@ -575,7 +575,7 @@
           $("ckAssignedChn").checked = true;
           $("chnNameRow").hidden = false;
         }
-        else if ($(chnName).innerHTML != "")
+        else if (($(chnName).innerHTML != "") || (parseInt($("chnId").value, 10) > 0))
         {
           $("ckAssignedChn").checked = true;
           $("chnNameRow").hidden = false;

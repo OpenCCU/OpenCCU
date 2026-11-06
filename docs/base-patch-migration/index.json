@@ -132,7 +132,7 @@
       ],
       "patch": "0097-WebUI-SetSysvarValueByUser.patch",
       "removed": 79,
-      "sha256": "ff39fa022ea1f2756789afeaa9411278971cabd60f25ef6421d36e15dc78ac6b"
+      "sha256": "1cec2a3c353f4b7f52813f7cf17cb75ec2e5b1835e1d723c6bfe7ccf8ee9ab69"
     },
     {
       "added": 439,
