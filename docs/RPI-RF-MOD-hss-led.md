@@ -141,6 +141,27 @@ RGB state survives process restarts, but not a normal reboot with cleared
 `/run`. `/etc/config/disableLED` retains priority for the RGB status display. A process restart begins the
 saved pattern at its first phase; it does not preserve the exact phase timestamp.
 
+## Radio LED support per platform
+
+The `rpi-rf-mod` target needs all three RPI-RF-MOD LED lines (red, green and
+blue). On the 40-pin header they are pins 36, 38 and 40.
+
+| Platform | Radio LED |
+| --- | --- |
+| Raspberry Pi, ASUS Tinkerboard, ASUS Tinkerboard 2/2S | RGB group `rpi_rf_mod:rgb:status` from the device tree overlay |
+| HB-RF-USB, HB-RF-USB-2, HB-RF-ETH (any host) | LED driver `rpi_rf_mod_rgb` (or legacy `rpi_rf_mod_led`), using the adapter's LED pins |
+| Hardkernel ODROID-C2, ODROID-C4, ODROID-N2/N2+ (GPIO header) | Not available |
+
+On the ODROID boards, header pin 38 is a 1.8 V reference output and pin 40 is
+an ADC input. Neither can be used as a GPIO, so the green and blue LEDs of a
+RPI-RF-MOD on the GPIO header cannot be driven. Only the red line (pin 36) is
+a GPIO. Their device tree overlays therefore define no LED nodes, even though
+the kernel provides `CONFIG_LEDS_GROUP_MULTICOLOR`. The radio LED stays off on
+these boards; the radio module itself is not affected. `hss_led` accepts only
+complete RGB groups or all three legacy LEDs, so a red-only group would not be
+used either. With an HB-RF-USB/HB-RF-ETH adapter the RGB LED also works on
+ODROID boards.
+
 ## Explicit board LED targets
 
 Every target-specific command requires `--led NAME`, including `status`,
