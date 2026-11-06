@@ -768,7 +768,14 @@ function ::checkFilter() {
 function ::saveSysVar()
 {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
-  if( oUser.UserLevel() == iulAdmin )
+  ! Reject a value list without any entry, like the dialog does.
+  boolean bValidValueList = true;
+  if( system.GetVar("iSubType") == istEnum )
+  {
+    string sCheckValList = system.GetVar("sValList");
+    if( sCheckValList.Replace(";", "").Trim() == "" ) { bValidValueList = false; }
+  }
+  if( (oUser.UserLevel() == iulAdmin) && bValidValueList )
   {
   integer ist = system.GetVar("iSubType"); 
   object oChn = dom.GetObject( system.GetVar("iChnId") );
@@ -820,8 +827,13 @@ function ::saveSysVar()
   !sv.ValueSubType(ist);
   sv.DPInfo( system.GetVar("sInfo") );
   sv.ValueUnit( system.GetVar("sUnit") );
+  ! ReGa keeps range, value names and value list as metadata. Drop the
+  ! entries of the previous type, the branches below set the current ones.
   sv.RemoveMetaData('MIN');
   sv.RemoveMetaData('MAX');
+  sv.RemoveMetaData('BV0');
+  sv.RemoveMetaData('BV1');
+  sv.RemoveMetaData('VALUE_LIST');
   var svValue;
   if (ist == istAlarm)
   {
@@ -850,6 +862,86 @@ function ::saveSysVar()
   }
   elseif (ist == istEnum)
   {
+    ! [sRefMap] "old:new;..." moves the program references to value list
+    ! entries to their new positions.
+    if( (system.GetVar("createNew") == 0) && (system.IsVar("sRefMap")) )
+    {
+      string refMap = system.GetVar("sRefMap");
+      string mapEntry;
+      integer oldIndex;
+      integer newIndex;
+      string prgId;
+      string condId;
+      integer singleNum;
+      integer conditions;
+      object prg;
+      object rule;
+      object cond;
+      object sc;
+      object dest;
+      object sd;
+      foreach(prgId, dom.GetObject(ID_PROGRAMS).EnumUsedIDs())
+      {
+        prg = dom.GetObject(prgId);
+        if( prg )
+        {
+          rule = prg.Rule();
+          while( rule )
+          {
+            conditions = rule.RuleConditions().Count();
+            if( conditions > 0 )
+            {
+              foreach(condId, system.GenerateEnum(0, conditions - 1))
+              {
+                cond = rule.RuleCondition(condId.ToInteger());
+                if( cond )
+                {
+                  singleNum = 0;
+                  sc = cond.CndSingleCondition(singleNum);
+                  while( sc )
+                  {
+                    if( (sc.LeftValType() == ivtSystemId) && (sc.LeftVal() == sv.ID()) && (sc.RightVal1ValType() == ivtInteger) )
+                    {
+                      oldIndex = sc.RightVal1();
+                      newIndex = oldIndex;
+                      foreach(mapEntry, refMap.Split(";"))
+                      {
+                        if( mapEntry.StrValueByIndex(":", 0).ToInteger() == oldIndex ) { newIndex = mapEntry.StrValueByIndex(":", 1).ToInteger(); }
+                      }
+                      if( newIndex != oldIndex ) { sc.RightVal1(newIndex); }
+                    }
+                    singleNum = singleNum + 1;
+                    sc = cond.CndSingleCondition(singleNum);
+                  }
+                }
+              }
+            }
+            dest = rule.RuleDestination();
+            if( dest )
+            {
+              singleNum = 0;
+              sd = dest.DestSingleDestination(singleNum);
+              while( sd )
+              {
+                if( (sd.DestinationParam() == ivtSystemId) && (sd.DestinationDP() == sv.ID()) && (sd.DestinationValueType() == ivtInteger) )
+                {
+                  oldIndex = sd.DestinationValue();
+                  newIndex = oldIndex;
+                  foreach(mapEntry, refMap.Split(";"))
+                  {
+                    if( mapEntry.StrValueByIndex(":", 0).ToInteger() == oldIndex ) { newIndex = mapEntry.StrValueByIndex(":", 1).ToInteger(); }
+                  }
+                  if( newIndex != oldIndex ) { sd.DestinationValue(newIndex); }
+                }
+                singleNum = singleNum + 1;
+                sd = dest.DestSingleDestination(singleNum);
+              }
+            }
+            rule = rule.RuleSubRule();
+          }
+        }
+      }
+    }
     sv.ValueType( ivtInteger );
     sv.ValueSubType( istEnum );
     sv.ValueList(system.GetVar("sValList"));

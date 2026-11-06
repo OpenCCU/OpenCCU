@@ -1181,6 +1181,16 @@ jQuery.extend(true,langJSON, {
     "optionNone" : "None",
     "optionNotActive" : "Not active",
 
+    "svEditTypeUsed" : "The variable type cannot be changed because this system variable is used in programs.",
+    "svEditTypeAlarm" : "The type of an existing alarm variable cannot be changed.",
+    "svEditTypeToAlarm" : "An existing system variable cannot be converted into an alarm variable.",
+    "svEditInvalidRange" : "The minimum value must not exceed the maximum value.",
+    "svEditEmptyValueList" : "The value list must contain at least one non-empty entry.",
+    "svEditValueListPrograms" : "The changed value list affects entries used by the following programs:",
+    "svEditValueListAdjust" : "Adjust the programs automatically: moved entries get their new position, entries behind the end of the list get the last entry.",
+    "svEditRangePrograms" : "The following programs use values outside the new range:",
+    "svEditCheckPrograms" : "Please review the affected programs after saving.",
+    "svEditSaveAnyway" : "Save anyway?",
     "HelpTitle" : "Help"
   }
 });
