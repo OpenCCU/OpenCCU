@@ -290,15 +290,16 @@
           $("ckAssignedChn").checked = true;
           $("chnNameRow").hidden = false;
         }
-        else if ($(chnName).innerHTML != "")
+        else if (($(chnName).innerHTML != "") || (parseInt($("chnId").value, 10) > 0))
         {
           $("ckAssignedChn").checked = true;
           $("chnNameRow").hidden = false;
         }
         else
         {
-          $("ckAssignedChn").checked = true;
-          $("chnNameRow").hidden = false;
+          // the chooser was cancelled without a channel
+          $("ckAssignedChn").checked = false;
+          noChannel();
         }
       }, ChannelChooser.SHOW_ALL);
     } else {
