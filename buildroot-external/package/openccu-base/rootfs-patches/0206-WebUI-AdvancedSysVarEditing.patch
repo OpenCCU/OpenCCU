@@ -245,7 +245,7 @@
    <table>
    <tr>
      <td>
-@@ -160,6 +242,79 @@
+@@ -160,6 +242,98 @@
  <script type="text/javascript">
    dlgResult = 0;
  
@@ -267,6 +267,25 @@
 +    var vals = svParseValueList(text);
 +    while ((vals.length > 1) && (vals[vals.length - 1].strip().length == 0)) { vals.pop(); }
 +    return vals;
++  };
++
++  // Position of the n-th entry with this text (counting from 0), -1 if
++  // there are fewer.
++  svIndexOfOccurrence = function(vals, text, n) {
++    for (var i = 0; i < vals.length; i++) {
++      if ((vals[i] === text) && (n-- == 0)) { return i; }
++    }
++    return -1;
++  };
++
++  // Where an entry of oldVals is in newVals: the same occurrence of its
++  // text, so duplicate entries keep their order, else its first one.
++  svMovedIndex = function(oldVals, newVals, index) {
++    var text = oldVals[index];
++    var n = 0;
++    for (var i = 0; i < index; i++) { if (oldVals[i] === text) { n++; } }
++    var target = svIndexOfOccurrence(newVals, text, n);
++    return (target < 0) ? newVals.indexOf(text) : target;
 +  };
 +
 +  // Entries of the saved value list as shown in the dialog, empty for other types.
@@ -325,16 +344,17 @@
    var arrElem = ["#inpName", "#inpDesc"];
  
    jQuery.each(arrElem, function(index, elem){
-@@ -175,6 +330,73 @@
+@@ -175,6 +349,75 @@
      $("chnNameRow").hidden = true;
    };
    
 +
 +  // Compares the value list entries that programs use with the new list.
-+  // With the adjustment an entry found at another position is mapped there,
-+  // an entry that is gone keeps its position or, behind the end of the list,
-+  // gets the last one. Without it only references behind the end change, to
-+  // the first entry, which the WebUI shows for them anyway.
++  // With the adjustment an entry found at another position is mapped there
++  // (for duplicate entries the same occurrence of the text), an entry that is
++  // gone keeps its position or, behind the end of the list, gets the last
++  // one. Without it only references behind the end change, to the first
++  // entry, which the WebUI shows for them anyway.
 +  svValueListChanges = function(newVals) {
 +    var result = {programs: [], adjustMap: {}, keepMap: {}};
 +    jQuery.each(svPrograms, function(i, prg) {
@@ -342,10 +362,11 @@
 +      jQuery.each(prg.values, function(j, value) {
 +        var index = parseInt(value, 10);
 +        var oldText = svOldValueList[index];
-+        if ((oldText === undefined) || (newVals[index] === oldText)) { return; }
-+        if (refs.some(function(ref) { return ref.index == index; })) { return; }
-+        var target = newVals.indexOf(oldText);
++        if (oldText === undefined) { return; }
++        var target = svMovedIndex(svOldValueList, newVals, index);
 +        if (target < 0) { target = Math.min(index, newVals.length - 1); }
++        if ((target == index) && (newVals[index] === oldText)) { return; }
++        if (refs.some(function(ref) { return ref.index == index; })) { return; }
 +        var keep = (index < newVals.length) ? index : 0;
 +        refs.push({index: index, oldText: oldText, target: target, keep: keep});
 +        if (target != index) { result.adjustMap[index] = target; }
@@ -399,7 +420,7 @@
    saveSysVars = function()
    {
      if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
-@@ -198,17 +420,46 @@
+@@ -198,17 +441,46 @@
        pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
        pb += "string sName = '"+name+"';";
        pb += "string sInfo = '"+$("inpDesc").value+"';";
@@ -450,7 +471,7 @@
            break;
          case 2:
            iSubType = SYSVAR_GENERIC;
-@@ -228,6 +479,24 @@
+@@ -228,6 +500,24 @@
            var itmpMaxVal = parseFloat( $("inpMax").value );
            if( isNaN(itmpMinVal) ) itmpMinVal = 0;
            if( isNaN(itmpMaxVal) ) itmpMaxVal = 0;
@@ -475,7 +496,7 @@
            pb += "integer iMinVal = '"+itmpMinVal+"';";
            pb += "integer iMaxVal = '"+itmpMaxVal+"';";
            
-@@ -243,16 +512,16 @@
+@@ -243,16 +533,16 @@
            break;
          case 3: 
            iSubType = SYSVAR_ALARM;
@@ -496,7 +517,7 @@
        pb += "integer iSubType = "+iSubType+";";
        pb += "integer iChnId = "+ $("chnId").value +";";
        var opts = {
-@@ -265,6 +534,18 @@
+@@ -265,6 +555,18 @@
            if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
          }
        };
@@ -515,7 +536,7 @@
        new Ajax.Request(url, opts);
      } else {
          // No name available
-@@ -317,6 +598,7 @@
+@@ -317,6 +619,7 @@
          break;
        case 1:
          loadValueEdit(translateKey("lblVal1Val2Val3"));
@@ -523,7 +544,7 @@
          break;
        case 2:
          loadIntEdit(0, 65000);
-@@ -357,16 +639,25 @@
+@@ -357,16 +660,25 @@
      $("tdValueEdit").innerHTML = "";
    };
    
@@ -551,7 +572,7 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
-@@ -381,13 +672,39 @@
+@@ -381,13 +693,39 @@
      } 
      s += "<table class='CLASS05010'>";
      s += "<tr>";
@@ -578,10 +599,10 @@
 +      selection.add(option);
 +    }
 +
-+    // Keep the selected entry: at its position when the entry there is
-+    // unchanged, also with duplicate entries, otherwise where it moved to.
++    // Keep the selected entry, also when it moved to another position, and
++    // the order of duplicate entries.
 +    if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
-+    var newIndex = ((oldIndex < vals.length) && (vals[oldIndex] === svLastValueList[oldIndex])) ? oldIndex : vals.indexOf(svLastValueList[oldIndex]);
++    var newIndex = svMovedIndex(svLastValueList, vals, oldIndex);
 +    if (newIndex < 0) newIndex = Math.min(oldIndex, vals.length - 1);
 +    selection.selectedIndex = newIndex;
 +    svLastValueList = vals;
@@ -592,7 +613,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -397,9 +714,11 @@
+@@ -397,9 +735,11 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -605,7 +626,7 @@
      
      s = "";
      var hidden = (sValue) ? "" : "style='display: none;'";
-@@ -482,7 +801,7 @@
+@@ -482,7 +822,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -614,7 +635,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
          Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
-@@ -497,13 +816,13 @@
+@@ -497,13 +837,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);

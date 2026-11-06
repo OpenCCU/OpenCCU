@@ -262,6 +262,25 @@
     return vals;
   };
 
+  // Position of the n-th entry with this text (counting from 0), -1 if
+  // there are fewer.
+  svIndexOfOccurrence = function(vals, text, n) {
+    for (var i = 0; i < vals.length; i++) {
+      if ((vals[i] === text) && (n-- == 0)) { return i; }
+    }
+    return -1;
+  };
+
+  // Where an entry of oldVals is in newVals: the same occurrence of its
+  // text, so duplicate entries keep their order, else its first one.
+  svMovedIndex = function(oldVals, newVals, index) {
+    var text = oldVals[index];
+    var n = 0;
+    for (var i = 0; i < index; i++) { if (oldVals[i] === text) { n++; } }
+    var target = svIndexOfOccurrence(newVals, text, n);
+    return (target < 0) ? newVals.indexOf(text) : target;
+  };
+
   // Entries of the saved value list as shown in the dialog, empty for other types.
   var svOldValueList = <%
     if ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istEnum)) {
@@ -332,10 +351,11 @@
   
 
   // Compares the value list entries that programs use with the new list.
-  // With the adjustment an entry found at another position is mapped there,
-  // an entry that is gone keeps its position or, behind the end of the list,
-  // gets the last one. Without it only references behind the end change, to
-  // the first entry, which the WebUI shows for them anyway.
+  // With the adjustment an entry found at another position is mapped there
+  // (for duplicate entries the same occurrence of the text), an entry that is
+  // gone keeps its position or, behind the end of the list, gets the last
+  // one. Without it only references behind the end change, to the first
+  // entry, which the WebUI shows for them anyway.
   svValueListChanges = function(newVals) {
     var result = {programs: [], adjustMap: {}, keepMap: {}};
     jQuery.each(svPrograms, function(i, prg) {
@@ -343,10 +363,11 @@
       jQuery.each(prg.values, function(j, value) {
         var index = parseInt(value, 10);
         var oldText = svOldValueList[index];
-        if ((oldText === undefined) || (newVals[index] === oldText)) { return; }
-        if (refs.some(function(ref) { return ref.index == index; })) { return; }
-        var target = newVals.indexOf(oldText);
+        if (oldText === undefined) { return; }
+        var target = svMovedIndex(svOldValueList, newVals, index);
         if (target < 0) { target = Math.min(index, newVals.length - 1); }
+        if ((target == index) && (newVals[index] === oldText)) { return; }
+        if (refs.some(function(ref) { return ref.index == index; })) { return; }
         var keep = (index < newVals.length) ? index : 0;
         refs.push({index: index, oldText: oldText, target: target, keep: keep});
         if (target != index) { result.adjustMap[index] = target; }
@@ -694,10 +715,10 @@
       selection.add(option);
     }
 
-    // Keep the selected entry: at its position when the entry there is
-    // unchanged, also with duplicate entries, otherwise where it moved to.
+    // Keep the selected entry, also when it moved to another position, and
+    // the order of duplicate entries.
     if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
-    var newIndex = ((oldIndex < vals.length) && (vals[oldIndex] === svLastValueList[oldIndex])) ? oldIndex : vals.indexOf(svLastValueList[oldIndex]);
+    var newIndex = svMovedIndex(svLastValueList, vals, oldIndex);
     if (newIndex < 0) newIndex = Math.min(oldIndex, vals.length - 1);
     selection.selectedIndex = newIndex;
     svLastValueList = vals;
