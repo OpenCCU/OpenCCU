@@ -551,7 +551,7 @@
      s += "</tr>";
      s += "</table>";
      $("tdEdit").innerHTML = s;
-@@ -381,13 +672,38 @@
+@@ -381,13 +672,39 @@
      } 
      s += "<table class='CLASS05010'>";
      s += "<tr>";
@@ -578,9 +578,10 @@
 +      selection.add(option);
 +    }
 +
-+    // Keep the selected entry, also when it moved to another position.
++    // Keep the selected entry: at its position when the entry there is
++    // unchanged, also with duplicate entries, otherwise where it moved to.
 +    if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
-+    var newIndex = vals.indexOf(svLastValueList[oldIndex]);
++    var newIndex = ((oldIndex < vals.length) && (vals[oldIndex] === svLastValueList[oldIndex])) ? oldIndex : vals.indexOf(svLastValueList[oldIndex]);
 +    if (newIndex < 0) newIndex = Math.min(oldIndex, vals.length - 1);
 +    selection.selectedIndex = newIndex;
 +    svLastValueList = vals;
@@ -591,7 +592,7 @@
    loadValueEdit = function(vals, sValue, optionList) 
    {
      if( vals == "" )
-@@ -397,9 +713,11 @@
+@@ -397,9 +714,11 @@
      var s = "";
      s += "<table class='CLASS05012'>";
      s += "<tr><td>"+ translateKey("lblValueDescription") + ":</td></tr>";
@@ -604,7 +605,7 @@
      
      s = "";
      var hidden = (sValue) ? "" : "style='display: none;'";
-@@ -482,7 +800,7 @@
+@@ -482,7 +801,7 @@
          Write("loadChar8859Edit('"#sval.UriEncode()#"');");
        }
        if (sv.ValueSubType() == istAlarm) {
@@ -613,7 +614,7 @@
        }
        if (sv.ValueSubType() == istGeneric) {
          Write("loadIntEdit('"#sv.ValueMin()#"', '"#sv.ValueMax()#"', '"#sv.Value()#"', '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
-@@ -497,13 +815,13 @@
+@@ -497,13 +816,13 @@
          foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
          {
           oVal = count.ToString(0);

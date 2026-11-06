@@ -694,9 +694,10 @@
       selection.add(option);
     }
 
-    // Keep the selected entry, also when it moved to another position.
+    // Keep the selected entry: at its position when the entry there is
+    // unchanged, also with duplicate entries, otherwise where it moved to.
     if (isNaN(oldIndex) || oldIndex < 0) oldIndex = 0;
-    var newIndex = vals.indexOf(svLastValueList[oldIndex]);
+    var newIndex = ((oldIndex < vals.length) && (vals[oldIndex] === svLastValueList[oldIndex])) ? oldIndex : vals.indexOf(svLastValueList[oldIndex]);
     if (newIndex < 0) newIndex = Math.min(oldIndex, vals.length - 1);
     selection.selectedIndex = newIndex;
     svLastValueList = vals;
