@@ -56,7 +56,7 @@
             i2c0 = "/soc/bus@ffd00000/i2c@1c000";           // @i2c3
             i2c1 = "/soc/bus@ffd00000/i2c@1d000";           // @i2c2
             rtc0 = "/soc/bus@ffd00000/i2c@1d000/rx8130@32"; // @rpi_rf_mod_rtc
-            rtc1 = "/soc/bus@ff800000/rtc@0a8";             // @vrtc
+            rtc1 = "/soc/bus@ff800000/rtc@a8";              // @vrtc
         };
     };
 };
