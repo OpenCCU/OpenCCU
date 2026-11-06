@@ -11,7 +11,7 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = 1.14.0
+RPI_RF_MOD_VERSION = 1.14.1
 RPI_RF_MOD_SITE = $(BR2_EXTERNAL_EQ3_PATH)/package/rpi-rf-mod
 RPI_RF_MOD_SITE_METHOD = local
 RPI_RF_MOD_LICENSE = Apache-2.0
