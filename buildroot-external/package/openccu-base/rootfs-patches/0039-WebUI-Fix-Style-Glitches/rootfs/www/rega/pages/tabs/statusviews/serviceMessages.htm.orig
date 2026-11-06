@@ -361,10 +361,10 @@ iseInitUpdateArrays();
               Write( 'tmp["write"] = false;' );
             }
             Write( 'tmp["first"] = "'#sFirstTimestamp#'"; ');
-            Write( 'tmp["name"] = "'#sAlarmName#'";');
+            Write( 'tmp["name"] = "'#sAlarmName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'";');
             Write( 'tmp["sn"] = "'#sSerialNumber#'";');
-            Write( 'tmp["func"] = "'#sFunction#'"; ');
-            Write( 'tmp["room"] = "'#sRoom#'"; ');
+            Write( 'tmp["func"] = "'#sFunction.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ');
+            Write( 'tmp["room"] = "'#sRoom.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ');
             Write( 'tmp["desc"] = "'#sServiceMessage#'"; ');
             Write( 'tmp["trid"] = "'#sTrId#'"; ');
 

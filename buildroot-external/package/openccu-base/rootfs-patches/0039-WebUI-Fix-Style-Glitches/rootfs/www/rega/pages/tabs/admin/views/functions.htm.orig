@@ -69,7 +69,7 @@ bNecc = false; // to reload page in neccecary
               
               Write("tmp = new Object();");
               Write("tmp['id'] = "#o3.ID()#";");
-              Write("tmp['name'] = '"#o3.Name()#"';");
+              Write("tmp['name'] = '"#o3.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
               
               integer devId = o3.Device();
               if (devId != ID_ERROR)
@@ -99,7 +99,7 @@ bNecc = false; // to reload page in neccecary
                 object objTmp = dom.GetObject(roomTmp);
                 rooms = rooms # objTmp.Name() # " ";
               }
-              Write("tmp['room'] = '"#rooms#"';"); !rooms
+              Write("tmp['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';"); !rooms
               Write("arCObj[arCObj.length] = tmp;");
             }
           }
@@ -126,7 +126,7 @@ bNecc = false; // to reload page in neccecary
   {
     Write("arF[arF.length] = "#tmp#";");
     Write("arFObj['"#tmp#"'] = new Object();");
-    Write("arFObj['"#tmp#"']['func'] = '"#obj.Name()#"';");
+    Write("arFObj['"#tmp#"']['func'] = '"#obj.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
     Write("arFObj['"#tmp#"']['id'] = '"#tmp#"';");
     Write("arFObj['"#tmp#"']['flt'] = true;");
     Write("arFObj['"#tmp#"']['exp'] = false;");
@@ -134,7 +134,7 @@ bNecc = false; // to reload page in neccecary
      
     object o = dom.GetObject(tmp);    
     Write("tmpRoom = new Object();");
-    Write("tmpRoom['func'] = '"#o.Name()#"';");
+    Write("tmpRoom['func'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
     Write("tmpRoom['id'] = '"#tmp#"';");
     Write("tmpRoom['flt'] = true;");
     Write("tmpRoom['exp'] = false;");

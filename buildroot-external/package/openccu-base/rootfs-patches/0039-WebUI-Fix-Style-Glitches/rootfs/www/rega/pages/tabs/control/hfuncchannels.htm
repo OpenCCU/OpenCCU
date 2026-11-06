@@ -226,8 +226,8 @@
             Write("chn = new Object();");
             Write("chn['id'] = '"#chn.ID()#"';");
             Write("chn['ctrlId'] = '"#sCtrlId#"';");
-            Write("chn['name'] = '"#chn.Name()#"';");
-            Write("chn['room'] = '"#rooms#"';");
+            Write("chn['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+            Write("chn['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
             Write("chn['fltOpts'] = new Object();");
             Write("chn['fltOpts']['rooms'] = '"#roomIDs#"';");
             Write("chn['trid'] = '"#trId#"';");

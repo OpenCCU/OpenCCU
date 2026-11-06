@@ -231,8 +231,8 @@
             Write("chn = new Object();");
             Write("chn['id'] = '"#chn.ID()#"';");
             Write("chn['ctrlId'] = '"#sCtrlId#"';");
-            Write("chn['name'] = '"#chn.Name()#"';");
-            Write("chn['func'] = '"#functions#"';");
+            Write("chn['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+            Write("chn['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
             Write("chn['fltOpts'] = new Object();");
             Write("chn['fltOpts']['funcs'] = '"#funcIDs#"';");
             Write("chn['trid'] = '"#trId#"';");

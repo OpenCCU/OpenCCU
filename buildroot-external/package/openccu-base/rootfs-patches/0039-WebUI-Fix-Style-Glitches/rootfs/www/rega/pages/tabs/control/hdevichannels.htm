@@ -276,7 +276,7 @@
             Write("</tr>");
             
             Write("<script type='text/javascript'>");
-            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name()#"','"#rooms#"','"#functions#"','"#roomIDs#"', '"#funcIDs#"');");
+            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#roomIDs#"', '"#funcIDs#"');");
 
             Write("arChns[arChns.length] = o;");
             Write("if (!fltHD.objPassFilter(o ))");

@@ -105,7 +105,7 @@
                             Write("Draw(jg_0, '"#devs.Label()#"', 50, '-1');");
                           Write("var tmp = new Object();");
                           Write("tmp['id'] = '"#devs.ID()#"';");
-                          Write("tmp['name'] = '"#devs.Name()#"';");
+                          Write("tmp['name'] = '"#devs.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                           Write("tmp['trid'] = '"#trId#"';");
                           Write("arItems[arItems.length] = tmp;");
                           Write("Cursor.set(Cursor.NORMAL);");

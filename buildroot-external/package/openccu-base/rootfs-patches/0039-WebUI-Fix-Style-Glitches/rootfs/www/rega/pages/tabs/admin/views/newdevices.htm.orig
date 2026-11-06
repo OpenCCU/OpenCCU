@@ -124,7 +124,7 @@ foreach(devId, oUser.UserTempViewIDs().EnumEnabledIDs())
   if (dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.Interface() != ID_ERROR)) {
     Write("deviceData = new Object();");
     Write("deviceData['id'] = "#dev.ID()#";");
-    Write("deviceData['name'] = '"#dev.Name()#"';");
+    Write("deviceData['name'] = '"#dev.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
     Write("deviceData['type'] = '"#dev.Label()#"';");
     Write("deviceData['pic'] = '';");
     Write("deviceData['desc'] = DEV_getDescription('"#dev.Label()#"');");
@@ -290,8 +290,8 @@ foreach(devId, oUser.UserTempViewIDs().EnumEnabledIDs())
       sIface = dom.GetObject(iface).Name();
     }
     Write("deviceData['iface'] = '"#sIface#"';");
-    Write("deviceData['func'] = '"#funcNames#"';");
-    Write("deviceData['room'] = '"#roomNames#"';");
+    Write("deviceData['func'] = '"#funcNames.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+    Write("deviceData['room'] = '"#roomNames.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
     Write("deviceData['proto'] = "#bOneProto#";");
     boolean bFound3 = false;
     string s3;
