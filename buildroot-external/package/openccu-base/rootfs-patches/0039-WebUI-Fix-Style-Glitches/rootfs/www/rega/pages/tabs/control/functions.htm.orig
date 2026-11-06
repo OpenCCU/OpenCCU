@@ -62,7 +62,7 @@
                         string trId = "funcs"#func.ID();
                         Write("<tr id='"#trId#"'>");
                           Write("<td id='"#func.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHF.clearFilters();updateTable();loadChannels("#func.ID()#")'>");
-                            Write(func.Name());
+                            Write(func.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                           Write("</td>");
                           Write("<script type='text/javascript'>");
                           Write("var tmp = new Object();");

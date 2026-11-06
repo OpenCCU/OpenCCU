@@ -146,7 +146,7 @@ iseInitUpdateArrays();
       string sDestDPName = "";
       if( oDestDP )
       {
-        sDestDPName = '<a href="#" class="CLASS02805">&lt;'#oDestDP.Name()#'&gt;</a>';
+        sDestDPName = '<a href="#" class="CLASS02805">&lt;'#oDestDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'&gt;</a>';
       }
       else
       {

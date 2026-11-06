@@ -257,7 +257,7 @@
     
     Write("<td class='"#CellBkg#" CLASS05206' >");
       object svCH = dom.GetObject( sv.Channel() );
-      if( svCH ) { Write( svCH.Name() ); }
+      if( svCH ) { Write( svCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); }
     Write("</td>");
     
    

@@ -80,7 +80,7 @@
                 string sSelected = "";
                 if( id == oFavorite.ID() ) { sSelected = "selected";}
                 Write( '<option '#sSelected#' value="'#oFavorite.ID()#'">' );
-                Write( oFavorite.Name() );
+                Write( oFavorite.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                 Write( '</option>' );
               }
             }
@@ -112,7 +112,7 @@
                   Write('<td>');
                   Write('<table cellpadding="0" cellspacing="0" class="CLASS01806">');
                   Write('<tr>');
-                  Write('<td class="CLASS01807">'#dom.GetObject(sid).Name()#'</td>');
+                  Write('<td class="CLASS01807">'#dom.GetObject(sid).Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>');
                   Write('</tr>');
                   Write('<tr>');
                   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
@@ -231,7 +231,7 @@
                   if (hasSV == false) { Write("<tr><td colspan='2'><hr/></td></tr>"); hasSV = true;}
                   object oDP = dom.GetObject(tmp);
                   Write("<tr class='UserSysVars'>");
-                  Write("<td>"#oDP.Name()#":</td>");
+                  Write("<td>"#oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#":</td>");
                   if( (oUser.UserLevel() == iulAdmin) && (oDP.ValueSubType() != istPresent) ) {
                     Write( '<td colspan="3" id="SYSVAR_' # tmp # '" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#oDP.ID()#');" onmouseover="this.className=\'DeviceListRow_Highlight\';" onmouseout="this.className=\'\';">' );
                   } else {

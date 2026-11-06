@@ -337,7 +337,7 @@ function ::UpdateUI()
           string sDateTimeTmp = sTimestamp;
           !string sMessageTmp = oSV.Name()#" ausgelöst";
           string sMessageTmp = oSV.Name()#" ${lblTriggered}";
-          WriteLine( 'if( typeof(alarmLogSystem) == "object" ) alarmLogSystem.add("'#sDateTimeTmp#'","","'#sMessageTmp#'");' );
+          WriteLine( 'if( typeof(alarmLogSystem) == "object" ) alarmLogSystem.add("'#sDateTimeTmp#'","","'#sMessageTmp.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'");' );
         }
       }
     }
@@ -417,7 +417,7 @@ function ::UpdateUI()
             Write("if ($('sla"#sAID#"'))");
               Write("$('sla"#sAID#"').innerHTML = '"#sLastTimestamp#"';");
           }
-          Write( 'if( typeof(serviceLogSystem) == "object" ) serviceLogSystem.add("'#sDateTime#'","'#sChannelName#'","'#sServiceMessage#'");' );
+          Write( 'if( typeof(serviceLogSystem) == "object" ) serviceLogSystem.add("'#sDateTime#'","'#sChannelName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'","'#sServiceMessage#'");' );
         }
       }
     }
@@ -655,7 +655,7 @@ function ::buildPropTable() {
       object elem = dom.GetObject(tmp);
       if (elem) {
         Write("<tr class='popupWhiteCells'>");
-        Write("<td id='er"#elem.ID()#"' onclick='bNecc = true;textEdit(id, "#elem.ID()#", false, function() { changeRoomOrSubsection.delay(1, \"" # elem.ID() # "\"); });'>"#elem.Name()#"</td>");
+        Write("<td id='er"#elem.ID()#"' onclick='bNecc = true;textEdit(id, "#elem.ID()#", false, function() { changeRoomOrSubsection.delay(1, \"" # elem.ID() # "\"); });'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
         Write("<td id='cr"#elem.ID()#"' onclick='bNecc = false;textEditInfo(id, "#elem.ID()#", true)' >"#elem.EnumInfo()#"</td>");
         Write( '<td><span class="StdButton" onclick="bNecc = true;DeleteObject2('#elem.ID()#');removeRoomOrSubsection(\''#elem.ID()#'\');">${btnRemove}</span></td>' );
         Write("</tr>");
@@ -675,7 +675,7 @@ function ::getChnNameById()
     object obj = dom.GetObject( system.GetVar("id") );
     if (obj)
     {
-      Write(obj.Name());
+      Write(obj.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
     }
   }
   return;

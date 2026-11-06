@@ -87,7 +87,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03506'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03506'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -112,7 +112,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03506'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03506'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -205,7 +205,7 @@
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
             if (showExtDesc == false) {
-              Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+              Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
             Write("</td>");
@@ -227,7 +227,7 @@
             string roomIDs = "";
             foreach(roomTmp, chn.ChnRoom()) {
               object objTmp = dom.GetObject(roomTmp);
-              rooms = rooms # objTmp.Name() # "<br />";
+              rooms = rooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
               roomIDs = roomIDs # objTmp.ID() # '\t';
             }
             Write(rooms);
@@ -238,7 +238,7 @@
             string funcIDs = "";
             foreach(funcTmp, chn.ChnFunction()) {
               object objTmp = dom.GetObject(funcTmp);
-              functions = functions # objTmp.Name() # "<br />";
+              functions = functions # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
               funcIDs = funcIDs # objTmp.ID() # '\t';
             }
             Write(functions);

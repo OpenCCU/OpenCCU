@@ -94,7 +94,7 @@
                         string trId = "devices"#devs.ID();
                         WriteLine('<tr id="'#trId#'" class="CLASS03904">');
                           Write("<td id='"#devs.ID()#"name' class='ButtonStatusRooms CLASS03905' style='height: 80px;' onclick='fltHD.clearFilters();updateTable();loadChannels("#devs.ID()#")'>");
-                          Write(devs.Name());
+                          Write(devs.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                           Write("</td>");
                           Write("<td id='"#devs.ID()#"pic' class='ButtonStatusRoomsPic CLASS03906' style='height: 80px;'>");
                           

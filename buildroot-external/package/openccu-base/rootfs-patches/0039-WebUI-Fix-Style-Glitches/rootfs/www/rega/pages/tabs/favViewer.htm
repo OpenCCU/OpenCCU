@@ -26,7 +26,7 @@
   if( obj )
   {
     string sName = obj.Name();
-    WriteLine('conInfo("Object '#obj.ID()#', Name = ['#sName#']");' );
+    WriteLine('conInfo("Object '#obj.ID()#', Name = ['#sName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#']");' );
   }
   
 
@@ -36,8 +36,7 @@
     WriteLine('conInfo("ID_FAVORITES ok");');
   }
   %>
-  //setPath("<span>Status und Bedienung</span> &gt; Favoriten &gt; <% Write(sName ); %>");
-  var path = "<span>"+translateKey('menuControlPage')+"</span> &gt; "+translateKey('submenuFavorites')+" &gt; " + translateString('<% Write(sName);%>');
+  var path = "<span>"+translateKey('menuControlPage')+"</span> &gt; "+translateKey('submenuFavorites')+" &gt; " + translateString('<% Write(sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n"));%>');
   setPath(path);
 </script>
 
