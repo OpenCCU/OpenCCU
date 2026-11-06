@@ -905,18 +905,24 @@
       "base_pr": 308,
       "cleanup_pr": 4645,
       "patch": "0061-WebUI-MenuSortedIcons.patch"
+    },
+    {
+      "base_merge_commit": "14699bdd398ab08d86470bb74bc48d52f085665b",
+      "base_pr": 313,
+      "cleanup_pr": 4651,
+      "patch": "0097-WebUI-SetSysvarValueByUser.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "14699bdd398ab08d86470bb74bc48d52f085665b",
-    "base_pr": 313,
-    "cleanup_pr": 4651,
-    "patch": "0097-WebUI-SetSysvarValueByUser.patch",
+    "base_merge_commit": "b218b0058ff25f1a53459e33c7390049a0268d90",
+    "base_pr": 317,
+    "cleanup_pr": 4656,
+    "patch": "0206-WebUI-AdvancedSysVarEditing.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "f35bc5abd75ef3034fcebfeb32e1430c88d292ed",
-  "verified_base_pin": "4dd1eeabe219f7f9b67bd3fc22a48e268c6e0ab8",
-  "verified_source_sha256": "ef89527d278ff00bfa9dde7094ef033763d1076ad91bf4863de1bae5cf55d38d"
+  "verified_at_openccu_commit": "c85ded2f7c66ca8d4e8e4d0cc1a55060e877d904",
+  "verified_base_pin": "14699bdd398ab08d86470bb74bc48d52f085665b",
+  "verified_source_sha256": "26f45530789a743b0d69f15b3f72985cfe385e671066f908b569a5a051bae5dd"
 }

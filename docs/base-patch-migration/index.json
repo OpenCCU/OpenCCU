@@ -94,7 +94,7 @@
       ],
       "patch": "0039-WebUI-Fix-Style-Glitches.patch",
       "removed": 654,
-      "sha256": "3eae778ce6340ff0143a6dd355a3a500c06ca653ba346081788053f62f037090"
+      "sha256": "99dd79023a735a90911a85c5706b7d94b2ef85c846bbbfdbb0799ceea54a9f9d"
     },
     {
       "added": 305,
@@ -187,20 +187,8 @@
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
       "removed": 40,
       "sha256": "5031d94c607821097d0010f5562b7f89afb4b8842e04c9eaffd03c17ebc110ea"
-    },
-    {
-      "added": 473,
-      "files": [
-        "www/rega/esp/system.fn",
-        "www/rega/pages/tabs/admin/msg/newSysVar.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js"
-      ],
-      "patch": "0206-WebUI-AdvancedSysVarEditing.patch",
-      "removed": 21,
-      "sha256": "0e9bda4f611b44f3d1d9893afad1e717616cb649ad62ca3809db6c1ad0ec6edb"
     }
   ],
   "schema": 1,
-  "series_sha256": "5e4ff234c5bbe33647303e0a18b85da4c644feba4c52270480beb8ec4302b60a"
+  "series_sha256": "6201e4baa88d0fab3909923fe462ea1a78cfda7ea6492e1e6097dd06fa9ae30b"
 }

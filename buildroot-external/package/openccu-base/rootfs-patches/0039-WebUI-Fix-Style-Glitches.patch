@@ -847,7 +847,7 @@
      string sEnum = "";
 --- a/www/rega/esp/system.fn
 +++ b/www/rega/esp/system.fn
-@@ -1299,7 +1299,7 @@
+@@ -1391,7 +1391,7 @@
      Write("<tr>");
      Write("<td  class='CLASS02103'>");
          Write("<div align='center'>");

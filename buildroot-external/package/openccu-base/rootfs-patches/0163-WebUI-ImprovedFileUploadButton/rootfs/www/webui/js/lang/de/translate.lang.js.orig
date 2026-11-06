@@ -1110,6 +1110,16 @@ jQuery.extend(true,langJSON, {
     "optionNone" : "Keine",
     "optionNotActive" : "Nicht aktiv",
 
+    "svEditTypeUsed" : "Der Variablentyp kann nicht ge%E4ndert werden, da diese Systemvariable in Programmen verwendet wird.",
+    "svEditTypeAlarm" : "Der Typ einer bestehenden Alarmvariable kann nicht ge%E4ndert werden.",
+    "svEditTypeToAlarm" : "Eine bestehende Systemvariable kann nicht in eine Alarmvariable umgewandelt werden.",
+    "svEditInvalidRange" : "Der Minimalwert darf nicht gr%F6%DFer als der Maximalwert sein.",
+    "svEditEmptyValueList" : "Die Werteliste muss mindestens einen nichtleeren Eintrag enthalten.",
+    "svEditValueListPrograms" : "Die ge%E4nderte Werteliste betrifft Eintr%E4ge, die in folgenden Programmen verwendet werden:",
+    "svEditValueListAdjust" : "Programme automatisch anpassen: verschobene Eintr%E4ge erhalten ihre neue Position, Eintr%E4ge hinter dem Ende der Liste den letzten Eintrag.",
+    "svEditRangePrograms" : "Folgende Programme verwenden Werte au%DFerhalb des neuen Wertebereichs:",
+    "svEditCheckPrograms" : "Bitte die betroffenen Programme nach dem Speichern pr%FCfen.",
+    "svEditSaveAnyway" : "Trotzdem speichern?",
     "HelpTitle" : "Hilfe"
   }
 });
