@@ -863,8 +863,9 @@
                      <td><span>${lblColorTemperatureBR}</span></td>
                      <td class='CLASS02546' align="right">
 -                      <div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b'>
+-                        <input id='infoSliderPos' type='text' value='0' size='3' class='CLASS02542' style='margin-top: 6px; text-align:center'/>
 +                      <div class='PercBtn' style='height:19px; width:96px; background-color:#89989b'>
-                         <input id='infoSliderPos' type='text' value='0' size='3' class='CLASS02542' style='margin-top: 6px; text-align:center'/>
++                        <input id='infoSliderPos' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/>
                        </div>
                      </td>
                    </tr>
@@ -877,16 +878,17 @@
                  </table>
 --- a/www/rega/pages/msg/setVIR_LG_WHITEController.htm
 +++ b/www/rega/pages/msg/setVIR_LG_WHITEController.htm
-@@ -13,7 +13,7 @@
+@@ -13,15 +13,15 @@
                    <tr>
                      <td><span>${lblColorTemperatureBR}</span></td>
                      <td class='CLASS02546' align="right">
 -                      <div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b'>
+-                        <input id='infoSliderPos' type='text' value='0' size='3' class='CLASS02542' style='margin-top: 6px; text-align:center'/>
 +                      <div class='PercBtn' style='height:19px; width:96px; background-color:#89989b'>
-                         <input id='infoSliderPos' type='text' value='0' size='3' class='CLASS02542' style='margin-top: 6px; text-align:center'/>
++                        <input id='infoSliderPos' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/>
                          <span>K</span>
                        </div>
-@@ -21,7 +21,7 @@
+                     </td>
                    </tr>
                    <tr>
                      <td colspan='2'>
