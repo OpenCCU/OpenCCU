@@ -984,7 +984,19 @@
      if (!fltSF.objPassFilter(chnsTmp[i]))
        tr.style.display = "none";
      else
-@@ -272,4 +273,4 @@
+@@ -248,8 +249,9 @@
+   arDelChns[arDelChns.length] = "" + fId + chnId;
+ }
+ 
+-// reset all SortSelected columns
+-var ths = document.getElementById("tblFunctionList").getElementsByTagName("th");
++// reset all SortSelected columns of the sort header row only; rewriting the
++// filter row would drop the click handlers of its filter buttons
++var ths = document.getElementById("tblFunctionList").tHead.rows[0].getElementsByTagName("th");
+ for(th in ths)
+ { 
+   var sTmp = /\d/;
+@@ -272,4 +274,4 @@
  bEIP = false;
  Cursor.set(Cursor.NORMAL);
  translatePage("#tblsvr");
@@ -1061,7 +1073,7 @@
 -  <td style='height:20px'></td>
 -  <td class='CLASS04206' style='height:20px' ></td>
 -  <td class='CLASS04211' style='height:20px'>
-+  <th></td>
++  <th></th>
 +  <th class='CLASS04206'></th>
 +  <th class='CLASS04211'>
      <div id="btnFilterName" class="FilterBtn CLASS00203">${thFilter}</div>
@@ -1453,6 +1465,18 @@
      if (!fltSR.objPassFilter(chnsTmp[i]))
        tr.style.display = "none";
      else 
+@@ -246,8 +247,9 @@
+   arDelChns[arDelChns.length] = "" + rId + chnId;
+ }
+ 
+-// reset all SortSelected columns
+-var ths = document.getElementById("tblRoomList").getElementsByTagName("th");
++// reset all SortSelected columns of the sort header row only; rewriting the
++// filter row would drop the click handlers of its filter buttons
++var ths = document.getElementById("rowhead").getElementsByTagName("th");
+ for(th in ths)
+ { 
+   if(ths[th].innerHTML)
 --- a/www/rega/pages/tabs/admin/views/rooms.htm
 +++ b/www/rega/pages/tabs/admin/views/rooms.htm
 @@ -177,82 +177,82 @@
@@ -1524,7 +1548,7 @@
 -  <td style="height:20px"></td>
 -  <td class="CLASS04104" style="height:20px"></td>
 -  <td class="CLASS04109" style="height:20px">
-+  <th></td>
++  <th></th>
 +  <th class="CLASS04104"></th>
 +  <th class="CLASS04109">
      <div id="btnFilterName" class="FilterBtn CLASS00203">${thFilter}</div>
