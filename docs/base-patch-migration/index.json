@@ -67,8 +67,8 @@
         "www/error/error-503.html"
       ],
       "patch": "0149-WebUI-ImprovedErrorPages.patch",
-      "removed": 20,
-      "sha256": "89282b1041c50624258dd59c912fc389331704879fe5bc6b85c091a33560099a"
+      "removed": 16,
+      "sha256": "3e7bd479f9e0336431724ec6402a831fe659913c57f02dac13f1e32fb74c0b7b"
     },
     {
       "added": 46,
