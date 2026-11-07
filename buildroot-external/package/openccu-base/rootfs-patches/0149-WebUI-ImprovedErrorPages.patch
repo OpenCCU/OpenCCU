@@ -7,7 +7,7 @@
    <head>
      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
      <title>HomeMatic</title>
-@@ -87,15 +87,12 @@
+@@ -87,20 +87,19 @@
  
      </script>
    </head>
@@ -27,6 +27,13 @@
        </div>
      </div>
  
+     <script type="text/javascript">
+         translatePage();
++        // show the translated content without waiting for the logo (onload)
++        document.getElementById("content").className = "";
+     </script>
+ 
+     <noscript>
 --- a/www/error/error-503.html
 +++ b/www/error/error-503.html
 @@ -1,5 +1,5 @@
@@ -36,7 +43,7 @@
    <head>
      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
      <title>HomeMatic</title>
-@@ -88,15 +88,12 @@
+@@ -88,20 +88,19 @@
  
      </script>
    </head>
@@ -56,3 +63,10 @@
        </div>
      </div>
  
+     <script type="text/javascript">
+         translatePage();
++        // show the translated content without waiting for the logo (onload)
++        document.getElementById("content").className = "";
+     </script>
+ 
+     <noscript>
