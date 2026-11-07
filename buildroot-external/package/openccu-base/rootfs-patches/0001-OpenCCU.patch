@@ -1180,7 +1180,7 @@
      "dialogSettingsStorageHintUSBStorageP1" : "Storage of data only includes the diagrams.",
      "dialogSettingsSecurityTDAuth" : "Authentication",
      "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentication active: ",
-@@ -1100,4 +1100,4 @@
+@@ -1102,4 +1102,4 @@
  });
  
  langJSON.en.hintActivateDetectorSelfTest += langJSON.en.checkSmokeDetectorSelfTest;
@@ -1278,7 +1278,7 @@
      $("body").appendChild(script);
    },
  
-@@ -35551,11 +35550,11 @@
+@@ -35549,11 +35548,11 @@
        {
          if( $("headerLogo").src.indexOf("_red") >= 0 )
          {

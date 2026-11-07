@@ -345,7 +345,7 @@ DEVICELIST_FLAT_JST = "{macro printHead(name, id)}\n
     <\/th>\n
   {\/if}\n
 {\/macro}\n
-<table id=\"DeviceListTable\" width=\"97%\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n
+<table id=\"DeviceListTable\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n
   <colgroup>\n
     <col style=\"width:11%;\"\/>\n
     <col style=\"width:11%;\"\/>\n
@@ -435,25 +435,25 @@ DEVICELIST_FLAT_JST = "{macro printHead(name, id)}\n
 <\/table>\n
 \n
 ";
-DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" width=\"97%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n
+DEVICELIST_TREE_JST = "<table id=\"DeviceListTable\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n
   <colgroup>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:55px;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:25px;\"\/>\n
-    <col style=\"width:11%;\"\/>\n
+    <col style=\"width:25px;\" \/>\n
+    <col style=\"width:25px;\" \/>\n
+    <col style=\"width:25px;\" \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col style=\"width:55px;\" \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col \/>\n
+    <col style=\"width:100px;\" \/>\n
   <\/colgroup>\n
   <thead>\n
     <tr>\n
@@ -26495,7 +26495,7 @@ if (PLATFORM == "Central") {
   TREE_EXPANDED_FOOTER_HTML: "" +
     "<table border='0' cellspacing='8'>" +
       "<tr>" + 
-        "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' style='width:auto;padding-left:5px;padding-right:5px;' onclick='WebUI.goBack();'>${footerBtnPageBack}</div></td>" +
+        "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>${footerBtnPageBack}</div></td>" +
         "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
         "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.collapseTree();'>${footerBtnCloseTree}</div></td>" +
       "</tr>" +
@@ -26503,7 +26503,7 @@ if (PLATFORM == "Central") {
   FLAT_FOOTER_HTML: "" +
     "<table border='0' cellspacing='8'>" +
       "<tr>" + 
-        "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' style='width:auto;padding-left:5px;padding-right:5px;' onclick='WebUI.goBack();'>${footerBtnPageBack}</div></td>" +
+        "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>${footerBtnPageBack}</div></td>" +
         "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.resetFilters();'>${footerBtnResetFilter}</div></td>" +
         "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04312' onclick='DeviceListPage.recoverTree();'>${footerBtnRestoreTree}</div></td>" +
       "</tr>" +
@@ -28018,7 +28018,7 @@ BidcosRfPage =
     FOOTER_HTML= "" +
       "<table border='0' cellspacing='8'>" +
         "<tr>" +
-          "<td style='text-align:center;vertical-align=middle;' ><div class='FooterButton' style='width:auto;padding-left:5px;padding-right:5px;' onclick='WebUI.goBack();'>"+translateKey("footerBtnPageBack")+"</div></td>" +
+          "<td style='text-align:center;vertical-align=middle;' ><div class='FooterButton' onclick='WebUI.goBack();'>"+translateKey("footerBtnPageBack")+"</div></td>" +
         "</tr>" +
       "</table>";
 
@@ -32402,13 +32402,11 @@ iseMessageBox.prototype =
       case ID_ROOMS:
         this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
         this.setWidth75Perc();
-        this.setHeight(700);
         this.setFile( "/pages/msg/popupPropEditor.htm" );
         break;
       case ID_FUNCTIONS: 
         this.setTitle( translateKey("dialogEditFunction") /*"Gewerk bearbeiten"*/ );
         this.setWidth75Perc();
-        this.setHeight(700);
         this.setFile( "/pages/msg/popupPropEditor.htm" );
         break;
       case ID_TRANSFER_PARAMETERS:
@@ -34028,7 +34026,7 @@ buildPropTable= function(id) {
   var opts = {
     evalScripts: true,
     onComplete: function(trans) {
-      window.setTimeout(centerMessageBox, 200);
+      centerMessageBox();
     }
   };
   var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
@@ -37224,7 +37222,13 @@ getDualWhiteControllerDiagramURLs = function() {
 setPositionAllDevices = function() {
   if (ConfigData.isPresent) {
 
-  homematic("system.getPositionData", {}, function(posData) {
+  homematic("system.getPositionData", {}, function(posData, error) {
+    // The position is saved already, only the devices could not be updated.
+    if (!posData || (posData.length < 4)) {
+      conInfo("system.getPositionData failed, the devices were not updated");
+      MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionDevicesFailure") + String((error && error.message) || "").escapeHTML());
+      return;
+    }
     var lon = posData[0].split(":")[1],
       lat = posData[1].split(":")[1],
       utcOffset = posData[2].split(":")[1],
@@ -37285,6 +37289,11 @@ setPositionAllDevices = function() {
 
 setNewDevicePos2SystemPos = function(oDevice) {
   homematic("system.getPositionData", {}, function(posData) {
+    // Without position data the device keeps its own position.
+    if (!posData || (posData.length < 4)) {
+      conInfo("system.getPositionData failed, the position of " + oDevice.sn + " was not set");
+      return;
+    }
     var lon = posData[0].split(":")[1],
       lat = posData[1].split(":")[1],
       utcOffset = posData[2].split(":")[1],
@@ -46648,7 +46657,7 @@ iseDoorLockTransceiver.prototype = {
 //Defines
 BORDER_COLOR = WebUI.getColor("channelBorder");     //Border
 HL_COLOR = WebUI.getColor("channelHighlight");  //Highlight
-BG_COLOR = WebUI.getColor("channelBackground");//Background
+BG_COLOR = 'inherit'; //Background
 HL_STROKE = 4;//Background
 //-----
 
@@ -46700,8 +46709,8 @@ DrawForm = function(jg, formname, devtype, size, x_offset, y_offset)
   
   if (!form) return;
 
-  if (!x_offset) x_offset = 0;
-  if (!y_offset) y_offset = 0;
+  if (!x_offset) x_offset = 0.032;  // workaround css offsets
+  if (!y_offset) y_offset = -0.005; // workaround css offsets
 
   switch (form[gd_type])
   {
@@ -46797,7 +46806,7 @@ picDivShow = function(jg, devtype, size, formname, divelem)
     previewPicTimer = window.setTimeout(function () {
       HideElement('picDiv');
       delete previewPicTimer;
-    }, 10000);
+    }, 3000);
   }
 };
 
