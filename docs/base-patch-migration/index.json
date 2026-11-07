@@ -61,14 +61,14 @@
       "sha256": "c322567389acffbab5cc74dbf3f7db5f36755929bc35a9c37fb2b4beff2abed8"
     },
     {
-      "added": 14,
+      "added": 42,
       "files": [
         "www/error/error-500.html",
         "www/error/error-503.html"
       ],
       "patch": "0149-WebUI-ImprovedErrorPages.patch",
-      "removed": 16,
-      "sha256": "46d6c920fa2dc533177e12b750a8ff8309349dbbfeaa68328985c32ce7c50d30"
+      "removed": 36,
+      "sha256": "0cbfa36f530bc256593fb32eeb9ae25151d2c85b177f45ef558003745bea5ac2"
     },
     {
       "added": 46,

@@ -7,7 +7,39 @@
    <head>
      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
      <title>HomeMatic</title>
-@@ -87,20 +87,19 @@
+@@ -60,17 +60,21 @@
+ 
+         if (request)
+         {
+-          request.open("GET", "/ise/checkrega.cgi", false); // synchrone Anfrage
+-          request.send(null);
+-
+-          if ("OK" == request.responseText)
+-          {
+-            window.setTimeout("window.location.href='/index.htm'", 1000);
+-          }
+-          else
++          request.open("GET", "/ise/checkrega.cgi", true); // asynchrone Anfrage
++          request.onreadystatechange = function()
+           {
+-            window.setTimeout("check();", CHECK_INTERVAL);
+-          }
++            if (request.readyState != 4) { return; }
++
++            if ("OK" == request.responseText)
++            {
++              window.setTimeout("window.location.href='/index.htm'", 1000);
++            }
++            else
++            {
++              window.setTimeout("check();", CHECK_INTERVAL);
++            }
++          };
++          request.send(null);
+         }
+       };
+ 
+@@ -87,20 +91,19 @@
  
      </script>
    </head>
@@ -43,7 +75,39 @@
    <head>
      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
      <title>HomeMatic</title>
-@@ -88,20 +88,19 @@
+@@ -61,17 +61,21 @@
+ 
+         if (request)
+         {
+-          request.open("GET", "/ise/checkrega.cgi", false); // synchrone Anfrage
+-          request.send(null);
+-
+-          if ("OK" == request.responseText)
+-          {
+-            window.setTimeout("window.location.href='/index.htm'", 1000);
+-          }
+-          else
++          request.open("GET", "/ise/checkrega.cgi", true); // asynchrone Anfrage
++          request.onreadystatechange = function()
+           {
+-            window.setTimeout("check();", CHECK_INTERVAL);
+-          }
++            if (request.readyState != 4) { return; }
++
++            if ("OK" == request.responseText)
++            {
++              window.setTimeout("window.location.href='/index.htm'", 1000);
++            }
++            else
++            {
++              window.setTimeout("check();", CHECK_INTERVAL);
++            }
++          };
++          request.send(null);
+         }
+       };
+ 
+@@ -88,20 +92,19 @@
  
      </script>
    </head>

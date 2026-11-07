@@ -60,17 +60,21 @@
 
         if (request)
         {
-          request.open("GET", "/ise/checkrega.cgi", false); // synchrone Anfrage
-          request.send(null);
+          request.open("GET", "/ise/checkrega.cgi", true); // asynchrone Anfrage
+          request.onreadystatechange = function()
+          {
+            if (request.readyState != 4) { return; }
 
-          if ("OK" == request.responseText)
-          {
-            window.setTimeout("window.location.href='/index.htm'", 1000);
-          }
-          else
-          {
-            window.setTimeout("check();", CHECK_INTERVAL);
-          }
+            if ("OK" == request.responseText)
+            {
+              window.setTimeout("window.location.href='/index.htm'", 1000);
+            }
+            else
+            {
+              window.setTimeout("check();", CHECK_INTERVAL);
+            }
+          };
+          request.send(null);
         }
       };
 
