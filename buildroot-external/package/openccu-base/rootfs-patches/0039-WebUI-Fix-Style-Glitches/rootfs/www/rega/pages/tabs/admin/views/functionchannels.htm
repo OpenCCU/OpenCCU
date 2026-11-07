@@ -249,8 +249,9 @@ hideRow = function(fId, chnId)
   arDelChns[arDelChns.length] = "" + fId + chnId;
 }
 
-// reset all SortSelected columns
-var ths = document.getElementById("tblFunctionList").getElementsByTagName("th");
+// reset all SortSelected columns of the sort header row only; rewriting the
+// filter row would drop the click handlers of its filter buttons
+var ths = document.getElementById("tblFunctionList").tHead.rows[0].getElementsByTagName("th");
 for(th in ths)
 { 
   var sTmp = /\d/;
