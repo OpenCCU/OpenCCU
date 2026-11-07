@@ -928,7 +928,7 @@
   "in_progress": {
     "base_merge_commit": "707eedcfd3daeb27fe3afdf74e9833cec8ae5cf6",
     "base_pr": 321,
-    "cleanup_pr": null,
+    "cleanup_pr": 4673,
     "patch": "0039-WebUI-Fix-Style-Glitches.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
