@@ -68,7 +68,7 @@
       ],
       "patch": "0149-WebUI-ImprovedErrorPages.patch",
       "removed": 16,
-      "sha256": "8f1abfb83cc483d29273b2f4a91a84cb7729cdee52fdd9f63d3d96fecd8c7a1e"
+      "sha256": "46d6c920fa2dc533177e12b750a8ff8309349dbbfeaa68328985c32ce7c50d30"
     },
     {
       "added": 46,

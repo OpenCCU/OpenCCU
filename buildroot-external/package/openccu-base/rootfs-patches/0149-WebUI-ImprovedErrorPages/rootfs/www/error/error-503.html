@@ -88,7 +88,7 @@
 
     </script>
   </head>
-  <body style="background-color: #183473;color: #FFFFFF;width:100%;height:100%;" onload="startup();">
+  <body style="background-color: #183473;color: #FFFFFF;width:100%;height:100%;">
 
     <div id="content" class="Invisible" style="width:100%;height:100%;">
       <div style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
@@ -99,8 +99,8 @@
 
     <script type="text/javascript">
         translatePage();
-        // show the translated content without waiting for the logo (onload)
-        document.getElementById("content").className = "";
+        // start right away instead of on load, which waits for the logo
+        startup();
     </script>
 
     <noscript>
