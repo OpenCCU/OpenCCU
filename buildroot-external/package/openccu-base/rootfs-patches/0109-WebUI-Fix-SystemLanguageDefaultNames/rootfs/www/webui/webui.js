@@ -37348,7 +37348,13 @@ getDualWhiteControllerDiagramURLs = function() {
 setPositionAllDevices = function() {
   if (ConfigData.isPresent) {
 
-  homematic("system.getPositionData", {}, function(posData) {
+  homematic("system.getPositionData", {}, function(posData, error) {
+    // The position is saved already, only the devices could not be updated.
+    if (!posData || (posData.length < 4)) {
+      conInfo("system.getPositionData failed, the devices were not updated");
+      MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionDevicesFailure") + String((error && error.message) || "").escapeHTML());
+      return;
+    }
     var lon = posData[0].split(":")[1],
       lat = posData[1].split(":")[1],
       utcOffset = posData[2].split(":")[1],
@@ -37409,6 +37415,11 @@ setPositionAllDevices = function() {
 
 setNewDevicePos2SystemPos = function(oDevice) {
   homematic("system.getPositionData", {}, function(posData) {
+    // Without position data the device keeps its own position.
+    if (!posData || (posData.length < 4)) {
+      conInfo("system.getPositionData failed, the position of " + oDevice.sn + " was not set");
+      return;
+    }
     var lon = posData[0].split(":")[1],
       lat = posData[1].split(":")[1],
       utcOffset = posData[2].split(":")[1],

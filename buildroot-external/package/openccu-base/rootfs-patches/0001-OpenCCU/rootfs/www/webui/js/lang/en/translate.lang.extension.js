@@ -956,6 +956,8 @@ jQuery.extend(true, langJSON, {
     "dialogSettingsTimePositionMessageSetPositionSucceedIncludingAllDevices" :
       "Position information was saved.<br/><br/>" +
         "The location data of the corresponding HmIP devices will be adjusted.",
+    "dialogSettingsTimePositionMessageSetPositionDevicesFailure" :
+      "Position information was saved, but could not be transferred to the HmIP devices: ",
     "PowerMeterProtocolModeModeOptionSML" : "SML protocol",
     "btnChooseSongs"  : "Title selection",
     "drapFwNotCompatWithCCUFW" : "The Access Point firmware is not compatible to the CCU.\n\nPlease update your CCU!",
