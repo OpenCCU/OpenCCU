@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "d6b025ed6713345c354d3c30d313c813f015569100cd25382f547197cb350d89"
+      "sha256": "441000815aa55f8df01fc3c21b143e0c9ebe7af87b8f81b6a0d706662f604549"
     },
     {
       "added": 305,
@@ -59,16 +59,6 @@
       "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
       "removed": 2,
       "sha256": "c322567389acffbab5cc74dbf3f7db5f36755929bc35a9c37fb2b4beff2abed8"
-    },
-    {
-      "added": 42,
-      "files": [
-        "www/error/error-500.html",
-        "www/error/error-503.html"
-      ],
-      "patch": "0149-WebUI-ImprovedErrorPages.patch",
-      "removed": 36,
-      "sha256": "0cbfa36f530bc256593fb32eeb9ae25151d2c85b177f45ef558003745bea5ac2"
     },
     {
       "added": 46,
@@ -114,5 +104,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "ebe30b2c9dc352db1f86ff9a8e92886a7bb56681c168a86b966210f679b7c0ed"
+  "series_sha256": "d64e2c72a005bac411cb6bb9db2539bae62e03ef73a8ee4c01104dc0f1903a79"
 }
