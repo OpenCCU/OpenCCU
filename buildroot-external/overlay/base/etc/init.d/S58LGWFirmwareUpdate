@@ -14,8 +14,15 @@ update_performed=0
 waitForIP() {
   # shellcheck disable=SC2034
   for i in $(seq 1 5); do
-    gw=$(ip -4 route get 1 2>/dev/null | head -1 | cut -d' ' -f3 | tr -d '\n')
-    if [[ -n "${gw}" ]] && /bin/ping -q -W 5 -c 1 "${gw}" 2>/dev/null >/dev/null; then
+    # the words after "via" and "src": their positions differ with and
+    # without a gateway, an on-link route ("dev eth0  src <ip>") has none
+    route=$(ip -4 route get 1 2>/dev/null)
+    gw=$(echo "${route}" | sed -n '1s/.*[[:space:]]via[[:space:]]\{1,\}\([0-9.]\{1,\}\).*/\1/p')
+    src=$(echo "${route}" | sed -n '1s/.*[[:space:]]src[[:space:]]\{1,\}\([0-9.]\{1,\}\).*/\1/p')
+    if [[ -n "${gw}" ]]; then
+      /bin/ping -q -W 5 -c 1 "${gw}" 2>/dev/null >/dev/null && return 0
+    elif [[ -n "${src}" ]]; then
+      # on-link route: no gateway to ping, an address is all there is to wait for
       return 0
     fi
     echo -n "."
