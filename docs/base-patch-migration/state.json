@@ -923,18 +923,24 @@
       "base_pr": 318,
       "cleanup_pr": 4661,
       "patch": "0054-WebUI-AddTimeZones.patch"
+    },
+    {
+      "base_merge_commit": "707eedcfd3daeb27fe3afdf74e9833cec8ae5cf6",
+      "base_pr": 321,
+      "cleanup_pr": 4673,
+      "patch": "0039-WebUI-Fix-Style-Glitches.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "707eedcfd3daeb27fe3afdf74e9833cec8ae5cf6",
-    "base_pr": 321,
-    "cleanup_pr": 4673,
-    "patch": "0039-WebUI-Fix-Style-Glitches.patch",
+    "base_merge_commit": "5f56eb1e794dc9061ec0b2e1b2f76ce86c69bbfc",
+    "base_pr": 322,
+    "cleanup_pr": null,
+    "patch": "0149-WebUI-ImprovedErrorPages.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "d9e2502d70378efd56b5c773b16c6b8dcf8037cf",
-  "verified_base_pin": "681a0da86102d7066ed35d84da6c8286baf3ee5a",
-  "verified_source_sha256": "a7a7fc72435a145c74e3fe3d23f283f7bcdf1dacebcb3ecdf92cd6498ef5fc81"
+  "verified_at_openccu_commit": "cc19f19aae8cfd8399ab769dbe7596bc0e48d68a",
+  "verified_base_pin": "707eedcfd3daeb27fe3afdf74e9833cec8ae5cf6",
+  "verified_source_sha256": "e812346d51041076dfcc4e271e02d6b7242806814173284e6975e47c85bf8872"
 }

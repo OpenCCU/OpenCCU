@@ -516,25 +516,25 @@
 --- a/www/error/error-500.html
 +++ b/www/error/error-500.html
 @@ -95,7 +95,7 @@
-         <p>${ccuNotReadyHint}</p>
-       </div>
-       <div align="center" style="padding-top:250px;">
+ 
+     <div id="content" class="Invisible" style="width:100%;height:100%;">
+       <div style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
 -        <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
 +        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
+         <div style="font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size:12px;">${ccuNotReadyHint}</div>
        </div>
      </div>
- 
 --- a/www/error/error-503.html
 +++ b/www/error/error-503.html
 @@ -96,7 +96,7 @@
-         <p>${ccuNotReadyHint}</p>
-       </div>
-       <div align="center" style="padding-top:250px;">
+ 
+     <div id="content" class="Invisible" style="width:100%;height:100%;">
+       <div style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;">
 -        <img id="imgLogo" src="/ise/img/hm-logo.png" alt=""/>
 +        <img id="imgLogo" src="/ise/img/occu-logo.png" alt=""/>
+         <div style="font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size:12px;">${ccuNotReadyHint}</div>
        </div>
      </div>
- 
 --- a/www/ise/htm/header.htm
 +++ b/www/ise/htm/header.htm
 @@ -8,8 +8,8 @@
