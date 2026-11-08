@@ -29,10 +29,10 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "441000815aa55f8df01fc3c21b143e0c9ebe7af87b8f81b6a0d706662f604549"
+      "sha256": "b895e145e3751acd4d93a2493926789fe4a358aa47b440c3cfe73880bd9ae815"
     },
     {
-      "added": 305,
+      "added": 306,
       "files": [
         "www/rega/pages/index.htm",
         "www/rega/pages/msg/editScript.htm",
@@ -41,7 +41,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "ff76cf4923ab4707786367a3d211fa2905ab47d80ac28ec5be2e9c523be83ace"
+      "sha256": "77fdb51bbd834c252202f08059d2f52f7c82db356773901605ec845a213a6432"
     },
     {
       "added": 439,
@@ -85,24 +85,8 @@
       "patch": "0154-WebUI-DynamicResizing.patch",
       "removed": 350,
       "sha256": "d6512b459c4fa71be6fbb1c06146fc122b1ee6f4dd0ec4c4ee7ee9a73d86b7b1"
-    },
-    {
-      "added": 90,
-      "files": [
-        "opt/HMServer/pages/AvailableFirmware.ftl",
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_network.cgi",
-        "www/config/cp_security.cgi",
-        "www/tcl/extern/cgi.tcl",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/style.css"
-      ],
-      "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
-      "removed": 41,
-      "sha256": "6d805861747a7d2fad2ec8d84d87aa488621b6e38a59634891334f0482956aec"
     }
   ],
   "schema": 1,
-  "series_sha256": "d64e2c72a005bac411cb6bb9db2539bae62e03ef73a8ee4c01104dc0f1903a79"
+  "series_sha256": "bcfec66817ee24c00b45f093e2dd90ddce0f8e4f623a94784541238d053a89a3"
 }

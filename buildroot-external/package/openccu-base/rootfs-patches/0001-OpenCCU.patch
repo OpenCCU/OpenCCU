@@ -63,15 +63,15 @@
                      }
                    }
 @@ -452,7 +453,7 @@
-                     table_row {
-                       table_data {
-                         division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
--                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
-+                        division {class="CLASS20908"}  "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
-                       }
-                     }
-                   }
-@@ -499,30 +500,18 @@
+               table_data {align="left"} {colspan="2"} {
+                 division {class="popupControls CLASS20905"} {
+                   division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
+-                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
++                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+                 }
+               }
+             }
+@@ -493,30 +494,18 @@
                  puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
                }
              }

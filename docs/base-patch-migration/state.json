@@ -929,18 +929,24 @@
       "base_pr": 321,
       "cleanup_pr": 4673,
       "patch": "0039-WebUI-Fix-Style-Glitches.patch"
+    },
+    {
+      "base_merge_commit": "5f56eb1e794dc9061ec0b2e1b2f76ce86c69bbfc",
+      "base_pr": 322,
+      "cleanup_pr": 4675,
+      "patch": "0149-WebUI-ImprovedErrorPages.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "5f56eb1e794dc9061ec0b2e1b2f76ce86c69bbfc",
-    "base_pr": 322,
-    "cleanup_pr": 4675,
-    "patch": "0149-WebUI-ImprovedErrorPages.patch",
+    "base_merge_commit": "87e39a107ab9c1bfb64e0dddcab593e327e1eb21",
+    "base_pr": 323,
+    "cleanup_pr": 4681,
+    "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "cc19f19aae8cfd8399ab769dbe7596bc0e48d68a",
-  "verified_base_pin": "707eedcfd3daeb27fe3afdf74e9833cec8ae5cf6",
-  "verified_source_sha256": "e812346d51041076dfcc4e271e02d6b7242806814173284e6975e47c85bf8872"
+  "verified_at_openccu_commit": "8e9923b0df1f6a7bc0be0935ca3f668952cec553",
+  "verified_base_pin": "5f56eb1e794dc9061ec0b2e1b2f76ce86c69bbfc",
+  "verified_source_sha256": "dfc26834cdd551682b04635480306320cd4fad5cc441aab78f7d9650c1b12419"
 }
