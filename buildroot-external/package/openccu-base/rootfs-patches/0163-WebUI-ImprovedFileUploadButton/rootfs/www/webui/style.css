@@ -9390,6 +9390,6 @@ color: $_(textColorA); /* white */
   font-weight: normal;
 }
 
-input[type='file'] {
+.file-name + input[type='file'] {
   display: none;
 }

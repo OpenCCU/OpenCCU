@@ -163,11 +163,16 @@
 
         // Set an event listener on the Choose File field.
         jQuery("#fileselect").bind("change", function(e) {
-          jQuery(".YesNoDialog_yesButton").show();
           var files = e.target.files || e.dataTransfer.files;
           // Our file var now holds the selected file
           file = files[0];
-          jQuery(".file-name").text(file.name);
+          if (file) {
+            jQuery(".YesNoDialog_yesButton").show();
+            jQuery(".file-name").text(file.name);
+          } else {
+            jQuery(".YesNoDialog_yesButton").hide();
+            jQuery(".file-name").text(translateKey("lblNoFileSelected"));
+          }
         });
 
         jQuery(".YesNoDialog_yesButton").hide().text(translateKey("dialogSettingsCMBtnPerformSoftwareUpdateUpload"));

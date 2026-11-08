@@ -448,7 +448,7 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep1}"
               }
             }
-            table_data {
+            table_row {
               td {width="20"} {}
               table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
