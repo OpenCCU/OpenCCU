@@ -443,19 +443,16 @@ proc action_put_page {} {
             }
             table_row {
               td {width="20"} {}
-              table_data {align="left"} {
+              table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep1}"
               }
-              table_data {
+            }
+            table_row {
+              td {width="20"} {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
-                      }
-                    }
-                  }
+                  division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
+                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                 }
               }
             }
@@ -467,28 +464,25 @@ proc action_put_page {} {
             }
             table_row {
               td {width="20"} {}
-              table_data {colspan="2"} {
+              table_data {align="left"} {colspan="2"} {
                 form "/config/fileupload.ccc?sid=$sid&action=firmware_upload&downloadOnly=$downloadOnly&url=$env(SCRIPT_NAME)" {target=firmware_upload_iframe} name=firmware_form enctype=multipart/form-data method=post {
-                  file_button firmware_file size=30 maxlength=1000000
+                  file_button firmware_file size=30 maxlength=1000000 accept='.zip,.tgz,application/zip,application/gzip'
                 }
                 puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
               }
             }
             table_row {
               td {width="20"} {}
-              table_data {align="left"} {
+              table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep3}"
               }
-              table_data {
+            }
+            table_row {
+              td {width="20"} {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS20919"} {onClick="stopHmIPServer();document.firmware_form.submit();showUserHint();"} {
-                          puts "\${dialogSettingsCMBtnPerformSoftwareUpdateUpload}"
-                        }
-                      }
-                    }
+                  division {class="CLASS20919" style="width: 150px; margin-left: 20px;"} {onClick="stopHmIPServer();document.firmware_form.submit();showUserHint();"} {id="btnSoftwareUpdateUpload"} {
+                    puts "\${dialogSettingsCMBtnPerformSoftwareUpdateUpload}"
                   }
                 }
               }
