@@ -13,29 +13,39 @@ PIDFILE_ANGEL=/var/run/lighttpd-angel.pid
 [[ "${HM_MODE}" != "NORMAL" ]] && exit 0
 
 create_certificate() {
-  # a new self-signed certificate for this host; the one before is kept aside
-  [[ -f /etc/config/server.pem ]] && mv -f /etc/config/server.pem "/etc/config/server.pem_$(date +%Y%m%d)"
-  rm -f /etc/config/server.pem.noaddress
+  # a new self-signed certificate for this host. It is made in a file of
+  # its own beside the current one, which is only kept aside and replaced
+  # once the new one exists: a failed attempt leaves the current
+  # certificate (and the note about it) in place, and lighttpd still has
+  # one to start with.
   echo -n "creating new SSL cert... "
   # name the address only when there is one: without a route (no DHCP
-  # lease yet at a first start) openssl refuses an empty "IP:", writes
-  # nothing, and lighttpd does not start. A certificate made without an
-  # address is made again once one exists, see check_certificate().
+  # lease yet at a first start) openssl refuses an empty "IP:" and writes
+  # nothing. A certificate made without an address is made again once
+  # one exists, see check_certificate() and /bin/dhcp.script.
   SAN="DNS:$(hostname)"
   [[ -n "${IP}" ]] && SAN="${SAN},IP:${IP}"
+  NEW=$(mktemp /etc/config/server.pem.XXXXXX) || return 1
   # openssl's own complaint stays visible, so a refusal is not silent
-  /usr/bin/openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
-                                         -keyout /etc/config/server.pem \
-                                         -out /etc/config/server.pem \
-                                         -days 3650 \
-                                         -addext "subjectAltName = ${SAN}" \
-                                         -addext "keyUsage = keyCertSign,digitalSignature,keyEncipherment" \
-                                         -addext "extendedKeyUsage = serverAuth" \
-                                         -addext "nsCertType = server,sslCA" \
-                                         -subj "/C=DE/O=HomeMatic/OU=$(cat /var/board_serial)/CN=$(hostname)" >/dev/null
-  # note the fingerprint of a certificate made without an address, so
-  # that only this very certificate is made again later
-  [[ -z "${IP}" ]] && /usr/bin/openssl x509 -noout -fingerprint -sha256 -in /etc/config/server.pem >/etc/config/server.pem.noaddress 2>/dev/null
+  if /usr/bin/openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
+                                            -keyout "${NEW}" \
+                                            -out "${NEW}" \
+                                            -days 3650 \
+                                            -addext "subjectAltName = ${SAN}" \
+                                            -addext "keyUsage = keyCertSign,digitalSignature,keyEncipherment" \
+                                            -addext "extendedKeyUsage = serverAuth" \
+                                            -addext "nsCertType = server,sslCA" \
+                                            -subj "/C=DE/O=HomeMatic/OU=$(cat /var/board_serial)/CN=$(hostname)" >/dev/null &&
+     /usr/bin/openssl x509 -noout -in "${NEW}" 2>/dev/null; then
+    [[ -f /etc/config/server.pem ]] && mv -f /etc/config/server.pem "/etc/config/server.pem_$(date +%Y%m%d)"
+    mv -f "${NEW}" /etc/config/server.pem
+    rm -f /etc/config/server.pem.noaddress
+    # note the fingerprint of a certificate made without an address, so
+    # that only this very certificate is made again later
+    [[ -z "${IP}" ]] && /usr/bin/openssl x509 -noout -fingerprint -sha256 -in /etc/config/server.pem >/etc/config/server.pem.noaddress 2>/dev/null
+  else
+    rm -f "${NEW}"
+  fi
   return 0
 }
 
