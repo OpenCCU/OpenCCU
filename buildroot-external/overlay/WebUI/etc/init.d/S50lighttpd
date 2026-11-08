@@ -15,6 +15,7 @@ PIDFILE_ANGEL=/var/run/lighttpd-angel.pid
 create_certificate() {
   # a new self-signed certificate for this host; the one before is kept aside
   [[ -f /etc/config/server.pem ]] && mv -f /etc/config/server.pem "/etc/config/server.pem_$(date +%Y%m%d)"
+  rm -f /etc/config/server.pem.noaddress
   echo -n "creating new SSL cert... "
   # name the address only when there is one: without a route (no DHCP
   # lease yet at a first start) openssl refuses an empty "IP:", writes
@@ -32,16 +33,25 @@ create_certificate() {
                                          -addext "extendedKeyUsage = serverAuth" \
                                          -addext "nsCertType = server,sslCA" \
                                          -subj "/C=DE/O=HomeMatic/OU=$(cat /var/board_serial)/CN=$(hostname)" >/dev/null
+  # note the fingerprint of a certificate made without an address, so
+  # that only this very certificate is made again later
+  [[ -z "${IP}" ]] && /usr/bin/openssl x509 -noout -fingerprint -sha256 -in /etc/config/server.pem >/etc/config/server.pem.noaddress 2>/dev/null
+  return 0
 }
 
 certificate_without_address() {
-  # our own self-signed certificate (the issuer as create_certificate()
-  # writes it) that names no address at all: the one a first start
-  # without a lease makes. A user's own certificate, or one that names an
-  # address, even an old one, is left alone: its fingerprint is what
-  # browsers have accepted.
-  /usr/bin/openssl x509 -noout -issuer -nameopt RFC2253 -in /etc/config/server.pem 2>/dev/null | grep -q ',O=HomeMatic,C=DE$' || return 1
-  ! /usr/bin/openssl x509 -noout -ext subjectAltName -in /etc/config/server.pem 2>/dev/null | grep -q 'IP Address:'
+  # the certificate create_certificate() made without an address (at a
+  # first start without a lease), recognised by the fingerprint it noted
+  # in /etc/config/server.pem.noaddress, not by its issuer: an uploaded
+  # or restored certificate may carry the same issuer. Any other
+  # certificate, a user's own or one that names an address, even an old
+  # one, is left alone: its fingerprint is what browsers have accepted.
+  [[ -f /etc/config/server.pem.noaddress ]] || return 1
+  FP=$(/usr/bin/openssl x509 -noout -fingerprint -sha256 -in /etc/config/server.pem 2>/dev/null)
+  [[ -n "${FP}" ]] && [[ "${FP}" = "$(cat /etc/config/server.pem.noaddress)" ]] && return 0
+  # server.pem was replaced since, so the note is stale
+  rm -f /etc/config/server.pem.noaddress
+  return 1
 }
 
 check_certificate() {
@@ -51,7 +61,8 @@ check_certificate() {
   [[ -f /etc/config/server.pem.managed ]] && return 0
 
   # the address the certificate names; empty while there is no IPv4 route
-  IP=$(ip -4 route get 1 2>/dev/null | head -1 | cut -d' ' -f8 | tr -d '\n')
+  # (the word after "src": its position differs with and without a gateway)
+  IP=$(ip -4 route get 1 2>/dev/null | sed -n '1s/.*[[:space:]]src[[:space:]]\{1,\}\([0-9.]\{1,\}\).*/\1/p')
 
   # check if a valid/non-expired SSL cert exists and if
   # not we regenerate it.
