@@ -9391,5 +9391,15 @@ color: $_(textColorA); /* white */
 }
 
 .file-name + input[type='file'] {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+.file-label:has(~ input[type='file']:focus-visible) .file-button {
+  outline: 2px solid;
+  outline-offset: 2px;
 }
