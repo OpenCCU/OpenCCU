@@ -43,11 +43,16 @@ check_factory_reset() {
     esac
 
     # we create a clean ext4 partition now; when that fails (e.g. the
-    # partition is still in use) nothing was cleared: mount it back and
-    # keep .doFactoryReset for the next boot
+    # partition is still in use) mount it back and keep .doFactoryReset
+    # for the next boot. mkfs may have failed after it already wrote
+    # parts of the filesystem, so recreate the marker in case it is gone.
     if ! /sbin/mkfs.ext4 -F -L userfs -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${DEVNAME}"; then
-      mount /usr/local
-      return 2
+      mountpoint -q /usr/local || mount /usr/local
+      if mountpoint -q /usr/local; then
+        touch /usr/local/.doFactoryReset
+        return 2
+      fi
+      return 3
     fi
     /sbin/tune2fs -c 0 -i 0 "${DEVNAME}"
     /sbin/e2fsck -pDf "${DEVNAME}"
@@ -81,7 +86,8 @@ start() {
   case $? in
     0) echo "cleared, OK" ;;
     1) echo "not required" ;;
-    *) echo "mkfs failed, ERROR" ;;
+    2) echo "mkfs failed, ERROR" ;;
+    *) echo "mkfs failed, userfs not mounted, ERROR" ;;
   esac
 }
 
