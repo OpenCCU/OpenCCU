@@ -42,15 +42,23 @@ save_install_log() {
 
     last=$(list_install_logs "${dir}" | tail -n 1 | cut -d' ' -f1)
     log="${dir}/$((${last:-0} + 1))_$(date -u +%Y-%m-%dT%H-%M-%SZ).log"
-    cp /tmp/fwinstall.log "${log}" 2>/dev/null && chmod 0644 "${log}" 2>/dev/null
 
-    # drop all but the newest five, oldest sequence number first
-    n=$(list_install_logs "${dir}" | wc -l)
-    list_install_logs "${dir}" | while read -r seq f; do
-      [[ ${n} -gt 5 ]] || break
-      rm -f "${f}"
-      n=$((n - 1))
-    done
+    # copy under a name the listing does not match, and rename only a complete
+    # copy: a copy cut short by a full userfs must neither count as the newest
+    # log nor make the rotation below delete an older, complete one
+    if cp /tmp/fwinstall.log "${log}.tmp" 2>/dev/null && mv -f "${log}.tmp" "${log}" 2>/dev/null; then
+      chmod 0644 "${log}" 2>/dev/null
+
+      # drop all but the newest five, oldest sequence number first
+      n=$(list_install_logs "${dir}" | wc -l)
+      list_install_logs "${dir}" | while read -r seq f; do
+        [[ ${n} -gt 5 ]] || break
+        rm -f "${f}"
+        n=$((n - 1))
+      done
+    else
+      rm -f "${log}.tmp"
+    fi
   fi
   return 0
 }

@@ -195,12 +195,14 @@ expand_userfs_to_max()
   # leaves the filesystem clean. The exit code is a bit mask: an operational
   # error (8) or worse, e.g. I/O errors of a failing card, is not retried,
   # since -y would also answer "ignore error" and "force rewrite" with yes.
-  # Both results go to the log.
-  E2FSCK_OUT=$(/sbin/e2fsck -pDf "${USER_DEV}" 2>&1)
+  # Both results go to the log. Only the tail of the output is kept: a badly
+  # damaged filesystem can make e2fsck print a lot, and the recovery runs from
+  # RAM. pipefail keeps the exit code of e2fsck, as tail exits with 0.
+  E2FSCK_OUT=$(set -o pipefail; /sbin/e2fsck -pDf "${USER_DEV}" 2>&1 | tail -n 50)
   E2FSCK_RC=$?
   if [[ $((E2FSCK_RC & 4)) -ne 0 ]] && [[ ${E2FSCK_RC} -lt 8 ]]; then
     echo -ne "e2fsck -p rc=${E2FSCK_RC} ($(log_excerpt "${E2FSCK_OUT}")), retrying with e2fsck -fy, "
-    E2FSCK_OUT=$(/sbin/e2fsck -fy "${USER_DEV}" 2>&1)
+    E2FSCK_OUT=$(set -o pipefail; /sbin/e2fsck -fy "${USER_DEV}" 2>&1 | tail -n 50)
     E2FSCK_RC=$?
     if [[ ${E2FSCK_RC} -lt 4 ]]; then
       echo -ne "rc=${E2FSCK_RC} ($(log_excerpt "${E2FSCK_OUT}")), "
