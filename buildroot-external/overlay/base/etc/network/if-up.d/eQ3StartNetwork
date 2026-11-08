@@ -282,7 +282,7 @@ else
   echo -n "inet down, "
 fi
 
-IP=$(ip -4 route get 1 | head -1 | cut -d' ' -f8 | tr -d '\n')
+IP=$(ip -4 route get 1 2>/dev/null | sed -n '1s/.*[[:space:]]src[[:space:]]\{1,\}\([0-9.]\{1,\}\).*/\1/p')
 echo -n "${IP}, "
 
 exit ${RET}

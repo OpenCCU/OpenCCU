@@ -83,7 +83,7 @@ case "${MODE}" in
     echo -n "fixed, "
 
     # get IP data within container environment
-    IP=$(/sbin/ip -4 route get 1 | head -1 | cut -d' ' -f8 | tr -d '\n')
+    IP=$(/sbin/ip -4 route get 1 2>/dev/null | sed -n '1s/.*[[:space:]]src[[:space:]]\{1,\}\([0-9.]\{1,\}\).*/\1/p')
     GATEWAY=$(/sbin/ip -4 route | grep default | awk '{print $3}')
     NETMASK=$(/sbin/ifconfig "${IFACE}" | grep "inet addr" | cut -d: -f4)
     NAMESERVER1=$(grep -E "^nameserver [[:digit:]]" /etc/resolv.conf | awk 'FNR==1{print $2}')
