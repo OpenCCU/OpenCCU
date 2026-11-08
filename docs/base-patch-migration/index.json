@@ -61,16 +61,6 @@
       "sha256": "c322567389acffbab5cc74dbf3f7db5f36755929bc35a9c37fb2b4beff2abed8"
     },
     {
-      "added": 46,
-      "files": [
-        "www/config/control_panel.cgi",
-        "www/webui/style.css"
-      ],
-      "patch": "0150-WebUI-Responsive-ControlPage.patch",
-      "removed": 106,
-      "sha256": "84bf4617a62cecfa3ea2a3f01d85e42678b13d9f11b0908485482063e99671f9"
-    },
-    {
       "added": 88,
       "files": [
         "www/rega/login.htm",
@@ -88,5 +78,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "bcfec66817ee24c00b45f093e2dd90ddce0f8e4f623a94784541238d053a89a3"
+  "series_sha256": "8fd4f0498ad6ca91181dc30e2346a74fcc4ad870b0f8f083bbe19c2f4e244ece"
 }
