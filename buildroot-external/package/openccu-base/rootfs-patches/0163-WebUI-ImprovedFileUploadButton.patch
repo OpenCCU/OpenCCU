@@ -11,11 +11,21 @@
          msgContent += "  </fieldset>"
          msgContent += "</form>"
  
-@@ -165,6 +167,7 @@
+@@ -161,10 +163,16 @@
+ 
+         // Set an event listener on the Choose File field.
+         jQuery("#fileselect").bind("change", function(e) {
+-          jQuery(".YesNoDialog_yesButton").show();
            var files = e.target.files || e.dataTransfer.files;
            // Our file var now holds the selected file
            file = files[0];
-+          jQuery(".file-name").text(file.name);
++          if (file) {
++            jQuery(".YesNoDialog_yesButton").show();
++            jQuery(".file-name").text(file.name);
++          } else {
++            jQuery(".YesNoDialog_yesButton").hide();
++            jQuery(".file-name").text(translateKey("lblNoFileSelected"));
++          }
          });
  
          jQuery(".YesNoDialog_yesButton").hide().text(translateKey("dialogSettingsCMBtnPerformSoftwareUpdateUpload"));
@@ -31,7 +41,7 @@
                }
 -              table_data {
 +            }
-+            table_data {
++            table_row {
 +              td {width="20"} {}
 +              table_data {align="left"} {colspan="2"} {
                  division {class="popupControls CLASS20905"} {
@@ -159,11 +169,11 @@
  	error "cgi_file_button requires that cgi_form have the argument enctype=multipart/form-data"
      }
 -    cgi_put "<input type=file name=\"$name\"[_cgi_list_to_string $args]/>"
-+	cgi_put "<script>"
-+    cgi_put "function update(e) {fileName.textContent = file.files\[0\].name;}"
++    cgi_put "<script>"
++    cgi_put "function update(e) {fileName.textContent = (file.files.length > 0) ? file.files\[0\].name : translateKey('lblNoFileSelected');}"
 +    cgi_put "const file = document.querySelector('#file'), fileName = document.querySelector('.file-name');"
 +    cgi_put "file.addEventListener('change', update);"
-+	cgi_put "</script>"
++    cgi_put "</script>"
 +    cgi_put "<label class='file-label' for='file'><div class='file-button'>\${lblChooseFile}&hellip;</div></label><p class='file-name'>\${lblNoFileSelected}</p><input type=file id='file' name=\"$name\"[_cgi_list_to_string $args]/>"
  }
  
@@ -221,6 +231,6 @@
 +  font-weight: normal;
 +}
 +
-+input[type='file'] {
++.file-name + input[type='file'] {
 +  display: none;
 +}

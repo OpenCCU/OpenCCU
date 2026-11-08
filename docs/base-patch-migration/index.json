@@ -87,7 +87,7 @@
       "sha256": "d6512b459c4fa71be6fbb1c06146fc122b1ee6f4dd0ec4c4ee7ee9a73d86b7b1"
     },
     {
-      "added": 74,
+      "added": 80,
       "files": [
         "opt/HMServer/pages/AvailableFirmware.ftl",
         "www/config/cp_maintenance.cgi",
@@ -99,8 +99,8 @@
         "www/webui/style.css"
       ],
       "patch": "0163-WebUI-ImprovedFileUploadButton.patch",
-      "removed": 40,
-      "sha256": "5031d94c607821097d0010f5562b7f89afb4b8842e04c9eaffd03c17ebc110ea"
+      "removed": 41,
+      "sha256": "d8081c480e761aa63181138e0ef5d2ff3a561cdc2fb6b92c93f9d9b86e1d4c93"
     }
   ],
   "schema": 1,

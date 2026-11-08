@@ -1837,11 +1837,11 @@ proc cgi_file_button {name args} {
     if {[info exists _cgi(formtype)] && ("multipart/form-data" != $_cgi(form,enctype))} {
 	error "cgi_file_button requires that cgi_form have the argument enctype=multipart/form-data"
     }
-	cgi_put "<script>"
-    cgi_put "function update(e) {fileName.textContent = file.files\[0\].name;}"
+    cgi_put "<script>"
+    cgi_put "function update(e) {fileName.textContent = (file.files.length > 0) ? file.files\[0\].name : translateKey('lblNoFileSelected');}"
     cgi_put "const file = document.querySelector('#file'), fileName = document.querySelector('.file-name');"
     cgi_put "file.addEventListener('change', update);"
-	cgi_put "</script>"
+    cgi_put "</script>"
     cgi_put "<label class='file-label' for='file'><div class='file-button'>\${lblChooseFile}&hellip;</div></label><p class='file-name'>\${lblNoFileSelected}</p><input type=file id='file' name=\"$name\"[_cgi_list_to_string $args]/>"
 }
 
