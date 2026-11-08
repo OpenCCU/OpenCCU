@@ -122,7 +122,7 @@
 +jsonrpc_response [json_toString $lang]
 --- /dev/null
 +++ b/www/api/methods/ccu/setsystemlanguage.tcl
-@@ -0,0 +1,259 @@
+@@ -0,0 +1,264 @@
 +##
 +# CCU.setSystemLanguage
 +# Setzt die Systemsprache der CCU in /etc/config/systemLanguage
@@ -368,6 +368,11 @@
 +
 +  set result [hmscript $script args]
 +  return $result
++}
++
++# only accept the supported system languages
++if { ![info exists args(lang)] || (($args(lang) != "de") && ($args(lang) != "en")) } then {
++  jsonrpc_error 501 "invalid language, expected de or en"
 +}
 +
 +# set the system language to lang

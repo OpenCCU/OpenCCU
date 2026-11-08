@@ -245,6 +245,11 @@ proc setSystemLanguage {a} {
   return $result
 }
 
+# only accept the supported system languages
+if { ![info exists args(lang)] || (($args(lang) != "de") && ($args(lang) != "en")) } then {
+  jsonrpc_error 501 "invalid language, expected de or en"
+}
+
 # set the system language to lang
 set result [setSystemLanguage [array get args]]
 
