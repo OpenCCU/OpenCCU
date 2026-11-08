@@ -44,23 +44,6 @@
       "sha256": "77fdb51bbd834c252202f08059d2f52f7c82db356773901605ec845a213a6432"
     },
     {
-      "added": 444,
-      "files": [
-        "bin/hm_autoconf",
-        "www/api/methods.conf",
-        "www/api/methods/ccu/getsystemlanguage.tcl",
-        "www/api/methods/ccu/setsystemlanguage.tcl",
-        "www/rega/pages/msg/systemLanguageConfig.htm",
-        "www/rega/pages/tabs/admin/userAdministration.htm",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0109-WebUI-Fix-SystemLanguageDefaultNames.patch",
-      "removed": 2,
-      "sha256": "c29b182d7b0e907fd95164e020793e046d1c7973f19e5806608815abb96c3acf"
-    },
-    {
       "added": 88,
       "files": [
         "www/rega/login.htm",
@@ -78,5 +61,5 @@
     }
   ],
   "schema": 1,
-  "series_sha256": "8fd4f0498ad6ca91181dc30e2346a74fcc4ad870b0f8f083bbe19c2f4e244ece"
+  "series_sha256": "d21db65b7c0979afc706d1f83d0ba103f7a27b79499baa15f3602be51b67a921"
 }
