@@ -958,7 +958,7 @@
   "in_progress": {
     "base_merge_commit": "15405d5f0e900e93e494b3024f57e72142a77c39",
     "base_pr": 338,
-    "cleanup_pr": null,
+    "cleanup_pr": 4688,
     "patch": "0154-WebUI-DynamicResizing.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
