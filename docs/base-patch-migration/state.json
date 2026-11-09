@@ -965,18 +965,18 @@
       "base_pr": 340,
       "cleanup_pr": 4691,
       "patch": "0046-WebUI-ImprovedScriptEditor.patch"
+    },
+    {
+      "base_merge_commit": "f708e8f87fd6319ac117b087e2dcc38a7ae75e30",
+      "base_pr": 341,
+      "cleanup_pr": 4705,
+      "patch": "0001-OpenCCU.patch"
     }
   ],
-  "in_progress": {
-    "base_merge_commit": "f708e8f87fd6319ac117b087e2dcc38a7ae75e30",
-    "base_pr": 341,
-    "cleanup_pr": 4705,
-    "patch": "0001-OpenCCU.patch",
-    "phase": "cleanup-prepared; merge not yet verified"
-  },
-  "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
+  "in_progress": null,
+  "next_action": "All rootfs patches are migrated to OpenCCU-Base; no migration is pending.",
   "schema": 1,
-  "verified_at_openccu_commit": "d96ed6ee4fa47c3eba778d8f4d51f49bdcc1d823",
-  "verified_base_pin": "0730658ca476131ca309b2a390ec7d4431da055d",
-  "verified_source_sha256": "c5084777d339d2bc179c3ef4fcc6be4bd0ff6d2a5ffa283f64b8c883ca7f859a"
+  "verified_at_openccu_commit": "38f6496b5786b7c91ce82ddf72ea9e2099af9ad7",
+  "verified_base_pin": "79d0a44a2848e732a0f730a90e31f88209878e06",
+  "verified_source_sha256": "2769257f639393b65d2a7be60471360b8466534398e37791cf6225bac3ee75ad"
 }
