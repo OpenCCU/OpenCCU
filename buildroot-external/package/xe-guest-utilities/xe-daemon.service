@@ -9,9 +9,13 @@ Wants=proc-xen.mount
 
 [Service]
 Type=simple
-ExecStartPre=/usr/sbin/xe-linux-distribution /var/cache/xe-linux-distribution
+# as in S11xe-daemon, the agent also starts when the distribution
+# detection fails; it then reports its other metrics without it
+ExecStartPre=-/usr/sbin/xe-linux-distribution /var/cache/xe-linux-distribution
 ExecStart=/usr/sbin/xe-daemon -p /run/xe-daemon.pid
-Restart=on-failure
+# xe-daemon exits with status 0 on a XenStore error (v8.4.0), so restart it
+# whenever it exits
+Restart=always
 RestartSec=5
 
 [Install]
