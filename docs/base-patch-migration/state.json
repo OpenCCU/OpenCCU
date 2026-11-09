@@ -970,7 +970,7 @@
   "in_progress": {
     "base_merge_commit": "f708e8f87fd6319ac117b087e2dcc38a7ae75e30",
     "base_pr": 341,
-    "cleanup_pr": null,
+    "cleanup_pr": 4705,
     "patch": "0001-OpenCCU.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
