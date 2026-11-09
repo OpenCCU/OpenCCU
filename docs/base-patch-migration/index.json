@@ -41,7 +41,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "aab00992196d04b853613909c9142e96cf7cad6086e6d5992fa9fc8f92287e4a"
+      "sha256": "85a59c7f633b7ecb30ebc6a06cdcf07e7c2c19b4a76f2cc7fa59234395c57682"
     }
   ],
   "schema": 1,

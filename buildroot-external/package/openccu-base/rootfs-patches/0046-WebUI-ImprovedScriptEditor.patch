@@ -179,7 +179,7 @@
 +                }
 +                else
 +                {
-+                  editor_output.setValue("Fehler: " + Object.toJSON(error));
++                  editor_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
 +                }
 +              });
 +        }
@@ -995,7 +995,7 @@
 +                }
 +                else
 +                {
-+                  _this_.m_output.setValue("Fehler: " + Object.toJSON(error));
++                  _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
 +                }
 +                });
 +              }

@@ -17064,7 +17064,7 @@ HMScriptExecutor = Class.create({
                 }
                 else
                 {
-                  _this_.m_output.setValue("Fehler: " + Object.toJSON(error));
+                  _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
                 }
                 });
               }
