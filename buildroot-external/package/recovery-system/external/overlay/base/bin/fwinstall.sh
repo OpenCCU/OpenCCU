@@ -602,12 +602,16 @@ EOF
 # did not get through (FWPREPARE_FILE stays set until it succeeds) is removed
 # together with its extraction directory, so that a failed update does not
 # leave a firmware-sized file on the userfs that only blocks the next attempt.
-# Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here).
+# Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here),
+# and never for a path with a ".." component.
 # shellcheck disable=SC2329 # only called from the EXIT traps
 on_exit()
 {
   if [[ -n "${FWPREPARE_FILE}" ]]; then
     case "${FWPREPARE_FILE}" in
+      */../*|*/..)
+        # a path that leaves the upload directory is never removed
+        ;;
       /usr/local/tmp/?*|/userfs/tmp/?*)
         rm -rf "${FWPREPARE_FILE}-dir" 2>/dev/null
         rm -f "${FWPREPARE_FILE}" 2>/dev/null
