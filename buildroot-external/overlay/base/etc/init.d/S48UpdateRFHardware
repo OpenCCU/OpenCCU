@@ -284,8 +284,10 @@ start() {
   # check+update rf module firmwares
   update_rf_hardware
 
-  # save all HM_ env variables
-  set | grep '^HM_' >/var/hm_mode
+  # save all HM_ env variables; written to a temporary file and renamed,
+  # so that a reader never sees the file half written
+  set | grep '^HM_' >/var/hm_mode.tmp
+  mv -f /var/hm_mode.tmp /var/hm_mode
 
   # check if we should re-init afterwards
   if [[ -n "${REINIT}" ]]; then
