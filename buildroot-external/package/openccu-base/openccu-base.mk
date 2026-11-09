@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = 15405d5f0e900e93e494b3024f57e72142a77c39
+OPENCCU_BASE_VERSION = 0730658ca476131ca309b2a390ec7d4431da055d
 OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
 OPENCCU_BASE_LICENSE = HMSL-2.0, Apache-2.0 (WebUI), \
-	GPL-2.0+ (kernel modules), LGPL-2.1 (libraries)
+	GPL-2.0+ (kernel modules), LGPL-2.1 (libraries), MIT (CodeMirror)
 OPENCCU_BASE_LICENSE_FILES = licenses/licenses.md licenses/HMSL2.txt \
-	licenses/gpl-2.0.txt licenses/lgpl-2.1.txt
+	licenses/gpl-2.0.txt licenses/lgpl-2.1.txt licenses/codemirror-MIT.txt
 OPENCCU_BASE_ROOTFS_PATCH_DIR = \
 	$(OPENCCU_BASE_PKGDIR)/rootfs-patches
 OPENCCU_BASE_ENABLE_ROOTFS_PATCHING ?= YES

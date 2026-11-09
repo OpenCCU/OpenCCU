@@ -65,11 +65,6 @@ jobs:
             package: neoserver
             version_file: buildroot-external/package/neoserver/neoserver.mk
             version_regex: '^NEOSERVER_VERSION = (.*)$'
-          - slug: codemirror
-            script: scripts/update-codemirror.sh
-            package: codemirror6
-            version_file: buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror6/VERSION
-            version_regex: '^CODEMIRROR6_VERSION = (.*)$'
           - slug: picod
             script: scripts/update-picod.sh
             package: picod

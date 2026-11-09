@@ -209,6 +209,9 @@
       } catch (e) {}
     </script>
 
+    <link rel="stylesheet" type="text/css" href="/webui/js/extern/codemirror6/codemirror6.bundle.css">
+    <script type="text/javascript" src="/webui/js/extern/codemirror6/codemirror6.bundle.js"></script>
+
   </head>
   <body id="body" onload="WebUI.start();" >
     <div id="webuiloader_wrapper">

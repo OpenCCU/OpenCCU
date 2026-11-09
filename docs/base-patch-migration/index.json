@@ -29,21 +29,9 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "a2dfe39ab278d3ea8d49c1ec00b23fb207482db06e27aa50a05494ddb7b2c517"
-    },
-    {
-      "added": 314,
-      "files": [
-        "www/rega/pages/index.htm",
-        "www/rega/pages/msg/editScript.htm",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0046-WebUI-ImprovedScriptEditor.patch",
-      "removed": 138,
-      "sha256": "85a59c7f633b7ecb30ebc6a06cdcf07e7c2c19b4a76f2cc7fa59234395c57682"
+      "sha256": "be49fd213e337ce1bc85203f230f9d0f34a8d50b3147e3b25ef424b4a5c5ace4"
     }
   ],
   "schema": 1,
-  "series_sha256": "82d1b2ebcb22cdbd3e9f1c4a9361e539e4cd6e0a1f81e304fd466cb544e01e51"
+  "series_sha256": "21d1519d427678b3e8a0ed60260c67a3e58d80830b77e22a1184a5150ee10e9e"
 }

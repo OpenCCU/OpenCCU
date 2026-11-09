@@ -278,9 +278,9 @@ run `make PRODUCT=<product> check` (Buildroot `check-package`).
 ## Component updates
 
 `scripts/update-*.sh` automate upstream bumps (Buildroot, kernels, Raspberry Pi
-firmware/EEPROM, OpenCCU-Base, Java Azul, Tailscale, CloudMatic, CodeMirror,
-RF drivers, guest agents, …). Run the matching script instead of editing
-versions and hashes by hand, then validate as described above.
+firmware/EEPROM, OpenCCU-Base, Java Azul, Tailscale, CloudMatic, RF drivers,
+guest agents, …). Run the matching script instead of editing versions and
+hashes by hand, then validate as described above.
 
 ## Home Assistant app and releases
 
