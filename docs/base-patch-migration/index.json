@@ -1,37 +1,5 @@
 {
-  "patches": [
-    {
-      "added": 568,
-      "files": [
-        "www/api/methods/ccu/downloadFirmware.tcl",
-        "www/config/cp_maintenance.cgi",
-        "www/config/cp_network.cgi",
-        "www/config/cp_time.cgi",
-        "www/config/help.cgi",
-        "www/error/error-500.html",
-        "www/error/error-503.html",
-        "www/ise/htm/header.htm",
-        "www/ise/js/functions.j_",
-        "www/rega/help.htm",
-        "www/rega/index.htm",
-        "www/rega/login.htm",
-        "www/rega/logout.htm",
-        "www/rega/pages/index.htm",
-        "www/upnp/basic_dev.cgi",
-        "www/webui/error/notready.html",
-        "www/webui/js/lang/de/translate.lang.extension.js",
-        "www/webui/js/lang/de/translate.lang.js",
-        "www/webui/js/lang/de/translate.lang.system.js",
-        "www/webui/js/lang/en/translate.lang.extension.js",
-        "www/webui/js/lang/en/translate.lang.js",
-        "www/webui/js/lang/en/translate.lang.system.js",
-        "www/webui/webui.js"
-      ],
-      "patch": "0001-OpenCCU.patch",
-      "removed": 254,
-      "sha256": "be49fd213e337ce1bc85203f230f9d0f34a8d50b3147e3b25ef424b4a5c5ace4"
-    }
-  ],
+  "patches": [],
   "schema": 1,
-  "series_sha256": "21d1519d427678b3e8a0ed60260c67a3e58d80830b77e22a1184a5150ee10e9e"
+  "series_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
 }

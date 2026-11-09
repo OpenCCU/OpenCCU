@@ -959,18 +959,24 @@
       "base_pr": 338,
       "cleanup_pr": 4688,
       "patch": "0154-WebUI-DynamicResizing.patch"
+    },
+    {
+      "base_merge_commit": "0730658ca476131ca309b2a390ec7d4431da055d",
+      "base_pr": 340,
+      "cleanup_pr": 4691,
+      "patch": "0046-WebUI-ImprovedScriptEditor.patch"
     }
   ],
   "in_progress": {
-    "base_merge_commit": "0730658ca476131ca309b2a390ec7d4431da055d",
-    "base_pr": 340,
-    "cleanup_pr": 4691,
-    "patch": "0046-WebUI-ImprovedScriptEditor.patch",
+    "base_merge_commit": "f708e8f87fd6319ac117b087e2dcc38a7ae75e30",
+    "base_pr": 341,
+    "cleanup_pr": null,
+    "patch": "0001-OpenCCU.patch",
     "phase": "cleanup-prepared; merge not yet verified"
   },
   "next_action": "Prepare the next selected patch migration after verifying the current repository state.",
   "schema": 1,
-  "verified_at_openccu_commit": "df9b09d2e5bb5343ae05b7b3d026307752b70473",
-  "verified_base_pin": "15405d5f0e900e93e494b3024f57e72142a77c39",
-  "verified_source_sha256": "71c18cd1669dde01ec4937a5bd1732aab68d95973c5b6f3fb105001fffa81354"
+  "verified_at_openccu_commit": "d96ed6ee4fa47c3eba778d8f4d51f49bdcc1d823",
+  "verified_base_pin": "0730658ca476131ca309b2a390ec7d4431da055d",
+  "verified_source_sha256": "c5084777d339d2bc179c3ef4fcc6be4bd0ff6d2a5ffa283f64b8c883ca7f859a"
 }
