@@ -134,6 +134,28 @@ init() {
     # in crRFD.
     sed -i "s|^Lan\.Routing\.Enabled=.*$|Lan.Routing.Enabled=${ADVANCED_HMIP}|" /var/etc/crRFD.conf
 
+    # optional overrides: /etc/hmipserver.default (the image) and then
+    # /etc/config/hmipserver.default (the user) may set HMIP_BIND_ADDRESS to
+    # keep the XML-RPC port of the HmIP server (Legacy.Port) off the LAN,
+    # e.g. HMIP_BIND_ADDRESS=127.0.0.1 when every client runs on the CCU.
+    # Only an IPv4/IPv6 address is taken; without the setting crRFD.conf
+    # stays as the template has it.
+    HMIP_BIND_ADDRESS=
+    for f in /etc/hmipserver.default /etc/config/hmipserver.default; do
+      [[ -r "${f}" ]] && . "${f}"
+    done
+    case "${HMIP_BIND_ADDRESS}" in
+      "")
+        ;;
+      *[!0-9A-Fa-f:.]*)
+        echo -n "WARNING: invalid HMIP_BIND_ADDRESS ignored, "
+        ;;
+      *)
+        sed -i "/^Legacy\.BindAddress=/d" /var/etc/crRFD.conf
+        echo "Legacy.BindAddress=${HMIP_BIND_ADDRESS}" >>/var/etc/crRFD.conf
+        ;;
+    esac
+
   else
     HM_SERVER=/opt/HMServer/HMServer.jar:/opt/HMServer/coupling/ESHBridge.jar
     HM_SERVER_CLASS="de.eq3.ccu.server.HMServer"
