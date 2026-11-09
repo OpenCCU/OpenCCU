@@ -23,7 +23,8 @@ die() {
 
 diff --version 2>/dev/null | grep -q '^diff (GNU diffutils)' || \
   die "GNU diffutils is required"
-[[ -s ${script_dir}/series ]] || die "missing or empty series file"
+# An empty series (no rootfs patches left) is valid.
+[[ -f ${script_dir}/series ]] || die "missing series file"
 temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/openccu-create-patches.XXXXXX")
 trap 'rm -rf -- "$temp_dir"' EXIT
 
@@ -86,6 +87,7 @@ while IFS= read -r patch_name || [[ -n $patch_name ]]; do
 done <"${script_dir}/series"
 
 for patch_file in "${script_dir}"/*.patch; do
+  [[ -e $patch_file ]] || continue
   patch_name=${patch_file##*/}
   [[ -n ${seen[$patch_name]+x} ]] || die "patch is not listed in series: $patch_name"
 done

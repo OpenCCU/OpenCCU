@@ -7,10 +7,6 @@ apple-touch-icon.png
 favicon-96x96.png
 favicon.ico
 favicon.svg
-occu-logo_small_gray.png
-occu-logo_small_red.png
-occu-logo_small.png
-occu-logo.png
 web-app-manifest-192x192.png
 web-app-manifest-512x512.png
 ```
