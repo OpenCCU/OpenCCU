@@ -32,7 +32,7 @@
       "sha256": "a2dfe39ab278d3ea8d49c1ec00b23fb207482db06e27aa50a05494ddb7b2c517"
     },
     {
-      "added": 306,
+      "added": 314,
       "files": [
         "www/rega/pages/index.htm",
         "www/rega/pages/msg/editScript.htm",
@@ -41,7 +41,7 @@
       ],
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
-      "sha256": "77fdb51bbd834c252202f08059d2f52f7c82db356773901605ec845a213a6432"
+      "sha256": "aab00992196d04b853613909c9142e96cf7cad6086e6d5992fa9fc8f92287e4a"
     }
   ],
   "schema": 1,
