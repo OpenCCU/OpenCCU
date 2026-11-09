@@ -121,9 +121,11 @@ LICENSES_MD_HASH=$(archive_file_hash licenses/licenses.md)
 HMSL2_HASH=$(archive_file_hash licenses/HMSL2.txt)
 GPL2_HASH=$(archive_file_hash licenses/gpl-2.0.txt)
 LGPL21_HASH=$(archive_file_hash licenses/lgpl-2.1.txt)
+CODEMIRROR_MIT_HASH=$(archive_file_hash licenses/codemirror-MIT.txt)
+OPENCCU_IMAGES_HASH=$(archive_file_hash licenses/openccu-images.md)
 EQ3_CHAR_LOOP_HASH=$(archive_file_hash src/eq3_char_loop/eq3_char_loop.c)
 
-if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" || -z "${EQ3_CHAR_LOOP_HASH}" ]]; then
+if [[ -z "${ARCHIVE_HASH}" || -z "${LICENSES_MD_HASH}" || -z "${HMSL2_HASH}" || -z "${GPL2_HASH}" || -z "${LGPL21_HASH}" || -z "${CODEMIRROR_MIT_HASH}" || -z "${OPENCCU_IMAGES_HASH}" || -z "${EQ3_CHAR_LOOP_HASH}" ]]; then
   echo "Failed to retrieve one or more hashes for ${PACKAGE_NAME}" >&2
   exit 1
 fi
@@ -134,6 +136,8 @@ sha256  ${LICENSES_MD_HASH}  licenses/licenses.md
 sha256  ${HMSL2_HASH}  licenses/HMSL2.txt
 sha256  ${GPL2_HASH}  licenses/gpl-2.0.txt
 sha256  ${LGPL21_HASH}  licenses/lgpl-2.1.txt
+sha256  ${CODEMIRROR_MIT_HASH}  licenses/codemirror-MIT.txt
+sha256  ${OPENCCU_IMAGES_HASH}  licenses/openccu-images.md
 sha256  ${ARCHIVE_HASH}  ${ARCHIVE_FILE}
 EOF
 
