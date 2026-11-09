@@ -47,16 +47,17 @@ fi
 case "${IFACE}" in
 
   *)
-    # wait until the link is up
+    # wait until the link is up (at most 12 s, checked every 0.2 s,
+    # one dot every 2 s)
     /sbin/ip link set "${IFACE}" up
     i=0
     while [[ "$(cat "/sys/class/net/${IFACE}/carrier")" == "0" ]]; do
-      sleep 2
+      sleep 0.2
       i=$((i+1))
-      if [[ $i -ge 6 ]]; then
+      if [[ $i -ge 60 ]]; then
         break
       fi
-      echo -n "."
+      [[ $((i % 10)) -eq 0 ]] && echo -n "."
     done
 
     # if the link is not up we continue only if this is a
