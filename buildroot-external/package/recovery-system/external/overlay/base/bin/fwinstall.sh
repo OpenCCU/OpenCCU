@@ -598,12 +598,33 @@ EOF
   return 0
 }
 
+# true when the directory holding $1 resolves (symlinks followed) to an
+# upload directory or a directory below it
+# shellcheck disable=SC2329 # only called from on_exit
+fw_in_upload_dir()
+{
+  local parent root
+  parent=$(readlink -f "$(dirname "$1")" 2>/dev/null) || return 1
+  [[ -n "${parent}" ]] || return 1
+  for root in /usr/local/tmp /userfs/tmp; do
+    root=$(readlink -f "${root}" 2>/dev/null) || continue
+    [[ -n "${root}" ]] && [[ "${root}" != "/" ]] || continue
+    case "${parent}/" in
+      "${root}"/*)
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
 # what every EXIT trap runs: the lock goes, and an uploaded file that fwprepare
 # did not get through (FWPREPARE_FILE stays set until it succeeds) is removed
 # together with its extraction directory, so that a failed update does not
 # leave a firmware-sized file on the userfs that only blocks the next attempt.
-# Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here),
-# and never for a path with a ".." component.
+# Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here):
+# never for a path with a ".." component, and only when the directory holding
+# the file resolves (symlinks followed) to that directory or one below it.
 # shellcheck disable=SC2329 # only called from the EXIT traps
 on_exit()
 {
@@ -613,9 +634,11 @@ on_exit()
         # a path that leaves the upload directory is never removed
         ;;
       /usr/local/tmp/?*|/userfs/tmp/?*)
-        rm -rf "${FWPREPARE_FILE}-dir" 2>/dev/null
-        rm -f "${FWPREPARE_FILE}" 2>/dev/null
-        echo "(the uploaded file ${FWPREPARE_FILE} removed after the failure)<br/>"
+        if fw_in_upload_dir "${FWPREPARE_FILE}"; then
+          rm -rf "${FWPREPARE_FILE}-dir" 2>/dev/null
+          rm -f "${FWPREPARE_FILE}" 2>/dev/null
+          echo "(the uploaded file ${FWPREPARE_FILE} removed after the failure)<br/>"
+        fi
         ;;
     esac
     FWPREPARE_FILE=""
