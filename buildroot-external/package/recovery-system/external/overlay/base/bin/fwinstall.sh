@@ -623,8 +623,9 @@ fw_in_upload_dir()
 # together with its extraction directory, so that a failed update does not
 # leave a firmware-sized file on the userfs that only blocks the next attempt.
 # Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here):
-# never for a path with a ".." component, and only when the directory holding
-# the file resolves (symlinks followed) to that directory or one below it.
+# never for a path with a ".." component, and only when the directories holding
+# the file and its -dir resolve (symlinks followed) to that directory or one
+# below it.
 # shellcheck disable=SC2329 # only called from the EXIT traps
 on_exit()
 {
@@ -634,7 +635,10 @@ on_exit()
         # a path that leaves the upload directory is never removed
         ;;
       /usr/local/tmp/?*|/userfs/tmp/?*)
-        if fw_in_upload_dir "${FWPREPARE_FILE}"; then
+        # each target is checked on its own: for a path ending in "/", the
+        # -dir target lies in a different directory than the file
+        if fw_in_upload_dir "${FWPREPARE_FILE}" &&
+           fw_in_upload_dir "${FWPREPARE_FILE}-dir"; then
           rm -rf "${FWPREPARE_FILE}-dir" 2>/dev/null
           rm -f "${FWPREPARE_FILE}" 2>/dev/null
           echo "(the uploaded file ${FWPREPARE_FILE} removed after the failure)<br/>"
