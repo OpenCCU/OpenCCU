@@ -20,33 +20,12 @@
     <script type="text/javascript" src="/webui/js/extern/prototype.js"></script>
     <script type="text/javascript" src="/webui/js/lang/loadTextResource.js"></script>
     <script type="text/javascript" src="/webui/js/lang/translate.js"></script>
-
-    <script type="text/javascript">
-      recalcDivs = function()
-      {
-        var wHeight = 0;
-        if (window.innerHeight) {
-          wHeight = window.innerHeight;
-        }
-        else if (document.documentElement.offsetHeight) {
-          wHeight = document.documentElement.offsetHeight;
-        }
-
-        var wHeaderHeight = 72;
-        var wFooterHeight = 32;
-        var wContentHeight = wHeight - wHeaderHeight - wFooterHeight - 27;
-
-        $("navbar").setStyle({height: wHeaderHeight + "px"});
-        $("content").setStyle({height: wContentHeight + "px"});
-        $("footer").setStyle({height: wFooterHeight + "px"});
-      };
-    </script>
   </head>
   <body>
-    <table style="width: 100%; height: 100%;" cellpadding="0" cellspacing="0" id="maintable" class="j_translate">
+    <table id="maintable" class="j_translate">
       <tr>
         <td id="navbar">
-          <table cellpadding="0" cellspacing="0">
+          <table>
           <tr>
             <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
             <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
@@ -58,7 +37,7 @@
       </tr>
       <tr>
         <td>
-          <div id="content" style="background-repeat:no-repeat;background-position:480px center;">
+          <div id="content">
             <table id="logout_content" cellspacing="8">
               <tr>
                 <td style="vertical-align: top;">
@@ -77,9 +56,6 @@
     </table>
 
     <script type="text/javascript">
-      Event.observe(window, "resize", function(event) { recalcDivs(); });
-      recalcDivs();
-
       gotoLoginPage = function() {
         location.href = "/login.htm";
       };
