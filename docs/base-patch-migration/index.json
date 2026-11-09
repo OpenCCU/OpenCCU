@@ -29,7 +29,7 @@
       ],
       "patch": "0001-OpenCCU.patch",
       "removed": 254,
-      "sha256": "b895e145e3751acd4d93a2493926789fe4a358aa47b440c3cfe73880bd9ae815"
+      "sha256": "a2dfe39ab278d3ea8d49c1ec00b23fb207482db06e27aa50a05494ddb7b2c517"
     },
     {
       "added": 306,
@@ -42,24 +42,8 @@
       "patch": "0046-WebUI-ImprovedScriptEditor.patch",
       "removed": 138,
       "sha256": "77fdb51bbd834c252202f08059d2f52f7c82db356773901605ec845a213a6432"
-    },
-    {
-      "added": 88,
-      "files": [
-        "www/rega/login.htm",
-        "www/rega/logout.htm",
-        "www/rega/pages/tabs/control/devices.htm",
-        "www/rega/pages/tabs/control/functions.htm",
-        "www/rega/pages/tabs/control/rooms.htm",
-        "www/rega/pages/tabs/startpage.htm",
-        "www/webui/style.css",
-        "www/webui/webui.js"
-      ],
-      "patch": "0154-WebUI-DynamicResizing.patch",
-      "removed": 350,
-      "sha256": "d6512b459c4fa71be6fbb1c06146fc122b1ee6f4dd0ec4c4ee7ee9a73d86b7b1"
     }
   ],
   "schema": 1,
-  "series_sha256": "d21db65b7c0979afc706d1f83d0ba103f7a27b79499baa15f3602be51b67a921"
+  "series_sha256": "82d1b2ebcb22cdbd3e9f1c4a9361e539e4cd6e0a1f81e304fd466cb544e01e51"
 }

@@ -603,16 +603,16 @@
      </script>
 --- a/www/rega/login.htm
 +++ b/www/rega/login.htm
-@@ -80,7 +80,7 @@
+@@ -59,7 +59,7 @@
          <td id="navbar">
-           <table cellpadding="0" cellspacing="0">
+           <table>
              <tr>
 -              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
 +              <td style="text-align: center;"><div style="width: 180px;"><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
                <td><span class="HeaderTitle" style="cursor: pointer;" onclick="gotoLoginPage();">${lblUsrLogin}</span></td>
                <td style="width: 100%;"></td>
                <!-- <td><a href="/pda/index.cgi" target="_blank"><img id="WebUIorPDA" src="/ise/img/mobile_device.png" width="48px;" height="48px" alt="WebUI PDA" title="WebUI PDA"/></a></td> -->
-@@ -202,4 +202,4 @@
+@@ -178,4 +178,4 @@
        translateAttribute("#WebUIorPDA", "title", "tooltipWebUIorPDA");
      </script>
    </body>
@@ -621,9 +621,9 @@
 +</html>
 --- a/www/rega/logout.htm
 +++ b/www/rega/logout.htm
-@@ -48,7 +48,7 @@
+@@ -27,7 +27,7 @@
          <td id="navbar">
-           <table cellpadding="0" cellspacing="0">
+           <table>
            <tr>
 -            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/homematic_logo_small.png" alt="HomeMatic Logo" /></div></td>
 +            <td style="text-align: center;"><div style="width: 180px;" ><img src="/ise/img/occu-logo_small.png" alt="OpenCCU Logo" /></div></td>
