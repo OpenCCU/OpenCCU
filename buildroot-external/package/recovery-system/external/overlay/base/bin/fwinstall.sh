@@ -598,12 +598,65 @@ EOF
   return 0
 }
 
+# true when the directory holding $1 resolves (symlinks followed) to an
+# upload directory or a directory below it
+# shellcheck disable=SC2329 # only called from on_exit
+fw_in_upload_dir()
+{
+  local parent root
+  parent=$(readlink -f "$(dirname "$1")" 2>/dev/null) || return 1
+  [[ -n "${parent}" ]] || return 1
+  for root in /usr/local/tmp /userfs/tmp; do
+    root=$(readlink -f "${root}" 2>/dev/null) || continue
+    [[ -n "${root}" ]] && [[ "${root}" != "/" ]] || continue
+    case "${parent}/" in
+      "${root}"/*)
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
+# what every EXIT trap runs: the lock goes, and an uploaded file that fwprepare
+# did not get through (FWPREPARE_FILE stays set until it succeeds) is removed
+# together with its extraction directory, so that a failed update does not
+# leave a firmware-sized file on the userfs that only blocks the next attempt.
+# Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here):
+# never for a path with a ".." component, and only when the directories holding
+# the file and its -dir resolve (symlinks followed) to that directory or one
+# below it.
+# shellcheck disable=SC2329 # only called from the EXIT traps
+on_exit()
+{
+  if [[ -n "${FWPREPARE_FILE}" ]]; then
+    case "${FWPREPARE_FILE}" in
+      */../*|*/..)
+        # a path that leaves the upload directory is never removed
+        ;;
+      /usr/local/tmp/?*|/userfs/tmp/?*)
+        # each target is checked on its own: for a path ending in "/", the
+        # -dir target lies in a different directory than the file
+        if fw_in_upload_dir "${FWPREPARE_FILE}" &&
+           fw_in_upload_dir "${FWPREPARE_FILE}-dir"; then
+          rm -rf "${FWPREPARE_FILE}-dir" 2>/dev/null
+          rm -f "${FWPREPARE_FILE}" 2>/dev/null
+          echo "(the uploaded file ${FWPREPARE_FILE} removed after the failure)<br/>"
+        fi
+        ;;
+    esac
+    FWPREPARE_FILE=""
+  fi
+  rm -f /tmp/.runningFirmwareUpdate
+}
+
 ######
 # function that is called with the filename containing
 # the firmware update either archived or unarchived.
 fwprepare()
 {
   filename=${1}
+  FWPREPARE_FILE="${filename}"
 
   echo -ne "[1/7] Checking uploaded data... "
   # check if filename exists
@@ -628,14 +681,14 @@ fwprepare()
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
   if ! CHKSUM=$(/usr/bin/sha256sum "${filename}" 2>/dev/null) || [[ -z "${CHKSUM}" ]]; then
     echo "ERROR: (sha256sum)"
     exit 1
   fi
   # stop the progress output
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
   echo "$(echo "${CHKSUM}" | awk '{ print $1 }')<br/>"
 
@@ -668,17 +721,17 @@ fwprepare()
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
   # run the file i/o test using 'fio' which emulates a
   # Apps Class A1 performance test
   if ! RES=$(/usr/bin/fio --output-format=terse --max-jobs=4 /usr/share/agnostics/sd_bench.fio | cut -f 3,7,8,48,49 -d";" -) || [[ -z "${RES}" ]]; then
     echo "WARNING: performance test failed"
     # stop the progress output
-    kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+    kill ${PROGRESS_PID} && trap "on_exit" EXIT
   else
     # stop the progress output
-    kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+    kill ${PROGRESS_PID} && trap "on_exit" EXIT
     rm -f /usr/local/tmp/sd.test.file
 
     swri=$(echo "${RES}" | head -n 2 | tail -n 1 | cut -d ";" -f 4)
@@ -765,7 +818,7 @@ fwprepare()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       if ! /bin/gzip -dc "${filename}" >"${TMPDIR}/rootfs.ext4"; then
         echo "ERROR: (gunzip)"
@@ -774,7 +827,7 @@ fwprepare()
 
       # stop the progress output
       kill ${PROGRESS_PID} 2>/dev/null || true
-      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "on_exit" EXIT
 
       # the uncompressed file must be a valid rootfs ext4 filesystem
       if ! /usr/bin/file -b "${TMPDIR}/rootfs.ext4" | grep -E -q "ext4 filesystem.*rootfs"; then
@@ -810,7 +863,7 @@ fwprepare()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # unarchive the tar
       if ! /bin/tar -C "${TMPDIR}" --warning=no-timestamp --no-same-owner -xmf "${filename}"; then
@@ -819,7 +872,7 @@ fwprepare()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       rm -f "${filename}"
 
@@ -846,7 +899,7 @@ fwprepare()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # unarchive the zip
       if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
@@ -922,7 +975,7 @@ fwprepare()
               awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
               PROGRESS_PID=$!
               # shellcheck disable=SC2064
-              trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+              trap "kill ${PROGRESS_PID}; on_exit" EXIT
               # unarchive the zip once more
               if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
                 echo "ERROR: (unzip)"
@@ -945,7 +998,7 @@ fwprepare()
 
       # stop the progress output (may already be stopped on resize paths)
       kill ${PROGRESS_PID} 2>/dev/null || true
-      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "on_exit" EXIT
 
       rm -f "${filename}"
 
@@ -1062,7 +1115,7 @@ fwprepare()
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
   # check for sha256 checksums
   (cd "${TMPDIR}";
@@ -1091,7 +1144,7 @@ fwprepare()
   ) || exit 1
 
   # stop the progress output
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
   echo "DONE<br>"
 
@@ -1117,6 +1170,8 @@ fwprepare()
     exit 1
   fi
 
+  # prepared: from here on the extraction directory is the update, kept on a failure
+  FWPREPARE_FILE=""
   echo "OK, DONE<br/>"
 }
 
@@ -1243,7 +1298,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${ext4_file}" of="${ROOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1252,7 +1307,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${ROOTFS_DEV}" /rootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1357,7 +1412,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${vfat_file}" of="${BOOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1366,7 +1421,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${BOOTFS_DEV}" /bootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1516,7 +1571,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${BOOTFS_LOOPDEV}" of="${BOOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1525,7 +1580,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${BOOTFS_DEV}" /bootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1659,7 +1714,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${ROOTFS_LOOPDEV}" of="${ROOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1668,7 +1723,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${ROOTFS_DEV}" /rootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1711,7 +1766,7 @@ if [[ -f /tmp/.runningFirmwareUpdate ]]; then
 fi
 
 # capture on EXIT and create the lock file
-trap 'rm -f /tmp/.runningFirmwareUpdate' EXIT
+trap 'on_exit' EXIT
 touch /tmp/.runningFirmwareUpdate
 
 # source all data from /var/hm_mode
