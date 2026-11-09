@@ -146,6 +146,10 @@
                 {
                   editor_output.setValue(response);
                 }
+                else
+                {
+                  editor_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
+                }
               });
         }
         else

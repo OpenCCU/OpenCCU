@@ -17062,6 +17062,10 @@ HMScriptExecutor = Class.create({
                 {
                   _this_.m_output.setValue(response);
                 }
+                else
+                {
+                  _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
+                }
                 });
               }
           else
@@ -32838,10 +32842,10 @@ iseMessageBox.prototype =
       onComplete: function(trans)
       {
         //$("messagebox").style.width = t.width + "px";
-        if(t.width !== "undefined") {
+        if(typeof t.width !== "undefined") {
           jQuery("#messagebox").width(t.width + "px");
         }
-        if(t.height !== "undefined") {
+        if(typeof t.height !== "undefined") {
           jQuery("#messagebox").height(t.height + "px");
         }
         jQuery("#tableContainer").css("max-height",(parseInt(jQuery(window).height() * 0.75)) + "px");

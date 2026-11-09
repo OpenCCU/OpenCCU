@@ -45,7 +45,7 @@
        <%
          integer iThis = 0;
          if(oTmp)
-@@ -28,38 +28,141 @@
+@@ -28,38 +28,145 @@
          }
        %>
        <input id="Text2" type="text" class="CLASS00008" value="<% Write(iThis); %>" />
@@ -177,6 +177,10 @@
 +                {
 +                  editor_output.setValue(response);
 +                }
++                else
++                {
++                  editor_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
++                }
 +              });
 +        }
 +        else
@@ -199,7 +203,7 @@
      var val = $F('Text1');
      var ths = $F('Text2');
      var src = $F('Text3');
-@@ -78,14 +181,14 @@
+@@ -78,14 +185,14 @@
          conInfo( "EditScript: CheckSyntax returned: ["+iseStripAll(t.responseText)+"]" );
          if( iseStripAll(t.responseText).length == 0 )
          {
@@ -827,7 +831,7 @@
      var frameX       = parseInt((screenWidth  - frameWidth)  / 2);
      var frameY       = parseInt((screenHeight - frameHeight) / 2);
  
-@@ -16913,63 +16935,142 @@
+@@ -16913,63 +16935,146 @@
      
      this.m_layer = document.createElement("div");
      this.m_layer.className = "DialogLayer";
@@ -989,6 +993,10 @@
 +                {
 +                  _this_.m_output.setValue(response);
 +                }
++                else
++                {
++                  _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
++                }
 +                });
 +              }
 +          else
@@ -1002,7 +1010,7 @@
    },
    
    close: function()
-@@ -16979,8 +17080,8 @@
+@@ -16979,8 +17084,8 @@
    
  });
  
@@ -1013,7 +1021,7 @@
  
  /**
   * firewallconfigdialog.js
-@@ -32396,6 +32497,9 @@
+@@ -32396,6 +32501,9 @@
    },
    initPopup: function(id)
    {
@@ -1023,7 +1031,7 @@
      switch(this.id)
      {
        case ID_ROOMS:
-@@ -32461,9 +32565,10 @@
+@@ -32461,9 +32569,10 @@
          break;
        case ID_EDIT_SCRIPT:
          this.setTitle( translateKey("dialogEditScript") /*"Skript bearbeiten"*/ );
@@ -1036,7 +1044,7 @@
          this.setFile( "/pages/msg/editScript.htm" );
          break;
        case ID_CONTROL_TEST:
-@@ -32571,7 +32676,9 @@
+@@ -32571,7 +32680,9 @@
      }
  
      if (this.draggable) {
@@ -1047,15 +1055,15 @@
      }
  
    },
-@@ -32731,7 +32838,12 @@
+@@ -32731,7 +32842,12 @@
        onComplete: function(trans)
        {
          //$("messagebox").style.width = t.width + "px";
 -        jQuery("#messagebox").width(t.width + "px");
-+        if(t.width !== "undefined") {
++        if(typeof t.width !== "undefined") {
 +          jQuery("#messagebox").width(t.width + "px");
 +        }
-+        if(t.height !== "undefined") {
++        if(typeof t.height !== "undefined") {
 +          jQuery("#messagebox").height(t.height + "px");
 +        }
          jQuery("#tableContainer").css("max-height",(parseInt(jQuery(window).height() * 0.75)) + "px");
