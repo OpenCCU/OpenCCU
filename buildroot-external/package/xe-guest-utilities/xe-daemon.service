@@ -1,0 +1,18 @@
+# xe-guest-utilities: the XenServer guest agent (the systemd counterpart of
+# S11xe-daemon). Only on Xen: the condition keeps it inactive on every other
+# hypervisor and on bare metal.
+[Unit]
+Description=XenServer guest agent (xe-daemon)
+ConditionPathExists=/proc/xen
+After=proc-xen.mount network.target
+Wants=proc-xen.mount
+
+[Service]
+Type=simple
+ExecStartPre=/usr/sbin/xe-linux-distribution /var/cache/xe-linux-distribution
+ExecStart=/usr/sbin/xe-daemon -p /run/xe-daemon.pid
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
