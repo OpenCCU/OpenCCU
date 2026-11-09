@@ -4,6 +4,23 @@
 # Startup script checking for RF capabale hardware
 #
 
+# the MAC address of the board: eth0's, else that of the first network interface
+# with a hardware device and a hardware address of its own - independent of which
+# interface holds the default route, and of whether there is one yet
+board_mac() {
+  bm_net=${1:-/sys/class/net}
+  for bm_dev in "${bm_net}/eth0" "${bm_net}"/*; do
+    [[ -r "${bm_dev}/address" ]] || continue
+    [[ "${bm_dev##*/}" == "eth0" ]] || [[ -e "${bm_dev}/device" ]] || continue
+    [[ "$(cat "${bm_dev}/type" 2>/dev/null)" == "1" ]] || continue
+    bm_mac=$(cat "${bm_dev}/address")
+    [[ -n "${bm_mac}" ]] && [[ "${bm_mac}" != "00:00:00:00:00:00" ]] || continue
+    echo "${bm_mac}"
+    return 0
+  done
+  return 1
+}
+
 # function to identify rf hardware
 identify_rf_hardware() {
 
@@ -396,7 +413,7 @@ query_rf_parameters() {
     echo -n "$(hostname)" | sed 's/-openccu//g' >/var/board_serial
   else
     # fallback to put the mac in /var/board_serial
-    MAC=$(cat /sys/class/net/"$(ip route show default | awk '/default/ {print $5}')"/address)
+    MAC=$(board_mac)
     echo -n "$(echo "${MAC}" | tr -d : | tail -c 10)" >/var/board_serial
   fi
 
