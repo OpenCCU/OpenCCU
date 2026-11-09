@@ -466,7 +466,7 @@ proc action_put_page {} {
               td {width="20"} {}
               table_data {align="left"} {colspan="2"} {
                 form "/config/fileupload.ccc?sid=$sid&action=firmware_upload&downloadOnly=$downloadOnly&url=$env(SCRIPT_NAME)" {target=firmware_upload_iframe} name=firmware_form enctype=multipart/form-data method=post {
-                  file_button firmware_file size=30 maxlength=1000000 accept='.zip,.tgz,application/zip,application/gzip'
+                  file_button firmware_file size=30 maxlength=1000000 accept='.zip,.tgz,.tar,.img,.ext4,.vfat,application/zip,application/gzip,application/x-tar'
                 }
                 puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
               }

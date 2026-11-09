@@ -8822,7 +8822,6 @@ function showSecurityDialog() {
          1 - user selected YES
          */
         if (action == 1) {
-          WebUI.resize();
           jQuery(".Layer0").show();
           homematic("CCU.setSecurityHint");
           if (getProduct() >= 3) {
@@ -9059,42 +9058,8 @@ WebUI = Singleton.create({
     this.currentPageOptions  = null;    // Argumente der aktuellen Seite
     this.previousPage        = null;    // Vorherige Seite
     this.previousPageOptions = null;    // Argumente der vorherigen Seite
-    this.onResizeHandler     = null;    // EventHandler: onResize
-
-    this.onResizeHandler = this.onResize.bindAsEventListener(this);
-    Event.observe(window, "resize", this.onResizeHandler);
   },  
   
-  /**
-   * Ereignis. Wird bei der Änderung der Fenstergröße aufgerufen.
-   * Passt die Steuerelemente entsprechend der Änderung an.
-   */
-  onResize: function()
-  {
-    var height       = WebUI.getHeight();
-    var width        = WebUI.getWidth();
-    var bodyOverflow = "hidden";
-
-    if (width  < this.MIN_WIDTH)  { width  = this.MIN_WIDTH;  bodyOverflow = "auto"; }
-    if (height < this.MIN_HEIGHT) { height = this.MIN_HEIGHT; bodyOverflow = "auto"; }
-    var contentHeight = height - this.STATIC_HEIGHT;
-
-    if ($("body"))    { Element.setStyle("body", {"overflow": bodyOverflow, "width": width  + "px", "height": height + "px"}); }
-    if ($("header"))  { Element.setStyle("header" , {"height": this.HEADER_HEIGHT  + "px", "width": width + "px"}); }
-    if ($("menubar")) { Element.setStyle("menubar", {"height": this.MENUBAR_HEIGHT + "px", "width": width + "px"}); }
-    if ($("content")) { Element.setStyle("content", {"height": contentHeight       + "px", "width": width + "px"}); }
-    if ($("footer"))  { Element.setStyle("footer" , {"height": this.FOOTER_HEIGHT  + "px", "width": width + "px"}); }
-
-    if (this.currentPage) { this.currentPage.resize(); }
-
-    if(typeof dcTimeout == "undefined") {
-      dcTimeout = window.setTimeout(function () {
-        showDutyCycle();
-        delete dcTimeout;
-      }, 10);
-    }
-  },
-
   /*########################*/
   /*# Öffentliche Elemente #*/
   /*########################*/
@@ -9294,8 +9259,6 @@ WebUI = Singleton.create({
 
 
     if (result) {
-      WebUI.resize();
-
       if (!isFF) {
         jQuery(".Layer0").show();
         WebUI.enter(StartPage);
@@ -9426,6 +9389,11 @@ WebUI = Singleton.create({
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
             homematic("CCU.setUserAckInstallWizard");
           }
+
+          // open the systemLanguage config dialog if no systemLanguage was selected yet
+          if (homematic('CCU.getSystemLanguage') === 'none') {
+            CreatePopup(ID_SYSTEM_LANGUAGE_CONFIG);
+          }
         }
       }
     } else {
@@ -9500,13 +9468,6 @@ WebUI = Singleton.create({
     {
       throw new Error("content not defined");
     }
-  },
-  /**
-   * Ruft das onResize-Ereignis auf.
-   **/
-  resize: function()
-  {
-    this.onResize();
   },
   
   /**
@@ -10640,7 +10601,13 @@ UI.Text = Class.create(UI.Component, {
     Element.setStyle(this.m_element, {"textAlign": alignment});
     return this;
   },
-  
+
+  setStyle: function(style)
+  {
+    Element.setStyle(this.m_element, style);
+    return this;
+  },
+
   /**
    * Setzt die Breite des Labels.
    * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
@@ -10661,7 +10628,13 @@ UI.Text = Class.create(UI.Component, {
     if (height != "auto") { height = parseInt(height) + "px"; }
     Element.setStyle(this.m_element, { height    : height });
     return this;
-  }
+  },
+
+  setClass: function(name)
+  {
+    this.m_element.className = name;
+    return this;
+  },
 });
  
 /**
@@ -10928,6 +10901,16 @@ UI.Textarea = Class.create(UI.InputComponent, {
     return this;
   },
   
+  setID : function(id) {
+    this.m_element.setAttribute("id",id);
+    return this;
+  },
+
+  setName : function(name) {
+    this.m_element.setAttribute("name",name);
+    return this;
+  },
+
   setWrap: function(isWrap)
   {
     if (isWrap) { Element.writeAttribute(this.m_element, "wrap", "soft"); }
@@ -16902,8 +16885,8 @@ HMScriptExecutor = Class.create({
   {
     var screenWidth  = WebUI.getWidth();
     var screenHeight = WebUI.getHeight();
-    var frameWidth   = HMScriptExecutor.CONTENT_WIDTH;
-    var frameHeight  = HMScriptExecutor.CONTENT_HEIGHT;
+    var frameWidth   = parseInt(screenWidth * 0.8);
+    var frameHeight  = parseInt(screenHeight * 0.8);
     var frameX       = parseInt((screenWidth  - frameWidth)  / 2);
     var frameY       = parseInt((screenHeight - frameHeight) / 2);
 
@@ -16913,63 +16896,151 @@ HMScriptExecutor = Class.create({
     
     this.m_layer = document.createElement("div");
     this.m_layer.className = "DialogLayer";
-    
-    this.m_input = new UI.Textarea()
-        .setPosition(5,25)
-        .setWidth(590)
-        .setHeight(200)
-        .setText('WriteLine("'+ translateKey("dialogScriptExecuterHelloWorld") +'");');
-    
-    this.m_output = new UI.Textarea()
-        .setPosition(5,250)
-        .setWidth(590)
-        .setHeight(200); 
-    
+
     this.m_frame = new UI.Frame(true)
       .setTitle(HMScriptExecutor.TITLE)
       .setContentSize(frameWidth, frameHeight)
       .setPosition(frameX, frameY)
       .add(new UI.Text()
-        .setPosition(5,5)
-        .setText(translateKey("dialogScriptExecuterLblInput"))
+        .setStyle('margin-left: 5px')
+        .setHtml('<b>' + translateKey("dialogScriptExecuterLblInput") + '</b>')
+        .setClass("")
       )
-      .add(this.m_input)
+      .add(new UI.Textarea()
+        .setID("code")
+        .setName("code")
+        .setText('WriteLine("'+ translateKey("dialogScriptExecuterHelloWorld") +'");')
+      )
       .add(new UI.Text()
-        .setPosition(5,230)
-        .setText(translateKey("dialogScriptExecuterLblOutput"))
+        .setStyle('margin-left: 5px')
+        .setHtml('<b>' + translateKey("dialogScriptExecuterLblOutput") + '</b>')
+        .setClass("")
       )
-      .add(this.m_output)
+      .add(new UI.Textarea()
+        .setID("output")
+        .setName("output")
+      )
       .add(new UI.Button()
-        .setPosition(5,455)
+        .setPosition(5, frameHeight-30)
         .setText(HMScriptExecutor.TEXT_RUN)
         .setAction(this.run, this)
       )
       .add(new UI.Button()
-        .setPosition(445, 455)
+        .setPosition(frameWidth-155, frameHeight-30)
         .setText(HMScriptExecutor.TEXT_CLOSE)
         .setAction(this.close, this)
       );
       
-      this.m_layer.appendChild(this.m_frame.getElement());
-      Layer.add(this.m_layer);
+    this.m_layer.appendChild(this.m_frame.getElement());
+    Layer.add(this.m_layer);
+
+    this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
+      mode: "text/x-rega",
+      autofocus: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      lineWrapping: true,
+      lineNumbers: true,
+      foldGutter: true,
+      indentUnit: 2,
+      tabSize: 2,
+      indentWithTabs: false,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+      extraKeys: {"Ctrl-Space": "autocomplete",
+                  "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); },
+                  "F11": function(cm) { cm.setOption("fullScreen", !cm.getOption("fullScreen")); },
+                  "Esc": function(cm) { if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false); },
+                  "Alt-F": "findPersistent",
+                  "Tab": function(cm) {
+                    if (cm.somethingSelected()) {
+                      var sel = cm.getSelection("\n");
+                      // Indent only if there are multiple lines selected, or if the selection spans a full line
+                      if (sel.length > 0 && (sel.indexOf("\n") > -1 || sel.length === cm.getLine(cm.getCursor().line).length)) {
+                        cm.execCommand("indentMore");
+                        return;
+                      }
+                    }
+                    if (cm.options.indentWithTabs)
+                      cm.execCommand("insertTab");
+                    else
+                      cm.execCommand("insertSoftTab");
+                  },
+                  "Shift-Tab": function(cm) {
+                    if (cm.somethingSelected()) {
+                      var sel = cm.getSelection("\n");
+                      // Outdent only if there are multiple lines selected, or if the selection spans a full line
+                      if (sel.length > 0 && (sel.indexOf("\n") > -1 || sel.length === cm.getLine(cm.getCursor().line).length)) {
+                        cm.execCommand("indentLess");
+                        return;
+                      }
+                    }
+                    var charSize = cm.options.tabSize;
+                    if (cm.options.indentWithTabs)
+                      charSize = 1;
+                    var c = cm.getCursor();
+                    var lineText = cm.getRange({line: c.line, ch: c.ch - charSize}, {line: c.line, ch: c.ch});
+                    var m = /^(\s+)/.exec(lineText.reverse());
+                    if(m && m.length == 2)
+                      cm.replaceRange('', {line: c.line, ch: c.ch - m[1].length}, {line: c.line, ch: c.ch});
+                  }}
+    });
+    this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
+
+    this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
+      mode: "default",
+      readOnly: true,
+      lineWrapping: true,
+      lineNumbers: false
+    });
+    this.m_output.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.4));
   },
 
   run: function()
   {
+    this.m_output.setValue("");
     var _this_ = this;
-    this.m_output.setText("");
-       
-    homematic("ReGa.runScript", {script: this.m_input.getText()}, function(response, error)
+    var code = this.m_input.getValue();
+    var val = "";
+    var ths = "2459";
+    var src = "";
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "SyntaxCheck";';
+    pb += 'string code = ^'+code.replace(/\^/g, '^#\'^\'#^')+'^;';
+    pb += 'string val = "'+val+'";';
+    pb += 'string ths = "'+ths+'";';
+    pb += 'string src = "'+src+'";';
+    var opt =
     {
-      if (error === null)
+      postBody: ReGa.encode(pb),
+      onComplete: function(t)
       {
-        _this_.m_output.setText(response);
+        // only run the script that passed a completed syntax check
+        if( t.status < 200 || t.status >= 300 )
+        {
+          _this_.m_output.setValue(translateKey("lblError") + ": HTTP " + t.status);
+        }
+        else if( iseStripAll(t.responseText).length == 0 )
+        {
+          homematic("ReGa.runScript", {script: code}, function(response, error)
+          {
+            if (error === null)
+            {
+              _this_.m_output.setValue(response);
+            }
+            else
+            {
+              _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
+            }
+          });
+        }
+        else
+        {
+          _this_.m_output.setValue(t.responseText);
+        }
       }
-      else
-      {
-        _this_.m_output.setText("Fehler: " + Object.toJSON(error));
-      }
-    });
+    };
+    new Ajax.Request(url,opt);
   },
   
   close: function()
@@ -16979,8 +17050,8 @@ HMScriptExecutor = Class.create({
   
 });
 
-HMScriptExecutor.CONTENT_WIDTH = 600;
-HMScriptExecutor.CONTENT_HEIGHT = 485;
+HMScriptExecutor.CONTENT_WIDTH = 800;
+HMScriptExecutor.CONTENT_HEIGHT = 500;
 
 /**
  * firewallconfigdialog.js
@@ -25590,11 +25661,6 @@ IPage = Interface.create({
    **/
   leave: function() {},
   
-  /**
-   * Callback beim Verändern der Bildschirmgröße
-   **/
-  resize: function() {}
-  
 });
 /**
  * page.js
@@ -25622,13 +25688,6 @@ Page = Class.create({
   {
   },
   
-  /**
-   * Callback. Wird beim Verändern des Bildschirms aufgerufen.
-   **/
-  resize: function()
-  {
-  }
-  
 });
 /**
  * StartPage.js
@@ -25655,19 +25714,6 @@ StartPage = Singleton.create(Page, {
   initialize: function ()
   {
     this.deviceList = [];
-
-    switch (getUPL())
-    {
-      case UPL_ADMIN:
-      case UPL_USER:
-        this.resize = this.resizeUser;
-        break;
-      case UPL_GUEST:
-        this.rezise = this.resizeGuest;
-        break;
-      default:
-        break;
-    }
   },
 
   /**
@@ -25678,7 +25724,6 @@ StartPage = Singleton.create(Page, {
     iseInitUpdateArrays();
     setPath("");
     setFooter("");
-    WebUI.resize();
   
     switch (getUPL())
     {
@@ -25708,35 +25753,6 @@ StartPage = Singleton.create(Page, {
     }
     this.prevDownloadURL = this.downloadURL;
     conInfo("Device Fw. downloadURL: " + this.downloadURL);
-  },
-  
-  /**
-   * Berechnet die Größe der normalen Startseite (Admin und Benutzer)
-   **/
-  resizeUser: function()
-  {
-    var contentHeight     = $("content").getHeight();
-    var contentWidth      = $("content").getWidth();
-    var width = parseInt(contentWidth / 2);
-    
-    if ($("contentLeft"))
-    {
-      //Element.setStyle("contentLeft", {"height": contentHeight + "px", "width": width + "px"});
-      Element.setStyle("contentLeft", {"height": contentHeight + "px", "width": "55%"});
-    }
-    if ($("contentLeft"))
-    {
-      //Element.setStyle("contentRight", {"height": contentHeight + "px", "width": (width - 10) + "px"});
-      Element.setStyle("contentRight", {"height": contentHeight + "px", "width": "44%"});
-    }
-    
-    if ($("favSelector"))
-    {   
-      var FavSelectorHeight = $("favSelector").getHeight();
-      var FAV_MARGIN_HEIGHT = 8;          
-      var favViewHeight = (contentHeight - FavSelectorHeight - FAV_MARGIN_HEIGHT) * 0.95;
-      $("favView").setStyle({"height": favViewHeight});
-    }
   },
 
   getPageMeasurement: function() {
@@ -26110,11 +26126,9 @@ StartPage = Singleton.create(Page, {
     }
   },
   
-  /**
-   * Berechnet die Größe der Startseite für den Gast
-   **/
-  resizeGuest: function() { }   
-  
+  showDutyCycle: function() {
+    showDutyCycle();
+  }
   
 });
 ControlPage = new function()
@@ -26129,12 +26143,12 @@ ControlPage = new function()
   
   this.leave = function()
   {
+    // open the systemLanguage config dialog if no systemLanguage was selected yet
+    if (homematic('CCU.getSystemLanguage') === 'none') {
+      CreatePopup(ID_SYSTEM_LANGUAGE_CONFIG);
+    }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlRoomsPage = new function()
 {
@@ -26150,10 +26164,6 @@ ControlRoomsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlFunctionsPage = new function()
 {
@@ -26169,10 +26179,6 @@ ControlFunctionsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlFavoritesPage = new function()
 {
@@ -26189,10 +26195,6 @@ ControlFavoritesPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlFavoritePage = new function()
 {
@@ -26208,10 +26210,6 @@ ControlFavoritePage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlDevicesPage = new function()
 {
@@ -26227,10 +26225,6 @@ ControlDevicesPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlProgramsPage = new function()
 {
@@ -26246,10 +26240,6 @@ ControlProgramsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlVariablesPage = new function()
 {
@@ -26265,10 +26255,6 @@ ControlVariablesPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ControlProtocolPage = new function()
 {
@@ -26284,10 +26270,6 @@ ControlProtocolPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 LinksAndProgramsPage = new function()
 {
@@ -26303,10 +26285,6 @@ LinksAndProgramsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 LinkListPage = new function()
 {
@@ -26331,10 +26309,6 @@ LinkListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ProgramListPage = new function()
 {
@@ -26350,10 +26324,6 @@ ProgramListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 LinkEditProfilePage = new function()
 {
@@ -26374,10 +26344,6 @@ LinkEditProfilePage = new function()
   {
   };
   
-  this.resize = function()
-  {
-  };
-  
 };AlarmMessagesPage = new function()
 {
   
@@ -26393,10 +26359,6 @@ LinkEditProfilePage = new function()
     if ($("msgAlarms")) { $("msgAlarms").removeClassName("Messages_Selected"); }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 ServiceMessagesPage = new function()
 {
@@ -26413,10 +26375,6 @@ ServiceMessagesPage = new function()
     if ($("msgServices")) { $("msgServices").removeClassName("Messages_Selected"); }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 HelpPage = new function()
 {
@@ -26433,10 +26391,6 @@ HelpPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 adminFirstStartup = new function()
 {
@@ -26450,10 +26404,6 @@ adminFirstStartup = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 userFirstStartup = new function()
 {
@@ -26467,10 +26417,6 @@ userFirstStartup = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 /**
  * devielistpage.js
@@ -27209,10 +27155,6 @@ if (PLATFORM == "Central") {
   {
   };
 
-  this.resize = function()
-  {
-  };
-
  }();
 
 }
@@ -27230,10 +27172,6 @@ FavoriteListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 FunctionListPage = new function()
 {
@@ -27248,10 +27186,6 @@ FunctionListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 NewDeviceListPage = new function()
 {
@@ -27275,10 +27209,6 @@ NewDeviceListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 RoomListPage = new function()
 {
@@ -27294,10 +27224,6 @@ RoomListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 SystemConfigPageUser = new function()
 {
@@ -27313,10 +27239,6 @@ SystemConfigPageUser = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 SystemConfigPage = new function()
 {
@@ -27332,10 +27254,6 @@ SystemConfigPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 UserAdminPageUser = new function()
 {
@@ -27351,10 +27269,6 @@ UserAdminPageUser = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 UserAdminPageAdmin = new function()
 {
@@ -27370,10 +27284,6 @@ UserAdminPageAdmin = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 SystemControlPage = new function()
 {
@@ -27389,10 +27299,6 @@ SystemControlPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 CreateDiagramPage = new function()
 {
@@ -27431,10 +27337,6 @@ CreateDiagramPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 CreateDiagramPage = new function()
 {
@@ -27473,10 +27375,6 @@ CreateDiagramPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 DiagramListPage = new function()
 {
@@ -27503,10 +27401,6 @@ DiagramListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 CreateGroupPage = new function()
 {
@@ -27535,10 +27429,6 @@ CreateGroupPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 CreateTestPage = new function()
 {
@@ -27565,10 +27455,6 @@ CreateTestPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 DeviceFirmware = new function()
 {
@@ -27595,10 +27481,6 @@ DeviceFirmware = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 function compare(a,b) {
   if (a.name < b.name)
@@ -27649,10 +27531,6 @@ DeviceFirmwareInformation = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-
 }();VariableListPage = new function()
 {
   var MAINMENU_ID = "MAINMENU_OPTIONS";
@@ -27667,10 +27545,6 @@ DeviceFirmwareInformation = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 DeviceConfigPage = new function()
 {
@@ -27704,10 +27578,6 @@ DeviceConfigPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
 getGatewayStatus = function()
 {
@@ -28037,10 +27907,6 @@ BidcosRfPage =
   {
     this.destroy();
     InterfaceMonitor.start();
-  },
-  
-  resize: function()
-  {
   },
   
   onSourceChanged: function()
@@ -31239,6 +31105,7 @@ ise.Programs.prototype = {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "SetBreakOnRestart";';
+    pb += 'string rid = "'+rid+'";';
     pb += 'string id = "'+id+'";';
     pb += 'string value = "'+value+'";';
     var opts =
@@ -31247,11 +31114,29 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadRule(rid);
+        isePrograms.ReloadRuleAfterChange(rid, t.responseText);
       }
     };
     new Ajax.Request(url,opts);    
     if(dbg)alert(pb);
+  },
+
+  // Reloads rule rid after a change. When the server answers
+  // "removedRule:<parent id>", the empty ELSE rule rid was removed:
+  // drop it from the page and reload its parent rule instead.
+  ReloadRuleAfterChange: function(rid, responseText)
+  {
+    var result = responseText.strip();
+    if (result.indexOf("removedRule:") === 0)
+    {
+      var removedElement = $("rule"+rid);
+      if (removedElement) { removedElement.remove(); }
+      ReloadRule(result.substring("removedRule:".length));
+    }
+    else
+    {
+      ReloadRule(rid);
+    }
   },
 
   SetActive: function( id, value )
@@ -31457,6 +31342,7 @@ ise.Programs.prototype = {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "DeleteSingleDestination";';
+    pb += 'string rid = "'+rid+'";';
     pb += 'string did = "'+did+'";';
     pb += 'string sid = "'+sid+'";';
     var opts =
@@ -31465,7 +31351,7 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadRule(rid);
+        isePrograms.ReloadRuleAfterChange(rid, t.responseText);
       }
     };
     new Ajax.Request(url,opts);
@@ -32397,6 +32283,9 @@ iseMessageBox.prototype =
   },
   initPopup: function(id)
   {
+    var screenWidth  = WebUI.getWidth();
+    var screenHeight = WebUI.getHeight();
+
     switch(this.id)
     {
       case ID_ROOMS:
@@ -32462,9 +32351,10 @@ iseMessageBox.prototype =
         break;
       case ID_EDIT_SCRIPT:
         this.setTitle( translateKey("dialogEditScript") /*"Skript bearbeiten"*/ );
+        this.setWidth(parseInt(screenWidth * 0.8));
+        this.setHeight(parseInt(screenHeight * 0.8));
         this.addToPostBody( 'string sdid = "'+this.type+'";' );
-        //this.setWidth(800);
-        this.setWidth('auto');
+        this.addToPostBody( 'string frameHeight = "'+this.height+'";' );
         this.setFile( "/pages/msg/editScript.htm" );
         break;
       case ID_CONTROL_TEST:
@@ -32540,7 +32430,12 @@ iseMessageBox.prototype =
         this.setWidth(800);
         this.setFile( "/pages/msg/autoLoginConfig.htm" );
         break;
-       case ID_CHOOSE_LED:
+      case ID_SYSTEM_LANGUAGE_CONFIG:
+        this.setTitle( translateKey("dialogConfigSystemLanguage") /*"Systemsprache waehlen - Konfiguration" */);
+        this.setWidth(800);
+        this.setFile( "/pages/msg/systemLanguageConfig.htm" );
+        break;
+        case ID_CHOOSE_LED:
         this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
         this.addToPostBody( 'string type = "'+this.type+'";' );
         this.setWidth(800);
@@ -32572,7 +32467,9 @@ iseMessageBox.prototype =
     }
 
     if (this.draggable) {
-      jQuery("#messagebox").draggable();
+      jQuery("#messagebox").draggable({
+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
+      });
     }
 
   },
@@ -32732,7 +32629,12 @@ iseMessageBox.prototype =
       onComplete: function(trans)
       {
         //$("messagebox").style.width = t.width + "px";
-        jQuery("#messagebox").width(t.width + "px");
+        if(typeof t.width !== "undefined") {
+          jQuery("#messagebox").width(t.width + "px");
+        }
+        if(typeof t.height !== "undefined") {
+          jQuery("#messagebox").height(t.height + "px");
+        }
         jQuery("#tableContainer").css("max-height",(parseInt(jQuery(window).height() * 0.75)) + "px");
         centerMessageBox();
         iseRefr(true);
@@ -33360,6 +33262,7 @@ ID_CHOOSE_LED            = 1022;
 ID_SET_OUCFM_MODE        = 1023;
 ID_SET_STATUS_DISPLAY    = 1024;
 ID_BIDCOS_INTERFACE = 1025;
+ID_SYSTEM_LANGUAGE_CONFIG = 2001;
 
 nUA = navigator.userAgent;
 NAV_IE = false;

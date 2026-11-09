@@ -388,9 +388,9 @@ proc action_put_page {} {
             }
             table_row {
               table_data {width="20"} {}
-              table_data {colspan="2"} {
+              table_data {align="left"} {colspan="2"} {
                 form "/config/fileupload.ccc?sid=$sid&action=cert_upload&url=$env(SCRIPT_NAME)" name=cert_form {target=cert_upload_iframe} enctype=multipart/form-data method=post {
-                  file_button cert_file size=30 maxlength=1000000
+                  file_button cert_file size=30 maxlength=1000000 accept='.pem,.crt'
                 }
                 puts {<iframe name="cert_upload_iframe" style="display: none;"></iframe>}
               }
@@ -401,17 +401,14 @@ proc action_put_page {} {
                 #puts "Schritt 3: Zertifikat auf Zentrale laden"
                 puts "\${dialogSettingsNetworkCertificateLblStep3}"
               }
-              table_data {align="right"} {
+            }
+            table_row {
+              table_data {width="20"} {}
+              table_data {colspan="2" align="left"} {
                 division {class="popupControls CLASS21107"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS21108"} {onClick="document.cert_form.submit();"} {
-                          #puts "Hochladen"
-                          puts "\${dialogSettingsNetworkCertificateLblUpload}"
-                        }
-                      }
-                    }
+                  division {class="CLASS21108" style="width: 150px; margin-left: 20px;"} {onClick="document.cert_form.submit();"} {
+                    #puts "Hochladen"
+                    puts "\${dialogSettingsNetworkCertificateLblUpload}"
                   }
                 }
               }
