@@ -60,8 +60,12 @@ dtoverlay=rpi-rf-mod
 # make sure gpio12 is set as input and pull_up
 gpio=12=ip,pu
 
-# light the RPI-RF-MOD's LED yellow (red+green) from the firmware on,
-# until the kernel's LED driver takes over
+# light the RPI-RF-MOD's status LED yellow from power-on: the firmware
+# drives red (16) and green (20) high and blue (21) low while it reads this
+# file, about two seconds after reset, instead of the LED staying dark until
+# S02InitRTC lights it (some 20 s on a Pi 3). The kernel keeps the yellow:
+# the rpi-rf-mod overlay's pinctrl only sets function and pull, and its PWM
+# LEDs start red and green on (default-state "on").
 gpio=16,20=op,dh
 gpio=21=op,dl
 
