@@ -50,8 +50,9 @@ fdt get value bootargs /chosen bootargs
 
 # set bootargs; cgroup_enable=memory comes after the firmware's own
 # ${bootargs} so that the memory cgroup controller is enabled even when
-# the firmware passes cgroup_disable=memory
-setenv bootargs "dwc_otg.lpm_enable=0 sdhci_bcm2708.enable_llm=0 console=${console} root=${rootfs_str} ro rootfstype=ext4 fsck.repair=yes rootwait rootdelay=5 consoleblank=120 logo.nologo quiet loglevel=${loglevel} init_on_alloc=1 init_on_free=1 slab_nomerge iomem=relaxed net.ifnames=0 usb-storage.quirks=${usbstoragequirks} ${extraargs} ${bootargs} cgroup_enable=memory"
+# the firmware passes cgroup_disable=memory. ${extraargs} comes last so
+# that a user can still turn it off with extraargs=cgroup_disable=memory
+setenv bootargs "dwc_otg.lpm_enable=0 sdhci_bcm2708.enable_llm=0 console=${console} root=${rootfs_str} ro rootfstype=ext4 fsck.repair=yes rootwait rootdelay=5 consoleblank=120 logo.nologo quiet loglevel=${loglevel} init_on_alloc=1 init_on_free=1 slab_nomerge iomem=relaxed net.ifnames=0 usb-storage.quirks=${usbstoragequirks} ${bootargs} cgroup_enable=memory ${extraargs}"
 
 # load kernel
 load ${devtype} ${devnum}:${kernelfs} ${kernel_addr_r} ${kernel_img}
