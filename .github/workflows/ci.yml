@@ -113,6 +113,8 @@ jobs:
           python3 scripts/testcases/build/test_gateway_update.py -v
           python3 scripts/testcases/build/test_component_selection.py -v
           python3 scripts/testcases/build/test_rf_factory_reset.py -v
+          python3 scripts/testcases/build/test_led_lifecycle.py -v
+          python3 scripts/testcases/build/test_rf_mod_pwm_led.py -v
 
       - name: Check Package consistency
         run: |

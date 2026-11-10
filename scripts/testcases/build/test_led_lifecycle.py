@@ -171,6 +171,58 @@ else:
             daemon.write_text("#!/bin/sh\nexit 0\n")
             daemon.chmod(0o755)
 
+    def fake_device(self, name, driver):
+        """A platform device bound to driver, with writable driver files."""
+        drivers = self.root / "sys/bus/platform/drivers"
+        (drivers / driver).mkdir(parents=True, exist_ok=True)
+        (drivers / driver / "unbind").write_text("")
+        device = self.root / "sys/devices/platform" / name
+        device.mkdir(parents=True)
+        (device / "driver").symlink_to(drivers / driver)
+        (device / "driver_override").write_text("")
+        return device
+
+    def run_unbind(self):
+        leds = self.root / "sys/class/leds"
+        helper = self.root / "unbind-helper"
+        helper.write_text(self.helper.read_text()
+                          .replace("/sys/bus/platform/devices/", str(self.root / "sys/bus/platform/devices") + "/")
+                          .replace("/sys/class/leds/", str(leds) + "/"))
+        subprocess.run(["/bin/sh", str(helper), "unbind-group"], env=self.env, check=True,
+                       capture_output=True, text=True)
+
+    def link_leds(self, device):
+        for color in ("red", "green", "blue"):
+            led = self.root / "sys/class/leds" / ("rpi_rf_mod:" + color)
+            led.mkdir(parents=True)
+            (led / "device").symlink_to(device)
+
+    def test_unbind_group_frees_the_pwm_leds_after_the_group(self):
+        group = self.fake_device("multi-led", "leds_group_multicolor")
+        devices = self.root / "sys/bus/platform/devices"
+        devices.mkdir(parents=True)
+        (devices / "multi-led").symlink_to(group)
+        pwm = self.fake_device("rpi-rf-mod-leds", "leds_pwm")
+        self.link_leds(pwm)
+        self.run_unbind()
+        drivers = self.root / "sys/bus/platform/drivers"
+        self.assertEqual((drivers / "leds_group_multicolor/unbind").read_text(), "multi-led\n")
+        self.assertEqual((group / "driver_override").read_text(), "openccu-remote-led\n")
+        self.assertEqual((drivers / "leds_pwm/unbind").read_text(), "rpi-rf-mod-leds\n")
+        self.assertEqual((pwm / "driver_override").read_text(), "openccu-remote-led\n")
+
+    def test_unbind_group_leaves_gpio_leds_to_the_init_scripts(self):
+        # gpio-leds also drives board LEDs; S47InitRFHardware rebinds it.
+        gpio = self.fake_device("leds", "leds-gpio")
+        self.link_leds(gpio)
+        self.run_unbind()
+        self.assertEqual((self.root / "sys/bus/platform/drivers/leds-gpio/unbind").read_text(), "")
+        self.assertEqual((gpio / "driver_override").read_text(), "")
+
+    def test_unbind_group_without_local_leds_does_nothing(self):
+        self.run_unbind()
+        self.assertFalse((self.root / "sys/bus/platform/drivers").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

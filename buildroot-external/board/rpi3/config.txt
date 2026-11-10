@@ -60,6 +60,11 @@ dtoverlay=rpi-rf-mod
 # make sure gpio12 is set as input and pull_up
 gpio=12=ip,pu
 
+# light the RPI-RF-MOD's LED yellow (red+green) from the firmware on,
+# until the kernel's LED driver takes over
+gpio=16,20=op,dh
+gpio=21=op,dl
+
 # use fixed names for start.elf/fixup.dat
 start_file=start.elf
 fixup_file=fixup.dat
