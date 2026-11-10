@@ -24,7 +24,8 @@ class FactoryResetTest(unittest.TestCase):
             if updater:
                 jar.touch()
             source = SCRIPT.read_text()
-            start = source.index("query_rf_parameters() {")
+            # Include probe_radio_module, the helper the loop calls for each node.
+            start = source.index("probe_radio_module() {")
             # Stop after marker cleanup, before unrelated LED-driver setup.
             end = source.index("\n  #####################################", start)
             query = source[start:end] + "\n}\n"

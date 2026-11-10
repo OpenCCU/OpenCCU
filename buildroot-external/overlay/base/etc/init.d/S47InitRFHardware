@@ -163,6 +163,49 @@ reset_rf_hardware() {
   sleep 2
 }
 
+# the limit in seconds for probing a radio module on the GPIO header (see
+# probe_radio_module): /etc/config/rf_gpio_probe_timeout if it holds a number,
+# else 6; 0 turns the limit off
+rf_gpio_probe_timeout() {
+  rt_val=$(head -1 /etc/config/rf_gpio_probe_timeout 2>/dev/null | tr -d '[:space:]')
+  case "${rt_val}" in
+    "" | *[!0-9]*) echo 6 ;;
+    *) echo "${rt_val}" ;;
+  esac
+}
+
+# read a radio module's parameters from /dev/<node> into RF_INFO. With
+# RF_GPIO_PROBE_TIMEOUT set (seconds; 0: no limit and no second pass), a node
+# on the GPIO header (device_type GPIO@...) is probed with that limit in the
+# first pass: the header's raw-uart node exists whether or not a module is
+# fitted, and detect_radio_module waits about 18 s on an empty one, while a
+# fitted module answers within about 3 s. When the first pass found no module
+# at all, query_rf_parameters probes again: the other raw-uart nodes (a USB
+# stick probed right after a cut probe can answer "did not respond correctly"
+# once), then the GPIO nodes that ran into the limit, without it and only
+# while nothing was found - so a slow module on the header is not lost.
+probe_radio_module() {
+  PROBE_GPIO=false
+  grep -q '^GPIO@' "/sys/class/raw-uart/${1}/device_type" 2>/dev/null && PROBE_GPIO=true
+  if [[ -n "${RF_GPIO_PROBE_TIMEOUT}" ]] && [[ "${RF_GPIO_PROBE_TIMEOUT}" != "0" ]]; then
+    if [[ "${RF_PROBE_PASS}" == "short" ]] && [[ "${PROBE_GPIO}" == "true" ]]; then
+      RF_INFO=$(/usr/bin/timeout "${RF_GPIO_PROBE_TIMEOUT}" /bin/detect_radio_module "/dev/${1}")
+      PROBE_RC=$?
+      # coreutils' timeout exits with 124, busybox's with the signal's status (143)
+      if [[ ${PROBE_RC} -eq 124 ]] || [[ ${PROBE_RC} -gt 128 ]]; then
+        RF_GPIO_TIMED_OUT="${RF_GPIO_TIMED_OUT} ${1}"
+      fi
+      return ${PROBE_RC}
+    elif [[ "${RF_PROBE_PASS}" == "short" ]] && [[ -r "/sys/class/raw-uart/${1}/device_type" ]]; then
+      RF_RETRY_NODES="${RF_RETRY_NODES} ${1}"
+    elif [[ "${RF_PROBE_PASS}" == "full" ]] && [[ "${PROBE_GPIO}" == "true" ]] &&
+         { [[ -n "${HM_HMRF_DEV}" ]] || [[ -n "${HM_HMIP_DEV}" ]]; }; then
+      return 1
+    fi
+  fi
+  RF_INFO=$(/bin/detect_radio_module "/dev/${1}")
+}
+
 # function to read out all relevant rf module parameters (serial, firmware
 # version, rf-addresses, sgtin, etc.)
 query_rf_parameters() {
@@ -171,8 +214,14 @@ query_rf_parameters() {
   RF_COPRO_RESET_PERFORMED=false
 
   # walk through our recognized device nodes and query for
-  # all rf module relevant parameters
-  for dev in ${RF_DEVNODES}; do
+  # all rf module relevant parameters (a second pass probes the GPIO
+  # nodes that ran into RF_GPIO_PROBE_TIMEOUT, see probe_radio_module)
+  RF_PROBE_PASS=short
+  RF_GPIO_TIMED_OUT=
+  RF_RETRY_NODES=
+  RF_PROBE_NODES=${RF_DEVNODES}
+  while [[ -n "${RF_PROBE_NODES}" ]]; do
+  for dev in ${RF_PROBE_NODES}; do
 
     echo -n "."
 
@@ -205,7 +254,7 @@ query_rf_parameters() {
     # use detect_radio_module to retrieve all relevant info from
     # the rf-module
     if [[ -c /dev/${dev} ]]; then
-      if RF_INFO=$(/bin/detect_radio_module "/dev/${dev}"); then
+      if probe_radio_module "${dev}"; then
 
         echo -n "."
 
@@ -307,6 +356,23 @@ query_rf_parameters() {
       fi
     fi
 
+  done
+
+  # no module found at all (no USB stick either): probe the other raw-uart
+  # nodes and the GPIO nodes that timed out once more, after another reset
+  RF_PROBE_NODES=
+  if [[ "${RF_PROBE_PASS}" == "short" ]] &&
+     [[ -z "${HM_HMRF_DEV}" ]] && [[ -z "${HM_HMIP_DEV}" ]]; then
+    RF_PROBE_NODES=$(echo "${RF_RETRY_NODES} ${RF_GPIO_TIMED_OUT}" | xargs)
+    for dev in ${RF_PROBE_NODES}; do
+      echo -n "."
+      if [[ -e "/sys/class/raw-uart/${dev}/reset_radio_module" ]]; then
+        echo 1 >"/sys/class/raw-uart/${dev}/reset_radio_module" 2>/dev/null
+      fi
+    done
+    [[ -n "${RF_PROBE_NODES}" ]] && sleep 2
+  fi
+  RF_PROBE_PASS=full
   done
 
   # cleanup coprocessor status file
@@ -436,6 +502,8 @@ start() {
 
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
+
+  RF_GPIO_PROBE_TIMEOUT=$(rf_gpio_probe_timeout)
 
   identify_rf_hardware
   reset_rf_hardware
