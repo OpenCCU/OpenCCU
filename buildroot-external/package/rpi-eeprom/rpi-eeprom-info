@@ -79,16 +79,20 @@ esac
 
 # an update only when the image is newer than the running bootloader
 # (rpi-eeprom-update's own rule), so a newer bootloader is never
-# reported as outdated
-if [ "${BOOTLOADER_UPDATE_VERSION:-0}" -gt "${BOOTLOADER_CURRENT_VERSION:-0}" ] 2>/dev/null; then
+# reported as outdated. "up to date" needs an equal timestamp; a value
+# the shell cannot compare (e.g. out of range) fails.
+if [ "${BOOTLOADER_UPDATE_VERSION}" -gt "${BOOTLOADER_CURRENT_VERSION}" ] 2>/dev/null; then
   echo "BOOTLOADER: update available"
   res=${EXIT_UPDATE_REQUIRED}
-elif [ "${BOOTLOADER_UPDATE_VERSION:-0}" -lt "${BOOTLOADER_CURRENT_VERSION:-0}" ] 2>/dev/null; then
+elif [ "${BOOTLOADER_UPDATE_VERSION}" -lt "${BOOTLOADER_CURRENT_VERSION}" ] 2>/dev/null; then
   echo "BOOTLOADER: up to date (the running bootloader is newer than the image's)"
   res=${EXIT_SUCCESS}
-else
+elif [ "${BOOTLOADER_UPDATE_VERSION}" -eq "${BOOTLOADER_CURRENT_VERSION}" ] 2>/dev/null; then
   echo "BOOTLOADER: up to date"
   res=${EXIT_SUCCESS}
+else
+  echo "Cannot compare the bootloader build-timestamps (${BOOTLOADER_CURRENT_VERSION}, ${BOOTLOADER_UPDATE_VERSION})" >&2
+  exit ${EXIT_FAILED}
 fi
 
 echo "   CURRENT: $(date -u "-d@${BOOTLOADER_CURRENT_VERSION}") (${BOOTLOADER_CURRENT_VERSION})"
