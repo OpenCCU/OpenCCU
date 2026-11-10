@@ -5,11 +5,23 @@
 #
 
 LOGLEVEL_RFD=5
+LOGLEVEL_MULTIMACD=
 CFG_TEMPLATE_DIR=/etc/config_templates
 PIDFILE=/var/run/multimacd.pid
 STEPS=10
 
 [[ -r /var/hm_mode ]] && . /var/hm_mode
+
+# the level multimacd runs with: LOGLEVEL_MULTIMACD from /etc/config/syslog
+# when it is one of eQ-3's levels (0-6), otherwise rfd's - which was
+# multimacd's only level before, so a file without the key (or a restored
+# backup) keeps the old behaviour
+multimacdLogLevel() {
+  case "${LOGLEVEL_MULTIMACD}" in
+    [0-6]) echo "${LOGLEVEL_MULTIMACD}" ;;
+    *) echo "${LOGLEVEL_RFD}" ;;
+  esac
+}
 
 init() {
   # make sure /var/etc/multimacd.conf contains the correct
@@ -48,7 +60,7 @@ waitStartupComplete() {
         # restart multimacd
         start-stop-daemon -K -q -p ${PIDFILE}
         sleep 2
-        start-stop-daemon -d / -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}
+        start-stop-daemon -d / -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l "$(multimacdLogLevel)"
       else
         # wait until /dev/mmd_* devices are accessible
         for j in $(seq 1 ${STEPS}); do
@@ -109,7 +121,7 @@ start() {
 
         # start multimacd with nice level -15 to increase
         # process priority
-        start-stop-daemon -d / -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l ${LOGLEVEL_RFD}
+        start-stop-daemon -d / -S -N -15 -q -b -m -p ${PIDFILE} --exec /bin/multimacd -- -f /var/etc/multimacd.conf -l "$(multimacdLogLevel)"
         waitStartupComplete
       else
         echo "ERROR: /dev/eq3loop missing"
