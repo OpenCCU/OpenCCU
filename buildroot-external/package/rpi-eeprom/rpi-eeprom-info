@@ -69,10 +69,13 @@ fi
 # Prefer device-tree to vcgencmd
 BOOTLOADER_CURRENT_VERSION=$(printf "%d" "0x$(od "${DT_BOOTLOADER_TS}" -v -An -t x1 | tr -d ' ' )")
 BOOTLOADER_UPDATE_VERSION=$(strings "${BOOTLOADER_UPDATE_IMAGE}" | grep BUILD_TIMESTAMP | sed 's/.*=//g')
-if [ -z "${BOOTLOADER_UPDATE_VERSION}" ]; then
-  echo "Bootloader build-timestamp not found in ${BOOTLOADER_UPDATE_IMAGE}" >&2
-  exit ${EXIT_FAILED}
-fi
+# exactly one decimal number, else the comparison below cannot be trusted
+case "${BOOTLOADER_UPDATE_VERSION}" in
+  "" | *[!0-9]*)
+    echo "No valid bootloader build-timestamp found in ${BOOTLOADER_UPDATE_IMAGE}" >&2
+    exit ${EXIT_FAILED}
+    ;;
+esac
 
 # an update only when the image is newer than the running bootloader
 # (rpi-eeprom-update's own rule), so a newer bootloader is never
