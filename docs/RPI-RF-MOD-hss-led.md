@@ -1,8 +1,11 @@
 # LED control with hss_led and hss_ledctl
 
 The LED controller and `hss_ledctl` implementation are part of
-[OpenCCU-Base PR #59](https://github.com/OpenCCU/OpenCCU-Base/pull/59),
-pinned by OpenCCU at `48cdf839b04b7b2820163c784f11a655478d3e3e`.
+[OpenCCU-Base PR #59](https://github.com/OpenCCU/OpenCCU-Base/pull/59);
+free colors and a brightness for the radio LED were added in
+[OpenCCU-Base PR #350](https://github.com/OpenCCU/OpenCCU-Base/pull/350).
+OpenCCU pins the Base revision in `OPENCCU_BASE_VERSION` of
+`buildroot-external/package/openccu-base/openccu-base.mk`.
 They replace the experimental `rpi-rf-mod-ledd` with the existing `hss_led`
 service.
 
@@ -121,6 +124,9 @@ hss_ledctl --led rpi-rf-mod alternate blue red slow
 hss_ledctl --led rpi-rf-mod alternate green yellow 250 750
 hss_ledctl --led rpi-rf-mod magenta fast
 hss_ledctl --led rpi-rf-mod green
+hss_ledctl --led rpi-rf-mod '#ff8000' slow
+hss_ledctl --led rpi-rf-mod alternate '#0040ff' red fast
+hss_ledctl --led rpi-rf-mod brightness 30
 hss_ledctl --led rpi-rf-mod release
 hss_ledctl --led rpi-rf-mod status
 /etc/init.d/S00hss_led restart
@@ -133,6 +139,29 @@ they do not stop the daemon. Acknowledgment confirms acceptance of the command;
 `/etc/config/disableLED` exists ("LED-Nutzung (Funkmodul)" disabled in the WebUI):
 the radio LED then stays off, manual overrides included, although commands are
 still accepted.
+
+### Colors and brightness
+
+Besides the eight names (`off`, `red`, `green`, `yellow`, `blue`, `magenta`,
+`cyan`, `white`) every radio color accepts `'#RRGGBB'`, also for `alternate`.
+Quote it: the shell starts a comment with `#`. `brightness PERCENT` (1-100)
+dims all radio patterns, automatic status included. It is a setting like
+`disableLED`: `hss_ledctl` writes it to `/etc/config/hss_led_brightness`
+(root only), it survives reboots, and the daemon picks up a change within
+250 ms. Remove the file or set 100 for full brightness.
+
+Colors are only mixed and dimmed where the RGB group has levels
+(`max_brightness` above 1), which the software PWM of the Raspberry Pi and
+Tinkerboard 2 provides (see below). Values and brightness follow a gamma curve
+of 2.2, so `#808080` looks about half as bright as `white`, and a lit channel
+keeps at least 3 % of the maximum against PWM shimmer. Full values at 100 %
+give the same output as on/off LEDs. LEDs without levels (HB-RF adapters, the
+Tinkerboard, legacy component LEDs) light a channel from 128 on: they show the
+nearest named color and ignore the brightness.
+
+`status` reports `brightness=N` and `dimmable=0|1` after the pattern. The
+pattern shows a named color as its number 0-7 (bit 0 red, bit 1 green, bit 2
+blue) and any other color as `#rrggbb`, as in the saved runtime state.
 
 The socket and RGB state now reside in `/run/hss_led/`. The experimental old
 CLI name is not installed as an alias; its stale target-file entry is removed
@@ -170,7 +199,8 @@ overlays drive each LED with the kernel's software PWM (`pwm-gpio`, one
 hrtimer per channel, 4 ms period) through `pwm-leds` with `max-brightness 255`.
 The multicolor group and the component names `rpi_rf_mod:red/green/blue` stay
 as before, so the group reports `max_brightness` 255 instead of 1 and can mix
-colors and dim. `hss_led` still writes the full level for its colors.
+colors and dim. `hss_led` uses this for free colors and its brightness
+setting (see [Colors and brightness](#colors-and-brightness)).
 
 The timer only runs while a channel is between off and full brightness; a
 channel that is off or full is a static GPIO, as with `gpio-leds`. Each dimmed
@@ -264,13 +294,15 @@ OpenCCU includes a test runner for the Base sources using fake sysfs files. Run
 it against the pinned, extracted OpenCCU-Base source tree:
 
 ```sh
-OPENCCU_BASE_SOURCE_DIR="$PWD/build-rpi3/build/openccu-base-48cdf839b04b7b2820163c784f11a655478d3e3e" \
+base=$(sed -n 's/^OPENCCU_BASE_VERSION = //p' buildroot-external/package/openccu-base/openccu-base.mk)
+OPENCCU_BASE_SOURCE_DIR="$PWD/build-rpi3/build/openccu-base-$base" \
   python3 scripts/testcases/build/test_rgb_led.py -v
 ```
 
 The Python runner compiles the actual Base sources; it does not contain a
 second controller implementation. The socket tests cover
-CLI/background operation, overrides, legacy LEDs, hardware replacement, restart,
+CLI/background operation, overrides, free colors and brightness on dimmable,
+on/off and legacy LEDs, hardware replacement, restart,
 a stalled in-process status producer, independent board LEDs, and delayed
 board timer permissions. They explicitly skip when Unix sockets
 are prohibited. The state/backend tests still run in that environment.
