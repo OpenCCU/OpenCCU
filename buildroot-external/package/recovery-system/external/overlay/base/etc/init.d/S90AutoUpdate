@@ -26,9 +26,33 @@ list_install_logs() {
   done | sort -n
 }
 
+# what the recovery system saw of its hardware, appended to the kept install
+# log: whether the network came up (eth0), the USB tree and the end of the
+# kernel log, so that an update that ran without a network or without its
+# USB stick can be explained afterwards
+recovery_diagnostics() {
+  local d
+
+  echo "--- recovery system diagnostics ---"
+  if [[ -e /sys/class/net/eth0 ]]; then
+    echo "eth0: operstate $(cat /sys/class/net/eth0/operstate 2>/dev/null), carrier $(cat /sys/class/net/eth0/carrier 2>/dev/null)"
+  else
+    echo "eth0: missing"
+  fi
+  echo "usb devices:"
+  for d in /sys/bus/usb/devices/*; do
+    [[ -f "${d}/idVendor" ]] || continue
+    echo "  ${d##*/} $(cat "${d}/idVendor" 2>/dev/null):$(cat "${d}/idProduct" 2>/dev/null) $(cat "${d}/product" 2>/dev/null)"
+  done
+  echo "kernel log (the last 150 lines):"
+  dmesg 2>/dev/null | tail -n 150
+  return 0
+}
+
 # keep the install log of an unattended update for the system that boots
 # next: a copy of /tmp/fwinstall.log on the userfs (mounted read-write by
-# the caller), named <sequence number>_<UTC time>.log, the newest five kept.
+# the caller) with the recovery_diagnostics appended, named
+# <sequence number>_<UTC time>.log, the newest five kept.
 # The order comes from the sequence number, not from the time: without an RTC
 # and without network the recovery runs with a clock near 1970, and such a
 # name would neither be unique nor sort after the older logs. Best effort:
@@ -45,8 +69,11 @@ save_install_log() {
 
     # copy under a name the listing does not match, and rename only a complete
     # copy: a copy cut short by a full userfs must neither count as the newest
-    # log nor make the rotation below delete an older, complete one
-    if cp /tmp/fwinstall.log "${log}.tmp" 2>/dev/null && mv -f "${log}.tmp" "${log}" 2>/dev/null; then
+    # log nor make the rotation below delete an older, complete one. The
+    # diagnostics are best effort and do not decide whether the log is kept.
+    if cp /tmp/fwinstall.log "${log}.tmp" 2>/dev/null &&
+      { recovery_diagnostics >>"${log}.tmp" 2>/dev/null || true; } &&
+      mv -f "${log}.tmp" "${log}" 2>/dev/null; then
       chmod 0644 "${log}" 2>/dev/null
 
       # drop all but the newest five, oldest sequence number first
@@ -66,7 +93,7 @@ save_install_log() {
 # after an unattended update, whichever way it ended: the userfs read-write (the
 # update may have left it unmounted), both boot markers gone so that the next boot
 # is a normal one, the install log kept, the userfs read-only again. The reason of
-# a failure is in the log's last line.
+# a failure is in the install log's last line, before the appended diagnostics.
 finish_update() {
   mount -o rw,remount /userfs 2>/dev/null || mount -o rw /userfs 2>/dev/null
   rm -f /usr/local/.recoveryMode
