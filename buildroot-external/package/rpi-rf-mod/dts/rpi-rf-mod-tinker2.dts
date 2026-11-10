@@ -42,10 +42,15 @@
             rpi_rf_mod {
                 rpi_rf_mod_pins: rpi-rf-mod-pins {
                     rockchip,pins = <3 24 0 &pcfg_pull_none>,  // GPIO3_D0 (pin 35): reset
-                                    <4 18 0 &pcfg_pull_up>,    // GPIO4_C2 (pin 32): button
-                                    <2 18 0 &pcfg_output_low>, // GPIO2_C2 (pin 36): red LED
-                                    <3 27 0 &pcfg_output_low>, // GPIO3_D3 (pin 38): green LED
-                                    <3 31 0 &pcfg_output_low>; // GPIO3_D7 (pin 40): blue LED
+                                    <4 18 0 &pcfg_pull_up>;    // GPIO4_C2 (pin 32): button
+                };
+                // GPIO function only: pwm-gpio sets the direction and level.
+                // An output-low setting here would switch a lit LED off
+                // whenever this state is applied after the LED driver.
+                rpi_rf_mod_led_pins: rpi-rf-mod-led-pins {
+                    rockchip,pins = <2 18 0 &pcfg_pull_none>,  // GPIO2_C2 (pin 36): red LED
+                                    <3 27 0 &pcfg_pull_none>,  // GPIO3_D3 (pin 38): green LED
+                                    <3 31 0 &pcfg_pull_none>;  // GPIO3_D7 (pin 40): blue LED
                 };
             };
             hm_mod_rpi_pcb {
@@ -56,33 +61,69 @@
         };
     };
 
-    // fragment to define dedicated led nodes for
-    // each separate led supported by the RPI-RF-MOD
+    // fragment to keep the reset/button pin setup on the board's gpio-leds
+    // node, where it was applied before
     fragment@1 {
         target-path = "/gpio-leds";
         __overlay__ {
             pinctrl-names = "default";
             pinctrl-0 = <&rpi_rf_mod_pins>, <&hm_mod_rpi_pcb_pins>;
-            rpi_rf_mod_red: rpi-rf-mod-red {
-                label = "rpi_rf_mod:red";
-                color = <1>; // LED_COLOR_ID_RED
+        };
+    };
+
+    // fragment to drive each LED of the RPI-RF-MOD by software PWM (pwm-gpio,
+    // one hrtimer per channel) so that the multi-led group above can mix colors
+    // and dim (max-brightness 255). The timer only runs for levels between off
+    // and full: full colors keep the GPIO static as before. The labels (sysfs
+    // names) are unchanged. Period 4 ms (250 Hz). Red and green start "on" to
+    // show yellow from the driver's probe ("keep" cannot work: pwm-gpio has no
+    // state to read before its first apply).
+    fragment@6 {
+        target-path = "/";
+        __overlay__ {
+            rpi_rf_mod_pwm_red: rpi-rf-mod-pwm-red {
+                compatible = "pwm-gpio";
+                #pwm-cells = <3>;
                 gpios = <&gpio2 18 0>;
-                default-state = "keep";
-                linux,default-trigger = "none";
             };
-            rpi_rf_mod_green: rpi-rf-mod-green {
-                label = "rpi_rf_mod:green";
-                color = <2>; // LED_COLOR_ID_GREEN
+            rpi_rf_mod_pwm_green: rpi-rf-mod-pwm-green {
+                compatible = "pwm-gpio";
+                #pwm-cells = <3>;
                 gpios = <&gpio3 27 0>;
-                default-state = "keep";
-                linux,default-trigger = "none";
             };
-            rpi_rf_mod_blue: rpi-rf-mod-blue {
-                label = "rpi_rf_mod:blue";
-                color = <3>; // LED_COLOR_ID_BLUE
+            rpi_rf_mod_pwm_blue: rpi-rf-mod-pwm-blue {
+                compatible = "pwm-gpio";
+                #pwm-cells = <3>;
                 gpios = <&gpio3 31 0>;
-                default-state = "keep";
-                linux,default-trigger = "none";
+            };
+            rpi-rf-mod-leds {
+                compatible = "pwm-leds";
+                pinctrl-names = "default";
+                pinctrl-0 = <&rpi_rf_mod_led_pins>;
+                rpi_rf_mod_red: led-red {
+                    label = "rpi_rf_mod:red";
+                    color = <1>; // LED_COLOR_ID_RED
+                    pwms = <&rpi_rf_mod_pwm_red 0 4000000 0>;
+                    max-brightness = <255>;
+                    default-state = "on";
+                    linux,default-trigger = "none";
+                };
+                rpi_rf_mod_green: led-green {
+                    label = "rpi_rf_mod:green";
+                    color = <2>; // LED_COLOR_ID_GREEN
+                    pwms = <&rpi_rf_mod_pwm_green 0 4000000 0>;
+                    max-brightness = <255>;
+                    default-state = "on";
+                    linux,default-trigger = "none";
+                };
+                rpi_rf_mod_blue: led-blue {
+                    label = "rpi_rf_mod:blue";
+                    color = <3>; // LED_COLOR_ID_BLUE
+                    pwms = <&rpi_rf_mod_pwm_blue 0 4000000 0>;
+                    max-brightness = <255>;
+                    default-state = "off";
+                    linux,default-trigger = "none";
+                };
             };
         };
     };
@@ -121,7 +162,7 @@
     };
 
     // we have to disable i2s0 on the Tinkerboard 2 or
-    // otherwise the gpio-leds cannot use the pins for the RPI-RF-MOD
+    // otherwise the LED drivers cannot use the pins for the RPI-RF-MOD
     // (I2S0 8ch bus uses GPIO3_D0-D7 which conflicts with the RF-MOD GPIOs)
     fragment@4 {
         target = <&i2s0>;

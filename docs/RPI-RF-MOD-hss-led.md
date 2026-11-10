@@ -148,7 +148,8 @@ blue). On the 40-pin header they are pins 36, 38 and 40.
 
 | Platform | Radio LED |
 | --- | --- |
-| Raspberry Pi, ASUS Tinkerboard, ASUS Tinkerboard 2/2S | RGB group `rpi_rf_mod:rgb:status` from the device tree overlay |
+| Raspberry Pi, ASUS Tinkerboard 2/2S | RGB group `rpi_rf_mod:rgb:status` over software PWM (`pwm-leds`), dimmable |
+| ASUS Tinkerboard | RGB group `rpi_rf_mod:rgb:status` over `gpio-leds`, on/off per channel |
 | HB-RF-USB, HB-RF-USB-2, HB-RF-ETH (any host) | LED driver `rpi_rf_mod_rgb` (or legacy `rpi_rf_mod_led`), using the adapter's LED pins |
 | Hardkernel ODROID-C2, ODROID-C4, ODROID-N2/N2+ (GPIO header) | Not available |
 
@@ -161,6 +162,36 @@ these boards; the radio module itself is not affected. `hss_led` accepts only
 complete RGB groups or all three legacy LEDs, so a red-only group would not be
 used either. With an HB-RF-USB/HB-RF-ETH adapter the RGB LED also works on
 ODROID boards.
+
+### Software PWM on the Raspberry Pi and Tinkerboard 2
+
+None of the three LED pins is a hardware PWM output on these boards. Their
+overlays drive each LED with the kernel's software PWM (`pwm-gpio`, one
+hrtimer per channel, 4 ms period) through `pwm-leds` with `max-brightness 255`.
+The multicolor group and the component names `rpi_rf_mod:red/green/blue` stay
+as before, so the group reports `max_brightness` 255 instead of 1 and can mix
+colors and dim. `hss_led` still writes the full level for its colors.
+
+The timer only runs while a channel is between off and full brightness; a
+channel that is off or full is a static GPIO, as with `gpio-leds`. Each dimmed
+channel costs two timer interrupts per period (500 per second). Timer jitter
+shows as shimmer at very low levels. The drivers (`CONFIG_PWM_GPIO`,
+`CONFIG_LEDS_PWM`) are built in, because the recovery kernel uses the same
+configuration and loads no modules.
+
+Red and green start on (`default-state "on"`): `pwm-gpio` cannot keep a state
+it has not set, so `"keep"` would switch the LED off at probe. On the Raspberry
+Pi, `config.txt` already lights yellow from the firmware on (`gpio=16,20=op,dh`
+and `gpio=21=op,dl`). On the Tinkerboard 2 the LED pins have their own pin
+group without an output level; the old `output-low` setting on the board's
+`gpio-leds` node would switch a fully lit LED off when applied after the PWM
+driver.
+
+With an HB-RF adapter, `rpi-rf-mod-led-driver unbind-group` releases the
+`pwm-leds` device of the header after the group, so that the adapter's driver
+gets the canonical names. Like the group it stays unbound until reboot.
+Software PWM is not used for the adapters' LEDs: every edge would be a USB
+transfer or a UDP packet.
 
 ## Explicit board LED targets
 
