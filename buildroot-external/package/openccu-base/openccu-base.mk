@@ -14,9 +14,6 @@ OPENCCU_BASE_LICENSE = HMSL-2.0, Apache-2.0 (WebUI), \
 OPENCCU_BASE_LICENSE_FILES = licenses/licenses.md licenses/HMSL2.txt \
 	licenses/gpl-2.0.txt licenses/lgpl-2.1.txt licenses/codemirror-MIT.txt \
 	licenses/openccu-images.md
-OPENCCU_BASE_ROOTFS_PATCH_DIR = \
-	$(OPENCCU_BASE_PKGDIR)/rootfs-patches
-OPENCCU_BASE_ENABLE_ROOTFS_PATCHING ?= YES
 
 # Native programs are selected independently. CMake derives the internal
 # library installation set from the selected targets' link dependencies.
@@ -24,14 +21,14 @@ OPENCCU_BASE_PROGRAMS = SETINTERFACECLOCK CRYPTTOOL EQ3CONFIGCMD EQ3CONFIGD \
 	HS485D HS485DLOADER HSS_LED MULTIMACD RFD SSDPD TCLREGA TCLRPC
 OPENCCU_BASE_ASSETS = WEBUI DEVICETYPES TCL_HOMEMATIC HMSERVER HMIP_TOOLS \
 	FIRMWARE HM_SCRIPTS
-OPENCCU_BASE_PATCH_ASSETS = $(strip $(foreach c,$(OPENCCU_BASE_ASSETS),$(if $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_$(c))),$(c))))
+OPENCCU_BASE_SELECTED_ASSETS = $(strip $(foreach c,$(OPENCCU_BASE_ASSETS),$(if $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_$(c))),$(c))))
 OPENCCU_BASE_ASSET_ROOTFS = $(@D)/build/asset-rootfs
 OPENCCU_BASE_DEPENDENCIES = \
 	$(if $(filter y,$(BR2_PACKAGE_OPENCCU_BASE_HMSERVER) $(BR2_PACKAGE_OPENCCU_BASE_HMIP_TOOLS)),java-azul) \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_NEEDS_CRYPTO),openssl) \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_NEEDS_TCL),tcl) \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_RFD),host-pkgconf libusb) \
-	$(if $(OPENCCU_BASE_PATCH_ASSETS),host-python3 host-python-html2text host-tcl) \
+	$(if $(OPENCCU_BASE_SELECTED_ASSETS),host-python3 host-python-html2text host-tcl) \
 	$(if $(BR2_PACKAGE_OPENCCU_BASE_SYSTEM_INTEGRATION),host-python3)
 
 OPENCCU_BASE_BUILD_OPTS = --target core
@@ -66,14 +63,14 @@ OPENCCU_BASE_CONF_OPTS += \
 	-DTARGET_PLATFORM=$(OPENCCU_BASE_TARGET_PLATFORM) \
 	-DCROSS_PREFIX=$(TARGET_CROSS)
 
-# The remaining rootfs patch series touches WebUI, firmware, scripts and Java
-# data together. Prepare that complete input once, then install only the selected
-# asset components. A native-only selection needs none of these generators.
+# Generate the WebUI, device description and Tcl assets once, then install only
+# the selected asset components. A native-only selection needs none of these
+# generators.
 define OPENCCU_BASE_PREPARE_ASSETS
 	rm -rf "$(OPENCCU_BASE_ASSET_ROOTFS)"
 	CMAKE="$(BR2_CMAKE)" PYTHON="$(HOST_DIR)/bin/python3" \
 		TCLSH="$(HOST_DIR)/bin/tclsh8.6" \
-		$(SHELL) "$(OPENCCU_BASE_ROOTFS_PATCH_DIR)/stage_validation_rootfs.sh" \
+		$(SHELL) "$(OPENCCU_BASE_PKGDIR)/stage_assets.sh" \
 		"$(@D)" "$(OPENCCU_BASE_ASSET_ROOTFS)"
 	$(INSTALL) -d -m 0755 "$(OPENCCU_BASE_ASSET_ROOTFS)/bin"
 	for file in hm_autoconf hm_deldev hm_startup; do \
@@ -82,19 +79,8 @@ define OPENCCU_BASE_PREPARE_ASSETS
 	# Preserve generated device descriptions when supplementing static firmware.
 	rsync -a --ignore-existing "$(@D)/firmware/" "$(OPENCCU_BASE_ASSET_ROOTFS)/firmware/"
 endef
-ifneq ($(OPENCCU_BASE_PATCH_ASSETS),)
+ifneq ($(OPENCCU_BASE_SELECTED_ASSETS),)
 OPENCCU_BASE_POST_BUILD_HOOKS += OPENCCU_BASE_PREPARE_ASSETS
-endif
-
-define OPENCCU_BASE_APPLY_ROOTFS_PATCHES
-	$(SHELL) "$(OPENCCU_BASE_ROOTFS_PATCH_DIR)/prepare_patch_input.sh" "$(OPENCCU_BASE_ASSET_ROOTFS)"
-	$(APPLY_PATCHES) "$(OPENCCU_BASE_ASSET_ROOTFS)" "$(OPENCCU_BASE_ROOTFS_PATCH_DIR)" \*.patch
-	$(SHELL) "$(OPENCCU_BASE_ROOTFS_PATCH_DIR)/finalize_patch_input.sh" "$(OPENCCU_BASE_ASSET_ROOTFS)"
-endef
-ifeq ($(OPENCCU_BASE_ENABLE_ROOTFS_PATCHING),YES)
-ifneq ($(OPENCCU_BASE_PATCH_ASSETS),)
-OPENCCU_BASE_POST_BUILD_HOOKS += OPENCCU_BASE_APPLY_ROOTFS_PATCHES
-endif
 endif
 
 # The runtime install component contains the selected native targets plus their

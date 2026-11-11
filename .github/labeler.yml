@@ -24,7 +24,6 @@
       - any-glob-to-any-file:
           - 'buildroot-external/overlay/WebUI/**'
           - 'buildroot-external/overlay/WebUI-openccu/**'
-          - 'buildroot-external/package/openccu-base/rootfs-patches/**'
 
 ':label: OS':
   - changed-files:

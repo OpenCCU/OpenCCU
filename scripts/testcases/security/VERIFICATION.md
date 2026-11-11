@@ -55,19 +55,18 @@ var p = "\\\";WriteLine(31337);!";       -> output:  PRE        <-- inert, 31337
 the patched form emits `\"`, a literal quote that stays *inside* the string, so
 the would-be payload is just data.
 
-## Layer 3 — patch hygiene
+## Layer 3 — generated rootfs check
 
-- `rootfs-patches/0207-WebUI-Fix-ReGaScriptInjection.patch` applies to the
-  pristine rootfs generated from the exact OpenCCU-Base commit pinned by
-  `OPENCCU_BASE_VERSION` in `openccu-base.mk`.
-- Buildroot calls `prepare_patch_input.sh`, applies the complete rootfs patch
-  series with zero-fuzz-compatible paths, and calls `finalize_patch_input.sh`
-  before installing the generated WebUI.
-- `rootfs-patches/validate_patches.sh` reproduces that lifecycle, verifies the
-  final rootfs invariants and compatibility symlinks, checks removed files and
-  Tcl syntax, and runs the security regression against the actual patched
-  helper implementations.
-- All 4 edited Tcl files pass `info complete` (brace balance).
+- The fix, formerly the OpenCCU rootfs patch
+  `0207-WebUI-Fix-ReGaScriptInjection`, is part of OpenCCU-Base since
+  [OpenCCU/OpenCCU-Base#46](https://github.com/OpenCCU/OpenCCU-Base/pull/46).
+- `make PRODUCT=<product> check` generates the WebUI assets of the OpenCCU-Base
+  commit pinned by `OPENCCU_BASE_VERSION` in `openccu-base.mk`
+  (`buildroot-external/package/openccu-base/stage_assets.sh`), and
+  `validate_rootfs.sh` checks that rootfs: generated files, compatibility
+  symlinks, Tcl syntax of the 4 edited Tcl files (`info complete`, brace
+  balance), the PDA ID validation, and the security regression against the
+  actual helper implementations.
 
 ## Layer 4 — functional regression on the live WebUI (does legit `\` still work?)
 
@@ -105,8 +104,8 @@ so escaper-doubling and parser-halving cancel) and neutralizes the injection.
 ```sh
 tclsh scripts/testcases/security/rega_script_injection_test.tcl  # standalone layer 1
 # full generated-rootfs verification:
-buildroot-external/package/openccu-base/rootfs-patches/validate_patches.sh \
-  /absolute/path/to/pristine/build/rootfs \
-  /absolute/path/to/extracted/OpenCCU-Base
+buildroot-external/package/openccu-base/stage_assets.sh \
+  /absolute/path/to/extracted/OpenCCU-Base /tmp/openccu-base-rootfs
+buildroot-external/package/openccu-base/validate_rootfs.sh /tmp/openccu-base-rootfs
 # layer 2: run the two scripts above via any ReGa runner (rega.exe / tclrega)
 ```

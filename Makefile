@@ -4,7 +4,7 @@ BUILDROOT_EXTERNAL=buildroot-external
 DEFCONFIG_DIR=$(BUILDROOT_EXTERNAL)/configs
 OPENCCU_BASE_VERSION=$(shell grep "OPENCCU_BASE_COMPAT_VERSION =" $(BUILDROOT_EXTERNAL)/package/openccu-base/openccu-base.mk | cut -d' ' -f3)
 OPENCCU_BASE_SOURCE_VERSION=$(shell grep "^OPENCCU_BASE_VERSION =" $(BUILDROOT_EXTERNAL)/package/openccu-base/openccu-base.mk | cut -d' ' -f3)
-OPENCCU_BASE_ROOTFS_PATCH_DIR=$(BUILDROOT_EXTERNAL)/package/openccu-base/rootfs-patches
+OPENCCU_BASE_PKG_DIR=$(BUILDROOT_EXTERNAL)/package/openccu-base
 DATE=$(shell date +%Y%m%d)
 PRODUCT=
 PRODUCT_VERSION:=$(OPENCCU_BASE_VERSION).$(DATE)
@@ -113,9 +113,7 @@ check: buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
 	$(MAKE) PRODUCT=$(PRODUCT) check-openccu-base
 
 check-openccu-base: buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
-	@echo "[checking generated rootfs patches: OPENCCU_BASE $(OPENCCU_BASE_VERSION)]"
-	$(OPENCCU_BASE_ROOTFS_PATCH_DIR)/create_patches.sh --check
-	@echo "[preparing patch validation sources: OPENCCU_BASE $(OPENCCU_BASE_SOURCE_VERSION)]"
+	@echo "[preparing validation sources: OPENCCU_BASE $(OPENCCU_BASE_SOURCE_VERSION)]"
 	$(MAKE) -C build-$(PRODUCT) openccu-base-patch
 	@set -eu; \
 		openccu_base_dir="$(shell pwd)/build-$(PRODUCT)/build/openccu-base-$(OPENCCU_BASE_SOURCE_VERSION)"; \
@@ -127,10 +125,9 @@ check-openccu-base: buildroot-$(BUILDROOT_VERSION) build-$(PRODUCT)/.config
 		}; \
 		python3 scripts/testcases/build/test_devicetypes_assets.py "$$openccu_base_dir"; \
 		python3 scripts/testcases/build/test_version_headers.py "$$openccu_base_dir"; \
-		$(OPENCCU_BASE_ROOTFS_PATCH_DIR)/stage_validation_rootfs.sh \
+		$(OPENCCU_BASE_PKG_DIR)/stage_assets.sh \
 			"$$openccu_base_dir" "$$validation_dir/rootfs"; \
-		$(OPENCCU_BASE_ROOTFS_PATCH_DIR)/validate_patches.sh \
-			"$$validation_dir/rootfs" "$$openccu_base_dir"
+		$(OPENCCU_BASE_PKG_DIR)/validate_rootfs.sh "$$validation_dir/rootfs"
 
 clean-all: $(addsuffix -clean, $(PRODUCTS))
 $(addsuffix -clean, $(PRODUCTS)): %:

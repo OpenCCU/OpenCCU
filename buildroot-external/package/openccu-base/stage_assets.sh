@@ -3,6 +3,10 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 export LC_ALL=C
 
+# Generates the WebUI, device description and Tcl assets of an OpenCCU-Base
+# source tree into OUTPUT_ROOTFS without building its native programs. Used by
+# the openccu-base package (OPENCCU_BASE_PREPARE_ASSETS) and by "make check".
+
 die() {
   printf 'ERROR: %s\n' "$*" >&2
   exit 1
@@ -37,7 +41,7 @@ cmake=$(resolve_executable "${CMAKE:-cmake}")
 python=$(resolve_executable "${PYTHON:-python3}")
 tclsh=$(resolve_executable "${TCLSH:-tclsh}")
 
-build_dir=$(mktemp -d "${TMPDIR:-/tmp}/openccu-validation-assets.XXXXXX")
+build_dir=$(mktemp -d "${TMPDIR:-/tmp}/openccu-base-assets.XXXXXX")
 trap 'rm -rf -- "$build_dir"' EXIT
 
 # Use the asset subdirectories from OpenCCU-Base directly. A small driver
@@ -48,7 +52,7 @@ mkdir -p "$build_dir/source"
   "$openccu_base_source/build-tools" "$build_dir/source/build-tools"
 cat >"$build_dir/source/CMakeLists.txt" <<'CMAKE'
 cmake_minimum_required(VERSION 3.20)
-project(OpenCCUBaseValidationAssets NONE)
+project(OpenCCUBaseAssets NONE)
 
 add_subdirectory("${OPENCCU_BASE_SOURCE}/src/devicetypes"
   "${CMAKE_BINARY_DIR}/devicetypes")
@@ -66,8 +70,8 @@ CMAKE
 "$cmake" --build "$build_dir/build" --target \
   webui-assets devicetypes-assets tcl-homematic-assets
 
-# Check every generated device before validate_patches.sh can supplement the
-# firmware tree with static files from OpenCCU-Base.
+# Check every generated device before the build supplements the firmware tree
+# with the static files from OpenCCU-Base.
 for family in rftypes hs485types; do
   device_sources=("$openccu_base_source/src/devicetypes/$family/"*.xml)
   [[ -f ${device_sources[0]} ]] || die "no device XML files found: $family"
@@ -88,6 +92,6 @@ for generated_asset in \
 done
 
 # The package target stages the static HMServer files after building core. Copy
-# them explicitly because the validation path intentionally never builds core.
+# them explicitly because this script never builds core.
 "$cmake" -E make_directory "$rootfs/opt"
 "$cmake" -E copy_directory "$openccu_base_source/opt" "$rootfs/opt"

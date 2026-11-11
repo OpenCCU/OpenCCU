@@ -35,8 +35,7 @@ buildroot-external/        # BR2_EXTERNAL layer – all OpenCCU customization
   Buildroot.config         # Common Buildroot options merged into every product
   configs/<product>.config # Per-product Buildroot defconfig fragments
   package/                 # Custom Buildroot packages (Config.in, <pkg>.mk, <pkg>.hash)
-    openccu-base/
-      rootfs-patches/      # OpenCCU WebUI/rootfs patch workspaces, generated .patch files, series
+    openccu-base/          # stage_assets.sh / validate_rootfs.sh: Base asset rootfs and its checks
   patches/<pkg>/           # Patches applied to upstream Buildroot packages
   board/<board>/           # Board files: kernel.config, boot config, genimage, post-*.sh,
                            #   patches/<pkg>/ (linux, uboot, …), kernel_defconfig (some boards)
@@ -67,7 +66,7 @@ The build downloads the Buildroot release named in `Makefile`, applies
 make PRODUCT=rpi4 build                   # Build one product (downloads Buildroot on first run)
 make build-all                            # Build all products
 make PRODUCT=rpi4 release                 # Create release archives for one product
-make PRODUCT=rpi4 check                   # Package lint + rootfs patch validation (what CI runs)
+make PRODUCT=rpi4 check                   # Package lint + OpenCCU-Base asset checks (what CI runs)
 make check-all                            # Checks for all products
 make PRODUCT=rpi4 menuconfig              # Buildroot config  -> persist with savedefconfig
 make PRODUCT=rpi4 linux-menuconfig        # Kernel config     -> persist with linux-update-defconfig
@@ -89,10 +88,8 @@ asked. Run the checks that match the files you touched, fastest first:
 | YAML | `yamllint .` (config: `.yamllint`) |
 | Markdown | `markdownlint` with `.markdownlint.yml` |
 | `buildroot-external/board/oci/Dockerfile` | `hadolint` |
-| Base migration tooling | `python3 -m unittest discover -s scripts/testcases/migration -v` and `python3 scripts/base-patch-migration.py index` |
 | Build/package logic | `python3 scripts/testcases/build/test_<name>.py -v` (needs `kconfiglib`) |
-| rootfs patches | `buildroot-external/package/openccu-base/rootfs-patches/create_patches.sh --check` |
-| Package definitions, patch series | `make PRODUCT=rpi3 check` (downloads Buildroot and OpenCCU-Base) |
+| Package definitions, OpenCCU-Base assets | `make PRODUCT=rpi3 check` (downloads Buildroot and OpenCCU-Base) |
 | A single package | `make -C build-<product> <pkg>-rebuild` (needs an existing build dir) |
 
 CI (`.github/workflows/ci.yml`) runs all linters, the Python tests and
@@ -104,11 +101,9 @@ which checks you ran and which you could not run.
 
 ## Hard rules
 
-- **Never hand-edit generated `.patch` files** in
-  `buildroot-external/package/openccu-base/rootfs-patches/` or
-  `buildroot-patches/`. Edit the workspace file *without* the `.orig` suffix and
-  regenerate with that directory's `create_patches.sh`. Never modify `*.orig`
-  files. The `series` file defines the patch order.
+- **Never hand-edit generated `.patch` files** in `buildroot-patches/`. Edit
+  the workspace file *without* the `.orig` suffix and regenerate with
+  `buildroot-patches/create_patches.sh`. Never modify `*.orig` files.
 - Kernel, U-Boot and DTS patches are applied with `patch -F0`: hunk headers must
   match the content exactly.
 - Bump components with the matching `scripts/update-*.sh` and keep the
@@ -137,52 +132,33 @@ which checks you ran and which you could not run.
   [OpenCCU/OpenCCU-Base](https://github.com/OpenCCU/OpenCCU-Base). This
   repository then picks them up by bumping `openccu-base`
   (`scripts/update-openccu-base.sh`).
-- **rootfs patches** (`openccu-base/rootfs-patches/`) are a transitional
-  mechanism: the series is being migrated into OpenCCU-Base, and once that is
-  complete, WebUI changes will most likely be made directly in OpenCCU-Base.
-  Do not add new rootfs patches by default. Prefer OpenCCU-Base and touch the
-  series only where a fix cannot go there yet; ask if unsure.
-- **Migrating existing rootfs patches into OpenCCU-Base** follows
-  [docs/base-patch-migration.md](docs/base-patch-migration.md) strictly: one
-  patch at a time, Base PR first, then the OpenCCU cleanup PR.
+- **WebUI changes** are made in OpenCCU-Base as well. OpenCCU applies no
+  patches to the OpenCCU-Base rootfs any more: the former rootfs patch series
+  was migrated into OpenCCU-Base (tracked in
+  [#4361](https://github.com/OpenCCU/OpenCCU/issues/4361)).
 - **OS-level changes** (Buildroot configuration, kernel, boards, overlays,
   packages, release tooling, Home Assistant apps, Helm) belong here.
 
-## OpenCCU-Base rootfs patches
+## OpenCCU-Base assets
 
-The patches are applied after OpenCCU-Base has staged `build/rootfs`, but before
-files are installed into Buildroot's target directory. Each numbered patch has a
-generated `.patch` file and a workspace directory mirroring the staged rootfs;
-for every changed path it contains the upstream `.orig` file and the desired
-file without that suffix:
+The `openccu-base` package generates the WebUI, device description and Tcl
+assets of the pinned OpenCCU-Base revision with
+`buildroot-external/package/openccu-base/stage_assets.sh` into a separate asset
+rootfs and installs only the selected asset directories from it.
 
-```text
-rootfs-patches/0123-WebUI-Example/
-  rootfs/www/webui/example.js.orig
-  rootfs/www/webui/example.js
-rootfs-patches/0123-WebUI-Example.patch
-```
+`make PRODUCT=<product> check` stages the same asset rootfs and checks it with
+`validate_rootfs.sh` (generated files, compatibility symlinks, file modes, Tcl
+syntax and the ReGa script injection tests in `scripts/testcases/security/`):
 
 ```bash
-cd buildroot-external/package/openccu-base/rootfs-patches
-
-./create_patches.sh --check   # Verify generated patches match their workspaces
-./create_patches.sh           # Regenerate after editing a workspace
-
-# Rebase workspaces onto a newly generated pristine rootfs
-./update_patchfiles.sh /abs/path/to/pristine/build/rootfs /abs/path/to/OpenCCU-Base
-
-# Apply and validate the complete series independently
-./validate_patches.sh /abs/path/to/pristine/build/rootfs /abs/path/to/OpenCCU-Base
+buildroot-external/package/openccu-base/stage_assets.sh /abs/path/to/OpenCCU-Base /tmp/rootfs
+buildroot-external/package/openccu-base/validate_rootfs.sh /tmp/rootfs
 ```
 
-`prepare_patch_input.sh` converts generated inputs such as `webui.js` into the
-canonical patchable form; `finalize_patch_input.sh` restores the runtime form
-after the series has been applied. `make PRODUCT=<product> check` stages an
-unpatched rootfs and runs the same validation, so stale workspaces, rejects,
-excessive fuzz, missing symlinks, Tcl syntax errors and security regressions
-fail early. `buildroot-patches/` uses the same workspace/`create_patches.sh`
-pattern for patches to Buildroot itself.
+`buildroot-patches/` keeps patches to Buildroot itself as workspaces: for every
+changed path, the upstream `.orig` file and the desired file without that
+suffix, from which `buildroot-patches/create_patches.sh` generates the `.patch`
+files.
 
 ## Kernel and board configuration
 
@@ -273,7 +249,7 @@ run `make PRODUCT=<product> check` (Buildroot `check-package`).
 | `susvd` | S.USV UPS daemon | local |
 | `strompi2d` | StromPi2 UPS daemon | local |
 | `daemonize` | Run programs as Unix daemons | bmc/daemonize |
-| `python-html2text` | Host tool used by `openccu-base` patch asset generation | Alir3z4/html2text |
+| `python-html2text` | Host tool used by `openccu-base` to generate the license information of the Java components | Alir3z4/html2text |
 
 ## Component updates
 
