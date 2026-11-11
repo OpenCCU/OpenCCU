@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCCU_BASE_VERSION = b5b0291c840c0826e5169486af2879c92eebd6b7
+OPENCCU_BASE_VERSION = 53d9dfae6947aa695c80f2d632541cb3ae56a475
 OPENCCU_BASE_COMPAT_VERSION = 3.89.11
 OPENCCU_BASE_SITE = https://github.com/OpenCCU/OpenCCU-Base
 OPENCCU_BASE_SITE_METHOD = git
