@@ -188,7 +188,7 @@ jobs:
 
           if [[ "${PACKAGE}" == "openccu-base" ]]; then
             if ! make PRODUCT=rpi3 check-openccu-base; then
-              echo "::warning::OpenCCU-Base source or generated rootfs patches require an update."
+              echo "::warning::OpenCCU-Base source patches or generated assets require an update."
               echo "patch_warning=true" >>"${GITHUB_OUTPUT}"
               exit 0
             fi

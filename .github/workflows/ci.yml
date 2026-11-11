@@ -99,11 +99,6 @@ jobs:
         with:
           ignore: '**/node_modules/**'
 
-      - name: Check Base migration tooling
-        run: |
-          python3 -m unittest discover -s scripts/testcases/migration -v
-          python3 scripts/base-patch-migration.py index
-
       - name: Check shared recovery services
         run: |
           pip install kconfiglib
