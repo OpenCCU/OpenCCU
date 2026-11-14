@@ -11,10 +11,12 @@ This allows to write a large, mostly empty disk image from a stream
 (e.g. "unzip -p archive.zip disk.img | dd of=disk.img bs=64k conv=sparse")
 with considerably less free space than the full image size.
 
-Unlike GNU dd, holes are only created in regular files: on a block
-device a skipped block would keep its old content, and with O_APPEND
-all writes go to the end of the file anyway. For other output types
-conv=sparse is silently ignored and all blocks are written.
+Unlike GNU dd, holes are only created in regular files not opened with
+O_APPEND: on a block device a skipped block would keep its old content,
+and with O_APPEND (oflag=append, or inherited like ">>" for stdout) all
+writes go to the end of the file, so the skipped bytes would be lost.
+For other outputs conv=sparse is silently ignored and all blocks are
+written.
 
 As the output position might now have been advanced by lseek() for the
 last block(s), the final partial output block (ibs != obs) is written
@@ -24,7 +26,7 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
 Upstream: not yet submitted
 
 diff --git a/coreutils/dd.c b/coreutils/dd.c
-index 7a64c35..e32a4bb 100644
+index 7a64c35..b163b56 100644
 --- a/coreutils/dd.c
 +++ b/coreutils/dd.c
 @@ -58,7 +58,7 @@
@@ -154,7 +156,7 @@ index 7a64c35..e32a4bb 100644
  	/* Unimplemented conv=XXX: */
  	//nocreat       do not create the output file
  	//excl          fail if the output file already exists
-@@ -564,6 +591,21 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
+@@ -564,6 +591,22 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
  		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
  			goto die_outfile;
  	}
@@ -163,9 +165,10 @@ index 7a64c35..e32a4bb 100644
 +		struct stat st;
 +
 +		/* Holes only in regular files: on a block device a skipped
-+		 * block would keep its old content, and with O_APPEND
-+		 * every write goes to the end anyway. */
-+		if ((G.flags & FLAG_APPEND)
++		 * block would keep its old content, and with O_APPEND (also
++		 * when inherited, e.g. ">>" for stdout) every write goes to
++		 * the end, so the skipped bytes would be lost. */
++		if ((fcntl(ofd, F_GETFL) & O_APPEND)
 +		 || fstat(ofd, &st) < 0
 +		 || !S_ISREG(st.st_mode)
 +		) {
@@ -176,7 +179,7 @@ index 7a64c35..e32a4bb 100644
  
  	while (1) {
  		ssize_t n = ibs;
-@@ -645,17 +687,27 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
+@@ -645,17 +688,27 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
  		}
  	}
  
