@@ -8,6 +8,7 @@ system, so this tests the shell logic, not the BusyBox dd patch itself.
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -110,6 +111,33 @@ class FwinstallSparseTest(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("invalid path", result.stdout)
         self.assertFalse((self.root / "evil.img").exists())
+
+    def test_unzip_firmware_refuses_symlink_in_image_path(self):
+        outside = self.root / "outside"
+        outside.mkdir()
+        with zipfile.ZipFile(self.zip, "w") as z:
+            link = zipfile.ZipInfo("images")
+            link.create_system = 3
+            link.external_attr = (stat.S_IFLNK | 0o777) << 16
+            z.writestr(link, str(outside))
+            z.write(self.image, "images/" + IMG)
+        result = self.call("unzip_firmware", str(self.zip), str(self.out))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("symlink in path", result.stdout)
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_unzip_firmware_escapes_pattern_characters(self):
+        name = "OpenCCU[1]*?.img"
+        with zipfile.ZipFile(self.zip, "w", zipfile.ZIP_DEFLATED) as z:
+            z.write(self.image, name)
+            z.writestr("OpenCCU1.img", b"wrong member")
+        result = self.call("unzip_firmware", str(self.zip), str(self.out))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual((self.out / name).read_bytes(),
+                         self.image.read_bytes())
+        # the other member is extracted as it is, not excluded
+        self.assertEqual((self.out / "OpenCCU1.img").read_bytes(),
+                         b"wrong member")
 
     def test_out_of_space_is_retried_after_userfs_expansion(self):
         self.mock_dd_out_of_space(1)

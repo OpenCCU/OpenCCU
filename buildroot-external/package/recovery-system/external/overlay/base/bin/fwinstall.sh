@@ -209,7 +209,7 @@ get_zip_required_size()
 unzip_firmware()
 {
   local zipfile="$1" dir="$2"
-  local img out err
+  local img pat out err path rest
 
   img=$(get_zip_img_name "${zipfile}")
   if [[ -z "${img}" ]]; then
@@ -220,8 +220,12 @@ unzip_firmware()
     return 0
   fi
 
+  # unzip matches member names as patterns, so escape the pattern
+  # characters of the name for the exclusion and the extraction
+  pat=$(printf '%s' "${img}" | sed 's/[][*?\\]/\\&/g')
+
   # all files except the disk image
-  if ! err=$(/usr/bin/unzip -q -o -d "${dir}" "${zipfile}" -x "${img}" 2>&1); then
+  if ! err=$(/usr/bin/unzip -q -o -d "${dir}" "${zipfile}" -x "${pat}" 2>&1); then
     echo "ERROR: (unzip: $(log_excerpt "${err}"))"
     return 1
   fi
@@ -235,6 +239,29 @@ unzip_firmware()
       ;;
   esac
   out="${dir}/${img}"
+
+  # neither the image nor a directory of its path may be a symlink, which
+  # the archive could have created with the files extracted above, so that
+  # the image cannot be written outside the directory through it
+  path="${dir}"
+  rest="${img}"
+  while true; do
+    path="${path}/${rest%%/*}"
+    if [[ -L "${path}" ]]; then
+      echo "ERROR: (unzip: symlink in path of ${img})"
+      return 1
+    fi
+    # (case: BusyBox ash expands the pattern of [[ == ]] as file glob)
+    case "${rest}" in
+      */*)
+        rest="${rest#*/}"
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
   if ! mkdir -p "$(dirname "${out}")"; then
     echo "ERROR: (mkdir for ${img})"
     return 1
@@ -242,7 +269,7 @@ unzip_firmware()
 
   # unzip verifies the CRC at the end of the data and fails on a
   # mismatch, which pipefail passes on.
-  if ! err=$(set -o pipefail; { /usr/bin/unzip -p "${zipfile}" "${img}" | write_sparse "${out}"; } 2>&1); then
+  if ! err=$(set -o pipefail; { /usr/bin/unzip -p "${zipfile}" "${pat}" | write_sparse "${out}"; } 2>&1); then
     rm -f "${out}"
     err="unzip ${img}: $(log_excerpt "${err}") $(/bin/df -B1 "${dir}" | tail -1 | awk '{ print $4 }') bytes free"
     case "${err}" in
