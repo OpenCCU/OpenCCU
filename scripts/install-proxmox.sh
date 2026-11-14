@@ -187,6 +187,8 @@ select_workdir() {
       warn "TMPDIR=${dir} is located on a RAM-backed filesystem ($(fs_info "${dir}")). Download and extraction will consume host RAM."
     fi
     WORK_DIR=$(mktemp -d -p "${dir}" openccu-install.XXXXXX)
+    # mktemp returns a relative path for a relative TMPDIR
+    WORK_DIR=$(cd "${WORK_DIR}" && pwd -P)
     pushd "${WORK_DIR}" >/dev/null
     info "Using working directory ${WORK_DIR} ($(fs_info "${WORK_DIR}"))."
     return 0
