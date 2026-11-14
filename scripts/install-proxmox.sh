@@ -1010,10 +1010,15 @@ if [[ "${VMTYPE}" == "VM" ]]; then
       die "Could not find a disk image (*.img) in ${FILE}."
     fi
 
-    # make sure the extracted image will fit into the working directory
+    # warn if the full size of the extracted image does not fit into the
+    # working directory. As the image is extracted as sparse file it
+    # requires considerably less space on filesystems supporting sparse
+    # files (e.g. ext4, xfs, btrfs, zfs), thus extraction might still
+    # succeed and any failure is reported in detail.
     IMG_SIZE=$(unzip -Zt "${FILE}" "${IMG_FILE}" </dev/null 2>>${LOGFILE} | tail -1 | awk '{print $3}' || true)
-    if [[ "${IMG_SIZE}" =~ ^[0-9]+$ ]]; then
-      check_space "${WORK_DIR}" "${IMG_SIZE}" "extracting ${IMG_FILE}"
+    if [[ "${IMG_SIZE}" =~ ^[0-9]+$ ]] &&
+       [[ $(free_bytes "${WORK_DIR}") -lt ${IMG_SIZE} ]]; then
+      warn "The disk image has a size of $(hsize "${IMG_SIZE}"), but ${WORK_DIR} has less free space ($(fs_info "${WORK_DIR}")). Trying sparse extraction anyway, which requires less space on filesystems supporting sparse files."
     fi
 
     # extract the image as sparse file (zero blocks are not allocated)
