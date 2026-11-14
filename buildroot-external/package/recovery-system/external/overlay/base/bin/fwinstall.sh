@@ -68,6 +68,123 @@ log_excerpt()
   printf '%s\n' "$1" | grep -v '^[[:space:]]*$' | tail -n 10 | tr -d '<>&' | tr '\n' ';'
 }
 
+# space in bytes a file actually occupies on disk, which is less than its
+# size for a sparse file
+get_alloc_size()
+{
+  local blocks bsize
+
+  blocks=$(stat -c %b "$1" 2>/dev/null) || return 1
+  bsize=$(stat -c %B "$1" 2>/dev/null) || return 1
+  echo $((blocks * bsize))
+}
+
+# the space required for unarchiving a disk or filesystem image of $2 bytes
+# from $1 compressed bytes: the image is written as sparse file and only
+# occupies the space of its data, which is about 2.7 times the compressed
+# size (unused space of the partitions/filesystems compresses to nearly
+# nothing). Three times the compressed size is used as estimate, the full
+# size as upper bound.
+get_sparse_required_size()
+{
+  local compressed="$1" full="$2"
+
+  if [[ $((compressed * 3)) -lt ${full} ]]; then
+    echo $((compressed * 3))
+  else
+    echo "${full}"
+  fi
+}
+
+# write stdin to the file $1 as sparse file: blocks consisting of NULs only
+# are skipped instead of written (dd conv=sparse), so that a mostly empty
+# disk or filesystem image only occupies the space of its data. Falls back
+# to writing all blocks if dd does not support conv=sparse.
+write_sparse()
+{
+  if /bin/dd if=/dev/null of=/dev/null conv=sparse status=none 2>/dev/null; then
+    /bin/dd of="$1" bs=64k conv=sparse status=none
+  else
+    /bin/dd of="$1" bs=64k status=none
+  fi
+}
+
+# name of the disk image (*.img) in the zip archive $1, empty if none
+get_zip_img_name()
+{
+  /usr/bin/unzip -l "$1" 2>/dev/null | awk '$NF ~ /\.img$/ { print $NF; exit }'
+}
+
+# the space required for unarchiving the zip archive $1 with unzip_firmware
+get_zip_required_size()
+{
+  local zipfile="$1"
+  local img full img_size zip_size
+
+  # total unarchived size from the last line of the listing
+  full=$(/usr/bin/unzip -l "${zipfile}" 2>/dev/null | tail -1 | awk '{ print $1 }')
+  case "${full}" in
+    ''|*[!0-9]*)
+      return 1
+      ;;
+  esac
+
+  img=$(get_zip_img_name "${zipfile}")
+  if [[ -z "${img}" ]]; then
+    echo "${full}"
+    return 0
+  fi
+
+  # the disk image is written as sparse file (see unzip_firmware), its
+  # compressed size is at most the size of the zip file
+  img_size=$(/usr/bin/unzip -l "${zipfile}" "${img}" 2>/dev/null | awk -v n="${img}" '$NF == n { print $1; exit }')
+  zip_size=$(stat -c%s "${zipfile}" 2>/dev/null)
+  case "${img_size}${zip_size}" in
+    ''|*[!0-9]*)
+      echo "${full}"
+      return 0
+      ;;
+  esac
+  echo $(($(get_sparse_required_size "${zip_size}" "${img_size}") + full - img_size))
+  return 0
+}
+
+# extract the zip archive $1 into directory $2. A disk image (*.img) in it
+# is written as sparse file (about 1 GiB instead of its full size of
+# 2.3 GiB), all other files are extracted as they are. On a failure an
+# error message is printed and 1 returned.
+unzip_firmware()
+{
+  local zipfile="$1" dir="$2"
+  local img out err
+
+  img=$(get_zip_img_name "${zipfile}")
+  if [[ -z "${img}" ]]; then
+    if ! err=$(/usr/bin/unzip -q -o -d "${dir}" "${zipfile}" 2>&1); then
+      echo "ERROR: (unzip: $(log_excerpt "${err}"))"
+      return 1
+    fi
+    return 0
+  fi
+
+  # all files except the disk image
+  if ! err=$(/usr/bin/unzip -q -o -d "${dir}" "${zipfile}" -x "${img}" 2>&1); then
+    echo "ERROR: (unzip: $(log_excerpt "${err}"))"
+    return 1
+  fi
+
+  # the disk image as sparse file. unzip verifies the CRC at the end of
+  # the data and fails on a mismatch, which pipefail passes on.
+  out="${dir}/$(basename "${img}")"
+  if ! err=$(set -o pipefail; { /usr/bin/unzip -p "${zipfile}" "${img}" | write_sparse "${out}"; } 2>&1); then
+    rm -f "${out}"
+    echo "ERROR: (unzip ${img}: $(log_excerpt "${err}"), $(/bin/df -B1 "${dir}" | tail -1 | awk '{ print $4 }') bytes free)"
+    return 1
+  fi
+  echo -ne "$(stat -c%s "${out}") bytes image ($(get_alloc_size "${out}") bytes allocated), "
+  return 0
+}
+
 expand_userfs_to_max()
 {
   local USER_DEV DISK_DEV SECTOR_SIZE DISK_SIZE_BYTES DISK_LAST_SECTOR
@@ -788,11 +905,14 @@ fwprepare()
       echo -ne "rootfs ext4.gz identified, validating, "
 
       # check if unarchived size is < available space or we abort right away!
+      # The rootfs image is written as sparse file, thus it requires less
+      # space than its uncompressed size.
       REQSIZE=$(get_gzip_uncompressed_size "${filename}")
       if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
         exit 1
       fi
+      REQSIZE=$(get_sparse_required_size "${FILESIZE}" "${REQSIZE}")
       if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo -ne "insufficient free space, "
         expand_userfs_to_max
@@ -820,14 +940,18 @@ fwprepare()
       # shellcheck disable=SC2064
       trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
-      if ! /bin/gzip -dc "${filename}" >"${TMPDIR}/rootfs.ext4"; then
-        echo "ERROR: (gunzip)"
+      # write the rootfs image as sparse file (unused filesystem blocks
+      # are not allocated)
+      if ! ERR=$(set -o pipefail; { /bin/gzip -dc "${filename}" | write_sparse "${TMPDIR}/rootfs.ext4"; } 2>&1); then
+        echo "ERROR: (gunzip: $(log_excerpt "${ERR}"), $(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }') bytes free)"
         exit 1
       fi
 
       # stop the progress output
       kill ${PROGRESS_PID} 2>/dev/null || true
       trap "on_exit" EXIT
+
+      echo -ne " $(stat -c%s "${TMPDIR}/rootfs.ext4") bytes ($(get_alloc_size "${TMPDIR}/rootfs.ext4") bytes allocated), "
 
       # the uncompressed file must be a valid rootfs ext4 filesystem
       if ! /usr/bin/file -b "${TMPDIR}/rootfs.ext4" | grep -E -q "ext4 filesystem.*rootfs"; then
@@ -886,8 +1010,27 @@ fwprepare()
       echo -ne "zip identified, "
 
       # check if unarchived size is < available space or we abort right away!
-      REQSIZE=$(/usr/bin/unzip -v "${filename}" | tail -1 | cut -d" " -f1)
-      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+      # A disk image in the zip is unarchived as sparse file, thus it
+      # requires less space than its full size.
+      REQSIZE=$(get_zip_required_size "${filename}")
+      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]]; then
+        echo "ERROR: ${REQSIZE} bytes required!"
+        exit 1
+      fi
+      if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+        echo -ne "insufficient free space, "
+        expand_userfs_to_max
+        RESIZE_RC=$?
+        if [[ ${RESIZE_RC} -eq 0 ]]; then
+          AVAILSPACE=$(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }')
+          echo -ne "${AVAILSPACE} bytes available after userfs resize, "
+        elif [[ ${RESIZE_RC} -eq 1 ]]; then
+          echo -ne "no userfs resize possible, "
+        else
+          exit 1
+        fi
+      fi
+      if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
         exit 1
       fi
@@ -901,9 +1044,8 @@ fwprepare()
       # shellcheck disable=SC2064
       trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
-      # unarchive the zip
-      if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
-        echo "ERROR: (unzip)"
+      # unarchive the zip (a disk image as sparse file)
+      if ! unzip_firmware "${filename}" "${TMPDIR}"; then
         exit 1
       fi
       kill ${PROGRESS_PID} 2>/dev/null || true
@@ -976,9 +1118,8 @@ fwprepare()
               PROGRESS_PID=$!
               # shellcheck disable=SC2064
               trap "kill ${PROGRESS_PID}; on_exit" EXIT
-              # unarchive the zip once more
-              if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
-                echo "ERROR: (unzip)"
+              # unarchive the zip once more (a disk image as sparse file)
+              if ! unzip_firmware "${filename}" "${TMPDIR}"; then
                 exit 1
               fi
               kill ${PROGRESS_PID} 2>/dev/null || true
