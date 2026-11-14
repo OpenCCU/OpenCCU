@@ -12,6 +12,11 @@
 # Usage:
 # wget -qO - https://openccu.de/install-proxmox.sh | bash -
 #
+# The disk image is downloaded and extracted in a temporary working
+# directory on disk (RAM-backed filesystems like tmpfs are skipped). The
+# location can be chosen by setting TMPDIR, e.g.:
+# wget -qO - https://openccu.de/install-proxmox.sh | TMPDIR=/path/on/disk bash -
+#
 
 # Setup script environment
 set -o errexit  #Exit immediately if a pipeline returns a non-zero status
@@ -19,40 +24,253 @@ set -o errtrace #Trap ERR from shell functions, command substitutions, and comma
 set -o nounset  #Treat unset variables as an error
 set -o pipefail #Pipe will exit with last non-zero status if applicable
 shopt -s expand_aliases
-alias die='EXIT=$? LINE=${LINENO} error_exit'
+alias die='EXIT=$? LINE=${LINENO} CMD=${BASH_COMMAND} error_exit'
 trap die ERR
 trap cleanup EXIT
 
 # Set default variables
-VERSION="3.22"
-LOGFILE="/tmp/install-proxmox.log"
+VERSION="3.23"
+LOGFILE="/var/log/openccu-install-proxmox.log"
 LINE=
+WORK_DIR=
+VM_CREATED=
 
 error_exit() {
   trap - ERR
-  local DEFAULT='Unknown failure occured.'
+  local DEFAULT='Unknown failure occurred.'
+  # explicit die/fail calls might come with a zero exit status
+  if [[ "${EXIT:-0}" -eq 0 ]]; then
+    EXIT=1
+  fi
   local REASON="\e[97m${1:-$DEFAULT}\e[39m"
   local FLAG="\e[91m[ERROR] \e[93m${EXIT}@${LINE}:"
   msg "${FLAG} ${REASON}"
-  [ -n "${VMID-}" ] && cleanup_vmid
+  log "[ERROR] ${EXIT}@${LINE}: ${1:-$DEFAULT}"
+  # without an explicit reason (ERR trap) show the failed command
+  if [[ -z "${1-}" ]] && [[ -n "${CMD-}" ]]; then
+    msg "${FLAG} \e[39mFailed command: ${CMD}"
+    log "[ERROR] Failed command: ${CMD}"
+  fi
+  # only remove a VM/CT this script has (started to) create(d)
+  [ -n "${VM_CREATED-}" ] && cleanup_vmid
   if [[ -s "${LOGFILE}" ]]; then
-    msg "${FLAG} \e[39mSee ${LOGFILE} for error details"
+    msg "${FLAG} \e[39mSee ${LOGFILE} for error details and attach it when reporting this issue."
   fi
   exit "${EXIT}"
+}
+fail() {
+  # exit with an explicitly specified exit status and reason
+  EXIT=${1} LINE=${BASH_LINENO[0]} CMD=
+  shift
+  error_exit "$@"
 }
 warn() {
   local REASON="\e[97m$1\e[39m"
   local FLAG="\e[93m[WARNING]\e[39m"
   msg "${FLAG} ${REASON}"
+  log "[WARNING] $1"
 }
 info() {
   local REASON="$1"
   local FLAG="\e[36m[INFO]\e[39m"
   msg "${FLAG} ${REASON}"
+  log "[INFO] $1"
 }
 msg() {
   local TEXT="$1"
   echo -e "${TEXT}"
+}
+log() {
+  # append to the logfile without color escape sequences
+  printf '%b\n' "$*" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' >>"${LOGFILE}" 2>/dev/null || true
+}
+log_sysinfo() {
+  # log host information useful for analyzing installation problems
+  {
+    echo "=== OpenCCU Proxmox installation script v${VERSION} ($(date -R))"
+    echo "--- uname -a"
+    uname -a
+    echo "--- pveversion"
+    pveversion
+    echo "--- free -h"
+    free -h
+    echo "--- df -hT"
+    df -hT / /tmp /var/tmp /var/lib/vz
+    echo "---"
+  } >>"${LOGFILE}" 2>&1 || true
+}
+hsize() {
+  # format a byte value as human readable size
+  numfmt --to=iec-i --suffix=B --format %.1f "${1:-0}" 2>/dev/null || echo "${1:-0} bytes"
+}
+free_bytes() {
+  # free space in bytes of the filesystem the given path is located on
+  local avail
+  avail=$(df -B1 --output=avail "${1}" 2>/dev/null | awk 'NR==2 {print $1}' || true)
+  echo "${avail:-0}"
+}
+fs_info() {
+  # filesystem type and free space of the given path (e.g. "ext4, 155.0GiB free")
+  local fstype
+  fstype=$(findmnt -no FSTYPE -T "${1}" 2>/dev/null || true)
+  echo "${fstype:-unknown}, $(hsize "$(free_bytes "${1}")") free"
+}
+is_ramfs() {
+  # check if the given path is located on a RAM-backed filesystem
+  local fstype source
+  fstype=$(findmnt -no FSTYPE -T "${1}" 2>/dev/null || true)
+  source=$(findmnt -no SOURCE -T "${1}" 2>/dev/null || true)
+  [[ "${fstype}" == "tmpfs" ]] || [[ "${fstype}" == "ramfs" ]] || [[ "${source}" == /dev/zram* ]]
+}
+check_space() {
+  # make sure the filesystem of path ${1} has at least ${2} bytes free for ${3}
+  local avail
+  avail=$(free_bytes "${1}")
+  if [[ ${avail} -lt ${2} ]]; then
+    die "Not enough free space for ${3} in ${1} ($(fs_info "${1}")), $(hsize "${2}") required. Free up some space or re-run the script with 'TMPDIR=/path/on/disk' set to a directory with enough free space."
+  fi
+}
+required_space() {
+  # estimate the free space required in the working directory to
+  # download (and extract) a release archive of ${1} bytes
+  local size=${1:-0}
+  local margin=$((256 * 1024 * 1024))
+  if [[ "${VMTYPE}" == "VM" ]] && [[ "${PLATFORM}" == "aarch64" ]]; then
+    # zip archive + extracted disk image. As the size of the extracted
+    # disk image is unknown before the download, its sparse size is
+    # estimated (3.89.11.20260919: 372 MiB zip, 2.25 GiB image of which
+    # 985 MiB are allocated when extracted sparse) and checked again
+    # before extraction
+    echo $((size * 4 + margin))
+  elif [[ "${VMTYPE}" == "VM" ]]; then
+    # ova archive + extracted ovf/vmdk files
+    echo $((size * 2 + margin))
+  else
+    # the LXC archive is used as is
+    echo $((size + margin))
+  fi
+}
+select_workdir() {
+  # select and change into a temporary working directory for the
+  # download and extraction which has at least ${1} bytes free space and
+  # is not located on a RAM-backed filesystem (tmpfs) to not exhaust the
+  # RAM of the host. ${2} is an optional additional candidate directory.
+  local required=${1}
+  local candidates=() checked=() seen=" " dir avail
+  if [[ -n "${TMPDIR-}" ]]; then
+    candidates+=("${TMPDIR}")
+  fi
+  candidates+=("/var/tmp")
+  if [[ -n "${2-}" ]]; then
+    candidates+=("${2}")
+  fi
+  candidates+=("/tmp")
+
+  info "Selecting working directory (required free space: $(hsize "${required}"))..."
+  for dir in "${candidates[@]}"; do
+    # skip duplicate candidates
+    if [[ "${seen}" == *" ${dir} "* ]]; then
+      continue
+    fi
+    seen+="${dir} "
+    if [[ ! -d "${dir}" ]] || [[ ! -w "${dir}" ]]; then
+      checked+=("${dir}: not existing or not writable")
+      continue
+    fi
+    # skip RAM-backed filesystems unless explicitly requested via TMPDIR
+    if is_ramfs "${dir}" && [[ "${dir}" != "${TMPDIR-}" ]]; then
+      checked+=("${dir}: $(fs_info "${dir}") - RAM-backed filesystem, skipped")
+      continue
+    fi
+    avail=$(free_bytes "${dir}")
+    if [[ ${avail} -lt ${required} ]]; then
+      checked+=("${dir}: $(fs_info "${dir}") - not enough free space")
+      continue
+    fi
+    if is_ramfs "${dir}"; then
+      warn "TMPDIR=${dir} is located on a RAM-backed filesystem ($(fs_info "${dir}")). Download and extraction will consume host RAM."
+    fi
+    # e.g. a filesystem without free inodes might still fail here
+    if ! WORK_DIR=$(mktemp -d -p "${dir}" openccu-install.XXXXXX 2>>"${LOGFILE}"); then
+      WORK_DIR=
+      checked+=("${dir}: $(fs_info "${dir}") - could not create directory")
+      continue
+    fi
+    # mktemp returns a relative path for a relative TMPDIR
+    WORK_DIR=$(cd "${WORK_DIR}" && pwd -P)
+    pushd "${WORK_DIR}" >/dev/null
+    info "Using working directory ${WORK_DIR} ($(fs_info "${WORK_DIR}"))."
+    return 0
+  done
+
+  warn "No suitable working directory found. Checked locations:"
+  for dir in "${checked[@]}"; do
+    msg "  - ${dir}"
+    log "  - ${dir}"
+  done
+  die "At least $(hsize "${required}") of free space on a disk-backed filesystem are required for downloading and extracting the OpenCCU image. Free up some space or re-run the script with 'TMPDIR=/path/on/disk' set, e.g.: wget -qO - https://openccu.de/install-proxmox.sh | TMPDIR=/path/on/disk bash -"
+}
+wget_reason() {
+  # translate wget exit status to a human readable reason
+  case "${1}" in
+    3) echo "file I/O error (disk full?)" ;;
+    4) echo "network failure" ;;
+    5) echo "SSL verification failure" ;;
+    8) echo "server issued an error response" ;;
+    *) echo "wget exit status ${1}" ;;
+  esac
+}
+unzip_reason() {
+  # translate unzip exit status to a human readable reason
+  case "${1}" in
+    2|3|51) echo "archive is corrupted or truncated" ;;
+    9) echo "archive not found" ;;
+    11) echo "no matching files found in archive" ;;
+    50) echo "disk full" ;;
+    *) echo "unzip exit status ${1}" ;;
+  esac
+}
+verify_sha256() {
+  # verify file ${1} against the checksum file ${2}. Only the hash is
+  # compared, as the file name listed in the checksum file can differ from
+  # the actual one (e.g. snapshot assets get renamed after the checksum
+  # file was created). Returns 0 if the checksum matches, 1 on mismatch
+  # and 2 if the checksum file does not contain a valid sha256 hash.
+  local expected actual
+  expected=$(awk 'NR==1 {print tolower($1)}' "${2}" 2>/dev/null || true)
+  if ! [[ "${expected}" =~ ^[0-9a-f]{64}$ ]]; then
+    log "${2} does not contain a valid sha256 checksum"
+    return 2
+  fi
+  actual=$(sha256sum "${1}" 2>>"${LOGFILE}" | awk '{print $1}' || true)
+  log "sha256 of ${1}: expected ${expected}, actual ${actual:-n/a}"
+  [[ "${expected}" == "${actual}" ]]
+}
+download_image() {
+  # download ${1} into the current working directory and verify its
+  # checksum. Sets FILE to the downloaded file name.
+  local url=${1} rc=0
+  FILE=$(basename "${url}")
+  info "Downloading ${FILE}..."
+  wget -q --show-progress -O "${FILE}" "${url}" </dev/null || rc=$?
+  if [[ ${rc} -ne 0 ]]; then
+    fail "${rc}" "Download of ${url} failed: $(wget_reason "${rc}") [${WORK_DIR}: $(fs_info "${WORK_DIR}")]"
+  fi
+  echo -en "\e[1A\e[0K" #Overwrite output from wget
+
+  local verify_rc=2
+  if wget -q -O "${FILE}.sha256" "${url}.sha256" </dev/null >>${LOGFILE} 2>&1; then
+    info "Verifying download checksum..."
+    verify_rc=0
+    verify_sha256 "${FILE}" "${FILE}.sha256" || verify_rc=$?
+    if [[ ${verify_rc} -eq 1 ]]; then
+      die "Checksum verification of ${FILE} failed. The download is incomplete or corrupted, please try again."
+    fi
+  fi
+  if [[ ${verify_rc} -eq 2 ]]; then
+    warn "No valid checksum available for ${FILE}, skipping verification."
+  fi
+  rm -f "${FILE}.sha256"
 }
 cleanup_vmid() {
   if [[ -n "${VMID}" ]]; then
@@ -73,6 +291,14 @@ cleanup_vmid() {
     fi
   fi
 }
+ensure_vmid_free() {
+  # the ID was checked before the download and might have been taken in
+  # the meantime. Fail before VM_CREATED is set so that cleanup_vmid never
+  # removes a guest this script has not created.
+  if pct status "${VMID}" &>/dev/null || qm status "${VMID}" &>/dev/null; then
+    fail 1 "ID '${VMID}' has been taken in the meantime. Please re-run the script to select another ID."
+  fi
+}
 check_sudo() {
   # Make sure only root can run our script
   if [[ $EUID -ne 0 ]]; then
@@ -81,8 +307,10 @@ check_sudo() {
   fi
 }
 cleanup() {
-  popd >/dev/null
-  rm -rf "${TEMP_DIR}"
+  if [[ -n "${WORK_DIR-}" ]] && [[ -d "${WORK_DIR}" ]]; then
+    popd >/dev/null 2>&1 || true
+    rm -rf "${WORK_DIR}"
+  fi
 }
 
 pkg_installed() {
@@ -244,14 +472,13 @@ update() {
   VMTYPE="CT"
 
   # select target openccu version
-  select_version version url
+  select_version version url size
 
-  # Download OpenCCU ova archive
-  info "Downloading disk image..."
+  # select working directory and download OpenCCU lxc archive
   # shellcheck disable=SC2154
-  wget -q --show-progress "${url}"
-  echo -en "\e[1A\e[0K" #Overwrite output from wget
-  FILE=$(basename "${url}")
+  select_workdir "$(required_space "${size}")"
+  # shellcheck disable=SC2154
+  download_image "${url}"
 
   # final update question
   # shellcheck disable=SC2154
@@ -295,7 +522,7 @@ update() {
 
   # unarchive new rootfs
   info "Updating rootfs..."
-  tar --numeric-owner -xpf "${FILE}" -C "${ROOTFS_PATH}"
+  tar --numeric-owner -xpf "${FILE}" -C "${ROOTFS_PATH}" </dev/null >>${LOGFILE} 2>&1 || fail $? "Extracting ${FILE} to rootfs of container ${CONTAINER} failed [${ROOTFS_PATH}: $(fs_info "${ROOTFS_PATH}")]"
 
   # unmount rootfs again
   pct unmount ${CONTAINER}
@@ -352,7 +579,7 @@ for release in r:
             name = asset["name"]
             version = re.findall('OpenCCU-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
             if len(version) > 0 and num < 5:
-                print(version[0] + ' release ' + image_url)
+                print(version[0] + ' release ' + image_url + ' ' + str(asset["size"]))
                 num = num + 1
             break
 EOF
@@ -376,7 +603,7 @@ for asset in r["assets"]:
         name = asset["name"]
         version = re.findall('OpenCCU-(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-[0-9a-f]{6})?)-?.*\\\\.', name)
         if len(version) > 0:
-          print(version[0] + ' snapshot ' + image_url)
+          print(version[0] + ' snapshot ' + image_url + ' ' + str(asset["size"]))
         break
 EOF
   )
@@ -414,25 +641,22 @@ EOF
                        16 $((MSG_MAX_LENGTH + 23)) 6 \
                        "${RELEASES_MENU[@]}" 3>&1 1>&2 2>&3) || exit
 
-  # extract URL from RELEASES
+  # extract URL and download size from RELEASES
   prefix=${RELEASES%%"$RELEASE"*}
   URL=$(echo ${RELEASES:${#prefix}} | cut -d' ' -f3)
+  SIZE=$(echo ${RELEASES:${#prefix}} | cut -d' ' -f4)
   info "Selected ${RELEASE} as target ${VMTYPE} version"
 
   eval ${1}="${RELEASE}"
   eval ${2}="${URL}"
+  if [[ -n "${3-}" ]]; then
+    eval ${3}="${SIZE:-0}"
+  fi
 }
 
 msg "OpenCCU Proxmox installation script v${VERSION}"
 msg "Copyright (c) 2022-2026 Jens Maus <mail@jens-maus.de>"
 msg ""
-
-# create temp dir
-TEMP_DIR=$(mktemp -d)
-pushd "${TEMP_DIR}" >/dev/null
-
-# remove existing log
-rm -f "${LOGFILE}"
 
 # check if this is a valid PVE environment host or not
 if [[ ! -d /etc/pve ]]; then
@@ -441,6 +665,10 @@ fi
 
 # check that this script is run as root/sudo
 check_sudo
+
+# remove existing log and log host information
+rm -f "${LOGFILE}"
+log_sysinfo
 
 info "Checking/Installing host package dependencies..."
 
@@ -581,14 +809,19 @@ EOF
       if command -v armbian-install >/dev/null; then
         if grep -q Raspberry /proc/cpuinfo; then
           if [[ ! -f /boot/firmware/overlays/pivccu-raspberrypi.dtbo ]]; then
+            # small temporary directory for the package extraction only
+            DEB_DIR=$(mktemp -d)
+            # mktemp returns a relative path for a relative TMPDIR
+            DEB_DIR=$(cd "${DEB_DIR}" && pwd -P)
             info "Downloading pivccu-modules-raspberrypi"
-            (cd "${TEMP_DIR}" && apt download pivccu-modules-raspberrypi)
+            (cd "${DEB_DIR}" && apt download pivccu-modules-raspberrypi)
             info "Extracting pivccu-modules-raspberrypi"
-            (cd "${TEMP_DIR}" && ar x pivccu-modules-raspberrypi_*_all.deb)
+            (cd "${DEB_DIR}" && ar x pivccu-modules-raspberrypi_*_all.deb)
             info "Extracting pivccu-raspberry.dtbo"
-            (cd "${TEMP_DIR}" && tar -C "${TEMP_DIR}" -xf data.tar.xz ./var/lib/piVCCU/dtb/overlays/pivccu-raspberrypi.dtbo)
+            (cd "${DEB_DIR}" && tar -C "${DEB_DIR}" -xf data.tar.xz ./var/lib/piVCCU/dtb/overlays/pivccu-raspberrypi.dtbo </dev/null)
             info "Installing dtbo to /boot/firmware/overlays/"
-            cp "${TEMP_DIR}/var/lib/piVCCU/dtb/overlays/pivccu-raspberrypi.dtbo" /boot/firmware/overlays/
+            cp "${DEB_DIR}/var/lib/piVCCU/dtb/overlays/pivccu-raspberrypi.dtbo" /boot/firmware/overlays/
+            rm -rf "${DEB_DIR:?}"
             echo "dtoverlay=pivccu-raspberrypi" >>/boot/firmware/config.txt
 
             # on Pi < 5 we have to add miniuart-bt dtoverlay
@@ -671,7 +904,7 @@ EOF
 fi
 
 # ask for the openccu version
-select_version RELEASE URL
+select_version RELEASE URL SIZE
 
 # Select storage location
 info "Selecting storage location"
@@ -729,6 +962,13 @@ while true; do
     die "Virtual disk size selection canceled."
   fi
 done
+
+# warn if the selected storage has less free space than the virtual disk size
+STORAGE_AVAIL=$(pvesm status -storage "${STORAGE}" 2>/dev/null | awk 'NR>1 {print $6}' || true)
+if [[ "${STORAGE_AVAIL}" =~ ^[0-9]+$ ]] &&
+   [[ ${STORAGE_AVAIL} -lt $((DISK_SIZE * 1024 * 1024)) ]]; then
+  warn "Storage '${STORAGE}' has only $(hsize $((STORAGE_AVAIL * 1024))) free, which is less than the chosen virtual disk size of ${DISK_SIZE} GB."
+fi
 
 # Search+Select HomeMatic USB devices
 MSG_MAX_LENGTH=0
@@ -790,11 +1030,13 @@ while true; do
   fi
 done
 
-# Download OpenCCU ova archive
-info "Downloading disk image..."
-wget -q --show-progress "${URL}"
-echo -en "\e[1A\e[0K" #Overwrite output from wget
-FILE=$(basename "${URL}")
+# Select a disk-backed working directory with enough free space. As
+# additional candidate the path of the selected storage is used (if any)
+STORAGE_PATH=$(awk -v s="${STORAGE}" '/^[a-z0-9]+:/ {cur=($2==s)} cur && $1=="path" {print $2; exit}' /etc/pve/storage.cfg 2>/dev/null || true)
+select_workdir "$(required_space "${SIZE}")" "${STORAGE_PATH}"
+
+# Download OpenCCU archive
+download_image "${URL}"
 
 # main installation steps
 if [[ "${VMTYPE}" == "VM" ]]; then
@@ -802,16 +1044,56 @@ if [[ "${VMTYPE}" == "VM" ]]; then
   # Extract OpenCCU disk image
   info "Extracting disk image..."
   if [[ "${PLATFORM}" == "aarch64" ]]; then
-    unzip "${FILE}" '*.img*'
-    IMG_FILE="$(ls OpenCCU-*-aarch64.img)"
-    if [[ -f "${IMG_FILE}.sha256" ]]; then
-      info "Verifying download checksum..."
-      sha256sum -c "${IMG_FILE}.sha256" >>${LOGFILE}
+    IMG_FILE=$(unzip -Z1 "${FILE}" </dev/null 2>>${LOGFILE} | awk '/^OpenCCU-.*-aarch64\.img$/ {print; exit}' || true)
+    if [[ -z "${IMG_FILE}" ]]; then
+      die "Could not find a disk image (*.img) in ${FILE}."
+    fi
+
+    # warn if the full size of the extracted image does not fit into the
+    # working directory. As the image is extracted as sparse file it
+    # requires considerably less space on filesystems supporting sparse
+    # files (e.g. ext4, xfs, btrfs, zfs), thus extraction might still
+    # succeed and any failure is reported in detail.
+    IMG_SIZE=$(unzip -Zt "${FILE}" "${IMG_FILE}" </dev/null 2>>${LOGFILE} | tail -1 | awk '{print $3}' || true)
+    if [[ "${IMG_SIZE}" =~ ^[0-9]+$ ]] &&
+       [[ $(free_bytes "${WORK_DIR}") -lt ${IMG_SIZE} ]]; then
+      warn "The disk image has a size of $(hsize "${IMG_SIZE}"), but ${WORK_DIR} has less free space ($(fs_info "${WORK_DIR}")). Trying sparse extraction anyway, which requires less space on filesystems supporting sparse files."
+    fi
+
+    # extract the image as sparse file (zero blocks are not allocated)
+    # and never let unzip read from stdin which might be the script itself
+    RC=(0 0)
+    # shellcheck disable=SC2216 # cp reads the piped data via /dev/stdin
+    unzip -p "${FILE}" "${IMG_FILE}" </dev/null 2>>${LOGFILE} | cp --sparse=always /dev/stdin "${IMG_FILE}" 2>>${LOGFILE} || RC=("${PIPESTATUS[@]}")
+    if [[ ${RC[1]} -ne 0 ]]; then
+      fail "${RC[1]}" "Writing extracted disk image ${IMG_FILE} failed (disk full?) [${WORK_DIR}: $(fs_info "${WORK_DIR}")]"
+    elif [[ ${RC[0]} -ne 0 ]]; then
+      fail "${RC[0]}" "Extracting ${IMG_FILE} from ${FILE} failed: $(unzip_reason "${RC[0]}") [${WORK_DIR}: $(fs_info "${WORK_DIR}")]"
+    fi
+
+    # verify the checksum of the extracted image
+    if unzip -o -q "${FILE}" "${IMG_FILE}.sha256" </dev/null >>${LOGFILE} 2>&1; then
+      info "Verifying disk image checksum..."
+      verify_rc=0
+      verify_sha256 "${IMG_FILE}" "${IMG_FILE}.sha256" || verify_rc=$?
+      if [[ ${verify_rc} -eq 1 ]]; then
+        die "Checksum verification of extracted disk image ${IMG_FILE} failed."
+      elif [[ ${verify_rc} -eq 2 ]]; then
+        warn "No valid checksum available for ${IMG_FILE}, skipping verification."
+      fi
     fi
   else
-    tar xf "${FILE}"
+    # make sure the extracted ova content will fit into the working directory
+    OVA_SIZE=$(tar -tvf "${FILE}" </dev/null 2>>${LOGFILE} | awk '{s+=$3} END {print s+0}' || true)
+    if [[ "${OVA_SIZE}" =~ ^[0-9]+$ ]]; then
+      check_space "${WORK_DIR}" "${OVA_SIZE}" "extracting ${FILE}"
+    fi
+    tar -xf "${FILE}" </dev/null >>${LOGFILE} 2>&1 || fail $? "Extracting ${FILE} failed [${WORK_DIR}: $(fs_info "${WORK_DIR}")]"
     IMG_FILE="OpenCCU.ovf"
   fi
+
+  # remove the downloaded archive to free up space
+  rm -f "${FILE}"
 
   # Identify target format
   IMPORT_OPT=
@@ -825,6 +1107,8 @@ if [[ "${VMTYPE}" == "VM" ]]; then
   # Create VM using the "importovf" or use manual create
   if [[ "${PLATFORM}" == "aarch64" ]]; then
     info "Creating VM ${VMID}..."
+    ensure_vmid_free
+    VM_CREATED=1
     qm create ${VMID} -bios ovmf \
                       -cores 2 \
                       -memory 2048 \
@@ -840,7 +1124,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
 
     # import img file
     info "Importing image..."
-    qm importdisk "${VMID}" "${IMG_FILE}" "${STORAGE}" ${IMPORT_OPT}
+    qm importdisk "${VMID}" "${IMG_FILE}" "${STORAGE}" ${IMPORT_OPT} </dev/null || fail $? "Importing disk image into storage '${STORAGE}' failed."
 
     # get disk id/num
     DISK_ID="${STORAGE}:${VMID}/vm-${VMID}-disk-1.qcow2"
@@ -860,10 +1144,12 @@ if [[ "${VMTYPE}" == "VM" ]]; then
       --scsi0 "${DISK_ID},discard=on,iothread=1" >>${LOGFILE} 2>&1
   else
     info "Importing OVA..."
+    ensure_vmid_free
+    VM_CREATED=1
     qm importovf "${VMID}" \
       "${IMG_FILE}" \
       "${STORAGE}" \
-      ${IMPORT_OPT} >>${LOGFILE} 2>&1
+      ${IMPORT_OPT} </dev/null >>${LOGFILE} 2>&1 || fail $? "Importing OVA into storage '${STORAGE}' failed."
 
     # get the assigned disk id after the import
     DISK_ID=$(qm config "${VMID}" 2>>${LOGFILE} | grep -e "^\(sata\|scsi\).:" | cut -d' ' -f2 | cut -d',' -f1)
@@ -897,7 +1183,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
   # Resize scsi0 disk
   info "Resizing virtual disk to ${DISK_SIZE} GB..."
   sync
-  qm resize "${VMID}" scsi0 "${DISK_SIZE}G" >>${LOGFILE}
+  qm resize "${VMID}" scsi0 "${DISK_SIZE}G" >>${LOGFILE} 2>&1 || fail $? "Resizing virtual disk to ${DISK_SIZE} GB failed."
 
   # Identify+Set known USB-based RF module devices
   if [[ -n "${USB_DEVICE}" ]]; then
@@ -909,6 +1195,8 @@ elif [[ "${VMTYPE}" == "CT" ]]; then
   info "Creating CT..."
 
   # create initial CT
+  ensure_vmid_free
+  VM_CREATED=1
   pct create "${VMID}" "${FILE}" \
     --arch "${CTARCH}" \
     --storage "${STORAGE}" \
@@ -921,7 +1209,7 @@ elif [[ "${VMTYPE}" == "CT" ]]; then
     --rootfs volume=${STORAGE}:1,mountoptions=noatime \
     --mp0 volume=${STORAGE}:${DISK_SIZE},mp=/usr/local,mountoptions=noatime \
     --description "[![OpenCCU](https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/release/logo.png 'OpenCCU')](https://openccu.de)" \
-    --hostname "OpenCCU"
+    --hostname "OpenCCU" </dev/null || fail $? "Creating container in storage '${STORAGE}' failed."
 
   # patching container config
   info "Patching CT config..."
