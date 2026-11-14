@@ -230,6 +230,22 @@ unzip_reason() {
     *) echo "unzip exit status ${1}" ;;
   esac
 }
+verify_sha256() {
+  # verify file ${1} against the checksum file ${2}. Only the hash is
+  # compared, as the file name listed in the checksum file can differ from
+  # the actual one (e.g. snapshot assets get renamed after the checksum
+  # file was created). Returns 0 if the checksum matches, 1 on mismatch
+  # and 2 if the checksum file does not contain a valid sha256 hash.
+  local expected actual
+  expected=$(awk 'NR==1 {print tolower($1)}' "${2}" 2>/dev/null || true)
+  if ! [[ "${expected}" =~ ^[0-9a-f]{64}$ ]]; then
+    log "${2} does not contain a valid sha256 checksum"
+    return 2
+  fi
+  actual=$(sha256sum "${1}" 2>>"${LOGFILE}" | awk '{print $1}' || true)
+  log "sha256 of ${1}: expected ${expected}, actual ${actual:-n/a}"
+  [[ "${expected}" == "${actual}" ]]
+}
 download_image() {
   # download ${1} into the current working directory and verify its
   # checksum. Sets FILE to the downloaded file name.
@@ -242,15 +258,19 @@ download_image() {
   fi
   echo -en "\e[1A\e[0K" #Overwrite output from wget
 
+  local verify_rc=2
   if wget -q -O "${FILE}.sha256" "${url}.sha256" </dev/null >>${LOGFILE} 2>&1; then
     info "Verifying download checksum..."
-    if ! sha256sum -c "${FILE}.sha256" >>${LOGFILE} 2>&1; then
+    verify_rc=0
+    verify_sha256 "${FILE}" "${FILE}.sha256" || verify_rc=$?
+    if [[ ${verify_rc} -eq 1 ]]; then
       die "Checksum verification of ${FILE} failed. The download is incomplete or corrupted, please try again."
     fi
-  else
-    rm -f "${FILE}.sha256"
-    warn "No checksum available for ${FILE}, skipping verification."
   fi
+  if [[ ${verify_rc} -eq 2 ]]; then
+    warn "No valid checksum available for ${FILE}, skipping verification."
+  fi
+  rm -f "${FILE}.sha256"
 }
 cleanup_vmid() {
   if [[ -n "${VMID}" ]]; then
@@ -1054,8 +1074,12 @@ if [[ "${VMTYPE}" == "VM" ]]; then
     # verify the checksum of the extracted image
     if unzip -o -q "${FILE}" "${IMG_FILE}.sha256" </dev/null >>${LOGFILE} 2>&1; then
       info "Verifying disk image checksum..."
-      if ! sha256sum -c "${IMG_FILE}.sha256" >>${LOGFILE} 2>&1; then
+      verify_rc=0
+      verify_sha256 "${IMG_FILE}" "${IMG_FILE}.sha256" || verify_rc=$?
+      if [[ ${verify_rc} -eq 1 ]]; then
         die "Checksum verification of extracted disk image ${IMG_FILE} failed."
+      elif [[ ${verify_rc} -eq 2 ]]; then
+        warn "No valid checksum available for ${IMG_FILE}, skipping verification."
       fi
     fi
   else
