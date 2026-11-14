@@ -271,6 +271,14 @@ cleanup_vmid() {
     fi
   fi
 }
+ensure_vmid_free() {
+  # the ID was checked before the download and might have been taken in
+  # the meantime. Fail before VM_CREATED is set so that cleanup_vmid never
+  # removes a guest this script has not created.
+  if pct status "${VMID}" &>/dev/null || qm status "${VMID}" &>/dev/null; then
+    fail 1 "ID '${VMID}' has been taken in the meantime. Please re-run the script to select another ID."
+  fi
+}
 check_sudo() {
   # Make sure only root can run our script
   if [[ $EUID -ne 0 ]]; then
@@ -1075,6 +1083,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
   # Create VM using the "importovf" or use manual create
   if [[ "${PLATFORM}" == "aarch64" ]]; then
     info "Creating VM ${VMID}..."
+    ensure_vmid_free
     VM_CREATED=1
     qm create ${VMID} -bios ovmf \
                       -cores 2 \
@@ -1111,6 +1120,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
       --scsi0 "${DISK_ID},discard=on,iothread=1" >>${LOGFILE} 2>&1
   else
     info "Importing OVA..."
+    ensure_vmid_free
     VM_CREATED=1
     qm importovf "${VMID}" \
       "${IMG_FILE}" \
@@ -1161,6 +1171,7 @@ elif [[ "${VMTYPE}" == "CT" ]]; then
   info "Creating CT..."
 
   # create initial CT
+  ensure_vmid_free
   VM_CREATED=1
   pct create "${VMID}" "${FILE}" \
     --arch "${CTARCH}" \
