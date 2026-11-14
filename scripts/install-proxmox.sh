@@ -774,6 +774,8 @@ EOF
           if [[ ! -f /boot/firmware/overlays/pivccu-raspberrypi.dtbo ]]; then
             # small temporary directory for the package extraction only
             DEB_DIR=$(mktemp -d)
+            # mktemp returns a relative path for a relative TMPDIR
+            DEB_DIR=$(cd "${DEB_DIR}" && pwd -P)
             info "Downloading pivccu-modules-raspberrypi"
             (cd "${DEB_DIR}" && apt download pivccu-modules-raspberrypi)
             info "Extracting pivccu-modules-raspberrypi"
