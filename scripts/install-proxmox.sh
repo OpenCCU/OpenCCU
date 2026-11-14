@@ -33,6 +33,7 @@ VERSION="3.23"
 LOGFILE="/var/log/openccu-install-proxmox.log"
 LINE=
 WORK_DIR=
+VM_CREATED=
 
 error_exit() {
   trap - ERR
@@ -50,7 +51,8 @@ error_exit() {
     msg "${FLAG} \e[39mFailed command: ${CMD}"
     log "[ERROR] Failed command: ${CMD}"
   fi
-  [ -n "${VMID-}" ] && cleanup_vmid
+  # only remove a VM/CT this script has (started to) create(d)
+  [ -n "${VM_CREATED-}" ] && cleanup_vmid
   if [[ -s "${LOGFILE}" ]]; then
     msg "${FLAG} \e[39mSee ${LOGFILE} for error details and attach it when reporting this issue."
   fi
@@ -135,9 +137,11 @@ required_space() {
   local margin=$((256 * 1024 * 1024))
   if [[ "${VMTYPE}" == "VM" ]] && [[ "${PLATFORM}" == "aarch64" ]]; then
     # zip archive + extracted disk image. As the size of the extracted
-    # disk image is unknown before the download a conservative
-    # compression ratio is assumed and checked again before extraction
-    echo $((size * 8 + margin))
+    # disk image is unknown before the download, its sparse size is
+    # estimated (3.89.11.20260919: 372 MiB zip, 2.25 GiB image of which
+    # 985 MiB are allocated when extracted sparse) and checked again
+    # before extraction
+    echo $((size * 4 + margin))
   elif [[ "${VMTYPE}" == "VM" ]]; then
     # ova archive + extracted ovf/vmdk files
     echo $((size * 2 + margin))
@@ -186,7 +190,12 @@ select_workdir() {
     if is_ramfs "${dir}"; then
       warn "TMPDIR=${dir} is located on a RAM-backed filesystem ($(fs_info "${dir}")). Download and extraction will consume host RAM."
     fi
-    WORK_DIR=$(mktemp -d -p "${dir}" openccu-install.XXXXXX)
+    # e.g. a filesystem without free inodes might still fail here
+    if ! WORK_DIR=$(mktemp -d -p "${dir}" openccu-install.XXXXXX 2>>"${LOGFILE}"); then
+      WORK_DIR=
+      checked+=("${dir}: $(fs_info "${dir}") - could not create directory")
+      continue
+    fi
     # mktemp returns a relative path for a relative TMPDIR
     WORK_DIR=$(cd "${WORK_DIR}" && pwd -P)
     pushd "${WORK_DIR}" >/dev/null
@@ -1066,6 +1075,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
   # Create VM using the "importovf" or use manual create
   if [[ "${PLATFORM}" == "aarch64" ]]; then
     info "Creating VM ${VMID}..."
+    VM_CREATED=1
     qm create ${VMID} -bios ovmf \
                       -cores 2 \
                       -memory 2048 \
@@ -1101,6 +1111,7 @@ if [[ "${VMTYPE}" == "VM" ]]; then
       --scsi0 "${DISK_ID},discard=on,iothread=1" >>${LOGFILE} 2>&1
   else
     info "Importing OVA..."
+    VM_CREATED=1
     qm importovf "${VMID}" \
       "${IMG_FILE}" \
       "${STORAGE}" \
@@ -1150,6 +1161,7 @@ elif [[ "${VMTYPE}" == "CT" ]]; then
   info "Creating CT..."
 
   # create initial CT
+  VM_CREATED=1
   pct create "${VMID}" "${FILE}" \
     --arch "${CTARCH}" \
     --storage "${STORAGE}" \
