@@ -1,0 +1,214 @@
+dd: add conv=sparse
+
+Add the conv=sparse option known from GNU coreutils dd: an output block
+consisting of NUL bytes only is not written but skipped with lseek(), so
+that the output file becomes sparse and the skipped blocks do not occupy
+any space on filesystems supporting sparse files. If the output ends
+with such a hole, the file is extended to its full size with ftruncate()
+(only if it is not already larger, e.g. with conv=notrunc).
+
+This allows to write a large, mostly empty disk image from a stream
+(e.g. "unzip -p archive.zip disk.img | dd of=disk.img bs=64k conv=sparse")
+with considerably less free space than the full image size.
+
+Unlike GNU dd, holes are only created in regular files not opened with
+O_APPEND: on a block device a skipped block would keep its old content,
+and with O_APPEND (oflag=append, or inherited like ">>" for stdout) all
+writes go to the end of the file, so the skipped bytes would be lost.
+For other outputs conv=sparse is silently ignored and all blocks are
+written.
+
+As the output position might now have been advanced by lseek() for the
+last block(s), the final partial output block (ibs != obs) is written
+before the optional fsync(), so conv=fsync covers it as well.
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+Upstream: not yet submitted
+
+diff --git a/coreutils/dd.c b/coreutils/dd.c
+index 7a64c35..b163b56 100644
+--- a/coreutils/dd.c
++++ b/coreutils/dd.c
+@@ -58,7 +58,7 @@
+ //usage:#define dd_trivial_usage
+ //usage:       "[if=FILE] [of=FILE] [" IF_FEATURE_DD_IBS_OBS("ibs=N obs=N/") "bs=N] [count=N] [skip=N] [seek=N]"
+ //usage:	IF_FEATURE_DD_IBS_OBS("\n"
+-//usage:       "	[conv=notrunc|noerror|sync|fsync]\n"
++//usage:       "	[conv=notrunc|noerror|sync|fsync|sparse]\n"
+ //usage:       "	[iflag=skip_bytes|count_bytes|fullblock|direct] [oflag=seek_bytes|append|direct]"
+ //usage:	)
+ //usage:#define dd_full_usage "\n\n"
+@@ -81,6 +81,7 @@
+ //usage:     "\n	conv=sync	Pad blocks with zeros"
+ //usage:     "\n	conv=fsync	Physically write data out before finishing"
+ //usage:     "\n	conv=swab	Swap every pair of bytes"
++//usage:     "\n	conv=sparse	Seek over NUL output blocks (regular files only)"
+ //usage:     "\n	iflag=skip_bytes	skip=N is in bytes"
+ //usage:     "\n	iflag=count_bytes	count=N is in bytes"
+ //usage:     "\n	oflag=seek_bytes	seek=N is in bytes"
+@@ -119,6 +120,10 @@ struct globals {
+ 	unsigned long long begin_time_us;
+ #endif
+ 	int flags;
++#if ENABLE_FEATURE_DD_IBS_OBS
++	/* conv=sparse: the last output block was skipped (a hole) */
++	smallint sparse_hole_at_end;
++#endif
+ } FIX_ALIASING;
+ #define G (*(struct globals*)bb_common_bufsiz1)
+ #define INIT_G() do { \
+@@ -135,24 +140,25 @@ enum {
+ 	FLAG_NOERROR = (1 << 2) * ENABLE_FEATURE_DD_IBS_OBS,
+ 	FLAG_FSYNC   = (1 << 3) * ENABLE_FEATURE_DD_IBS_OBS,
+ 	FLAG_SWAB    = (1 << 4) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_SPARSE  = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
+ 	/* end of conv flags */
+ 	/* start of input flags */
+-	FLAG_IFLAG_SHIFT   = 5,
+-	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
+-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+-	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
+-	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_IFLAG_SHIFT   = 6,
++	FLAG_SKIP_BYTES    = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_COUNT_BYTES   = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_FULLBLOCK     = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_IDIRECT       = (1 << 9) * ENABLE_FEATURE_DD_IBS_OBS,
+ 	/* end of input flags */
+ 	/* start of output flags */
+-	FLAG_OFLAG_SHIFT   = 9,
+-	FLAG_SEEK_BYTES    = (1 << 9) * ENABLE_FEATURE_DD_IBS_OBS,
+-	FLAG_APPEND        = (1 << 10) * ENABLE_FEATURE_DD_IBS_OBS,
+-	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_OFLAG_SHIFT   = 10,
++	FLAG_SEEK_BYTES    = (1 << 10) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_APPEND        = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_ODIRECT       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
+ 	/* end of output flags */
+-	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
+-	FLAG_COUNT         = 1 << 13,
+-	FLAG_STATUS_NONE   = 1 << 14,
+-	FLAG_STATUS_NOXFER = 1 << 15,
++	FLAG_TWOBUFS       = (1 << 13) * ENABLE_FEATURE_DD_IBS_OBS,
++	FLAG_COUNT         = 1 << 14,
++	FLAG_STATUS_NONE   = 1 << 15,
++	FLAG_STATUS_NOXFER = 1 << 16,
+ };
+ 
+ static void dd_output_status(int UNUSED_PARAM cur_signal)
+@@ -235,19 +241,39 @@ static ssize_t dd_read(void *ibuf, size_t ibs)
+ 	return n;
+ }
+ 
++#if ENABLE_FEATURE_DD_IBS_OBS
++static bool is_nul_block(const char *buf, size_t len)
++{
++	/* buf[0] is NUL and every byte equals its predecessor */
++	return len != 0 && buf[0] == '\0' && memcmp(buf, buf + 1, len - 1) == 0;
++}
++#endif
++
+ static bool write_and_stats(const void *buf, size_t len, size_t obs,
+ 	const char *filename)
+ {
+ 	ssize_t n;
+ 
++#if ENABLE_FEATURE_DD_IBS_OBS
++	/* conv=sparse: seek over a block of NULs instead of writing it */
++	if ((G.flags & FLAG_SPARSE) && is_nul_block(buf, len)
++	 && lseek(ofd, len, SEEK_CUR) >= 0
++	) {
++		G.sparse_hole_at_end = 1;
++		n = len;
++	} else
++#endif
++	{
+  IF_FEATURE_DD_IBS_OBS(write_again:)
+-	n = full_write(ofd, buf, len);
++		n = full_write(ofd, buf, len);
+ #if ENABLE_FEATURE_DD_IBS_OBS
+ # ifdef O_DIRECT
+-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
+-		goto write_again;
++		if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
++			goto write_again;
+ # endif
++		G.sparse_hole_at_end = 0;
+ #endif
++	}
+ 
+ #if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+ 	if (n > 0)
+@@ -318,7 +344,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
+ 		;
+ #if ENABLE_FEATURE_DD_IBS_OBS
+ 	static const char conv_words[] ALIGN1 =
+-		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
++		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0""sparse\0";
+ 	static const char iflag_words[] ALIGN1 =
+ 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
+ 	static const char oflag_words[] ALIGN1 =
+@@ -348,6 +374,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
+ 		OP_conv_noerror,
+ 		OP_conv_fsync,
+ 		OP_conv_swab,
++		OP_conv_sparse,
+ 	/* Unimplemented conv=XXX: */
+ 	//nocreat       do not create the output file
+ 	//excl          fail if the output file already exists
+@@ -564,6 +591,22 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
+ 		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+ 			goto die_outfile;
+ 	}
++#if ENABLE_FEATURE_DD_IBS_OBS
++	if (G.flags & FLAG_SPARSE) {
++		struct stat st;
++
++		/* Holes only in regular files: on a block device a skipped
++		 * block would keep its old content, and with O_APPEND (also
++		 * when inherited, e.g. ">>" for stdout) every write goes to
++		 * the end, so the skipped bytes would be lost. */
++		if ((fcntl(ofd, F_GETFL) & O_APPEND)
++		 || fstat(ofd, &st) < 0
++		 || !S_ISREG(st.st_mode)
++		) {
++			G.flags &= ~FLAG_SPARSE;
++		}
++	}
++#endif
+ 
+ 	while (1) {
+ 		ssize_t n = ibs;
+@@ -645,17 +688,27 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
+ 		}
+ 	}
+ 
+-	if (G.flags & FLAG_FSYNC) {
+-		if (fsync(ofd) < 0)
+-			goto die_outfile;
+-	}
+-
+ #if ENABLE_FEATURE_DD_IBS_OBS
+ 	if (ocount != 0) {
+ 		if (write_and_stats(obuf, ocount, obs, outfile))
+ 			goto out_status;
+ 	}
++	if (G.sparse_hole_at_end) {
++		/* the output ends with a hole: extend the file to its end */
++		struct stat st;
++		off_t pos = lseek(ofd, 0, SEEK_CUR);
++
++		if (pos < 0 || fstat(ofd, &st) < 0)
++			goto die_outfile;
++		if (st.st_size < pos && ftruncate(ofd, pos) < 0)
++			goto die_outfile;
++	}
+ #endif
++
++	if (G.flags & FLAG_FSYNC) {
++		if (fsync(ofd) < 0)
++			goto die_outfile;
++	}
+ 	if (close(ifd) < 0) {
+  die_infile:
+ 		bb_simple_perror_msg_and_die(infile);
