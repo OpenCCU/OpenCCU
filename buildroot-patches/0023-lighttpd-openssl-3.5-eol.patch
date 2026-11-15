@@ -1,0 +1,23 @@
+--- buildroot/package/lighttpd/0002-mod_openssl-every-openssl-3.5.x-is-supported.patch.orig
++++ buildroot/package/lighttpd/0002-mod_openssl-every-openssl-3.5.x-is-supported.patch
+@@ -0,0 +1,20 @@
++From: openccu-lite
++Subject: mod_openssl: every openssl 3.5.x is supported, not only 3.5.0
++
++lighttpd 1.4.84 warns from 23 Oct 2026 that the openssl it was built with
++is out of support unless OPENSSL_VERSION_NUMBER is 4.0 or later or exactly
++0x30500000L. Since openssl 3.0 the number carries the patch release
++(3.5.9 is 0x30500090L), so every 3.5 LTS release after 3.5.0 still gets
++the end-of-life warning. Compare the major and minor version only.
++
++--- a/src/mod_openssl.c
+++++ b/src/mod_openssl.c
++@@ -4454,7 +4454,7 @@
++     }
++ 
++   #if OPENSSL_VERSION_NUMBER < 0x40000000L \
++-   && OPENSSL_VERSION_NUMBER != 0x30500000L \
+++   && (OPENSSL_VERSION_NUMBER & 0xFFF00000L) != 0x30500000L \
++    && !defined(BORINGSSL_API_VERSION) \
++    && !defined(LIBRESSL_VERSION_NUMBER)
++   if (log_epoch_secs >= 1792728000) /* 23 Oct 2026 */
