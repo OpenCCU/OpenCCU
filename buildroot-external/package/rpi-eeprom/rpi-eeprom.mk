@@ -9,7 +9,7 @@
 # rpi-eeprom repository (>100 MB), which contains every firmware release.
 # The paths use the real firmware directory, because the "stable" symlink
 # is not resolved by raw.githubusercontent.com.
-RPI_EEPROM_VERSION = 65d9489a4938569001d46291431f6a737a516e18
+RPI_EEPROM_VERSION = 15b8ea216515b9b768210ed1fa66aaf80c8664d5
 RPI_EEPROM_SITE = https://raw.githubusercontent.com/raspberrypi/rpi-eeprom/$(RPI_EEPROM_VERSION)
 RPI_EEPROM_SOURCE = LICENSE
 RPI_EEPROM_LICENSE = BSD-3-Clause, MIT, uIP, custom
@@ -25,7 +25,7 @@ ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),y)
 else ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI5),y)
   # Raspberry Pi 5 (2712)
   RPI_EEPROM_SOC = 2712
-  RPI_EEPROM_FIRMWARE_PATH = firmware-2712/latest/pieeprom-2026-10-30.bin
+  RPI_EEPROM_FIRMWARE_PATH = firmware-2712/latest/pieeprom-2026-11-16.bin
   RPI_EEPROM_RECOVERY_PATH = firmware-2712/latest/recovery.bin
 endif
 
