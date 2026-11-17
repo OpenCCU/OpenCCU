@@ -1,0 +1,442 @@
+<%
+  system.SetSessionVar("sessionTAB", "systemvars");
+%>
+<script type="text/javascript">
+
+  ResetGAC();
+
+<%
+  boolean firstSort = false;
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser && (system.GetSessionVar("sessionCTV")=="true") )
+  {
+    firstSort = true;
+    oUser.UserTempViewIDs().RemoveAll();
+    
+    Write('iseClearLastSort();');
+    
+    object oSysVarArray = dom.GetObject( ID_SYSTEM_VARIABLES );
+    if( oSysVarArray )
+    {
+      oSysVarArray.SortByName(soAsc,stNatural);
+      
+      string sEnumSVIDs = oSysVarArray.EnumEnabledIDs();
+
+      if( system.IsSessionVar("sessionSISV") )
+      {
+        string sEnable = system.GetSessionVar("sessionSISV");
+        if( sEnable == "1" )
+        {
+          sEnumSVIDs = sEnumSVIDs#"\t"#oSysVarArray.EnumEnabledInternalIDs();
+        }
+      }
+      
+      string sTmp;
+      foreach( sTmp, sEnumSVIDs )
+      {
+        object oTmp = dom.GetObject( sTmp );
+        if( oTmp )
+        {
+          oUser.UserTempViewIDs().Add( oTmp.ID() );
+        }
+      }
+    }
+  }
+  Write( 'conInfo("SysVars TempView loaded.");' );
+%>
+
+  setPath("<span onclick='WebUI.enter(SystemConfigPage)'>"+ translateKey('menuSettingsPage') +"</span> &gt; "+  translateKey("submenuSysVar"));
+  fltSYV = new iseFilter("fltSYV", FLT_OBJ_TYP_VARS);
+  arSysVars = new Array();
+  
+  DivSort = function(colName)
+  { 
+    IseSort(arSysVars,colName,true);
+  }
+  
+  
+</script>
+<div id="svOffset" style="display:none"></div>
+<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable" style="display:none">
+<colgroup>
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:200px;" />
+  <col style="width:100px;" />
+</colgroup>
+<thead>
+<tr>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thName}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('desc');">${thDescription}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="type"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('type');">${thTypeOfVariable}</div></th>
+  <th class="thCell">${thValues}</th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="unit"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('unit');">${thUnit}</div></th>
+  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="chn"){sCssName="SortSelected";} %>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('chn');">${thCannelMapping}</div></th>
+  <th class="thCell">${thAction}</th>
+  <th class="thCell">${thLink}</th>
+</tr>
+<tr class="CLASS05201">
+  <td class="CLASS05202">
+    <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
+        <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS05203" />
+        <div id="ftSetNameBtn" class='FilterSetButton CLASS05204' onclick="setSFilter(fltSYV, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+        <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
+    </div>
+  </td>
+  <td class="CLASS05205"></td>
+  <td class="CLASS05202">
+    <div id="btnFilterVarType" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterVarTypeSub" style="display:none">
+        <table class="CLASS05208">
+          <tr>
+            <td>${lblLogicValue}</td>
+            <td><input type="checkbox" id="cbLogic" /></td>
+          </tr>
+          <tr>
+            <td>${lblValueList}</td>
+            <td><input type="checkbox" id="cbValueList" /></td>
+          </tr>
+          <tr>
+            <td>${lblNumber}</td>
+            <td><input type="checkbox" id="cbNumber" /></td>
+          </tr>
+          <tr>
+            <td>${lblAlarm}</td>
+            <td><input type="checkbox" id="cbAlarm" /></td>
+          </tr>
+            <td>${lblString}</td>
+            <td><input type="checkbox" id="cbString" /></td>
+          </tr>
+        </table>
+        <div class='FilterSetButton' onclick='setAFilter(fltSYV, "vartypes");updateTable();$("btnFilterVarTypeSub").hide();'>${filterSet}</div>
+        <div class='FilterSetButton' onclick="$('btnFilterVarTypeSub').hide();">${filterClose}</div>
+    </div>
+  </td>
+  <td class="CLASS05205"></td> 
+  <td class="CLASS05202">
+    <div id="btnFilterUnit" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterUnitSub" style="display:none">
+        <input id="ftUnit" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetUnitBtn', 'ftCancelUnitBtn')" type="text" size="15" class="CLASS05203" />
+        <div id="ftSetUnitBtn" class="FilterSetButton CLASS05204" onclick="setSFilter(fltSYV, 'ftUnit', FIL_UNIT);updateTable();$('btnFilterUnitSub').hide();" >${filterSet}</div>
+        <div id="ftCancelUnitBtn" class='FilterSetButton' onclick="$('btnFilterUnitSub').hide();">${filterClose}</div>
+    </div>
+  </td>
+  <td class="CLASS05202">
+    <div id="btnFilterChn" class="FilterBtn">${thFilter}</div>
+    <div class="FilterSubMenu" id="btnFilterChnSub" style="display:none">
+        <input id="ftChn" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetChnBtn', 'ftCancelChnBtn')" type="text" size="15" class="CLASS05203" />
+        <div id="ftSetChnBtn" class="FilterSetButton CLASS05204" onclick="setSFilter(fltSYV, 'ftChn', FIL_CHN);updateTable();$('btnFilterChnSub').hide();" >${filterSet}</div>
+        <div id="ftCancelChnBtn" class='FilterSetButton' onclick="$('btnFilterChnSub').hide();">${filterClose}</div>
+    </div>
+  </td>
+  <td class="CLASS05202">
+  <td class="CLASS05205"></td>
+  </thead>
+<% 
+  string sysvar = "";
+  if (oUser.UserTempViewIDs().Count() == 0)
+  {
+    WriteLine("<script type='text/javascript'>");
+    WriteLine("Cursor.set(Cursor.NORMAL);");
+    WriteLine("</script>");
+  }  
+  foreach (sysvar, oUser.UserTempViewIDs()) 
+  {
+    string sTrId = "sv"#sysvar;
+    Write("<tr id='"#sTrId#"'>");
+    object sv = dom.GetObject(sysvar);
+    string CellBkg = "GrayBkg";
+    if (sv.Internal() == true) { CellBkg = "LightGrayBkg"; }
+    Write("<td style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
+      Write(sv.Name());
+    Write("</td>");
+    
+    Write("<td  style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
+      Write(sv.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>'));
+    Write("</td>");
+    
+    Write("<td  style='text-align:center;' class='"#CellBkg#" CLASS05206' >");
+      string s = "Unbekannt: " # sv.ValueSubType();
+      if( sv.ValueSubType() == istPresent )
+      {
+        s = "${lblPresence}";
+      }
+      if( sv.ValueSubType() == istAlarm )
+      {
+        s = "${lblAlarm}";
+      }
+      if( sv.ValueSubType() == istGeneric )
+      {
+        s = "${lblNumber}";
+      }
+      if( sv.ValueSubType() == istEnum )
+      {
+        s = "${lblValueList}";
+      }
+      if( sv.ValueSubType() == istBool )
+      {
+        s = "${lblLogicValue}";
+      }
+      if ( sv.ValueSubType() == istChar8859 )
+      {
+        s = "${lblString}";
+      }
+      Write(s);
+    Write("</td>");
+    
+    Write("<td class='"#CellBkg#" CLASS05209' >");
+      if (sv.ValueSubType() == istPresent) {
+      }
+      if (sv.ValueSubType() == istChar8859) {
+      }
+      if (sv.ValueSubType() == istAlarm) {
+        Write("${lblTrue} = " # sv.ValueName1()#"<br />");
+        Write("${lblFalse} = " # sv.ValueName0());
+      }
+      if (sv.ValueSubType() == istGeneric) {
+        Write("${lblMinValue}: " # sv.ValueMin()#"<br />");
+        Write("${lblMaxValue}: " # sv.ValueMax());
+      }
+      if (sv.ValueSubType() == istEnum) {
+        Write(sv.ValueList());
+      }
+      if (sv.ValueSubType() == istBool) {
+        Write("${lblTrue} = " # sv.ValueName1()#"<br />");
+        Write("${lblFalse} = " # sv.ValueName0());
+      }
+      
+    Write("</td>");
+    
+    
+    Write("<td class='"#CellBkg#" CLASS05206' >");
+      Write(sv.ValueUnit());
+    Write("</td>");
+    
+    Write("<td class='"#CellBkg#" CLASS05206' >");
+      object svCH = dom.GetObject( sv.Channel() );
+      if( svCH ) { Write( svCH.Name() ); }
+    Write("</td>");
+    
+   
+    Write("<td class='"#CellBkg#" CLASS05206' >");
+      Write("<table cellspacing='0' cellpadding='0' border='0' style='width:100%;'>");
+      Write("<tr>");
+      Write("<td>");
+        Write("<table cellspacing='0' cellpadding='0' style='width:100%;'><tr>");
+        Write("<td class='CLASS05210'>");
+          string sClassName = "StdButton";
+          string sOnclick = "DeleteSysVar("#sv.ID()#",\""#sv.Name()#"\");";
+          if( sv.Unerasable() )
+          {
+            sClassName = sClassName#"Inactive";
+            sOnclick = "";
+          }
+          Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnRemove}</div>");
+        Write("</td>");
+        Write("</tr><tr>");
+        Write("<td class='CLASS05210'>");
+          string sClassName = "StdButton";
+          string sOnclick = "editSysVar("#sv.ID()#")";
+          if( (sv.ID() == ID_GW_SYSALARM) || (sv.ID() == ID_GW_SYSSERVICE) )
+          {
+            sClassName = sClassName#"Inactive";
+            sOnclick = "";
+          }
+          Write("<div onclick='"#sOnclick#"' class='"#sClassName#"'>${btnEdit}</div>");
+        Write("</td>");
+        Write("</tr></table>");
+      Write("</td>");
+      
+      Write("<td>");
+        Write("<table cellspacing='0' cellpadding='0'><tr>");
+        Write("<td class='CLASS05211'>");
+          string sChecked = "";
+          if (sv.Visible()) {
+            sChecked = "checked";
+          }
+          Write("<input id='svvis"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpVisibility("#sv.ID()#", this)' />${lblVisible}");
+        Write("</td>");
+        Write("</tr><tr>");
+        Write("<td class='CLASS05211'>");
+          string sChecked = "";
+          if (sv.DPArchive()) {
+            sChecked = "checked";
+          }
+          Write("<input id='svp"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpProto("#sv.ID()#", this)' />${lblRecorded}");
+        Write("</td>");
+        Write("</tr><tr>");
+        Write("<td class='CLASS05211'>");
+          string sChecked = "";
+          if (sv.Internal()) {
+            sChecked = "checked";
+          }
+          Write("<input id='svinternal"#sv.ID()#"' type='checkbox' "#sChecked#" onclick='iseSystem.saveDpInternal("#sv.ID()#", this);reloadPage();' />${lblSystemIntern}");
+        Write("</td>");
+        Write("</tr></table>");
+      Write("</td>");
+      Write("</tr>");
+      Write("</table>");
+    Write("</td>");
+    
+    Write("<td class='"#CellBkg#" CLASS05206' >");
+      string sJSTmp = "WebUI.enter(ProgramListPage, '"#sv.DPEnumUsagePrograms()#"');";
+      Write( '<div class="StdButton" onclick="'#sJSTmp#'">${btnPrograms}</div>' );
+    Write("</td>");
+    Write("</tr>");
+    
+    Write("<script type='text/javascript'>");
+      Write("var tmp = new Object();");
+      Write("tmp['trid'] = '"#sTrId#"';");
+      Write("tmp['id'] = '"#sv.ID()#"';");
+      Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
+      Write("tmp['name'] = '"#sv.Name()#"';");
+      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
+      Write("tmp['chn'] = '';");
+      object obj = dom.GetObject( sv.Channel() );
+      if( obj )
+      {
+        Write("tmp['chn'] = '"#obj.Name()#"';");
+      }
+      
+      if (sv.ValueSubType() == istAlarm) { 
+        Write("tmp['type'] = 'alarm';");
+      }
+      if (sv.ValueSubType() == istGeneric) { 
+        Write("tmp['type'] = 'generic';");
+      }
+      if (sv.ValueSubType() == istEnum) { 
+        Write("tmp['type'] = 'enum';");
+      }
+      if (sv.ValueSubType() == istBool) { 
+        Write("tmp['type'] = 'bool';");
+      }
+      if (sv.ValueSubType() == istChar8859) {
+        Write("tmp['type'] = 'string';");
+      }
+      Write("tmp['trid'] = '"#sTrId#"';");
+      Write("arSysVars[arSysVars.length] = tmp;");
+      Write("Cursor.set(Cursor.NORMAL);");
+    Write("</script>");
+  }
+%>
+</tr>
+</table>
+
+
+<script type="text/javascript">
+  
+  var mouseOpts = {
+    onTopOver: function(divToShow) {
+      selectFilters(fltSYV, divToShow);
+    }
+  };
+  new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "svOffset", {}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterVarType", "btnFilterVarTypeSub", "svOffset", {}, mouseOpts, false, true);  
+  new iseSubMenuControl("btnFilterUnit", "btnFilterUnitSub", "svOffset", {}, mouseOpts, false, true);
+  new iseSubMenuControl("btnFilterChn", "btnFilterChnSub", "svOffset", {}, mouseOpts, false, true);
+  
+  ShowInternalSysVars = function()
+  {
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "ShowInternalSystemVars";';
+    var opt =
+    {
+      postBody: pb,
+      onComplete: function(t)
+      {
+        if(dbg){alert(t.responseText);}
+        reloadPage();
+      }
+    };
+    new Ajax.Request(url,opt);
+  };
+  
+  <%
+    string sInternalBtnText = "";
+    if( system.GetSessionVar("sessionSISV") == "1" )
+    {
+        !sInternalBtnText = "aus";
+        sInternalBtnText = "footerBtnHideInternalSystemVars";
+    }
+    else
+    {
+        !sInternalBtnText = "ein";
+        sInternalBtnText = "footerBtnShowInternalSystemVars";
+    }
+    Write("var internalBtnText = '"#sInternalBtnText#"';");
+  %>
+   
+  var s = "";
+  
+  s += "<table cellspacing='8'>";
+  s += "<tr>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='newSysVar()'>${footerBtnNew}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalSysVars()'>"+translateKey(internalBtnText)+"</div></td>";
+  s += "</tr>";
+  s += "</table>";
+
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
+  jQuery("#btnFilterUnit").click(function(){
+    jQuery("#ftUnit").focus();
+  });
+
+  jQuery("#btnFilterChn").click(function(){
+    jQuery("#ftChn").focus();
+  });
+
+  setFooter(s);
+  
+  newSysVar = function() {
+    reloadSysVars = function() {
+      PopupClose();
+      reloadPage();
+    }
+    CreatePopup(ID_NEW_SYSVAR);
+  }
+  
+  editSysVar = function(id) {
+    reloadSysVars = function() {
+      PopupClose();
+      reloadPage();
+    }
+    CreatePopup(ID_EDIT_SYSVAR, id);
+  }
+  
+  updateTable = function() {
+    colorFilterBtns(fltSYV);
+    for (var i = 0; i < arSysVars.length; i++) {
+      if (fltSYV.objPassFilter(arSysVars[i]))
+        show(arSysVars[i]['trid']);
+      else {
+        hide(arSysVars[i]['trid']);
+      }
+    }
+  }
+  
+  DeleteSysVar = function(id,name)
+  {
+    var _id_ = id;
+	var _name_ = name;
+    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveSysVar").replace(/%s/, _name_), function(result) {
+      if (result == YesNoDialog.RESULT_YES) { DeleteObject(_id_); }
+    });    
+  };
+  translatePage("#sysVars");
+  jQuery("#sysVars").show();
+</script>
