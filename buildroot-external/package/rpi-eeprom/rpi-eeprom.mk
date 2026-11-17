@@ -9,7 +9,7 @@
 # rpi-eeprom repository (>100 MB), which contains every firmware release.
 # The paths use the real firmware directory, because the "stable" symlink
 # is not resolved by raw.githubusercontent.com.
-RPI_EEPROM_VERSION = 15b8ea216515b9b768210ed1fa66aaf80c8664d5
+RPI_EEPROM_VERSION = 439fc2e934737cb6b718b837ec0870ac85bf7409
 RPI_EEPROM_SITE = https://raw.githubusercontent.com/raspberrypi/rpi-eeprom/$(RPI_EEPROM_VERSION)
 RPI_EEPROM_SOURCE = LICENSE
 RPI_EEPROM_LICENSE = BSD-3-Clause, MIT, uIP, custom
@@ -19,7 +19,7 @@ RPI_EEPROM_INSTALL_IMAGES = YES
 ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI4),y)
   # Raspberry Pi 4 (2711)
   RPI_EEPROM_SOC = 2711
-  RPI_EEPROM_FIRMWARE_PATH = firmware-2711/latest/pieeprom-2026-10-30.bin
+  RPI_EEPROM_FIRMWARE_PATH = firmware-2711/latest/pieeprom-2026-11-17.bin
   RPI_EEPROM_RECOVERY_PATH = firmware-2711/latest/recovery.bin
   RPI_EEPROM_VL805_PATH = firmware-2711/latest/vl805-000138c0.bin
 else ifeq ($(BR2_PACKAGE_RPI_EEPROM_RPI5),y)
