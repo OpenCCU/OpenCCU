@@ -140,7 +140,7 @@ jobs:
           )
 
           # one line for the OpenCCU-Base components with changes
-          BASE_COMPONENTS=$(sed -n 's/^- \([A-Za-z0-9_.-]*\): .*/\1/p' /tmp/openccu-base-changes.md | awk '!seen[$0]++' | paste -sd , - | sed 's/,/, /g')
+          BASE_COMPONENTS=$(sed -n 's/^##### \[\([A-Za-z0-9_.-]*\)\](.*/\1/p' /tmp/openccu-base-changes.md | awk '!seen[$0]++' | paste -sd , - | sed 's/,/, /g')
 
           mkdir -p /tmp/changelog-summary
 
