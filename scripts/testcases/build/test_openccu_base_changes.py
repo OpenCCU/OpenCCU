@@ -113,6 +113,32 @@ class OpenccuBaseChangesTest(unittest.TestCase):
         names = re.findall(r"^##### \[([A-Za-z0-9_.-]*)\]\(", self.render(), re.M)
         self.assertEqual(names, ["ReGaHss", "hmipserver", "rfd"])
 
+    def test_limit_replaces_the_largest_components_by_a_changelog_link(self):
+        body, versions = obc.groups(SECTIONS)
+        full = obc.render(body, versions, URL, "3.89.14")
+        text = obc.fit(body, versions, URL, "3.89.11", "3.89.14", len(full) - 1)
+        self.assertLessEqual(len(text), len(full) - 1)
+        # hmipserver has the most text and is replaced first
+        self.assertIn(f"- 2 changes, see the [changelog]({URL}/blob/3.89.14/src/"
+                      "hmipserver/CHANGELOG.md)", text)
+        self.assertIn("BreakOnRestart", text)
+        self.assertEqual(obc.fit(body, versions, URL, "3.89.11", "3.89.14", 10), "")
+
+    def test_limit_skips_replacements_that_are_not_shorter(self):
+        # the ReGaHss entry has the most text but is shorter than its
+        # replacement, the rfd entry is two characters longer than its own
+        rfd = obc.changelog_line("rfd", 1, URL, "new")
+        regahss = obc.changelog_line("ReGaHss", 1, URL, "new")
+        body = {"ReGaHss": ["- " + "r" * (len(rfd) + 1)],
+                "rfd": ["- " + "f" * len(rfd)]}
+        self.assertGreater(len(body["ReGaHss"][0]), len(body["rfd"][0]))
+        self.assertGreater(len(regahss), len(body["ReGaHss"][0]))
+        full = obc.render(body, {}, URL, "new")
+        text = obc.fit(body, {}, URL, "old", "new", len(full) - 2)
+        self.assertIn(body["ReGaHss"][0], text)
+        self.assertIn(rfd, text)
+        self.assertNotIn("full commit log", text)
+
 
 if __name__ == "__main__":
     unittest.main()

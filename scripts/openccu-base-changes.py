@@ -182,6 +182,38 @@ def render(body, versions, url, new):
     return "\n".join(parts)
 
 
+def changelog_line(component, count, url, new):
+    """Return the line that replaces the entries of a component."""
+    return (f"- {count} change{'s' if count > 1 else ''}, see the "
+            f"[changelog]({url}/blob/{new}/src/{component}/CHANGELOG.md)")
+
+
+def fit(body, versions, url, old, new, limit):
+    """Return the text of the category within limit characters, or "".
+    The entries of the components with the most text are replaced by a
+    line with a link to their changelog until the category fits; a
+    component whose replacement would not be shorter keeps its entries."""
+    body = {c: list(lines) for c, lines in body.items()}
+    tried = set()
+    while True:
+        text = render(body, versions, url, new)
+        if len(text) <= limit:
+            return text
+        rest = sorted((c for c in body if c not in tried),
+                      key=lambda c: len("\n".join(body[c])), reverse=True)
+        for component in rest:
+            tried.add(component)
+            line = changelog_line(component, len(body[component]), url, new)
+            if len(line) < len("\n".join(body[component])):
+                body[component] = [line]
+                break
+        else:
+            break
+    # not even one line per component fits
+    text = f"{TITLE}\n\n- see the [full commit log]({url}/compare/{old}...{new})\n"
+    return text if len(text) <= limit else ""
+
+
 def main():
     """Print the OpenCCU-Base category within the given limit."""
     if len(sys.argv) != 5:
@@ -198,26 +230,8 @@ def main():
     body, versions = groups(markdown)
     if not body:
         return
-    # replace the lines of the largest components by a line with a link to
-    # their changelog until the category fits
-    linked = set()
-    while True:
-        text = render(body, versions, url, new)
-        if len(text) <= limit:
-            print(text, end="")
-            return
-        rest = [c for c in body if c not in linked]
-        if not rest:
-            break
-        component = max(rest, key=lambda c: len("\n".join(body[c])))
-        count = len(body[component])
-        body[component] = [
-            f"- {count} change{'s' if count > 1 else ''}, see the "
-            f"[changelog]({url}/blob/{new}/src/{component}/CHANGELOG.md)"]
-        linked.add(component)
-    # not even one line per component fits
-    text = f"{TITLE}\n\n- see the [full commit log]({url}/compare/{old}...{new})\n"
-    if len(text) <= limit:
+    text = fit(body, versions, url, old, new, limit)
+    if text:
         print(text, end="")
 
 
