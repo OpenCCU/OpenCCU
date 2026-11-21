@@ -1,6 +1,6 @@
 ---
 name: OpenCCU
-version: 3.89.11.20260919
+version: 3.89.14.20261121
 slug: openccu
 image: ghcr.io/openccu/openccu
 arch:
