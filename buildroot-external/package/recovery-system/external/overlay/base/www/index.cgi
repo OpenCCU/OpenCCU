@@ -158,6 +158,9 @@ cat <<EOF
       <tr>
         <td><div><input class="NavButton" type="button" onclick="confirmAction(1,this.value);" value="Reset Network Settings"></div></td>
       </tr>
+      <tr>
+        <td><div><input class="NavButton" type="button" onclick="confirmAction(2,this.value);" value="Reset Admin Passwords"></div></td>
+      </tr>
       <tr><td><hr noshade size="4" color="white"></td></tr>
       <tr>
         <td><div><input class="NavButton" type="button" onclick="window.location.href = 'cgi-bin/safemode_boot.cgi';" value="Safe Mode Reboot"></div></td>
@@ -326,6 +329,14 @@ cat <<EOF
             elmConfirmActionText.innerHTML = "Do you really want to reset the network settings?";
             elmBtnConfirmYes.onclick = function () {
               window.location.href = 'cgi-bin/network_reset.cgi';
+             };
+            break;
+          case 2:
+            elmConfirmActionText.innerHTML = "Do you really want to clear the passwords of all WebUI administrators and of the OS root user (console/SSH)?<br/><br/>"
+              + "<span style='font-size: 60%;'>The reset is performed during the next normal boot. Afterwards the WebUI will ask for a new administrator password "
+              + "and a new SSH password can be set in the WebUI. Until then the system is accessible without passwords!</span>";
+            elmBtnConfirmYes.onclick = function () {
+              window.location.href = 'cgi-bin/admin_password_reset.cgi';
              };
             break;
         }
