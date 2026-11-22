@@ -405,6 +405,120 @@ jobs:
           asset_content_type: text/plain
           max_releases: 1
 
+      # WebFreak001/deploy-nightly only removes old assets whose name starts
+      # with the same prefix in front of the '$$' placeholder, i.e.
+      # 'OpenCCU-<OCCU_VERSION>.'. After an OpenCCU-Base bump (e.g. 3.89.11 ->
+      # 3.89.14) the snapshots of the previous version thus no longer match
+      # and stay in the release. Once the new ones have been uploaded
+      # successfully, remove all older snapshot assets of this platform that
+      # belong to a different OpenCCU-Base version.
+      - name: Remove outdated snapshot assets of other OpenCCU-Base versions
+        if: |
+          github.repository_owner == 'OpenCCU'
+        shell: python3 {0}
+        env:
+          GH_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          GH_REPO: OpenCCU/OpenCCU
+          RELEASE_ID: 22744592
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          import json, os, re, urllib.error, urllib.request
+
+          token = os.environ["GH_TOKEN"]
+          repo = os.environ["GH_REPO"]
+          release_id = os.environ["RELEASE_ID"]
+          platform = os.environ["PLATFORM"]
+          occu_version = os.environ["OCCU_VERSION"]
+
+          # archive name suffixes (after the '$$' placeholder) this platform
+          # uploads; each archive comes with a '<archive>.sha256' checksum
+          if platform.startswith("oci_"):
+            archive_suffixes = [f"-{platform}.tgz"]
+          elif platform.startswith("lxc_"):
+            archive_suffixes = [f"-{platform}.tar.xz"]
+          else:
+            archive_suffixes = [f"-{platform}.zip"]
+            if platform == "rpi3":
+              archive_suffixes.append("-ccu3.tgz")
+            elif platform == "ova":
+              archive_suffixes.append(".ova")
+          checksum_suffixes = [s + ".sha256" for s in archive_suffixes]
+
+          # OpenCCU-<x.y.z>.<YYYYMMDD>-<sha><suffix>
+          pattern = re.compile(r"^OpenCCU-(\d+(?:\.\d+)*)\.\d{8}-[0-9a-f]+(.+)$")
+
+          def api(method, url):
+            req = urllib.request.Request(url, method=method, headers={
+              "Accept": "application/vnd.github+json",
+              "Authorization": f"Bearer {token}",
+              "X-GitHub-Api-Version": "2022-11-28",
+            })
+            with urllib.request.urlopen(req) as resp:
+              body = resp.read()
+              return json.loads(body) if body else None
+
+          assets = []
+          page = 1
+          while True:
+            batch = api("GET", f"https://api.github.com/repos/{repo}/releases/{release_id}/assets?per_page=100&page={page}")
+            assets += batch
+            if len(batch) < 100:
+              break
+            page += 1
+
+          by_name = {a["name"]: a for a in assets}
+          deleted = set()
+
+          def delete(asset):
+            if asset["name"] in deleted:
+              return
+            print(f"Deleting outdated snapshot asset {asset['name']}")
+            try:
+              api("DELETE", f"https://api.github.com/repos/{repo}/releases/assets/{asset['id']}")
+            except urllib.error.HTTPError as e:
+              if e.code != 404:  # 404: already deleted by an overlapping run
+                raise
+            deleted.add(asset["name"])
+
+          # group the archives of this platform by suffix
+          archives = {s: [] for s in archive_suffixes}
+          for asset in assets:
+            m = pattern.match(asset["name"])
+            if m and m.group(2) in archives:
+              archives[m.group(2)].append((m.group(1), asset))
+
+          # Archive and checksum always share one decision, based on the
+          # archive (which is uploaded before its checksum). Only archives of
+          # other versions which are older than the newest archive of the
+          # current version are deleted, together with their checksum. If
+          # another snapshot run with a different OpenCCU-Base version
+          # overlaps with this one, only the older upload gets removed and
+          # the newest archive always survives.
+          for suffix, entries in archives.items():
+            current = [a["created_at"] for v, a in entries if v == occu_version]
+            if not current:
+              continue
+            newest = max(current)  # ISO 8601 UTC timestamps sort lexically
+            for version, asset in entries:
+              if version == occu_version or asset["created_at"] >= newest:
+                continue
+              delete(asset)
+              checksum = by_name.get(asset["name"] + ".sha256")
+              if checksum:
+                delete(checksum)
+
+          # A checksum is only ever uploaded after its archive, so a checksum
+          # without its archive is left over from an archive an overlapping
+          # run has already deleted. Only trust a complete single-page
+          # listing here: with several pages, a concurrent deletion can shift
+          # an archive onto an already read page and hide it.
+          for asset in (assets if page == 1 else []):
+            m = pattern.match(asset["name"])
+            if m and m.group(2) in checksum_suffixes and asset["name"][:-len(".sha256")] not in by_name:
+              delete(asset)
+
+          print(f"Deleted {len(deleted)} outdated snapshot asset(s) for platform {platform}")
+
       ########################
       # upload build artifacts (oci only)
       - name: Upload build artifact [oci]
