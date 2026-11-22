@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise the admin password reset (recovery action, boot hook and script) in a temp root."""
+"""Exercise the admin password reset (recovery action, ReGaHss hook, script) in a temp root."""
 import os
 import re
 from pathlib import Path
@@ -11,7 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[3]
 EXTERNAL = ROOT / "buildroot-external"
 RESET_SCRIPT = EXTERNAL / "overlay/base-openccu/bin/resetAdminPasswords"
-INIT_SCRIPT = EXTERNAL / "overlay/base-openccu/etc/init.d/S71CheckAdminPasswordReset"
+REGA_INIT_SCRIPT = EXTERNAL / "package/openccu-base/S70ReGaHss"
 RECOVERY_CGI = (EXTERNAL / "package/recovery-system/external/overlay/base"
                 "/www/cgi-bin/admin_password_reset.cgi")
 RECOVERY_INDEX = EXTERNAL / "package/recovery-system/external/overlay/base/www/index.cgi"
@@ -127,12 +127,17 @@ class AdminPasswordResetTest(unittest.TestCase):
         self.assertEqual(self.shadow.read_text(), SHADOW)
 
     def run_init(self):
+        """Run the reset check of S70ReGaHss as executed after ReGaHss was started."""
+        source = REGA_INIT_SCRIPT.read_text()
+        start = source.index("checkAdminPasswordReset() {")
+        end = source.index("\n}\n", start) + 3
+        flag = re.search(r"^ADMIN_PASSWORD_RESET_FLAG=.*$", source, re.M).group(0)
         # resolve the script via PATH so that the mock below is used
-        source = INIT_SCRIPT.read_text().replace("/bin/resetAdminPasswords",
-                                                 "resetAdminPasswords")
-        script = self.localize(source, "S71CheckAdminPasswordReset")
+        hook = (flag + "\n" + source[start:end] + "checkAdminPasswordReset\n").replace(
+            "/bin/resetAdminPasswords", "resetAdminPasswords")
+        script = self.localize(hook, "check_reset.sh")
         self.mock("resetAdminPasswords", 'echo "reset $*" >>"$CALL_LOG"')
-        result = subprocess.run(["bash", str(script), "start"], env=self.env,
+        result = subprocess.run(["bash", str(script)], env=self.env,
                                 capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stderr)
         return result.stdout
@@ -144,16 +149,22 @@ class AdminPasswordResetTest(unittest.TestCase):
             subprocess.run(["sleep", "0.1"], check=True)
         self.fail(f"{text!r} not called: {self.log.read_text()!r}")
 
-    def test_boot_hook_consumes_flag_and_starts_reset(self):
+    def test_rega_start_consumes_flag_and_starts_reset(self):
         flag = self.root / "usr/local/.doAdminPasswordReset"
         flag.touch()
-        self.assertIn("started", self.run_init())
+        self.assertIn("Admin password reset started", self.run_init())
         self.assertFalse(flag.exists())
         self.wait_for_call("reset -w 300")
 
-    def test_boot_hook_without_flag_does_nothing(self):
-        self.assertIn("not required", self.run_init())
+    def test_rega_start_without_flag_does_nothing(self):
+        self.assertEqual(self.run_init(), "")
         self.assertNotIn("reset", self.log.read_text())
+
+    def test_rega_start_checks_reset_after_startup(self):
+        source = REGA_INIT_SCRIPT.read_text()
+        start = source[source.index("\nstart() {"):source.index("\nstop() {")]
+        self.assertGreater(start.index("\tcheckAdminPasswordReset"),
+                           start.index("\twaitStartupComplete"))
 
     def run_cgi(self):
         for name in ("mount", "reboot"):

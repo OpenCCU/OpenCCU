@@ -10,6 +10,7 @@ LOGLEVEL_REGA=2
 REGA_BIN_VERSION=
 DAEMON="ReGaHss"
 PIDFILE="/var/run/${DAEMON}.pid"
+ADMIN_PASSWORD_RESET_FLAG=/usr/local/.doAdminPasswordReset
 
 [[ -r /var/hm_mode ]] && . /var/hm_mode
 
@@ -86,6 +87,20 @@ waitTerminationComplete() {
 	done
 }
 
+checkAdminPasswordReset() {
+	[[ -e ${ADMIN_PASSWORD_RESET_FLAG} ]] || return 0
+
+	# remove the flag file first so that the reset is only performed
+	# once, even if it fails or the system is rebooted in between
+	rm -f ${ADMIN_PASSWORD_RESET_FLAG}
+	sync
+
+	# ReGaHss might still be loading its object model, thus run the
+	# reset in the background and let it wait for ReGaHss to become ready
+	(/bin/resetAdminPasswords -w 300 2>&1 | logger -t resetAdminPasswords -p user.warn) </dev/null >/dev/null 2>&1 &
+	echo "Admin password reset started (see syslog)"
+}
+
 start() {
 	echo -n "Starting ReGaHss: "
 	init
@@ -111,6 +126,10 @@ start() {
 
 	# make sure the PID file has world readable permissions
 	chmod 0644 ${PIDFILE}
+
+	# check if a reset of all admin passwords (WebUI + OS) was requested
+	# (e.g. via the recovery system) and perform it once ReGaHss is ready
+	checkAdminPasswordReset
 }
 
 stop() {

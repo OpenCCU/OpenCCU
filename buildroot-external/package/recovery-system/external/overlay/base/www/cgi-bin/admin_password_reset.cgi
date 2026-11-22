@@ -15,7 +15,7 @@ if ! mount -o rw,remount /userfs; then
 	exit 1
 fi
 
-# the actual reset is performed by /etc/init.d/S71CheckAdminPasswordReset
+# the actual reset is performed by /etc/init.d/S70ReGaHss
 # (/bin/resetAdminPasswords) in the normal system since ReGaHss is required
 if ! touch /userfs/.doAdminPasswordReset; then
 	echo "ERROR (touch)"
