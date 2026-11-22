@@ -430,18 +430,19 @@ jobs:
           platform = os.environ["PLATFORM"]
           occu_version = os.environ["OCCU_VERSION"]
 
-          # asset name suffixes (after the '$$' placeholder) this platform uploads
+          # archive name suffixes (after the '$$' placeholder) this platform
+          # uploads; each archive comes with a '<archive>.sha256' checksum
           if platform.startswith("oci_"):
-            suffixes = [f"-{platform}.tgz"]
+            archive_suffixes = [f"-{platform}.tgz"]
           elif platform.startswith("lxc_"):
-            suffixes = [f"-{platform}.tar.xz"]
+            archive_suffixes = [f"-{platform}.tar.xz"]
           else:
-            suffixes = [f"-{platform}.zip"]
+            archive_suffixes = [f"-{platform}.zip"]
             if platform == "rpi3":
-              suffixes.append("-ccu3.tgz")
+              archive_suffixes.append("-ccu3.tgz")
             elif platform == "ova":
-              suffixes.append(".ova")
-          suffixes += [s + ".sha256" for s in suffixes]
+              archive_suffixes.append(".ova")
+          checksum_suffixes = [s + ".sha256" for s in archive_suffixes]
 
           # OpenCCU-<x.y.z>.<YYYYMMDD>-<sha><suffix>
           pattern = re.compile(r"^OpenCCU-(\d+(?:\.\d+)*)\.\d{8}-[0-9a-f]+(.+)$")
@@ -465,19 +466,35 @@ jobs:
               break
             page += 1
 
-          # group the assets of this platform by suffix
-          by_suffix = {s: [] for s in suffixes}
+          by_name = {a["name"]: a for a in assets}
+          deleted = set()
+
+          def delete(asset):
+            if asset["name"] in deleted:
+              return
+            print(f"Deleting outdated snapshot asset {asset['name']}")
+            try:
+              api("DELETE", f"https://api.github.com/repos/{repo}/releases/assets/{asset['id']}")
+            except urllib.error.HTTPError as e:
+              if e.code != 404:  # 404: already deleted by an overlapping run
+                raise
+            deleted.add(asset["name"])
+
+          # group the archives of this platform by suffix
+          archives = {s: [] for s in archive_suffixes}
           for asset in assets:
             m = pattern.match(asset["name"])
-            if m and m.group(2) in by_suffix:
-              by_suffix[m.group(2)].append((m.group(1), asset))
+            if m and m.group(2) in archives:
+              archives[m.group(2)].append((m.group(1), asset))
 
-          # Only delete assets of other versions which are older than the
-          # newest asset of the current version. If another snapshot run with
-          # a different OpenCCU-Base version overlaps with this one, only the
-          # older upload gets removed and the newest one always survives.
-          deleted = 0
-          for suffix, entries in by_suffix.items():
+          # Archive and checksum always share one decision, based on the
+          # archive (which is uploaded before its checksum). Only archives of
+          # other versions which are older than the newest archive of the
+          # current version are deleted, together with their checksum. If
+          # another snapshot run with a different OpenCCU-Base version
+          # overlaps with this one, only the older upload gets removed and
+          # the newest archive always survives.
+          for suffix, entries in archives.items():
             current = [a["created_at"] for v, a in entries if v == occu_version]
             if not current:
               continue
@@ -485,15 +502,20 @@ jobs:
             for version, asset in entries:
               if version == occu_version or asset["created_at"] >= newest:
                 continue
-              print(f"Deleting outdated snapshot asset {asset['name']}")
-              try:
-                api("DELETE", f"https://api.github.com/repos/{repo}/releases/assets/{asset['id']}")
-              except urllib.error.HTTPError as e:
-                if e.code != 404:  # 404: already deleted by an overlapping run
-                  raise
-              deleted += 1
+              delete(asset)
+              checksum = by_name.get(asset["name"] + ".sha256")
+              if checksum:
+                delete(checksum)
 
-          print(f"Deleted {deleted} outdated snapshot asset(s) for platform {platform}")
+          # A checksum is only ever uploaded after its archive, so a checksum
+          # without its archive is left over from an archive an overlapping
+          # run has already deleted.
+          for asset in assets:
+            m = pattern.match(asset["name"])
+            if m and m.group(2) in checksum_suffixes and asset["name"][:-len(".sha256")] not in by_name:
+              delete(asset)
+
+          print(f"Deleted {len(deleted)} outdated snapshot asset(s) for platform {platform}")
 
       ########################
       # upload build artifacts (oci only)
