@@ -409,9 +409,9 @@ jobs:
       # with the same prefix in front of the '$$' placeholder, i.e.
       # 'OpenCCU-<OCCU_VERSION>.'. After an OpenCCU-Base bump (e.g. 3.89.11 ->
       # 3.89.14) the snapshots of the previous version thus no longer match
-      # and stay in the release. Remove all snapshot assets of this platform
-      # that belong to a different OpenCCU-Base version once the new ones
-      # have been uploaded successfully.
+      # and stay in the release. Once the new ones have been uploaded
+      # successfully, remove all older snapshot assets of this platform that
+      # belong to a different OpenCCU-Base version.
       - name: Remove outdated snapshot assets of other OpenCCU-Base versions
         if: |
           github.repository_owner == 'OpenCCU'
@@ -422,7 +422,7 @@ jobs:
           RELEASE_ID: 22744592
           PLATFORM: ${{ matrix.platform }}
         run: |
-          import json, os, re, urllib.request
+          import json, os, re, urllib.error, urllib.request
 
           token = os.environ["GH_TOKEN"]
           repo = os.environ["GH_REPO"]
@@ -465,14 +465,33 @@ jobs:
               break
             page += 1
 
-          deleted = 0
+          # group the assets of this platform by suffix
+          by_suffix = {s: [] for s in suffixes}
           for asset in assets:
             m = pattern.match(asset["name"])
-            if not m or m.group(2) not in suffixes or m.group(1) == occu_version:
+            if m and m.group(2) in by_suffix:
+              by_suffix[m.group(2)].append((m.group(1), asset))
+
+          # Only delete assets of other versions which are older than the
+          # newest asset of the current version. If another snapshot run with
+          # a different OpenCCU-Base version overlaps with this one, only the
+          # older upload gets removed and the newest one always survives.
+          deleted = 0
+          for suffix, entries in by_suffix.items():
+            current = [a["created_at"] for v, a in entries if v == occu_version]
+            if not current:
               continue
-            print(f"Deleting outdated snapshot asset {asset['name']}")
-            api("DELETE", f"https://api.github.com/repos/{repo}/releases/assets/{asset['id']}")
-            deleted += 1
+            newest = max(current)  # ISO 8601 UTC timestamps sort lexically
+            for version, asset in entries:
+              if version == occu_version or asset["created_at"] >= newest:
+                continue
+              print(f"Deleting outdated snapshot asset {asset['name']}")
+              try:
+                api("DELETE", f"https://api.github.com/repos/{repo}/releases/assets/{asset['id']}")
+              except urllib.error.HTTPError as e:
+                if e.code != 404:  # 404: already deleted by an overlapping run
+                  raise
+              deleted += 1
 
           print(f"Deleted {deleted} outdated snapshot asset(s) for platform {platform}")
 
