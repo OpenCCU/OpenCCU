@@ -509,8 +509,10 @@ jobs:
 
           # A checksum is only ever uploaded after its archive, so a checksum
           # without its archive is left over from an archive an overlapping
-          # run has already deleted.
-          for asset in assets:
+          # run has already deleted. Only trust a complete single-page
+          # listing here: with several pages, a concurrent deletion can shift
+          # an archive onto an already read page and hide it.
+          for asset in (assets if page == 1 else []):
             m = pattern.match(asset["name"])
             if m and m.group(2) in checksum_suffixes and asset["name"][:-len(".sha256")] not in by_name:
               delete(asset)
