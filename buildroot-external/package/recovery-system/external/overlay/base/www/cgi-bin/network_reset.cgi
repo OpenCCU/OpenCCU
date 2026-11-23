@@ -3,10 +3,9 @@
 
 echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
 
-if [ -f /tmp/.runningFirmwareUpdate ]; then
-  echo "ERROR: firmware update is currently running"
-  exit 1
-fi
+# check the request (CSRF) and claim the recovery action lock
+. /lib/librecovery.sh
+recovery_cgi_begin
 
 echo -ne "[1/2] Setting network configuration to factory defaults... "
 
@@ -28,4 +27,4 @@ fi
 echo "done.<br>"
 
 echo "[2/2] Rebooting..."
-/sbin/reboot
+recovery_reboot

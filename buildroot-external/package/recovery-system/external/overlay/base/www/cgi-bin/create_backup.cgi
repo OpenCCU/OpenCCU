@@ -1,11 +1,20 @@
 #!/bin/sh
 # shellcheck shell=dash disable=SC2169 source=/dev/null
 
-if [ -f /tmp/.runningFirmwareUpdate ]; then
+# check the request (CSRF) and claim the recovery action lock
+. /lib/librecovery.sh
+if ! ERRMSG=$(recovery_check_request); then
   echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
-  echo "ERROR: firmware update is currently running"
+  echo "${ERRMSG}"
   exit 1
 fi
+if ! recovery_lock; then
+  echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
+  echo "ERROR: another recovery action (e.g. firmware update) is currently running"
+  exit 1
+fi
+trap recovery_unlock EXIT
+recovery_trap_signals
 
 if ! mount | grep -q /userfs; then
   echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"

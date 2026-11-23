@@ -15,6 +15,7 @@ REGA_INIT_SCRIPT = EXTERNAL / "package/openccu-base/S70ReGaHss"
 RECOVERY_CGI = (EXTERNAL / "package/recovery-system/external/overlay/base"
                 "/www/cgi-bin/admin_password_reset.cgi")
 RECOVERY_INDEX = EXTERNAL / "package/recovery-system/external/overlay/base/www/index.cgi"
+RECOVERY_LIB = EXTERNAL / "package/recovery-system/external/overlay/base/lib/librecovery.sh"
 
 SHADOW = ("root:$6$salt$hash:19000:0:99999:7:::\n"
           "daemon:*:10933:0:99999:7:::\n"
@@ -66,7 +67,7 @@ class AdminPasswordResetTest(unittest.TestCase):
 
     def localize(self, source, target):
         """Redirect absolute paths of a target script into the temp root."""
-        source = re.sub(r"(?<![\w./-])(/etc/|/var/|/usr/local/|/userfs|/tmp/)",
+        source = re.sub(r"(?<![\w./-])(/etc/|/var/|/usr/local/|/userfs|/tmp/|/lib/librecovery\.sh)",
                         lambda match: str(self.root) + match.group(1), source)
         out = self.root / target
         out.write_text(source)
@@ -169,9 +170,12 @@ class AdminPasswordResetTest(unittest.TestCase):
     def run_cgi(self):
         for name in ("mount", "reboot"):
             self.mock(name, f'echo "{name} $*" >>"$CALL_LOG"')
-        source = RECOVERY_CGI.read_text().replace("/sbin/reboot", "reboot")
-        script = self.localize(source, "admin_password_reset.cgi")
-        return subprocess.run(["bash", str(script)], env=self.env,
+        (self.root / "lib").mkdir(exist_ok=True)
+        self.localize(RECOVERY_LIB.read_text().replace("/sbin/reboot", "reboot"),
+                      "lib/librecovery.sh")
+        script = self.localize(RECOVERY_CGI.read_text(), "admin_password_reset.cgi")
+        env = dict(self.env, REQUEST_METHOD="POST", HTTP_HOST="ccu", HTTP_ORIGIN="http://ccu")
+        return subprocess.run(["bash", str(script)], env=env,
                               capture_output=True, text=True, timeout=10)
 
     def test_recovery_action_schedules_reset_and_reboots(self):
@@ -185,7 +189,7 @@ class AdminPasswordResetTest(unittest.TestCase):
         self.assertEqual(self.shadow.read_text(), SHADOW)
 
     def test_recovery_action_refused_during_firmware_update(self):
-        (self.root / "tmp/.runningFirmwareUpdate").touch()
+        (self.root / "tmp/.recoveryActionLock").mkdir()
         result = self.run_cgi()
         self.assertEqual(result.returncode, 1)
         self.assertFalse((self.root / "userfs/.doAdminPasswordReset").exists())

@@ -3,10 +3,9 @@
 
 echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
 
-if [ -f /tmp/.runningFirmwareUpdate ]; then
-  echo "ERROR: firmware update is currently running"
-  exit 1
-fi
+# check the request (CSRF) and claim the recovery action lock
+. /lib/librecovery.sh
+recovery_cgi_begin
 
 echo -ne "[1/2] Scheduling reset of all admin passwords (WebUI + OS) for next boot... "
 
@@ -32,4 +31,4 @@ echo "done.<br>"
 
 echo "[2/2] Rebooting...<br>"
 echo "Please login to the WebUI afterwards and set new passwords immediately!"
-/sbin/reboot
+recovery_reboot
