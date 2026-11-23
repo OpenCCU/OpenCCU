@@ -3,10 +3,11 @@
 
 echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
 
-if [ -f /tmp/.runningFirmwareUpdate ]; then
-  echo "ERROR: firmware update is already running"
-  exit 1
-fi
+# check the request (CSRF) and claim the recovery action lock before the
+# upload is written to /usr/local/tmp. The lock is held until the system
+# reboots (or released on exit) and handed over to fwinstall.sh.
+. /lib/librecovery.sh
+recovery_cgi_begin
 
 # cleanup first
 rm -f /usr/local/.firmwareUpdate
@@ -34,7 +35,7 @@ a=$((a*2+b+c+d+10))
 awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
 PROGRESS_PID=$!
 # shellcheck disable=SC2064
-trap "kill ${PROGRESS_PID}" EXIT
+trap "kill ${PROGRESS_PID}; recovery_unlock" EXIT
 
 # calculate the expected content length using
 # HTTP_CONTENT_LENGTH or CONTENT_LENGTH
@@ -51,14 +52,14 @@ if ! head -q -c $SIZE >"${filename}"; then
 fi
 
 # stop the progress output
-kill ${PROGRESS_PID} && trap " " EXIT
+kill ${PROGRESS_PID} && trap recovery_unlock EXIT
 
 echo "OK, DONE<br/><br/>"
 
 ######
 # lets start the firmware update now using /bin/fwinstall.sh
 # and if it returns 0 everything was fine and we can reboot!
-if ! /bin/fwinstall.sh "${filename}"; then
+if ! RECOVERY_LOCK_HELD=1 /bin/fwinstall.sh "${filename}"; then
   RET=1
 else
   RET=0
@@ -70,7 +71,7 @@ rm -f /tmp/.runningFirmwareUpdate
 
 if [ ${RET} -eq 0 ]; then
   echo "Rebooting...<br/>"
-  /sbin/reboot
+  recovery_reboot || RET=1
 fi
 
 exit ${RET}

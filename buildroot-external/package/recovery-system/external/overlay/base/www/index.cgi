@@ -66,7 +66,7 @@ cat <<EOF
       <tr>
         <td id="tdBackupConfig" style="display: none;">
           <p style="text-align: center">Backup Configuration</p>
-          <p style="text-align: center"><input class="NavButton" type="button" onclick="window.location.href = 'cgi-bin/create_backup.cgi';" value="Create Backup"></p>
+          <p style="text-align: center"><input class="NavButton" type="button" onclick="postAction('cgi-bin/create_backup.cgi');" value="Create Backup"></p>
         </td>
       </tr>
       <tr align="center">
@@ -163,10 +163,10 @@ cat <<EOF
       </tr>
       <tr><td><hr noshade size="4" color="white"></td></tr>
       <tr>
-        <td><div><input class="NavButton" type="button" onclick="window.location.href = 'cgi-bin/safemode_boot.cgi';" value="Safe Mode Reboot"></div></td>
+        <td><div><input class="NavButton" type="button" onclick="postAction('cgi-bin/safemode_boot.cgi');" value="Safe Mode Reboot"></div></td>
       </tr>
       <tr>
-        <td><div><input class="NavButton" type="button" onclick="window.location.href = 'cgi-bin/normal_boot.cgi';" value="Normal Reboot"></div></td>
+        <td><div><input class="NavButton" type="button" onclick="postAction('cgi-bin/normal_boot.cgi');" value="Normal Reboot"></div></td>
       </tr>
       <tr><td><hr noshade size="4" color="white"></td></tr>
     </table>
@@ -234,6 +234,16 @@ cat <<EOF
 
       function reloadPage() {
         window.location.reload();
+      }
+
+      // trigger a recovery action via POST (the CGI scripts reject GET
+      // requests to protect against cross-site request forgery)
+      function postAction(url) {
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = url;
+        document.body.appendChild(form);
+        form.submit();
       }
 
       function showOnlyRelevantElems() {
@@ -322,13 +332,13 @@ cat <<EOF
           case 0:
             elmConfirmActionText.innerHTML = "Do you really want to perform a factory reset?";
             elmBtnConfirmYes.onclick = function () {
-               window.location.href = 'cgi-bin/factory_reset.cgi';
+               postAction('cgi-bin/factory_reset.cgi');
              };
              break;
           case 1:
             elmConfirmActionText.innerHTML = "Do you really want to reset the network settings?";
             elmBtnConfirmYes.onclick = function () {
-              window.location.href = 'cgi-bin/network_reset.cgi';
+              postAction('cgi-bin/network_reset.cgi');
              };
             break;
           case 2:
@@ -336,7 +346,7 @@ cat <<EOF
               + "<span style='font-size: 60%;'>The reset is performed during the next normal boot. Afterwards the WebUI will ask for a new administrator password "
               + "and a new SSH password can be set in the WebUI. Until then the system is accessible without passwords!</span>";
             elmBtnConfirmYes.onclick = function () {
-              window.location.href = 'cgi-bin/admin_password_reset.cgi';
+              postAction('cgi-bin/admin_password_reset.cgi');
              };
             break;
         }

@@ -891,7 +891,7 @@ fw_in_upload_dir()
 # never for a path with a ".." component, and only when the directories holding
 # the file and its -dir resolve (symlinks followed) to that directory or one
 # below it.
-# shellcheck disable=SC2329 # only called from the EXIT traps
+# shellcheck disable=SC2329,SC2317 # only called from the EXIT traps
 on_exit()
 {
   if [[ -n "${FWPREPARE_FILE}" ]]; then
@@ -913,6 +913,9 @@ on_exit()
     FWPREPARE_FILE=""
   fi
   rm -f /tmp/.runningFirmwareUpdate
+  if [[ "${RECOVERY_LOCK_OWNER}" == "1" ]]; then
+    recovery_unlock
+  fi
 }
 
 ######
@@ -2030,14 +2033,25 @@ fwinstall()
 #################################
 # main body starts here
 
-# there can be only one!
-if [[ -f /tmp/.runningFirmwareUpdate ]]; then
-  echo "ERROR: Firmware Update already running<br/>"
+# there can be only one! (atomically claim the recovery action lock
+# shared with the CGI scripts of the recovery system). If the caller
+# (firmware_update.cgi) already holds the lock it sets RECOVERY_LOCK_HELD=1
+# and also remains responsible for releasing it.
+. /lib/librecovery.sh
+RECOVERY_LOCK_OWNER=0
+if [[ "${RECOVERY_LOCK_HELD}" == "1" ]] && recovery_locked; then
+  :
+elif recovery_lock; then
+  RECOVERY_LOCK_OWNER=1
+else
+  echo "ERROR: Firmware Update or another recovery action already running<br/>"
   exit 1
 fi
 
-# capture on EXIT and create the lock file
+# capture on EXIT and create the marker file (used by index.cgi to
+# display the update progress)
 trap 'on_exit' EXIT
+recovery_trap_signals
 touch /tmp/.runningFirmwareUpdate
 
 # source all data from /var/hm_mode
