@@ -1,0 +1,231 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169
+#
+# S51lighttpd-ssl: serves the recovery system over HTTPS on port 443 as well,
+# with the certificate of the installed system (/etc/config/server.pem on the
+# userfs), so that a browser that trusts the system by its name keeps
+# reaching it while the recovery system runs.
+#
+# This is a second lighttpd instance beside the one S50lighttpd starts on
+# port 80, and port 80 never depends on it:
+#
+#  - S50lighttpd and its configuration are not touched; this instance runs
+#    from a copy of /etc/lighttpd/lighttpd.conf in RAM whose only changes are
+#    the ports, the pid file and the TLS settings. If anything about it fails,
+#    the second instance just does not start.
+#  - All of it runs in the background: the boot (and an unattended update in
+#    S90AutoUpdate) never waits for the userfs, even when the card hangs.
+#  - The userfs is only read, with hard time limits: the certificate is copied
+#    into RAM (size-capped, a regular file at its expected place, no symlink
+#    elsewhere), validated there (certificate, key, the key matching the
+#    certificate) and lighttpd only ever sees the RAM copy - a card that dies
+#    later cannot take the instance down, let alone port 80.
+#  - Missing, unreadable, too large, garbage, a key that does not match, a
+#    read that hangs, a userfs that is not mounted: no HTTPS, one line in the
+#    log, nothing else. The recovery never creates a certificate.
+#  - An expired certificate is still served: the browser has accepted (or
+#    pinned) exactly this certificate for the system, so it shows the same
+#    for the recovery system; refusing it would only lose the way by name.
+#  - No redirect from port 80 and no HSTS header: plain HTTP on port 80 stays
+#    the fallback that always works, by name and by IP address.
+#
+# Usage: S51lighttpd-ssl {start|stop|restart|check}
+#   check: runs the certificate check in the foreground and prints the result
+#          (for tests and diagnostics), starts nothing.
+
+NAME=lighttpd-ssl
+DAEMON=/usr/sbin/lighttpd
+SRC_CONF=/etc/lighttpd/lighttpd.conf
+RUN_DIR=/run/lighttpd-ssl
+PEM="${RUN_DIR}/server.pem"
+CONF="${SRC_CONF%/*}/${NAME}.conf"
+PID_FILE=/var/run/lighttpd-ssl.pid
+USERFS=/userfs
+MOUNTS=/proc/mounts
+CERT=/etc/config/server.pem
+CERT_REAL="${USERFS}/etc/config/server.pem"
+MAX_SIZE=65536
+STEP_TIMEOUT=5
+
+log() {
+  logger -t "${NAME}" "$*" 2>/dev/null
+  echo "${NAME}: $*"
+}
+
+# t <seconds> <cmd...>: the command, killed when it takes longer
+t() {
+  local secs=$1
+  shift
+  timeout -s KILL "${secs}" "$@"
+}
+
+# copies the certificate into RAM and validates the copy; prints the
+# reason and returns 1 when there is nothing usable
+fetch_certificate() {
+  local real info size
+
+  # the userfs mounted at all? (/proc only: no access to the userfs itself)
+  if ! grep -q "^[^ ]* ${USERFS} " "${MOUNTS}" 2>/dev/null; then
+    echo "userfs not mounted"
+    return 1
+  fi
+
+  # its expected place: /etc/config -> /usr/local/etc/config -> /userfs/...,
+  # and the file itself no symlink to anywhere else
+  real=$(t "${STEP_TIMEOUT}" readlink -f "${CERT}" 2>/dev/null)
+  if [ "${real}" != "${CERT_REAL}" ]; then
+    echo "${CERT} does not lead to ${CERT_REAL} (${real:-timeout or error})"
+    return 1
+  fi
+
+  info=$(t "${STEP_TIMEOUT}" stat -c '%F:%s' "${CERT_REAL}" 2>/dev/null)
+  case "${info}" in
+    "regular file:"*) size=${info#regular file:} ;;
+    "regular empty file:"*) echo "${CERT} is empty"; return 1 ;;
+    "") echo "${CERT} is missing or unreadable (or the read timed out)"; return 1 ;;
+    *) echo "${CERT} is not a regular file (${info%%:*})"; return 1 ;;
+  esac
+  case "${size}" in ''|*[!0-9]*) echo "${CERT}: no size"; return 1 ;; esac
+  if [ "${size}" -le 0 ] || [ "${size}" -gt "${MAX_SIZE}" ]; then
+    echo "${CERT} has ${size} bytes (limit ${MAX_SIZE})"
+    return 1
+  fi
+
+  rm -rf "${RUN_DIR}"
+  (umask 077 && mkdir -p "${RUN_DIR}") || { echo "cannot create ${RUN_DIR}"; return 1; }
+  if ! (umask 077 && t "${STEP_TIMEOUT}" head -c $((MAX_SIZE + 1)) "${CERT_REAL}" >"${PEM}.new" 2>/dev/null); then
+    echo "reading ${CERT} failed or timed out"
+    return 1
+  fi
+  size=$(wc -c <"${PEM}.new" 2>/dev/null)
+  if [ "${size:-0}" -le 0 ] || [ "${size}" -gt "${MAX_SIZE}" ]; then
+    echo "the copy of ${CERT} has ${size:-no} bytes"
+    return 1
+  fi
+
+  # the copy in RAM: a certificate, a key, and the key is the certificate's
+  if ! t "${STEP_TIMEOUT}" openssl x509 -noout -in "${PEM}.new" >/dev/null 2>&1; then
+    echo "${CERT} holds no readable certificate"
+    return 1
+  fi
+  if ! t "${STEP_TIMEOUT}" openssl pkey -noout -in "${PEM}.new" >/dev/null 2>&1; then
+    echo "${CERT} holds no readable private key"
+    return 1
+  fi
+  if [ "$(t "${STEP_TIMEOUT}" openssl x509 -noout -pubkey -in "${PEM}.new" 2>/dev/null)" != \
+       "$(t "${STEP_TIMEOUT}" openssl pkey -pubout -in "${PEM}.new" 2>/dev/null)" ]; then
+    echo "the key in ${CERT} does not belong to its certificate"
+    return 1
+  fi
+  mv -f "${PEM}.new" "${PEM}" || { echo "cannot move the copy into place"; return 1; }
+  return 0
+}
+
+# writes the second instance's configuration: the port-80 one with the
+# ports, the pid file and TLS changed, nothing else (beside the original:
+# lighttpd resolves its relative includes against the main file's directory)
+# shellcheck disable=SC2016 # $SERVER is lighttpd's, not the shell's
+write_config() {
+  umask 022
+  sed -e 's|^server\.port = 80$|server.port = 443|' \
+      -e 's|^\$SERVER\["socket"\] == "\[::\]:80" {$|$SERVER["socket"] == "[::]:443" {\n\tssl.engine = "enable"|' \
+      -e 's|^server\.pid-file = .*$|server.pid-file = "'"${PID_FILE}"'"|' \
+      "${SRC_CONF}" >"${CONF}.new" 2>/dev/null || return 1
+  cat >>"${CONF}.new" <<EOF
+
+## ${NAME}: HTTPS with the system's certificate (copied into RAM)
+ssl.engine = "enable"
+ssl.pemfile = "${PEM}"
+ssl.openssl.ssl-conf-cmd = ("MinProtocol" => "TLSv1.2",
+                            "Options" => "-ServerPreference",
+                            "CipherString" => "EECDH+AESGCM:AES256+EECDH:CHACHA20:!SHA1:!SHA256:!SHA384")
+EOF
+  # each change made, and nothing left on port 80 - else the instance would
+  # only fight the one on port 80 for it (and lose)
+  grep -q '^server\.port = 443$' "${CONF}.new" &&
+    grep -q '^\$SERVER\["socket"\] == "\[::\]:443" {$' "${CONF}.new" &&
+    grep -q "^server\\.pid-file = \"${PID_FILE}\"\$" "${CONF}.new" &&
+    ! grep -q '^[^#]*:80"' "${CONF}.new" &&
+    ! grep -q '^server\.port = 80$' "${CONF}.new" || return 1
+  mv -f "${CONF}.new" "${CONF}"
+}
+
+# the whole start: certificate, configuration, test, daemon - one log line
+run() {
+  local why subject
+  if ! why=$(fetch_certificate); then
+    rm -rf "${RUN_DIR}"
+    log "no HTTPS on port 443: ${why}"
+    return 1
+  fi
+  if ! write_config; then
+    rm -rf "${RUN_DIR}" "${CONF}.new"
+    log "no HTTPS on port 443: ${SRC_CONF} is not in the expected shape"
+    return 1
+  fi
+  if ! t 10 "${DAEMON}" -tt -f "${CONF}" >/dev/null 2>&1; then
+    rm -rf "${RUN_DIR}" "${CONF}"
+    log "no HTTPS on port 443: lighttpd refuses the configuration with the certificate"
+    return 1
+  fi
+  if ! start-stop-daemon -S -q -p "${PID_FILE}" --exec "${DAEMON}" -- -f "${CONF}"; then
+    log "no HTTPS on port 443: lighttpd did not start"
+    return 1
+  fi
+  subject=$(t "${STEP_TIMEOUT}" openssl x509 -noout -subject -in "${PEM}" 2>/dev/null)
+  if t "${STEP_TIMEOUT}" openssl x509 -noout -checkend 0 -in "${PEM}" >/dev/null 2>&1; then
+    log "HTTPS on port 443 with the system's certificate (${subject})"
+  else
+    log "HTTPS on port 443 with the system's certificate (${subject}), which has expired - served anyway"
+  fi
+  return 0
+}
+
+start() {
+  printf "Starting %s: " "${NAME}"
+  [ -x "${DAEMON}" ] && [ -f "${SRC_CONF}" ] || { echo "skipped"; return 0; }
+  # in the background, detached: nothing here may hold up the boot
+  # (the redirection inside the subshell: on the function call, dash would hand
+  # the caller's stdout to the command substitutions within)
+  (exec </dev/null >/dev/null 2>&1; run) &
+  echo "OK (in the background)"
+}
+
+stop() {
+  printf "Stopping %s: " "${NAME}"
+  start-stop-daemon -K -q -p "${PID_FILE}" 2>/dev/null
+  rm -rf "${RUN_DIR}" "${CONF}"
+  echo "OK"
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload)
+    stop
+    start
+    ;;
+  check)
+    # a directory of its own: the running instance's copy stays as it is
+    RUN_DIR=/run/lighttpd-ssl-check
+    PEM="${RUN_DIR}/server.pem"
+    if why=$(fetch_certificate); then
+      echo "usable: ${CERT}"
+      rm -rf "${RUN_DIR}"
+      exit 0
+    fi
+    rm -rf "${RUN_DIR}"
+    echo "not usable: ${why}"
+    exit 1
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|check}"
+    exit 1
+    ;;
+esac
+
+exit 0

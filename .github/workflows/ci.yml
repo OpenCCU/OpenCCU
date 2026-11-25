@@ -115,6 +115,7 @@ jobs:
           python3 scripts/testcases/build/test_rf_mod_pwm_led.py -v
           python3 scripts/testcases/build/test_fwinstall_sparse.py -v
           python3 scripts/testcases/build/test_openccu_base_changes.py -v
+          python3 scripts/testcases/build/test_recovery_https.py -v
 
       - name: Check Package consistency
         run: |
