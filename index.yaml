@@ -270,14 +270,14 @@ entries:
         - name: Documentation
           url: https://github.com/OpenCCU/OpenCCU/wiki
     apiVersion: v2
-    appVersion: 3.89.14.20261123-54c67c1
-    created: "2026-11-23T10:07:27.4155047Z"
+    appVersion: 3.89.14.20261125-a66ff69
+    created: "2026-11-25T11:11:13.369321967Z"
     dependencies:
     - name: common
       repository: https://bjw-s-labs.github.io/helm-charts/
       version: 0.2.2
     description: HomeMatic/homematicIP CCU central based on OpenCCU
-    digest: 687f623fc5eb24edf5447f0db0eda867be77b11ea7bb7a357aa03956e67438f5
+    digest: fcd2b47298d65e941efcb58703fb0c958eb2bf8d31cd66e1106113d278c1fa08
     home: https://github.com/OpenCCU/OpenCCU
     icon: https://raw.githubusercontent.com/OpenCCU/OpenCCU/master/home-assistant-addon/icon.png
     keywords:
@@ -1109,4 +1109,4 @@ entries:
     urls:
     - https://OpenCCU.github.io/OpenCCU/raspberrymatic-3.55.10.tgz
     version: 3.55.10
-generated: "2026-11-23T10:07:27.4133694Z"
+generated: "2026-11-25T11:11:13.367257344Z"
