@@ -118,7 +118,17 @@ class RecoveryHttpsTest(unittest.TestCase):
         log = self.logfile.read_text()
         self.assertTrue(log.strip(), "no log line")
         self.assertEqual(len(log.strip().splitlines()), 1, f"one log line, got: {log!r}")
+        self.wait_for_job()
         return log, elapsed
+
+    def wait_for_job(self):
+        """the background job of a start is done when it has given the lock back - which comes
+        after its log line"""
+        lock = self.root / "var/run/lighttpd-ssl.lock"
+        deadline = time.monotonic() + BOUND
+        while time.monotonic() < deadline and lock.exists():
+            time.sleep(0.02)
+        self.assertFalse(lock.exists(), "a finished start must free the lock")
 
     def started(self):
         return "ssd -S" in self.calls.read_text()
@@ -363,6 +373,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         deadline = time.monotonic() + BOUND
         while time.monotonic() < deadline and not self.logfile.read_text().strip():
             time.sleep(0.05)
+        self.wait_for_job()
         self.assertEqual(self.calls.read_text().count("lighttpd -tt"), 1, self.calls.read_text())
         self.assertEqual(self.calls.read_text().count("ssd -S"), 1, self.calls.read_text())
 
@@ -374,6 +385,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         deadline = time.monotonic() + BOUND
         while time.monotonic() < deadline and not self.logfile.read_text().strip():
             time.sleep(0.05)
+        self.wait_for_job()
         self.assert_https(self.logfile.read_text())
         self.assertEqual(self.calls.read_text().count("ssd -S"), 2)
 
@@ -410,6 +422,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         deadline = time.monotonic() + BOUND
         while time.monotonic() < deadline and not self.logfile.read_text().strip():
             time.sleep(0.05)
+        self.wait_for_job()
         self.assert_https(self.logfile.read_text())
         self.assertEqual(self.calls.read_text().count("lighttpd -tt"), 1, self.calls.read_text())
         self.assertEqual(self.calls.read_text().count("ssd -S"), 1, self.calls.read_text())
@@ -449,7 +462,6 @@ class RecoveryHttpsTest(unittest.TestCase):
                 self.assertLess(elapsed, 5)
                 self.assertFalse((self.root / "var/run/lighttpd-ssl.lock").exists())
         self.assert_https(self.start()[0])
-        self.assertFalse((self.root / "var/run/lighttpd-ssl.lock").exists(), "a finished start frees the lock")
 
     def test_nothing_is_written_to_the_userfs(self):
         self.pem.write_text(self.good)
