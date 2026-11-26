@@ -88,6 +88,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         script = SCRIPT.read_text()
         for name, value in (("DAEMON", r / "bin/lighttpd"), ("SRC_CONF", r / "lighttpd.conf"),
                             ("RUN_DIR", r / "run/lighttpd-ssl"), ("PID_FILE", r / "var/run/lighttpd-ssl.pid"),
+                            ("START_PID_FILE", r / "var/run/lighttpd-ssl-start.pid"),
                             ("USERFS", r / "userfs"), ("MOUNTS", self.mounts),
                             ("CERT", r / "etc/config/server.pem"),
                             ("STEP_TIMEOUT", STEP_TIMEOUT)):
@@ -261,6 +262,95 @@ class RecoveryHttpsTest(unittest.TestCase):
         self.assertIn("usable", res.stdout)
         self.assertEqual((self.root / "run/lighttpd-ssl/server.pem").read_text(), before)
         self.assertFalse((self.root / "run/lighttpd-ssl-check").exists())
+
+    # --- stop and a start that is still under way --------------------------------------------
+
+    def run_script(self, action):
+        t0 = time.monotonic()
+        res = subprocess.run(["sh", str(self.script), action], env=self.env, capture_output=True, text=True,
+                             timeout=30)
+        self.assertEqual(res.returncode, 0, res.stderr)
+        return res.stdout, time.monotonic() - t0
+
+    def slow_config_test(self, seconds=1):
+        """lighttpd -tt takes a while: the start is still under way when the next call comes"""
+        self.mock("lighttpd", 'printf "lighttpd %s\\n" "$*" >>"$CALL_LOG"\n'
+                              f'if [ "$1" = -tt ]; then sleep {seconds}; exit 0; fi\n')
+
+    def assert_nothing_left(self):
+        self.assertFalse(self.started(), self.calls.read_text())
+        self.assertFalse((self.root / "run/lighttpd-ssl").exists(), "the RAM copy must be gone")
+        self.assertFalse((self.root / "lighttpd-ssl.conf").exists(), "no configuration left")
+        self.assertFalse((self.root / "var/run/lighttpd-ssl-start.pid").exists())
+
+    def test_stop_cancels_a_start_under_way(self):
+        self.pem.write_text(self.good)
+        self.slow_config_test()
+        self.run_script("start")
+        time.sleep(0.3)
+        self.assertIn("lighttpd -tt", self.calls.read_text(), "the start must be under way")
+        _, elapsed = self.run_script("stop")
+        # stop has waited for the job: nothing comes back afterwards
+        self.assertLess(elapsed, 5)
+        self.assert_nothing_left()
+        time.sleep(1.5)
+        self.assert_nothing_left()
+        self.assertEqual(self.logfile.read_text(), "")
+
+    def test_stop_right_after_start(self):
+        self.pem.write_text(self.good)
+        self.run_script("start")
+        self.run_script("stop")
+        calls = self.calls.read_text()
+        # either the job gave up, or the instance it started was stopped after it
+        if "ssd -S" in calls:
+            self.assertLess(calls.index("ssd -S"), calls.rindex("ssd -K"), calls)
+        self.assertFalse((self.root / "run/lighttpd-ssl").exists())
+        self.assertFalse((self.root / "lighttpd-ssl.conf").exists())
+        time.sleep(1)
+        self.assertEqual(calls, self.calls.read_text(), "nothing may happen after the stop")
+        self.assertFalse((self.root / "run/lighttpd-ssl").exists())
+        self.assertFalse((self.root / "lighttpd-ssl.conf").exists())
+
+    def test_stop_does_not_wait_for_a_hanging_step_forever(self):
+        self.pem.write_text(self.good)
+        self.mock("readlink", "exec sleep 600\n")
+        self.run_script("start")
+        _, elapsed = self.run_script("stop")
+        self.assertLess(elapsed, BOUND + 1)
+        self.assert_nothing_left()
+
+    def test_second_start_while_the_first_is_under_way(self):
+        self.pem.write_text(self.good)
+        self.slow_config_test()
+        self.run_script("start")
+        time.sleep(0.3)
+        out, _ = self.run_script("start")
+        self.assertIn("already starting", out)
+        deadline = time.monotonic() + BOUND
+        while time.monotonic() < deadline and not self.logfile.read_text().strip():
+            time.sleep(0.05)
+        self.assertEqual(self.calls.read_text().count("lighttpd -tt"), 1, self.calls.read_text())
+        self.assertEqual(self.calls.read_text().count("ssd -S"), 1, self.calls.read_text())
+
+    def test_restart_starts_again(self):
+        self.pem.write_text(self.good)
+        self.start()
+        self.logfile.write_text("")
+        self.run_script("restart")
+        deadline = time.monotonic() + BOUND
+        while time.monotonic() < deadline and not self.logfile.read_text().strip():
+            time.sleep(0.05)
+        self.assert_https(self.logfile.read_text())
+        self.assertEqual(self.calls.read_text().count("ssd -S"), 2)
+
+    def test_stale_start_pid_file_is_ignored(self):
+        # a pid that is no start of this script (here: this test) is never signalled
+        self.pem.write_text(self.good)
+        (self.root / "var/run/lighttpd-ssl-start.pid").write_text(f"{os.getpid()}\n")
+        _, elapsed = self.run_script("stop")
+        self.assertLess(elapsed, 1.5)
+        self.assert_https(self.start()[0])
 
     def test_nothing_is_written_to_the_userfs(self):
         self.pem.write_text(self.good)
