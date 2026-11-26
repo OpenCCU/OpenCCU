@@ -31,8 +31,8 @@
 #
 #  - "stop" ends a start that is still under way first: the background job
 #    is told to give up, and only when it is gone are the instance stopped
-#    and its files removed - a start can neither outlive a stop nor run
-#    beside a second one.
+#    and its files removed. A lock makes sure of it: a start can neither
+#    outlive a stop nor run beside a second one, however they are called.
 #
 # Usage: S51lighttpd-ssl {start|stop|restart|check}
 #   check: runs the certificate check in the foreground and prints the result
@@ -45,7 +45,7 @@ RUN_DIR=/run/lighttpd-ssl
 PEM="${RUN_DIR}/server.pem"
 CONF="${SRC_CONF%/*}/${NAME}.conf"
 PID_FILE=/var/run/lighttpd-ssl.pid
-START_PID_FILE=/var/run/lighttpd-ssl-start.pid
+START_LOCK=/var/run/lighttpd-ssl.lock
 USERFS=/userfs
 MOUNTS=/proc/mounts
 CERT=/etc/config/server.pem
@@ -54,6 +54,8 @@ MAX_SIZE=65536
 STEP_TIMEOUT=5
 # how long "stop" waits for a start under way (its longest step is 10 s)
 STOP_WAIT=15
+# how long "stop" waits for whoever holds the lock to name itself
+LOCK_GRACE=2
 SELF=${0##*/}
 CANCELLED=
 
@@ -160,11 +162,17 @@ EOF
   mv -f "${CONF}.new" "${CONF}"
 }
 
-# the pid of the background job of a start that is still under way, if any
-# (the pid file may be stale: only a process that runs this script counts)
+# Starts and stops exclude each other with ${START_LOCK}, a directory, as
+# mkdir either creates it or fails: a start takes it and hands it to its
+# background job, which names itself in it and removes it when it ends; a
+# stop takes it for its cleanup. So there is one background job at most, and
+# none while a stop removes the files.
+
+# the pid of the background job that holds the lock, if there is one
+# (only a process that runs this script counts)
 start_job() {
   local pid
-  pid=$(cat "${START_PID_FILE}" 2>/dev/null)
+  pid=$(cat "${START_LOCK}/pid" 2>/dev/null)
   case "${pid}" in ''|*[!0-9]*) return 1 ;; esac
   grep -q "${SELF}" "/proc/${pid}/cmdline" 2>/dev/null || return 1
   echo "${pid}"
@@ -209,8 +217,8 @@ start() {
     echo "skipped"
     return 0
   fi
-  if start_job >/dev/null; then
-    echo "OK (already starting)"
+  if ! mkdir "${START_LOCK}" 2>/dev/null; then
+    echo "OK (a start or stop is already under way)"
     return 0
   fi
   # in the background, detached: nothing here may hold up the boot
@@ -218,29 +226,52 @@ start() {
   # the caller's stdout to the command substitutions within)
   # a stop sends TERM: the step under way ends (each has its time limit),
   # then the job gives up instead of starting the instance
-  (exec </dev/null >/dev/null 2>&1; trap 'CANCELLED=1' TERM; run) &
-  echo $! >"${START_PID_FILE}"
+  (
+    exec </dev/null >/dev/null 2>&1
+    trap 'CANCELLED=1' TERM
+    # /proc/self is this subshell: the read opens it without a fork
+    read -r job _ </proc/self/stat && echo "${job}" >"${START_LOCK}/pid"
+    run
+    rm -rf "${START_LOCK}"
+  ) &
   echo "OK (in the background)"
 }
 
 stop() {
-  local job n
+  local job n tries=5
   printf "Stopping %s: " "${NAME}"
-  # a start still under way first: it would bring the instance and its files
-  # back after they were removed here. Wait until it is gone - or kill it
-  # when it does not end (a step that hangs in the kernel).
-  if job=$(start_job); then
-    kill -TERM "${job}" 2>/dev/null
-    n=$((STOP_WAIT * 5))
-    while [ "${n}" -gt 0 ] && [ -d "/proc/${job}" ]; do
+  # the lock first. While it is held, a start is under way, which would bring
+  # the instance and its files back after they were removed here: tell its
+  # job to give up and wait until it is gone - or kill it when it does not
+  # end (a step that hangs in the kernel).
+  until mkdir "${START_LOCK}" 2>/dev/null; do
+    # a start that has just taken the lock names its job in a moment
+    n=$((LOCK_GRACE * 5))
+    while [ "${n}" -gt 0 ] && [ -d "${START_LOCK}" ] && ! job=$(start_job); do
       sleep 0.2
       n=$((n - 1))
     done
-    [ ! -d "/proc/${job}" ] || kill -KILL "${job}" 2>/dev/null
-  fi
-  rm -f "${START_PID_FILE}"
+    if job=$(start_job); then
+      kill -TERM "${job}" 2>/dev/null
+      n=$((STOP_WAIT * 5))
+      while [ "${n}" -gt 0 ] && [ -d "/proc/${job}" ]; do
+        sleep 0.2
+        n=$((n - 1))
+      done
+      if [ -d "/proc/${job}" ]; then
+        kill -KILL "${job}" 2>/dev/null
+        rm -rf "${START_LOCK}"
+      fi
+    elif [ -d "${START_LOCK}" ]; then
+      # nobody behind it: left over
+      rm -rf "${START_LOCK}"
+    fi
+    tries=$((tries - 1))
+    [ "${tries}" -gt 0 ] || rm -rf "${START_LOCK}"
+  done
   start-stop-daemon -K -q -p "${PID_FILE}" 2>/dev/null
   rm -rf "${RUN_DIR}" "${CONF}"
+  rm -rf "${START_LOCK}"
   echo "OK"
 }
 

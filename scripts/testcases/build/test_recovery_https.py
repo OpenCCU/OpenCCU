@@ -88,7 +88,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         script = SCRIPT.read_text()
         for name, value in (("DAEMON", r / "bin/lighttpd"), ("SRC_CONF", r / "lighttpd.conf"),
                             ("RUN_DIR", r / "run/lighttpd-ssl"), ("PID_FILE", r / "var/run/lighttpd-ssl.pid"),
-                            ("START_PID_FILE", r / "var/run/lighttpd-ssl-start.pid"),
+                            ("START_LOCK", r / "var/run/lighttpd-ssl.lock"),
                             ("USERFS", r / "userfs"), ("MOUNTS", self.mounts),
                             ("CERT", r / "etc/config/server.pem"),
                             ("STEP_TIMEOUT", STEP_TIMEOUT)):
@@ -276,18 +276,21 @@ class RecoveryHttpsTest(unittest.TestCase):
         """lighttpd -tt reports that it was reached (wait_for) and then stays there until
         release(): the start is under way for exactly as long as the test wants it to be"""
         self.reached = self.root / "tt-reached"
-        self.gate = self.root / "tt-gate"
-        os.mkfifo(self.gate)
+        self.released = self.root / "tt-released"
+        # the release is a file that stays: it also holds when it comes before the mock looks.
+        # The mock waits with the real sleep, not with one a test puts into the PATH.
+        sleep = shutil.which("sleep")
         self.mock("lighttpd", 'printf "lighttpd %s\\n" "$*" >>"$CALL_LOG"\n'
-                              f'if [ "$1" = -tt ]; then : >"{self.reached}"; read -r _ <"{self.gate}"; exit 0; fi\n')
+                              'if [ "$1" = -tt ]; then\n'
+                              f'  : >"{self.reached}"\n'
+                              f'  while [ ! -e "{self.released}" ]; do "{sleep}" 0.05; done\n'
+                              '  exit 0\n'
+                              'fi\n')
         self.addCleanup(self.release)
 
     def release(self):
-        """lets a held lighttpd -tt go on; without one waiting, nothing happens"""
-        try:
-            os.close(os.open(self.gate, os.O_WRONLY | os.O_NONBLOCK))
-        except OSError:
-            pass
+        """lets a held lighttpd -tt go on, whether it already waits or only gets there later"""
+        self.released.touch()
 
     def wait_for(self, marker, what):
         deadline = time.monotonic() + BOUND + 5
@@ -299,7 +302,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         self.assertFalse(self.started(), self.calls.read_text())
         self.assertFalse((self.root / "run/lighttpd-ssl").exists(), "the RAM copy must be gone")
         self.assertFalse((self.root / "lighttpd-ssl.conf").exists(), "no configuration left")
-        self.assertFalse((self.root / "var/run/lighttpd-ssl-start.pid").exists())
+        self.assertFalse((self.root / "var/run/lighttpd-ssl.lock").exists(), "the lock must be gone")
 
     def test_stop_cancels_a_start_under_way(self):
         self.pem.write_text(self.good)
@@ -355,7 +358,7 @@ class RecoveryHttpsTest(unittest.TestCase):
         self.run_script("start")
         self.wait_for(self.reached, "the start must be under way")
         out, _ = self.run_script("start")
-        self.assertIn("already starting", out)
+        self.assertIn("already under way", out)
         self.release()
         deadline = time.monotonic() + BOUND
         while time.monotonic() < deadline and not self.logfile.read_text().strip():
@@ -374,13 +377,79 @@ class RecoveryHttpsTest(unittest.TestCase):
         self.assert_https(self.logfile.read_text())
         self.assertEqual(self.calls.read_text().count("ssd -S"), 2)
 
-    def test_stale_start_pid_file_is_ignored(self):
-        # a pid that is no start of this script (here: this test) is never signalled
+    def lock(self, pid=None):
+        """the lock as somebody else holds it, with or without a pid in it"""
+        lock = self.root / "var/run/lighttpd-ssl.lock"
+        lock.mkdir()
+        if pid is not None:
+            (lock / "pid").write_text(f"{pid}\n")
+        return lock
+
+    def test_start_does_nothing_while_the_lock_is_held(self):
+        # another start that has taken the lock and not yet named its job, or a stop
         self.pem.write_text(self.good)
-        (self.root / "var/run/lighttpd-ssl-start.pid").write_text(f"{os.getpid()}\n")
-        _, elapsed = self.run_script("stop")
-        self.assertLess(elapsed, 1.5)
+        lock = self.lock()
+        out, _ = self.run_script("start")
+        self.assertIn("already under way", out)
+        time.sleep(1)
+        self.assertEqual(self.calls.read_text(), "", "no second job may run")
+        self.assertEqual(self.logfile.read_text(), "")
+        self.assertTrue(lock.is_dir(), "the lock is the other one's")
+
+    def test_simultaneous_starts_run_one_job(self):
+        self.pem.write_text(self.good)
+        self.hold_config_test()
+        starts = [subprocess.Popen(["sh", str(self.script), "start"], env=self.env, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, text=True) for _ in range(12)]
+        outs = [p.communicate(timeout=30)[0] for p in starts]
+        self.assertEqual([p.returncode for p in starts], [0] * len(starts))
+        self.assertEqual(sum("in the background" in o for o in outs), 1, outs)
+        self.assertEqual(sum("already under way" in o for o in outs), len(starts) - 1, outs)
+        self.wait_for(self.reached, "the one job must be under way")
+        self.release()
+        deadline = time.monotonic() + BOUND
+        while time.monotonic() < deadline and not self.logfile.read_text().strip():
+            time.sleep(0.05)
+        self.assert_https(self.logfile.read_text())
+        self.assertEqual(self.calls.read_text().count("lighttpd -tt"), 1, self.calls.read_text())
+        self.assertEqual(self.calls.read_text().count("ssd -S"), 1, self.calls.read_text())
+
+    def test_simultaneous_starts_and_a_stop(self):
+        # whichever start got the lock: the stop ends its job, and nothing is left or comes back
+        self.pem.write_text(self.good)
+        self.hold_config_test()
+        starts = [subprocess.Popen(["sh", str(self.script), "start"], env=self.env, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, text=True) for _ in range(12)]
+        for p in starts:
+            p.communicate(timeout=30)
+        self.wait_for(self.reached, "the one job must be under way")
+        waiting = self.root / "stop-waiting"
+        sleep = shutil.which("sleep")
+        self.mock("sleep", f': >"{waiting}"\nexec "{sleep}" "$@"\n')
+        stop = subprocess.Popen(["sh", str(self.script), "stop"], env=self.env, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True)
+        self.addCleanup(stop.kill)
+        self.wait_for(waiting, "stop must wait for the start under way")
+        self.release()
+        _, err = stop.communicate(timeout=30)
+        self.assertEqual(stop.returncode, 0, err)
+        self.assert_nothing_left()
+        time.sleep(1)
+        self.assert_nothing_left()
+        self.assertEqual(self.calls.read_text().count("lighttpd -tt"), 1, self.calls.read_text())
+
+    def test_stop_removes_a_lock_nobody_holds(self):
+        # left over, or with a pid that is no start of this script (here: this test): such a
+        # process is never signalled, and the next start works
+        self.pem.write_text(self.good)
+        for pid in (None, os.getpid()):
+            with self.subTest(pid=pid):
+                self.lock(pid)
+                _, elapsed = self.run_script("stop")
+                self.assertLess(elapsed, 5)
+                self.assertFalse((self.root / "var/run/lighttpd-ssl.lock").exists())
         self.assert_https(self.start()[0])
+        self.assertFalse((self.root / "var/run/lighttpd-ssl.lock").exists(), "a finished start frees the lock")
 
     def test_nothing_is_written_to_the_userfs(self):
         self.pem.write_text(self.good)
