@@ -272,10 +272,28 @@ class RecoveryHttpsTest(unittest.TestCase):
         self.assertEqual(res.returncode, 0, res.stderr)
         return res.stdout, time.monotonic() - t0
 
-    def slow_config_test(self, seconds=1):
-        """lighttpd -tt takes a while: the start is still under way when the next call comes"""
+    def hold_config_test(self):
+        """lighttpd -tt reports that it was reached (wait_for) and then stays there until
+        release(): the start is under way for exactly as long as the test wants it to be"""
+        self.reached = self.root / "tt-reached"
+        self.gate = self.root / "tt-gate"
+        os.mkfifo(self.gate)
         self.mock("lighttpd", 'printf "lighttpd %s\\n" "$*" >>"$CALL_LOG"\n'
-                              f'if [ "$1" = -tt ]; then sleep {seconds}; exit 0; fi\n')
+                              f'if [ "$1" = -tt ]; then : >"{self.reached}"; read -r _ <"{self.gate}"; exit 0; fi\n')
+        self.addCleanup(self.release)
+
+    def release(self):
+        """lets a held lighttpd -tt go on; without one waiting, nothing happens"""
+        try:
+            os.close(os.open(self.gate, os.O_WRONLY | os.O_NONBLOCK))
+        except OSError:
+            pass
+
+    def wait_for(self, marker, what):
+        deadline = time.monotonic() + BOUND + 5
+        while time.monotonic() < deadline and not marker.exists():
+            time.sleep(0.02)
+        self.assertTrue(marker.exists(), what)
 
     def assert_nothing_left(self):
         self.assertFalse(self.started(), self.calls.read_text())
@@ -285,15 +303,26 @@ class RecoveryHttpsTest(unittest.TestCase):
 
     def test_stop_cancels_a_start_under_way(self):
         self.pem.write_text(self.good)
-        self.slow_config_test()
+        self.hold_config_test()
+        # stop waits for the job with sleep, after it has told it to give up
+        waiting = self.root / "stop-waiting"
+        sleep = shutil.which("sleep")
+        self.mock("sleep", f': >"{waiting}"\nexec "{sleep}" "$@"\n')
         self.run_script("start")
-        time.sleep(0.3)
-        self.assertIn("lighttpd -tt", self.calls.read_text(), "the start must be under way")
-        _, elapsed = self.run_script("stop")
-        # stop has waited for the job: nothing comes back afterwards
-        self.assertLess(elapsed, 5)
+        self.wait_for(self.reached, "the start must be under way")
+        t0 = time.monotonic()
+        stop = subprocess.Popen(["sh", str(self.script), "stop"], env=self.env, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True)
+        self.addCleanup(stop.kill)
+        self.wait_for(waiting, "stop must wait for the start under way")
+        self.assertIsNone(stop.poll(), "stop must not return while the start is under way")
+        self.release()
+        _, err = stop.communicate(timeout=30)
+        self.assertEqual(stop.returncode, 0, err)
+        self.assertLess(time.monotonic() - t0, BOUND + 5)
+        # the job gave up instead of starting the instance, and nothing comes back
         self.assert_nothing_left()
-        time.sleep(1.5)
+        time.sleep(1)
         self.assert_nothing_left()
         self.assertEqual(self.logfile.read_text(), "")
 
@@ -322,11 +351,12 @@ class RecoveryHttpsTest(unittest.TestCase):
 
     def test_second_start_while_the_first_is_under_way(self):
         self.pem.write_text(self.good)
-        self.slow_config_test()
+        self.hold_config_test()
         self.run_script("start")
-        time.sleep(0.3)
+        self.wait_for(self.reached, "the start must be under way")
         out, _ = self.run_script("start")
         self.assertIn("already starting", out)
+        self.release()
         deadline = time.monotonic() + BOUND
         while time.monotonic() < deadline and not self.logfile.read_text().strip():
             time.sleep(0.05)
