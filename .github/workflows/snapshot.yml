@@ -5,7 +5,7 @@ name: Snapshot Build
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # run at 0 AM UTC
+    - cron: '17 0 * * *'  # run at 00:17 UTC (off the full hour to reduce schedule delays)
   workflow_dispatch:
     inputs:
       test_workflow:
