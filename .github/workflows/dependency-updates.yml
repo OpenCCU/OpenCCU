@@ -5,7 +5,7 @@ name: Dependency Updates
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # run daily at 02:00 UTC (quiet window)
+    - cron: '13 2 * * *'  # run daily at 02:13 UTC (quiet window, off the full hour)
   workflow_dispatch:
 
 concurrency:

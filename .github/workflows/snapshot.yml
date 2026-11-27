@@ -3,9 +3,24 @@
 ---
 name: Snapshot Build
 
+# The nightly snapshot is meant to be started by an external scheduler,
+# because GitHub delays scheduled runs by several hours. It calls the
+# workflow_dispatch API with only_if_changes=true, e.g. with a fine-grained
+# token limited to this repository and "Actions: write":
+#
+#   curl -fsS -X POST \
+#     -H "Accept: application/vnd.github+json" \
+#     -H "Authorization: Bearer ${TOKEN}" \
+#     https://api.github.com/repos/OpenCCU/OpenCCU/actions/workflows/snapshot.yml/dispatches \
+#     -d '{"ref":"master","inputs":{"only_if_changes":"true"}}'
+#
+# The schedule below stays as a fallback. Runs are serialized, and a run
+# finds no changes if the commit it was started for has already been built
+# as a snapshot, so the fallback does not build the same commit twice.
+
 on:
   schedule:
-    - cron: '0 0 * * *'  # run at 0 AM UTC
+    - cron: '17 0 * * *'  # run at 00:17 UTC (off the full hour to reduce schedule delays)
   workflow_dispatch:
     inputs:
       test_workflow:
@@ -18,23 +33,52 @@ on:
         required: true
         default: 'all'
         type: string
+      only_if_changes:
+        description: 'Only build if there are new commits since the last snapshot (like the scheduled run)?'
+        required: true
+        type: 'boolean'
+        default: 'false'
 
 # default read-only permission
 permissions:
   contents: read
+
+# never run two snapshot builds at the same time: a run started while
+# another one is in progress waits for it (and then usually finds no
+# changes, see repo-check)
+concurrency:
+  group: snapshot-${{ github.repository }}
+  cancel-in-progress: false
 
 jobs:
   repo-check:
     name: Check for Changes
     runs-on: ubuntu-24.04
     steps:
+      # check out the current branch tip and not the commit this run was
+      # started for, so that a snapshot bump pushed by a run this one had
+      # to wait for is seen
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0
       - id: commit-check
         run: |
-          REF=$(git --no-pager log --no-merges --grep='snapshot bump \[' --pretty='tformat:%H' -1)
-          COUNT=$(git --no-pager log --no-merges --pretty='tformat:%s' ${REF:+$REF..}HEAD | grep -v -e '\(snapshot\|release\) bump \[' | wc -l)
+          # last snapshot bump on the branch tip; its subject ends with the
+          # short hash of the commit that snapshot was built from
+          # ("snapshot bump [<version>-<sha7>]")
+          BUMP=$(git --no-pager log --no-merges --grep='snapshot bump \[' --pretty='tformat:%H' -1 HEAD)
+          BASE=
+          if [ -n "${BUMP}" ]; then
+            BUILT=$(git --no-pager log -1 --pretty='tformat:%s' "${BUMP}" | sed -n 's/^snapshot bump \[.*-\([0-9a-f]\{7,\}\)\]$/\1/p')
+            # if that commit cannot be resolved, leave BASE empty and build: the
+            # bump commit itself may contain commits that were not built
+            BASE=$(git rev-parse -q --verify "${BUILT:-none}^{commit}" || true)
+          fi
+          # count the commits of this run's commit that are not part of the
+          # last snapshot (commits merged while that snapshot was built count)
+          COUNT=$(git --no-pager log --no-merges --pretty='tformat:%s' ${BASE:+$BASE..}"${GITHUB_SHA}" | grep -v -e '\(snapshot\|release\) bump \[' | wc -l)
+          echo "last snapshot built from: ${BASE:-none}, new commits in ${GITHUB_SHA}: ${COUNT}"
           echo "has-commits=$COUNT" >> "$GITHUB_OUTPUT"
     outputs:
       has-commits: ${{ steps.commit-check.outputs.has-commits }}
@@ -44,7 +88,7 @@ jobs:
       contents: read
       pull-requests: read  # mikepenz/release-changelog-builder-action
     name: Generate ChangeLog summary
-    if: ${{ github.repository == 'OpenCCU/OpenCCU' && (github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0) }}
+    if: ${{ github.repository == 'OpenCCU/OpenCCU' && (needs.repo-check.outputs.has-commits > 0 || (github.event_name == 'workflow_dispatch' && github.event.inputs.only_if_changes != 'true')) }}
     runs-on: ubuntu-24.04
     needs: repo-check
 
@@ -122,7 +166,7 @@ jobs:
       id-token: write      # actions/attest-build-provenance
       attestations: write  # actions/attest-build-provenance
     name: Snapshot build [${{ matrix.platform }}]
-    if: ${{ github.repository == 'OpenCCU/OpenCCU' && (github.event_name != 'schedule' || needs.repo-check.outputs.has-commits > 0) }}
+    if: ${{ github.repository == 'OpenCCU/OpenCCU' && (needs.repo-check.outputs.has-commits > 0 || (github.event_name == 'workflow_dispatch' && github.event.inputs.only_if_changes != 'true')) }}
     runs-on: self-hosted
     needs: [repo-check, changelog_summary]
     timeout-minutes: 300

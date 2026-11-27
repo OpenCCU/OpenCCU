@@ -34,7 +34,7 @@ OCI packages require a secret to be uploaded `CR_PAT`. See GitHub [instructions(
 
 - **ci**: on each push, pull request or manual - builds all artefacts (dev versions)
 - **release**: manually triggered - builds a draft release and attach official builds. Updates OCI and Helm latest tags.
-- **snapshot**: cronjob - only works on official repo (dummy in fork) - uploads all snapshot versions
+- **snapshot**: nightly, started by an external scheduler via `workflow_dispatch` with `only_if_changes=true` and by a cronjob as fallback (builds only if there are new commits) - only works on official repo (dummy in fork) - uploads all snapshot versions
 
 ## How to draft a release
 
