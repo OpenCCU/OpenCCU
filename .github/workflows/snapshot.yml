@@ -71,7 +71,9 @@ jobs:
           BASE=
           if [ -n "${BUMP}" ]; then
             BUILT=$(git --no-pager log -1 --pretty='tformat:%s' "${BUMP}" | sed -n 's/^snapshot bump \[.*-\([0-9a-f]\{7,\}\)\]$/\1/p')
-            BASE=$(git rev-parse -q --verify "${BUILT:-none}^{commit}" || echo "${BUMP}")
+            # if that commit cannot be resolved, leave BASE empty and build: the
+            # bump commit itself may contain commits that were not built
+            BASE=$(git rev-parse -q --verify "${BUILT:-none}^{commit}" || true)
           fi
           # count the commits of this run's commit that are not part of the
           # last snapshot (commits merged while that snapshot was built count)
