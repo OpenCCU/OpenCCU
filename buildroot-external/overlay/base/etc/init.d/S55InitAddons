@@ -4,6 +4,33 @@
 # startup script to start/stop third-party addons
 #
 
+# The device descriptions, WebUI pages and patches of the JP-HB-Devices
+# addon are part of OpenCCU. Its rc.d script would patch the WebUI files a
+# second time when the addon is updated, revert or delete them when it is
+# uninstalled and link its own device descriptions into /firmware/rftypes.
+# Therefore the addon is unregistered before the addons are initialized.
+# Device descriptions in its customized_firmware folder are kept there.
+retireIntegratedAddons() {
+  local name=jp-hb-devices-addon
+  local dir=/usr/local/addons/${name}
+
+  # only if the firmware brings the HB device descriptions itself
+  [[ -f /firmware/rftypes/hb-uni-sen-cap-moist.xml ]] || return 0
+  [[ -L /firmware/rftypes/hb-uni-sen-cap-moist.xml ]] && return 0
+  [[ -e /usr/local/etc/config/rc.d/${name} ]] || [[ -d ${dir} ]] || return 0
+
+  rm -f "/usr/local/etc/config/rc.d/${name}"
+  rm -f "/usr/local/etc/config/addons/www/${name}"
+  rm -rf "${dir}-new"
+  if [[ -n "$(find "${dir}/customized_firmware" -type f -iname '*.xml' 2>/dev/null)" ]]; then
+    find "${dir}" -mindepth 1 -maxdepth 1 ! -name customized_firmware -exec rm -rf {} +
+  else
+    rm -rf "${dir}"
+  fi
+  echo -n "${name} removed (part of the firmware), "
+  logger -t openccu -p user.warn "${name} removed: its devices are supported by the firmware itself"
+}
+
 start() {
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
@@ -13,6 +40,8 @@ start() {
   echo -n "Initializing Third-Party Addons: "
 
   if [[ ! -e /etc/config/safemode ]]; then
+
+    retireIntegratedAddons
 
     # adjust the oom score (which is inherited by run-parts)
     # to ensure that others are killed first in case of low memory situations

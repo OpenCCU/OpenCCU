@@ -42,6 +42,15 @@ fi
   done
 ) || exit 105
 
+# the JP-HB-Devices addon is part of the firmware: installing it would
+# patch the WebUI a second time (see /etc/init.d/S55InitAddons)
+if [[ -f ${UPDATEDIR}/rc.d/jp-hb-devices-addon ]] &&
+   [[ -f /firmware/rftypes/hb-uni-sen-cap-moist.xml ]] &&
+   [[ ! -L /firmware/rftypes/hb-uni-sen-cap-moist.xml ]]; then
+  rm -rf "${UPDATEDIR}"
+  exit 107
+fi
+
 # perform addon install by executing the 'update_script' script
 (cd "${UPDATEDIR}" && ./update_script HM-RASPBERRYMATIC 2>/dev/null >/dev/null)
 RESULT=$?
