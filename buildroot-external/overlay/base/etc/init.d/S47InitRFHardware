@@ -4,6 +4,23 @@
 # Startup script checking for RF capabale hardware
 #
 
+# the MAC address of the board: eth0's, else that of the first network interface
+# with a hardware device and a hardware address of its own - independent of which
+# interface holds the default route, and of whether there is one yet
+board_mac() {
+  bm_net=${1:-/sys/class/net}
+  for bm_dev in "${bm_net}/eth0" "${bm_net}"/*; do
+    [[ -r "${bm_dev}/address" ]] || continue
+    [[ "${bm_dev##*/}" == "eth0" ]] || [[ -e "${bm_dev}/device" ]] || continue
+    [[ "$(cat "${bm_dev}/type" 2>/dev/null)" == "1" ]] || continue
+    bm_mac=$(cat "${bm_dev}/address")
+    [[ -n "${bm_mac}" ]] && [[ "${bm_mac}" != "00:00:00:00:00:00" ]] || continue
+    echo "${bm_mac}"
+    return 0
+  done
+  return 1
+}
+
 # function to identify rf hardware
 identify_rf_hardware() {
 
@@ -146,6 +163,49 @@ reset_rf_hardware() {
   sleep 2
 }
 
+# the limit in seconds for probing a radio module on the GPIO header (see
+# probe_radio_module): /etc/config/rf_gpio_probe_timeout if it holds a number,
+# else 6; 0 turns the limit off
+rf_gpio_probe_timeout() {
+  rt_val=$(head -1 /etc/config/rf_gpio_probe_timeout 2>/dev/null | tr -d '[:space:]')
+  case "${rt_val}" in
+    "" | *[!0-9]*) echo 6 ;;
+    *) echo "${rt_val}" ;;
+  esac
+}
+
+# read a radio module's parameters from /dev/<node> into RF_INFO. With
+# RF_GPIO_PROBE_TIMEOUT set (seconds; 0: no limit and no second pass), a node
+# on the GPIO header (device_type GPIO@...) is probed with that limit in the
+# first pass: the header's raw-uart node exists whether or not a module is
+# fitted, and detect_radio_module waits about 18 s on an empty one, while a
+# fitted module answers within about 3 s. When the first pass found no module
+# at all, query_rf_parameters probes again: the other raw-uart nodes (a USB
+# stick probed right after a cut probe can answer "did not respond correctly"
+# once), then the GPIO nodes that ran into the limit, without it and only
+# while nothing was found - so a slow module on the header is not lost.
+probe_radio_module() {
+  PROBE_GPIO=false
+  grep -q '^GPIO@' "/sys/class/raw-uart/${1}/device_type" 2>/dev/null && PROBE_GPIO=true
+  if [[ -n "${RF_GPIO_PROBE_TIMEOUT}" ]] && [[ "${RF_GPIO_PROBE_TIMEOUT}" != "0" ]]; then
+    if [[ "${RF_PROBE_PASS}" == "short" ]] && [[ "${PROBE_GPIO}" == "true" ]]; then
+      RF_INFO=$(/usr/bin/timeout "${RF_GPIO_PROBE_TIMEOUT}" /bin/detect_radio_module "/dev/${1}")
+      PROBE_RC=$?
+      # coreutils' timeout exits with 124, busybox's with the signal's status (143)
+      if [[ ${PROBE_RC} -eq 124 ]] || [[ ${PROBE_RC} -gt 128 ]]; then
+        RF_GPIO_TIMED_OUT="${RF_GPIO_TIMED_OUT} ${1}"
+      fi
+      return ${PROBE_RC}
+    elif [[ "${RF_PROBE_PASS}" == "short" ]] && [[ -r "/sys/class/raw-uart/${1}/device_type" ]]; then
+      RF_RETRY_NODES="${RF_RETRY_NODES} ${1}"
+    elif [[ "${RF_PROBE_PASS}" == "full" ]] && [[ "${PROBE_GPIO}" == "true" ]] &&
+         { [[ -n "${HM_HMRF_DEV}" ]] || [[ -n "${HM_HMIP_DEV}" ]]; }; then
+      return 1
+    fi
+  fi
+  RF_INFO=$(/bin/detect_radio_module "/dev/${1}")
+}
+
 # function to read out all relevant rf module parameters (serial, firmware
 # version, rf-addresses, sgtin, etc.)
 query_rf_parameters() {
@@ -154,15 +214,47 @@ query_rf_parameters() {
   RF_COPRO_RESET_PERFORMED=false
 
   # walk through our recognized device nodes and query for
-  # all rf module relevant parameters
-  for dev in ${RF_DEVNODES}; do
+  # all rf module relevant parameters (a second pass probes the GPIO
+  # nodes that ran into RF_GPIO_PROBE_TIMEOUT, see probe_radio_module)
+  RF_PROBE_PASS=short
+  RF_GPIO_TIMED_OUT=
+  RF_RETRY_NODES=
+  RF_PROBE_NODES=${RF_DEVNODES}
+  while [[ -n "${RF_PROBE_NODES}" ]]; do
+  for dev in ${RF_PROBE_NODES}; do
 
     echo -n "."
+
+    # In an OCI/HA environment the host grants device-cgroup access to a
+    # device node that only appeared after the container was started
+    # (e.g. /dev/raw-uart of the hb_rf_eth module loaded above) with a
+    # delay (HA supervisor: >= 2s after the udev event). Thus wait until
+    # the node can actually be opened read-write (as detect_radio_module
+    # does). This also catches a not (yet) connected HB-RF-ETH, for which
+    # open() fails with ENODEV. The subshell is required: a failing
+    # redirection on the ':' special builtin would abort the whole script.
+    # As '<>' implies O_CREAT (no shell redirection opens O_RDWR without
+    # it), the node is re-checked before every attempt. This narrows, but
+    # cannot close, the window in which a node vanishing between check
+    # and open leaves an empty regular file on a writable /dev (in the HA
+    # app /dev is mounted read-only, so the open fails there instead).
+    if [[ "${HM_HOST}" == "oci" ]] && [[ -c "/dev/${dev}" ]]; then
+      for try in $(seq 1 40); do
+        [[ -c "/dev/${dev}" ]] || break
+        ( : <>"/dev/${dev}" ) 2>/dev/null && break
+        if [[ ${try} -eq 40 ]]; then
+          echo -n "ERROR: /dev/${dev} not accessible, "
+          break
+        fi
+        [[ $((try % 4)) -eq 0 ]] && echo -n "."
+        sleep 0.25
+      done
+    fi
 
     # use detect_radio_module to retrieve all relevant info from
     # the rf-module
     if [[ -c /dev/${dev} ]]; then
-      if RF_INFO=$(/bin/detect_radio_module "/dev/${dev}"); then
+      if probe_radio_module "${dev}"; then
 
         echo -n "."
 
@@ -264,6 +356,23 @@ query_rf_parameters() {
       fi
     fi
 
+  done
+
+  # no module found at all (no USB stick either): probe the other raw-uart
+  # nodes and the GPIO nodes that timed out once more, after another reset
+  RF_PROBE_NODES=
+  if [[ "${RF_PROBE_PASS}" == "short" ]] &&
+     [[ -z "${HM_HMRF_DEV}" ]] && [[ -z "${HM_HMIP_DEV}" ]]; then
+    RF_PROBE_NODES=$(echo "${RF_RETRY_NODES} ${RF_GPIO_TIMED_OUT}" | xargs)
+    for dev in ${RF_PROBE_NODES}; do
+      echo -n "."
+      if [[ -e "/sys/class/raw-uart/${dev}/reset_radio_module" ]]; then
+        echo 1 >"/sys/class/raw-uart/${dev}/reset_radio_module" 2>/dev/null
+      fi
+    done
+    [[ -n "${RF_PROBE_NODES}" ]] && sleep 2
+  fi
+  RF_PROBE_PASS=full
   done
 
   # cleanup coprocessor status file
@@ -370,7 +479,7 @@ query_rf_parameters() {
     echo -n "$(hostname)" | sed 's/-openccu//g' >/var/board_serial
   else
     # fallback to put the mac in /var/board_serial
-    MAC=$(cat /sys/class/net/"$(ip route show default | awk '/default/ {print $5}')"/address)
+    MAC=$(board_mac)
     echo -n "$(echo "${MAC}" | tr -d : | tail -c 10)" >/var/board_serial
   fi
 
@@ -394,12 +503,16 @@ start() {
   # source all data from /var/hm_mode
   [[ -r /var/hm_mode ]] && . /var/hm_mode
 
+  RF_GPIO_PROBE_TIMEOUT=$(rf_gpio_probe_timeout)
+
   identify_rf_hardware
   reset_rf_hardware
   query_rf_parameters
 
-  # save all HM_ env variables
-  set | grep '^HM_' >/var/hm_mode
+  # save all HM_ env variables; written to a temporary file and renamed,
+  # so that a reader never sees the file half written
+  set | grep '^HM_' >/var/hm_mode.tmp
+  mv -f /var/hm_mode.tmp /var/hm_mode
 
   # output some status information
   echo -n "HmRF: "

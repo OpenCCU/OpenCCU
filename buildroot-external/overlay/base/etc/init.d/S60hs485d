@@ -32,6 +32,13 @@ stop() {
   echo -n "Stopping hs485d: "
   start-stop-daemon -K -q -p /var/run/hs485dLoader.pid
   killall -q hs485d
+  # hs485d shuts down cleanly on SIGTERM (saves pending device files, closes
+  # the interface), so wait for it to exit before e.g. restarting it
+  for _ in $(seq 1 20); do
+    pidof hs485d >/dev/null || break
+    sleep 1
+  done
+  killall -q -9 hs485d
   rm -f /var/run/hs485dLoader.pid
   echo "OK"
 }

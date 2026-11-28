@@ -5,5 +5,5 @@ sha256  8e378ab93586eb55135d3bc119cce787f7324f48394777d00c34fa3d0be3303f  LICENS
 # for host-mpfr (lxc/oci)
 sha256  50eb7fa307745f30e5cae4c17e188fc42ce6a72f7d925d5ea7e3c2135de6148e  linux-5.15.207.tar.xz
 # Locally calculated
-sha256  3eacbbb1253a913034efd38ce6aeee2def137eb40c799af2745db874796e389d  stable_20260609.tar.gz
-sha256  5bd9acdc82ec5efc3790ae840e5aaa40dfde7efff261cf6dde902dc570acf98c  linux-6.18.57.tar.xz
+sha256  53a3967359cf1b68953bbfc5aef5d3c7fcf9ebf61518fbba108c6a8bfce0c079  stable_20261103.tar.gz
+sha256  c92606f956f09dc50b5a0e2af9e86763fce27ada1647de97f8d1ac8cfc95801d  linux-6.18.65.tar.xz

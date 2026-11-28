@@ -3,10 +3,9 @@
 
 echo -ne "Content-Type: text/html; charset=iso-8859-1\r\n\r\n"
 
-if [ -f /tmp/.runningFirmwareUpdate ]; then
-  echo "ERROR: firmware update is currently running"
-  exit 1
-fi
+# check the request (CSRF) and claim the recovery action lock
+. /lib/librecovery.sh
+recovery_cgi_begin
 
 echo "<pre>"
 
@@ -20,17 +19,17 @@ if [[ -n "${USERFS_DEV}" ]]; then
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; recovery_unlock" EXIT
 
   # run the file i/o test using 'fio' which emulates a
   # Apps Class A1 performance test
   if ! RES=$(/usr/bin/fio --output-format=terse --max-jobs=4 /usr/share/agnostics/sd_bench.fio | cut -f 3,7,8,48,49 -d";" -) || [[ -z "${RES}" ]]; then
     echo "WARNING: performance test failed"
     # stop the progress output
-    kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+    kill ${PROGRESS_PID} && trap "recovery_unlock" EXIT
   else
     # stop the progress output
-    kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+    kill ${PROGRESS_PID} && trap "recovery_unlock" EXIT
     rm -f /usr/local/tmp/sd.test.file
 
     swri=$(echo "${RES}" | head -n 2 | tail -n 1 | cut -d ";" -f 4)
@@ -87,11 +86,11 @@ if [[ -n "${BOOTFS_DEV}" ]]; then
   awk 'BEGIN{i=0;while(1){if(i%75==0){printf"\n";}printf".";fflush();system("sleep 3");i++;}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; recovery_unlock" EXIT
   /bin/umount ${BOOTFS_DEV} 2>/dev/null
   /sbin/fsck.fat -v -a -t -l -V ${BOOTFS_DEV}
   /bin/mount /bootfs
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "recovery_unlock" EXIT
 else
   echo "WARNING: no /bootfs found"
 fi
@@ -104,11 +103,11 @@ if [[ -n "${ROOTFS_DEV}" ]]; then
   awk 'BEGIN{i=0;while(1){if(i%75==0){printf"\n";}printf".";fflush();system("sleep 3");i++;}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; recovery_unlock" EXIT
   /bin/umount ${ROOTFS_DEV} 2>/dev/null
   /sbin/e2fsck -c -c -y -f -v ${ROOTFS_DEV} 2>/dev/null
   /bin/mount /rootfs
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "recovery_unlock" EXIT
 else
   echo "WARNING: no /rootfs found"
 fi
@@ -121,11 +120,11 @@ if [[ -n "${USERFS_DEV}" ]]; then
   awk 'BEGIN{i=0;while(1){if(i%75==0){printf"\n";}printf".";fflush();system("sleep 3");i++;}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; recovery_unlock" EXIT
   /bin/umount ${USERFS_DEV} 2>/dev/null
   /sbin/e2fsck -c -c -y -f -v ${USERFS_DEV} 2>/dev/null
   /bin/mount /userfs
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "recovery_unlock" EXIT
 else
   echo "WARNING: no /userfs found"
 fi

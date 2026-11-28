@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: hobbyquaker <hobbyquaker@gmail.com>
+Date: Wed, 30 Sep 2026 07:12:07 +0200
+Subject: [PATCH] usb: dwc_otg: bounce IN transfers whose length is not a
+ multiple of 4
+
+The DWC OTG core in BCM2835 through BCM2712 only does DMA writes of
+whole words. An IN transfer into a buffer whose length is not a
+multiple of 4 therefore gets up to 3 bytes written past the end of the
+buffer. dwc_otg bounces only buffers whose start is not word aligned,
+so an aligned buffer of odd length goes straight to the DMA engine.
+
+The most visible case is usb_get_device_descriptor(): it allocates
+exactly sizeof(struct usb_device_descriptor), 18 bytes, and the core
+writes 20. kmalloc's size classes usually hide the two bytes in the
+object's slack, but with CONFIG_KFENCE a sampled allocation sits at the
+end of a page and the overrun is reported, on a Raspberry Pi 3 B while
+its LAN9514 enumerates:
+
+  BUG: KFENCE: memory corruption in hub_port_init+0x5b0/0xcf0
+
+with the two bytes after an 18-byte kmalloc-64 object from
+usb_get_device_descriptor() overwritten.
+
+Extend the existing non-dword-aligned path in assign_and_init_hc() to
+IN transfers whose remaining length is not a multiple of 4, for the
+non-isochronous and the isochronous (per frame) cases. The align buffer
+is at least as large as the transfer, and the completion handlers
+already copy back only the bytes actually received, so the URB's
+buffer is never written past its length. The FIQ FSM programs
+hc->align_buff for non-periodic splits and for interrupt splits sent
+as control transfers, and completes those through the same handlers;
+periodic split IN transfers use the FIQ's own bounce buffers as before,
+and so do high-speed isochronous transfers run by the FIQ FSM, which
+use the URB's buffer directly (unchanged).
+
+The dwc2 driver in the Raspberry Pi tree bounces the same case since
+commit 279fbca16a ("drivers: dwc2: better handle hardware length &
+alignment issues").
+---
+ drivers/usb/host/dwc_otg/dwc_otg_hcd.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_hcd.c b/drivers/usb/host/dwc_otg/dwc_otg_hcd.c
+index 9e05e07..cdaa3f9 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_hcd.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_hcd.c
+@@ -1280,6 +1280,19 @@ static void assign_and_init_hc(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
+ 	hc->xfer_len = urb->length - urb->actual_length;
+ 	hc->xfer_count = 0;
+ 
++	/*
++	 * Hardware bug: the core only does DMA writes of whole words, so an
++	 * IN transfer into a buffer whose length is not a multiple of 4 gets
++	 * up to 3 bytes written past the end of the buffer. Bounce such
++	 * transfers through the align buffer; the completion copies back
++	 * only the bytes received. The control SETUP and STATUS phases below
++	 * clear ptr again, and isochronous transfers set it per frame.
++	 */
++	if (hcd->core_if->dma_enable && !hcd->core_if->dma_desc_enable &&
++	    hc->ep_is_in && (hc->xfer_len & 0x3) && urb->buf) {
++		ptr = (uint8_t *) urb->buf + urb->actual_length;
++	}
++
+ 	/*
+ 	 * Set the split attributes
+ 	 */
+@@ -1400,8 +1413,9 @@ static void assign_and_init_hc(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
+ 			hc->xfer_len =
+ 			    frame_desc->length - qtd->isoc_split_offset;
+ 
+-			/* For non-dword aligned buffers */
+-			if (((unsigned long)hc->xfer_buff & 0x3)
++			/* For non-dword aligned buffers and odd-length IN frames */
++			if ((((unsigned long)hc->xfer_buff & 0x3) ||
++			     (hc->ep_is_in && (hc->xfer_len & 0x3) && urb->buf))
+ 			    && hcd->core_if->dma_enable) {
+ 				ptr =
+ 				    (uint8_t *) urb->buf + frame_desc->offset +

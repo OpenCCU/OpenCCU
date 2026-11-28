@@ -43,11 +43,10 @@ maintenance tools respectively, and require the Java runtime.
 descriptions, firmware payloads, Tcl helpers and maintenance scripts.
 `CONFIG_TEMPLATES` installs templates belonging to selected services.
 
-The remaining legacy rootfs patches span several asset components. When any
-patched asset is needed, the build prepares the complete asset input in a
-separate directory and applies the patch series there. Only selected directories
-are copied into the image. A native-only selection, such as recovery, needs no
-WebUI/Tcl asset generation or rootfs patching.
+When any asset component is selected, the build generates the WebUI, device
+description and Tcl assets once in a separate directory (`stage_assets.sh`).
+Only selected directories are copied into the image. A native-only selection,
+such as recovery, needs no WebUI/Tcl asset generation.
 
 ## Services and system integration
 

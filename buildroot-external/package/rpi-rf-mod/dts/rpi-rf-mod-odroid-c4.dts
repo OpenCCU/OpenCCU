@@ -8,6 +8,11 @@
 ** Copyright (c) 2021-2023 Jens Maus <mail@jens-maus.de>
 ** Licensed under Apache 2.0
 **
+** LED limitation: the RPI-RF-MOD LEDs use header pins 36 (red),
+** 38 (green) and 40 (blue). On ODROID boards pin 38 is a 1.8V
+** reference output and pin 40 is an ADC input, so no RGB LED group
+** (leds-group-multicolor) can be defined. See
+** docs/RPI-RF-MOD-hss-led.md.
 */
 
 / {
@@ -51,7 +56,7 @@
             i2c0 = "/soc/bus@ffd00000/i2c@1c000";           // @i2c3
             i2c1 = "/soc/bus@ffd00000/i2c@1d000";           // @i2c2
             rtc0 = "/soc/bus@ffd00000/i2c@1d000/rx8130@32"; // @rpi_rf_mod_rtc
-            rtc1 = "/soc/bus@ff800000/rtc@0a8";             // @vrtc
+            rtc1 = "/soc/bus@ff800000/rtc@a8";              // @vrtc
         };
     };
 };

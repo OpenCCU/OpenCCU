@@ -13,7 +13,7 @@
 / {
     compatible = "brcm,bcm2708";
 
-    // One trigger drives all three GPIO LEDs. Numeric color IDs keep this
+    // One trigger drives all three PWM LEDs. Numeric color IDs keep this
     // overlay compatible with the package's direct dtc (no C preprocessor).
     fragment@20 {
         target-path = "/";
@@ -40,33 +40,67 @@
         };
     };
 
-    // fragment to define dedicated led nodes for
-    // each separate led supported by the RPI-RF-MOD
+    // fragment to keep the pin setup on the base leds node: the reset lines
+    // and the button are inputs, the LED pins outputs
     fragment@1 {
         target = <&leds>;
         __overlay__ {
             pinctrl-names = "default";
             pinctrl-0 = <&rpi_rf_mod_pins>;
-            rpi_rf_mod_red: rpi_rf_mod_red {
-                label = "rpi_rf_mod:red";
-                color = <1>; // LED_COLOR_ID_RED
+        };
+    };
+
+    // fragment to drive each LED of the RPI-RF-MOD by software PWM (pwm-gpio,
+    // one hrtimer per channel) so that the multi-led group above can mix colors
+    // and dim (max-brightness 255). The timer only runs for levels between off
+    // and full: full colors keep the GPIO static as before. The labels (sysfs
+    // names) are unchanged. Period 4 ms (250 Hz). Red and green start "on" to
+    // keep the yellow which config.txt sets during boot ("keep" cannot work:
+    // pwm-gpio has no state to read before its first apply).
+    fragment@5 {
+        target-path = "/";
+        __overlay__ {
+            rpi_rf_mod_pwm_red: rpi-rf-mod-pwm-red {
+                compatible = "pwm-gpio";
+                #pwm-cells = <3>;
                 gpios = <&gpio 16 0>;
-                default-state = "keep";
-                linux,default-trigger = "none";
             };
-            rpi_rf_mod_green: rpi_rf_mod_green {
-                label = "rpi_rf_mod:green";
-                color = <2>; // LED_COLOR_ID_GREEN
+            rpi_rf_mod_pwm_green: rpi-rf-mod-pwm-green {
+                compatible = "pwm-gpio";
+                #pwm-cells = <3>;
                 gpios = <&gpio 20 0>;
-                default-state = "keep";
-                linux,default-trigger = "none";
             };
-            rpi_rf_mod_blue: rpi_rf_mod_blue {
-                label = "rpi_rf_mod:blue";
-                color = <3>; // LED_COLOR_ID_BLUE
+            rpi_rf_mod_pwm_blue: rpi-rf-mod-pwm-blue {
+                compatible = "pwm-gpio";
+                #pwm-cells = <3>;
                 gpios = <&gpio 21 0>;
-                default-state = "keep";
-                linux,default-trigger = "none";
+            };
+            rpi-rf-mod-leds {
+                compatible = "pwm-leds";
+                rpi_rf_mod_red: led-red {
+                    label = "rpi_rf_mod:red";
+                    color = <1>; // LED_COLOR_ID_RED
+                    pwms = <&rpi_rf_mod_pwm_red 0 4000000 0>;
+                    max-brightness = <255>;
+                    default-state = "on";
+                    linux,default-trigger = "none";
+                };
+                rpi_rf_mod_green: led-green {
+                    label = "rpi_rf_mod:green";
+                    color = <2>; // LED_COLOR_ID_GREEN
+                    pwms = <&rpi_rf_mod_pwm_green 0 4000000 0>;
+                    max-brightness = <255>;
+                    default-state = "on";
+                    linux,default-trigger = "none";
+                };
+                rpi_rf_mod_blue: led-blue {
+                    label = "rpi_rf_mod:blue";
+                    color = <3>; // LED_COLOR_ID_BLUE
+                    pwms = <&rpi_rf_mod_pwm_blue 0 4000000 0>;
+                    max-brightness = <255>;
+                    default-state = "off";
+                    linux,default-trigger = "none";
+                };
             };
         };
     };

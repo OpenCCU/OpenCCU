@@ -66,7 +66,8 @@ class CliHelpTest(unittest.TestCase):
             for flag in ("-h", "--help", "-V", "--version"):
                 with self.subTest(program=binary.name, flag=flag):
                     result = subprocess.run([str(binary), flag], check=True, capture_output=True, text=True)
-                    self.assertRegex(result.stdout, binary.name + r" \d+\.\d+ \(built .+ \d{2}:\d{2}:\d{2}\)")
+                    self.assertRegex(result.stdout,
+                                     binary.name + r" \d+\.\d+(?:\.\d+)? \(built .+ \d{2}:\d{2}:\d{2}\)")
                     self.assertEqual(result.stderr, "")
                     if flag in ("-h", "--help"):
                         self.assertIn("Usage:", result.stdout)
@@ -110,8 +111,10 @@ class LedServiceTest(unittest.TestCase):
         self.runtime = self.root / "run"
         self.startup = self.root / "startupFinished"
         self.disabled = self.root / "disableLED"
+        self.brightness = self.root / "hss_led_brightness"
         self.env = dict(os.environ, LED_TEST_RUNTIME=str(self.runtime), LED_TEST_SYSFS=str(self.leds),
-                        LED_TEST_STARTUP=str(self.startup), LED_TEST_DISABLED=str(self.disabled))
+                        LED_TEST_STARTUP=str(self.startup), LED_TEST_DISABLED=str(self.disabled),
+                        LED_TEST_BRIGHTNESS=str(self.brightness))
         self.process = None
 
     def tearDown(self):
@@ -412,6 +415,68 @@ class LedServiceTest(unittest.TestCase):
         finally:
             for s in idle:
                 s.close()
+
+    def test_free_colors_and_brightness_on_a_dimmable_group(self):
+        # Group over software PWM (max_brightness 255): gamma 2.2, 3 % floor.
+        p = self.rgb()
+        self.start()
+        self.cli("--led", "rpi-rf-mod", "#ff8000")
+        self.expect_color(p, "255 56 0")
+        status = self.cli("--led", "rpi-rf-mod", "status").stdout
+        self.assertIn("pattern=#ff8000 #ff8000 0 0 brightness=100 dimmable=1", status)
+        self.cli("--led", "rpi-rf-mod", "brightness", "50")
+        self.assertEqual(self.brightness.read_text(), "50\n")
+        self.expect_color(p, "55 12 0")
+        self.assertIn("brightness=50 dimmable=1", self.cli("--led", "rpi-rf-mod", "status").stdout)
+        # The kernel blink keeps the mixed, dimmed color.
+        self.cli("--led", "rpi-rf-mod", "#ff8000", "100")
+        self.wait_for(lambda: self.value(p, "trigger") == "timer")
+        self.assertEqual(self.value(p), "55 12 0")
+        self.assertEqual(self.value(p, "delay_on"), "100")
+        self.cli("--led", "rpi-rf-mod", "alternate", "#0000ff", "#ff0000", "40")
+        self.expect_color(p, "0 0 55")
+        self.expect_color(p, "55 0 0")
+        # The setting survives a restart and a missing file means 100 %.
+        self.cli("--led", "rpi-rf-mod", "white")
+        self.stop()
+        self.brightness.write_text("20\n")
+        self.start()
+        self.expect_color(p, "8 8 8")
+        self.brightness.unlink()
+        self.expect_color(p, "255 255 255")
+
+    def test_on_off_leds_show_the_nearest_named_color(self):
+        # GPIO groups and adapters (max_brightness 1) ignore the brightness.
+        p = self.rgb(maximum=1)
+        self.start()
+        self.cli("--led", "rpi-rf-mod", "brightness", "30")
+        self.cli("--led", "rpi-rf-mod", "#ff8000")
+        self.expect_color(p, "1 1 0")
+        # The daemon reads the setting on its 250 ms tick; the output stays.
+        self.wait_for(lambda: "brightness=30 dimmable=0" in self.cli("--led", "rpi-rf-mod", "status").stdout)
+        self.assertEqual(self.value(p), "1 1 0")
+        self.cli("--led", "rpi-rf-mod", "#7f7fff")
+        self.expect_color(p, "0 0 1")
+
+    def test_legacy_leds_round_free_colors(self):
+        devs = self.legacy()
+        self.start()
+        self.cli("--led", "rpi-rf-mod", "#2080ff")
+        self.wait_for(lambda: [self.value(d, "brightness") for d in devs] == ["0", "1", "1"])
+
+    def test_invalid_colors_and_brightness_change_nothing(self):
+        p = self.rgb()
+        self.start()
+        self.cli("--led", "rpi-rf-mod", "blue")
+        self.expect_color(p, "0 0 255")
+        for args in [("#ff80",), ("ff8000",), ("#gg8000",), ("alternate", "#ff8000", "red"),
+                     ("brightness", "0"), ("brightness", "101"), ("brightness", "x"), ("brightness",)]:
+            self.assertNotEqual(self.cli("--led", "rpi-rf-mod", *args, check=False).returncode, 0, args)
+        for message in ("1 override #gg8000 0 10 10", "1 override #ff800 #ff800 0 0", "1 override ff8000 0 10 10"):
+            self.assertTrue(self.request(message).startswith("ERR"), message)
+        self.assertFalse(self.brightness.exists())
+        self.assertIn("pattern=4 4 0 0 brightness=100", self.cli("--led", "rpi-rf-mod", "status").stdout)
+        self.assertEqual(self.value(p), "0 0 255")
 
     def test_corrupt_saved_state_uses_safe_boot_default(self):
         p = self.rgb()

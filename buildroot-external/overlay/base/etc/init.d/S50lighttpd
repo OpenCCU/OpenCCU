@@ -1,0 +1,185 @@
+#!/bin/sh
+# shellcheck shell=dash disable=SC2169,SC3001,SC3010 source=/dev/null
+#
+# Starts lighttpd.
+#
+
+[[ -r /var/hm_mode ]] && . /var/hm_mode
+
+PIDFILE=/var/run/lighttpd.pid
+PIDFILE_ANGEL=/var/run/lighttpd-angel.pid
+
+# skip this startup if not in normal mode
+[[ "${HM_MODE}" != "NORMAL" ]] && exit 0
+
+create_certificate() {
+  # a new self-signed certificate for this host. It is made in a file of
+  # its own beside the current one, which is only kept aside and replaced
+  # once the new one exists: a failed attempt leaves the current
+  # certificate (and the note about it) in place, and lighttpd still has
+  # one to start with.
+  echo -n "creating new SSL cert... "
+  # name the address only when there is one: without a route (no DHCP
+  # lease yet at a first start) openssl refuses an empty "IP:" and writes
+  # nothing. A certificate made without an address is made again once
+  # one exists, see check_certificate() and /bin/dhcp.script.
+  SAN="DNS:$(hostname)"
+  [[ -n "${IP}" ]] && SAN="${SAN},IP:${IP}"
+  NEW=$(mktemp /etc/config/server.pem.XXXXXX) || return 1
+  # openssl's own complaint stays visible, so a refusal is not silent
+  if /usr/bin/openssl req -new -x509 -nodes -newkey ec:<(openssl ecparam -name secp384r1) \
+                                            -keyout "${NEW}" \
+                                            -out "${NEW}" \
+                                            -days 3650 \
+                                            -addext "subjectAltName = ${SAN}" \
+                                            -addext "keyUsage = keyCertSign,digitalSignature,keyEncipherment" \
+                                            -addext "extendedKeyUsage = serverAuth" \
+                                            -addext "nsCertType = server,sslCA" \
+                                            -subj "/C=DE/O=HomeMatic/OU=$(cat /var/board_serial)/CN=$(hostname)" >/dev/null &&
+     /usr/bin/openssl x509 -noout -in "${NEW}" 2>/dev/null; then
+    [[ -f /etc/config/server.pem ]] && mv -f /etc/config/server.pem "/etc/config/server.pem_$(date +%Y%m%d)"
+    mv -f "${NEW}" /etc/config/server.pem
+    rm -f /etc/config/server.pem.noaddress
+    # note the fingerprint of a certificate made without an address, so
+    # that only this very certificate is made again later
+    [[ -z "${IP}" ]] && /usr/bin/openssl x509 -noout -fingerprint -sha256 -in /etc/config/server.pem >/etc/config/server.pem.noaddress 2>/dev/null
+  else
+    rm -f "${NEW}"
+  fi
+  return 0
+}
+
+certificate_without_address() {
+  # the certificate create_certificate() made without an address (at a
+  # first start without a lease), recognised by the fingerprint it noted
+  # in /etc/config/server.pem.noaddress, not by its issuer: an uploaded
+  # or restored certificate may carry the same issuer. Any other
+  # certificate, a user's own or one that names an address, even an old
+  # one, is left alone: its fingerprint is what browsers have accepted.
+  [[ -f /etc/config/server.pem.noaddress ]] || return 1
+  FP=$(/usr/bin/openssl x509 -noout -fingerprint -sha256 -in /etc/config/server.pem 2>/dev/null)
+  [[ -n "${FP}" ]] && [[ "${FP}" = "$(cat /etc/config/server.pem.noaddress)" ]] && return 0
+  # server.pem was replaced since, so the note is stale
+  rm -f /etc/config/server.pem.noaddress
+  return 1
+}
+
+check_certificate() {
+  # leave a certificate alone that something else manages (an ACME
+  # client, a certificate from a local CA): whoever installs it writes
+  # the marker /etc/config/server.pem.managed beside it and renews it
+  [[ -f /etc/config/server.pem.managed ]] && return 0
+
+  # the address the certificate names; empty while there is no IPv4 route
+  # (the word after "src": its position differs with and without a gateway)
+  IP=$(ip -4 route get 1 2>/dev/null | sed -n '1s/.*[[:space:]]src[[:space:]]\{1,\}\([0-9.]\{1,\}\).*/\1/p')
+
+  # check if a valid/non-expired SSL cert exists and if
+  # not we regenerate it.
+  if ! /usr/bin/openssl x509 -checkend 86400 -noout -in /etc/config/server.pem 2>/dev/null >/dev/null; then
+    create_certificate
+  elif [[ -n "${IP}" ]] && certificate_without_address; then
+    # made at a start without an address: make it again now that there is one
+    create_certificate
+  fi
+}
+
+start() {
+  echo -n "Starting lighttpd: "
+
+  # check if a valid/non-expired SSL cert exists and if
+  # not we regenerate it.
+  check_certificate
+
+  # activate/deactivate service interface authentication
+  if [[ -f /etc/config/authEnabled ]] && [[ -f /etc/lighttpd/conf.d/auth.conf ]]; then
+    echo "include \"/etc/lighttpd/conf.d/auth.conf\"" >/var/etc/lighttpd_auth.conf
+  else
+    echo "" >/var/etc/lighttpd_auth.conf
+  fi
+
+  # activate/deactivate automatic https redirect
+  if [[ -f /etc/config/httpsRedirectEnabled ]]; then
+    echo "include \"/etc/lighttpd/conf.d/httpsredirect.conf\"" >/var/etc/lighttpd_httpsredirect.conf
+  else
+    echo "" >/var/etc/lighttpd_httpsredirect.conf
+  fi
+
+  # activate/deactivate RemoteAPI ports
+  if [[ -f /var/status/startupFinished ]]; then
+    echo "include \"/etc/lighttpd/conf.d/webui_remoteapi.conf\"" >/var/etc/lighttpd_webui_remoteapi.conf
+  else
+    echo "include \"/etc/lighttpd/conf.d/webui_remoteapi_notready.conf\"" >/var/etc/lighttpd_webui_remoteapi.conf
+  fi
+
+  # adjust the oom score (which is inherited by start-stop-daemon)
+  # to ensure that others are killed first in case of low memory situations
+  echo -900 >/proc/$$/oom_score_adj 2>/dev/null
+
+  if start-stop-daemon -d / -S -q -b -m -p ${PIDFILE_ANGEL} --exec /usr/sbin/lighttpd-angel -- -f /etc/lighttpd/lighttpd.conf -D; then
+    echo "OK"
+  else
+    echo "ERROR"
+  fi
+}
+stop() {
+  echo -n "Stopping lighttpd: "
+  start-stop-daemon -K -q -p ${PIDFILE_ANGEL}
+  rm -f ${PIDFILE_ANGEL}
+  [[ ! -f ${PIDFILE} ]] && echo "OK" || echo "ERROR"
+}
+restart() {
+  stop
+  start
+}
+reload() {
+  echo -n "Reloading lighttpd: "
+
+  # check if a valid/non-expired SSL cert exists and if
+  # not we regenerate it.
+  check_certificate
+
+  # activate/deactivate service interface authentication
+  if [[ -f /etc/config/authEnabled ]] && [[ -f /etc/lighttpd/conf.d/auth.conf ]]; then
+    echo "include \"/etc/lighttpd/conf.d/auth.conf\"" >/var/etc/lighttpd_auth.conf
+  else
+    echo "" >/var/etc/lighttpd_auth.conf
+  fi
+
+  # activate/deactivate automatic https redirect
+  if [[ -f /etc/config/httpsRedirectEnabled ]]; then
+    echo "include \"/etc/lighttpd/conf.d/httpsredirect.conf\"" >/var/etc/lighttpd_httpsredirect.conf
+  else
+    echo "" >/var/etc/lighttpd_httpsredirect.conf
+  fi
+
+  # activate/deactivate RemoteAPI ports
+  if [[ -f /var/status/startupFinished ]]; then
+    echo "include \"/etc/lighttpd/conf.d/webui_remoteapi.conf\"" >/var/etc/lighttpd_webui_remoteapi.conf
+  else
+    echo "include \"/etc/lighttpd/conf.d/webui_remoteapi_notready.conf\"" >/var/etc/lighttpd_webui_remoteapi.conf
+  fi
+
+  start-stop-daemon -K -s USR1 -q -p ${PIDFILE_ANGEL}
+  [[ -f ${PIDFILE} ]] && echo "OK" || echo "ERROR"
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  restart)
+    restart
+  ;;
+  reload)
+    reload
+  ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|reload}"
+    exit 1
+esac
+
+exit 0

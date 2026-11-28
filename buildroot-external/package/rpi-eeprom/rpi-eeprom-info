@@ -69,13 +69,30 @@ fi
 # Prefer device-tree to vcgencmd
 BOOTLOADER_CURRENT_VERSION=$(printf "%d" "0x$(od "${DT_BOOTLOADER_TS}" -v -An -t x1 | tr -d ' ' )")
 BOOTLOADER_UPDATE_VERSION=$(strings "${BOOTLOADER_UPDATE_IMAGE}" | grep BUILD_TIMESTAMP | sed 's/.*=//g')
+# exactly one decimal number, else the comparison below cannot be trusted
+case "${BOOTLOADER_UPDATE_VERSION}" in
+  "" | *[!0-9]*)
+    echo "No valid bootloader build-timestamp found in ${BOOTLOADER_UPDATE_IMAGE}" >&2
+    exit ${EXIT_FAILED}
+    ;;
+esac
 
-if [[ "${BOOTLOADER_CURRENT_VERSION}" != "${BOOTLOADER_UPDATE_VERSION}" ]]; then
+# an update only when the image is newer than the running bootloader
+# (rpi-eeprom-update's own rule), so a newer bootloader is never
+# reported as outdated. "up to date" needs an equal timestamp; a value
+# the shell cannot compare (e.g. out of range) fails.
+if [ "${BOOTLOADER_UPDATE_VERSION}" -gt "${BOOTLOADER_CURRENT_VERSION}" ] 2>/dev/null; then
   echo "BOOTLOADER: update available"
   res=${EXIT_UPDATE_REQUIRED}
-else
+elif [ "${BOOTLOADER_UPDATE_VERSION}" -lt "${BOOTLOADER_CURRENT_VERSION}" ] 2>/dev/null; then
+  echo "BOOTLOADER: up to date (the running bootloader is newer than the image's)"
+  res=${EXIT_SUCCESS}
+elif [ "${BOOTLOADER_UPDATE_VERSION}" -eq "${BOOTLOADER_CURRENT_VERSION}" ] 2>/dev/null; then
   echo "BOOTLOADER: up to date"
   res=${EXIT_SUCCESS}
+else
+  echo "Cannot compare the bootloader build-timestamps (${BOOTLOADER_CURRENT_VERSION}, ${BOOTLOADER_UPDATE_VERSION})" >&2
+  exit ${EXIT_FAILED}
 fi
 
 echo "   CURRENT: $(date -u "-d@${BOOTLOADER_CURRENT_VERSION}") (${BOOTLOADER_CURRENT_VERSION})"

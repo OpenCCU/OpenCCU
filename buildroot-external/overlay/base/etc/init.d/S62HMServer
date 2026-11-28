@@ -134,6 +134,34 @@ init() {
     # in crRFD.
     sed -i "s|^Lan\.Routing\.Enabled=.*$|Lan.Routing.Enabled=${ADVANCED_HMIP}|" /var/etc/crRFD.conf
 
+    # optional override: /etc/hmipserver.default (the image) and then
+    # /etc/config/hmipserver.default (the user) may set
+    # HMIP_BIND_ADDRESS=127.0.0.1 to keep the XML-RPC port of the HmIP server
+    # (Legacy.Port) off the LAN when every client runs on the CCU. Only the
+    # IPv4 loopback address is accepted (also as ::ffff:127.0.0.1): the
+    # local clients (InterfacesList.xml, updateDCVars.tcl, the lighttpd
+    # proxy) reach the port on 127.0.0.1. Each file is checked on its own,
+    # so an invalid user value cannot drop a valid one from the image.
+    HMIP_BIND_ADDRESS=
+    for f in /etc/hmipserver.default /etc/config/hmipserver.default; do
+      [[ -r "${f}" ]] || continue
+      bind_addr=$(HMIP_BIND_ADDRESS=; . "${f}" >/dev/null 2>&1; echo "${HMIP_BIND_ADDRESS}")
+      case "${bind_addr}" in
+        "")
+          ;;
+        127.0.0.1|::ffff:127.0.0.1)
+          HMIP_BIND_ADDRESS=${bind_addr}
+          ;;
+        *)
+          echo -n "WARNING: HMIP_BIND_ADDRESS in ${f} ignored (only 127.0.0.1 is supported), "
+          ;;
+      esac
+    done
+    if [[ -n "${HMIP_BIND_ADDRESS}" ]]; then
+      sed -i "/^Legacy\.BindAddress=/d" /var/etc/crRFD.conf
+      echo "Legacy.BindAddress=${HMIP_BIND_ADDRESS}" >>/var/etc/crRFD.conf
+    fi
+
   else
     HM_SERVER=/opt/HMServer/HMServer.jar:/opt/HMServer/coupling/ESHBridge.jar
     HM_SERVER_CLASS="de.eq3.ccu.server.HMServer"

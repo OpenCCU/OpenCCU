@@ -96,6 +96,15 @@ handle_renew() {
   # flag as having a proper ip
   touch /var/status/hasIP
 
+  # lighttpd made its certificate at a start without an address (see
+  # check_certificate() in S50lighttpd): a reload makes it again with the
+  # address now. Only while lighttpd runs (otherwise its start does it),
+  # and never for a certificate that something else manages.
+  if [[ -f /etc/config/server.pem.noaddress ]] && [[ ! -f /etc/config/server.pem.managed ]] &&
+     [[ -f /var/run/lighttpd-angel.pid ]] && [[ -x /etc/init.d/S50lighttpd ]]; then
+    /etc/init.d/S50lighttpd reload >/dev/null
+  fi
+
   # check carrier
   if [[ $(cat "/sys/class/net/${interface}/carrier") -eq 1 ]]; then
     touch /var/status/hasLink

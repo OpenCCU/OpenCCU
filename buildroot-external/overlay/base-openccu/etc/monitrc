@@ -323,6 +323,9 @@ check process HMIPServer with pidfile /var/run/HMIPServer.pid
       exec "/bin/triggerAlarm.tcl 'HMIPServer restarted' 'WatchDog: hmipserver-restart' true"
     if filedescriptors > 95% for 5 cycles then
       exec "/bin/triggerAlarm.tcl 'HMIPServer: high filedescriptor usage (>95%)' 'WatchDog: hmipserver-highfd' true"
+    # HMIPServer leaks descriptors with every XML-RPC init (OpenCCU/OpenCCU-Base#36) and stops
+    # answering once it runs out of them, while its ports still accept connections
+    if filedescriptors > 98% for 5 cycles then restart
     depends on hmlangwDisabled
 
 # restart HMIPServer if it still holds a /dev/mmd_hmip removed by a multimacd restart
@@ -476,6 +479,16 @@ check program hb_rf_eth-Check with path "/bin/grep -q 1 /sys/class/hb-rf-eth/hb-
     group homematic
     if status != 0 then
       exec /bin/sh -c "/bin/triggerAlarm.tcl 'HB-RF-ETH: no connection' 'WatchDog: hb-rf-eth-connection' true"
+      repeat every 5 cycles
+    depends on hb_rf_eth-CheckEnabled
+
+# restart multimacd if the HB-RF-ETH had to start a new session (e.g. after a
+# restart of the gateway) while the radio module was in use, as its state is
+# unknown then. The rfdDevice/HMIPServerDevice checks restart rfd/HMIPServer.
+check program hb_rf_eth-Session with path "/bin/sh -c '! /bin/grep -qs 1 /sys/class/hb-rf-eth/hb-rf-eth/session_lost'"
+    group homematic
+    if status != 0 then
+      exec "/usr/bin/monit restart multimacd"
       repeat every 5 cycles
     depends on hb_rf_eth-CheckEnabled
 

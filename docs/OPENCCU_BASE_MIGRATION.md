@@ -61,10 +61,12 @@ The outer `multilib32` package then relocates these libraries from `/lib` to
 ## Source patches and fast validation
 
 `make PRODUCT=rpi3 check-openccu-base` applies the Buildroot source patches,
-runs compiler-free device generator failure tests, and generates only the
-assets needed for the rootfs patch validation. It does not configure or
-build the C++ services or the target toolchain. Both the normal package
-check and the dependency-update workflow use this target.
+runs compiler-free device generator failure tests, and generates and checks
+only the WebUI, device description and Tcl assets
+(`buildroot-external/package/openccu-base/stage_assets.sh` and
+`validate_rootfs.sh`). It does not configure or build the C++ services or the
+target toolchain. Both the normal package check and the dependency-update
+workflow use this target.
 
 The pinned OpenCCU-Base revision includes
 `src/devicetypes/GenerateDeviceTypes.cmake`, which fails on a Java error or

@@ -1,0 +1,14 @@
+# xe-guest-utilities: mount xenfs on /proc/xen for the XenServer guest agent
+# (the systemd counterpart of the mount in S11xe-daemon)
+[Unit]
+Description=Xen filesystem (xenfs) on /proc/xen
+ConditionPathExists=/proc/xen
+ConditionPathExists=!/proc/xen/xenbus
+
+[Mount]
+What=none
+Where=/proc/xen
+Type=xenfs
+
+[Install]
+WantedBy=xe-daemon.service

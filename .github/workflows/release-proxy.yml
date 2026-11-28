@@ -20,7 +20,7 @@ jobs:
 
       - name: Get information
         id: info
-        uses: home-assistant/actions/helpers/info@50baf3a307f87100cf550d4ae127746595030d5d  # master
+        uses: home-assistant/actions/helpers/info@07f46fd2e19967768b5fd3000f91f857452b767c  # master
         with:
           path: "./home-assistant-addon-proxy"
 
@@ -35,7 +35,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: env.BUILD_ARGS != '--test'
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f  # v4.6.0
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550  # v4.8.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}

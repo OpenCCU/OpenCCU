@@ -1,8 +1,11 @@
 # LED control with hss_led and hss_ledctl
 
 The LED controller and `hss_ledctl` implementation are part of
-[OpenCCU-Base PR #59](https://github.com/OpenCCU/OpenCCU-Base/pull/59),
-pinned by OpenCCU at `48cdf839b04b7b2820163c784f11a655478d3e3e`.
+[OpenCCU-Base PR #59](https://github.com/OpenCCU/OpenCCU-Base/pull/59);
+free colors and a brightness for the radio LED were added in
+[OpenCCU-Base PR #350](https://github.com/OpenCCU/OpenCCU-Base/pull/350).
+OpenCCU pins the Base revision in `OPENCCU_BASE_VERSION` of
+`buildroot-external/package/openccu-base/openccu-base.mk`.
 They replace the experimental `rpi-rf-mod-ledd` with the existing `hss_led`
 service.
 
@@ -121,6 +124,9 @@ hss_ledctl --led rpi-rf-mod alternate blue red slow
 hss_ledctl --led rpi-rf-mod alternate green yellow 250 750
 hss_ledctl --led rpi-rf-mod magenta fast
 hss_ledctl --led rpi-rf-mod green
+hss_ledctl --led rpi-rf-mod '#ff8000' slow
+hss_ledctl --led rpi-rf-mod alternate '#0040ff' red fast
+hss_ledctl --led rpi-rf-mod brightness 30
 hss_ledctl --led rpi-rf-mod release
 hss_ledctl --led rpi-rf-mod status
 /etc/init.d/S00hss_led restart
@@ -134,12 +140,88 @@ they do not stop the daemon. Acknowledgment confirms acceptance of the command;
 the radio LED then stays off, manual overrides included, although commands are
 still accepted.
 
+### Colors and brightness
+
+Besides the eight names (`off`, `red`, `green`, `yellow`, `blue`, `magenta`,
+`cyan`, `white`) every radio color accepts `'#RRGGBB'`, also for `alternate`.
+Quote it: the shell starts a comment with `#`. `brightness PERCENT` (1-100)
+dims all radio patterns, automatic status included. It is a setting like
+`disableLED`: `hss_ledctl` writes it to `/etc/config/hss_led_brightness`
+(root only), it survives reboots, and the daemon picks up a change within
+250 ms. Remove the file or set 100 for full brightness.
+
+Colors are only mixed and dimmed where the RGB group has levels
+(`max_brightness` above 1), which the software PWM of the Raspberry Pi and
+Tinkerboard 2 provides (see below). Values and brightness follow a gamma curve
+of 2.2, so `#808080` looks about half as bright as `white`, and a lit channel
+keeps at least 3 % of the maximum against PWM shimmer. Full values at 100 %
+give the same output as on/off LEDs. LEDs without levels (HB-RF adapters, the
+Tinkerboard, legacy component LEDs) light a channel from 128 on: they show the
+nearest named color and ignore the brightness.
+
+`status` reports `brightness=N` and `dimmable=0|1` after the pattern. The
+pattern shows a named color as its number 0-7 (bit 0 red, bit 1 green, bit 2
+blue) and any other color as `#rrggbb`, as in the saved runtime state.
+
 The socket and RGB state now reside in `/run/hss_led/`. The experimental old
 CLI name is not installed as an alias; its stale target-file entry is removed
 during package installation. Rebuild and reboot when moving from that draft.
 RGB state survives process restarts, but not a normal reboot with cleared
 `/run`. `/etc/config/disableLED` retains priority for the RGB status display. A process restart begins the
 saved pattern at its first phase; it does not preserve the exact phase timestamp.
+
+## Radio LED support per platform
+
+The `rpi-rf-mod` target needs all three RPI-RF-MOD LED lines (red, green and
+blue). On the 40-pin header they are pins 36, 38 and 40.
+
+| Platform | Radio LED |
+| --- | --- |
+| Raspberry Pi, ASUS Tinkerboard 2/2S | RGB group `rpi_rf_mod:rgb:status` over software PWM (`pwm-leds`), dimmable |
+| ASUS Tinkerboard | RGB group `rpi_rf_mod:rgb:status` over `gpio-leds`, on/off per channel |
+| HB-RF-USB, HB-RF-USB-2, HB-RF-ETH (any host) | LED driver `rpi_rf_mod_rgb` (or legacy `rpi_rf_mod_led`), using the adapter's LED pins |
+| Hardkernel ODROID-C2, ODROID-C4, ODROID-N2/N2+ (GPIO header) | Not available |
+
+On the ODROID boards, header pin 38 is a 1.8 V reference output and pin 40 is
+an ADC input. Neither can be used as a GPIO, so the green and blue LEDs of a
+RPI-RF-MOD on the GPIO header cannot be driven. Only the red line (pin 36) is
+a GPIO. Their device tree overlays therefore define no LED nodes, even though
+the kernel provides `CONFIG_LEDS_GROUP_MULTICOLOR`. The radio LED stays off on
+these boards; the radio module itself is not affected. `hss_led` accepts only
+complete RGB groups or all three legacy LEDs, so a red-only group would not be
+used either. With an HB-RF-USB/HB-RF-ETH adapter the RGB LED also works on
+ODROID boards.
+
+### Software PWM on the Raspberry Pi and Tinkerboard 2
+
+None of the three LED pins is a hardware PWM output on these boards. Their
+overlays drive each LED with the kernel's software PWM (`pwm-gpio`, one
+hrtimer per channel, 4 ms period) through `pwm-leds` with `max-brightness 255`.
+The multicolor group and the component names `rpi_rf_mod:red/green/blue` stay
+as before, so the group reports `max_brightness` 255 instead of 1 and can mix
+colors and dim. `hss_led` uses this for free colors and its brightness
+setting (see [Colors and brightness](#colors-and-brightness)).
+
+The timer only runs while a channel is between off and full brightness; a
+channel that is off or full is a static GPIO, as with `gpio-leds`. Each dimmed
+channel costs two timer interrupts per period (500 per second). Timer jitter
+shows as shimmer at very low levels. The drivers (`CONFIG_PWM_GPIO`,
+`CONFIG_LEDS_PWM`) are built in, because the recovery kernel uses the same
+configuration and loads no modules.
+
+Red and green start on (`default-state "on"`): `pwm-gpio` cannot keep a state
+it has not set, so `"keep"` would switch the LED off at probe. On the Raspberry
+Pi, `config.txt` already lights yellow from the firmware on (`gpio=16,20=op,dh`
+and `gpio=21=op,dl`). On the Tinkerboard 2 the LED pins have their own pin
+group without an output level; the old `output-low` setting on the board's
+`gpio-leds` node would switch a fully lit LED off when applied after the PWM
+driver.
+
+With an HB-RF adapter, `rpi-rf-mod-led-driver unbind-group` releases the
+`pwm-leds` device of the header after the group, so that the adapter's driver
+gets the canonical names. Like the group it stays unbound until reboot.
+Software PWM is not used for the adapters' LEDs: every edge would be a USB
+transfer or a UDP packet.
 
 ## Explicit board LED targets
 
@@ -212,13 +294,15 @@ OpenCCU includes a test runner for the Base sources using fake sysfs files. Run
 it against the pinned, extracted OpenCCU-Base source tree:
 
 ```sh
-OPENCCU_BASE_SOURCE_DIR="$PWD/build-rpi3/build/openccu-base-48cdf839b04b7b2820163c784f11a655478d3e3e" \
+base=$(sed -n 's/^OPENCCU_BASE_VERSION = //p' buildroot-external/package/openccu-base/openccu-base.mk)
+OPENCCU_BASE_SOURCE_DIR="$PWD/build-rpi3/build/openccu-base-$base" \
   python3 scripts/testcases/build/test_rgb_led.py -v
 ```
 
 The Python runner compiles the actual Base sources; it does not contain a
 second controller implementation. The socket tests cover
-CLI/background operation, overrides, legacy LEDs, hardware replacement, restart,
+CLI/background operation, overrides, free colors and brightness on dimmable,
+on/off and legacy LEDs, hardware replacement, restart,
 a stalled in-process status producer, independent board LEDs, and delayed
 board timer permissions. They explicitly skip when Unix sockets
 are prohibited. The state/backend tests still run in that environment.

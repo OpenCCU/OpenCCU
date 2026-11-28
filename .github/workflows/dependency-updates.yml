@@ -5,7 +5,7 @@ name: Dependency Updates
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # run daily at 02:00 UTC (quiet window)
+    - cron: '13 2 * * *'  # run daily at 02:13 UTC (quiet window, off the full hour)
   workflow_dispatch:
 
 concurrency:
@@ -65,11 +65,6 @@ jobs:
             package: neoserver
             version_file: buildroot-external/package/neoserver/neoserver.mk
             version_regex: '^NEOSERVER_VERSION = (.*)$'
-          - slug: codemirror
-            script: scripts/update-codemirror.sh
-            package: codemirror6
-            version_file: buildroot-external/overlay/WebUI-openccu/www/webui/js/extern/codemirror6/VERSION
-            version_regex: '^CODEMIRROR6_VERSION = (.*)$'
           - slug: picod
             script: scripts/update-picod.sh
             package: picod
@@ -193,7 +188,7 @@ jobs:
 
           if [[ "${PACKAGE}" == "openccu-base" ]]; then
             if ! make PRODUCT=rpi3 check-openccu-base; then
-              echo "::warning::OpenCCU-Base source or generated rootfs patches require an update."
+              echo "::warning::OpenCCU-Base source patches or generated assets require an update."
               echo "patch_warning=true" >>"${GITHUB_OUTPUT}"
               exit 0
             fi
@@ -266,7 +261,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true' && steps.metadata.outputs.no_update != 'true' && steps.duplicate.outputs.skip != 'true'
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1  # v8.1.1
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1  # v8.1.3
         with:
           token: ${{ secrets.AUTO_MERGE_TOKEN != '' && secrets.AUTO_MERGE_TOKEN || github.token }}
           branch: pr/dependency-update-${{ matrix.slug }}-${{ steps.metadata.outputs.version }}

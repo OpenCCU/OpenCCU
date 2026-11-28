@@ -34,11 +34,311 @@ get_gzip_uncompressed_size()
   return 1
 }
 
+# size of the ext2/3/4 filesystem on a device in bytes (block count * block
+# size, from the superblock), empty if it cannot be read
+get_ext_fs_size()
+{
+  local dev="$1"
+  local info count size v
+
+  # one superblock read for both values: "<block count> <block size>"
+  info=$(/sbin/tune2fs -l "${dev}" 2>/dev/null | awk -F: '
+    /^Block count:/ { gsub(/[[:space:]]/,"",$2); c=$2 }
+    /^Block size:/  { gsub(/[[:space:]]/,"",$2); s=$2 }
+    END { print c " " s }')
+  count=${info% *}
+  size=${info#* }
+  for v in "${count}" "${size}"; do
+    case "${v}" in
+      ''|*[!0-9]*)
+        return 1
+        ;;
+    esac
+  done
+
+  echo $((count * size))
+  return 0
+}
+
+# last lines of a tool's output joined into one line for the install log,
+# which the recovery WebUI shows as HTML: at most 10 lines, without the HTML
+# special characters (e2fsck prints e.g. "<The journal inode>" and file names)
+log_excerpt()
+{
+  printf '%s\n' "$1" | grep -v '^[[:space:]]*$' | tail -n 10 | tr -d '<>&' | tr '\n' ';'
+}
+
+# space in bytes a file actually occupies on disk, which is less than its
+# size for a sparse file
+get_alloc_size()
+{
+  local blocks bsize
+
+  blocks=$(stat -c %b "$1" 2>/dev/null) || return 1
+  bsize=$(stat -c %B "$1" 2>/dev/null) || return 1
+  echo $((blocks * bsize))
+}
+
+# true if dd supports conv=sparse (see write_sparse)
+dd_supports_sparse()
+{
+  /bin/dd if=/dev/null of=/dev/null conv=sparse status=none 2>/dev/null
+}
+
+# the space required for unarchiving a disk or filesystem image of $2 bytes
+# from $1 compressed bytes: the image is written as sparse file and only
+# occupies the space of its data, which is about 2.7 times the compressed
+# size (unused space of the partitions/filesystems compresses to nearly
+# nothing). Three times the compressed size is used as estimate, the full
+# size as upper bound. As this is only an estimate, an extraction running
+# out of space is retried after expanding the userfs (see
+# fw_expand_userfs). Without sparse support the full size is required.
+get_sparse_required_size()
+{
+  local compressed="$1" full="$2"
+
+  if dd_supports_sparse && [[ $((compressed * 3)) -lt ${full} ]]; then
+    echo $((compressed * 3))
+  else
+    echo "${full}"
+  fi
+}
+
+# write stdin to the file $1 as sparse file: blocks consisting of NULs only
+# are skipped instead of written (dd conv=sparse), so that a mostly empty
+# disk or filesystem image only occupies the space of its data. Falls back
+# to writing all blocks if dd does not support conv=sparse.
+write_sparse()
+{
+  if dd_supports_sparse; then
+    /bin/dd of="$1" bs=64k conv=sparse status=none
+  else
+    /bin/dd of="$1" bs=64k status=none
+  fi
+}
+
+# expand the userfs to the end of the disk if the free space is not
+# sufficient, at most once per update. Returns 0 if the userfs was expanded
+# (AVAILSPACE is updated), 1 if this is not possible or already tried, and
+# exits on errors.
+fw_expand_userfs()
+{
+  local rc
+
+  [[ -z "${USERFS_EXPANDED}" ]] || return 1
+  USERFS_EXPANDED=1
+
+  expand_userfs_to_max
+  rc=$?
+  if [[ ${rc} -eq 0 ]]; then
+    AVAILSPACE=$(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }')
+    echo -ne "${AVAILSPACE} bytes available after userfs resize, "
+    return 0
+  elif [[ ${rc} -eq 1 ]]; then
+    echo -ne "no userfs resize possible, "
+    return 1
+  fi
+  exit 1
+}
+
+# "<size> <name>" of the first disk image (*.img) in the zip archive $1,
+# empty if none. The name is everything after the date and time columns of
+# the listing, so that it may contain spaces.
+get_zip_img_entry()
+{
+  /usr/bin/unzip -l "$1" 2>/dev/null | awk '
+    /^ *[0-9]+ +[0-9][0-9-]+ +[0-9][0-9:]+ +/ {
+      name = $0
+      sub(/^ *[0-9]+ +[0-9][0-9-]+ +[0-9][0-9:]+ +/, "", name)
+      if (name ~ /\.img$/) {
+        print $1 " " name
+        exit
+      }
+    }'
+}
+
+# name of the disk image (*.img) in the zip archive $1, empty if none
+get_zip_img_name()
+{
+  local entry
+
+  entry=$(get_zip_img_entry "$1")
+  [[ -n "${entry}" ]] && echo "${entry#* }"
+  return 0
+}
+
+# the space required for unarchiving the zip archive $1 with unzip_firmware
+get_zip_required_size()
+{
+  local zipfile="$1"
+  local entry full img_size zip_size
+
+  # total unarchived size from the last line of the listing
+  full=$(/usr/bin/unzip -l "${zipfile}" 2>/dev/null | tail -1 | awk '{ print $1 }')
+  case "${full}" in
+    ''|*[!0-9]*)
+      return 1
+      ;;
+  esac
+
+  entry=$(get_zip_img_entry "${zipfile}")
+  if [[ -z "${entry}" ]]; then
+    echo "${full}"
+    return 0
+  fi
+
+  # the disk image is written as sparse file (see unzip_firmware), its
+  # compressed size is at most the size of the zip file
+  img_size=${entry%% *}
+  zip_size=$(stat -c%s "${zipfile}" 2>/dev/null)
+  case "${img_size}${zip_size}" in
+    ''|*[!0-9]*)
+      echo "${full}"
+      return 0
+      ;;
+  esac
+  echo $(($(get_sparse_required_size "${zip_size}" "${img_size}") + full - img_size))
+  return 0
+}
+
+# extract the zip archive $1 into directory $2. A disk image (*.img) in it
+# is written as sparse file (about 1 GiB instead of its full size of
+# 2.3 GiB) at its path in the archive, all other files are extracted as
+# they are. On a failure an error message is printed and 1 returned, or
+# 2 if the disk image could not be written for lack of space.
+unzip_firmware()
+{
+  local zipfile="$1" dir="$2"
+  local img pat out err path rest
+
+  img=$(get_zip_img_name "${zipfile}")
+  if [[ -z "${img}" ]]; then
+    if ! err=$(/usr/bin/unzip -q -o -d "${dir}" "${zipfile}" 2>&1); then
+      echo "ERROR: (unzip: $(log_excerpt "${err}"))"
+      return 1
+    fi
+    return 0
+  fi
+
+  # unzip matches member names as patterns, so escape the pattern
+  # characters of the name for the exclusion and the extraction
+  pat=$(printf '%s' "${img}" | sed 's/[][*?\\]/\\&/g')
+
+  # all files except the disk image
+  if ! err=$(/usr/bin/unzip -q -o -d "${dir}" "${zipfile}" -x "${pat}" 2>&1); then
+    echo "ERROR: (unzip: $(log_excerpt "${err}"))"
+    return 1
+  fi
+
+  # the disk image as sparse file at its path in the archive, which must
+  # not leave the directory (unzip itself refuses such paths as well)
+  case "/${img}/" in
+    *"/../"*|//*)
+      echo "ERROR: (unzip: invalid path of ${img})"
+      return 1
+      ;;
+  esac
+  out="${dir}/${img}"
+
+  # neither the image nor a directory of its path may be a symlink, which
+  # the archive could have created with the files extracted above, so that
+  # the image cannot be written outside the directory through it
+  path="${dir}"
+  rest="${img}"
+  while true; do
+    path="${path}/${rest%%/*}"
+    if [[ -L "${path}" ]]; then
+      echo "ERROR: (unzip: symlink in path of ${img})"
+      return 1
+    fi
+    # (case: BusyBox ash expands the pattern of [[ == ]] as file glob)
+    case "${rest}" in
+      */*)
+        rest="${rest#*/}"
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
+  if ! mkdir -p "$(dirname "${out}")"; then
+    echo "ERROR: (mkdir for ${img})"
+    return 1
+  fi
+
+  # unzip verifies the CRC at the end of the data and fails on a
+  # mismatch, which pipefail passes on.
+  if ! err=$(set -o pipefail; { /usr/bin/unzip -p "${zipfile}" "${pat}" | write_sparse "${out}"; } 2>&1); then
+    rm -f "${out}"
+    err="unzip ${img}: $(log_excerpt "${err}") $(/bin/df -B1 "${dir}" | tail -1 | awk '{ print $4 }') bytes free"
+    case "${err}" in
+      *"No space left"*)
+        echo -ne "${err}, "
+        return 2
+        ;;
+    esac
+    echo "ERROR: (${err})"
+    return 1
+  fi
+  echo -ne "$(stat -c%s "${out}") bytes image ($(get_alloc_size "${out}") bytes allocated), "
+  return 0
+}
+
+# unzip_firmware, retried once after expanding the userfs if it ran out
+# of space (the required space is only an estimate)
+unzip_firmware_retry()
+{
+  local rc
+
+  unzip_firmware "$1" "$2"
+  rc=$?
+  if [[ ${rc} -eq 2 ]] && fw_expand_userfs; then
+    echo -ne "retrying.."
+    unzip_firmware "$1" "$2"
+    rc=$?
+  fi
+  if [[ ${rc} -eq 2 ]]; then
+    echo "ERROR: (not enough free space for unarchiving)"
+  fi
+  [[ ${rc} -eq 0 ]]
+}
+
+# decompress the gzip file $1 to the sparse file $2, retried once after
+# expanding the userfs if it ran out of space. On a failure an error message
+# is printed and 1 returned.
+gunzip_firmware_retry()
+{
+  local err
+
+  while true; do
+    if err=$(set -o pipefail; { /bin/gzip -dc "$1" | write_sparse "$2"; } 2>&1); then
+      return 0
+    fi
+    rm -f "$2"
+    err="gunzip: $(log_excerpt "${err}") $(/bin/df -B1 "$(dirname "$2")" | tail -1 | awk '{ print $4 }') bytes free"
+    case "${err}" in
+      *"No space left"*)
+        echo -ne "${err}, "
+        if fw_expand_userfs; then
+          echo -ne "retrying.."
+          continue
+        fi
+        echo "ERROR: (not enough free space for unarchiving)"
+        return 1
+        ;;
+    esac
+    echo "ERROR: (${err})"
+    return 1
+  done
+}
+
 expand_userfs_to_max()
 {
   local USER_DEV DISK_DEV SECTOR_SIZE DISK_SIZE_BYTES DISK_LAST_SECTOR
   local SFDISK_DUMP LINE_USER USER_START USER_SIZE USER_END FREE_SECTORS
-  local USER_PARTNUM PARTED_ERR E2FSCK_RC RESIZE2FS_ERR RESIZE_THRESHOLD
+  local USER_PARTNUM PARTED_ERR E2FSCK_RC E2FSCK_OUT RESIZE2FS_ERR RESIZE_THRESHOLD
+  local PART_BYTES FS_BYTES RESIZE_PART
 
   USER_DEV=$(/sbin/blkid --label userfs 2>/dev/null || true)
   if [[ -z "${USER_DEV}" ]]; then
@@ -94,45 +394,87 @@ expand_userfs_to_max()
   USER_END=$((USER_START + USER_SIZE - 1))
   FREE_SECTORS=$((DISK_LAST_SECTOR - USER_END))
   RESIZE_THRESHOLD=2048
+
+  # compare the filesystem with its partition: a partition that already reaches
+  # the disk end but carries a smaller filesystem (a previous resize that was
+  # cut short after resizepart) is only expanded with resize2fs
+  PART_BYTES=$((USER_SIZE * SECTOR_SIZE))
+  FS_BYTES=$(get_ext_fs_size "${USER_DEV}")
+  RESIZE_PART=1
   if [[ "${FREE_SECTORS}" -le "${RESIZE_THRESHOLD}" ]]; then
-    echo -ne "userfs already maxed, "
-    return 1
+    if [[ -n "${FS_BYTES}" ]] && [[ $((PART_BYTES - FS_BYTES)) -gt $((RESIZE_THRESHOLD * SECTOR_SIZE)) ]]; then
+      RESIZE_PART=0
+    else
+      echo -ne "userfs already maxed, "
+      return 1
+    fi
   fi
 
-  USER_PARTNUM=$(/bin/lsblk -n -o PARTN "${USER_DEV}" 2>/dev/null | head -n 1 | tr -d '[:space:]')
-  if [[ -z "${USER_PARTNUM}" ]] || echo "${USER_PARTNUM}" | grep -q '[^0-9]'; then
-    echo "ERROR: (cannot determine userfs part number)"
-    return 2
+  if [[ ${RESIZE_PART} -eq 1 ]]; then
+    USER_PARTNUM=$(/bin/lsblk -n -o PARTN "${USER_DEV}" 2>/dev/null | head -n 1 | tr -d '[:space:]')
+    if [[ -z "${USER_PARTNUM}" ]]; then
+      # lsblk takes PARTN from udev; without udev properties sysfs has the number
+      USER_PARTNUM=$(cat "/sys/class/block/$(basename "${USER_DEV}")/partition" 2>/dev/null | tr -d '[:space:]')
+    fi
+    if [[ -z "${USER_PARTNUM}" ]] || echo "${USER_PARTNUM}" | grep -q '[^0-9]'; then
+      echo "ERROR: (cannot determine userfs part number)"
+      return 2
+    fi
+    echo -ne "resize userfs to disk end, "
+  else
+    echo -ne "userfs partition already at disk end, grow filesystem (${FS_BYTES} -> ${PART_BYTES} bytes), "
   fi
 
-  echo -ne "resize userfs to disk end, "
   umount -f /userfs 2>/dev/null || true
-
-  if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DISK_DEV}" resizepart "${USER_PARTNUM}" 100% 2>&1); then
-    echo "ERROR: (resizepart userfs failed: ${PARTED_ERR})"
-    mount -o rw /userfs 2>/dev/null || true
+  if grep -qs " /userfs " /proc/mounts; then
+    echo "ERROR: (umount /userfs failed, still mounted)"
     return 2
   fi
 
-  # set MBR disk signature in case we have a dos/mbr partitioning
-  PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DISK_DEV}" 2>/dev/null || true)"
-  case "${PTTYPE}" in
-    dos)
-      # MBR: required because parted resets disk signature, thus PARTUUID will be different
-      echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
-      ;;
-    gpt)
-      # GPT: not required; GPT-PARTUUID comes from unique partition GUID
-      ;;
-  esac
+  if [[ ${RESIZE_PART} -eq 1 ]]; then
+    if ! PARTED_ERR=$(/usr/sbin/parted -s -f "${DISK_DEV}" resizepart "${USER_PARTNUM}" 100% 2>&1); then
+      echo "ERROR: (resizepart userfs failed: ${PARTED_ERR})"
+      mount -o rw /userfs 2>/dev/null || true
+      return 2
+    fi
 
-  # use partprobe to query for updated parttable
-  partprobe "${DISK_DEV}" 2>/dev/null || true
+    # set MBR disk signature in case we have a dos/mbr partitioning
+    PTTYPE="$(/sbin/blkid -o value -s PTTYPE "${DISK_DEV}" 2>/dev/null || true)"
+    case "${PTTYPE}" in
+      dos)
+        # MBR: required because parted resets disk signature, thus PARTUUID will be different
+        echo -en '\xEF\xBE\xED\xDE' | /bin/dd of="${DISK_DEV}" conv=notrunc bs=1 seek=$((0x1B8)) 2>/dev/null
+        ;;
+      gpt)
+        # GPT: not required; GPT-PARTUUID comes from unique partition GUID
+        ;;
+    esac
 
-  /sbin/e2fsck -pDf "${USER_DEV}" >/dev/null 2>&1
+    # use partprobe to query for updated parttable
+    partprobe "${DISK_DEV}" 2>/dev/null || true
+  fi
+
+  # preen first; errors preen refuses to fix on its own (rc bit 4, e.g. a
+  # corrupted orphan list after a hard reboot with the userfs mounted
+  # read-write) get a full run answering yes, and the update continues if that
+  # leaves the filesystem clean. The exit code is a bit mask: an operational
+  # error (8) or worse, e.g. I/O errors of a failing card, is not retried,
+  # since -y would also answer "ignore error" and "force rewrite" with yes.
+  # Both results go to the log. Only the tail of the output is kept: a badly
+  # damaged filesystem can make e2fsck print a lot, and the recovery runs from
+  # RAM. pipefail keeps the exit code of e2fsck, as tail exits with 0.
+  E2FSCK_OUT=$(set -o pipefail; /sbin/e2fsck -pDf "${USER_DEV}" 2>&1 | tail -n 50)
   E2FSCK_RC=$?
+  if [[ $((E2FSCK_RC & 4)) -ne 0 ]] && [[ ${E2FSCK_RC} -lt 8 ]]; then
+    echo -ne "e2fsck -p rc=${E2FSCK_RC} ($(log_excerpt "${E2FSCK_OUT}")), retrying with e2fsck -fy, "
+    E2FSCK_OUT=$(set -o pipefail; /sbin/e2fsck -fy "${USER_DEV}" 2>&1 | tail -n 50)
+    E2FSCK_RC=$?
+    if [[ ${E2FSCK_RC} -lt 4 ]]; then
+      echo -ne "rc=${E2FSCK_RC} ($(log_excerpt "${E2FSCK_OUT}")), "
+    fi
+  fi
   if [[ ${E2FSCK_RC} -ge 4 ]]; then
-    echo "ERROR: (e2fsck userfs failed rc=${E2FSCK_RC})"
+    echo "ERROR: (e2fsck userfs failed rc=${E2FSCK_RC}: $(log_excerpt "${E2FSCK_OUT}"))"
     mount -o rw /userfs 2>/dev/null || true
     return 2
   fi
@@ -521,12 +863,69 @@ EOF
   return 0
 }
 
+# true when the directory holding $1 resolves (symlinks followed) to an
+# upload directory or a directory below it
+# shellcheck disable=SC2329 # only called from on_exit
+fw_in_upload_dir()
+{
+  local parent root
+  parent=$(readlink -f "$(dirname "$1")" 2>/dev/null) || return 1
+  [[ -n "${parent}" ]] || return 1
+  for root in /usr/local/tmp /userfs/tmp; do
+    root=$(readlink -f "${root}" 2>/dev/null) || continue
+    [[ -n "${root}" ]] && [[ "${root}" != "/" ]] || continue
+    case "${parent}/" in
+      "${root}"/*)
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
+# what every EXIT trap runs: the lock goes, and an uploaded file that fwprepare
+# did not get through (FWPREPARE_FILE stays set until it succeeds) is removed
+# together with its extraction directory, so that a failed update does not
+# leave a firmware-sized file on the userfs that only blocks the next attempt.
+# Only below the upload directory (/usr/local/tmp, which is /userfs/tmp here):
+# never for a path with a ".." component, and only when the directories holding
+# the file and its -dir resolve (symlinks followed) to that directory or one
+# below it.
+# shellcheck disable=SC2329,SC2317 # only called from the EXIT traps
+on_exit()
+{
+  if [[ -n "${FWPREPARE_FILE}" ]]; then
+    case "${FWPREPARE_FILE}" in
+      */../*|*/..)
+        # a path that leaves the upload directory is never removed
+        ;;
+      /usr/local/tmp/?*|/userfs/tmp/?*)
+        # each target is checked on its own: for a path ending in "/", the
+        # -dir target lies in a different directory than the file
+        if fw_in_upload_dir "${FWPREPARE_FILE}" &&
+           fw_in_upload_dir "${FWPREPARE_FILE}-dir"; then
+          rm -rf "${FWPREPARE_FILE}-dir" 2>/dev/null
+          rm -f "${FWPREPARE_FILE}" 2>/dev/null
+          echo "(the uploaded file ${FWPREPARE_FILE} removed after the failure)<br/>"
+        fi
+        ;;
+    esac
+    FWPREPARE_FILE=""
+  fi
+  rm -f /tmp/.runningFirmwareUpdate
+  if [[ "${RECOVERY_LOCK_OWNER}" == "1" ]]; then
+    recovery_unlock
+  fi
+}
+
 ######
 # function that is called with the filename containing
 # the firmware update either archived or unarchived.
 fwprepare()
 {
   filename=${1}
+  FWPREPARE_FILE="${filename}"
+  USERFS_EXPANDED=""
 
   echo -ne "[1/7] Checking uploaded data... "
   # check if filename exists
@@ -551,14 +950,14 @@ fwprepare()
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
   if ! CHKSUM=$(/usr/bin/sha256sum "${filename}" 2>/dev/null) || [[ -z "${CHKSUM}" ]]; then
     echo "ERROR: (sha256sum)"
     exit 1
   fi
   # stop the progress output
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
   echo "$(echo "${CHKSUM}" | awk '{ print $1 }')<br/>"
 
@@ -591,17 +990,17 @@ fwprepare()
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
   # run the file i/o test using 'fio' which emulates a
   # Apps Class A1 performance test
   if ! RES=$(/usr/bin/fio --output-format=terse --max-jobs=4 /usr/share/agnostics/sd_bench.fio | cut -f 3,7,8,48,49 -d";" -) || [[ -z "${RES}" ]]; then
     echo "WARNING: performance test failed"
     # stop the progress output
-    kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+    kill ${PROGRESS_PID} && trap "on_exit" EXIT
   else
     # stop the progress output
-    kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+    kill ${PROGRESS_PID} && trap "on_exit" EXIT
     rm -f /usr/local/tmp/sd.test.file
 
     swri=$(echo "${RES}" | head -n 2 | tail -n 1 | cut -d ";" -f 4)
@@ -658,23 +1057,17 @@ fwprepare()
       echo -ne "rootfs ext4.gz identified, validating, "
 
       # check if unarchived size is < available space or we abort right away!
+      # The rootfs image is written as sparse file, thus it requires less
+      # space than its uncompressed size.
       REQSIZE=$(get_gzip_uncompressed_size "${filename}")
       if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
         exit 1
       fi
+      REQSIZE=$(get_sparse_required_size "${FILESIZE}" "${REQSIZE}")
       if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo -ne "insufficient free space, "
-        expand_userfs_to_max
-        RESIZE_RC=$?
-        if [[ ${RESIZE_RC} -eq 0 ]]; then
-          AVAILSPACE=$(/bin/df -B1 "${TMPDIR}" | tail -1 | awk '{ print $4 }')
-          echo -ne "${AVAILSPACE} bytes available after userfs resize, "
-        elif [[ ${RESIZE_RC} -eq 1 ]]; then
-          echo -ne "no userfs resize possible, "
-        else
-          exit 1
-        fi
+        fw_expand_userfs
       fi
       if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
@@ -688,16 +1081,19 @@ fwprepare()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
-      if ! /bin/gzip -dc "${filename}" >"${TMPDIR}/rootfs.ext4"; then
-        echo "ERROR: (gunzip)"
+      # write the rootfs image as sparse file (unused filesystem blocks
+      # are not allocated)
+      if ! gunzip_firmware_retry "${filename}" "${TMPDIR}/rootfs.ext4"; then
         exit 1
       fi
 
       # stop the progress output
       kill ${PROGRESS_PID} 2>/dev/null || true
-      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "on_exit" EXIT
+
+      echo -ne " $(stat -c%s "${TMPDIR}/rootfs.ext4") bytes ($(get_alloc_size "${TMPDIR}/rootfs.ext4") bytes allocated), "
 
       # the uncompressed file must be a valid rootfs ext4 filesystem
       if ! /usr/bin/file -b "${TMPDIR}/rootfs.ext4" | grep -E -q "ext4 filesystem.*rootfs"; then
@@ -733,7 +1129,7 @@ fwprepare()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # unarchive the tar
       if ! /bin/tar -C "${TMPDIR}" --warning=no-timestamp --no-same-owner -xmf "${filename}"; then
@@ -742,7 +1138,7 @@ fwprepare()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       rm -f "${filename}"
 
@@ -756,8 +1152,18 @@ fwprepare()
       echo -ne "zip identified, "
 
       # check if unarchived size is < available space or we abort right away!
-      REQSIZE=$(/usr/bin/unzip -v "${filename}" | tail -1 | cut -d" " -f1)
-      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+      # A disk image in the zip is unarchived as sparse file, thus it
+      # requires less space than its full size.
+      REQSIZE=$(get_zip_required_size "${filename}")
+      if [[ -z "${REQSIZE}" ]] || [[ "${REQSIZE}" -le 0 ]]; then
+        echo "ERROR: ${REQSIZE} bytes required!"
+        exit 1
+      fi
+      if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
+        echo -ne "insufficient free space, "
+        fw_expand_userfs
+      fi
+      if [[ "${REQSIZE}" -ge "${AVAILSPACE}" ]]; then
         echo "ERROR: ${REQSIZE} bytes required!"
         exit 1
       fi
@@ -769,11 +1175,10 @@ fwprepare()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
-      # unarchive the zip
-      if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
-        echo "ERROR: (unzip)"
+      # unarchive the zip (a disk image as sparse file)
+      if ! unzip_firmware_retry "${filename}" "${TMPDIR}"; then
         exit 1
       fi
       kill ${PROGRESS_PID} 2>/dev/null || true
@@ -845,10 +1250,9 @@ fwprepare()
               awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
               PROGRESS_PID=$!
               # shellcheck disable=SC2064
-              trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
-              # unarchive the zip once more
-              if ! /usr/bin/unzip -q -o -d "${TMPDIR}" "${filename}" 2>/dev/null; then
-                echo "ERROR: (unzip)"
+              trap "kill ${PROGRESS_PID}; on_exit" EXIT
+              # unarchive the zip once more (a disk image as sparse file)
+              if ! unzip_firmware_retry "${filename}" "${TMPDIR}"; then
                 exit 1
               fi
               kill ${PROGRESS_PID} 2>/dev/null || true
@@ -868,7 +1272,7 @@ fwprepare()
 
       # stop the progress output (may already be stopped on resize paths)
       kill ${PROGRESS_PID} 2>/dev/null || true
-      trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "on_exit" EXIT
 
       rm -f "${filename}"
 
@@ -985,7 +1389,7 @@ fwprepare()
   awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
   PROGRESS_PID=$!
   # shellcheck disable=SC2064
-  trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+  trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
   # check for sha256 checksums
   (cd "${TMPDIR}";
@@ -1014,7 +1418,7 @@ fwprepare()
   ) || exit 1
 
   # stop the progress output
-  kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+  kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
   echo "DONE<br>"
 
@@ -1040,6 +1444,8 @@ fwprepare()
     exit 1
   fi
 
+  # prepared: from here on the extraction directory is the update, kept on a failure
+  FWPREPARE_FILE=""
   echo "OK, DONE<br/>"
 }
 
@@ -1166,7 +1572,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${ext4_file}" of="${ROOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1175,7 +1581,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${ROOTFS_DEV}" /rootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1280,7 +1686,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${vfat_file}" of="${BOOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1289,7 +1695,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${BOOTFS_DEV}" /bootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1439,7 +1845,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${BOOTFS_LOOPDEV}" of="${BOOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1448,7 +1854,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${BOOTFS_DEV}" /bootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1582,7 +1988,7 @@ fwinstall()
       awk 'BEGIN{while(1){printf".";fflush();system("sleep 3");}}' &
       PROGRESS_PID=$!
       # shellcheck disable=SC2064
-      trap "kill ${PROGRESS_PID}; rm -f /tmp/.runningFirmwareUpdate" EXIT
+      trap "kill ${PROGRESS_PID}; on_exit" EXIT
 
       # use dd to write the image file to the boot partition
       if ! /bin/dd if="${ROOTFS_LOOPDEV}" of="${ROOTFS_DEV}" bs=4M conv=fsync status=none; then
@@ -1591,7 +1997,7 @@ fwinstall()
       fi
 
       # stop the progress output
-      kill ${PROGRESS_PID} && trap "rm -f /tmp/.runningFirmwareUpdate" EXIT
+      kill ${PROGRESS_PID} && trap "on_exit" EXIT
 
       if ! mount -o ro "${ROOTFS_DEV}" /rootfs; then
         echo "ERROR: (mount)<br/>"
@@ -1627,14 +2033,25 @@ fwinstall()
 #################################
 # main body starts here
 
-# there can be only one!
-if [[ -f /tmp/.runningFirmwareUpdate ]]; then
-  echo "ERROR: Firmware Update already running<br/>"
+# there can be only one! (atomically claim the recovery action lock
+# shared with the CGI scripts of the recovery system). If the caller
+# (firmware_update.cgi) already holds the lock it sets RECOVERY_LOCK_HELD=1
+# and also remains responsible for releasing it.
+. /lib/librecovery.sh
+RECOVERY_LOCK_OWNER=0
+if [[ "${RECOVERY_LOCK_HELD}" == "1" ]] && recovery_locked; then
+  :
+elif recovery_lock; then
+  RECOVERY_LOCK_OWNER=1
+else
+  echo "ERROR: Firmware Update or another recovery action already running<br/>"
   exit 1
 fi
 
-# capture on EXIT and create the lock file
-trap 'rm -f /tmp/.runningFirmwareUpdate' EXIT
+# capture on EXIT and create the marker file (used by index.cgi to
+# display the update progress)
+trap 'on_exit' EXIT
+recovery_trap_signals
 touch /tmp/.runningFirmwareUpdate
 
 # source all data from /var/hm_mode

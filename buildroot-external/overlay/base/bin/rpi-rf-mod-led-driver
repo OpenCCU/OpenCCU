@@ -41,14 +41,26 @@ case "${1:-}" in
     record_module rpi_rf_mod_led
     ;;
   unbind-group)
-    # Keep the local DT group from occupying the canonical RGB name when an
+    # Keep the local DT LEDs from occupying the canonical names when an
     # external adapter is selected. Restore on reboot (like the GPIO binding).
+    # The group goes first: it uses the PWM LEDs below.
     dev=/sys/bus/platform/devices/multi-led
     if [ -L "$dev/driver" ] &&
        [ "$(basename "$(readlink -f "$dev/driver")")" = leds_group_multicolor ]; then
       echo openccu-remote-led >"$dev/driver_override"
       echo multi-led >"$dev/driver/unbind"
     fi
+    # The PWM LEDs of the header (pwm-leds) have their own device, which
+    # drives nothing else. A gpio-leds device also drives board LEDs, so the
+    # init scripts unbind and rebind that one themselves.
+    for color in red green blue; do
+      led=/sys/class/leds/rpi_rf_mod:$color/device
+      [ -L "$led/driver" ] || continue
+      [ "$(basename "$(readlink -f "$led/driver")")" = leds_pwm ] || continue
+      dev=$(readlink -f "$led")
+      echo openccu-remote-led >"$dev/driver_override"
+      basename "$dev" >"$dev/driver/unbind"
+    done
     ;;
   unload)
     lock_state
